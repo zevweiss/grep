@@ -1102,6 +1102,7 @@ Regexp selection and interpretation:\n"), program_name);
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression\n\
   -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
+  /* -X is undocumented on purpose. */
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -1457,7 +1458,7 @@ main (int argc, char **argv)
 	show_version = 1;
 	break;
 
-      case 'X':
+      case 'X': /* undocumented on purpose */
 	setmatcher (optarg);
 	break;
 
