@@ -11,8 +11,8 @@
       */
 #include "vms_fab.h"
 
-int
-vms_fab (char *argv[])
+void
+vms_fab (int * argp, char **argvp[])
 {
   extern int optind;
   int optout;
@@ -21,7 +21,7 @@ vms_fab (char *argv[])
   nam = cc$rms_nam;
 
   optout = 0;
-  strcpy (fna_buffer, argv[optind]);
+  strcpy (fna_buffer, *argvp[optind]);
   length_of_fna_buffer = NAM$C_MAXRSS;
 
   fab.fab$b_bid = FAB$C_BID;
@@ -80,6 +80,7 @@ vms_fab (char *argv[])
   /* Return a pointer to the beginning of memory that has the expanded
      filenames.
    */
-  return &arr_ptr;
+  *argcp = optout;
+  *argvp = arr_ptr;
 
 }
