@@ -20,9 +20,10 @@
 
 2003-06-12  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* README-alpha: Mention bug tracking system and grep-devel-list
+	* tests/spencer1.tests: Fix test 55, as noted by Tim Waugh
 
 2003-06-05  Stepan Kasal  <kasal@ucw.cz>
-	* tests/formatbre.awk, tests/formatbre.awk: probably unused, so
+	* tests/formatbre.awk, tests/formatere.awk: probably unused, so
 	  I've removed them.
 
 2003-06-05  Stepan Kasal  <kasal@ucw.cz>
