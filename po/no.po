@@ -1,4 +1,4 @@
-# Norwegian messages for GNU Grep version 2.1.  (bokmål dialect)
+# Norwegian messages for GNU Grep version 2.2.  (bokmål dialect)
 # Copyright (C) 1996 Free Software Foundation, Inc.
 # Karl Anders Øygard <karl.oygard@fou.telenor.no>, 1996.
 #
@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.1\n"
+"Project-Id-Version: GNU grep 2.2\n"
 "POT-Creation-Date: 1998-04-26 19:31-0400\n"
-"PO-Revision-Date: 1997-12-27 02:01+0100\n"
+"PO-Revision-Date: 1998-08-01 13:45+0200\n"
 "Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
 "Language-Team: Norwegian <no@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -205,6 +205,17 @@ msgid ""
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 msgstr ""
+"Søk etter MØNSTER i hver FIL eller standard inn.\n"
+"\n"
+"Regexp valg og fortolkning:\n"
+"  -E, --extended-regexp     MØNSTER er et utvidet regulært uttrykk\n"
+"  -F, --fixed-regexp        MØNSTER er en fast streng separert med linjeskift\n"
+"  -G, --basic-regexp        MØNSTER er et grunnleggende regulært uttrykk\n"
+"  -e, --regexp=MØNSTER      bruk MØNSTER som et regulært uttrykk\n"
+"  -f, --file=FIL            hent MØNSTER fra FIL\n"
+"  -i, --ignore-case         se bort ifra forskjellen på store og små bokstaver\n"
+"  -w, --word-regexp         MØNSTER må stemme overens med hele ord\n"
+"  -x, --line-regexp         MØNSTER må stemme overens med hele linjer\n"
 
 #: src/grep.c:615
 msgid ""
@@ -215,6 +226,12 @@ msgid ""
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
 msgstr ""
+"\n"
+"Diverse:\n"
+"  -s, --no-messages         undertrykk feilmeldinger\n"
+"  -v, --revert-match        velg linjer som ikke passer\n"
+"  -V, --version             vis versioninformasjon og avslutt\n"
+"      --help                vis denne helpeteksten og avslutt\n"
 
 #: src/grep.c:622
 msgid ""
@@ -229,6 +246,19 @@ msgid ""
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 msgstr ""
+"\n"
+"Ut-kontroll:\n"
+"  -b, --byte-offset         skriv tegnposisjon med utlinjene\n"
+"  -n, --line-number         skriv linjenummeret med utlinjene\n"
+"  -H, --with-filename       skriv filnavnet for hver treff\n"
+"  -h, --no-filename         ikke skriv filnavnet\n"
+"  -q, --quiet, --silent     undertrykk all vanlig utskrift\n"
+"  -L, --files-without-match skriv bare ut navnene på FILene som ikke\n"
+"                            inneholder treff\n"
+"  -l, --files-with-matches  skriv bare ut navnene på FILene som inneholder\n"
+"                            treff\n"
+"  -c, --count               skriv bare ut antall linjer som inneholder treff\n"
+"                            per FIL\n"
 
 #: src/grep.c:633
 msgid ""
@@ -246,17 +276,23 @@ msgid ""
 "two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
 "Exit with 2 if syntax errors or system errors.\n"
 msgstr ""
+"\n"
+"Kontekst-kontroll:\n"
+"  -B, --before-context=ANT  skriv ANT linjer med ledende kontekst\n"
+"  -A, --after-context=ANT   skriv ANT linjer med etterfølgende kontekst\n"
+"  -ANT                      samme som både -B ANT og -A ANT\n"
+"  -C, --context             samme som -2\n"
+"  -U, --binary              ikke fjern CR-tegn ved EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   rapporter posisjoner som om CRene ikke var der\n"
+"                            (MSDOS)\n"
 
 #: src/grep.c:647
-#, fuzzy
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "Rapportér bugs til <bug-gnu-utils@prep.ai.mit.edu>.\n"
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nRapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
 
 #: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
-msgstr ""
+msgstr "ugyldig kontekstlengde"
 
 #: src/grep.c:800 src/grep.c:805 src/grep.c:810
 msgid "you may specify only one of -E, -F, or -G"
@@ -272,10 +308,8 @@ msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""
@@ -297,131 +331,3 @@ msgstr "(standard inn)\n"
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "minnet oppbrukt\n"
-
-#~ msgid "Regexp selection and interpretation:\n"
-#~ msgstr "Regexp-valg og -tolkning:\n"
-
-#~ msgid ""
-#~ "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-#~ msgstr ""
-#~ "  -E, --extended-regexp     MØNSTER er et utvidet regulært uttrykk\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
-#~ msgstr ""
-#~ "  -F, --fixed-strings       MØNSTER er en fast streng separert med "
-#~ "linjeskift\n"
-
-#~ msgid "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
-#~ msgstr "  -G, --basic-regexp        MØNSTER er et vanlig regulært uttrykk\n"
-
-#~ msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
-#~ msgstr "  -e, --regexp=<mønster>    bruk MØNSTER som et regulært uttrykk\n"
-
-#, fuzzy
-#~ msgid "  -f, --file=FILE           obtain PATTERN from FILE\n"
-#~ msgstr "  -f, --file=FIL          skaff MØNSTER fra FIL\n"
-
-#~ msgid "  -i, --ignore-case         ignore case distinctions\n"
-#~ msgstr ""
-#~ "  -i, --ignore-case         skill ikke mellom store og små bokstaver\n"
-
-#~ msgid ""
-#~ "  -w, --word-regexp         force PATTERN to match only whole words\n"
-#~ msgstr ""
-#~ "  -w, --word-regexp         MØNSTER skal bare stemme overens med hele ord\n"
-
-#~ msgid ""
-#~ "  -x, --line-regexp         force PATTERN to match only whole lines\n"
-#~ msgstr ""
-#~ "  -x, --line-regexp         MØNSTER skal bare stemme overens med hele "
-#~ "linjer\n"
-
-#~ msgid "Miscellaneous:\n"
-#~ msgstr "Diverse:\n"
-
-#~ msgid "  -s, --no-messages         suppress error messages\n"
-#~ msgstr "  -s, --no-messages         ikke skriv ut feilmeldinger\n"
-
-#~ msgid "  -v, --revert-match        select non-matching lines\n"
-#~ msgstr ""
-#~ "  -v, --revert-match        velg linjer som _ikke_ stemmer med <mønster>\n"
-
-#~ msgid "  -V, --version             print version information and exit\n"
-#~ msgstr "  -V, --version             skriv versjonsinformasjon og avslutt\n"
-
-#~ msgid "      --help                display this help and exit\n"
-#~ msgstr "      --help                vis denne hjelpen og avslutt\n"
-
-#~ msgid "Output control:\n"
-#~ msgstr "Output-kontroll:\n"
-
-#~ msgid ""
-#~ "  -b, --byte-offset         print the byte offset with output lines\n"
-#~ msgstr ""
-#~ "  -b, --byte-offset         skriv byte-posisjon sammen med ut-linjer\n"
-
-#~ msgid "  -n, --line-number         print line number with output lines\n"
-#~ msgstr ""
-#~ "  -n, --line-number         skriv linjenummer sammen med ut-linjer\n"
-
-#~ msgid "  -H, --with-filename       print the filename for each match\n"
-#~ msgstr "  -H, --with-filename       skriv filnavnet for hvert treff\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -h, --no-filename         suppress the prefixing filename on output\n"
-#~ msgstr "  -h, --no-filename         ikke skriv filnavnet til skjermen\n"
-
-#~ msgid "  -q, --quiet, --silent     suppress all normal output\n"
-#~ msgstr "  -q, --quiet, --silent     ikke skriv normal utdata\n"
-
-#~ msgid ""
-#~ "  -L, --files-without-match only print FILE names containing no match\n"
-#~ msgstr ""
-#~ "  -L, --files-without-match bare skriv filnavnene til filer uten treff\n"
-
-#~ msgid ""
-#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
-#~ msgstr "  -l, --files-with-matches  bare skriv filnavnene med treff\n"
-
-#~ msgid ""
-#~ "  -c, --count               only print a count of matching lines per FILE\n"
-#~ msgstr ""
-#~ "  -c, --count               bare skriv antall linjer med treff per FIL\n"
-
-#~ msgid "Context control:\n"
-#~ msgstr "Kontekst-kontroll:\n"
-
-#~ msgid "  -B, --before-context=NUM  print NUM lines of leading context\n"
-#~ msgstr "  -B, --before-context=ANT  skriv ANT linjer med ledende kontekst\n"
-
-#~ msgid "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-#~ msgstr ""
-#~ "  -A, --after-context=ANT   skriv ANT linjer med etterfølgende kontekst\n"
-
-#~ msgid "  -NUM                      same as both -B NUM and -A NUM\n"
-#~ msgstr "  -ANT                      samme som både -B ANT og -A ANT\n"
-
-#~ msgid "  -C, --context             same as -2\n"
-#~ msgstr "  -C, --context             samme som -2\n"
-
-#~ msgid "  -U, --binary              do not strip CR characters at EOL\n"
-#~ msgstr ""
-#~ "  -U, --binary              ikke fjern CR-tegn ved slutten av linjene\n"
-
-#~ msgid ""
-#~ "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
-#~ msgstr ""
-#~ "  -u, --unix-byte-offsets   rapporter posisjoner som om CRene ikke var der\n"
-
-#~ msgid ""
-#~ "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
-#~ msgstr "Det skal være ett og bare ett MØNSTER, -e MØNSTER eller -f FIL.\n"
-
-#~ msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
-#~ msgstr "Kalt som «egrep» impliserer -E og kalt som «fgrep» impliserer -F.\n"
-
-#~ msgid "If no -[GEF], then -G is assumed.\n"
-#~ msgstr "Hvis ikke -[GEF] antas -G.\n"

@@ -1,13 +1,13 @@
 # Polish translation of the GNU grep messages
-# Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
-# Rafa³ Maszkowski <rzm@pdi.net>, 1996-1997.
+# Copyright (C) 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
+# Rafa³ Maszkowski <rzm@icm.edu.pl>, 1996-1998.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.0\n"
+"Project-Id-Version: GNU grep 2.2\n"
 "POT-Creation-Date: 1998-04-26 19:31-0400\n"
-"PO-Revision-Date: 1996-08-01 00:15+0200\n"
-"Last-Translator: Rafa³ Maszkowski <rzm@pdi.net>\n"
+"PO-Revision-Date: 1998-08-05 14:08+0200\n"
+"Last-Translator: Rafa³ Maszkowski <rzm@icm.edu.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
@@ -178,7 +178,7 @@ msgstr "zapisujê wyniki"
 #: src/grep.c:597
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr ""
+msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
 #: src/grep.c:598
 #, c-format
@@ -188,7 +188,7 @@ msgstr "Spróbuj `%s --help' dla uzyskania informacji.\n"
 #: src/grep.c:602
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr ""
+msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
 #: src/grep.c:603
 msgid ""
@@ -204,6 +204,17 @@ msgid ""
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 msgstr ""
+"Szukanie WZORCA w ka¿dym pliku lub na standardowym wej¶ciu.\n"
+"\n"
+"Interpretacja i wybór wyrar¿eb regularnych:\n"
+"  -E, --extended-regexp     WZORZEC jest rozszerzonym wyr. regularnym\n"
+"  -F, --fixed-strings       WZORZEC napisy oddzielone przez zn. nowej linii\n"
+"  -G, --basic-regexp        WZORZEC jest podstawowym wyr. regularnym\n"
+"  -e, --regexp=WZORZEC      u¿yj WZORCA jako wyr. regularnego\n"
+"  -f, --file=PLIK           u¿yj WZORCA z PLIKU\n"
+"  -i, --ignore-case         zignoruj ro¿nice miêdzy ma³ymi i du¿. lit.\n"
+"  -w, --word-regexp         dopasuj WZORZEC tylko do pe³nych s³ów\n"
+"  -x, --line-regexp         dopasuj WZORZEC tylko do ca³ych linii\n"
 
 #: src/grep.c:615
 msgid ""
@@ -214,6 +225,12 @@ msgid ""
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
 msgstr ""
+"\n"
+"Ró¿ne:\n"
+"  -s, --no-messages         bez komunikatów o b³êdach\n"
+"  -v, --revert-match        wybierz linie nie pasuj±ce\n"
+"  -V, --version             wypisz informacjê o wersji i zakoñcz\n"
+"      --help                wy¶wietl tê informacjê i zakoñcz\n"
 
 #: src/grep.c:622
 msgid ""
@@ -228,6 +245,16 @@ msgid ""
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 msgstr ""
+"\n"
+"Sterowanie danymi wyj¶ciowymi:\n"
+"  -b, --byte-offset         wypisz pozycje bajtów w wyniku\n"
+"  -n, --line-number         wypisuj numery linii w wyniku\n"
+"  -H, --with-filename       wypisz nazwê pliku dla ka¿dej linii\n"
+"  -h, --no-filename         nie dopisuj nazwy pliku w liniach wyj¶ciowych\n"
+"  -q, --quiet, --silent     wy³±cz wypisywanie wyniku\n"
+"  -L, --files-without-match wypisz tylko nazwy PLIKÓW bez trafieñ\n"
+"  -l, --files-with-matches  wypisz tylko nazwy PLIKÓW z trafieniami\n"
+"  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym PLIKu\n"
 
 #: src/grep.c:633
 msgid ""
@@ -245,16 +272,28 @@ msgid ""
 "two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
 "Exit with 2 if syntax errors or system errors.\n"
 msgstr ""
+"\n"
+"Sterowanie kontekstem:\n"
+"  -B, --before-context=ILE  wypisz ILE linii kontekstu przed\n"
+"  -A, --after-context=ILE   wypisz ILE linii kontekstu po\n"
+"  -NUM                      to samo co -B NUM i -A NUM razem\n"
+"  -C, --context             to samo co -2\n"
+"  -U, --binary              nie usuwaj znaków nowej linii na koñcu\n"
+"  -u, --unix-byte-offsets   podawaj pozycje tak jakby nie by³o CRów (MSDOS)\n"
+"\n"
+"Be opcji -[GEF] `egrep' zak³ada -E, `fgrep' -F, w przeciwnym razie -G.\n"
+"Bez PLIKu albo gdy PLIK to -, czytaj standadowe wej¶cie. Je¿eli podano\n"
+"mniej ni¿ dwa PLIKi, zak³ada -h. Zakoñczenie z kodem 0 je¿eli WZORZEC\n"
+"pasuje, z 1, je¿eli nie, z 2, je¿eli napotkano b³êdy syntaktyczne lub\n"
+"systemowe.\n"
 
 #: src/grep.c:647
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr ""
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nRaporty o b³êdach wysy³aj do bug-gnu-utils@gnu.org.\n"
 
 #: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
-msgstr ""
+msgstr "b³êdny argument d³ugo¶ci kontekstowej"
 
 #: src/grep.c:800 src/grep.c:805 src/grep.c:810
 msgid "you may specify only one of -E, -F, or -G"
@@ -273,20 +312,22 @@ msgid "matcher already specified"
 msgstr "wzorzec ju¿ podany"
 
 #: src/grep.c:915
-#, fuzzy, c-format
+#, c-format
 msgid "grep (GNU grep) %s\n"
-msgstr "GNU grep, wersja %s\n"
+msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
+msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
+"Oprogramowanie darmowe. Warunki kopiowania zamieszczone s± w kodzie ¼ród³owym.\n"
+"Nie podlega ¿adnej gwarancji, nawet gwarancji przydatno¶ci do jakiegokolwiek\n"
+"zastosowania lub sprzeda¿y.\n"
 
 #: src/grep.c:964 src/grep.c:1015
 msgid "(standard input)"
@@ -299,139 +340,3 @@ msgstr "(standardowe wyj¶cie)\n"
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "pamiêæ wyczerpana\n"
-
-#~ msgid "Regexp selection and interpretation:\n"
-#~ msgstr "Interperetacje i wybór wyr. regularnych:\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-#~ msgstr ""
-#~ "  -E, --extended-regexp     <wzorzec> jest rozszerzonym wyr. regularnym\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
-#~ msgstr ""
-#~ "  -F, --fixed-strings       <wzrozec> ³añcuchy znaków oddz. przez zn. nowej "
-#~ "linii\n"
-
-#, fuzzy
-#~ msgid "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
-#~ msgstr ""
-#~ "  -G, --basic-regexp        <wzorzec> jest prostym wyr. regularnym\n"
-
-#, fuzzy
-#~ msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
-#~ msgstr "  -e, --regexp=<wzorzec>    u¿yj <wzorca> jako wyr. regularnego\n"
-
-#, fuzzy
-#~ msgid "  -f, --file=FILE           obtain PATTERN from FILE\n"
-#~ msgstr "  -f, --file=<plik>         u¿yj <wzroca> z <pliku>\n"
-
-#~ msgid "  -i, --ignore-case         ignore case distinctions\n"
-#~ msgstr ""
-#~ "  -i, --ignore-case         zignoruj ro¿nice miêdzy ma³ymi i du¿. lit.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -w, --word-regexp         force PATTERN to match only whole words\n"
-#~ msgstr ""
-#~ "  -w, --word-regexp         dopasuj <wzorzec> tylko do pe³nych s³ów\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -x, --line-regexp         force PATTERN to match only whole lines\n"
-#~ msgstr ""
-#~ "  -x, --line-regexp         dopasuj <wzorzec> tylko do ca³ych linii\n"
-
-#~ msgid "Miscellaneous:\n"
-#~ msgstr "Ró¿ne:\n"
-
-#~ msgid "  -s, --no-messages         suppress error messages\n"
-#~ msgstr "  -s, --no-messages         bez komunikatów o b³êdach\n"
-
-#~ msgid "  -v, --revert-match        select non-matching lines\n"
-#~ msgstr "  -v, --revert-match        wybierz linie nie pasuj±ce\n"
-
-#~ msgid "  -V, --version             print version information and exit\n"
-#~ msgstr "  -V, --version             wypisz informacjê o wersji i zakoñcz\n"
-
-#~ msgid "      --help                display this help and exit\n"
-#~ msgstr "      --help                wy¶wietl tê informacjê i zakoñcz\n"
-
-#~ msgid "Output control:\n"
-#~ msgstr "Sterowanie wyj¶ciem:\n"
-
-#~ msgid ""
-#~ "  -b, --byte-offset         print the byte offset with output lines\n"
-#~ msgstr "  -b, --byte-offset         wypisz pozycje bajtów w wyniku\n"
-
-#~ msgid "  -n, --line-number         print line number with output lines\n"
-#~ msgstr "  -n, --line-number         wypisuj numery linii w wyniku\n"
-
-#~ msgid "  -H, --with-filename       print the filename for each match\n"
-#~ msgstr "  -H, --with-filename       wypisz nazwê pliku dla ka¿dej linii\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -h, --no-filename         suppress the prefixing filename on output\n"
-#~ msgstr ""
-#~ "  -h, --no-filename         nie dopisuj nazwy pliku w liniach wyj¶ciowych\n"
-
-#~ msgid "  -q, --quiet, --silent     suppress all normal output\n"
-#~ msgstr "  -q, --quiet, --silent     wy³±cz wypisywanie wyniku\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -L, --files-without-match only print FILE names containing no match\n"
-#~ msgstr ""
-#~ "  -L, --files-without-match wypisz tylko nazwy plików z nie-trafieniami\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
-#~ msgstr ""
-#~ "  -l, --files-with-matches  wypisz tylko nazwy plików z trafieniami\n"
-
-#~ msgid ""
-#~ "  -c, --count               only print a count of matching lines per FILE\n"
-#~ msgstr ""
-#~ "  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym "
-#~ "PLIKu\n"
-
-#~ msgid "Context control:\n"
-#~ msgstr "Sterowanie kotekstem:\n"
-
-#~ msgid "  -B, --before-context=NUM  print NUM lines of leading context\n"
-#~ msgstr "  -B, --before-context=ILE  wypisz ILE linii kontekstu przed\n"
-
-#~ msgid "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-#~ msgstr "  -A, --after-context=ILE   wypisz ILE linii kontekstu po\n"
-
-#~ msgid "  -NUM                      same as both -B NUM and -A NUM\n"
-#~ msgstr "  -NUM                      to samo co -B NUM i -A NUM razem\n"
-
-#~ msgid "  -C, --context             same as -2\n"
-#~ msgstr "  -C, --context             to samo co -2\n"
-
-# whats that? - rzm 970731
-#~ msgid "follows(%d:"
-#~ msgstr "natêpuje(%d:"
-
-#~ msgid "Usage: %s [option]... regex [file]...\n"
-#~ msgstr "U¿ycie: %s [opcja]... regex [plik]...\n"
-
-#~ msgid "Usage: %s [option]... pattern [file] ...\n"
-#~ msgstr "U¿ycie: %s [opcja]... wzorzec [plik] ...\n"
-
-#~ msgid "There should be one and only one pattern, -e pattern or -f file.\n"
-#~ msgstr ""
-#~ "Powinien byæ jeden i tylko jeden wzorzec, -e wzorzec albo -f plik.\n"
-
-# call? called? - rzm 970731
-#~ msgid "If call as egrep, this implies -E and fgrep for -F.\n"
-#~ msgstr "Zawo³anie jako egrep implikuje -E, jako fgrep - -F.\n"
-
-#~ msgid "If no -[GEF], then -G is assumed.\n"
-#~ msgstr "Je¿eli brak -[GEF] przyjmujê -G.\n"
