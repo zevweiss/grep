@@ -1,0 +1,3 @@
+@set UPDATED Nov 1998
+@set EDITION 0.01a
+@set VERSION 2.3
