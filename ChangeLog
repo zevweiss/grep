@@ -1,3 +1,8 @@
+	* intl/Makefile.in: Replace .o with .${ac_objext} where necessary.
+	Work around a limitation of Visual C++ on Cygwin32.
+	* acconfig.h configure.in: Define `alloca' as `_alloca' when CC=cl.
+	This little hack was suggested by Ian Roxborough <irox@cygnus.com>.
+
 1999-01-28 Alain Magloire
 
 	* PATCHES-AM: New file. A small patch for automake-1.4, use $(sep)

@@ -7,6 +7,9 @@
 /* Version number. */
 #undef VERSION
 
+/* Hack for Visual C++ suggested by irox. */
+#undef alloca
+
 /*
  * Internationalization stuffs.
  */
