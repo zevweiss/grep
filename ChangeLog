@@ -1,3 +1,8 @@
+1999-06-12 Alain Magloire
+
+	* doc/grep.{1,texi}: add description for --with-filename.
+	Noted missing by UEBAYASHI Masao.
+
 1999-03-17 Paul Eggert
 
 	* NEWS: Add GREP_OPTIONS.
