@@ -9,10 +9,9 @@
 	  m4/init.m4, m4/install.m4, m4/largefile.m4, m4/lcmessage.m4,
 	  m4/header.m4, m4/isc-posix.m4, m4/missing.m4, m4/progtest.m4,
 	  m4/sanity.m4:
-	  Fix build with autoconf 2.5x, try to retain 2.1x compatibility
-	  for now
-	* autogen.sh: Use aclocal -I rather than the crude
-	  cat m4/* >acinclude.m4 hack
+	  Fix build with autoconf 2.5x, retain 2.1x compatibility for now
+	* autogen.sh: Add some crude hacks to make it possible to build with
+	  both autoconf 2.5x and 2.1x
 	* acconfig.h: removed (no longer required)
 	* Makefile.am: add cvs-clean target
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes

@@ -54,7 +54,7 @@ AC_REPLACE_FUNCS(memchr stpcpy strtoul atexit fnmatch)
 jm_AC_PREREQ_XSTRTOUMAX
 
 dnl Replace this with jm_CHECK_DECLS once autoconf 2.15 is out.
-jm_CHECK_DECLARATIONS([#include <stdlib.h>], strtoul strtoull)
+jm_CHECK_DECLARATIONS([#include <stdlib.h>], [strtoul strtoull])
 test $jm_cv_func_decl_strtoul != yes
 AC_DEFINE_UNQUOTED([HAVE_DECL_STRTOUL], $?,
   [Define if <stdlib.h> declares strtoul.])
