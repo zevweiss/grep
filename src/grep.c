@@ -37,7 +37,10 @@
 #include "grep.h"
 #include "savedir.h"
 #include "xstrtol.h"
+#include "xalloc.h"
+#include "error.h"
 #include "exclude.h"
+#include "closeout.h"
 
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
@@ -143,7 +146,8 @@ int match_lines;
 unsigned char eolbyte;
 
 /* For error messages. */
-static char *prog;
+/* The name the program was run with, stripped of any leading path. */
+char *program_name;
 static char const *filename;
 static int errseen;
 
@@ -164,59 +168,13 @@ static inline int undossify_input PARAMS ((register char *, size_t));
 static void (*compile) PARAMS ((char const *, size_t));
 static size_t (*execute) PARAMS ((char const *, size_t, size_t *, int));
 
-/* Print a message and possibly an error string.  Remember
-   that something awful happened. */
-static void
-error (const char *mesg, int errnum)
-{
-  if (errnum)
-    fprintf (stderr, "%s: %s: %s\n", prog, mesg, strerror (errnum));
-  else
-    fprintf (stderr, "%s: %s\n", prog, mesg);
-}
-
 /* Like error, but suppress the diagnostic if requested.  */
 static void
 suppressible_error (char const *mesg, int errnum)
 {
   if (! suppress_errors)
-    error (mesg, errnum);
+    error (0, errnum, mesg);
   errseen = 1;
-}
-
-/* Like error (), but die horribly after printing. */
-void
-fatal (const char *mesg, int errnum)
-{
-  error (mesg, errnum);
-  exit (2);
-}
-
-/* Interface to handle errors and fix library lossage. */
-char *
-xmalloc (size_t size)
-{
-  char *result;
-
-  result = malloc (size);
-  if (size && !result)
-    fatal (_("memory exhausted"), 0);
-  return result;
-}
-
-/* Interface to handle errors and fix some library lossage. */
-char *
-xrealloc (char *ptr, size_t size)
-{
-  char *result;
-
-  if (ptr)
-    result = realloc (ptr, size);
-  else
-    result = malloc (size);
-  if (size && !result)
-    fatal (_("memory exhausted"), 0);
-  return result;
 }
 
 /* Convert STR to a positive integer, storing the result in *OUT.
@@ -230,9 +188,7 @@ context_length_arg (char const *str, int *out)
 	 && 0 <= (*out = value)
 	 && *out == value))
     {
-      fprintf (stderr, "%s: %s: %s\n", prog, str,
-	       _("invalid context length argument"));
-      exit (2);
+      error (2, 0, "%s: %s: %s\n", str, _("invalid context length argument"));
     }
 }
 
@@ -287,7 +243,7 @@ reset (int fd, char const *file, struct stats *stats)
 
   if (fstat (fd, &stats->stat) != 0)
     {
-      error ("fstat", errno);
+      error (0, errno, "fstat");
       return 0;
     }
   if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
@@ -301,7 +257,7 @@ reset (int fd, char const *file, struct stats *stats)
 	  bufoffset = lseek (fd, 0, SEEK_CUR);
 	  if (bufoffset < 0)
 	    {
-	      error ("lseek", errno);
+	      error (0, errno, "lseek");
 	      return 0;
 	    }
 	}
@@ -384,7 +340,7 @@ fillbuf (size_t save, struct stats const *stats)
       if (newalloc <= minsize
 	  || (bufalloc < newalloc
 	      && ! (buffer = xrealloc (buffer, bufalloc = newalloc))))
-	fatal (_("memory exhausted"), 0);
+	error (2, 0,  _("memory exhausted"));
 
       readbuf = ALIGN_TO (buffer + 1 + save, pagesize);
       bufbeg = readbuf - save;
@@ -430,7 +386,7 @@ fillbuf (size_t save, struct stats const *stats)
 	  if (bufoffset != initial_bufoffset
 	      && lseek (bufdesc, bufoffset, SEEK_SET) < 0)
 	    {
-	      error ("lseek", errno);
+	      error (0, errno, "lseek");
 	      cc = 0;
 	    }
 	}
@@ -507,7 +463,7 @@ add_count (uintmax_t a, uintmax_t b)
 {
   uintmax_t sum = a + b;
   if (sum < a)
-    fatal (_("input is too large to count"), 0);
+    error (2, 0, _("input is too large to count"));
   return sum;
 }
 
@@ -580,7 +536,7 @@ prline (char const *beg, char const *lim, int sep)
     }
   fwrite (beg, 1, lim - beg, stdout);
   if (ferror (stdout))
-    error (_("writing output"), errno);
+    error (0, errno, _("writing output"));
   lastout = lim;
   if (line_buffered)
     fflush (stdout);
@@ -746,7 +702,7 @@ grep (int fd, char const *file, struct stats *stats)
       /* Close fd now, so that we don't open a lot of file descriptors
 	 when we recurse deeply.  */
       if (close (fd) != 0)
-	error (file, errno);
+	error (0, errno, file);
       return grepdir (file, stats) - 2;
     }
 
@@ -882,7 +838,7 @@ grepfile (char const *file, struct stats *stats)
 	    {
 	      if (stat (file, &stats->stat) != 0)
 		{
-		  error (file, errno);
+		  error (0, errno, file);
 		  return 1;
 		}
 
@@ -943,13 +899,13 @@ grepfile (char const *file, struct stats *stats)
 	  if ((bufmapped || required_offset != bufoffset)
 	      && lseek (desc, required_offset, SEEK_SET) < 0
 	      && S_ISREG (stats->stat.st_mode))
-	    error (filename, errno);
+	    error (0, errno, filename);
 	}
       else
 	while (close (desc) != 0)
 	  if (errno != EINTR)
 	    {
-	      error (file, errno);
+	      error (0, errno, file);
 	      break;
 	    }
     }
@@ -972,8 +928,8 @@ grepdir (char const *dir, struct stats const *stats)
 	  && ancestor->stat.st_dev == stats->stat.st_dev)
 	{
 	  if (!suppress_errors)
-	    fprintf (stderr, _("%s: warning: %s: %s\n"), prog, dir,
-		     _("recursive directory loop"));
+	    error (0, 0, _("warning: %s: %s\n"), dir,
+		   _("recursive directory loop"));
 	  return 1;
 	}
 
@@ -985,7 +941,7 @@ grepdir (char const *dir, struct stats const *stats)
       if (errno)
 	suppressible_error (dir, errno);
       else
-	fatal (_("Memory exhausted"), 0);
+	error (2, 0, _("Memory exhausted"));
     }
   else
     {
@@ -1021,17 +977,19 @@ usage (int status)
 {
   if (status != 0)
     {
-      fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"), prog);
-      fprintf (stderr, _("Try `%s --help' for more information.\n"), prog);
+      fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
+	       program_name);
+      fprintf (stderr, _("Try `%s --help' for more information.\n"),
+	       program_name);
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE] ...\n"), prog);
+      printf (_("Usage: %s [OPTION]... PATTERN [FILE] ...\n"), program_name);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n"), prog);
+Regexp selection and interpretation:\n"), program_name);
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
@@ -1101,7 +1059,7 @@ static void
 setmatcher (char const *m)
 {
   if (matcher && strcmp (matcher, m) != 0)
-    fatal (_("conflicting matchers specified"), 0);
+    error (2, 0, _("conflicting matchers specified"));
   matcher = m;
 }
 
@@ -1258,23 +1216,23 @@ main (int argc, char **argv)
   extern int optind;
 
   initialize_main (&argc, &argv);
-  prog = argv[0];
-  if (prog && strrchr (prog, '/'))
-    prog = strrchr (prog, '/') + 1;
+  program_name = argv[0];
+  if (program_name && strrchr (program_name, '/'))
+    program_name = strrchr (program_name, '/') + 1;
 
 #if defined(__MSDOS__) || defined(_WIN32)
   /* DOS and MS-Windows use backslashes as directory separators, and usually
      have an .exe suffix.  They also have case-insensitive filesystems.  */
-  if (prog)
+  if (program_name)
     {
-      char *p = prog;
+      char *p = program_name;
       char *bslash = strrchr (argv[0], '\\');
 
-      if (bslash && bslash >= prog) /* for mixed forward/backslash case */
-	prog = bslash + 1;
-      else if (prog == argv[0]
+      if (bslash && bslash >= program_name) /* for mixed forward/backslash case */
+	program_name = bslash + 1;
+      else if (program_name == argv[0]
 	       && argv[0][0] && argv[0][1] == ':') /* "c:progname" */
-	prog = argv[0] + 2;
+	program_name = argv[0] + 2;
 
       /* Collapse the letter-case, so `strcmp' could be used hence.  */
       for ( ; *p; p++)
@@ -1282,7 +1240,7 @@ main (int argc, char **argv)
 	  *p += 'a' - 'A';
 
       /* Remove the .exe extension, if any.  */
-      if ((p = strrchr (prog, '.')) && strcmp (p, ".exe") == 0)
+      if ((p = strrchr (program_name, '.')) && strcmp (p, ".exe") == 0)
 	*p = '\0';
     }
 #endif
@@ -1308,6 +1266,8 @@ main (int argc, char **argv)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 #endif
+
+  atexit (close_stdout);
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
 
@@ -1392,7 +1352,7 @@ main (int argc, char **argv)
 	else if (strcmp (optarg, "recurse") == 0)
 	  directories = RECURSE_DIRECTORIES;
 	else
-	  fatal (_("unknown directories method"), 0);
+	  error (2, 0, _("unknown directories method"));
 	break;
 
       case 'e':
@@ -1406,7 +1366,7 @@ main (int argc, char **argv)
       case 'f':
 	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
 	if (!fp)
-	  fatal (optarg, errno);
+	  error (2, errno, optarg);
 	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
 	  ;
 	keys = xrealloc (keys, keyalloc);
@@ -1459,7 +1419,7 @@ main (int argc, char **argv)
 	      break;
 
 	    default:
-	      fatal (_("invalid max count"), 0);
+	      error (2, 0, _("invalid max count"));
 	    }
 	}
 	break;
@@ -1509,7 +1469,7 @@ main (int argc, char **argv)
 	else if (strcmp (optarg, "without-match") == 0)
 	  binary_files = WITHOUT_MATCH_BINARY_FILES;
 	else
-	  fatal (_("unknown binary-files type"), 0);
+	  error (2, 0, _("unknown binary-files type"));
 	break;
 
       case COLOR_OPTION:
@@ -1528,7 +1488,7 @@ main (int argc, char **argv)
         if (add_exclude_file (add_exclude, excluded_patterns, optarg, '\n')
 	    != 0)
           {
-            fatal (optarg, errno);
+            error (2, errno, optarg);
           }
         break;
 
@@ -1657,8 +1617,6 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   else
     status = grepfile ((char *) NULL, &stats_base);
 
-  if (fclose (stdout) == EOF)
-    error (_("writing output"), errno);
-
+  /* We register via atexit() to test stdout.  */
   exit (errseen ? 2 : status);
 }

@@ -85,7 +85,7 @@ static size_t Pexecute PARAMS ((char const *, size_t, size_t *, int));
 void
 dfaerror (char const *mesg)
 {
-  fatal(mesg, 0);
+  error (2, 0, mesg);
 }
 
 static void
@@ -99,7 +99,7 @@ kwsinit (kwset_t *pkwset)
       trans[i] = TOLOWER(i);
 
   if (!((*pkwset) = kwsalloc (match_icase ? trans : (char *) 0)))
-    fatal(_("memory exhausted"), 0);
+    error(2, 0, _("memory exhausted"));
 }
 
 /* If the DFA turns out to have some set of fixed strings one of
@@ -124,7 +124,7 @@ kwsmusts (struct patterns *pats)
 	    continue;
 	  ++(pats->kwset_exact_matches);
 	  if ((err = kwsincr(pats->kwset, dm->must, strlen(dm->must))) != 0)
-	    fatal(err, 0);
+	    error (2, err, "");
 	}
       /* Now, we compile the substrings that will require
 	 the use of the regexp matcher.  */
@@ -133,10 +133,10 @@ kwsmusts (struct patterns *pats)
 	  if (dm->exact)
 	    continue;
 	  if ((err = kwsincr(pats->kwset, dm->must, strlen(dm->must))) != 0)
-	    fatal(err, 0);
+	    error (2, err, "");
 	}
       if ((err = kwsprep(pats->kwset)) != 0)
-	fatal(err, 0);
+	error (2, err, "");
     }
 }
 
@@ -211,14 +211,14 @@ Gcompile (char const *motif, size_t total)
       patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
       if (patterns == NULL)
 	{
-	  fatal (_("memory exhausted"), 0);
+	  error (2, errno, _("memory exhausted"));
 	}
 
       patterns[pcount] = patterns0;
 
       if ((err = re_compile_pattern(motif, size,
 				    &(patterns[pcount].regexbuf))) != 0)
-	fatal(err, 0);
+	error (2, err, "");
 
       /* In the match_words and match_lines cases, we use a different pattern
 	 for the DFA matcher that will quickly throw out cases that won't work.
@@ -288,12 +288,12 @@ Ecompile (char const *motif, size_t total)
 
       patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
       if (patterns == NULL)
-	fatal (_("memory exhausted"), 0);
+	error (2, errno, _("memory exhausted"));
       patterns[pcount] = patterns0;
 
-      if ((err = re_compile_pattern(motif, size,
+      if ((err = re_compile_pattern (motif, size,
 				    &(patterns[pcount].regexbuf))) != 0)
-	fatal(err, 0);
+	error (2, err, "");
 
       /* In the match_words and match_lines cases, we use a different pattern
 	 for the DFA matcher that will quickly throw out cases that won't work.
@@ -485,25 +485,25 @@ Fcompile (char const *motif, size_t size)
 
   patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
   if (patterns == NULL)
-    fatal (_("memory exhausted"), 0);
+    error (2, 0, _("memory exhausted"));
   patterns[pcount] = patterns0;
 
-  kwsinit(&(patterns[pcount].kwset));
+  kwsinit (&(patterns[pcount].kwset));
   beg = motif;
   do
     {
       for (lim = beg; lim < motif + size && *lim != '\n'; ++lim)
 	;
-      if ((err = kwsincr(patterns[pcount].kwset, beg, lim - beg)) != 0)
-	fatal(err, 0);
+      if ((err = kwsincr (patterns[pcount].kwset, beg, lim - beg)) != 0)
+	error (2, err, "");
       if (lim < motif + size)
 	++lim;
       beg = lim;
     }
   while (beg < motif + size);
 
-  if ((err = kwsprep(patterns[pcount].kwset)) != 0)
-    fatal(err, 0);
+  if ((err = kwsprep (patterns[pcount].kwset)) != 0)
+    error (2, err, "");
   pcount++;
 }
 
@@ -617,7 +617,7 @@ static void
 Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
-  fatal (_("The -P option is not supported"), 0);
+  error (2, 0, _("The -P option is not supported"));
 #else
   int e;
   char const *ep;
@@ -630,7 +630,7 @@ Pcompile (char const *pattern, size_t size)
 
   /* FIXME: Remove this restriction.  */
   if (eolbyte != '\n')
-    fatal (_("The -P and -z options cannot be combined"), 0);
+    error (2, 0, _("The -P and -z options cannot be combined"));
 
   *n = '\0';
   if (match_lines)
@@ -668,11 +668,11 @@ Pcompile (char const *pattern, size_t size)
 
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
-    fatal (ep, 0);
+    error (2, 0, ep);
 
   extra = pcre_study (cre, 0, &ep);
   if (ep)
-    fatal (ep, 0);
+    error (2, 0, ep);
 
   free (re);
 #endif
@@ -700,7 +700,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	  return -1;
 
 	case PCRE_ERROR_NOMEMORY:
-	  fatal (_("Memory exhausted"), 0);
+	  error (2, 0, _("Memory exhausted"));
 
 	default:
 	  abort ();

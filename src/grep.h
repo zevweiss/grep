@@ -20,10 +20,6 @@
 # define __attribute__(x)
 #endif
 
-extern void fatal PARAMS ((const char *, int)) __attribute__((noreturn));
-extern char *xmalloc PARAMS ((size_t size));
-extern char *xrealloc PARAMS ((char *ptr, size_t size));
-
 /* Grep.c expects the matchers vector to be terminated
    by an entry with a NULL compile, and to contain at least
    an entry named "default". */
