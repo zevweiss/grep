@@ -69,6 +69,9 @@ static int mmap_option;
 /* If nonzero, use grep_color marker.  */
 static int color_option;
 
+/* If nonzero, show only the part of a line matching the expression. */
+static int only_matching;
+
 /* The color string used.  The user can overwrite it using the environment
    variable GREP_COLOR.  The default is to print red.  */
 static const char *grep_color = "01;31";
@@ -77,7 +80,7 @@ static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:D:EFGHIPUVX:abcd:e:f:hiKLlm:nqRrsuvwxyZz";
+"0123456789A:B:C:D:EFGHIPUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -124,6 +127,7 @@ static struct option const long_options[] =
   {"no-messages", no_argument, NULL, 's'},
   {"null", no_argument, NULL, 'Z'},
   {"null-data", no_argument, NULL, 'z'},
+  {"only-matching", no_argument, NULL, 'o'},
   {"perl-regexp", no_argument, NULL, 'P'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
@@ -517,6 +521,28 @@ prline (char const *beg, char const *lim, int sep)
       pos = dossified_pos (pos);
 #endif
       print_offset_sep (pos, sep);
+    }
+  if (only_matching)
+    {
+      size_t match_size;
+      size_t match_offset;
+      while ((match_offset = (*execute) (beg, lim - beg, &match_size, 1))
+	  != (size_t) -1)
+        {
+	  char const *b = beg + match_offset;
+	  if (b == lim)
+	    break;
+	  if(color_option)
+	    printf("\33[%sm", grep_color);
+	  fwrite(b, sizeof (char), match_size, stdout);
+	  if(color_option)
+	    fputs("\33[00m", stdout);
+	  fputs("\n", stdout);
+	  beg = b + match_size;
+        }
+      if(line_buffered)
+	fflush(stdout);
+      return;
     }
   if (color_option)
     {
@@ -1021,6 +1047,7 @@ Output control:\n\
       --line-buffered       flush output on every line\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
+  -o, --only-matching       show only the part of a line matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
                             TYPE is 'binary', 'text', or 'without-match'\n\
@@ -1263,6 +1290,8 @@ main (int argc, char **argv)
   out_after = out_before = -1;
   /* Default before/after context: chaged by -C/-NUM options */
   default_context = 0;
+  /* Changed by -o option */
+  only_matching = 0;
 
   /* Internationalization. */
 #if defined(HAVE_SETLOCALE)
@@ -1441,6 +1470,10 @@ main (int argc, char **argv)
 
       case 'n':
 	out_line = 1;
+	break;
+
+      case 'o':
+	only_matching = 1;
 	break;
 
       case 'q':

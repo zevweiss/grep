@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 # test that the empty file means no pattern
 # and an empty pattern means match all.
 

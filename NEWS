@@ -1,4 +1,8 @@
 Version 2.5
+  - The new option --only-matching (-o) will print only the part of matching
+    lines that matches the pattern. This is useful, for example, to extract
+    IP addresses from log files.
+
   - i18n bug fixed ([A-Z0-9] wouldn't match A in locales other than C on
     systems using recent glibc builds
 

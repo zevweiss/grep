@@ -185,6 +185,13 @@ The scanning of every file will stop on the first match.
 @cindex line numbering
 Prefix each line of output with the line number within its input file.
 
+@item -o
+@itemx --only-matching
+@opindex -o
+@opindex --only-matching
+@cindex only matching
+Print only the part of matching lines that actually matches @var{pattern}.
+
 @item -q
 @itemx --quiet
 @itemx --silent

@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 # Test that backrefs are local to regex.
 #
 #
