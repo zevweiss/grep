@@ -1,6 +1,15 @@
+1998-11-22  Alain Magloire
+
+	* doc/: New directory, grep.1, {e,f}grep.man move here
+	with a draft of grep.texi(base of sed.texi).
+	* tests/{ere,bre}.*: New files. The spencer2 test is split
+	in two ere/bre.
+	* config.hin: New, config.h.in rename to config.hin for OS
+	with limited file system aka DOS.
+
 1998-11-18  Alain Magloire
 
-	* src/regex.[ch] : Updated from GLibc, previous was
+	* src/regex.[ch] : Updated from GLibc, previous patches were
 	integrate by Ulrich Drepper and some added ones.
 
 1998-11-16  Paul Eggert
@@ -53,14 +62,6 @@
 	(grepdir): Don't free `file', inside the loop.  Use IS_SLASH to
 	check whether `dir' needs a slash.
 	(grepfile): If file is a directory, set e to EISDIR.
-
-1998-11-11  Alain Magloire
-
-	* src/regex.c : On Apple, grep is overriding the regex library
-	(recomp, etc.). Adding __private_extern__ in the declaration
-	localizes the scope of that symbol for the linker, so it knows
-	to use grep's regex routines rather than those in lib system.
-	Done by Wilfredo Sanchez.
 
 1998-11-10  Alain Magloire
 

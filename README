@@ -20,7 +20,7 @@ See the file INSTALL for compilation and installation instructions.
 
 See the file NEWS for a description of major changes in this release.
 
-See the file PROJECTS for ideas for how you could help us improve grep.
+See the file TODO for ideas on how you could help us improve grep.
 
 Send bug reports to bug-gnu-utils@gnu.org.  Be sure to
 include the word "grep" in your Subject: header field.

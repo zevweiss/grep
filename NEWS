@@ -1,3 +1,5 @@
+Version 2.3:
+
   - When searching a binary file FOO, grep now just reports
     `Binary file FOO matches' instead of outputting binary data.
     This is typically more useful than the old behavior,

@@ -20,19 +20,7 @@ datadir = $(prefix)/@DATADIRNAME@
 localedir = $(datadir)/locale
 INCLUDES = -I../intl -DLOCALEDIR=\"$(localedir)\"
 
-man_MANS = grep.1 fgrep.1 egrep.1
-
-EXTRA_DIST = grep.1 egrep.man fgrep.man \
-             regex.h \
+EXTRA_DIST = regex.h \
              dosbuf.c \
-             vms_fab.c   vms_fab.h
+             vms_fab.c vms_fab.h
 
-CLEANFILES = egrep.1 fgrep.1
-
-fgrep.1: fgrep.man
-	inst=`echo "grep" | sed '$(transform)'`.1; \
-sed -e "s%@grep@%$$inst%g" $(srcdir)/fgrep.man > $@
-
-egrep.1: egrep.man
-	inst=`echo "grep" | sed '$(transform)'`.1; \
-sed -e "s%@grep@%$$inst%g" $(srcdir)/egrep.man > $@

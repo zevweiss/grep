@@ -9,7 +9,7 @@ AC_PREREQ(2.12)
 
 dnl Automake stuff.
 AM_INIT_AUTOMAKE(grep, 2.2d)
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Checks for programs.
 AC_PROG_AWK

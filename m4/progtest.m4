@@ -1,5 +1,6 @@
 # Search path for a program which passes the given test.
 # Ulrich Drepper <drepper@cygnus.com>, 1996.
+# update to support dos
 #
 # This file can be copied and used freely without restrictions.  It can
 # be used in projects which are not available under the GNU Public License
@@ -16,14 +17,14 @@ set dummy $2; ac_word=[$]2
 AC_MSG_CHECKING([for $ac_word])
 AC_CACHE_VAL(ac_cv_path_$1,
 [case "[$]$1" in
-  /*)
+  /*|[A-Z]:/*)
   ac_cv_path_$1="[$]$1" # Let the user override the test with a path.
   ;;
   *)
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
   for ac_dir in ifelse([$5], , $PATH, [$5]); do
     test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
+    if test $ac_x $ac_dir/$ac_word; then
       if [$3]; then
 	ac_cv_path_$1="$ac_dir/$ac_word"
 	break
