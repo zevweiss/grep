@@ -16,7 +16,11 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
-extern void fatal PARAMS ((const char *, int));
+#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 6) || __STRICT_ANSI__
+# define __attribute__(x)
+#endif
+
+extern void fatal PARAMS ((const char *, int)) __attribute__((noreturn));
 extern char *xmalloc PARAMS ((size_t size));
 extern char *xrealloc PARAMS ((char *ptr, size_t size));
 

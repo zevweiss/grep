@@ -110,7 +110,7 @@ static enum
   } directories;
 
 static int  ck_atoi PARAMS ((char const *, int *));
-static void usage PARAMS ((int));
+static void usage PARAMS ((int)) __attribute__((noreturn));
 static void error PARAMS ((const char *, int));
 static int  setmatcher PARAMS ((char const *));
 static char *page_alloc PARAMS ((size_t, char **));

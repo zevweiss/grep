@@ -1,5 +1,11 @@
 1998-11-16  Paul Eggert
 
+	* grep.h (__attribute__): New macro, if not GCC.
+	(fatal): Add __attribute__((noreturn)).
+	* grep.c (usage): Add __attribute__((noreturn)).
+
+1998-11-16  Paul Eggert
+
 	Remove memory leak with valloced buffers, by invoking malloc instead.
 
 	* configure.in (AC_CHECK_FUNCS), src/system.h (valloc): Remove.
