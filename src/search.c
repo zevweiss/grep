@@ -152,7 +152,7 @@ check_multibyte_string(char const *buf, size_t size)
   static char const *precalc_buf = NULL;
   static size_t precalc_size = 0;
   static char *precalc_mb_properties = NULL;
-  char *mb_properties = malloc(size);
+  char *mb_properties = xmalloc(size);
   mbstate_t cur_state;
   int i;
 
@@ -248,7 +248,7 @@ Gcompile (char const *pattern, size_t size)
       static char const line_end[] = "\\)$";
       static char const word_beg[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
       static char const word_end[] = "\\)\\([^[:alnum:]_]\\|$\\)";
-      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+      char *n = xmalloc (sizeof word_beg - 1 + size + sizeof word_end);
       size_t i;
       strcpy (n, match_lines ? line_beg : word_beg);
       i = strlen (n);
@@ -331,7 +331,7 @@ Ecompile (char const *pattern, size_t size)
       static char const line_end[] = ")$";
       static char const word_beg[] = "(^|[^[:alnum:]_])(";
       static char const word_end[] = ")([^[:alnum:]_]|$)";
-      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+      char *n = xmalloc (sizeof word_beg - 1 + size + sizeof word_end);
       size_t i;
       strcpy (n, match_lines ? line_beg : word_beg);
       i = strlen(n);

@@ -3560,9 +3560,9 @@ dfamust (struct dfa *dfa)
  done:
   if (strlen(result))
     {
-      dm = (struct dfamust *) malloc(sizeof (struct dfamust));
+      MALLOC(dm, struct dfamust, 1);
       dm->exact = exact;
-      dm->must = malloc(strlen(result) + 1);
+      MALLOC(dm->must, char, strlen(result) + 1);
       strcpy(dm->must, result);
       dm->next = dfa->musts;
       dfa->musts = dm;

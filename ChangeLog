@@ -1,3 +1,9 @@
+2004-09-26  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/search.c (check_multibyte_string, Gcompile, Ecompile): Replace
+	  malloc with xmalloc.
+	* src/dfa.c (dfamust): Replace two calls to ``malloc'' by MALLOC.
+
 2003-07-23  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/Makefile.am: Add the egrep and fgrep scripts to CLEANFILES.
