@@ -1,3 +1,8 @@
+1999-03-16 Volker Borchert
+
+	* configure.in: Use case case ... esac for  checking Visual C++.
+	When $CC add option also it was not recognize.
+
 1999-03-07 Paul Eggert
 
 	* src/grep.c (usage): Don't report -E, -F, and -G unless we're grep.

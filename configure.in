@@ -42,9 +42,12 @@ AC_CHECK_FUNCS(btowc isascii setmode strerror wctype)
 AC_REPLACE_FUNCS(memchr stpcpy)
 
 dnl for VC++
-if test x"$ac_cv_prog_CC" = xcl ; then
-	AC_DEFINE(alloca, _alloca)
-fi
+case "x$ac_cv_prog_CC" in
+ xcl\ *)       AC_DEFINE(alloca, _alloca) ;;
+ xcl)  AC_DEFINE(alloca, _alloca) ;;
+ *)    ;;
+esac
+
 
 
 dnl I18N feature
