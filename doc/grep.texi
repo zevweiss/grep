@@ -603,7 +603,7 @@ if no @code{LC_CTYPE} locale is specified.
 @item [:alnum:]
 @opindex alnum
 @cindex alphanumeric characters
-Any of [:digit:] or [:alpha:]
+Any of @samp{[:digit:]} or @samp{[:alpha:]}
 
 @item [:alpha:]
 @opindex alpha
@@ -678,7 +678,7 @@ first in the list.  Similarly, to include a literal @samp{^}, place it anywhere
 but first.  Finally, to include a literal @samp{-}, place it last.
 
 The period @samp{.} matches any single character.  The symbol @samp{\w}
-is a synonym for @samp{[[:alnum:]]} and @samp{\W} is a synonym for
+is a synonym for @sam{[[:alnum:]]} and @samp{\W} is a synonym for
 @samp{[^[:alnum]]}.
 
 The caret @samp{^} and the dollar sign @samp{$} are metacharacters that
@@ -771,65 +771,47 @@ should avoid it.
 @chapter Usage
 
 @sc{gnu} @command{grep} comes with a variety of options.  The general form
-of grep is to specified the optionnal flags, the pattern and the file(s).
+is to specified optionnal flags, the pattern and the file(s).
 
-@itemize @bullet
-@item
-How to disable case sensitive search ?
-The option @samp{--ignore-case} or @sam{-i} will find the pattern
+@table @samp
+
+@item How to disable case sensitive search ?
+The option @samp{--ignore-case}, @samp{-i} will find the pattern
 ignoring the distinction between uppercase and lowercase.
 @example
 grep -i ghislaine /etc/password
 @end example
 
-@item
-How to get only the filenames that matches ?
-The @samp{--files-with-matches} or @samp{-l}, for example, it can be use with
+@item How to get only the filenames that matches ?
+The @samp{--files-with-matches}, @samp{-l}, for example, it can be use with
 the backquote shell construct to edit a certain number of files.
 @example
 vi `grep -l main *.c`
 @end example 
 
-@item
-What's the command to search recursively ?
+@item How do I search recursively directories ?
 Searching files recursively through directories can be done in many
-ways.  Looking for pattern "French" or "french". 
+ways using a combination of @command{find}, @command{grep} and @command{xargs}.
 @example
-#find /home/gigi -exec grep "[Ff]rench"
-...
+find /home/gigi -type f -print | xargs grep "[Gg]hislaine" /dev/null
 @end example
-This is a very inefficient solution, the reason is that @command{grep}
-is being invoked for every files.  Another possibility is to construct
-the files and passed them to @command{grep}.
+Starting from version 2.3, the recommanded solution is to use
+@samp{--directories=recurse} or the short-hands @samp{--recurse}, @samp{-r}.
 @example
-grep "[Ff]rench" `find /home/gigi -print`
-@end example
-A better approach but not portable, you may reach the
-maximum arguments on the command line.  The general solution
-is to use xargs.
-@example
-find /home/gigi -type f -print | xargs grep "[Ff]rench" /dev/null
-@end example
-Starting from @sc{gnu} @command{grep} 2.3, the recommanded solution
-is to use @samp{--directories=recuse} or the short-hands @samp{--recuse}
-and @samp{-r}.
-@example
-# grep -r "[Ff]rench" /home/gigi
+grep -r "[Gg]hislaine" /home/gigi
 @end example
 
-@item
-What to do if a pattern has a leading '-'?
-The @sc{gnu} @code{getopt} understands '--'.  If looking for pattern '-r,'
+@item What to do if a pattern has a leading '-'?
+@sc{gnu} @code{getopt} understands '--'.  If looking for pattern '-r,'
 @example
 grep --help | grep -- -r,
-@end 
+@end example 
 For POSIX.2 implementations, the option @samp{-e} is handy.
 @example
 grep --help | grep -e -r,
 @end example
 
-@item
-How to search for a whole word, not a pattern part of a word ?
+@item If I want to search for a whole word, not a pattern part of a word ?
 Option @samp{-w}.  For example for the word 'as' not for 'case' .
 @example
 grep --help | grep -w as
@@ -843,40 +825,35 @@ Another way is to use the special symbols.
 grep --help | grep -E -e '\<as\>'
 @end example
 
-@item
-How to get some context with grep ?
-Use options @samp{--before-context}, @samp{--after-context} or
-@samp{--context}
+@item How to get some context with grep ?
+Use options @samp{--before-context}, @samp{--after-context} or @samp{--context}
 @example
 grep -C 4 -i paul /etc/passwd
 @end example
 
-@item
-How do I force grep to put print the name of the file ?
+@item How do I force grep to print the name of the file ?
 When searching in one file @command{grep} does not show the
 filename, this can be a problem when running scripts.  The usual
 way is to add "/dev/null" as an empty file.
 @example
 grep eli /etc/passwd /dev/null
-@example
+@end example
 The option @samp{-H}, @samp{--with-filename}
 @example
 grep -H eli /etc/passwd
 @end example
 
-@item
-When  I use the @{@{} @{@}}, it does not work, is my regex correct ?
+@item When I use the @{@var{n},@var{m}@}, it does not work, is my regex correct ?
 Many versions of @command{egrep} does not support intervals, but starting
-from version 2.4 @sc{GNU} @command{egrep} will be equivalent to @code{grep -E}
+from version 2.4, @sc{gnu} @command{egrep} will be equivalent to @code{grep -E}
 that supports intervals.
 
-@item
-I saw someone do these  .. why ?
+@item I saw someone do these  .. why ?
 @example
 ps -ef | grep '[p]attern'
 ps -ef | grep \\pattern
 ps -ef | grep .pattern
-@example
+@end example
 The command line no longer matches what you are grepping, thus eliminating
 it from the output.  It's more reliable then using @samp{-v}.
 @example
@@ -884,7 +861,33 @@ ps -ef | grep pattern | grep -v grep
 @end example
 which as the side effect of filtering any command with the pattern "grep".
 
-@end itemize
+@item @command{grep} says "Binary file matches", when doing searches ?
+Doing search on binary files can be a problem since @command{grep} will spit out
+data that will muck the terminal.  @sc{gnu} @command{grep} will try to guess
+the type of the file and suppress the output.  Option @samp{--text} will
+force @command{grep} to consider every thing as text, if you need this option
+permantely use environ GREP_OPTIONS.
+
+@item @samp{-v}, @samp{-l} does not seem to work ?
+To have the name of files that does no contain the pattern, use
+@samp{-L}, @samp{--files-without-match}.
+
+@item I can do OR with | but what about AND ?
+@command{grep} is doing the parsing on each line, if you are looking
+for pattern1 and pattern2 to be on the line then you can cascade grep.
+@example
+grep -i -e paul /etc/motd | grep -i -e franc,ois
+@end example
+
+@item How to seach in both stdin and files, I need it for my scripts ?
+Use the special filename @samp{-}.  Some OS allows to open stdin via 
+the file sytem.
+@example
+cat /etc/passwd | grep alain - /etc/motd
+cat /etc/passwd | grep alain /dev/fd/0 /etc/motd
+@end example
+
+@end table
 
 @node Reporting Bugs
 @chapter Reporting bugs
