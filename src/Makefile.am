@@ -5,7 +5,7 @@ LN = ln
 
 bin_PROGRAMS = grep
 grep_SOURCES = grep.c dfa.c kwset.c search.c \
-               grepmat.c egrepmat.c fgrepmat.c
+               grepmat.c
 noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h
 
 LDADD = @INTLLIBS@ ../lib/libgreputils.a
