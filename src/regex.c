@@ -2,7 +2,7 @@
    version 0.12.
    (Implements POSIX draft P1003.2/D11.2, except for some of the
    internationalization features.)
-   Copyright (C) 1993, 94, 95, 96, 97, 98 Free Software Foundation, Inc.
+   Copyright (C) 1993, 94, 95, 96, 97, 98, 99 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
@@ -179,7 +179,7 @@ static void
 init_syntax_once ()
 {
    register int c;
-   static int done = 0;
+   static int done;
 
    if (done)
      return;
@@ -609,7 +609,7 @@ extract_number_and_incr (destination, source)
 /* It is useful to test things that ``must'' be true when debugging.  */
 # include <assert.h>
 
-static int debug = 0;
+static int debug;
 
 # define DEBUG_STATEMENT(e) e
 # define DEBUG_PRINT1(x) if (debug) printf (x)
@@ -3842,7 +3842,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
   fail_stack_type fail_stack;
 #endif
 #ifdef DEBUG
-  static unsigned failure_id = 0;
+  static unsigned failure_id;
   unsigned nfailure_points_pushed = 0, nfailure_points_popped = 0;
 #endif
 
@@ -4773,26 +4773,15 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 	      }
             else if ((re_opcode_t) *p2 == charset)
 	      {
-#ifdef DEBUG
-		register unsigned char c
-                  = *p2 == (unsigned char) endline ? '\n' : p2[2];
-#endif
-
-#if 0
+		/* We win if the first character of the loop is not part
+                   of the charset.  */
                 if ((re_opcode_t) p1[3] == exactn
 		    && ! ((int) p2[1] * BYTEWIDTH > (int) p1[5]
 			  && (p2[2 + p1[5] / BYTEWIDTH]
 			      & (1 << (p1[5] % BYTEWIDTH)))))
-#else
-                if ((re_opcode_t) p1[3] == exactn
-		    && ! ((int) p2[1] * BYTEWIDTH > (int) p1[4]
-			  && (p2[2 + p1[4] / BYTEWIDTH]
-			      & (1 << (p1[4] % BYTEWIDTH)))))
-#endif
                   {
   		    p[-3] = (unsigned char) pop_failure_jump;
-                    DEBUG_PRINT3 ("  %c != %c => pop_failure_jump.\n",
-                                  c, p1[5]);
+		    DEBUG_PRINT1 ("  No match => pop_failure_jump.\n");
                   }
 
 		else if ((re_opcode_t) p1[3] == charset_not)
