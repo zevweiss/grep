@@ -1,6 +1,22 @@
+1999-11-1 Alain Magloire
+
+	* src/search.c: Use the more portable [[:alnum:]]
+	to define a word instead of Ascii dependent [0-9A-Za-z]
+	* src/grep.c: make not_text global to not display text when
+	the context switches -A/-B/-C are use on binary files.
+	* make grep-2.3g available for testing.
+	
+1999-11-1 Arnold D. Robbins
+
+	* regex.c (init_syntax_once): move below definition of
+	ISALNUM etc., then use ISALNUM to init the table, so that
+	the word ops will work if i18n'ed.
+	(SYNTAX): And subscript with 0xFF for Latin-1 characters.
+
 1999-10-26  Alain Magloire
 
-	* Updated the *.po files, and make grep-2.3g beta available.
+	* src/regex.c: Merge changes from GNU lib C.
+	* Updated the *.po files
 
 1999-10-26  Paul Eggert
 
