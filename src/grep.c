@@ -837,8 +837,8 @@ grepdir (dir, stats)
   char *name_space;
 
   for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
-    if (! ((ancestor->stat.st_ino ^ stats->stat.st_ino)
-	   | (ancestor->stat.st_dev ^ stats->stat.st_dev)))
+    if (ancestor->stat.st_ino == stats->stat.st_ino
+	&& ancestor->stat.st_dev == stats->stat.st_dev)
       {
 	if (!suppress_errors)
 	  fprintf (stderr, _("%s: warning: %s: %s\n"), prog, dir,
