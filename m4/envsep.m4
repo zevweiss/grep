@@ -1,9 +1,9 @@
 # Check to see the separator for the environment variables
 # and set SEP to ";" or default ":"
 
-dnl AC_SEP()
+dnl AM_SEP()
 dnl SEP
-AC_DEFUN(AC_SEP,
+AC_DEFUN(AM_SEP,
 [AC_REQUIRE([AC_CYGWIN])
 AC_REQUIRE([AC_MINGW32])
 AC_REQUIRE([AC_DJGPP])

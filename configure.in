@@ -65,15 +65,15 @@ AC_DOSFILE
 
 dnl check for the enviroment separator
 dnl sets SEP
-AC_SEP
+AM_SEP
 
 dnl OS specifics
 dnl sets {EXE,OBJ}EXT
-dnl AC_EXEEXT
-dnl AC_OBJEXT
+AC_EXEEXT
+AC_OBJEXT
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
-AC_WITH_REGEX
+AM_WITH_REGEX
 
 AC_OUTPUT(Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

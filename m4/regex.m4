@@ -3,7 +3,7 @@ dnl Of course, for them it doesn't do anything.
 dnl Derived from code in GNU grep.
 dnl Derived from code in GNU fileutils ;-).
 
-AC_DEFUN(AC_WITH_REGEX,
+AC_DEFUN(AM_WITH_REGEX,
 [AC_REQUIRE([AM_GLIBC])
 AC_CACHE_CHECK([whether compiling regex.c], ac_cv_with_regex,
 [ # By default, don't use the included regex.c on systems with glibc 2
