@@ -37,6 +37,9 @@ Version 2.4:
   - Modifications of the tests scripts to go around the "Broken Pipe"
     errors from bash. See Bash FAQ.
 
+  - New option -r or --recursive or --directories=recurse.
+    (This option was also in grep 2.3, but wasn't announced here.)
+
 Version 2.3:
 
   - When searching a binary file FOO, grep now just reports
