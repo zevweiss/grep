@@ -1,3 +1,8 @@
+2005-03-09  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/search.c (EGexecute, Fexecute): Use xmalloc, not malloc.
+	(EGexecute): Handle the failure in one place, goto there.
+
 2005-02-26  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/grep.c (get_nondigit_option): Don't give up too early.

@@ -359,7 +359,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
     {
       if (match_icase)
         {
-          char *case_buf = malloc(size);
+          char *case_buf = xmalloc(size);
           memcpy(case_buf, buf, size);
           buf = case_buf;
         }
@@ -379,17 +379,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      /* Find a possible match using the KWset matcher. */
 	      size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
 	      if (offset == (size_t) -1)
-		{
-#ifdef MBS_SUPPORT
-		  if (MB_CUR_MAX > 1)
-                    {
-                      if (match_icase)
-                        free ((char*)buf);
-                      free(mb_properties);
-                    }
-#endif /* MBS_SUPPORT */
-		  return (size_t)-1;
-		}
+		goto failure;
 	      beg += offset;
 	      /* Narrow down to the line containing the candidate, and
 		 run it through DFA. */
@@ -484,6 +474,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	    }
 	} /* for Regex patterns.  */
     } /* for (beg = end ..) */
+
+ failure:
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
@@ -547,7 +539,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
     {
       if (match_icase)
         {
-          char *case_buf = malloc(size);
+          char *case_buf = xmalloc(size);
           memcpy(case_buf, buf, size);
           buf = case_buf;
         }
