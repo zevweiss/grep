@@ -1,5 +1,16 @@
 1999-02-23 Alain Magloire
 
+	* src/grep.c : Restrict the use of -E, -F, -G
+	to only grep driver, Posix behaviour. {f,e}grep
+	the matcher is already set. This change may brake
+	scripts, warn in NEWS.
+
+	* doc/grep.{1,texi} : -C takes arguments, upgrade manual.
+
+	* beta 2.3a
+
+1999-02-23 Alain Magloire
+
 	* configure.in : Change the configure VC test from
 	'test x$ac_cv_prog_CC = xcl;' to 'test x"$ac_cv_prog_CC" = xcl;'
 	Email from Joshua R. Poulson.

@@ -2,13 +2,13 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.1 1998/11/22 06:45:20 alainm Exp $
+.Id $Id: grep.1,v 1.2 1999/02/27 03:38:31 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
 .SH SYNOPSIS
 .B grep
-[-[AB] NUM] [-CEFGVabchiLlnqrsvwxyUu] [-e PATTERN | -f FILE]
+[-[ABC] NUM] [-EFGVabchiLlnqrsvwxyUu] [-e PATTERN | -f FILE]
 [-d ACTION] [--directories=ACTION]
 [--extended-regexp] [--fixed-strings] [--basic-regexp]
 [--regexp=PATTERN] [--file=FILE] [--ignore-case] [--word-regexp]
@@ -85,7 +85,7 @@ Print
 .I NUM
 lines of leading context before matching lines.
 .TP
-.BI \-C ,\  --context"[=NUM]"
+.BI \-C " [NUM]" ",  --context"[=NUM]"
 Print 
 .I NUM
 lines (default 2) of output context.

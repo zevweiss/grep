@@ -240,7 +240,7 @@ Print @var{num} lines of trailing context after matching lines.
 @cindex context lines, before match
 Print @var{num} lines of leading context before matching lines.
 
-@item -C
+@item -C @var{num}
 @itemx --context@var{[=num]}
 @opindex -C
 @opindex --context
