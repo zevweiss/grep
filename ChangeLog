@@ -1,3 +1,8 @@
+2000-08-20  Paul Eggert
+
+	* tests/Makefile.am (TESTS_ENVIRONMENT): Add LC_ALL=C, since
+	some of the tests assume the C locale.
+
 2000-08-16  Paul Eggert
 
 	* src/search.c (Gcompile, Ecompile): -x overrides -w, for
