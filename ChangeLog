@@ -1,3 +1,28 @@
+2000-04-17  Paul Eggert  <eggert@twinsun.com>
+
+	Do CRLF munging only if HAVE_DOS_FILE_CONTENTS, instead of
+	having it depend on O_BINARY (which leads to incorrect results
+	on BeOS, VMS, and MacOS).
+
+	* bootstrap/Makefile.try (DEFS): Add -DHAVE_DOS_FILE_CONTENTS.
+	* src/system.h (SET_BINARY): Define only if HAVE_DOS_FILE_CONTENTS.
+	(O_BINARY): Do not define.
+
+	* m4/dosfile.m4: Define HAVE_DOS_FILE_CONTENTS if it appears we're
+	using DOS.
+
+	* src/grep.c (undossify_input, fillbuf, dosbuf.c, prline, main):
+	Depend on HAVE_DOS_FILE_CONTENTS, not O_BINARY, when handling CRLF
+	matters.
+	(grepfile, main): Depend on SET_BINARY, not O_BINARY, when
+	handling binary files on hosts that care about text versus binary.
+
+2000-04-17  Paul Eggert
+
+	* lib/getpagesize.h (getpagesize): Define to B_PAGE_SIZE if
+	__BEOS__ is defined.  Based on a fix by Bruno Haible
+	<haible@clisp.cons.org>.
+
 2000-04-17  Bruno Haible
 
 	* src/system.h [BeOS]: Ignore O_BINARY.

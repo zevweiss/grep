@@ -56,17 +56,12 @@ extern char *sys_errlist[];
 #ifdef __BEOS__
 # undef O_BINARY /* BeOS 5 has O_BINARY and O_TEXT, but they have no effect. */
 #endif
-#if O_BINARY
+#ifdef HAVE_DOS_FILE_CONTENTS
 # include <io.h>
 # ifdef HAVE_SETMODE
 #  define SET_BINARY(fd)  setmode (fd, O_BINARY)
 # else
 #  define SET_BINARY(fd)  _setmode (fd, O_BINARY)
-# endif
-#else
-# ifndef O_BINARY
-#  define O_BINARY 0
-#  define SET_BINARY(fd)   (void)0
 # endif
 #endif
 

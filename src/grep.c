@@ -131,7 +131,7 @@ static enum
   } directories;
 
 static int grepdir PARAMS ((char const *, struct stats const *));
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
 static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
 
@@ -447,7 +447,7 @@ fillbuf (size_t save, struct stats const *stats)
     }
 
   bufoffset += fillsize;
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
   if (fillsize)
     fillsize = undossify_input (buffer + bufsalloc, fillsize);
 #endif
@@ -489,7 +489,7 @@ static int pending;		/* Pending lines of output.
 				   Always kept 0 if out_quiet is true.  */
 static int done_on_match;	/* Stop scanning file on first match */
 
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
 # include "dosbuf.c"
 #endif
 
@@ -535,7 +535,7 @@ prline (char const *beg, char const *lim, int sep)
   if (out_byte)
     {
       off_t pos = totalcc + (beg - bufbeg);
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
       pos = dossified_pos (pos);
 #endif
       print_offset_sep (pos, sep);
@@ -865,7 +865,7 @@ grepfile (char const *file, struct stats *stats)
       filename = file;
     }
 
-#if O_BINARY
+#ifdef SET_BINARY
   /* Set input to binary mode.  Pipes are simulated with files
      on DOS, so this includes the case of "foo | grep bar".  */
   if (!isatty (desc))
@@ -1288,12 +1288,12 @@ main (int argc, char **argv)
 	binary_files = WITHOUT_MATCH_BINARY_FILES;
 	break;
       case 'U':
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
 	dos_use_file_type = DOS_BINARY;
 #endif
 	break;
       case 'u':
-#if O_BINARY
+#if HAVE_DOS_FILE_CONTENTS
 	dos_report_unix_offset = 1;
 #endif
 	break;
@@ -1485,7 +1485,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-#if O_BINARY
+#ifdef SET_BINARY
   /* Output is set to binary mode because we shouldn't convert
      NL to CR-LF pairs, especially when grepping binary files.  */
   if (!isatty (1))

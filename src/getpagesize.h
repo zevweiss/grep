@@ -2,7 +2,7 @@
 
 #ifndef HAVE_GETPAGESIZE
 
-#ifdef __BEOS__
+#if !defined getpagesize && defined __BEOS__
 # include <OS.h>
 # define getpagesize() B_PAGE_SIZE
 #endif
