@@ -62,6 +62,9 @@ static int suppress_errors;
 /* If nonzero, use mmap if possible.  */
 static int mmap_option;
 
+/* Various color settings.  */
+static int color;
+
 /* Short options.  */
 static char const short_options[] =
 "0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiLlm:nqrsuvwxyZz";
@@ -69,8 +72,13 @@ static char const short_options[] =
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
 {
-  BINARY_FILES_OPTION = CHAR_MAX + 1
+  BINARY_FILES_OPTION = CHAR_MAX + 1,
+  COLOR_OPTION
 };
+
+/* The color string used.  The user can overwrite it using the environment
+   variable GREP_COLOR.  The default is to print red.  */
+static const char *grep_color = "31;5";
 
 /* Long options equivalences. */
 static struct option const long_options[] =
@@ -81,6 +89,7 @@ static struct option const long_options[] =
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
   {"byte-offset", no_argument, NULL, 'b'},
   {"context", required_argument, NULL, 'C'},
+  {"color", optional_argument, NULL, COLOR_OPTION},
   {"count", no_argument, NULL, 'c'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
@@ -140,7 +149,7 @@ static inline int undossify_input PARAMS ((register char *, size_t));
 
 /* Functions we'll use to search. */
 static void (*compile) PARAMS ((char const *, size_t));
-static size_t (*execute) PARAMS ((char const *, size_t, size_t *));
+static size_t (*execute) PARAMS ((char const *, size_t, size_t *, int));
 
 /* Print a message and possibly an error string.  Remember
    that something awful happened. */
@@ -534,6 +543,24 @@ prline (char const *beg, char const *lim, int sep)
 #endif
       print_offset_sep (pos, sep);
     }
+  if (color)
+    {
+      size_t match_size;
+      size_t match_offset;
+      while ((match_offset = (*execute) (beg, lim - beg, &match_size, 1))
+	     != (size_t) -1)
+	{
+	  char const *b = beg + match_offset;
+	  /* Avoid matching the empty line at the end of the buffer. */
+	  if (b == lim)
+	    break;
+	  fwrite (beg, sizeof (char), match_offset, stdout);
+	  printf ("\33[%sm", grep_color);
+	  fwrite (b, sizeof (char), match_size, stdout);
+	  fputs ("\33[00m", stdout);
+	  beg = b + match_size;
+	}
+    }
   fwrite (beg, 1, lim - beg, stdout);
   if (ferror (stdout))
     error (_("writing output"), errno);
@@ -553,7 +580,7 @@ prpending (char const *lim)
       size_t match_size;
       --pending;
       if (outleft
-	  || (((*execute) (lastout, nl - lastout, &match_size) == (size_t) -1)
+	  || (((*execute) (lastout, nl - lastout, &match_size, 0) == (size_t) -1)
 	      == !out_invert))
 	prline (lastout, nl + 1, '-');
       else
@@ -638,7 +665,7 @@ grepbuf (char const *beg, char const *lim)
 
   nlines = 0;
   p = beg;
-  while ((match_offset = (*execute) (p, lim - p, &match_size)) != (size_t) -1)
+  while ((match_offset = (*execute) (p, lim - p, &match_size, 0)) != (size_t) -1)
     {
       char const *b = p + match_offset;
       char const *endp = b + match_size;
@@ -931,7 +958,8 @@ grepdir (char const *dir, struct stats const *stats)
 	  return 1;
 	}
 
-  name_space = savedir (dir, (unsigned) stats->stat.st_size);
+  name_space = savedir (dir, (unsigned) stats->stat.st_size,
+			directories != SKIP_DIRECTORIES);
 
   if (! name_space)
     {
@@ -1424,6 +1452,28 @@ main (int argc, char **argv)
 	else
 	  fatal (_("unknown binary-files type"), 0);
 	break;
+      case COLOR_OPTION:
+	if (optarg == NULL || strcmp (optarg, "always") == 0
+	    || strcmp (optarg, "yes") == 0 || strcmp (optarg, "force") == 0)
+	  color = 1;
+	else if (strcmp (optarg, "never") == 0 || strcmp (optarg, "no") == 0
+		 || strcmp (optarg, "none") == 0)
+	  color = 0;
+	else if (strcmp (optarg, "auto") == 0 || strcmp (optarg, "tty") == 0
+		 || strcmp (optarg, "if-tty") == 0)
+	  color = isatty (STDOUT_FILENO);
+	else
+	  {
+	    fprintf (stderr, _("invalid argument `%s' for `--color'\n\
+Valid arguments are:\n\
+  - `always', `yes', `force'\n\
+  - `never', `no', `none'\n\
+  - `auto', `tty', `if-tty'\n"), optarg);
+	    fprintf (stderr, _("Try `%s --help' for more information.\n"),
+		     prog);
+	    exit (2);
+	  }
+	break;
       case 0:
 	/* long options */
 	break;
@@ -1447,6 +1497,13 @@ main (int argc, char **argv)
     out_after = default_context;
   if (out_before < 0)
     out_before = default_context;
+
+  if (color)
+    {
+      char *userval = getenv ("GREP_COLOR");
+      if (userval != NULL && *userval != '\0')
+	grep_color = userval;
+    }
 
   if (! matcher)
     matcher = "grep";

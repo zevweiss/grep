@@ -1,3 +1,17 @@
+2001-02-09  Alain Magloire
+
+	Patch from Ulrich Drepper to provide hilighting
+
+	* src/grep.c : New option --color.
+	(color) : New static var.
+	(COLOR_OPTION) : new constant.
+	(grep_color) : new static var.
+	(prline) : Now when color is set prline() will call the current matcher
+	to find the offset of the matching string.
+	* src/savedir.c : Take advantage of _DIRENT_HAVE_TYPE if supported.
+	* src/search.c (EGexecute, Fexecute, Pexecute): Take a new argument
+	when doing exact match for the color hiligting.
+
 2000-09-01  Brian Youmans
 
 	* doc/grep.texi : Typo fixes.
@@ -207,7 +221,7 @@
 	matching algorithms so that they no longer need to modify the
 	input by inserting a sentinel newline, and no longer worry
 	about running off the end of the buffer due to a missing sentinel.
-	
+
 	* src/grep.c (nlscan, prpending, prtext, grepbuf): Do not
 	worry about running off the end of the input buffer, since
 	it's now guaranteed to end in the sentinel newline.
@@ -245,7 +259,7 @@
 
 	* src/dfa.c (dfasyntax): Last arg is unsigned char, not int.
 	* src/dfa.h (dfasyntax): Likewise.
-	
+
 	* src/dfa.h (struct dfa): Remove member newlines; no longer needed.
 	* src/dfa.c (build_state, dfaexec, dfafree): Do not worry
 	about special newline state.
@@ -291,7 +305,7 @@
 	treenext, bmexec, cwexec): Likewise.
 	* src/search.c (Gcompile, Ecompile, EGexecute, Fcompile, Fexecute,
 	Pcompile, Pexecute, kwsinit): Likewise.
-	
+
 	* src/search.c (Pcompile): Do not assume newly allocated
 	storage is zeroed.
 

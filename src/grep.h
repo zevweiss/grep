@@ -1,5 +1,5 @@
 /* grep.h - interface to grep driver for searching subroutines.
-   Copyright (C) 1992, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1998, 2001 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ extern struct matcher
 {
   char name[8];
   void (*compile) PARAMS ((char const *, size_t));
-  size_t (*execute) PARAMS ((char const *, size_t, size_t *));
+  size_t (*execute) PARAMS ((char const *, size_t, size_t *, int));
 } const matchers[];
 
 /* Exported from fgrepmat.c, egrepmat.c, grepmat.c.  */

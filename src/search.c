@@ -203,7 +203,7 @@ Ecompile (char const *pattern, size_t size)
 }
 
 static size_t
-EGexecute (char const *buf, size_t size, size_t *match_size)
+EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 {
   register char const *buflim, *beg, *end;
   char eol = eolbyte;
@@ -216,41 +216,45 @@ EGexecute (char const *buf, size_t size, size_t *match_size)
 
   for (beg = end = buf; end < buflim; beg = end)
     {
-      if (kwset)
+      if (!exact)
 	{
-	  /* Find a possible match using the KWset matcher. */
-	  size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
-	  if (offset == (size_t) -1)
-	    return (size_t) -1;
-	  beg += offset;
-	  /* Narrow down to the line containing the candidate, and
-	     run it through DFA. */
-	  end = memchr(beg, eol, buflim - beg);
-	  end++;
-	  while (beg > buf && beg[-1] != eol)
-	    --beg;
-	  if (kwsm.index < kwset_exact_matches)
+	  if (kwset)
+	    {
+	      /* Find a possible match using the KWset matcher. */
+	      size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
+	      if (offset == (size_t) -1)
+		return (size_t) -1;
+	      beg += offset;
+	      /* Narrow down to the line containing the candidate, and
+		 run it through DFA. */
+	      end = memchr(beg, eol, buflim - beg);
+	      end++;
+	      while (beg > buf && beg[-1] != eol)
+		--beg;
+	      if (kwsm.index < kwset_exact_matches)
+		goto success;
+	      if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
+		continue;
+	    }
+	  else
+	    {
+	      /* No good fixed strings; start with DFA. */
+	      size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
+	      if (offset == (size_t) -1)
+		return (size_t) -1;
+	      /* Narrow down to the line we've found. */
+	      beg += offset;
+	      end = memchr(beg, eol, buflim - beg);
+	      end++;
+	      while (beg > buf && beg[-1] != eol)
+		--beg;
+	    }
+	  /* Successful, no backreferences encountered! */
+	  if (!backref)
 	    goto success;
-	  if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
-	    continue;
 	}
       else
-	{
-	  /* No good fixed strings; start with DFA. */
-	  size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
-	  if (offset == (size_t) -1)
-	    return (size_t) -1;
-	  /* Narrow down to the line we've found. */
-	  beg += offset;
-	  end = memchr(beg, eol, buflim - beg);
-	  end++;
-	  while (beg > buf && beg[-1] != eol)
-	    --beg;
-	}
-
-      /* Successful, no backreferences encountered! */
-      if (!backref)
-	goto success;
+	end = beg + size;
 
       /* If we've made it to this point, this means DFA has seen
 	 a probable match, and we need to run it through Regex. */
@@ -260,6 +264,11 @@ EGexecute (char const *buf, size_t size, size_t *match_size)
 				   end - beg - 1, &regs)))
 	{
 	  len = regs.end[0] - start;
+	  if (exact)
+	    {
+	      *match_size = len;
+	      return start;
+	    }
 	  if ((!match_lines && !match_words)
 	      || (match_lines && len == end - beg - 1))
 	    goto success;
@@ -329,7 +338,7 @@ Fcompile (char const *pattern, size_t size)
 }
 
 static size_t
-Fexecute (char const *buf, size_t size, size_t *match_size)
+Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 {
   register char const *beg, *try, *end;
   register size_t len;
@@ -343,6 +352,11 @@ Fexecute (char const *buf, size_t size, size_t *match_size)
 	return offset;
       beg += offset;
       len = kwsmatch.size[0];
+      if (exact)
+	{
+	  *match_size = len;
+	  return beg - buf;
+	}
       if (match_lines)
 	{
 	  if (beg > buf && beg[-1] != eol)
@@ -415,7 +429,7 @@ Pcompile (char const *pattern, size_t size)
   if (match_words)
     strcpy (n, "\\b(");
   n += strlen (n);
-  
+
   /* The PCRE interface doesn't allow NUL bytes in the pattern, so
      replace each NUL byte in the pattern with the four characters
      "\000", removing a preceding backslash if there are an odd
@@ -434,7 +448,7 @@ Pcompile (char const *pattern, size_t size)
       strcpy (n, "\\000");
       n += 4;
     }
-  
+
   memcpy (n, p, patlim - p);
   n += patlim - p;
   *n = '\0';
@@ -442,7 +456,7 @@ Pcompile (char const *pattern, size_t size)
     strcpy (n, ")\\b");
   if (match_lines)
     strcpy (n, ")$");
-      
+
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
     fatal (ep, 0);
@@ -456,7 +470,7 @@ Pcompile (char const *pattern, size_t size)
 }
 
 static size_t
-Pexecute (char const *buf, size_t size, size_t *match_size)
+Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
 {
 #if !HAVE_LIBPCRE
   abort ();
@@ -475,10 +489,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size)
 	{
 	case PCRE_ERROR_NOMATCH:
 	  return -1;
-	  
+
 	case PCRE_ERROR_NOMEMORY:
 	  fatal (_("Memory exhausted"), 0);
-	  
+
 	default:
 	  abort ();
 	}
@@ -490,10 +504,13 @@ Pexecute (char const *buf, size_t size, size_t *match_size)
       char const *end = buf + sub[1];
       char const *buflim = buf + size;
       char eol = eolbyte;
-      end = memchr (end, eol, buflim - end);
-      end++;
-      while (buf < beg && beg[-1] != eol)
-	--beg;
+      if (!exact)
+	{
+	  end = memchr (end, eol, buflim - end);
+	  end++;
+	  while (buf < beg && beg[-1] != eol)
+	    --beg;
+	}
 
       *match_size = end - beg;
       return beg - buf;
