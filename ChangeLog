@@ -1,3 +1,39 @@
+2000-03-23  Paul Eggert  <eggert@twinsun.com>
+
+	* src/search.c (Pcompile): Add support for NUL bytes in
+	Perl regular expressions.
+
+2000-03-23  Paul Eggert
+
+	* NEWS, doc/grep.1, doc/grep.texi: Change --pcre to --perl-regexp.
+	* src/grep.c (long_options, usage): Likewise.
+
+	* doc/grep.1, doc/grep.texi: Remove pgrep program.
+	* src/Makefile.am (bin_PROGRAMS): Likewise.
+	(pgrep_SOURCES): Remove.
+
+	* src/grep.c (main): Rename matcher from "pgrep" to "perl".
+	* src/search.c (matchers): Likewise.
+
+	* src/search.c: Do not include stdio.h; no longer needed.
+	(NILP): Remove.
+	(sub): No longer static.
+	(n_pcre): Remove.
+	(cre): No longer an array.  Present only if HAVE_LIBPCRE.
+	(extra): New variable.
+	(Pcompile): Use fatal to report errors.
+	This also removes a possible core dump.
+	Add checks (marked FIXME) for restrictions in pcre.
+	Use pcre_maketables for proper localized behavior.
+	(Pcompile, Pexecute): Use GNU coding style.
+	The argument is a single pattern, not a list of patterns separated
+	by newlines; this is for consistency with grep and egrep.
+	Use pcre_study for speed.
+	(Pexecute): Abort if we lack pcre.
+	Abort if pcre_exec reports an impossible error.
+	Use code similar to the rest of search.c
+	to narrow down to the line we've found.
+
 2000-03-21  Alain Magloire
 
 	* configure.in: added AC_CHECK_LIB(pcre, pcre_exec)

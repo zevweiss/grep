@@ -22,7 +22,6 @@
 # include <config.h>
 #endif
 #include <sys/types.h>
-#include <stdio.h>
 #include "system.h"
 #include "grep.h"
 #include "regex.h"
@@ -50,7 +49,7 @@ struct matcher matchers[] = {
   { "egrep", Ecompile, EGexecute },
   { "awk", Ecompile, EGexecute },
   { "fgrep", Fcompile, Fexecute },
-  { "pgrep", Pcompile, Pexecute },
+  { "perl", Pcompile, Pexecute },
   { 0, 0, 0 },
 };
 
@@ -427,88 +426,123 @@ Fexecute (char *buf, size_t size, char **endp)
   return beg;
 }
 
-#define	NILP	(unsigned char *)0
+#if HAVE_LIBPCRE
+/* Compiled internal form of a Perl regular expression.  */
+static pcre *cre;
 
-static int  sub[300];	/* Could be less for grep, since we'll not be
-			 * using grouping quite often. We'll need at least
-			 * a few to allow back-references like \1 */
-static int  n_pcre = 0;
-static pcre *cre[255];
+/* Additional information about the pattern.  */
+static pcre_extra *extra;
+#endif
 
 static void
 Pcompile (char *pattern, size_t size)
 {
-#ifndef HAVE_LIBPCRE
-  fprintf (stderr, _("PCRE not supported\n"));
-  fprintf (stderr, _("It can be fetch at :\n"));
-  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre\n");
-  exit (2);
+#if !HAVE_LIBPCRE
+  fatal (_("The -P option is not supported"), 0);
 #else
-  auto	int	e;
-  const	char	*ep;
-  register	char	*re, *p = pattern;
-  register	int	flags = PCRE_MULTILINE, l;
+  int e;
+  char const *ep;
+  char *re;
+  int flags = PCRE_MULTILINE | (match_icase ? PCRE_CASELESS : 0);
+  char const *patlim = pattern + size;
+  char *n = re = xmalloc (4 * size + 7);
+  char const *p;
+  char const *pnul;
 
-  while (*p && size > 0)
+  /* FIXME: Remove this restriction.  */
+  if (eolbyte != '\n')
+    fatal (_("The -P and -z options cannot be combined"), 0);
+
+  if (match_lines)
+    strcpy (n, "^(");
+  if (match_words)
+    strcpy (n, "\\b(");
+  n += strlen (n);
+  
+  /* The PCRE interface doesn't allow NUL bytes in the pattern, so
+     replace each NUL byte in the pattern with the four characters
+     "\000", removing a preceding backslash if there are an odd
+     number of backslashes before the NUL.
+
+     FIXME: This method does not work with some multibyte character
+     encodings, notably Shift-JIS, where a multibyte character can end
+     in a backslash byte.  */
+  for (p = pattern; (pnul = memchr (p, '\0', patlim - p)); p = pnul + 1)
     {
-      l = 0;
-      while (p[l] && p[l] != '\n')
-	l++;
-      p[l++] = (char)0;
-      if (match_words)
-	{
-	  re = xmalloc (strlen (p) + 5);
-	  (void)sprintf (re, "\\b%s\\b", p);
-	}
-      else if (match_lines)
-	{
-	  re = xmalloc (strlen (p) + 3);
-	  (void)sprintf (re, "^%s$", p);
-	}
-      else
-	re = p;
-      if (match_icase)	flags |= PCRE_CASELESS;
-
-      if (!(cre[n_pcre++] = pcre_compile (re, flags, &ep, &e, NILP)))
-	fatal (ep, 0);
-      if (re != p)
-	(void)free (re);
-      p += l;
-      size -= l;
+      memcpy (n, p, pnul - p);
+      n += pnul - p;
+      for (p = pnul; pattern < p && p[-1] == '\\'; p--)
+	continue;
+      n -= (pnul - p) & 1;
+      strcpy (n, "\\000");
+      n += 4;
     }
-#endif /* HAVE_LIBPCRE */
-} /* Pcompile */
+  
+  memcpy (n, p, patlim - p);
+  n += patlim - p;
+  *n = '\0';
+  if (match_words)
+    strcpy (n, ")\\b");
+  if (match_lines)
+    strcpy (n, ")$");
+      
+  cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
+  if (!cre)
+    fatal (ep, 0);
 
-/* Anyone to do 'pcre_free (cre);' when done? */
+  extra = pcre_study (cre, 0, &ep);
+  if (ep)
+    fatal (ep, 0);
+
+  free (re);
+#endif
+}
+
 static char *
 Pexecute (char *buf, size_t size, char **endp)
 {
-#ifndef HAVE_LIBPCRE
-  fprintf (stderr, _("PCRE not supported\n"));
-  fprintf (stderr, _("It can be fetch at :\n"));
-  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre\n");
-  exit (2);
+#if !HAVE_LIBPCRE
+  abort ();
+  return 0;
 #else
-  auto	int	e, i;
-  auto	int	flags = 0;
-  register	char	*p, *b = buf;
+  /* This array must have at least two elements; everything after that
+     is just for performance improvement in pcre_exec.  */
+  int sub[300];
 
-  for (i = 0; i < n_pcre; i++)
+  int e = pcre_exec (cre, extra, buf, size, 0, 0,
+		     sub, sizeof sub / sizeof *sub);
+
+  if (e <= 0)
     {
-      (void)memset (sub, 0, 300 * sizeof (int));
-      e = pcre_exec (cre[i], (pcre_extra *)0, b, size, 0, flags, sub, 300);
-
-      if (e < -1)
-	return (0);
-
-      if (e > 0)
+      switch (e)
 	{
-	  for (p = b + sub[1]; *p && *p != '\n'; p++);
-	  *endp = p + 1;
-	  for (p = b + sub[0]; p > b && p[-1] != '\n'; p--);
-	  return (p);
+	case PCRE_ERROR_NOMATCH:
+	  return 0;
+	  
+	case PCRE_ERROR_NOMEMORY:
+	  fatal (_("Memory exhausted"), 0);
+	  
+	default:
+	  abort ();
 	}
     }
-#endif /* HAVE_LIBPCRE */
-  return (0);
-} /* Pexecute */
+  else
+    {
+      /* Narrow down to the line we've found.  */
+      char *beg = buf + sub[0];
+      char *end = buf + sub[1];
+      char *buflim = buf + size;
+      char eol = eolbyte;
+      end = memchr (end, eol, buflim - end);
+      if (end)
+	end++;
+      else
+	end = buflim;
+      while (buf < beg && beg[-1] != eol)
+	--beg;
+
+      *endp = end;
+      return beg;
+    }
+#endif
+}

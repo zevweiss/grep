@@ -95,7 +95,7 @@ static struct option long_options[] =
   {"no-messages", no_argument, NULL, 's'},
   {"null", no_argument, NULL, 'Z'},
   {"null-data", no_argument, NULL, 'z'},
-  {"pcre", no_argument, NULL, 'P'},
+  {"perl-regexp", no_argument, NULL, 'P'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
   {"regexp", required_argument, NULL, 'e'},
@@ -1014,7 +1014,7 @@ Regexp selection and interpretation:\n"), prog);
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression\n\
-  -P, --pcre                PATTERN is a Perl Compatible Regular Expression\n"));
+  -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -1061,7 +1061,7 @@ Context control:\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
-`egrep' means `grep -E'.  `fgrep' means `grep -F'. `pgrep' means `grep -P'.\n\
+`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
 With no FILE, or when FILE is -, read standard input.  If less than\n\
 two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
 and 2 if trouble.\n"));
@@ -1295,7 +1295,7 @@ main (int argc, char **argv)
 	setmatcher ("fgrep");
 	break;
       case 'P':
-	setmatcher ("pgrep");
+	setmatcher ("perl");
 	break;
       case 'G':
 	setmatcher ("grep");

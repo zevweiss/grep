@@ -591,7 +591,7 @@ inaccessible input files, or other system errors.
 @command{grep} searches the named input files (or standard input if no
 files are named, or the file name @file{-} is given) for lines containing
 a match to the given pattern.  By default, @command{grep} prints the
-matching lines.  There are three major variants of @command{grep},
+matching lines.  There are four major variants of @command{grep},
 controlled by the following options.
 
 @table @samp
@@ -601,36 +601,35 @@ controlled by the following options.
 @opindex -G
 @opindex --basic-regexp
 @cindex matching basic regular expressions
-Interpret pattern as a basic regular expression.  This is the default.
+Interpret the pattern as a basic regular expression.  This is the default.
 
 @item -E
 @itemx --extended-regexp
 @opindex -E
 @opindex --extended-regexp
 @cindex matching extended regular expressions
-Interpret pattern as an extended regular expression.
-
+Interpret the pattern as an extended regular expression.
 
 @item -F
 @itemx --fixed-strings
 @opindex -F
 @opindex --fixed-strings
 @cindex matching fixed strings
-Interpret pattern as a list of fixed strings, separated
+Interpret the pattern as a list of fixed strings, separated
 by newlines, any of which is to be matched.
 
 @item -P
-@itemx --pcre
+@itemx --perl-regexp
 @opindex -P
-@opindex --pcre
-@cindex perl compatible regexp
-Interpret pattern with Perl-compatible regular expressions.
+@opindex --perl-regexp
+@cindex matching Perl regular expressions
+Interpret the pattern as a Perl regular expression.
 
 @end table
 
-In addition, three variant programs @sc{egrep}, @sc{fgrep} @sc{pgrep} are
-available. @sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
-same as @samp{grep -F}. @sc{pgrep} is the same as @samp{grep -P}.
+In addition, two variant programs @sc{egrep} and @sc{fgrep} are available.
+@sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
+same as @samp{grep -F}.
 
 @node Regular Expressions
 @chapter Regular Expressions

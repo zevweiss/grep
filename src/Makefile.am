@@ -8,7 +8,7 @@ LN = ln
 # We let configure figure out if we need the regex.c or not
 # it is provided in GNU/Linux system
 # regex.c regex.h
-bin_PROGRAMS = grep egrep fgrep pgrep
+bin_PROGRAMS = grep egrep fgrep
 base_sources = grep.c grep.h \
                dfa.c dfa.h \
                kwset.c  kwset.h \
@@ -19,7 +19,6 @@ base_sources = grep.c grep.h \
 egrep_SOURCES = $(base_sources) egrepmat.c
 fgrep_SOURCES = $(base_sources) fgrepmat.c
 grep_SOURCES  = $(base_sources) grepmat.c
-pgrep_SOURCES  = $(base_sources) pgrepmat.c
 
 LDADD = @ALLOCA@ @LIBOBJS@ @INTLLIBS@
 datadir = $(prefix)/@DATADIRNAME@

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.12 2000/03/22 03:30:37 alainm Exp $
+.Id $Id: grep.1,v 1.13 2001/02/08 05:33:57 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -45,12 +45,10 @@ By default,
 .B grep
 prints the matching lines.
 .PP
-In addition, three variant programs
+In addition, two variant programs
 .B egrep
-,
-.B fgrep
 and
-.B pgrep
+.B fgrep
 are available.
 .B Egrep
 is the same as
@@ -58,9 +56,6 @@ is the same as
 .B Fgrep
 is the same as
 .BR "grep\ \-F" .
-.B Pgrep
-is the same as
-.BR "grep\ \-P" .
 .SH OPTIONS
 .TP
 .BI \-A " NUM" "\fR,\fP \-\^\-after-context=" NUM
@@ -168,7 +163,7 @@ Interpret
 .I PATTERN
 as a list of fixed strings, separated by newlines,
 any of which is to be matched.
-.BR \-P ", " \-\^\-pcre
+.BR \-P ", " \-\^\-perl-regexp
 Interpret
 .I PATTERN
 as a Perl regular expression.
