@@ -1,4 +1,4 @@
-Version 2.3.1:
+Version 2.4:
 
   - egrep is now equivalent to `grep -E' as required by POSIX,
     removing a longstanding source of confusion and incompatibility.
