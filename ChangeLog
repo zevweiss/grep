@@ -1,6 +1,16 @@
+2004-11-20  Stepan Kasal  <kasal@ucw.cz>
+
+	* ./cvsignore: Amended several .cvsignore files and
+	  removed *.gmo, acinclude.m4 and stamp-h.in from the root one.
+	* m4/init.m4: Nuked, it was breaking current automake.
+	* m4/Makefile.m4: Removed init.m4.
+	* autogen.m4: Drop support for legacy autoconf; tell whether the
+	  auto tools exited successfully or not; fix the permissions of
+	  tests/*.sh--CVS doesn't provide a way to fix it.
+
 2004-11-19  Stepan Kasal  <kasal@ucw.cz>
 
-	* src/dfa.c: Remove old version of gofast patch, from 2003-05-30.
+	* src/dfa.c: Removed old version of gofast patch, from 2003-05-30.
 	* src/search.c (check_multibyte_string): Likewise.
 
 2004-11-19  Stepan Kasal  <kasal@ucw.cz>

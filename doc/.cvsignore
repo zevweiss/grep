@@ -1,4 +1,7 @@
 Makefile
 Makefile.in
-version.texi
+egrep.1
+fgrep.1
 grep.info
+stamp-vti
+version.texi

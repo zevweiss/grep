@@ -9,7 +9,6 @@ EXTRA_DIST = decl.m4 \
              gettext.m4 \
              glibc.m4 \
              header.m4 \
-             init.m4 \
              install.m4 \
              inttypes_h.m4 \
              isc-posix.m4 \

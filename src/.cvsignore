@@ -1,2 +1,5 @@
 Makefile
 Makefile.in
+egrep
+fgrep
+grep

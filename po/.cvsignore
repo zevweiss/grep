@@ -1,4 +1,6 @@
-POTFILES
+*.gmo
 Makefile.in
 Makefile
-*.gmo
+POTFILES
+grep.pot
+stamp-cat-id
