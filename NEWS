@@ -1,11 +1,11 @@
+Version 2.3.1:
+
+    Minor release to correct some configuration problems
+    on certain platforms.
+
   - The environment variable GREP_OPTIONS specifies default options;
     e.g. GREP_OPTIONS='--directories=skip' reestablishes grep 2.1's
     behavior of silently skipping directories.
-
-Version 2.3.1:
-
-  - Minor release to correct some configuration problems
-    on certain platforms.
 
   - Options -F, -E, -G are only possible on grep driver, since
     the matcher is already set for {e,f}grep. Posix behaviour.
