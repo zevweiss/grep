@@ -1,15 +1,37 @@
-# Configuration for grep
-#
-# Alain Magloire <alainm@gnu.org>
-# Bernhard Rosenkraenzer <bero@arklinux.org>
-#
-dnl Process this file with autoconf to produce a configure script
-AC_INIT(src/grep.c)
+dnl
+dnl autoconf input file for ``GNU grep''
+dnl
+dnl Copyright (C) 1997-2004 the Free Software Foundation, Inc.
+dnl
+dnl This file is part of GNU grep.
+dnl
+dnl GNU grep is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2 of the License, or
+dnl (at your option) any later version.
+dnl
+dnl GNU grep is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU General Public License along
+dnl with this program; if not, write to the Free Software Foundation, Inc.,
+dnl 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+dnl
+dnl Authors:
+dnl Alain Magloire <alainm@gnu.org>
+dnl Bernhard Rosenkraenzer <bero@arklinux.org>
+dnl Stepan Kasal <kasal@gnu.org>
+dnl
+
+AC_INIT(GNU grep, 2.5.1-cvs, bug-grep@gnu.org, grep)
+AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE(GREP, 1, [We are building grep])
 AC_PREREQ(2.53)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.5.1)
+AM_INIT_AUTOMAKE(dist-bzip2)
 AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Check for arguments

@@ -1,5 +1,11 @@
 2004-11-20  Stepan Kasal  <kasal@ucw.cz>
 
+	* configure.in: Added a copyright notice (using gawk as a template).
+	(AC_INIT, AM_INIT_AUTOMAKE): Changed to the ``new'' form so that
+	  the PACKAGE_* symbols get defined correctly in config.h.
+
+2004-11-20  Stepan Kasal  <kasal@ucw.cz>
+
 	* ./cvsignore: Amended several .cvsignore files and
 	  removed *.gmo, acinclude.m4 and stamp-h.in from the root one.
 	* m4/init.m4: Nuked, it was breaking current automake.
