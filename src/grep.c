@@ -90,7 +90,8 @@ enum
   INCLUDE_OPTION,
   EXCLUDE_OPTION,
   EXCLUDE_FROM_OPTION,
-  LINE_BUFFERED_OPTION
+  LINE_BUFFERED_OPTION,
+  LABEL_OPTION
 };
 
 /* Long options equivalences. */
@@ -118,6 +119,7 @@ static struct option const long_options[] =
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
+  {"label", required_argument, NULL, LABEL_OPTION},
   {"line-buffered", no_argument, NULL, LINE_BUFFERED_OPTION},
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
@@ -443,6 +445,7 @@ static off_t max_count;		/* Stop after outputting this many
 				   lines from an input file.  */
 static int line_buffered;       /* If nonzero, use line buffering, i.e.
 				   fflush everyline out.  */
+static char *label = NULL;      /* Fake filename for stdin */
 
 
 /* Internal variables to keep track of byte count, context, etc. */
@@ -878,7 +881,7 @@ grepfile (char const *file, struct stats *stats)
   if (! file)
     {
       desc = 0;
-      filename = _("(standard input)");
+      filename = label ? label : _("(standard input)");
     }
   else
     {
@@ -1074,6 +1077,7 @@ Output control:\n\
       --line-buffered       flush output on every line\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
+      --label=LABEL         print LABEL as filename for standard input\n\
   -o, --only-matching       show only the part of a line matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
@@ -1595,6 +1599,10 @@ main (int argc, char **argv)
 
       case LINE_BUFFERED_OPTION:
 	line_buffered = 1;
+	break;
+
+      case LABEL_OPTION:
+	label = optarg;
 	break;
 
       case 0:

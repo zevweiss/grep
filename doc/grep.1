@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.22 2001/11/19 13:23:29 bero Exp $
+.Id $Id: grep.1,v 1.23 2002/01/22 13:20:04 bero Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -295,6 +295,12 @@ within its input file.
 .BR \-o ", " \-\^\-only-matching
 Show only the part of a matching line that matches
 .I PATTERN.
+.TP
+.BI \-\^\-label= LABEL
+Displays input actually coming from standard input as input coming from file
+.I LABEL.
+This is especially useful for tools like zgrep, e.g.
+.B "gzip -cd foo.gz |grep --label=foo something"
 .TP
 .BR \-\^\-line-buffering
 Use line buffering, it can be a performance penality.

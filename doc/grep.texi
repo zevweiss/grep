@@ -359,6 +359,13 @@ Suppress the prefixing of filenames on output when multiple files are searched.
 @cindex line buffering
 Set the line buffering policy, this can be a performance penality.
 
+@item --label=@var{LABEL}
+@opindex --label
+@cindex changing name of standard input
+Displays input actually coming from standard input as input coming from file
+@var{LABEL}. This is especially useful for tools like zgrep, e.g.
+@command{gzip -cd foo.gz |grep --label=foo something}
+
 @item -L
 @itemx --files-without-match
 @opindex -L

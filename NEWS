@@ -1,4 +1,7 @@
 Version 2.5
+  - The new option --label allows to specify a different name for input
+    from stdin. See the man or info pages for details.
+
   - The internal lib/getopt* files are no longer used on systems providing
     getopt functionality in their libc (e.g. glibc 2.2.x).
     If you need the old getopt files, use --with-included-getopt.
