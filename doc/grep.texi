@@ -139,7 +139,7 @@ is no way to match newline characters in a text.
 @opindex -count
 @cindex counting lines
 Suppress normal output; instead print a count of matching
-lines for each input file.  With the @samp{-v}, @samp{--revert-match} option,
+lines for each input file.  With the @samp{-v}, @samp{--invert-match} option,
 count non-matching lines.
 
 @item -e @var{pattern}
@@ -205,10 +205,10 @@ scripts intended to be portable to BSD @sc{grep} should avoid both
 output to @file{/dev/null} instead.
 
 @item -v
-@itemx --revert-match
+@itemx --invert-match
 @opindex -v
-@opindex --revert-match
-@cindex revert matching
+@opindex --invert-match
+@cindex invert matching
 @cindex print non-matching lines
 Invert the sense of matching,  to  select  non-matching lines.
 

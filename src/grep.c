@@ -80,7 +80,7 @@ static struct option long_options[] =
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
   {"regexp", required_argument, NULL, 'e'},
-  {"revert-match", no_argument, NULL, 'v'},
+  {"invert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
   {"text", no_argument, NULL, 'a'},
 #if O_BINARY
@@ -927,7 +927,7 @@ Regexp selection and interpretation:\n"));
 \n\
 Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
-  -v, --revert-match        select non-matching lines\n\
+  -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
       --help                display this help and exit\n"));
       printf (_("\

@@ -2,7 +2,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.3 1999/06/13 03:35:55 alainm Exp $
+.Id $Id: grep.1,v 1.4 1999/08/13 14:45:14 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -12,7 +12,7 @@ grep, egrep, fgrep \- print lines matching a pattern
 [-d ACTION] [--directories=ACTION]
 [--extended-regexp] [--fixed-strings] [--basic-regexp]
 [--regexp=PATTERN] [--file=FILE] [--ignore-case] [--word-regexp]
-[--line-regexp] [--line-regexp] [--no-messages] [--revert-match]
+[--line-regexp] [--line-regexp] [--no-messages] [--invert-match]
 [--version] [--help] [--byte-offset] [--line-number]
 [--with-filename] [--no-filename] [--quiet] [--silent] [--text]
 [--files-without-match] [--files-with-matcces] [--count]
@@ -109,7 +109,7 @@ each line of output.
 Suppress normal output; instead print a count of
 matching lines for each input file.
 With the
-.B \-v, --revert-match
+.B \-v, --invert-match
 option (see below), count non-matching lines.
 .TP
 .BI \-d " ACTION" ", --directories=" ACTION
@@ -225,7 +225,7 @@ This option causes
 to act as if the file is a text file,
 even if it would otherwise be treated as binary.
 .TP
-.B \-v, --revert-match
+.B \-v, --invert-match
 Invert the sense of matching, to select non-matching lines.
 .TP
 .B \-w, --word-regexp

@@ -1,3 +1,9 @@
+!999-06-15 Alain Magloire
+
+	* src/grep.c, doc/grep{1,texi} : 
+	--revert-match should be --invert-match.
+	Correction proposed by Karl Berry.
+
 1999-06-12 Alain Magloire
 
 	* doc/grep.{1,texi}: add description for --with-filename.
