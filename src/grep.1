@@ -3,12 +3,13 @@
 grep, egrep, fgrep \- print lines matching a pattern
 .SH SYNOPSIS
 .B grep
-[-[AB] NUM] [-CEFGVbchiLlnqsvwxyUu] [-e PATTERN | -f FILE]
+[-[AB] NUM] [-CEFGVabchiLlnqsvwxyUu] [-e PATTERN | -f FILE]
+[-d ACTION] [--directories=ACTION]
 [--extended-regexp] [--fixed-strings] [--basic-regexp]
 [--regexp=PATTERN] [--file=FILE] [--ignore-case] [--word-regexp]
 [--line-regexp] [--line-regexp] [--no-messages] [--revert-match]
 [--version] [--help] [--byte-offset] [--line-number]
-[--with-filename] [--no-filename] [--quiet] [--silent]
+[--with-filename] [--no-filename] [--quiet] [--silent] [--text]
 [--files-without-match] [--files-with-matcces] [--count]
 [--before-context=NUM] [--after-context=NUM] [--context]
 [--binary] [--unix-byte-offsets]
@@ -107,6 +108,20 @@ With the
 .B \-v, --revert-match
 option (see below), count non-matching lines.
 .TP
+.BI \-d " ACTION" ", --directories=" ACTION
+If an input file is a directory, use
+.I ACTION
+to process it.  By default,
+.I ACTION
+is
+.BR read ,
+which means that directories are read just as if they were ordinary files.
+If
+.I ACTION
+is
+.BR skip ,
+directories are silently skipped.
+.TP
 .BI \-e " PATTERN" ", --regexp=" PATTERN
 Use
 .I PATTERN
@@ -150,6 +165,17 @@ on the first match.
 .TP
 .B \-s, --silent
 Suppress error messages about nonexistent or unreadable files.
+.TP
+.B \-a, --text
+Do not suppress output lines that contain binary data.
+Normally, if the first few bytes of a file indicate that
+the file contains binary data,
+.B grep
+outputs only a message saying that the file matches the pattern.
+This option causes
+.B grep
+to act as if the file is a text file,
+even if it would otherwise be treated as binary.
 .TP
 .B \-v, --revert-match
 Invert the sense of matching, to select non-matching lines.

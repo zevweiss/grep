@@ -1,3 +1,23 @@
+1998-04-29  Paul Eggert
+
+	* NEWS, src/grep.1: Describe new -a and -d options.
+
+	* src/grep.c (long_options, usage, main):
+	New options -d or --directories and -a or --text.
+	(directories, always_text): New variables.
+	(IS_DIRECTORY_ERRNO): New macro.
+	(reset): Now returns value specifying whether to skip this file.
+	Stat the file if either mmap or directory-skipping is possible.
+	Skip the file if it's a directory and we're skipping directories.
+	(grep): Skip the file if `reset' tells us to.
+	(main): If open fails because the file is a directory, and if we're
+	skipping directories, don't report an error.
+	Remove special case for DOS and Windows.
+
+	* src/dosbuf.c (guess_type): Use the same method for guessing whether a
+	file is binary as grep.c's grep does.
+	There's no longer any need to declare `bp' to be unsigned.
+
 1998-04-26 Alain Magloire
 
 	* grep-2.2 release.

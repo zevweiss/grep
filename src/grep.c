@@ -54,6 +54,7 @@ static struct option long_options[] =
   {"byte-offset", no_argument, NULL, 'b'},
   {"context", no_argument, NULL, 'C'},
   {"count", no_argument, NULL, 'c'},
+  {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
@@ -70,6 +71,7 @@ static struct option long_options[] =
   {"regexp", required_argument, NULL, 'e'},
   {"revert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
+  {"text", no_argument, NULL, 'a'},
 #if O_BINARY
   {"binary", no_argument, NULL, 'U'},
   {"unix-byte-offsets", no_argument, NULL, 'u'},
@@ -92,10 +94,24 @@ static char *filename;
 static int errseen;
 
 static int ck_atoi PARAMS((char const *, int *));
+
+/* How to handle directories.  */
+static enum
+  {
+    READ_DIRECTORIES,
+    SKIP_DIRECTORIES
+  } directories;
+
+#ifdef EISDIR
+# define IS_DIRECTORY_ERRNO(e) ((e) == EISDIR)
+#else
+# define IS_DIRECTORY_ERRNO(e) 0
+#endif
+
 static void usage PARAMS((int));
 static void error PARAMS((const char *, int));
 static int  setmatcher PARAMS((char *));
-static void reset PARAMS((int));
+static int  reset PARAMS((int));
 static int  fillbuf PARAMS((size_t));
 static int  grepbuf PARAMS((char *, char *));
 static void prtext PARAMS((char *, char *, int *));
@@ -190,16 +206,16 @@ static size_t bufalloc;		/* Total buffer size. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
+static struct stat bufstat;	/* From fstat(). */
 
 #if defined(HAVE_MMAP)
 static int bufmapped;		/* True for ordinary files. */
-static struct stat bufstat;	/* From fstat(). */
 static off_t bufoffset;		/* What read() normally remembers. */
 #endif
 
-/* Reset the buffer for a new file.  Initialize
-   on the first time through. */
-static void
+/* Reset the buffer for a new file, returning zero if we should skip it.
+   Initialize on the first time through. */
+static int
 reset(fd)
      int fd;
 {
@@ -224,8 +240,23 @@ reset(fd)
       buflim = buffer;
     }
   bufdesc = fd;
+
+  if (
 #if defined(HAVE_MMAP)
-  if (fstat(fd, &bufstat) < 0 || !S_ISREG(bufstat.st_mode))
+      1
+#else
+      directories != READ_DIRECTORIES
+#endif
+      )
+    if (fstat(fd, &bufstat) != 0)
+      {
+	error("fstat", errno);
+	return 0;
+      }
+  if (directories == SKIP_DIRECTORIES && S_ISDIR(bufstat.st_mode))
+    return 0;
+#if defined(HAVE_MMAP)
+  if (!S_ISREG(bufstat.st_mode))
     bufmapped = 0;
   else
     {
@@ -233,6 +264,7 @@ reset(fd)
       bufoffset = lseek(fd, 0, 1);
     }
 #endif
+  return 1;
 }
 
 /* Read new stuff into the buffer, saving the specified
@@ -287,8 +319,8 @@ fillbuf(save)
 	{
           /* This used to issue a warning, but on some hosts
              (e.g. Solaris 2.5) mmap can fail merely because some
-             other process has an advisory erad lock on the file.
-             There's no point alarming the use about this misfeature */
+             other process has an advisory read lock on the file.
+             There's no point alarming the user about this misfeature.  */
 #if 0
 	  fprintf(stderr, _("%s: warning: %s: %s\n"), prog, filename,
 		  strerror(errno));
@@ -332,6 +364,7 @@ fillbuf(save)
 }
 
 /* Flags controlling the style of output. */
+static int always_text;		/* Assume the input is always text. */
 static int out_quiet;		/* Suppress all normal output. */
 static int out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
@@ -524,10 +557,12 @@ grep(fd)
      int fd;
 {
   int nlines, i;
+  int not_text;
   size_t residue, save;
   char *beg, *lim;
 
-  reset(fd);
+  if (!reset(fd))
+    return 0;
 
   totalcc = 0;
   lastout = 0;
@@ -538,13 +573,19 @@ grep(fd)
   residue = 0;
   save = 0;
 
+  if (fillbuf(save) < 0)
+    {
+      error(filename, errno);
+      return nlines;
+    }
+
+  not_text = (! (always_text | out_quiet)
+	      && memchr (bufbeg, '\0', buflim - bufbeg));
+  done_on_match += not_text;
+  out_quiet += not_text;
+
   for (;;)
     {
-      if (fillbuf(save) < 0)
-	{
-	  error(filename, errno);
-	  return nlines;
-	}
       lastnl = bufbeg;
       if (lastout)
 	lastout = bufbeg;
@@ -560,7 +601,7 @@ grep(fd)
 	  if (pending)
 	    prpending(lim);
 	  if (nlines && done_on_match && !out_invert)
-	    return nlines;
+	    goto finish_grep;
 	}
       i = 0;
       beg = lim;
@@ -577,6 +618,11 @@ grep(fd)
       totalcc += buflim - bufbeg - save;
       if (out_line)
 	nlscan(beg);
+      if (fillbuf(save) < 0)
+	{
+	  error(filename, errno);
+	  goto finish_grep;
+	}
     }
   if (residue)
     {
@@ -584,6 +630,12 @@ grep(fd)
       if (pending)
 	prpending(buflim);
     }
+
+ finish_grep:
+  done_on_match -= not_text;
+  out_quiet -= not_text;
+  if ((not_text & ~out_quiet) && nlines != 0)
+    printf(_("Binary file %s matches\n"), filename);
   return nlines;
 }
 
@@ -627,6 +679,9 @@ Output control:\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
+  -a, --text                do not suppress binary output\n\
+  -d, --directories=ACTION  how to handle directories\n\
+                            ACTION is 'read' or 'skip'.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n"));
@@ -758,9 +813,9 @@ main(argc, argv)
 
   while ((opt = getopt_long(argc, argv,
 #if O_BINARY
-         "0123456789A:B:CEFGHVX:bce:f:hiLlnqsvwxyUu",
+         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqsvwxyUu",
 #else
-         "0123456789A:B:CEFGHVX:bce:f:hiLlnqsvwxy",
+         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqsvwxy",
 #endif
          long_options, NULL)) != EOF)
     switch (opt)
@@ -829,12 +884,23 @@ main(argc, argv)
 	  fatal(_("matcher already specified"), 0);
 	matcher = optarg;
 	break;
+      case 'a':
+	always_text = 1;
+	break;
       case 'b':
 	out_byte = 1;
 	break;
       case 'c':
 	out_quiet = 1;
 	count_matches = 1;
+	break;
+      case 'd':
+	if (strcmp (optarg, "read") == 0)
+	  directories = READ_DIRECTORIES;
+	else if (strcmp (optarg, "skip") == 0)
+	  directories = SKIP_DIRECTORIES;
+	else
+	  fatal(_("unknown directories method"), 0);
 	break;
       case 'e':
 	cc = strlen(optarg);
@@ -928,10 +994,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 
   if (keys)
     {
-      /* No keys were specified (e.g. -f /dev/null)/ Match nothing/ */
       if (keycc == 0)
+	/* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
         out_invert ^= 1;
-      else /* strip trailin newline. */
+      else
+	/* Strip trailing newline. */
         --keycc;
     }
   else
@@ -966,21 +1033,29 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	  }
 	else
 	  {
-#if defined(__MSDOS__) || defined(_WIN32)
-	    struct stat st;
-	    if (stat (argv[optind], &st) == 0 && S_ISDIR(st.st_mode))
-	      {
-		++optind;
-		continue;
-	      }
-#endif
 	    filename = argv[optind];
 	    desc = open(argv[optind], O_RDONLY);
 	  }
 	if (desc < 0)
 	  {
-	    if (!suppress_errors)
-	      error(argv[optind], errno);
+	    int e = errno;
+	    
+#ifdef EISDIR
+	    /* If a file is a directory, and is not readable, then `open'
+	       can report either EACCES or EISDIR when we try to open it.
+	       We'd rather see EISDIR so that the error is ignored when
+	       skipping directories, so if we see EACCES we replace it
+	       with EISDIR if both errno values are valid.  */
+	    struct stat st;
+	    if (e == EACCES
+		&& stat(argv[optind], &st) == 0 && S_ISDIR(st.st_mode))
+	      e = EISDIR;
+#endif
+
+	    if (! (suppress_errors
+		   || (directories == SKIP_DIRECTORIES
+		       && IS_DIRECTORY_ERRNO (e))))
+	      error(argv[optind], e);
 	  }
 	else
 	  {

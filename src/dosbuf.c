@@ -34,21 +34,18 @@ static inline File_type
 guess_type(char *buf, register size_t buflen)
 {
   int crlf_seen = 0;
-  /* Use unsigned char, so this will work with foreign characters.  */
-  register unsigned char *bp = buf;
+  register char *bp = buf;
 
   while (buflen--)
     {
-      /* Binary files have characters with ASCII code less then 32 decimal,
-         unless they are one of: BS (for man pages), TAB, LF, FF, CR, ^Z. */
-      if (*bp  < ' '  && !(*bp > '\a' && *bp <= '\n') &&
-          *bp != '\f' &&   *bp != '\r' && *bp != '\32')
+      /* Treat a file as binary if it has a NUL character.  */
+      if (!*bp)
         return DOS_BINARY;
 
       /* CR before LF means DOS text file (unless we later see
          binary characters).  */
       else if (*bp == '\r' && buflen && bp[1] == '\n')
-        crlf_seen++;
+        crlf_seen = 1;
 
       bp++;
     }
