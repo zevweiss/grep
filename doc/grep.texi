@@ -199,8 +199,9 @@ Prefix each line of output with the line number within its input file.
 @opindex --quiet
 @opindex --silent
 @cindex quiet, silent
-Quiet; suppress normal output.  The scanning of every file will stop on
-the first match.  Also see the @samp{-s} or @samp{--no-messages} option.
+Quiet; do not write anything to standard output.  Exit immediately with
+zero status if any match is found, even if an error was detected.  Also
+see the @samp{-s} or @samp{--no-messages} option.
 
 @item -s
 @itemx --no-messages
@@ -596,10 +597,10 @@ only when @code{POSIXLY_CORRECT} is not set.
 @node Diagnostics
 @chapter Diagnostics
 
-Normally, exit status is 0 if matches were found, and 1 if no matches
-were found (the @samp{-v} option inverts the sense of the exit status).
-Exit status is 2 if there were syntax errors in the pattern,
-inaccessible input files, or other system errors.
+Normally, exit status is 0 if selected lines are found and 1 otherwise.
+But the exit status is 2 if an error occurred, unless the @option{-q} or
+@option{--quiet} or @option{--silent} option is used and a selected line
+is found.
 
 @node Grep Programs
 @chapter @command{grep} programs

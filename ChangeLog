@@ -1,3 +1,24 @@
+2000-04-24  Paul Eggert  <eggert@twinsun.com>
+
+	POSIX.2 conformance fixes: grep -q now exits with status zero
+	if an input line is selected, even if an error also occurs.
+	grep -s no longer affects exit status.
+
+	* src/grep.c (suppress_errors): Move definition earlier so
+	that suppressible_error can use it.
+	(suppressible_error): New function.
+	(exit_on_match): New var.
+	(grepbuf): If exit_on_match is nonzero, exit with status zero
+	immediately.
+	(grep, grepfile, grepdir): Invoke suppressible_error.
+	(main): -q sets exit_on_match.
+
+	* doc/grep.1, doc/grep.texi, NEWS:
+	Document -q's behavior as required by POSIX.2.
+
+	* tests/status.sh:
+	Test for -q and -s behavior as conforming to POSIX.2.
+
 2000-04-20  Paul Eggert
 
 	* tests/Makefile.am (TESTS_ENVIRONMENT):

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.15 2001/02/08 15:11:47 alainm Exp $
+.Id $Id: grep.1,v 1.16 2001/02/08 16:12:10 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -265,13 +265,14 @@ Prefix each line of output with the line number
 within its input file.
 .TP
 .BR \-q ", " \-\^\-quiet ", " \-\^\-silent
-Quiet; suppress normal output.  The scanning will stop
-on the first match.
+Quiet; do not write anything to standard output.
+Exit immediately with zero status if any match is found,
+even if an error was detected.
 Also see the
 .B \-s
 or
 .B \-\^\-no-messages
-option below.
+option.
 .TP
 .BR \-r ", " \-\^\-recursive
 Read all files under each directory, recursively;
@@ -700,13 +701,14 @@ when
 is not set.
 .SH DIAGNOSTICS
 .PP
-Normally, exit status is 0 if matches were found,
-and 1 if no matches were found.  (The
-.B \-v
-option inverts the sense of the exit status.)
-Exit status is 2 if there were syntax errors
-in the pattern, inaccessible input files, or
-other system errors.
+Normally, exit status is 0 if selected lines are found and 1 otherwise.
+But the exit status is 2 if an error occurred, unless the
+.B \-q
+or
+.B \-\^\-quiet
+or
+.B \-\^\-silent
+option is used and a selected line is found.
 .SH BUGS
 .PP
 Email bug reports to

@@ -56,6 +56,9 @@ static int show_help;
 /* If non-zero, print the version on standard output and exit.  */
 static int show_version;
 
+/* If nonzero, suppress diagnostics for nonexistent or unreadable files.  */
+static int suppress_errors;
+
 /* If nonzero, use mmap if possible.  */
 static int mmap_option;
 
@@ -148,6 +151,14 @@ error (const char *mesg, int errnum)
     fprintf (stderr, "%s: %s: %s\n", prog, mesg, strerror (errnum));
   else
     fprintf (stderr, "%s: %s\n", prog, mesg);
+}
+
+/* Like error, but suppress the diagnostic if requested.  */
+static void
+suppressible_error (char const *mesg, int errnum)
+{
+  if (! suppress_errors)
+    error (mesg, errnum);
   errseen = 1;
 }
 
@@ -473,7 +484,6 @@ static int out_after;		/* Lines of trailing context. */
 static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
-static int suppress_errors;	/* Suppress diagnostics.  */
 static off_t max_count;		/* Stop after outputting this many
 				   lines from an input file.  */
 
@@ -487,7 +497,8 @@ static off_t totalnl;		/* Total newline count before lastnl. */
 static off_t outleft;		/* Maximum number of lines to be output.  */
 static int pending;		/* Pending lines of output.
 				   Always kept 0 if out_quiet is true.  */
-static int done_on_match;	/* Stop scanning file on first match */
+static int done_on_match;	/* Stop scanning file on first match.  */
+static int exit_on_match;	/* Exit on first match.  */
 
 #if HAVE_DOS_FILE_CONTENTS
 # include "dosbuf.c"
@@ -658,6 +669,8 @@ grepbuf (char const *beg, char const *lim)
           outleft--;
 	  if (!outleft || done_on_match)
 	    {
+	      if (exit_on_match)
+		exit (0);
 	      after_last_match = bufoffset - (buflim - endp);
 	      return nlines;
 	    }
@@ -719,8 +732,8 @@ grep (int fd, char const *file, struct stats *stats)
 
   if (! fillbuf (save, stats))
     {
-      if (! (is_EISDIR (errno, file) && suppress_errors))
-	error (filename, errno);
+      if (! is_EISDIR (errno, file))
+	suppressible_error (filename, errno);
       return 0;
     }
 
@@ -784,8 +797,8 @@ grep (int fd, char const *file, struct stats *stats)
 	nlscan (beg);
       if (! fillbuf (save, stats))
 	{
-	  if (! (is_EISDIR (errno, file) && suppress_errors))
-	    error (filename, errno);
+	  if (! is_EISDIR (errno, file))
+	    suppressible_error (filename, errno);
 	  goto finish_grep;
 	}
     }
@@ -855,10 +868,9 @@ grepfile (char const *file, struct stats *stats)
 		      return 1;
 		    break;
 		  }
-
-	      error (file, e);
 	    }
 
+	  suppressible_error (file, e);
 	  return 1;
 	}
 
@@ -930,10 +942,7 @@ grepdir (char const *dir, struct stats const *stats)
   if (! name_space)
     {
       if (errno)
-	{
-	  if (!suppress_errors)
-	    error (dir, errno);
-	}
+	suppressible_error (dir, errno);
       else
 	fatal (_("Memory exhausted"), 0);
     }
@@ -1394,6 +1403,7 @@ main (int argc, char **argv)
 	break;
       case 'q':
 	done_on_match = 1;
+	exit_on_match = 1;
 	out_quiet = 1;
 	break;
       case 'r':
