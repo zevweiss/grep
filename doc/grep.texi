@@ -926,6 +926,17 @@ the following command searches only C files:
 find /home/gigi -name '*.c' -print | xargs grep 'hello' /dev/null
 @end smallexample
 
+This differs from the command:
+
+@example
+grep -r 'hello' *.c
+@end example
+
+which merely looks for @samp{hello} in all files in the current
+directory whose names end in @samp{.c}.  Here the @option{-r} is
+probably unnecessary, as recursion occurs only in the unlikely event
+that one of @samp{.c} files is a directory.
+
 @item
 What if a pattern has a leading @samp{-}?
 
