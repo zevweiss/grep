@@ -1,4 +1,21 @@
-1999-11-1 Alain Magloire
+1999-11-07  Paul Eggert
+
+	Don't assume that the C library has re_set_syntax and friends.
+	* src/Makefile.am (base_sources): Add regex.c, regex.h.
+	(EXTRA_DIST): Remove regex.c, regex.h.
+
+	* src/grep.c (prtext): Use out_quiet, not not_text, to decide
+	whether to set pending to zero at the end.
+	(not_text): Remove static variable, undoing latest change.
+	(grep): Likewise.
+
+	* doc/grep.texi: Tighten up the text, and fix some minor
+	spelling and usage errors.  Use @enumerate rather than @table
+	@samp, since it's better for Q&A format.  Add cross
+	references.
+
+
+1999-11-01 Alain Magloire
 
 	* src/search.c: Use the more portable [[:alnum:]]
 	to define a word instead of Ascii dependent [0-9A-Za-z]

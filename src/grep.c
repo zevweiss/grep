@@ -489,7 +489,6 @@ static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
 static int suppress_errors;	/* Suppress diagnostics.  */
-static int not_text;		/* Whether or not the file is "text" */
 
 /* Internal variables to keep track of byte count, context, etc. */
 static off_t totalcc;		/* Total character count before bufbeg. */
@@ -643,7 +642,7 @@ prtext (beg, lim, nlinesp)
     if (!out_quiet)
       prline (beg, lim, ':');
 
-  pending = (not_text) ? 0 : out_after;
+  pending = out_quiet ? 0 : out_after;
   used = 1;
 }
 
@@ -699,6 +698,7 @@ grep (fd, file, stats)
      struct stats *stats;
 {
   int nlines, i;
+  int not_text;
   size_t residue, save;
   char *beg, *lim;
   char eol = eolbyte;

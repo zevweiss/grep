@@ -770,124 +770,144 @@ should avoid it.
 @node Usage
 @chapter Usage
 
-@sc{gnu} @command{grep} comes with a variety of options.  The general form
-is to specified optionnal flags, the pattern and the file(s).
+Here is an example shell command that invokes @sc{gnu} @command{grep}:
 
-@table @samp
-
-@item How to disable case sensitive search ?
-The option @samp{--ignore-case}, @samp{-i} will find the pattern
-ignoring the distinction between uppercase and lowercase.
 @example
-grep -i ghislaine /etc/password
+grep -i 'hello.*world' menu.h main.c
 @end example
 
-@item How to get only the filenames that matches ?
-The @samp{--files-with-matches}, @samp{-l}, for example, it can be use with
-the backquote shell construct to edit a certain number of files.
+This lists all lines in the files @file{menu.h} and @file{main.c} that
+contain the string @samp{hello} followed by the string @samp{world};
+this is because @samp{.*} matches zero or more characters within a line.
+@xref{Regular Expressions}.  The @samp{-i} option causes @command{grep}
+to ignore case, causing it to match the line @samp{Hello, world!}, which
+it would not otherwise match.  @xref{Invoking}, for more details about
+how to invoke @command{grep}.
+
+Here are some common questions and answers about @command{grep} usage.
+
+@enumerate
+
+@item
+How can I list just the names of matching files?
+
 @example
-vi `grep -l main *.c`
+grep -l 'main' *.c
 @end example 
 
-@item How do I search recursively directories ?
-Searching files recursively through directories can be done in many
-ways using a combination of @command{find}, @command{grep} and @command{xargs}.
+lists the names of all C files in the current directory whose contents
+mention @samp{main}.
+
+@item
+How do I search directories recursively?
+
 @example
-find /home/gigi -type f -print | xargs grep "[Gg]hislaine" /dev/null
-@end example
-Starting from version 2.3, the recommanded solution is to use
-@samp{--directories=recurse} or the short-hands @samp{--recurse}, @samp{-r}.
-@example
-grep -r "[Gg]hislaine" /home/gigi
+grep -r 'hello' /home/gigi
 @end example
 
-@item What to do if a pattern has a leading '-'?
-@sc{gnu} @code{getopt} understands '--'.  If looking for pattern '-r,'
+searches for @samp{hello} in all files under the directory
+@file{/home/gigi}.  For more control of which files are searched, use
+@command{find}, @command{grep} and @command{xargs}.  For example,
+the following command searches only C files:
+
 @example
-grep --help | grep -- -r,
+find /home/gigi -name '*.c' -print | xargs grep 'hello' /dev/null
+@end example
+
+@item
+What if a pattern has a leading @samp{-}?
+
+@example
+grep -e '--cut here--' *
 @end example 
-For POSIX.2 implementations, the option @samp{-e} is handy.
+
+searches for all lines matching @samp{--cut here--}.  Without @samp{-e},
+@command{grep} would attempt to parse @samp{--cut here--} as a list of
+options.
+
+@item
+Suppose I want to search for a whole word, not a part of a word?
+
 @example
-grep --help | grep -e -r,
+grep -w 'hello' *
 @end example
 
-@item If I want to search for a whole word, not a pattern part of a word ?
-Option @samp{-w}.  For example for the word 'as' not for 'case' .
+searches only for instances of @samp{hello} that are entire words; it
+does not match @samp{Othello}.  For more control, use @samp{\<} and
+@samp{\>} to match the start and end of words.  For example:
+
 @example
-grep --help | grep -w as
-@end example
-In fact @samp{--word-regexp} is a short-hand for this:
-@example
-grep --help | grep -E -e '[^[:alpha:]]as[^[:alpha:]]' 
-@end example
-Another way is to use the special symbols.
-@example
-grep --help | grep -E -e '\<as\>'
+grep 'hello\>' *
 @end example
 
-@item How to get some context with grep ?
-Use options @samp{--before-context}, @samp{--after-context} or @samp{--context}
+searches only for words ending in @samp{hello}, so it matches the word
+@samp{Othello}.
+
+@item
+How do I output context around the matching lines?
+
 @example
-grep -C 4 -i paul /etc/passwd
+grep -C 2 'hello' *
 @end example
 
-@item How do I force grep to print the name of the file ?
-When searching in one file @command{grep} does not show the
-filename, this can be a problem when running scripts.  The usual
-way is to add "/dev/null" as an empty file.
-@example
-grep eli /etc/passwd /dev/null
-@end example
-The option @samp{-H}, @samp{--with-filename}
-@example
-grep -H eli /etc/passwd
-@end example
+prints two lines of context around each matching line.
 
-@item When I use the @{@var{n},@var{m}@}, it does not work, is my regex correct ?
-Many versions of @command{egrep} does not support intervals, but starting
-from version 2.4, @sc{gnu} @command{egrep} will be equivalent to @code{grep -E}
-that supports intervals.
+@item
+How do I force grep to print the name of the file?
 
-@item I saw someone do these  .. why ?
+Append @file{/dev/null}:
+
 @example
-ps -ef | grep '[p]attern'
-ps -ef | grep \\pattern
-ps -ef | grep .pattern
-@end example
-The command line no longer matches what you are grepping, thus eliminating
-it from the output.  It's more reliable then using @samp{-v}.
-@example
-ps -ef | grep pattern | grep -v grep
-@end example
-which as the side effect of filtering any command with the pattern "grep".
-
-@item @command{grep} says "Binary file matches", when doing searches ?
-Doing search on binary files can be a problem since @command{grep} will spit out
-data that will muck the terminal.  @sc{gnu} @command{grep} will try to guess
-the type of the file and suppress the output.  Option @samp{--text} will
-force @command{grep} to consider every thing as text, if you need this option
-permantely use environ GREP_OPTIONS.
-
-@item @samp{-v}, @samp{-l} does not seem to work ?
-To have the name of files that does no contain the pattern, use
-@samp{-L}, @samp{--files-without-match}.
-
-@item I can do OR with | but what about AND ?
-@command{grep} is doing the parsing on each line, if you are looking
-for pattern1 and pattern2 to be on the line then you can cascade grep.
-@example
-grep -i -e paul /etc/motd | grep -i -e franc,ois
+grep 'eli' /etc/passwd /dev/null
 @end example
 
-@item How to seach in both stdin and files, I need it for my scripts ?
-Use the special filename @samp{-}.  Some OS allows to open stdin via 
-the file sytem.
+@item
+Why do people use strange regular expressions on @command{ps} output?
+
 @example
-cat /etc/passwd | grep alain - /etc/motd
-cat /etc/passwd | grep alain /dev/fd/0 /etc/motd
+ps -ef | grep '[c]ron'
 @end example
 
-@end table
+If the pattern had been written without the square brackets, it would
+have matched not only the @command{ps} output line for @command{cron},
+but also the @command{ps} output line for @command{grep}.
+
+@item
+Why does @command{grep} report ``Binary file matches''?
+
+If @command{grep} listed all matching ``lines'' from a binary file, it
+would probably generate output that is not useful, and it might even
+muck up your display.  So @sc{gnu} @command{grep} suppresses output from
+files that appear to be binary files.  To force @sc{gnu} @command{grep}
+to output lines even from files that appear to be binary, use the
+@samp{-a} or @samp{--text} option.
+
+@item
+Why doesn't @samp{grep -lv} print nonmatching file names?
+
+@samp{grep -lv} lists the names of all files containing one or more
+lines that do not match.  To list the names of all files that contain no
+matching lines, use the @samp{-L} or @samp{--files-without-match}
+option.
+
+@item
+I can do @sc{or} with @samp{|}, but what about @sc{and}?
+
+@example
+grep 'paul' /etc/motd | grep 'franc,ois'
+@end example
+
+finds all lines that contain both @samp{paul} and @samp{franc,ois}.
+
+@item
+How can I seach in both standard intput and in files?
+
+Use the special file name @samp{-}:
+
+@example
+cat /etc/passwd | grep 'alain' - /etc/motd
+@end example
+@end enumerate
 
 @node Reporting Bugs
 @chapter Reporting bugs
