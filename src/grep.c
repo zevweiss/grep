@@ -217,13 +217,11 @@ context_length_arg (char const *str, int *out)
 
 /* Hairy buffering mechanism for grep.  The intent is to keep
    all reads aligned on a page boundary and multiples of the
-   page size. */
+   page size, unless a read yields a partial page.  */
 
-static char *ubuffer;		/* Unaligned base of buffer. */
 static char *buffer;		/* Base of buffer. */
-static size_t bufsalloc;	/* Allocated size of buffer save region. */
-static size_t bufalloc;		/* Total buffer size. */
-#define PREFERRED_SAVE_FACTOR 5	/* Preferred value of bufalloc / bufsalloc.  */
+static size_t bufalloc;		/* Allocated buffer size, counting slop. */
+#define INITIAL_BUFSIZE 32768	/* Initial buffer size, not counting slop. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
@@ -247,53 +245,22 @@ static off_t initial_bufoffset;	/* Initial value of bufoffset. */
    ? (val) \
    : (val) + ((alignment) - (size_t) (val) % (alignment)))
 
-/* Return the address of a page-aligned buffer of size SIZE,
-   reallocating it from *UP.  Set *UP to the newly allocated (but
-   possibly unaligned) buffer used to build the aligned buffer.  To
-   free the buffer, free (*UP).  */
-static char *
-page_alloc (size_t size, char **up)
-{
-  size_t asize = size + pagesize - 1;
-  if (size <= asize)
-    {
-      char *p = *up ? realloc (*up, asize) : malloc (asize);
-      if (p)
-	{
-	  *up = p;
-	  return ALIGN_TO (p, pagesize);
-	}
-    }
-  return NULL;
-}
-
 /* Reset the buffer for a new file, returning zero if we should skip it.
    Initialize on the first time through. */
 static int
 reset (int fd, char const *file, struct stats *stats)
 {
-  if (pagesize)
-    bufsalloc = ALIGN_TO (bufalloc / PREFERRED_SAVE_FACTOR, pagesize);
-  else
+  if (! pagesize)
     {
-      size_t ubufsalloc;
       pagesize = getpagesize ();
-      if (pagesize == 0)
+      if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
 	abort ();
-#ifndef BUFSALLOC
-      ubufsalloc = MAX (8192, pagesize);
-#else
-      ubufsalloc = BUFSALLOC;
-#endif
-      bufsalloc = ALIGN_TO (ubufsalloc, pagesize);
-      bufalloc = PREFERRED_SAVE_FACTOR * bufsalloc;
-      if (bufsalloc < ubufsalloc
-	  || bufalloc / PREFERRED_SAVE_FACTOR != bufsalloc
-	  || ! (buffer = page_alloc (bufalloc, &ubuffer)))
-	fatal (_("memory exhausted"), 0);
+      bufalloc = ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + 1;
+      buffer = xmalloc (bufalloc);
     }
 
-  buflim = buffer;
+  bufbeg = buflim = ALIGN_TO (buffer + 1, pagesize);
+  bufbeg[-1] = eolbyte;
   bufdesc = fd;
 
   if (fstat (fd, &stats->stat) != 0)
@@ -339,69 +306,72 @@ fillbuf (size_t save, struct stats const *stats)
 {
   size_t fillsize = 0;
   int cc = 1;
+  char *readbuf;
   size_t readsize;
 
-  /* Offset from start of unaligned buffer to start of old stuff
+  /* Offset from start of buffer to start of old stuff
      that we want to save.  */
-  size_t saved_offset = buflim - ubuffer - save;
+  size_t saved_offset = buflim - save - buffer;
 
-  if (bufsalloc < save)
+  if (pagesize <= buffer + bufalloc - buflim)
     {
-      size_t aligned_save = ALIGN_TO (save, pagesize);
-      size_t maxalloc = (size_t) -1;
+      readbuf = buflim;
+      bufbeg = buflim - save;
+    }
+  else
+    {
+      size_t minsize = save + pagesize;
+      size_t maxsize = (size_t) -1;
+      size_t newsize;
       size_t newalloc;
 
-      if (S_ISREG (stats->stat.st_mode))
-	{
-	  /* Calculate an upper bound on how much memory we should allocate.
-	     We can't use ALIGN_TO here, since off_t might be longer than
-	     size_t.  Watch out for arithmetic overflow.  */
-	  off_t to_be_read = stats->stat.st_size - bufoffset;
-	  size_t slop = to_be_read % pagesize;
-	  off_t aligned_to_be_read = to_be_read + (slop ? pagesize - slop : 0);
-	  off_t maxalloc_off = aligned_save + aligned_to_be_read;
-	  if (0 <= maxalloc_off && maxalloc_off == (size_t) maxalloc_off)
-	    maxalloc = maxalloc_off;
-	}
-
-      /* Grow bufsalloc until it is at least as great as `save'; but
-	 if there is an overflow, just grow it to the next page boundary.  */
-      while (bufsalloc < save)
-	if (bufsalloc < bufsalloc * 2)
-	  bufsalloc *= 2;
-	else
+      /* Grow newsize until it is at least as great as minsize.  */
+      for (newsize = bufalloc; newsize < minsize; newsize *= 2)
+	if (newsize * 2 <= newsize)
 	  {
-	    bufsalloc = aligned_save;
+	    newsize = minsize;
 	    break;
 	  }
 
-      /* Grow the buffer size to be PREFERRED_SAVE_FACTOR times
-	 bufsalloc....  */
-      newalloc = PREFERRED_SAVE_FACTOR * bufsalloc;
-      if (maxalloc < newalloc)
+      if (S_ISREG (stats->stat.st_mode))
 	{
-	  /* ... except don't grow it more than a pagesize past the
-	     file size, as that might cause unnecessary memory
-	     exhaustion if the file is large.  */
-	  newalloc = maxalloc;
-	  bufsalloc = aligned_save;
+	  /* Calculate an upper bound on how much memory to allocate.
+	     Watch out for arithmetic overflow.  */
+	  off_t to_be_read = stats->stat.st_size - bufoffset;
+	  off_t maxsize_off = save + to_be_read;
+	  if (0 <= to_be_read && to_be_read <= maxsize_off
+	      && maxsize_off == (size_t) maxsize_off
+	      && minsize <= (size_t) maxsize_off)
+	    maxsize = maxsize_off;
 	}
+
+      /* Double the buffer size, except don't let it overflow, and
+	 don't let it grow past the file size as that might cause
+	 unnecessary memory exhaustion if the file is large.  */
+      newsize = (newsize * 2 / 2 == newsize && newsize * 2 < maxsize
+		 ? newsize * 2 : maxsize);
+
+      /* Add enough room so that the buffer is aligned and has room
+	 for byte sentinels fore and aft.  */
+      newalloc = newsize + pagesize + 1;
 
       /* Check that the above calculations made progress, which might
          not occur if there is arithmetic overflow.  If there's no
 	 progress, or if the new buffer size is larger than the old
 	 and buffer reallocation fails, report memory exhaustion.  */
-      if (bufsalloc < save || newalloc < save
-	  || (newalloc == save && newalloc != maxalloc)
+      if (newalloc <= minsize
 	  || (bufalloc < newalloc
-	      && ! (buffer
-		    = page_alloc ((bufalloc = newalloc) + 1, &ubuffer))))
+	      && ! (buffer = xrealloc (buffer, bufalloc = newalloc))))
 	fatal (_("memory exhausted"), 0);
+
+      readbuf = ALIGN_TO (buffer + 1 + save, pagesize);
+      bufbeg = readbuf - save;
+      memmove (bufbeg, buffer + saved_offset, save);
+      bufbeg[-1] = eolbyte;
     }
 
-  bufbeg = buffer + bufsalloc - save;
-  memmove (bufbeg, ubuffer + saved_offset, save);
-  readsize = bufalloc - bufsalloc;
+  readsize = buffer + bufalloc - readbuf;
+  readsize -= readsize % pagesize;
 
 #if defined(HAVE_MMAP)
   if (bufmapped)
@@ -417,7 +387,7 @@ fillbuf (size_t save, struct stats const *stats)
 	}
 
       if (mmapsize
-	  && (mmap ((caddr_t) (buffer + bufsalloc), mmapsize,
+	  && (mmap ((caddr_t) readbuf, mmapsize,
 		    PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_FIXED,
 		    bufdesc, bufoffset)
 	      != (caddr_t) -1))
@@ -448,7 +418,7 @@ fillbuf (size_t save, struct stats const *stats)
   if (! fillsize)
     {
       ssize_t bytesread;
-      while ((bytesread = read (bufdesc, buffer + bufsalloc, readsize)) < 0
+      while ((bytesread = read (bufdesc, readbuf, readsize)) < 0
 	     && errno == EINTR)
 	continue;
       if (bytesread < 0)
@@ -460,9 +430,9 @@ fillbuf (size_t save, struct stats const *stats)
   bufoffset += fillsize;
 #if HAVE_DOS_FILE_CONTENTS
   if (fillsize)
-    fillsize = undossify_input (buffer + bufsalloc, fillsize);
+    fillsize = undossify_input (readbuf, fillsize);
 #endif
-  buflim = buffer + bufsalloc + fillsize;
+  buflim = readbuf + fillsize;
   return cc;
 }
 
@@ -518,16 +488,11 @@ add_count (uintmax_t a, uintmax_t b)
 static void
 nlscan (char const *lim)
 {
-  if (out_line)
-    {
-      size_t newlines = 0;
-      char const *beg;
-      for (beg = lastnl;
-	   beg != lim;
-	   beg = memchr (beg, eolbyte, lim - beg), beg++)
-	newlines++;
-      totalnl = add_count (totalnl, newlines);
-    }
+  size_t newlines = 0;
+  char const *beg;
+  for (beg = lastnl; beg != lim; beg = memchr (beg, eolbyte, lim - beg), beg++)
+    newlines++;
+  totalnl = add_count (totalnl, newlines);
   lastnl = lim;
 }
 
@@ -620,7 +585,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	if (p > bp)
 	  do
 	    --p;
-	  while (p > bp && p[-1] != eol);
+	  while (p[-1] != eol);
 
       /* We only print the "--" separator if our output is
 	 discontiguous from the last output in the file. */
@@ -721,7 +686,9 @@ grep (int fd, char const *file, struct stats *stats)
   int nlines, i;
   int not_text;
   size_t residue, save;
-  char const *beg, *lim;
+  char oldc;
+  char *beg;
+  char *lim;
   char eol = eolbyte;
 
   if (!reset (fd, file, stats))
@@ -769,16 +736,22 @@ grep (int fd, char const *file, struct stats *stats)
       if (lastout)
 	lastout = bufbeg;
 
-      /* no more data to scan (eof) except for maybe a residue -> break */
-      if (buflim - bufbeg == save)
-	break;
+      beg = bufbeg + save;
 
-      beg = bufbeg + save - residue;
+      /* no more data to scan (eof) except for maybe a residue -> break */
+      if (beg == buflim)
+	break;
 
       /* Determine new residue (the length of an incomplete line at the end of
          the buffer, 0 means there is no incomplete last line).  */
-      for (lim = buflim; lim > beg && lim[-1] != eol; --lim)
-	;
+      oldc = beg[-1];
+      beg[-1] = eol;
+      for (lim = buflim; lim[-1] != eol; lim--)
+	continue;
+      beg[-1] = oldc;
+      if (lim == beg)
+	lim = beg - residue;
+      beg -= residue;
       residue = buflim - lim;
 
       if (beg < lim)
@@ -801,7 +774,7 @@ grep (int fd, char const *file, struct stats *stats)
 	  ++i;
 	  do
 	    --beg;
-	  while (beg > bufbeg && beg[-1] != eol);
+	  while (beg[-1] != eol);
 	}
 
       /* detect if leading context is discontinuous from last printed line.  */

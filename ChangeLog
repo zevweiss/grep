@@ -1,4 +1,31 @@
-2000-05-24  Paul Eggert  <eggert@twinsun.com>
+2000-05-27  Paul Eggert
+
+	Simplify and tune the buffer allocation strategy.  Do not reserve a
+	large save area: reserve only enough bytes to hold the residue, plus
+	page alignment.  Put a newline sentinel before the buffer, for speed
+	when searching backwards for newline.
+
+	* src/grep.c (ubuffer, bufsalloc, PREFERRED_SAVE_FACTOR, page_alloc):
+	Remove.  All uses changed.
+	(INITIAL_BUFSIZE): New macro.
+	(reset, fillbuf): Use simpler buffer allocation strategy.
+	(reset): Check for preposterously large pagesize that would cause
+	later calculations to overflow.
+	(fillbuf): Do not resize buffer if there's room at the end for
+	at least one more page.  This greatly increases performance when
+	reading from non-regular files that contain no newlines.
+	When growing the buffer, double its size instead of using a
+	more complicated algorithm.
+	(prtext, grep): Speed up by relying on the newline sentinel before the
+	start of the buffer.
+	(grep): When looking backwards for the last newline in a buffer,
+	stop when we hit the residue, since it can't contain a newline.
+	This avoids an O(N**2) algorithm when reading binary data from
+	a pipe.  Use a sentinel to speed up the backward search for newline.
+	(nlscan): Undo previous change; it wasn't needed and just complicates
+	and slows down the code a tad.
+
+2000-05-24  Paul Eggert
 
 	Handle very large input counts better. Bug noted by Jim Meyering.
 
