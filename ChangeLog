@@ -1,3 +1,8 @@
+1999-03-05  Eli Zaretskii
+
+	* src/grep.c (main): Print the name of the default matcher instead
+	of just "grep".                                                        
+
 1999-02-06 Alain Magloire
 
 	* tests/*.awk : Linux users are seeing "Broken Pipe" on make check.

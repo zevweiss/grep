@@ -1258,7 +1258,7 @@ main (argc, argv)
 
   if (show_version)
     {
-      printf (_("grep (GNU grep) %s\n"), VERSION);
+      printf (_("%s (GNU grep) %s\n"), default_matcher, VERSION);
       printf ("\n");
       printf (_("\
 Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"));
