@@ -1,5 +1,6 @@
 2002-01-23  Bernhard Rosenkraenzer <bero@redhat.com>
 	* configure.in: Version 2.5g
+	* Makefile.cvs, grep.spec: Add packaging tools
 	Merge djgpp changes from Andrew Cottrell <anddjgpp@ihug.coml.au>:
 	* src/grep.c: Added conditional compilation for DJGPP
 	* djgpp: remove directory as it is no longer required with DJGPP 2.03
