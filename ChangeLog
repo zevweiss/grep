@@ -3,6 +3,8 @@
 	* src/grep.1: update the man pages according to the
 	changes make by Miles.
 
+	* po/*.po: updated.
+
 	* first beta release for 2.3 (2.2a).
 
 1998-11-04 Miles Bader
