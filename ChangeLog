@@ -1,4 +1,10 @@
-2000-03-26  Paul Eggert  <eggert@twinsun.com>
+2000-04-06  Paul Eggert
+
+	* doc/grep.1, doc/grep.texi, NEWS: Improve the explanation of
+	locale-dependent behavior of range expressions.  Mention
+	LC_COLLATE, since this affects range expressions.
+
+2000-03-26  Paul Eggert
 
 	* Makefile.am (ACINCLUDE_INPUTS): Add decl.m4, inttypes_h.m4,
 	uintmax_t.m4, ulonglong.m4, xstrtoumax.m4.
@@ -27,7 +33,7 @@
 	New files, taken unchanged from textutils, fileutils, sh-utils
 	and/or tar.
 
-2000-03-23  Paul Eggert  <eggert@twinsun.com>
+2000-03-23  Paul Eggert
 
 	* src/search.c (Pcompile): Add support for NUL bytes in
 	Perl regular expressions.

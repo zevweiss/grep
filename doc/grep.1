@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.13 2001/02/08 05:33:57 alainm Exp $
+.Id $Id: grep.1,v 1.14 2001/02/08 15:03:50 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -395,11 +395,13 @@ a single character.  Most characters, including all letters and digits,
 are regular expressions that match themselves.  Any metacharacter with
 special meaning may be quoted by preceding it with a backslash.
 .PP
-A list of characters enclosed by
+A
+.I "bracket expression"
+is a list of characters enclosed by
 .B [
 and
-.B ]
-matches any single
+.BR ] .
+It matches any single
 character in that list; if the first character of the list
 is the caret
 .B ^
@@ -408,10 +410,32 @@ then it matches any character
 in the list.
 For example, the regular expression
 .B [0123456789]
-matches any single digit.  A range of characters
-may be specified by giving the first and last characters, separated
-by a hyphen.
-Finally, certain named classes of characters are predefined.
+matches any single digit.
+.PP
+Within a bracket expression, a
+.I "range expression"
+consists of two characters separated by a hyphen.
+It matches any single character that sorts between the two characters,
+inclusive, using the locale's collating sequence and character set.
+For example, in the default C locale,
+.B [a\-d]
+is equivalent to
+.BR [abcd] .
+Many locales sort characters in dictionary order, and in these locales
+.B [a\-d]
+is typically not equivalent to
+.BR [abcd] ;
+it might be equivalent to
+.BR [aBbCcDd] ,
+for example.
+To obtain the traditional interpretation of bracket expressions,
+you can use the C locale by setting the
+.B LC_ALL
+environment variable to the value
+.BR C .
+.PP
+Finally, certain named classes of characters are predefined within
+bracket expressions, as follows.
 Their names are self explanatory, and they are
 .BR [:alnum:] ,
 .BR [:alpha:] ,
@@ -428,8 +452,8 @@ and
 For example,
 .B [[:alnum:]]
 means
-.BR [0-9A-Za-z] ,
-except the latter form depends upon the \s-1POSIX\s0 locale and the
+.BR [0\-9A\-Za\-z] ,
+except the latter form depends upon the C locale and the
 \s-1ASCII\s0 character encoding, whereas the former is independent
 of locale and character set.
 (Note that the brackets in these class names are part of the symbolic
@@ -576,6 +600,29 @@ instead of reporting a syntax error in the regular expression.
 \s-1POSIX.2\s0 allows this behavior as an extension, but portable scripts
 should avoid it.
 .SH "ENVIRONMENT VARIABLES"
+Grep's behavior is affected by the following environment variables.
+.PP
+A locale
+.BI LC_ foo
+is specified by examining the three environment variables
+.BR LC_ALL ,
+.BR LC_\fIfoo\fP ,
+.BR LANG ,
+in that order.
+The first of these variables that is set specifies the locale.
+For example, if
+.B LC_ALL
+is not set, but
+.B LC_MESSAGES
+is set to
+.BR pt_BR ,
+then Brazilian Portuguese is used for the
+.B LC_MESSAGES
+locale.
+The C locale is used if none of these environment variables are set,
+or if the locale catalog is not installed, or if
+.B grep
+was not compiled with national language support (\s-1NLS\s0).
 .TP
 .B GREP_OPTIONS
 This variable specifies default options to be placed in front of any
@@ -593,28 +640,26 @@ Option specifications are separated by whitespace.
 A backslash escapes the next character,
 so it can be used to specify an option containing whitespace or a backslash.
 .TP
-\fBLC_ALL\fP, \fBLC_MESSAGES\fP, \fBLANG\fP
+\fBLC_ALL\fP, \fBLC_COLLATE\fP, \fBLANG\fP
 These variables specify the
-.B LC_MESSAGES
-locale, which determines the language that
-.B grep
-uses for messages.
-The locale is determined by the first of these variables that is set.
-American English is used if none of these environment variables are set,
-or if the message catalog is not installed, or if
-.B grep
-was not compiled with national language support (\s-1NLS\s0).
+.B LC_COLLATE
+locale, which determines the collating sequence used to interpret
+range expressions like
+.BR [a\-z] .
 .TP
 \fBLC_ALL\fP, \fBLC_CTYPE\fP, \fBLANG\fP
 These variables specify the
 .B LC_CTYPE
 locale, which determines the type of characters, e.g., which
 characters are whitespace.
-The locale is determined by the first of these variables that is set.
-The \s-1POSIX\s0 locale is used if none of these environment variables
-are set, or if the locale catalog is not installed, or if
+.TP
+\fBLC_ALL\fP, \fBLC_MESSAGES\fP, \fBLANG\fP
+These variables specify the
+.B LC_MESSAGES
+locale, which determines the language that
 .B grep
-was not compiled with national language support (\s-1NLS\s0).
+uses for messages.
+The default C locale uses American English messages.
 .TP
 .B POSIXLY_CORRECT
 If set,

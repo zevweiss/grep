@@ -1,3 +1,10 @@
+  - Bracket regular expressions like [a-z] are now locale-dependent,
+    as POSIX.2 requires.  For example, many locales sort characters in
+    dictionary order, and in these locales the regular expression
+    [a-d] is not equivalent to [abcd]; it might be equivalent to
+    [aBbCcDd], for example.  To obtain the traditional interpretation
+    of bracket expressions, you can use the C locale by setting the
+    LC_ALL environment variable to the value "C".
 
   - The new -P or --perl-regexp option tells grep to interpert the pattern as
     a Perl regular expression.

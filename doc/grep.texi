@@ -501,9 +501,20 @@ matching engine is used.  @xref{Grep Programs}.
 @section Environment Variables
 
 Grep's behavior is affected by the following environment variables.
+
+A locale @code{LC_@var{foo}} is specified by examining the three
+environment variables @env{LC_ALL}, @env{LC_@var{foo}}, and @env{LANG},
+in that order.  The first of these variables that is set specifies the
+locale.  For example, if @env{LC_ALL} is not set, but @env{LC_MESSAGES}
+is set to @samp{pt_BR}, then Brazilian Portuguese is used for the
+@code{LC_MESSAGES} locale.  The C locale is used if none of these
+environment variables are set, or if the locale catalog is not
+installed, or if @command{grep} was not compiled with national language
+support (@sc{nls}).
+
 @cindex environment variables
 
-@table @code
+@table @env
 
 @item GREP_OPTIONS
 @vindex GREP_OPTIONS
@@ -518,22 +529,17 @@ whitespace.  A backslash escapes the next character, so it can be used to
 specify an option containing whitespace or a backslash.
 
 @item LC_ALL
-@itemx LC_MESSAGES
+@itemx LC_COLLATE
 @itemx LANG
 @vindex LC_ALL
-@vindex LC_MESSAGES
+@vindex LC_COLLATE
 @vindex LANG
-@cindex language of messages
-@cindex message language
+@cindex character type
 @cindex national language support
 @cindex NLS
-@cindex translation of message language
-These variables specify the @code{LC_MESSAGES} locale, which determines
-the language that @command{grep} uses for messages.  The locale is determined
-by the first of these variables that is set.  American English is used
-if none of these environment variables are set, or if the message
-catalog is not installed, or if @command{grep} was not compiled with national
-language support (@sc{nls}).
+These variables specify the @code{LC_COLLATE} locale, which determines
+the collating sequence used to interpret range expressions like
+@samp{[a-z]}.
 
 @item LC_ALL
 @itemx LC_CTYPE
@@ -545,11 +551,22 @@ language support (@sc{nls}).
 @cindex national language support
 @cindex NLS
 These variables specify the @code{LC_CTYPE} locale, which determines the
-type of characters, e.g., which characters are whitespace.  The locale is
-determined by the first of these variables that is set.  The @sc{posix}
-locale is used if none of these environment variables are set, or if the
-locale catalog is not installed, or if @command{grep} was not compiled with
-national language support (@sc{nls}).
+type of characters, e.g., which characters are whitespace.
+
+@item LC_ALL
+@itemx LC_MESSAGES
+@itemx LANG
+@vindex LC_ALL
+@vindex LC_MESSAGES
+@vindex LANG
+@cindex language of messages
+@cindex message language
+@cindex national language support
+@cindex NLS
+@cindex translation of message language
+These variables specify the @code{LC_MESSAGES} locale, which determines
+the language that @command{grep} uses for messages.  The default C
+locale uses American English messages.
 
 @item POSIXLY_CORRECT
 @vindex POSIXLY_CORRECT
@@ -649,17 +666,31 @@ The fundamental building blocks are the regular expressions that match
 a single character.  Most characters, including all letters and digits,
 are regular expressions that match themselves.  Any metacharacter
 with special meaning may be quoted by preceding it with a backslash.
-A list of characters enclosed by @samp{[} and @samp{]} matches any
+
+@cindex bracket expression
+A @dfn{bracket expression} is a list of characters enclosed by @samp{[} and
+@samp{]}.  It matches any
 single character in that list; if the first character of the list is the
 caret @samp{^}, then it
 matches any character @strong{not} in the list.  For example, the regular
 expression @samp{[0123456789]} matches any single digit.
-A range of characters may be specified by giving the first
-and last characters, separated by a hyphen.
 
-Finally, certain named classes of characters are predefined, as follows.
+@cindex range expression
+Within a bracket expression, a @dfn{range expression} consists of two
+characters separated by a hyphen.  It matches any single character that
+sorts between the two characters, inclusive, using the locale's
+collating sequence and character set.  For example, in the default C
+locale, @samp{[a-d]} is equivalent to @samp{[abcd]}.  Many locales sort
+characters in dictionary order, and in these locales @samp{[a-d]} is
+typically not equivalent to @samp{[abcd]}; it might be equivalent to
+@samp{[aBbCcDd]}, for example.  To obtain the traditional interpretation
+of bracket expressions, you can use the C locale by setting the
+@env{LC_ALL} environment variable to the value @samp{C}.
+
+Finally, certain named classes of characters are predefined within
+bracket expressions, as follows.
 Their interpretation depends on the @code{LC_CTYPE} locale; the
-interpretation below is that of the @sc{posix} locale, which is the default
+interpretation below is that of the C locale, which is the default
 if no @code{LC_CTYPE} locale is specified.
 
 @cindex classes of characters
@@ -743,7 +774,7 @@ Hexadecimal digits:
 
 @end table
 For example, @samp{[[:alnum:]]} means @samp{[0-9A-Za-z]}, except the latter
-depends upon the @sc{posix} locale and the @sc{ascii} character
+depends upon the C locale and the @sc{ascii} character
 encoding, whereas the former is independent of locale and character set.
 (Note that the brackets in these class names are
 part of the symbolic names, and must be included in addition to
