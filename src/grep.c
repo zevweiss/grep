@@ -188,7 +188,7 @@ context_length_arg (char const *str, int *out)
 	 && 0 <= (*out = value)
 	 && *out == value))
     {
-      error (2, 0, "%s: %s: %s\n", str, _("invalid context length argument"));
+      error (2, 0, "%s: %s\n", str, _("invalid context length argument"));
     }
 }
 
