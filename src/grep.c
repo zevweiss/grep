@@ -540,6 +540,7 @@ prline (char const *beg, char const *lim, int sep)
 	  fputs("\n", stdout);
 	  beg = b + match_size;
         }
+      lastout = lim;
       if(line_buffered)
 	fflush(stdout);
       return;
@@ -548,6 +549,32 @@ prline (char const *beg, char const *lim, int sep)
     {
       size_t match_size;
       size_t match_offset;
+      if(match_icase)
+        {
+	  /* Yuck, this is tricky */
+          char *ibeg, *ilim;
+	  int i;
+	  ibeg=(char*)malloc(strlen(beg));
+	  ilim=ibeg+(lim-beg);
+	  for(i=0; i<strlen(beg); i++)
+	    ibeg[i]=tolower(beg[i]);
+	  while ((match_offset = (*execute) (ibeg, ilim - ibeg, &match_size, 1))
+	      != (size_t) -1)
+	    {
+	      char const *b=beg + match_offset;
+	      if(b == lim)
+		break;
+	      fwrite(beg, sizeof (char), match_offset, stdout);
+	      printf("\33[%sm", grep_color);
+	      fwrite(b, sizeof(char), match_size, stdout);
+	      fputs("\33[00m", stdout);
+	      beg = b + match_size;
+	      ibeg = ibeg + match_offset + match_size;
+	    }
+	  fwrite (beg, 1, lim - beg, stdout);
+	  lastout = lim;
+	  return;
+	}
       while ((match_offset = (*execute) (beg, lim - beg, &match_size, 1))
 	     != (size_t) -1)
 	{

@@ -97,6 +97,23 @@ dnl Many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(lib/regex.c)
 
+dnl Many people on non-GNU/Linux systems don't have getopt
+AC_CHECK_FUNC(getopt_long,
+  [
+    AC_ARG_WITH(included-getopt,
+      [  --with-included-getopt  Use the included getopt rather than glibc's],
+      with_getopt=$withval,
+      with_getopt=$no)
+    if test "x$with_getopt" = xyes; then
+      AC_SUBST(LIBOBJS)
+      LIBOBJS="$LIBOBJS getopt.$ac_objext getopt1.$ac_objext"
+    fi
+  ],
+  [
+    AC_SUBST(LIBOBJS)
+    LIBOBJS="$LIBOBJS getopt.$ac_objext getopt1.$ac_objext"
+  ])
+
 dnl Some installers want to be informed if we do not use our regex.
 dnl For example, if the host platform uses dynamic linking and the installer
 dnl knows that the grep may be invoked on other hosts with buggy libraries,

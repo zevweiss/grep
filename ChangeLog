@@ -1,6 +1,8 @@
 2001-11-19  Bernhard Rosenkraenzer <bero@redhat.com>
 	* src/grep.c: Add --only-matching (-o) switch (see NEWS)
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes
+	* configure.in, lib/Makefile.am: Don't use internal getopt if
+          we're on a system that provides a working getopt function
 
 2001-09-25  Bernhard Rosenkraenzer <bero@redhat.com>
 	* configure.in: Detect pcre correctly even when it's in

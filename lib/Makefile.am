@@ -9,7 +9,7 @@ INCLUDES = -I.. -I$(srcdir) -I../intl
 DEFS = -DLIBDIR=\"$(libdir)\" @DEFS@
 
 libgreputils_a_SOURCES = \
-  closeout.c error.c exclude.c getopt.c getopt1.c hard-locale.c \
+  closeout.c error.c exclude.c hard-locale.c \
   isdir.c obstack.c quotearg.c savedir.c xmalloc.c xstrtol.c  xstrtoumax.c
 
 libgreputils_a_LIBADD = @LIBOBJS@ @ALLOCA@
