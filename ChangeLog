@@ -1,5 +1,10 @@
 1999-09-12  Paul Eggert
 
+	* src/grep.c (fillbuf): Fix typo: we sometimes reported
+	arithmetic overflow even when there wasn't any.
+
+1999-09-12  Paul Eggert
+
 	* configure.in (AC_CHECK_FUNCS): Add memmove.
 
 	* src/system.h (S_ISREG): New macro.

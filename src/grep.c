@@ -378,7 +378,7 @@ fillbuf (save, stats)
          not occur if there is arithmetic overflow.  If there's no
 	 progress, or if the new buffer size is larger than the old
 	 and buffer reallocation fails, report memory exhaustion.  */
-      if (bufsalloc < save || newalloc <= bufsalloc
+      if (bufsalloc < save || newalloc <= save
 	  || (bufalloc < newalloc
 	      && ! (buffer
 		    = page_alloc ((bufalloc = newalloc) + 1, &ubuffer))))
