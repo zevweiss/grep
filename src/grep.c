@@ -60,7 +60,7 @@ static int mmap_option;
 
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C::EFGHIUVX:abcd:e:f:hiLlnqrsuvwxyZz";
+"0123456789A:B:C::EFGHIPUVX:abcd:e:f:hiLlm:nqrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -89,11 +89,13 @@ static struct option long_options[] =
   {"ignore-case", no_argument, NULL, 'i'},
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
+  {"max-count", required_argument, NULL, 'm'},
   {"mmap", no_argument, &mmap_option, 1},
   {"no-filename", no_argument, NULL, 'h'},
   {"no-messages", no_argument, NULL, 's'},
   {"null", no_argument, NULL, 'Z'},
   {"null-data", no_argument, NULL, 'z'},
+  {"pcre", no_argument, NULL, 'P'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
   {"regexp", required_argument, NULL, 'e'},
@@ -230,10 +232,15 @@ static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
 static off_t bufoffset;		/* Read offset; defined on regular files.  */
+static off_t after_last_match;	/* Pointer after last matching line that
+				   would have been output if we were
+				   outputting characters. */
 
 #if defined(HAVE_MMAP)
 static int bufmapped;		/* True if buffer is memory-mapped.  */
 static off_t initial_bufoffset;	/* Initial value of bufoffset. */
+#else
+# define bufmapped 0
 #endif
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
@@ -485,6 +492,9 @@ static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
 static int suppress_errors;	/* Suppress diagnostics.  */
+static int max_count;		/* Stop after outputting this many
+				   lines from an input file.
+				   FIXME: should be off_t.  */
 
 /* Internal variables to keep track of byte count, context, etc. */
 static off_t totalcc;		/* Total character count before bufbeg. */
@@ -493,8 +503,11 @@ static char *lastout;		/* Pointer after last character output;
 				   NULL if no character has been output
 				   or if it's conceptually before bufbeg. */
 static off_t totalnl;		/* Total newline count before lastnl. */
-static int pending;		/* Pending lines of output. */
-static int done_on_match;		/* Stop scanning file on first match */
+static int outleft;		/* Maximum number of lines to be output.
+				   FIXME: should be off_t.  */
+static int pending;		/* Pending lines of output.
+				   Always kept 0 if out_quiet is true.  */
+static int done_on_match;	/* Stop scanning file on first match */
 
 #if O_BINARY
 # include "dosbuf.c"
@@ -551,11 +564,12 @@ prline (char *beg, char *lim, int sep)
   lastout = lim;
 }
 
-/* Print pending lines of trailing context prior to LIM. */
+/* Print pending lines of trailing context prior to LIM. Trailing context ends
+   at the next matching line when OUTLEFT is 0.  */
 static void
 prpending (char *lim)
 {
-  char *nl;
+  char *nl, *endp, *b;
 
   if (!lastout)
     lastout = bufbeg;
@@ -566,12 +580,24 @@ prpending (char *lim)
 	++nl;
       else
 	nl = lim;
-      prline (lastout, nl, '-');
+
+      /* prline updates lastout to nl. */
+      if (outleft)
+	prline (lastout, nl, '-');
+      else
+	{
+	  b = (*execute)(lastout, nl - lastout, &endp);
+	  /* b <> 0 if match */
+	  if((b && out_invert) || (!b && !out_invert))
+	    prline (lastout, nl, '-');
+	  else
+	    pending = 0;
+	}
     }
 }
 
 /* Print the lines between BEG and LIM.  Deal with context crap.
-   If NLINESP is non-null, store a count of lines between BEG and LIM. */
+   If NLINESP is non-null, store a count of lines between BEG and LIM.  */
 static void
 prtext (char *beg, char *lim, int *nlinesp)
 {
@@ -612,7 +638,7 @@ prtext (char *beg, char *lim, int *nlinesp)
   if (nlinesp)
     {
       /* Caller wants a line count. */
-      for (n = 0; p < lim; ++n)
+      for (n = 0; p < lim && n < outleft; n++)
 	{
 	  if ((nl = memchr (p, eol, lim - p)) != 0)
 	    ++nl;
@@ -623,6 +649,9 @@ prtext (char *beg, char *lim, int *nlinesp)
 	  p = nl;
 	}
       *nlinesp = n;
+
+      /* relying on it that this function is never called when outleft = 0.  */
+      after_last_match = bufoffset - (buflim - p);
     }
   else
     if (!out_quiet)
@@ -653,14 +682,21 @@ grepbuf (char *beg, char *lim)
       if (!out_invert)
 	{
 	  prtext (b, endp, (int *) 0);
-	  nlines += 1;
-	  if (done_on_match)
-	    return nlines;
+	  nlines++;
+          outleft--;
+	  if (!outleft || done_on_match)
+	    {
+	      after_last_match = bufoffset - (buflim - endp);
+	      return nlines;
+	    }
 	}
       else if (p < b)
 	{
 	  prtext (p, b, &n);
 	  nlines += n;
+          outleft -= n;
+	  if (!outleft)
+	    return nlines;
 	}
       p = endp;
     }
@@ -668,6 +704,7 @@ grepbuf (char *beg, char *lim)
     {
       prtext (p, lim, &n);
       nlines += n;
+      outleft -= n;
     }
   return nlines;
 }
@@ -700,6 +737,8 @@ grep (int fd, char const *file, struct stats *stats)
   totalcc = 0;
   lastout = 0;
   totalnl = 0;
+  outleft = max_count;
+  after_last_match = 0;
   pending = 0;
 
   nlines = 0;
@@ -726,20 +765,32 @@ grep (int fd, char const *file, struct stats *stats)
       lastnl = bufbeg;
       if (lastout)
 	lastout = bufbeg;
+
+      /* no more data to scan (eof) except for maybe a residue -> break */
       if (buflim - bufbeg == save)
 	break;
+
       beg = bufbeg + save - residue;
+
+      /* Determine new residue (the length of an incomplete line at the end of
+         the buffer, 0 means there is no incomplete last line).  */
       for (lim = buflim; lim > beg && lim[-1] != eol; --lim)
 	;
       residue = buflim - lim;
+
       if (beg < lim)
 	{
-	  nlines += grepbuf (beg, lim);
+	  if (outleft)
+	    nlines += grepbuf (beg, lim);
 	  if (pending)
 	    prpending (lim);
-	  if (nlines && done_on_match && !out_invert)
+	  if((!outleft && !pending) || (nlines && done_on_match && !out_invert))
 	    goto finish_grep;
 	}
+
+      /* The last OUT_BEFORE lines at the end of the buffer will be needed as
+	 leading context if there is a matching line at the begin of the
+	 next data. Make beg point to their begin.  */
       i = 0;
       beg = lim;
       while (i < out_before && beg > bufbeg && beg != lastout)
@@ -749,8 +800,12 @@ grep (int fd, char const *file, struct stats *stats)
 	    --beg;
 	  while (beg > bufbeg && beg[-1] != eol);
 	}
+
+      /* detect if leading context is discontinuous from last printed line.  */
       if (beg != lastout)
 	lastout = 0;
+
+      /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
       totalcc += buflim - bufbeg - save;
       if (out_line)
@@ -765,9 +820,10 @@ grep (int fd, char const *file, struct stats *stats)
   if (residue)
     {
       *buflim++ = eol;
-      nlines += grepbuf (bufbeg + save - residue, buflim);
+      if (outleft)
+	nlines += grepbuf (bufbeg + save - residue, buflim);
       if (pending)
-	prpending (buflim);
+        prpending (buflim);
     }
 
  finish_grep:
@@ -798,7 +854,7 @@ grepfile (char const *file, struct stats *stats)
       if (desc < 0)
 	{
 	  int e = errno;
-	    
+
 	  if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
 	    {
 	      if (stat (file, &stats->stat) != 0)
@@ -809,7 +865,7 @@ grepfile (char const *file, struct stats *stats)
 
 	      return grepdir (file, stats);
 	    }
-	      
+
 	  if (!suppress_errors)
 	    {
 	      if (directories == SKIP_DIRECTORIES)
@@ -860,7 +916,15 @@ grepfile (char const *file, struct stats *stats)
       if (list_files == 1 - 2 * status)
 	printf ("%s%c", filename, '\n' & filename_mask);
 
-      if (file)
+      if (! file)
+	{
+	  off_t required_offset = outleft ? bufoffset : after_last_match;
+	  if ((bufmapped || required_offset != bufoffset)
+	      && lseek (desc, required_offset, SEEK_SET) < 0
+	      && S_ISREG (stats->stat.st_mode))
+	    error (filename, errno);
+	}
+      else
 	while (close (desc) != 0)
 	  if (errno != EINTR)
 	    {
@@ -949,7 +1013,8 @@ Regexp selection and interpretation:\n"), prog);
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression\n"));
+  -G, --basic-regexp        PATTERN is a basic regular expression\n\
+  -P, --pcre                PATTERN is a Perl Compatible Regular Expression\n"));
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -968,6 +1033,7 @@ Miscellaneous:\n\
       printf (_("\
 \n\
 Output control:\n\
+  -m, --max-count=NUM       stop after NUM matches\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
   -H, --with-filename       print the filename for each match\n\
@@ -995,7 +1061,7 @@ Context control:\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
-`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
+`egrep' means `grep -E'.  `fgrep' means `grep -F'. `pgrep' means `grep -P'.\n\
 With no FILE, or when FILE is -, read standard input.  If less than\n\
 two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
 and 2 if trouble.\n"));
@@ -1160,6 +1226,7 @@ main (int argc, char **argv)
   eolbyte = '\n';
   filename_mask = ~0;
 
+  max_count = INT_MAX;
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
   /* Default before/after context: chaged by -C/-NUM options */
@@ -1226,6 +1293,9 @@ main (int argc, char **argv)
 	break;
       case 'F':
 	setmatcher ("fgrep");
+	break;
+      case 'P':
+	setmatcher ("pgrep");
 	break;
       case 'G':
 	setmatcher ("grep");
@@ -1318,6 +1388,10 @@ main (int argc, char **argv)
 	out_quiet = 1;
 	list_files = 1;
 	done_on_match = 1;
+	break;
+      case 'm':
+	if (ck_atoi (optarg, &max_count))
+	  fatal (_("invalid max count"), 0);
 	break;
       case 'n':
 	out_line = 1;
@@ -1422,6 +1496,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     SET_BINARY (1);
 #endif
 
+  if (max_count == 0)
+    exit (1);
 
   if (optind < argc)
     {

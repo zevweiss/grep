@@ -27,6 +27,9 @@
 #include "regex.h"
 #include "dfa.h"
 #include "kwset.h"
+#ifdef HAVE_LIBPCRE
+# include <pcre.h>
+#endif
 
 #define NCHAR (UCHAR_MAX + 1)
 
@@ -35,6 +38,8 @@ static void Ecompile PARAMS((char *, size_t));
 static char *EGexecute PARAMS((char *, size_t, char **));
 static void Fcompile PARAMS((char *, size_t));
 static char *Fexecute PARAMS((char *, size_t, char **));
+static void Pcompile PARAMS((char *, size_t));
+static char *Pexecute PARAMS((char *, size_t, char **));
 static void kwsinit PARAMS((void));
 
 /* Here is the matchers vector for the main program. */
@@ -44,6 +49,7 @@ struct matcher matchers[] = {
   { "egrep", Ecompile, EGexecute },
   { "awk", Ecompile, EGexecute },
   { "fgrep", Fcompile, Fexecute },
+  { "pgrep", Pcompile, Pexecute },
   { 0, 0, 0 },
 };
 
@@ -419,3 +425,83 @@ Fexecute (char *buf, size_t size, char **endp)
     --beg;
   return beg;
 }
+
+#define	NILP	(unsigned char *)0
+
+static int  sub[300];	/* Could be less for grep, since we'll not be
+			 * using grouping quite often. We'll need at least
+			 * a few to allow back-references like \1 */
+static int  n_pcre = 0;
+static pcre *cre[255];
+
+static void
+Pcompile (char *pattern, size_t size)
+{
+#ifndef HAVE_LIBPCRE
+  fatal (_("PCRE not supported"), 0);
+#else
+  auto	int	e;
+  const	char	*ep;
+  register	char	*re, *p = pattern;
+  register	int	flags = 0, l;
+
+  while (*p && size > 0)
+    {
+      l = 0;
+      while (p[l] && p[l] != '\n')
+	l++;
+      p[l++] = (char)0;
+      if (match_words)
+	{
+	  re = xmalloc (strlen (p) + 5);
+	  (void)sprintf (re, "\\b%s\\b", p);
+	}
+      else if (match_lines)
+	{
+	  re = xmalloc (strlen (p) + 3);
+	  (void)sprintf (re, "^%s$", p);
+	}
+      else
+	re = p;
+      if (match_icase)	flags |= PCRE_CASELESS;
+
+      if (!(cre[n_pcre++] = pcre_compile (re, flags, &ep, &e, NILP)))
+	fatal (ep, 0);
+      if (re != p)
+	(void)free (re);
+      p += l;
+      size -= l;
+    }
+#endif /* HAVE_LIBPCRE */
+} /* Pcompile */
+
+/* Anyone to do 'pcre_free (cre);' when done? */
+static char *
+Pexecute (char *buf, size_t size, char **endp)
+{
+#ifndef HAVE_LIBPCRE
+  fatal (_("PCRE not supported"), 0);
+#else
+  auto	int	e, i;
+  auto	int	flags = 0;
+  register	char	*p, *b = buf;
+
+  for (i = 0; i < n_pcre; i++)
+    {
+      (void)memset (sub, 0, 300 * sizeof (int));
+      e = pcre_exec (cre[i], (pcre_extra *)0, b, size, 0, flags, sub, 300);
+
+      if (e < -1)
+	return (0);
+
+      if (e > 0)
+	{
+	  for (p = b + sub[1]; *p && *p != '\n'; p++);
+	  *endp = p + 1;
+	  for (p = b + sub[0]; p > b && p[-1] != '\n'; p--);
+	  return (p);
+	}
+    }
+#endif /* HAVE_LIBPCRE */
+  return (0);
+} /* Pexecute */

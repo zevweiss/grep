@@ -381,6 +381,47 @@ For each directory mentioned in the command line, read and process all
 files in that directory, recursively.  This is the same as the @samp{-d
 recurse} option.
 
+@item -m @var{num}
+@itemx --max-count=@var{num}
+@opindex -m
+@opindex --max-count
+@cindex max-count
+Stop reading a file after @var{num} matching lines.  If the input is
+standard input from a regular file, and @var{num} matching lines are
+output, @command{grep} ensures that the standard input is positioned to
+just after the last matching line before exiting, regardless of the
+presence of trailing context lines.  This enables a calling process
+to resume a search.  For example, the following shell script makes use
+of it:
+
+@example
+while grep -m 1 PATTERN
+do
+  echo xxxx
+done < FILE
+@end example
+
+But the following probably will not work because a pipe is not a regular
+file:
+
+@example
+# This probably will not work.
+cat FILE |
+while grep -m 1 PATTERN
+do
+  echo xxxx
+done
+@end example
+
+When @command{grep} stops after NUM matching lines, it outputs
+any trailing context lines. Since context does not include matching
+lines, @command{grep} will stop when it encounters another matching line.
+When the @samp{-c} or @samp{--count} option is also used,
+@command{grep} does not output a count greater than @var{num}.
+When the @samp{-v} or @samp{--invert-match} option is
+also used, @command{grep} stops after outputting @var{num}
+non-matching lines.
+
 @item -y
 @opindex -y
 @cindex case insensitive search, obsolete option
@@ -578,11 +619,18 @@ Interpret pattern as an extended regular expression.
 Interpret pattern as a list of fixed strings, separated
 by newlines, any of which is to be matched.
 
+@item -P
+@itemx --pcre
+@opindex -P
+@opindex --pcre
+@cindex perl compatible regexp
+Interpret pattern with Perl-compatible regular expressions.
+
 @end table
 
-In addition, two variant programs @sc{egrep} and @sc{fgrep} are available.
-@sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
-same as @samp{grep -F}.
+In addition, three variant programs @sc{egrep}, @sc{fgrep} @sc{pgrep} are
+available. @sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
+same as @samp{grep -F}. @sc{pgrep} is the same as @samp{grep -P}.
 
 @node Regular Expressions
 @chapter Regular Expressions
@@ -825,7 +873,7 @@ How can I list just the names of matching files?
 
 @example
 grep -l 'main' *.c
-@end example 
+@end example
 
 @noindent
 lists the names of all C files in the current directory whose contents
@@ -853,7 +901,7 @@ What if a pattern has a leading @samp{-}?
 
 @example
 grep -e '--cut here--' *
-@end example 
+@end example
 
 @noindent
 searches for all lines matching @samp{--cut here--}.  Without @samp{-e},

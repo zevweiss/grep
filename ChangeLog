@@ -1,3 +1,61 @@
+2000-03-21  Alain Magloire
+
+	* configure.in: added AC_CHECK_LIB(pcre, pcre_exec)
+	* ChangeLog: Typos corrected.
+	* src/search.c: new MACRO HAVE_LIBPCRE
+
+2000-03-21  H.Merijn Brand
+
+	* src/Makefile.am(bin_PROGRAMS): added pgrep and new macro
+	pgrep_SOURCES.
+	* src/search.c: new functions Pcompile() and Pexecute()
+	to support PCRE.  Update matcher[] array for pgrep.
+	* src/grep.c: new short and long option --pcre and -P.
+	usage() updated.
+
+2000-03-21  Bastiaan Stougie
+
+	Improvement of the -m or --max-count option. Now works for NUM > 1 and
+	prints trailing context for the last matching line.
+
+	* src/grep.c
+	(after_last_match): Is a new off_t variable that replaces inputhwm
+	to retain the correct input offset even after a call to fillbuf. Note
+	that after_last_match has a different meaning than inputhwm:
+	it always points to the offset in the input of the first byte after
+	the last matching line, and is 0 if no matching line has been found
+	yet.
+	(grep): Print trailing context after the NUMth match when the -m NUM
+	option is used.
+	(grep): Added comment. Should have been commented already.
+	(grepbuf): Now updates outleft correctly. This fixes the bug that the
+	-m NUM option did not stop after NUM lines for NUM greater than 1.
+	(grepbuf, prtext): Now update after_last_match instead of inputhwm.
+	(fillbuf): No longer updates inputhwm.
+	(prpending): When outputting trailing context of the max_count-th
+        matching line, stop at the first matching line.
+	(grepfile): Seek to after_last_match or eof, depending on the values
+        of outleft and bufmapped.
+	(usage): added the -m or --max-count option to the help message.
+	* doc/grep.texi, doc/grep.1: Document the change of the -m option.
+
+2000-03-17  Paul Eggert
+
+	Add new -m or --max-count option, based on a suggestion by
+	Bastiaan Stougie.
+
+	* doc/grep.texi, doc/grep.1: Document it.
+	* src/grep.c (short_options, long_options, main): Add it.
+	(inputhwm): New variable.
+	(fillbuf, prtext, grepbuf): Set it.
+	(bufmapped): Now a macro (defined to zero) if HAVE_MMAP is not defined.
+	(max_count, outleft): New variables.
+	(prtext, grepbuf, grep): Don't output more than outleft lines.
+	(grepfile): If grepping standard input, seek to the limit of what
+	we've read before exiting.  This fixes a bug with mmapped input,
+	and is needed for proper -m support.
+	(main): Exit immediately if -m 0 is specified.
+
 2000-03-08  Alain Magloire
 
 	* configure.in: version 2.4.2
@@ -45,7 +103,7 @@
 2000-01-30 Alain Magloire
 
 	* doc/grep.1:  corrected typo.
-	Noted by Ruslan Ermilob.
+	Noted by Ruslan Ermilov.
 
 2000-01-30 Alain Magloire
 
@@ -171,7 +229,7 @@
 
 2000-01-04  Paul Eggert
 
-	Inititial patch from David O'Brien.
+	Initial patch from David O'Brien.
 
 	Add --binary-files option.
 	* NEWS, doc/grep.1, doc/grep.texi: Document it.

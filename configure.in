@@ -8,7 +8,7 @@ AC_DEFINE(GREP)
 AC_PREREQ(2.13)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.4.2)
+AM_INIT_AUTOMAKE(grep, 2.5a)
 AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Checks for programs.
@@ -94,5 +94,8 @@ fi
 # This is necessary so that .o files in LIBOBJS are also built via
 # the ANSI2KNR-filtering rules.
 LIBOBJS=`echo $LIBOBJS|sed 's/\.o /\$U.o /g;s/\.o$/\$U.o/'`
+
+# support for pcre
+AC_CHECK_LIB(pcre, pcre_exec)
 
 AC_OUTPUT(Makefile src/Makefile src/posix/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

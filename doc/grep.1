@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.11 2000/02/26 03:18:40 alainm Exp $
+.Id $Id: grep.1,v 1.12 2000/03/22 03:30:37 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -45,10 +45,12 @@ By default,
 .B grep
 prints the matching lines.
 .PP
-In addition, two variant programs
+In addition, three variant programs
 .B egrep
-and
+,
 .B fgrep
+and
+.B pgrep
 are available.
 .B Egrep
 is the same as
@@ -56,6 +58,9 @@ is the same as
 .B Fgrep
 is the same as
 .BR "grep\ \-F" .
+.B Pgrep
+is the same as
+.BR "grep\ \-P" .
 .SH OPTIONS
 .TP
 .BI \-A " NUM" "\fR,\fP \-\^\-after-context=" NUM
@@ -163,6 +168,10 @@ Interpret
 .I PATTERN
 as a list of fixed strings, separated by newlines,
 any of which is to be matched.
+.BR \-P ", " \-\^\-pcre
+Interpret
+.I PATTERN
+as a Perl regular expression.
 .TP
 .BI \-f " FILE" "\fR,\fP \-\^\-file=" FILE
 Obtain patterns from
@@ -207,6 +216,39 @@ Suppress normal output; instead print
 the name of each input file from which output
 would normally have been printed.  The scanning will
 stop on the first match.
+.TP
+.BI \-m " NUM" "\fR,\fP \-\^\-max-count=" NUM
+Stop reading a file after
+.I NUM
+matching lines.  If the input is standard input from a regular file,
+and
+.I NUM
+matching lines are output,
+.B grep
+ensures that the standard input is positioned to just after the last
+matching line before exiting, regardless of the presence of trailing
+context lines.  This enables a calling process to resume a search.
+When
+.B grep
+stops after
+.I NUM
+matching lines, it outputs any trailing context lines.  When the
+.B \-c
+or
+.B \-\^\-count
+option is also used,
+.B grep
+does not output a count greater than
+.IR NUM .
+When the
+.B \-v
+or
+.B \-\^\-invert-match
+option is also used,
+.B grep
+stops after outputting
+.I NUM
+non-matching lines.
 .TP
 .B \-\^\-mmap
 If possible, use the

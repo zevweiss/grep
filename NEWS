@@ -1,3 +1,12 @@
+
+  - The new option --pcre tells grep to interpert the pattern as
+    a Perl regular expression.
+    New option -P; equivalent to --pcre.
+
+  - The new option --max-count=num makes grep stop reading
+    a file after num matching lines.
+    New option -m; equivalent to --max-count.
+
 Version 2.4.2
 
   - Added more check in configure to default the grep-${version}/src/regex.c
