@@ -943,7 +943,7 @@ usage (int status)
       printf (_("Usage: %s [OPTION]... PATTERN [FILE] ...\n"), prog);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n\
-Example: %s -i 'hello.*world' menu.h main.c\n\
+Example: %s -i 'hello world' menu.h main.c\n\
 \n\
 Regexp selection and interpretation:\n"), prog);
       printf (_("\

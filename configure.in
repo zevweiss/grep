@@ -78,9 +78,9 @@ dnl Many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(src/regex.c)
 
-dnl be very vocal about the fact we are not using are regex.c
-dnl some people ask for this because there is so many variants 
-dln of Linux machines
+dnl Be very vocal about the fact, we are not using regex.c part of the dist.
+dnl Some people ask for this because there are so many variants 
+dnl of Linux machines with different libc.
 if test $ac_use_included_regex = no; then
 	AC_MSG_WARN(Included src/regex.c not use)
 fi

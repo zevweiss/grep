@@ -1,3 +1,13 @@
+2000-01-28  Alain Magloire
+
+	* src/grep.c (usage):  The example "%s -i 'hello.*world' could
+	lead to confusion when progname is 'fgrep.
+	Noted by Akim Demaille.
+
+	* configure.in : Reenable, jm_INCLUDE_REGEX() since we now
+	track GNU lib C.
+	Requested By Ulrich Drepper.
+  
 2000-01-25  Paul Eggert
 
 	* src/grep.c (grep): If the final byte of an input file is not
