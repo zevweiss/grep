@@ -1,5 +1,5 @@
-/* Copyright (C) 1991, 1993, 1998 Free Software Foundation, Inc.
-   Based on strlen implemention by Torbjorn Granlund (tege@sics.se),
+/* Copyright (C) 1991, 1993, 1997, 1999 Free Software Foundation, Inc.
+   Based on strlen implementation by Torbjorn Granlund (tege@sics.se),
    with help from Dan Sahlin (dan@sics.se) and
    commentary by Jim Blandy (jimb@ai.mit.edu);
    adaptation to memchr suggested by Dick Karpinski (dick@cca.ucsf.edu),
@@ -20,10 +20,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+USA.  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 #undef __ptr_t
@@ -44,7 +45,7 @@ Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define LONG_MAX_32_BITS 2147483647
 
 #ifndef LONG_MAX
-#define LONG_MAX LONG_MAX_32_BITS
+# define LONG_MAX LONG_MAX_32_BITS
 #endif
 
 #include <sys/types.h>

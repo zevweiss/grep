@@ -1,5 +1,7 @@
 ## Process this file with automake to create Makefile.in
-AUTOMAKE_OPTIONS=no-dependencies
+AUTOMAKE_OPTIONS = ansi2knr no-dependencies
+
+SUBDIRS = posix
 
 LN = ln
 

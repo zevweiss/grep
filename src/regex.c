@@ -81,17 +81,16 @@
 #define btowc __btowc
 #endif
 
-/* This is for other GNU distributions with internationalized messages.  */
-#if HAVE_LIBINTL_H || defined _LIBC
-# include <libintl.h>
-#else
-# define gettext(msgid) (msgid)
-#endif
 
-#ifndef gettext_noop
-/* This define is so xgettext can find the internationalizable
-   strings.  */
-# define gettext_noop(String) String
+#ifndef _
+/* This is for other GNU distributions with internationalized messages.
+   When compiling libc, the _ and N_ macros are predefined.  */
+# ifdef HAVE_LIBINTL_H
+#  include <libintl.h>
+# else
+#  define gettext(msgid) (msgid)
+# endif
+# define N_(msgid) (msgid)
 #endif
 
 /* The `emacs' switch turns on certain matching commands
@@ -167,7 +166,7 @@ char *realloc ();
 #endif /* not emacs */
 
 /* Get the interface, including the syntax bits.  */
-#include "regex.h"
+#include <regex.h>
 
 /* isalpha etc. are used for the character classes.  */
 #include <ctype.h>
@@ -214,6 +213,12 @@ char *realloc ();
 #define ISUPPER(c) (ISASCII (c) && isupper (c))
 #define ISXDIGIT(c) (ISASCII (c) && isxdigit (c))
 
+#ifdef _tolower
+# define TOLOWER(c) _tolower(c)
+#else
+# define TOLOWER(c) tolower(c)
+#endif
+
 #ifndef NULL
 # define NULL (void *)0
 #endif
@@ -232,38 +237,38 @@ char *realloc ();
 
 #ifndef emacs
 /* How many characters in the character set.  */
-#define CHAR_SET_SIZE 256
+# define CHAR_SET_SIZE 256
 
-#ifdef SYNTAX_TABLE
+# ifdef SYNTAX_TABLE
 
 extern char *re_syntax_table;
 
-#else /* not SYNTAX_TABLE */
+# else /* not SYNTAX_TABLE */
 
 static char re_syntax_table[CHAR_SET_SIZE];
 
 static void
 init_syntax_once ()
 {
-    register int c;
-    static int done = 0;
+   register int c;
+   static int done = 0;
 
-    if (done)
-	return;
-    bzero (re_syntax_table, sizeof re_syntax_table);
+   if (done)
+     return;
+   bzero (re_syntax_table, sizeof re_syntax_table);
 
-    for (c = 0; c < CHAR_SET_SIZE; c++)
-	if (ISALNUM (c))
-	    re_syntax_table[c] = Sword;
+   for (c = 0; c < CHAR_SET_SIZE; ++c)
+     if (ISALNUM (c))
+	re_syntax_table[c] = Sword;
 
-    re_syntax_table['_'] = Sword;
+   re_syntax_table['_'] = Sword;
 
-    done = 1;
+   done = 1;
 }
 
-#endif /* not SYNTAX_TABLE */
+# endif /* not SYNTAX_TABLE */
 
-#define SYNTAX(c) re_syntax_table[((c) & 0xFF)]
+# define SYNTAX(c) re_syntax_table[((c) & 0xFF)]
 
 #endif /* emacs */
 
@@ -1004,25 +1009,88 @@ weak_alias (__re_set_syntax, re_set_syntax)
    POSIX doesn't require that we do anything for REG_NOERROR,
    but why not be nice?  */
 
-static const char *re_error_msgid[] =
+#if 0
+  /* This section is for xgettext; it sees the strings wrapped inside
+     N_() and marks them as needing translation.  They should match
+     the strings in re_error_msgid.  We can't use the usual string
+     concatenation trick to initialize re_error_msgid, since other GNU
+     distributions use this file with traditional C, and traditional C
+     lacks string concatenation.  */
+  N_("Success") /* REG_NOERROR */
+  N_("No match") /* REG_NOMATCH */
+  N_("Invalid regular expression") /* REG_BADPAT */
+  N_("Invalid collation character") /* REG_ECOLLATE */
+  N_("Invalid character class name") /* REG_ECTYPE */
+  N_("Trailing backslash") /* REG_EESCAPE */
+  N_("Invalid back reference") /* REG_ESUBREG */
+  N_("Unmatched [ or [^") /* REG_EBRACK */
+  N_("Unmatched ( or \\(") /* REG_EPAREN */
+  N_("Unmatched \\{") /* REG_EBRACE */
+  N_("Invalid content of \\{\\}") /* REG_BADBR */
+  N_("Invalid range end") /* REG_ERANGE */
+  N_("Memory exhausted") /* REG_ESPACE */
+  N_("Invalid preceding regular expression") /* REG_BADRPT */
+  N_("Premature end of regular expression") /* REG_EEND */
+  N_("Regular expression too big") /* REG_ESIZE */
+  N_("Unmatched ) or \\)") /* REG_ERPAREN */
+#endif
+
+static const char re_error_msgid[] = "\
+Success\0\
+No match\0\
+Invalid regular expression\0\
+Invalid collation character\0\
+Invalid character class name\0\
+Trailing backslash\0\
+Invalid back reference\0\
+Unmatched [ or [^\0\
+Unmatched ( or \\(\0\
+Unmatched \\{\0\
+Invalid content of \\{\\}\0\
+Invalid range end\0\
+Memory exhausted\0\
+Invalid preceding regular expression\0\
+Premature end of regular expression\0\
+Regular expression too big\0\
+Unmatched ) or \\)";
+
+#define REG_NOERROR_IDX	0
+#define REG_NOMATCH_IDX (REG_NOERROR_IDX + sizeof "Success")
+#define REG_BADPAT_IDX	(REG_NOMATCH_IDX + sizeof "No match")
+#define REG_ECOLLATE_IDX (REG_BADPAT_IDX + sizeof "Invalid regular expression")
+#define REG_ECTYPE_IDX	(REG_ECOLLATE_IDX + sizeof "Invalid collation character")
+#define REG_EESCAPE_IDX	(REG_ECTYPE_IDX + sizeof "Invalid character class name")
+#define REG_ESUBREG_IDX	(REG_EESCAPE_IDX + sizeof "Trailing backslash")
+#define REG_EBRACK_IDX	(REG_ESUBREG_IDX + sizeof "Invalid back reference")
+#define REG_EPAREN_IDX	(REG_EBRACK_IDX + sizeof "Unmatched [ or [^")
+#define REG_EBRACE_IDX	(REG_EPAREN_IDX + sizeof "Unmatched ( or \\(")
+#define REG_BADBR_IDX	(REG_EBRACE_IDX + sizeof "Unmatched \\{")
+#define REG_ERANGE_IDX	(REG_BADBR_IDX + sizeof "Invalid content of \\{\\}")
+#define REG_ESPACE_IDX	(REG_ERANGE_IDX + sizeof "Invalid range end")
+#define REG_BADRPT_IDX	(REG_ESPACE_IDX + sizeof "Memory exhausted")
+#define REG_EEND_IDX	(REG_BADRPT_IDX + sizeof "Invalid preceding regular expression")
+#define REG_ESIZE_IDX	(REG_EEND_IDX + sizeof "Premature end of regular expression")
+#define REG_ERPAREN_IDX	(REG_ESIZE_IDX + sizeof "Regular expression too big")
+
+static const size_t re_error_msgid_idx[] =
   {
-    gettext_noop ("Success"),	/* REG_NOERROR */
-    gettext_noop ("No match"),	/* REG_NOMATCH */
-    gettext_noop ("Invalid regular expression"), /* REG_BADPAT */
-    gettext_noop ("Invalid collation character"), /* REG_ECOLLATE */
-    gettext_noop ("Invalid character class name"), /* REG_ECTYPE */
-    gettext_noop ("Trailing backslash"), /* REG_EESCAPE */
-    gettext_noop ("Invalid back reference"), /* REG_ESUBREG */
-    gettext_noop ("Unmatched [ or [^"),	/* REG_EBRACK */
-    gettext_noop ("Unmatched ( or \\("), /* REG_EPAREN */
-    gettext_noop ("Unmatched \\{"), /* REG_EBRACE */
-    gettext_noop ("Invalid content of \\{\\}"), /* REG_BADBR */
-    gettext_noop ("Invalid range end"),	/* REG_ERANGE */
-    gettext_noop ("Memory exhausted"), /* REG_ESPACE */
-    gettext_noop ("Invalid preceding regular expression"), /* REG_BADRPT */
-    gettext_noop ("Premature end of regular expression"), /* REG_EEND */
-    gettext_noop ("Regular expression too big"), /* REG_ESIZE */
-    gettext_noop ("Unmatched ) or \\)"), /* REG_ERPAREN */
+    REG_NOERROR_IDX,
+    REG_NOMATCH_IDX,
+    REG_BADPAT_IDX,
+    REG_ECOLLATE_IDX,
+    REG_ECTYPE_IDX,
+    REG_EESCAPE_IDX,
+    REG_ESUBREG_IDX,
+    REG_EBRACK_IDX,
+    REG_EPAREN_IDX,
+    REG_EBRACE_IDX,
+    REG_BADBR_IDX,
+    REG_ERANGE_IDX,
+    REG_ESPACE_IDX,
+    REG_BADRPT_IDX,
+    REG_EEND_IDX,
+    REG_ESIZE_IDX,
+    REG_ERPAREN_IDX
   };
 
 /* Avoiding alloca during matching, to placate r_alloc.  */
@@ -4773,11 +4841,11 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 		/* We win if the first character of the loop is not part
                    of the charset.  */
                 if ((re_opcode_t) p1[3] == exactn
-		    && ! ((int) p2[1] * BYTEWIDTH > (int) p1[5]
-			  && (p2[2 + p1[5] / BYTEWIDTH]
-			      & (1 << (p1[5] % BYTEWIDTH)))))
-                  {
-  		    p[-3] = (unsigned char) pop_failure_jump;
+ 		    && ! ((int) p2[1] * BYTEWIDTH > (int) p1[5]
+ 			  && (p2[2 + p1[5] / BYTEWIDTH]
+ 			      & (1 << (p1[5] % BYTEWIDTH)))))
+		  {
+		    p[-3] = (unsigned char) pop_failure_jump;
 		    DEBUG_PRINT1 ("  No match => pop_failure_jump.\n");
                   }
 
@@ -5469,7 +5537,7 @@ re_compile_pattern (pattern, length, bufp)
 
   if (!ret)
     return NULL;
-  return gettext (re_error_msgid[(int) ret]);
+  return gettext (re_error_msgid + re_error_msgid_idx[(int) ret]);
 }
 #ifdef _LIBC
 weak_alias (__re_compile_pattern, re_compile_pattern)
@@ -5506,12 +5574,14 @@ re_comp (s)
     {
       re_comp_buf.buffer = (unsigned char *) malloc (200);
       if (re_comp_buf.buffer == NULL)
-        return (char *) gettext (re_error_msgid[(int) REG_ESPACE]);
+        return (char *) gettext (re_error_msgid
+				 + re_error_msgid_idx[(int) REG_ESPACE]);
       re_comp_buf.allocated = 200;
 
       re_comp_buf.fastmap = (char *) malloc (1 << BYTEWIDTH);
       if (re_comp_buf.fastmap == NULL)
-	return (char *) gettext (re_error_msgid[(int) REG_ESPACE]);
+	return (char *) gettext (re_error_msgid
+				 + re_error_msgid_idx[(int) REG_ESPACE]);
     }
 
   /* Since `re_exec' always passes NULL for the `regs' argument, we
@@ -5526,7 +5596,7 @@ re_comp (s)
     return NULL;
 
   /* Yes, we're discarding `const' here if !HAVE_LIBINTL.  */
-  return (char *) gettext (re_error_msgid[(int) ret]);
+  return (char *) gettext (re_error_msgid + re_error_msgid_idx[(int) ret]);
 }
 
 
@@ -5614,7 +5684,7 @@ regcomp (preg, pattern, cflags)
 
       /* Map uppercase characters to corresponding lowercase ones.  */
       for (i = 0; i < CHAR_SET_SIZE; i++)
-        preg->translate[i] = ISUPPER (i) ? tolower (i) : i;
+        preg->translate[i] = ISUPPER (i) ? TOLOWER (i) : i;
     }
   else
     preg->translate = NULL;
@@ -5752,15 +5822,15 @@ regerror (errcode, preg, errbuf, errbuf_size)
   size_t msg_size;
 
   if (errcode < 0
-      || errcode >= (int) (sizeof (re_error_msgid)
-			   / sizeof (re_error_msgid[0])))
+      || errcode >= (int) (sizeof (re_error_msgid_idx)
+			   / sizeof (re_error_msgid_idx[0])))
     /* Only error codes returned by the rest of the code should be passed
        to this routine.  If we are given anything else, or if other regex
        code generates an invalid error code, then the program has a bug.
        Dump core so we can fix it.  */
     abort ();
 
-  msg = gettext (re_error_msgid[errcode]);
+  msg = gettext (re_error_msgid + re_error_msgid_idx[errcode]);
 
   msg_size = strlen (msg) + 1; /* Includes the null.  */
 
