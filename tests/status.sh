@@ -41,10 +41,24 @@ else
         	failures=1
 	fi
 
+	# should return 2 file not found
+	echo "abcd" | ${GREP} -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
+	if test $? -ne 2 ; then
+		echo "Status: Wrong status code, test \#5 failed"
+		failures=1
+	fi
+
 	# should return 0 found a match
 	echo "abcd" | ${GREP} -E -q -s 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
 	if test $? -ne 0 ; then
-		echo "Status: Wrong status code, test \#5 failed"
+		echo "Status: Wrong status code, test \#6 failed"
+		failures=1
+	fi
+
+	# should still return 0 found a match
+	echo "abcd" | ${GREP} -E -q 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
+	if test $? -ne 0 ; then
+		echo "Status: Wrong status code, test \#7 failed"
 		failures=1
 	fi
 fi

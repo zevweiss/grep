@@ -1,3 +1,8 @@
+2005-01-07  Stepan Kasal  <kasal@ucw.cz>
+
+	* tests/status.sh: Added two tests--option `-s' should have no
+	  influence on the exit status.
+
 2004-12-16  Stepan Kasal  <kasal@ucw.cz>
 
 	Cosmetic changes, mostly imported from gawk:
