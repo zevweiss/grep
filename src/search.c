@@ -55,7 +55,7 @@ struct matcher matchers[] = {
 static struct dfa dfa;
 
 /* Regex compiled regexp. */
-static struct re_pattern_buffer regex;
+static struct re_pattern_buffer regexbuf;
 
 /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
    a list of strings, at least one of which is known to occur in
@@ -136,7 +136,7 @@ Gcompile(pattern, size)
   re_set_syntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
   dfasyntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase, eolbyte);
 
-  if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
+  if ((err = re_compile_pattern(pattern, size, &regexbuf)) != 0)
     fatal(err, 0);
 
   /* In the match_words and match_lines cases, we use a different pattern
@@ -202,7 +202,7 @@ Ecompile(pattern, size)
       dfasyntax(RE_SYNTAX_EGREP, match_icase, eolbyte);
     }
 
-  if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
+  if ((err = re_compile_pattern(pattern, size, &regexbuf)) != 0)
     fatal(err, 0);
 
   /* In the match_words and match_lines cases, we use a different pattern
@@ -308,8 +308,8 @@ EGexecute(buf, size, endp)
 	}
       /* If we've made it to this point, this means DFA has seen
 	 a probable match, and we need to run it through Regex. */
-      regex.not_eol = 0;
-      if ((start = re_search(&regex, beg, end - beg, 0, end - beg, &regs)) >= 0)
+      regexbuf.not_eol = 0;
+      if ((start = re_search(&regexbuf, beg, end - beg, 0, end - beg, &regs)) >= 0)
 	{
 	  len = regs.end[0] - start;
 	  if ((!match_lines && !match_words)
@@ -332,8 +332,8 @@ EGexecute(buf, size, endp)
 		  {
 		    /* Try a shorter length anchored at the same place. */
 		    --len;
-		    regex.not_eol = 1;
-		    len = re_match(&regex, beg, start + len, start, &regs);
+		    regexbuf.not_eol = 1;
+		    len = re_match(&regexbuf, beg, start + len, start, &regs);
 		  }
 		if (len <= 0)
 		  {
@@ -341,8 +341,8 @@ EGexecute(buf, size, endp)
 		    if (start == end - beg)
 		      break;
 		    ++start;
-		    regex.not_eol = 0;
-		    start = re_search(&regex, beg, end - beg,
+		    regexbuf.not_eol = 0;
+		    start = re_search(&regexbuf, beg, end - beg,
 				      start, end - beg - start, &regs);
 		    len = regs.end[0] - start;
 		  }
