@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0f\n"
-"POT-Creation-Date: 1998-04-26 19:31-0400\n"
+"POT-Creation-Date: 1998-11-09 00:40-0500\n"
 "PO-Revision-Date: 1997-09-03 11:19+0900\n"
 "Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-KR\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
 msgid "Memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/dfa.c:444
+#: src/dfa.c:452
 msgid "Unfinished \\ escape"
 msgstr "완결되지 않은 \\ 이스케이프"
 
@@ -26,32 +26,32 @@ msgstr "완결되지 않은 \\ 이스케이프"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
+#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
 msgid "unfinished repeat count"
 msgstr "완결되지 않은 반복 회수"
 
-#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
+#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
 msgid "malformed repeat count"
 msgstr "잘못 주어진 반복 회수"
 
-#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
-#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
+#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
+#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
 msgid "Unbalanced ["
 msgstr "짝이 맞지 않는 ["
 
-#: src/dfa.c:841
+#: src/dfa.c:849
 msgid "Unbalanced ("
 msgstr "짝이 맞지 않는 ("
 
-#: src/dfa.c:962
+#: src/dfa.c:970
 msgid "No syntax specified"
 msgstr "문법이 지정되지 않았음"
 
-#: src/dfa.c:970
+#: src/dfa.c:978
 msgid "Unbalanced )"
 msgstr "짝이 맞지 않는 )"
 
-#: src/dfa.c:1990
+#: src/dfa.c:1998
 msgid "out of memory"
 msgstr "메모리 부족"
 
@@ -160,36 +160,45 @@ msgstr "?? getopt가 문자 코드 0%o를 돌려주었습니다 ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "비옵션 ARGV 원소: "
 
-#: src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
+#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/grep.c:293
+#: src/grep.c:324
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: 경고: %s: %s\n"
 
-#: src/grep.c:392 src/grep.c:1034
+#: src/grep.c:429 src/grep.c:1222
 msgid "writing output"
 msgstr "출력을 기록하고 있습니다"
 
-#: src/grep.c:597
+#: src/grep.c:655
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr ""
+
+#: src/grep.c:670
+msgid "(standard input)"
+msgstr "(표준 입력)"
+
+#: src/grep.c:800
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일]...\n"
 
-#: src/grep.c:598
+#: src/grep.c:801
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "더 많은 정보를 보려면 `%s --help' 하십시오.\n"
 
-#: src/grep.c:602
+#: src/grep.c:805
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일] ...\n"
 
-#: src/grep.c:603
+#: src/grep.c:806
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -204,7 +213,7 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 msgstr ""
 
-#: src/grep.c:615
+#: src/grep.c:818
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -214,7 +223,7 @@ msgid ""
 "      --help                display this help and exit\n"
 msgstr ""
 
-#: src/grep.c:622
+#: src/grep.c:825
 msgid ""
 "\n"
 "Output control:\n"
@@ -223,19 +232,24 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
+"  -a, --text                do not suppress binary output\n"
+"  -d, --directories=ACTION  how to handle directories\n"
+"                            ACTION is 'read', 'recurse', or 'skip'.\n"
+"  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 msgstr ""
 
-#: src/grep.c:633
+#: src/grep.c:840
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -NUM                      same as both -B NUM and -A NUM\n"
-"  -C, --context             same as -2\n"
+"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
+"                            unless overriden by -A or -B\n"
+"  -NUM                      same as --contex=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -245,37 +259,45 @@ msgid ""
 "Exit with 2 if syntax errors or system errors.\n"
 msgstr ""
 
-#: src/grep.c:647
+#: src/grep.c:855
 #, fuzzy
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "문제점은 <bug0gnu-utils@prep.ai.mit.edu>로 보고해 주십시오.\n"
 
-#: src/grep.c:785 src/grep.c:792
+#: src/grep.c:998 src/grep.c:1005
 msgid "invalid context length argument"
 msgstr ""
 
-#: src/grep.c:800 src/grep.c:805 src/grep.c:810
+#: src/grep.c:1014
+msgid "infalid context length argument"
+msgstr ""
+
+#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "-E, -F, -G 중에서 하나만 지정할 수 있습니다"
 
-#: src/grep.c:829
+#: src/grep.c:1050
 msgid "matcher already specified"
 msgstr "짝이 이미 지정되었음"
 
-#: src/grep.c:915
+#: src/grep.c:1071
+msgid "unknown directories method"
+msgstr ""
+
+#: src/grep.c:1157
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:917
+#: src/grep.c:1159
 msgid ""
 "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 msgstr ""
 "저작권 (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:919
+#: src/grep.c:1161
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -284,17 +306,12 @@ msgstr ""
 "참조하십시오.\n"
 "상품성이나 특정 목적에 대한 적합성을 비롯하여, 어떠한 보증도 하지 않습니다.\n"
 
-#: src/grep.c:964 src/grep.c:1015
-msgid "(standard input)"
-msgstr "(표준 입력)"
-
-#: src/grep.c:1027 src/grep.c:1030
-msgid "(standard input)\n"
-msgstr "(표준 입력)\n"
-
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "메모리가 바닥남\n"
+
+#~ msgid "(standard input)\n"
+#~ msgstr "(표준 입력)\n"
 
 #~ msgid "Regexp selection and interpretation:\n"
 #~ msgstr "정규식 선택과 해석:\n"

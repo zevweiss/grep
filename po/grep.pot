@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-11-08 15:31-0500\n"
+"POT-Creation-Date: 1998-11-09 00:40-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,7 +171,7 @@ msgstr ""
 msgid "%s: warning: %s: %s\n"
 msgstr ""
 
-#: src/grep.c:429 src/grep.c:1220
+#: src/grep.c:429 src/grep.c:1222
 msgid "writing output"
 msgstr ""
 
@@ -266,37 +266,37 @@ msgid ""
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 
-#: src/grep.c:1006 src/grep.c:1013
+#: src/grep.c:998 src/grep.c:1005
 msgid "invalid context length argument"
 msgstr ""
 
-#: src/grep.c:1022
+#: src/grep.c:1014
 msgid "infalid context length argument"
 msgstr ""
 
-#: src/grep.c:1029 src/grep.c:1034 src/grep.c:1039
+#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
 msgid "you may specify only one of -E, -F, or -G"
 msgstr ""
 
-#: src/grep.c:1058
+#: src/grep.c:1050
 msgid "matcher already specified"
 msgstr ""
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1165
+#: src/grep.c:1157
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr ""
 
-#: src/grep.c:1167
+#: src/grep.c:1159
 msgid ""
 "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/grep.c:1169
+#: src/grep.c:1161
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

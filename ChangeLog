@@ -3,6 +3,11 @@
 	* src/grep.c: The Matcher is not set to argv[0] but
 	explicitly by a #define MATCHER at compile time default is "grep".
 
+	* aclocal/: NEW dir. provides our own *.m4
+
+	* configure.in: Move Paul's Large Files to AC_LFS.(aclocal/lfs.m4)
+	Taken from Jim meyering fileutils.
+
 1998-11-05 Alain Magloire
 
 	* src/grep.1: update the man pages according to the

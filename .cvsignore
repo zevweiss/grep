@@ -1,0 +1,6 @@
+*.gmo
+Makefile.in
+src/Makefile.in
+tests/Makefile.in
+aclocal.m4
+configure
