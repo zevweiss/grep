@@ -250,9 +250,9 @@ read_alias_file (fname, fname_len)
 	 b) these fields must be usable as file names and so must not
 	    be that long
        */
-      unsigned char buf[BUFSIZ];
-      unsigned char *alias;
-      unsigned char *value;
+      char buf[BUFSIZ];
+      char *alias;
+      char *value;
       unsigned char *cp;
 
       if (fgets (buf, sizeof buf, fp) == NULL)
@@ -272,7 +272,7 @@ read_alias_file (fname, fname_len)
 	  while (strchr (altbuf, '\n') == NULL);
 	}
 
-      cp = buf;
+      cp = (unsigned char *) buf;
       /* Ignore leading white space.  */
       while (isspace (cp[0]))
 	++cp;
@@ -280,7 +280,7 @@ read_alias_file (fname, fname_len)
       /* A leading '#' signals a comment line.  */
       if (cp[0] != '\0' && cp[0] != '#')
 	{
-	  alias = cp++;
+	  alias = (char *) cp++;
 	  while (cp[0] != '\0' && !isspace (cp[0]))
 	    ++cp;
 	  /* Terminate alias name.  */
@@ -296,7 +296,7 @@ read_alias_file (fname, fname_len)
 	      size_t alias_len;
 	      size_t value_len;
 
-	      value = cp++;
+	      value = (char *) cp++;
 	      while (cp[0] != '\0' && !isspace (cp[0]))
 		++cp;
 	      /* Terminate value.  */

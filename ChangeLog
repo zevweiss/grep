@@ -1,3 +1,11 @@
+1998-12-29 Kaveh R. Ghazi
+
+	intl/localealias.c: When building grep-2.2e using cc on Irix4, I needed the following
+	patch to intl/localealias.c.  (Its the same patch used by fileutils-4.0.)
+	The patch resolves conflicts between char* and unsigned char* in the i18n code.
+
+1998-12-10 Alain Magloire
+
 	* src/grep.c : Typo in contex -->context
 	Noted by  Vladimir Michl.
 
@@ -16,7 +24,7 @@
 	* TODO: updated.
 
 	* src/search.c: remove obsolete 'gegrep,ggrep,gnugrep'
-	matchers. grep no longer depend on argv[0]. 
+	matchers. grep no longer depend on argv[0].
 
 	* grep-2.2e beta to test DJGPP port.
 
@@ -69,7 +77,7 @@
 	* src/grep.c : Typo s/infalid/invalid/
 	Also noted by Stanislav Brabec.
 
-1998-11-24  Eli Zaretskii 
+1998-11-24  Eli Zaretskii
 
 	* doc/grep.texi: I found and corrected several typos.
 	I believe the GNU standards require the section that describes the
@@ -92,8 +100,8 @@
 
 	* doc: New directory, grep.1, {e,f}grep.man move here
 	* doc/grep.texi: New info manual
-	* doc/version.texi: New 
-	* doc/Makefile.am: New 
+	* doc/version.texi: New
+	* doc/Makefile.am: New
 	* tests/{ere,bre}.*: New files. The spencer2 test is split
 	in two ere/bre.
 	* config.hin: New, config.h.in rename to config.hin for OS
@@ -136,7 +144,7 @@
 	since dfacomp does it for us, and if we also do it then we
 	leak memory.
 
-1998-11-13  Eli Zaretskii 
+1998-11-13  Eli Zaretskii
 
 	* djgpp/config.bat: Rewrite to run the configure script via Bash.
 	* djgpp/config.site, djgpp/getconf: New files.
@@ -162,7 +170,7 @@
 	* src/vms_fab.{c,h}: New file for VMS wildcard expansion
 	Written by Phillip C. Brisco.
 
-	* vms/make.com : add line to compile vms_fab.c and 
+	* vms/make.com : add line to compile vms_fab.c and
 	{e,f,}grepmat.c with link for each grep/fgrep/egrep.
 	Base on patch send by Phillib C. Brisco.
 
