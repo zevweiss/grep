@@ -2839,7 +2839,7 @@ go_fast:
 	  {
 	    if (d->states[s].mbps.nelem != 0)
 	      {
-		/* Can match with a multibyte character( and multi character
+		/* Can match with a multibyte character (and multi character
 		   collating element).  */
 		unsigned char const *nextp;
 
