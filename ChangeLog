@@ -14,7 +14,14 @@
 	(main) : Register with atexit() to check for error on stdout.
 	* configure.in : Check for atexit(), call jm_MALLOC, jm_RELLOC and
 	jm_PREREQ_ERROR.
+	* tests/bre.awk : Removed the hack to drain the buffer since we
+	always fclose(stdout) atexit.
+	* tests/ere.awk : Likewise.
+	* tests/spencer1.awk : Likewise.
+	* bootstrap/Makefile.try : Update the Makefile to reflect the changes
+	in the new hierarchy.
 
+	* README-alpha : New File.
 	* m4/realloc.m4 : New File.
 	* m4/malloc.m4 : New File.
 	* m4/error.m4 : New File.

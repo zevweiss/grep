@@ -18,3 +18,5 @@ noinst_HEADERS = \
   closeout.h error.h exclude.h fnmatch.h getopt.h \
   hard-locale.h obstack.h quotearg.h regex.h savedir.h xalloc.h xstrtol.h
 
+EXTRA_DIST = strtol.c
+
