@@ -10,16 +10,23 @@ if not "%XSRC%" == "." goto SmallEnv
 if "%1" == "" goto InPlace
 set XSRC=%1
 if not "%XSRC%" == "%1" goto SmallEnv
+redir -e /dev/null update %XSRC%/configure.orig ./configure
+if not exist configure update %XSRC%/configure ./configure
 
 :InPlace
+Rem Edit configuration files due to DOS-specific problems
+echo Updating configuration scripts...
+if not exist configure.orig update configure configure.orig
+sed -f %XSRC%/djgpp/config.sed configure.orig > configure
+if errorlevel 1 goto SedError
+
 Rem Make sure they have a config.site file
 set CONFIG_SITE=%XSRC%/djgpp/config.site
 if not "%CONFIG_SITE%" == "%XSRC%/djgpp/config.site" goto SmallEnv
 
 Rem Make sure crucial file names are not munged by unpacking
-Rem This is only needed if the original file names are not renamed.
-REM  if exist intl\po2tbl.sed.in ren intl\po2tbl.sed.in po2tblsed.in
-REM  if not exist intl\po2tblsed.in ren intl\po2tbl.sed po2tblsed.in
+if exist intl\po2tbl.sed.in ren intl\po2tbl.sed.in po2tblsed.in
+if not exist intl\po2tblsed.in ren intl\po2tbl.sed po2tblsed.in
 
 Rem This is required because DOS/Windows are case-insensitive
 Rem to file names, and "make install" will do nothing if Make
@@ -38,7 +45,6 @@ if not "%OS%" == "MS-DOS" goto SmallEnv
 :haveos
 if not "%USERNAME%" == "" goto haveuname
 if not "%USER%" == "" goto haveuser
-echo No USERNAME and no USER found in the environment, using default values
 set HOSTNAME=Unknown PC
 if not "%HOSTNAME%" == "Unknown PC" goto SmallEnv
 :haveuser
@@ -58,6 +64,7 @@ Rem install-sh is required by the configure script but clashes with the
 Rem various Makefile install-foo targets, so we MUST have it before the
 Rem script runs and rename it afterwards
 if not exist install-sh if exist install-sh.sh ren install-sh.sh install-sh
+
 echo Running the ./configure script...
 sh %XSRC%/configure --src=%XSRC% --disable-nls
 if errorlevel 1 goto CfgError
