@@ -1,4 +1,10 @@
-2001-03-17  Paul Eggert  <eggert@twinsun.com>
+2001-03-18  Paul Eggert
+
+	* src/grep.c (fillbuf): Fix storage allocation performance
+	bug: buffer was doubling in size in many cases where it didn't
+	have to.
+
+2001-03-17  Paul Eggert
 
 	* src/grep.c (fillbuf): Avoid unnecessary division by 2.
 	Don't check xrealloc return value; it's guaranteed to be nonzero.
@@ -6,12 +12,12 @@
 
 2001-03-17  Alain Magloire
 
-	* src/grep.c (context_length_arg) : error () passing wrong format.
+	* src/grep.c (context_length_arg): error () passing wrong format.
 	Spotted by Jim Meyering.
 
 2001-03-07  Alain Magloire
 
-	* README-alpha : Removed reference to GNU tar, add the location
+	* README-alpha: Removed reference to GNU tar, add the location
 	of the CVSROOT.
 
 2001-03-06  Alain Magloire
@@ -20,20 +26,20 @@
 	The dfa and KWset compiled patterns should remain global and the
 	patterns compiled all at once.
 
-	* src/search.c : include "error.h" and "xalloc.h" to get prototyping
+	* src/search.c: include "error.h" and "xalloc.h" to get prototyping
 	of x*alloc() and error().
-	(kwsinit) : Reverse to previous behaviour and takes no argument.
-	(kwsmusts) : Likewised.
-	(Gcompile) : For the regex pattern, split them and each pattern
+	(kwsinit): Reverse to previous behaviour and takes no argument.
+	(kwsmusts): Likewised.
+	(Gcompile): For the regex pattern, split them and each pattern
 	is put in different compiled structure patterns[]. The patterns
 	are given to dfacomp() and kwsmusts() as is.
-	(Ecompile) : Likewised.
-	(Fcompile) : Reverse to the old behaviour of compiling the enire
+	(Ecompile): Likewised.
+	(Fcompile): Reverse to the old behaviour of compiling the enire
 	patterns in one shot.
-	(EGexecute) : If falling to GNU regex for the matching, loop in the
+	(EGexecute): If falling to GNU regex for the matching, loop in the
 	array of compile patterns[] to find a match.
-	(error) : Many error () were call with arguments in the wrong order.
-	* tests/file.sh : Simple test to check for pattern in files.
+	(error): Many error () were call with arguments in the wrong order.
+	* tests/file.sh: Simple test to check for pattern in files.
 
 	Reaction to bug report fired by Greg Louis <glouis@dynamicro.on.ca>
 
@@ -43,23 +49,23 @@
 	characters in bracket expressions.
 
 	* src/dfa.h (mb_char_classes) : new structure.
-	(mbcsets) : new variable.
-	(nmbcsets) : new variable.
+	(mbcsets): new variable.
+	(nmbcsets): new variable.
 	(mbcsets_alloc) : new variable.
 	* src/dfa.c (prtok) : handle MBCSET.
-	(fetch_wc) : new function to fetch a wide character.
+	(fetch_wc): new function to fetch a wide character.
 	(parse_bracket_exp_mb) : new function to handle multibyte character
 	in lex().
-	(lex) : invoke parse_bracket_exp_mb() for multibyte bracket expression.
-	(atom) : handle MBCSET.
-	(epsclosure) : likewise.
-	(dfaanalyze) : likewise.
-	(dfastate) : likewise.
-	(match_mb_charset) : new function to judge whether a bracket match
+	(lex): invoke parse_bracket_exp_mb() for multibyte bracket expression.
+	(atom): handle MBCSET.
+	(epsclosure): likewise.
+	(dfaanalyze): likewise.
+	(dfastate): likewise.
+	(match_mb_charset): new function to judge whether a bracket match
 	with a multibyte character.
 	(check_matching_with_multibyte_ops) : handle MBCSET.
-	(dfainit) : initialize new variables.
-	(dfafree) : free new variables.
+	(dfainit): initialize new variables.
+	(dfafree): free new variables.
 
 2001-03-04  Alain Magloire
 
@@ -68,130 +74,130 @@
 	Thanks to Jim Meyering, Volkert Bochert and Paul Eggert for
 	the code and the reminders.
 
-	* src/grep.c (fatal) : Function removed, using error () from
+	* src/grep.c (fatal): Function removed, using error () from
 	lib/error.c instead.
-	(usage) : Copyright updated.
-	(error) : Function removed, using error () from lib/error.c instead,
+	(usage): Copyright updated.
+	(error): Function removed, using error () from lib/error.c instead,
 	adjust prototypes.
-	(prog) : Global variable rename to program_name, to work with new
+	(prog): Global variable rename to program_name, to work with new
 	lib/error.c.
-	(xrealloc) : Removed using lib/xmalloc.c.
-	(xmalloc) : Removed using lib/xmalloc.c
-	(main) : Register with atexit() to check for error on stdout.
-	* configure.in : Check for atexit(), call jm_MALLOC, jm_RELLOC and
+	(xrealloc): Removed using lib/xmalloc.c.
+	(xmalloc): Removed using lib/xmalloc.c
+	(main): Register with atexit() to check for error on stdout.
+	* configure.in: Check for atexit(), call jm_MALLOC, jm_RELLOC and
 	jm_PREREQ_ERROR.
-	* tests/bre.awk : Removed the hack to drain the buffer since we
+	* tests/bre.awk: Removed the hack to drain the buffer since we
 	always fclose(stdout) atexit.
-	* tests/ere.awk : Likewise.
-	* tests/spencer1.awk : Likewise.
-	* bootstrap/Makefile.try : Update the Makefile to reflect the changes
+	* tests/ere.awk: Likewise.
+	* tests/spencer1.awk: Likewise.
+	* bootstrap/Makefile.try: Update the Makefile to reflect the changes
 	in the new hierarchy.
 
-	* README-alpha : New File.
-	* m4/realloc.m4 : New File.
-	* m4/malloc.m4 : New File.
-	* m4/error.m4 : New File.
-	* m4/Makefile.am : Updated.
-	* lib : New directory.
-	* lib/Makefile.am : New file.
-	* lib/closeout.c : New file.
-	* lib/closeout.h : New file.
-	* lib/fnmatch.c : New file.
-	* lib/fnmatch.h : New file.
-	* lib/atexit.c : New file.
-	* lib/error.c : New file.
-	* lib/error.h : New file.
-	* lib/quotearg.h : New file.
-	* lib/quotearg.c : New file.
-	* lib/xmalloc.c : New file.
-	* lib/posix : New directory.
-	* lib/posix/Makefile.am : New file.
-	* src/getopt.c : Moved to lib.
-	* src/getopt1.c : Moved to lib.
-	* src/getopt.h : Moved to lib.
-	* src/alloca.c : Moved to lib.
-	* src/exclude.c : Moved to lib.
-	* src/exclude.h : Moved to lib.
-	* src/hard-locale.h : Moved to lib.
-	* src/hard-locale.c : Moved to lib.
-	* src/isdir.c : Moved to lib.
-	* src/mechr.c : Moved to lib.
-	* src/obstack.c : Moved to lib.
-	* src/obstack.h : Moved to lib.
-	* src/regex.c : Moved to lib.
-	* src/regex.h : Moved to lib.
-	* src/posix : Moved to lib.
-	* src/posix/regex.h : Moved to lib.
-	* src/savedir.h : Moved to lib.
-	* src/savedir.c : Moved to lib.
-	* src/stpcpy.c : Moved to lib.
-	* src/strtoul.c : Moved to lib.
-	* src/strtol.c : Moved to lib.
-	* src/strtoull.c : Moved to lib.
-	* src/strtoumax.c : Moved to lib.
-	* src/xstrtol.c : Moved to lib.
-	* src/xstrtol.h : Moved to lib.
-	* src/xstrtoumax.c : Moved to lib.
+	* README-alpha: New File.
+	* m4/realloc.m4: New File.
+	* m4/malloc.m4: New File.
+	* m4/error.m4: New File.
+	* m4/Makefile.am: Updated.
+	* lib: New directory.
+	* lib/Makefile.am: New file.
+	* lib/closeout.c: New file.
+	* lib/closeout.h: New file.
+	* lib/fnmatch.c: New file.
+	* lib/fnmatch.h: New file.
+	* lib/atexit.c: New file.
+	* lib/error.c: New file.
+	* lib/error.h: New file.
+	* lib/quotearg.h: New file.
+	* lib/quotearg.c: New file.
+	* lib/xmalloc.c: New file.
+	* lib/posix: New directory.
+	* lib/posix/Makefile.am: New file.
+	* src/getopt.c: Moved to lib.
+	* src/getopt1.c: Moved to lib.
+	* src/getopt.h: Moved to lib.
+	* src/alloca.c: Moved to lib.
+	* src/exclude.c: Moved to lib.
+	* src/exclude.h: Moved to lib.
+	* src/hard-locale.h: Moved to lib.
+	* src/hard-locale.c: Moved to lib.
+	* src/isdir.c: Moved to lib.
+	* src/mechr.c: Moved to lib.
+	* src/obstack.c: Moved to lib.
+	* src/obstack.h: Moved to lib.
+	* src/regex.c: Moved to lib.
+	* src/regex.h: Moved to lib.
+	* src/posix: Moved to lib.
+	* src/posix/regex.h: Moved to lib.
+	* src/savedir.h: Moved to lib.
+	* src/savedir.c: Moved to lib.
+	* src/stpcpy.c: Moved to lib.
+	* src/strtoul.c: Moved to lib.
+	* src/strtol.c: Moved to lib.
+	* src/strtoull.c: Moved to lib.
+	* src/strtoumax.c: Moved to lib.
+	* src/xstrtol.c: Moved to lib.
+	* src/xstrtol.h: Moved to lib.
+	* src/xstrtoumax.c: Moved to lib.
 
 2001-03-01  Isamu Hasegawa
 
 	Implement the mechanism to match with multibyte characters,
 	and use it for `period' in multibyte environments.
 
-	* dfa.h (mbps) : new variable.
-	* dfa.c (prtok) : handle ANYCHAR.
-	(lex) : use ANYCHAR for `period' in multibyte environments.
-	(atom) : handle ANYCHAR.
-	(state_index) : initialize mbps in multibyte environments.
-	(epsclosure) : handle ANYCHAR.
-	(dfaanalyze) : handle ANYCHAR.
-	(dfastate) : handle ANYCHAR.
-	(realloc_trans_if_necessary) : new function.
-	(transit_state_singlebyte) : new function.
-	(match_anychar) : new function.
-	(check_matching_with_multibyte_ops) : new function.
-	(transit_state_consume_1char) : new function.
-	(transit_state) : new function.
-	(dfaexec) : invoke transit_state if expression can match with
+	* dfa.h (mbps): new variable.
+	* dfa.c (prtok): handle ANYCHAR.
+	(lex): use ANYCHAR for `period' in multibyte environments.
+	(atom): handle ANYCHAR.
+	(state_index): initialize mbps in multibyte environments.
+	(epsclosure): handle ANYCHAR.
+	(dfaanalyze): handle ANYCHAR.
+	(dfastate): handle ANYCHAR.
+	(realloc_trans_if_necessary): new function.
+	(transit_state_singlebyte): new function.
+	(match_anychar): new function.
+	(check_matching_with_multibyte_ops): new function.
+	(transit_state_consume_1char): new function.
+	(transit_state): new function.
+	(dfaexec): invoke transit_state if expression can match with
 	a multibyte character in multibyte environments.
-	(dfamust) : handle ANYCHAR.
+	(dfamust): handle ANYCHAR.
 
 2001-03-01  Alain Magloire
 
-	* src/exclude.c : New file.
-	* src/exclude.h : New file.
-	* src/grep.c (main) : Took the GNU tar code to handle
+	* src/exclude.c: New file.
+	* src/exclude.h: New file.
+	* src/grep.c (main): Took the GNU tar code to handle
 	the option --include, --exclude, --exclude-from.
 	Files are check for a match, with exlude_filename ().
 	New option --exclude-from.
-	* src/savedir.c : Call exclude_filename() to check for
+	* src/savedir.c: Call exclude_filename() to check for
 	file pattern exclusion or inclusion.
-	* configure.in : --disable-pcre rename to --disable-perl-regexp.
+	* configure.in: --disable-pcre rename to --disable-perl-regexp.
 
 
 2001-02-25  Alain Magloire
 
-	* src/dfa.c : Typo corrected.
+	* src/dfa.c: Typo corrected.
 	Noted by Isamu Hasegawa.
-	* src/savedir.c : Typos corrected.
+	* src/savedir.c: Typos corrected.
 
 2001-02-22  Alain Magloire
 
-	* src/savedir.c (isdir1) : New function, calling isdir with
+	* src/savedir.c (isdir1): New function, calling isdir with
 	the correct pathname.
 
 2001-02-19  Isamu Hasegawa
 
 	Avoid incorrect state transition in multibyte environments.
 
-	* dfa.h (nmultibyte_prop) : new variable.
-	(multibyte_prop) : new variable.
-	* dfa.c (addtok) : set inputwcs.
-	(dfastate) : avoid incorrect state transition in multibyte
+	* dfa.h (nmultibyte_prop): new variable.
+	(multibyte_prop): new variable.
+	* dfa.c (addtok): set inputwcs.
+	(dfastate): avoid incorrect state transition in multibyte
 	environments.
-	(dfaexec) : likewise.
-	(dfainit) : init multibyte_prop.
-	(dfafree) : free multibyte_prop.
+	(dfaexec): likewise.
+	(dfainit): init multibyte_prop.
+	(dfafree): free multibyte_prop.
 	(inputwcs): new variable.
 
 2001-02-19  Isamu Hasegawa
@@ -201,13 +207,13 @@
 
 	* dfa.c (update_mb_len_index): new function.
 	Support for multibyte string.
-	(FETCH) : call update_mb_len_index.
-	(lex) : check cur_mb_index not to misunderstand multibyte characters.
-	(atom) : make a tree from a multibyte character.
-	(dfaparse) : initialize new variables.
-	(mbs) : new variable.
-	(cur_mb_len) : new variable.
-	(cur_mb_index) : new variable.
+	(FETCH): call update_mb_len_index.
+	(lex): check cur_mb_index not to misunderstand multibyte characters.
+	(atom): make a tree from a multibyte character.
+	(dfaparse): initialize new variables.
+	(mbs): new variable.
+	(cur_mb_len): new variable.
+	(cur_mb_index): new variable.
 
 2001-02-18  Jim Meyering
 
@@ -215,11 +221,11 @@
 
 2001-02-17  Alain Malgoire
 
-	* doc/grep.texi : Document the new options and the new behaviour
+	* doc/grep.texi: Document the new options and the new behaviour
 	back-references are local.  Use excerpt from Karl Berry regex
 	texinfo.
 
-	* bootstrap/Makefile.try : Added xstrtoumax.o xstrtoul.o hard-local.o
+	* bootstrap/Makefile.try: Added xstrtoumax.o xstrtoul.o hard-local.o
 
 2001-02-17  Alain Magloire
 
@@ -249,15 +255,15 @@
 	patterns to GNU regex but rather compile each patterns separately
 	and keep the result in an array.
 
-	* src/search.c (patterns) : New global variable; a structure array
+	* src/search.c (patterns): New global variable; a structure array
 	holding the compiled patterns.
 	Declare function prototypes to minimize error.
-	(dfa, kswset, regexbuf, regs) : Removed, no longer static globals, but
+	(dfa, kswset, regexbuf, regs): Removed, no longer static globals, but
 	rather fields in patterns[] structure per motif.
-	(Fcompile) : Alloc an entry in patterns[] to hold the regex.
-	(Ecompile) : Alloc an entry per motif in the patterns[] array.
-	(Gcompile) : Likewise.
-	(EGexecute) : Loop through of array of patterns[] for a match.
+	(Fcompile): Alloc an entry in patterns[] to hold the regex.
+	(Ecompile): Alloc an entry per motif in the patterns[] array.
+	(Gcompile): Likewise.
+	(EGexecute): Loop through of array of patterns[] for a match.
 
 2001-02-17  Alain Magloire
 
@@ -272,9 +278,9 @@
 	terminal is on the other end. This doesn't take care of the cases where
 	this connection is somehow indirect.
 
-	* src/grep.c (line_buffered) : new option variable.
-	(prline) : if line_buffered is set fflush() is call.
-	(usage) : line_buffered new option.
+	* src/grep.c (line_buffered): new option variable.
+	(prline): if line_buffered is set fflush() is call.
+	(usage): line_buffered new option.
 	Input from Paul Eggert, doing setvbuf() may not be portable
 	and breaks grep -z.
 
@@ -289,18 +295,18 @@
 	codepoint is 0xb9a5.  So 0xb9a5 can match with 2nd byte of 0xa5b9
 	and 1st byte of 0xa5c8.
 
-	* configure.in : Add check for mbrtowc.
-	* src/search.c (check_multibyte_string) : new function.
+	* configure.in: Add check for mbrtowc.
+	* src/search.c (check_multibyte_string): new function.
 	Support for multibyte string.
-	(EGexecute) : call check_multibyte_string when kwset is set.
-	(Fexecute) : call to check_multibyte_string.
-	(MBS_SUPPORT) : new macro.
-	(MB_CUR_MAX) : new macro.
+	(EGexecute): call check_multibyte_string when kwset is set.
+	(Fexecute): call to check_multibyte_string.
+	(MBS_SUPPORT): new macro.
+	(MB_CUR_MAX): new macro.
 
 2001-02-16  Alain Magloire
 
-	* djgpp/config.bat : Fix for 4dos.com.
-	* m4/dosfile.m4 (HAVE_DOS_FILE_CONTENTS) : Was not set.
+	* djgpp/config.bat: Fix for 4dos.com.
+	* m4/dosfile.m4 (HAVE_DOS_FILE_CONTENTS): Was not set.
 	Bugs noted and patched by Juan Manuel Guerrero.
 
 2001-02-16  Alain Magloire
@@ -315,19 +321,19 @@
 	* src/grep.c (short_options): -R equivalent to -r.
 	(#ifdef) : Fix some inconsistencies in the use of #ifdefs, prefer
 	#if defined() wen possible.
-	(long_options) : Add --color, --include and exclude.
-	(Usage) : Description of new options.
-	(color) : Rename color variable to color_option.
+	(long_options): Add --color, --include and exclude.
+	(Usage): Description of new options.
+	(color): Rename color variable to color_option.
 	Removed 'always|never|auto' arguments, not necessary for grep.
-	(exclude_pattern) : new variable, holder for the file pattern.
-	(include_pattern) : new variable, hoder for the file pattern.
-	* src/savedir.c : Signature change, take two new argmuments.
-	* doc/grep.texi : Document, new options.
-	* doc/grep.man : Document, new options.
+	(exclude_pattern): new variable, holder for the file pattern.
+	(include_pattern): new variable, hoder for the file pattern.
+	* src/savedir.c: Signature change, take two new argmuments.
+	* doc/grep.texi: Document, new options.
+	* doc/grep.man: Document, new options.
 
 2001-02-09  Alain Magloire
 
-	* src/grep.c (long_options) : Added equivalent to -r with -R.
+	* src/grep.c (long_options): Added equivalent to -r with -R.
 	* src/grep.c (usage): added --color and --colour.
 	Noted with patch from, H.Merijn Brand and Wichert Akkerman.
 
@@ -335,19 +341,19 @@
 
 	Patch from Ulrich Drepper to provide hilighting.
 
-	* src/grep.c : New option --color.
-	(color) : New static var.
-	(COLOR_OPTION) : new constant.
-	(grep_color) : new static var.
-	(prline) : Now when color is set prline() will call the current matcher
+	* src/grep.c: New option --color.
+	(color): New static var.
+	(COLOR_OPTION): new constant.
+	(grep_color): new static var.
+	(prline): Now when color is set prline() will call the current matcher
 	to find the offset of the matching string.
-	* src/savedir.c : Take advantage of _DIRENT_HAVE_TYPE if supported.
+	* src/savedir.c: Take advantage of _DIRENT_HAVE_TYPE if supported.
 	* src/search.c (EGexecute, Fexecute, Pexecute): Take a new argument
 	when doing exact match for the color hiligting.
 
 2000-09-01  Brian Youmans
 
-	* doc/grep.texi : Typo fixes.
+	* doc/grep.texi: Typo fixes.
 
 2000-08-30  Paul Eggert
 

@@ -299,51 +299,45 @@ fillbuf (size_t save, struct stats const *stats)
   else
     {
       size_t minsize = save + pagesize;
-      size_t maxsize = (size_t) -1;
       size_t newsize;
       size_t newalloc;
+      char *newbuf;
 
       /* Grow newsize until it is at least as great as minsize.  */
-      for (newsize = bufalloc; newsize < minsize; newsize *= 2)
-	if (newsize * 2 <= newsize)
-	  {
-	    newsize = minsize;
-	    break;
-	  }
+      for (newsize = bufalloc - pagesize - 1; newsize < minsize; newsize *= 2)
+	if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
+	  xalloc_die ();
 
+      /* Try not to allocate more memory than the file size indicates,
+	 as that might cause unnecessary memory exhaustion if the file
+	 is large.  However, do not use the original file size as a
+	 heuristic if we've already read past the file end, as most
+	 likely the file is growing.  */
       if (S_ISREG (stats->stat.st_mode))
 	{
-	  /* Calculate an upper bound on how much memory to allocate.
-	     Watch out for arithmetic overflow.  */
 	  off_t to_be_read = stats->stat.st_size - bufoffset;
 	  off_t maxsize_off = save + to_be_read;
 	  if (0 <= to_be_read && to_be_read <= maxsize_off
 	      && maxsize_off == (size_t) maxsize_off
-	      && minsize <= (size_t) maxsize_off)
-	    maxsize = maxsize_off;
+	      && minsize <= (size_t) maxsize_off
+	      && (size_t) maxsize_off < newsize)
+	    newsize = maxsize_off;
 	}
-
-      /* Double the buffer size, except don't let it overflow, and
-	 don't let it grow past the file size as that might cause
-	 unnecessary memory exhaustion if the file is large.  */
-      newsize = (newsize <= newsize * 2 && newsize * 2 < maxsize
-		 ? newsize * 2 : maxsize);
 
       /* Add enough room so that the buffer is aligned and has room
 	 for byte sentinels fore and aft.  */
       newalloc = newsize + pagesize + 1;
 
-      /* Check that the above calculations made progress, which might
-         not occur if there is arithmetic overflow.  */
-      if (newalloc <= minsize)
-	xalloc_die ();
-
-      if (bufalloc < newalloc)
-	buffer = xrealloc (buffer, bufalloc = newalloc);
-      readbuf = ALIGN_TO (buffer + 1 + save, pagesize);
+      newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
+      readbuf = ALIGN_TO (newbuf + 1 + save, pagesize);
       bufbeg = readbuf - save;
       memmove (bufbeg, buffer + saved_offset, save);
       bufbeg[-1] = eolbyte;
+      if (newbuf != buffer)
+	{
+	  free (buffer);
+	  buffer = newbuf;
+	}
     }
 
   readsize = buffer + bufalloc - readbuf;
