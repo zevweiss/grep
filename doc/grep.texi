@@ -265,7 +265,7 @@ Print @var{num} lines of output context.
 @itemx --color[=@var{WHEN}]
 @opindex --colour
 @cindex highlight, color, colour
-Surround the matching string with escape sequences to display them in color
+Surround the matching strings with escape sequences to display them in color
 on the terminal.  The color is defined by the environment variable
 @var{GREP_COLOR} and defaults to `01;31' which means the text is red.
 @var{WHEN} is `never', `always', or `auto'.
@@ -274,7 +274,6 @@ on the terminal.  The color is defined by the environment variable
 @opindex -NUM
 Same as @samp{--context=@var{num}} lines of leading and trailing
 context.  However, grep will never print any given line more than once.
-
 
 @item -V
 @itemx --version

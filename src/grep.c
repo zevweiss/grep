@@ -1147,7 +1147,7 @@ Context control:\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
       --color[=WHEN],\n\
-      --colour[=WHEN]       use markers to distinguish the matching string;\n\
+      --colour[=WHEN]       use markers to highlight the matching strings;\n\
                             WHEN is `always', `never', or `auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
