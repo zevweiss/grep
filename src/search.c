@@ -22,6 +22,7 @@
 # include <config.h>
 #endif
 #include <sys/types.h>
+#include <stdio.h>
 #include "system.h"
 #include "grep.h"
 #include "regex.h"
@@ -438,7 +439,9 @@ static void
 Pcompile (char *pattern, size_t size)
 {
 #ifndef HAVE_LIBPCRE
-  fatal (_("PCRE not supported"), 0);
+  fprintf (stderr, _("PCRE not supported"));
+  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre");
+  exit (2);
 #else
   auto	int	e;
   const	char	*ep;
@@ -481,7 +484,9 @@ static char *
 Pexecute (char *buf, size_t size, char **endp)
 {
 #ifndef HAVE_LIBPCRE
-  fatal (_("PCRE not supported"), 0);
+  fprintf (stderr, _("PCRE not supported"));
+  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre");
+  exit (2);
 #else
   auto	int	e, i;
   auto	int	flags = 0;
