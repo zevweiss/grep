@@ -1,6 +1,6 @@
 2001-02-09  Alain Magloire
 
-	Patch from Ulrich Drepper to provide hilighting
+	Patch from Ulrich Drepper to provide hilighting.
 
 	* src/grep.c : New option --color.
 	(color) : New static var.

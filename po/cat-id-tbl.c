@@ -105,11 +105,17 @@ Report bugs to <bug-gnu-utils@gnu.org>.\n", 39},
   {"unknown directories method", 41},
   {"invalid max count", 42},
   {"unknown binary-files type", 43},
-  {"%s (GNU grep) %s\n", 44},
-  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 45},
+  {"\
+invalid argument `%s' for `--color'\n\
+Valid arguments are:\n\
+  - `always', `yes', `force'\n\
+  - `never', `no', `none'\n\
+  - `auto', `tty', `if-tty'\n", 44},
+  {"%s (GNU grep) %s\n", 45},
+  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 46},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 46},
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 47},
 };
 
-int _msg_tbl_length = 46;
+int _msg_tbl_length = 47;
