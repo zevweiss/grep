@@ -21,6 +21,6 @@ EXTRA_DIST = \
              dosbuf.c \
              vms_fab.c vms_fab.h
 
-install-local:
+install-exec-local:
 	@LINK@ @bindir@/grep @bindir@/egrep
 	@LINK@ @bindir@/grep @bindir@/fgrep
