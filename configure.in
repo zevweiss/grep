@@ -147,9 +147,11 @@ rm -f test00 test01
 touch test00
 ln -s test00 test01 || :
 LINK=""
+LINKSRC="grep"
 if test -L test01; then
 	LINK="ln -s"
 else
+	LINKSRC="${bindir}/grep"
 	rm -f test01
 	ln test00 test01 || :
 	if test -e test01; then
@@ -160,6 +162,7 @@ else
 fi
 AC_MSG_RESULT($LINK)
 AC_SUBST(LINK)
+AC_SUBST(LINKSRC)
 rm -f test00 test01
 
 AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

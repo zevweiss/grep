@@ -22,5 +22,5 @@ EXTRA_DIST = \
              vms_fab.c vms_fab.h
 
 install-exec-local:
-	@LINK@ @bindir@/grep @bindir@/egrep
-	@LINK@ @bindir@/grep @bindir@/fgrep
+	@LINK@ @LINKSRC@ $(bindir)/egrep
+	@LINK@ @LINKSRC@ $(bindir)/fgrep
