@@ -113,6 +113,7 @@ static int  ck_atoi PARAMS ((char const *, int *));
 static void usage PARAMS ((int));
 static void error PARAMS ((const char *, int));
 static int  setmatcher PARAMS ((char const *));
+static char *page_alloc PARAMS ((size_t, char **));
 static int  reset PARAMS ((int, char const *));
 static int  fillbuf PARAMS ((size_t));
 static int  grepbuf PARAMS ((char *, char *));
@@ -203,6 +204,7 @@ ck_atoi (str, out)
    all reads aligned on a page boundary and multiples of the
    page size. */
 
+static char *ubuffer;		/* Unaligned base of buffer. */
 static char *buffer;		/* Base of buffer. */
 static size_t bufsalloc;	/* Allocated size of buffer save region. */
 static size_t bufalloc;		/* Total buffer size. */
@@ -210,12 +212,48 @@ static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
 static struct stat bufstat;	/* From fstat(). */
+static size_t pagesize;		/* alignment of memory pages */
 
 #if defined(HAVE_MMAP)
 static int bufmapped;		/* True for ordinary files. */
 static off_t bufoffset;		/* What read() normally remembers. */
 static off_t initial_bufoffset;	/* Initial value of bufoffset. */
 #endif
+
+/* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
+   an integer or a pointer.  Both args must be free of side effects.  */
+#define ALIGN_TO(val, alignment) \
+  ((size_t) (val) % (alignment) == 0 \
+   ? (val) \
+   : (val) + ((alignment) - (size_t) (val) % (alignment)))
+
+/* Return the address of a new page-aligned buffer of size SIZE.  Set
+   *UP to the newly allocated (but possibly unaligned) buffer used to
+   *build the aligned buffer.  To free the buffer, free (*UP).  */
+static char *
+page_alloc (size, up)
+     size_t size;
+     char **up;
+{
+  /* HAVE_WORKING_VALLOC means that valloc is properly declared, and
+     you can free the result of valloc.  This symbol is not (yet)
+     autoconfigured.  It can be useful to define HAVE_WORKING_VALLOC
+     while debugging, since some debugging memory allocators might
+     catch more bugs if this symbol is enabled.  */
+#if HAVE_WORKING_VALLOC
+  *up = valloc (size);
+  return *up;
+#else
+  size_t asize = size + pagesize - 1;
+  if (size <= asize)
+    {
+      *up = malloc (asize);
+      if (*up)
+	return ALIGN_TO (*up, pagesize);
+    }
+  return NULL;
+#endif
+}
 
 /* Reset the buffer for a new file, returning zero if we should skip it.
    Initialize on the first time through. */
@@ -224,22 +262,25 @@ reset (fd, file)
      int fd;
      char const *file;
 {
-  static int initialized;
-
-  if (!initialized)
+  if (pagesize == 0)
     {
-      initialized = 1;
+      size_t ubufsalloc;
+      pagesize = getpagesize ();
+      if (pagesize == 0)
+	abort ();
 #ifndef BUFSALLOC
-      bufsalloc = MAX (8192, getpagesize ());
+      ubufsalloc = MAX (8192, pagesize);
 #else
-      bufsalloc = BUFSALLOC;
+      ubufsalloc = BUFSALLOC;
 #endif
+      bufsalloc = ALIGN_TO (ubufsalloc, pagesize);
       bufalloc = 5 * bufsalloc;
       /* The 1 byte of overflow is a kludge for dfaexec(), which
 	 inserts a sentinel newline at the end of the buffer
 	 being searched.  There's gotta be a better way... */
-      buffer = valloc (bufalloc + 1);
-      if (!buffer)
+      if (bufsalloc < ubufsalloc
+	  || bufalloc / 5 != bufsalloc || bufalloc + 1 < bufalloc
+	  || ! (buffer = page_alloc (bufalloc + 1, &ubuffer)))
 	fatal (_("memory exhausted"), 0);
       bufbeg = buffer;
       buflim = buffer;
@@ -280,38 +321,34 @@ static int
 fillbuf (save)
      size_t save;
 {
-  char *nbuffer, *dp, *sp;
   int cc;
 #if defined(HAVE_MMAP)
   caddr_t maddr;
 #endif
-  static int pagesize;
-
-  if (pagesize == 0 && (pagesize = getpagesize ()) == 0)
-    abort ();
 
   if (save > bufsalloc)
     {
+      char *nubuffer;
+      char *nbuffer;
+
       while (save > bufsalloc)
 	bufsalloc *= 2;
       bufalloc = 5 * bufsalloc;
-      nbuffer = valloc (bufalloc + 1);
-      if (!nbuffer)
+      if (bufalloc / 5 != bufsalloc || bufalloc + 1 < bufalloc
+	  || ! (nbuffer = page_alloc (bufalloc + 1, &nubuffer)))
 	fatal (_("memory exhausted"), 0);
+
+      bufbeg = nbuffer + bufsalloc - save;
+      memcpy (bufbeg, buflim - save, save);
+      free (ubuffer);
+      ubuffer = nubuffer;
+      buffer = nbuffer;
     }
   else
-    nbuffer = buffer;
-
-  sp = buflim - save;
-  dp = nbuffer + bufsalloc - save;
-  bufbeg = dp;
-  while (save--)
-    *dp++ = *sp++;
-
-  /* We may have allocated a new, larger buffer.  Since
-     there is no portable vfree (), we just have to forget
-     about the old one.  Sorry. */
-  buffer = nbuffer;
+    {
+      bufbeg = buffer + bufsalloc - save;
+      memcpy (bufbeg, buflim - save, save);
+    }
 
 #if defined(HAVE_MMAP)
   if (bufmapped && bufoffset % pagesize == 0

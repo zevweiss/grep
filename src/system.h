@@ -31,7 +31,6 @@
 # define PARAMS(x) ()
 #endif
 
-#define valloc system_valloc /* kludge */
 #ifdef HAVE_UNISTD_H
 # include <fcntl.h>
 # include <unistd.h>
@@ -68,15 +67,6 @@ static inline int undossify_input PARAMS((char *, size_t));
 #else
 ptr_t malloc(), realloc(), calloc();
 void free();
-#endif
-
-/* Be careful declaring valloc.  OSF/1 3.2 declares it in stdlib.h,
-   BSD/OS 2.1 in unistd.h.  Ultrix 4.4 doesn't declare it.  */
-#undef valloc /* undo the kludge */
-#if !defined(HAVE_VALLOC)
-# define valloc malloc
-#else
-ptr_t valloc();
 #endif
 
 #if __STDC__

@@ -38,7 +38,7 @@ AC_FUNC_ALLOCA
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
-AC_CHECK_FUNCS(strerror valloc isascii)
+AC_CHECK_FUNCS(strerror isascii)
 AC_REPLACE_FUNCS(memchr stpcpy)
 dnl This test replaces the obsolescent AC_ISC_POSIX kludge.
 dnl AC_CHECK_LIB(cposix, strerror, [LIBS="$LIBS -lcposix"])

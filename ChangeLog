@@ -1,3 +1,15 @@
+1998-11-16  Paul Eggert
+
+	Remove memory leak with valloced buffers, by invoking malloc instead.
+
+	* configure.in (AC_CHECK_FUNCS), src/system.h (valloc): Remove.
+	* src/grep.c (page_alloc): New function.
+	(ubuffer, pagesize): New vars.
+	(ALIGN_TO): New macro.
+	(reset): Initialize new vars.  Check for overflow in buffer size calc.
+	Use page_alloc instead of valloc.
+	(fillbuf): Likewise.  Use memcpy to copy saved area.
+
 1998-11-15  Paul Eggert
 
 	* dfa.c (dfacomp), search.c (EGexecute): Don't assume char is unsigned.
