@@ -12,6 +12,27 @@
 
 	* src/grep.c (main): Update copyright.
 
+	Specify default matcher with default_matcher extern var, not
+	DEFAULT_MATCHER macro.  This is more straightforward and means
+	we need to compile grep.c just once.
+
+	* src/egrepmat.c, src/fgrepmat.c, src/grepmat.c: New files.
+
+	* src/Makefile.am (base_sources): New macro.
+	(egrep_SOURCES, fgrep_SOURCES, grep_SOURCES): Now consist of
+	$(base_sources) plus the single tailoring file.
+	(grep_LDADD, egrep_LDADD, fgrep_LDADD): Remove.
+	(EXTRA_DIST): Remove grep.c, regex.c.
+	(fgrep.o, egrep.o): Remove.
+
+	* src/grep.h (matcher): Now char const *.
+	(default_matcher): New decl.
+
+	* src/grep.c (matcher): Now char const *.
+	(setmatcher): Now accepts char const *.
+	(main): Default the matcher from default_matcher (linked externally)
+	rather than DEFAULT_MATCHER (a macro).
+
 1998-11-08 Alain Magloire
 
 	* src/grep.1: `prep.ai.mit.edu' should be replaced with `gnu.org'.
