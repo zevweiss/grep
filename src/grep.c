@@ -37,10 +37,6 @@
 #include "grep.h"
 #include "savedir.h"
 
-#if O_BINARY
-# include "dosbuf.c"
-#endif
-
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
@@ -438,6 +434,10 @@ static char *lastout;		/* Pointer after last character output;
 static off_t totalnl;		/* Total newline count before lastnl. */
 static int pending;		/* Pending lines of output. */
 static int done_on_match;		/* Stop scanning file on first match */
+
+#if O_BINARY
+# include "dosbuf.c"
+#endif
 
 static void
 nlscan (lim)

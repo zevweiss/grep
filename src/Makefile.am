@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS=no-dependencies
 
 LN = ln
 
-bin_PROGRAMS = grep egrep fgrep
+bin_PROGRAMS = grep$(EXEEXT) egrep$(EXEEXT) fgrep$(EXEEXT)
 base_sources = grep.c grep.h \
                dfa.c dfa.h \
                kwset.c  kwset.h \

@@ -1,7 +1,20 @@
+1999-02-03 Alain Magloire
+
+	* grep-2.2f beta release.
+
+1999-02-02 Alain Magloire
+
+	* m4/{djgpp,envsep,glibc,regex,dosfile,isc-posix}.m4 :
+	New files to aid configuration and unload configure.in.
+	* m4/Makefile.am : updated.
+
+1999-01-28 Alain Magloire
+
 	* intl/Makefile.in: Replace .o with .${ac_objext} where necessary.
 	Work around a limitation of Visual C++ on Cygwin32.
 	* acconfig.h configure.in: Define `alloca' as `_alloca' when CC=cl.
 	This little hack was suggested by Ian Roxborough <irox@cygnus.com>.
+	Patch forwarded by Ben Elliston.
 
 1999-01-28 Alain Magloire
 
