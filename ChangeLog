@@ -1,3 +1,29 @@
+1999-02-23 Paul Eggert
+
+	Fix porting bug reported by Amakawa Shuhei for SunOS 4.1.4-JL.
+	The btowc.c shipped with grep 2.3 is incorrect for Solaris
+	2.5.1 and earlier, as it assumes UTF8, which these OSes do not
+	support.  Solaris 7 supports btowc, so there's no need to ship
+	a substitute for it.  The only questionable case is Solaris
+	2.6, which lacks btowc but does support UTF8.  However, 2.6
+	supports UTF8 but only as a demonstration (for an English
+	locale!); Japanese Solaris 2.6 users typically use EUC, or
+	sometimes shift-JIS, but they cannot use UTF8 since Japanese
+	UTF8 is not supported.  Hence there's no point to having grep
+	substitute a btowc that uses UTF8, as it is either redundant,
+	or it will almost invariably have incorrect behavior.
+
+	* configure.in (AC_CHECK_HEADERS): Don't set USE_WCHAR.
+	(AC_CHECK_FUNCS): Add btowc, wctype.
+	(AC_REPLACE_FUNCS): Don't replace btowc; our replacement is
+	invariably doing the wrong thing anyway, at least on SunOS/Solaris.
+	Don't bother to check for wctype in -lw, as we don't support
+	wide characters on Solaris 2.5.1 or earlier anyway.
+
+	* bootstrap/Makefile.try (OBJS): Remove btowc.$(OBJEXT).
+
+	* src/btowc.c: Removed; no longer needed.
+
 1999-02-19  Paul Eggert
 
 	* NEWS: Fix typo when talking about the old behavior of

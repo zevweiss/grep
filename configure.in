@@ -29,7 +29,7 @@ AC_C_CONST
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(string.h stdlib.h sys/param.h memory.h unistd.h libintl.h)
-AC_CHECK_HEADERS(wctype.h wchar.h, USE_WCHAR=yes, USE_WCHAR=no)
+AC_CHECK_HEADERS(wctype.h wchar.h)
 AC_HEADER_DIRENT
 AC_HEADER_STAT
 
@@ -38,14 +38,8 @@ AC_FUNC_ALLOCA
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
-AC_CHECK_FUNCS(strerror isascii setmode)
+AC_CHECK_FUNCS(btowc isascii setmode strerror wctype)
 AC_REPLACE_FUNCS(memchr stpcpy)
-dnl Solaris 2.5 doesn't have btowc()
-if test "$USE_WCHAR" = "yes"; then
-	AC_REPLACE_FUNCS(btowc)
-dnl Solaris puts wctype/wXXX() in /usr/lib/libw.a
-	AC_CHECK_LIB(w, wctype, [LIBS="$LIBS -lw"])
-fi
 
 dnl for VC++
 if test x$ac_cv_prog_CC = xcl ; then

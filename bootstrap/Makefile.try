@@ -8,7 +8,6 @@ OBJEXT = o
 
 
 OBJS = alloca.$(OBJEXT) \
-      btowc.$(OBJEXT) \
       dfa.$(OBJEXT) \
       getopt.$(OBJEXT) \
       getopt1.$(OBJEXT) \
