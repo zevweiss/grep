@@ -11,6 +11,8 @@ Version 2.4:
 
   - The --revert-match option has been renamed to --invert-match.
 
+  - The --fixed-regexp option has been renamed to --fixed-string.
+
   - New option -H or --with-filename.
 
   - New option --mmap.  By default, GNU grep now uses read instead of mmap.

@@ -1,3 +1,19 @@
+1999-10-26  Alain Magloire
+
+	* Updated the *.po files, and make grep-2.3g beta available.
+
+1999-10-26  Paul Eggert
+
+	* src/grep.c (fillbuf): Don't report buffer size overflow if
+	newalloc == save and maxalloc == save.  This can happen
+	e.g. when reading a large page-aligned file that contains
+	no newlines.
+
+1999-10-21  Paul Eggert
+
+	* src/grep.c (usage): Give example.  Clarify -F.
+	Explain exit status more clearly.
+
 1999-10-12  Paul Eggert
 
 	* doc/grep.texi: Shorten the commentary about egrep and {.
@@ -45,6 +61,7 @@
 	(grepfile): Work correctly if open or close is interrupted.
 
 	* src/system.h (SEEK_SET, SEEK_CUR): New macros.
+
 1999-10-02 Alain Magloire
 
 	* src/regex.[ch]: upgrade from GNU lib C source tree.
