@@ -3,6 +3,8 @@
 	* bootstrap/{Makefile{try,am},REAMDE} : skeleton
 	provided for system lacking the tools to autoconfigure.
 
+	* src/{e,f,}grepmat.c: added guard [HAVE_CONFIG_H]
+
 1999-02-10 Alain Magloire
 
 	* PATCHES-AC, PATCHES-AM: updated.

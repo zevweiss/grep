@@ -1,8 +1,8 @@
 #
 
-IF your system is lacking the necessary tools to build the configuration,
+If your system is lacking the necessary tools to build the configuration,
 Makefile.try is provided for bootstraping. Copy all the source and header
-files from grep-$version/src directory, move Makefile.try to Makefile,
+files from grep-${version}/src directory, move Makefile.try to Makefile,
 edit the Makefile and type make. Good luck !
 
 cp ../src/*.c .
