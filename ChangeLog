@@ -1,3 +1,8 @@
+2004-11-02  Stepan Kasal  <kasal@ucw.cz>
+
+	* README-alpha: Remove obsolete instructions about CVS, redirect
+	  the reader to savannah web.
+
 2004-09-26  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/search.c (check_multibyte_string, Gcompile, Ecompile): Replace

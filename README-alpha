@@ -1,11 +1,5 @@
-Newer ALPHA versions of this code are available through
-anonymous CVS:
-
-$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs checkout grep
-
-If you are using an old version of cvs, you might have to run
-$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs login
-first (and just press enter at the password prompt).
+Newer ALPHA versions of this code are available in CVS on savannah,
+see http://savannah.gnu.org/cvs/?group=grep for details.
 
 Please submit bug reports at
 http://savannah.gnu.org/bugs/?group=grep
