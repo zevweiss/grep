@@ -1103,7 +1103,7 @@ Context control:\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
-      --color[=WHEN],
+      --color[=WHEN],\n\
       --colour[=WHEN]       use markers to distinguish the matching string\n\
                             WHEN may be `always', `never' or `auto'.\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
