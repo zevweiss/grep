@@ -918,10 +918,9 @@ grepdir (char const *dir, struct stats const *stats)
   struct stats const *ancestor;
   char *name_space;
 
-  /* Mingw32 does not support st_dev or st_ino.  No known working
-     hosts use zeros here, so assume that the Mingw32 bug applies if
-     they're both zero.  */
-  if (stats->stat.st_ino || stats->stat.st_dev)
+  /* Mingw32 does not support st_ino.  No known working hosts use zero
+     for st_ino, so assume that the Mingw32 bug applies if it's zero.  */
+  if (stats->stat.st_ino)
     for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
       if (ancestor->stat.st_ino == stats->stat.st_ino
 	  && ancestor->stat.st_dev == stats->stat.st_dev)

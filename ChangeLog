@@ -1,3 +1,8 @@
+2000-06-06  Paul Eggert
+
+	* src/grep.c (grepdir): Don't look at st_dev when testing for
+	Mingw32 bug.
+
 2000-06-05  Paul Eggert
 
 	Port to Mingw32, based on suggestions from Christian Groessler
