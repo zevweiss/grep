@@ -1,5 +1,8 @@
 Version 2.5
 
+  - The new option --devices controls how grep handles device files. Its usage
+    is analogous to --directories.
+
   - The new option --line-buffered fflush on everyline.  There is a noticeable
     slow down when forcing line buffering.
 
@@ -15,6 +18,8 @@ Version 2.5
 
   - The new option --color will use the environment variable GREP_COLOR
     (default is red) to highlight the matching string.
+    --color takes an optional argument specifying when to colorize a line:
+      --color=always, --color=tty, --color=never
 
   - The following changes are for POSIX.2 conformance:
 

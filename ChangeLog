@@ -4,7 +4,9 @@
 	* src/grep.c: Add --color={always,never,tty} argument (like in ls)
 	* src/grep.c: Turn off blinking in the default colorization
 	* src/grep.c: Add --devices (-D) switch (analogous to --directories)
-	* doc/grep.texi, doc/grep.1: Document changes (--color, --devices, -D)
+	* doc/grep.texi, doc/grep.1, NEWS: Document changes
+	(--color, --devices, -D)
+	* AUTHORS: Change maintainer, credit Alain for his work until now
 
 2001-08-30  Alain Magloire
 
