@@ -19,6 +19,7 @@
 
 	* grep/src/grep.c (grepdir): Remove the (unsigned) cast when calling
 	savedir().
+	Patch from David Clissold.
 
 2001-07-29  Alain Magloire
 
