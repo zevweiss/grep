@@ -8,7 +8,7 @@ BEGIN {
 $0 ~ /^#/  { next; }
 
 NF == 3 {
-	printf ("echo '%s' | { ${GREP} -e '%s' > /dev/null 2>&1 ; cat > /dev/null ; }\n",$3, $2);
+	printf ("echo '%s' | ${GREP} -e '%s' > /dev/null 2>&1\n",$3, $2);
 	printf ("if test $? -ne %s ; then\n", $1);
 	printf ("\techo Spencer bre test \\#%d failed\n", ++n);
 	printf ("\tfailures=1\n");
