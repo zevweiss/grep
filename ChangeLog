@@ -1,3 +1,10 @@
+2001-07-31  Alain Magloire
+
+	* po/*.po: New files from the translation team:
+	grep-2.5e.de.po  grep-2.5e.el.po  grep-2.5e.eo.po grep-2.5e.es.po
+	grep-2.5e.et.po  grep-2.5e.fr.po  grep-2.5e.gl.po grep-2.5e.it.po
+	grep-2.5e.pl.po  grep-2.5e.sl.po
+
 2001-07-31  Andreas Schwab
 
 	* src/grep.c: Fix all uses of error to pass a proper format
