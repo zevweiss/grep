@@ -1007,7 +1007,7 @@ Context control:\n\
   -B, --before-context=NUM  print NUM lines of leading context\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context[=NUM]       print NUM (default 2) lines of output context\n\
-                            unless overriden by -A or -B\n\
+                            unless overridden by -A or -B\n\
   -NUM                      same as --context=NUM\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\

@@ -5,6 +5,10 @@
 
 1999-11-07  Paul Eggert
 
+	* src/grep.c (usage): Fix misspelling.
+
+1999-11-07  Paul Eggert
+
 	Don't assume that the C library has re_set_syntax and friends.
 	* src/Makefile.am (base_sources): Add regex.c, regex.h.
 	(EXTRA_DIST): Remove regex.c, regex.h.
