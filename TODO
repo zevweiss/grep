@@ -53,10 +53,4 @@ Moving away from GNU regex API for POSIX regex API.
 
 Finish I18N.
 
-To Correct :
- /usr/bin/echo "a\c" |grep -F ''
-give the wrong answer.
- print "aaa\nAAA\naAA\n"|grep -E "([A-Z])\1\1"
-give the wrong answer.
-
 Better and faster !!
