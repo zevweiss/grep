@@ -2702,7 +2702,7 @@ transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
 
 /* Transit state from s, then return new state and update the pointer of the
    buffer.  This function is for some operator which can match with a multi-
-   byte character or a collating element(which may be multi characters).  */
+   byte character or a collating element (which may be multi characters).  */
 static int
 transit_state (struct dfa *d, int s, unsigned char const **pp)
 {
@@ -2786,7 +2786,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   return s1;
 }
 
-#endif
+#endif /* MBS_SUPPORT */
 
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the buffer,
