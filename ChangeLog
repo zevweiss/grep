@@ -1,6 +1,7 @@
 2002-01-22  Bernhard Rosenkraenzer <bero@redhat.com>
 	* doc/grep.texi, doc/grep.1, NEWS: Document --label
 	* po/ru.po: Sync with translation project
+	* po/grep.pot: Sync with source
 	* configure.in: Bump version number
 
 2002-01-18  Bernhard Rosenkraenzer <bero@redhat.com>
