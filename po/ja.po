@@ -268,10 +268,10 @@ msgstr ""
 #: src/grep.c:1120
 msgid ""
 "\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"バグは <bug-gnu-utils@gnu.org> へ報告してください。\n"
+"バグは <bug-grep@gnu.org> へ報告してください。\n"
 
 #: src/grep.c:1130
 msgid "conflicting matchers specified"

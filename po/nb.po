@@ -307,8 +307,8 @@ msgstr ""
 "                            (MSDOS)\n"
 
 #: src/grep.c:950
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nRapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
+msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
+msgstr "\nRapportér feil til <bug-grep@gnu.org>.\n"
 
 #: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
 msgid "invalid context length argument"

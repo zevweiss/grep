@@ -1,3 +1,10 @@
+2004-11-12  Stepan Kasal  <kasal@ucw.cz>
+
+	Change bug-gnu-utils address to bug-grep, on many places; there
+	is no need to have the word ``grep'' in subject then.
+	Thanks to Tony Abou-Assaleh and Benno Schulenberg for pointing
+	out this.
+
 2004-11-02  Stepan Kasal  <kasal@ucw.cz>
 
 	* README-alpha: Remove obsolete instructions about CVS, redirect
@@ -43,6 +50,10 @@
 
 2003-01-18  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Fix -i -o combination (Patch from Tim Waugh)
+
+2002-03-26  Bernhard Rosenkraenzer <bero@arklinux.org>
+
+	* 2.5.1 Release.
 
 2002-03-26  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Don't fail if we don't have an stdout fd and -q

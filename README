@@ -22,5 +22,4 @@ See the file NEWS for a description of major changes in this release.
 
 See the file TODO for ideas on how you could help us improve grep.
 
-Send bug reports to bug-gnu-utils@gnu.org.  Be sure to
-include the word "grep" in your Subject: header field.
+Send bug reports to bug-grep@gnu.org.

@@ -1227,8 +1227,7 @@ g/re/p
 @chapter Reporting bugs
 
 @cindex Bugs, reporting
-Email bug reports to @email{bug-gnu-utils@@gnu.org}.
-Be sure to include the word ``grep'' somewhere in the ``Subject:'' field.
+Email bug reports to @email{bug-grep@@gnu.org}.
 
 Large repetition counts in the @samp{@{n,m@}} construct may cause
 @command{grep} to use lots of memory.  In addition, certain other

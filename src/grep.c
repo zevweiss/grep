@@ -1156,7 +1156,7 @@ Context control:\n\
 With no FILE, or when FILE is -, read standard input.  If less than\n\
 two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
 and 2 if trouble.\n"));
-      printf (_("\nReport bugs to <bug-gnu-utils@gnu.org>.\n"));
+      printf (_("\nReport bugs to <bug-grep@gnu.org>.\n"));
     }
   exit (status);
 }

@@ -260,10 +260,10 @@ msgstr ""
 "syntaktické nebo systémové chybì.\n"
 
 #: src/grep.c:1052
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"  Chyby v programu oznamujte na adrese <bug-gnu-utils@gnu.org> (pouze\n"
+"  Chyby v programu oznamujte na adrese <bug-grep@gnu.org> (pouze\n"
 "anglicky), pøipomínky k pøekladu zasílejte na adresu <cs@li.org> (èesky).\n"
 
 #: src/grep.c:1062

@@ -277,10 +277,10 @@ msgstr ""
 #: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Comunicar bichos a <bug-gnu-utils@gnu.org>.\n"
+"Comunicar bichos a <bug-grep@gnu.org>.\n"
 
 #  viendo los fuentes , hay varias opciones
 #  que hay sin documentar. O quizá es que getopt() lo he entendido mal

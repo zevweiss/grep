@@ -249,8 +249,8 @@ msgstr ""
 "1, se ne estis, kaj 2 æe eraro.\n"
 
 #: src/grep.c:1052
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nRaportu cimojn al <bug-gnu-utils@prep.ai.mit.edu>.\n"
+msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
+msgstr "\nRaportu cimojn al <bug-grep@gnu.org>.\n"
 
 #: src/grep.c:1062
 msgid "conflicting matchers specified"
