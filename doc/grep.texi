@@ -22,6 +22,7 @@
 
 @defcodeindex op
 @syncodeindex op fn
+@syncodeindex vr fn
 
 @ifinfo
 @direntry
@@ -34,7 +35,7 @@ Published by the Free Software Foundation,
 59 Temple Place - Suite 330
 Boston, MA 02111-1307, USA
 
-Copyright (C) 1998 Free Software Foundation, Inc.
+Copyright 1999 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -67,7 +68,7 @@ by the Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998 Free Software Foundation, Inc.
+Copyright @copyright{} 1999 Free Software Foundation, Inc.
 
 @sp 2
 Published by the Free Software Foundation, @*
@@ -391,8 +392,79 @@ MS-Windows.
 Several additional options control which variant of the @sc{grep}
 matching engine is used.  @xref{Grep Programs}.
 
-@sc{grep} uses the environment variable @var{LANG} to
-provide internationalization support, if compiled with this feature.
+Grep's behavior is affected by the following environment variables.
+@cindex environment variables
+
+@table @code
+
+@item GREP_OPTIONS
+@vindex GREP_OPTIONS
+@cindex default options environment variable
+This variable specifies default options to be placed in front of any
+explicit options.  For example, if @code{GREP_OPTIONS} is @samp{--text
+--directories=skip}, @sc{grep} behaves as if the two options
+@samp{--text} and @samp{--directories=skip} had been specified before
+any explicit options.  Option specifications are separated by
+whitespace.  A backslash escapes the next character, so it can be used to
+specify an option containing whitespace or a backslash.
+
+@item LC_ALL
+@itemx LC_MESSAGES
+@itemx LANG
+@vindex LC_ALL
+@vindex LC_MESSAGES
+@vindex LANG
+@cindex language of messages
+@cindex message language
+@cindex national language support
+@cindex NLS
+@cindex translation of message language
+These variables specify the @code{LC_MESSAGES} locale, which determines
+the language that @sc{grep} uses for messages.  The locale is determined
+by the first of these variables that is set.  American English is used
+if none of these environment variables are set, or if the message
+catalog is not installed, or if @sc{grep} was not compiled with national
+language support (NLS).
+
+@item LC_ALL
+@itemx LC_CTYPE
+@itemx LANG
+@vindex LC_ALL
+@vindex LC_CTYPE
+@vindex LANG
+@cindex character type
+@cindex national language support
+@cindex NLS
+These variables specify the @code{LC_CTYPE} locale, which determines the
+type of characters, e.g. which characters are whitespace.  The locale is
+determined by the first of these variables that is set.  The POSIX
+locale is used if none of these environment variables are set, or if the
+locale catalog is not installed, or if @sc{grep} was not compiled with
+national language support (NLS).
+
+@item POSIXLY_CORRECT
+@vindex POSIXLY_CORRECT
+If set, @sc{grep} behaves as POSIX.2 requires; otherwise, @sc{grep}
+behaves more like other GNU programs.  POSIX.2 requires that options that
+follow file names must be treated as file names; by default, such
+options are permuted to the front of the operand list and are treated as
+options.  Also, POSIX.2 requires that unrecognized options be diagnosed as
+``illegal'', but since they are not really against the law the default
+is to diagnose them as ``invalid''.  @code{POSIXLY_CORRECT} also
+disables @code{_@var{N}_GNU_nonoption_argv_flags_}, described below.
+
+@item _@var{N}_GNU_nonoption_argv_flags_
+@vindex _@var{N}_GNU_nonoption_argv_flags_
+(Here @code{@var{N}} is @sc{grep}'s numeric process ID.)  If the
+@var{i}th character of this environment variable's value is @samp{1}, do
+not consider the @var{i}th operand of @sc{grep} to be an option, even if
+it appears to be one.  A shell can put this variable in the environment
+for each command it runs, specifying which operands are the results of
+file name wildcard expansion and therefore should not be treated as
+options.  This behavior is available only with the GNU C library, and
+only when @code{POSIXLY_CORRECT} is not set.
+
+@end table
 
 @node Diagnostics, Grep Programs, Invoking, Top
 @comment  node-name,  next,  previous,  up
@@ -467,10 +539,13 @@ single character in that list; if the first character of the list is the
 caret @samp{^}, then it 
 matches any character @strong{not} in the list.  For example, the regular
 expression @samp{[0123456789]} matches any single digit.
-A range of @sc{ascii} characters  may be  specified  by  giving  the  first
-and  last characters, separated by a hyphen.  Finally, certain  named
-classes  of characters  are  predefined.   Their names are self explanatory,
-and  they  are :
+A range of @sc{ascii} characters may be specified by giving the first
+and last characters, separated by a hyphen.
+
+Finally, certain named classes of characters are predefined, as follows.
+Their interpretation depends on the @code{LC_CTYPE} locale; the
+interpretation below is that of the POSIX locale, which is the default
+if no @code{LC_CTYPE} locale is specified.
 
 @cindex classes of characters
 @cindex character classes
@@ -484,15 +559,20 @@ Any of [:digit:] or [:alpha:]
 @item [:alpha:]
 @opindex alpha
 @cindex alphabetic characters
-Any local-specific or one of the @sc{ascii} letters:@*
+Any letter:@*
 @code{a b c d e f g h i j k l m n o p q r s t u v w x y z},@*
 @code{A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}.
+
+@item [:blank:]
+@opindex blank
+@cindex blank characters
+Space or tab.
 
 @item [:cntrl:]
 @opindex cntrl
 @cindex control characters
-Any of @code{BEL}, @code{BS}, @code{CR}, @code{FF}, @code{HT},
-@code{NL}, or @code{VT}.
+Any character with octal codes 000 through 037, or @code{DEL} (octal
+code 177).
 
 @item [:digit:]
 @opindex digit
@@ -519,8 +599,7 @@ Any character from the @samp{[:space:]} class, and any character that is
 @item [:punct:]
 @opindex punct
 @cindex punctuation characters
-Any one of @code{!@: " #% & ' ( ) ; < = > ?@: [ \ ] * + , - .@: / : ^ _ @{ | @}}.
-
+Any one of @code{!@: " # $ % & ' ( ) * + , - .@: / : ; < = > ?@: @@ [ \ ] ^ _ ` @{ | @} ~}.
 
 @item [:space:]
 @opindex space
@@ -663,8 +742,8 @@ exception of the @sc{grep} commands and command-line options.
 @node Index, , Concept Index, Top
 @unnumbered Index
 
-This is an alphabetical list of all @sc{grep} commands and command-line
-options.
+This is an alphabetical list of all @sc{grep} commands, command-line
+options, and environment variables.
 
 @printindex fn
 

@@ -1,3 +1,7 @@
+  - The environment variable GREP_OPTIONS specifies default options;
+    e.g. GREP_OPTIONS='--directories=skip' reestablishes grep 2.1's
+    behavior of silently skipping directories.
+
 Version 2.3.1:
 
   - Minor release to correct some configuration problems

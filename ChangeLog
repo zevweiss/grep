@@ -1,3 +1,14 @@
+1999-03-17 Paul Eggert
+
+	* NEWS: Add GREP_OPTIONS.
+
+	* doc/grep.texi: Document GREP_OPTIONS, and the other
+	environment variables.  Fix doc for [:blank:], [:cntrl:], [:punct:].
+
+	* src/grep.c (prepend_args, prepend_default_options): New functions.
+	(main): Use them to implement GREP_OPTIONS.
+	* src/system.h (getenv): New decl.
+
 1999-03-16 Volker Borchert
 
 	* configure.in: Use case case ... esac for  checking Visual C++.
