@@ -21,6 +21,7 @@ ACINCLUDE_INPUTS = $(M4DIR)/decl.m4 $(M4DIR)/djgpp.m4 $(M4DIR)/dosfile.m4 \
 $(srcdir)/acinclude.m4 : $(ACINCLUDE_INPUTS)
 	cat $(ACINCLUDE_INPUTS) >$(srcdir)/acinclude.m4
 
+# make cvs-clean blatantly stolen from KDE CVS ;)
 cvs-clean:
 	@if test ! -d CVS; then \
 	  echo "You don't have a toplevel CVS directory."; \
