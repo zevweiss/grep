@@ -1,3 +1,8 @@
+2001-03-07  Alain Magloire
+
+	* README-alpha : Removed reference to GNU tar, add the location
+	of the CVSROOT.
+
 2001-03-06  Alain Magloire
 
 	Only the Regex patterns should be split in an array, patterns[].
@@ -49,6 +54,8 @@
 
 	To get more in sync with other GNU utilities like GNU tar and fetish
 	all the supporting functions are now under lib.
+	Thanks to Jim Meyering, Volkert Bochert and Paul Eggert for
+	the code and the reminders.
 
 	* src/grep.c (fatal) : Function removed, using error () from
 	lib/error.c instead.
