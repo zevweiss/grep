@@ -17,7 +17,9 @@ set dummy $2; ac_word=[$]2
 AC_MSG_CHECKING([for $ac_word])
 AC_CACHE_VAL(ac_cv_path_$1,
 [case "[$]$1" in
-  /*|[A-Z]:/*)
+changequote(, )dnl
+  /*|[A-z]:/*)
+changequote([, ])dnl
   ac_cv_path_$1="[$]$1" # Let the user override the test with a path.
   ;;
   *)

@@ -41,13 +41,10 @@ static void kwsinit PARAMS((void));
 struct matcher matchers[] = {
   { "default", Gcompile, EGexecute },
   { "grep", Gcompile, EGexecute },
-  { "ggrep", Gcompile, EGexecute },
   { "egrep", Ecompile, EGexecute },
   { "posix-egrep", Ecompile, EGexecute },
   { "awk", Ecompile, EGexecute },
-  { "gegrep", Ecompile, EGexecute },
   { "fgrep", Fcompile, Fexecute },
-  { "gfgrep", Fcompile, Fexecute },
   { 0, 0, 0 },
 };
 

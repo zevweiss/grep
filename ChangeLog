@@ -35,6 +35,13 @@
 	* configure.in (AC_CHECK_FUNCS): Add setmode.
 	(HAVE_DOS_FILENAMES): New macro
 
+1998-11-27  Eli Zaretskii
+
+	* djgpp/config.sed: New file, a Sed script to edit configure
+	script before running it on DOS/Windows.
+	* djgpp/config.bat: Updated to handle po2tbl.sed.in and
+	po/Makefile.in.in on DOS filesystems, and to run config.sed.
+
 1998-11-24  Jim Meyering
 
 	* src/grep.c : Typo s/infalid/invalid/

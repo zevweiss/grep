@@ -17,14 +17,17 @@ for accessing this information!
 ##
 Provide some sort of Hilight ... hmm Not.
 
-Have different binaries for fgrep, egrep and grep.
-It needs a complete rewrite of the main and how the matcher
-is call; it should not depend on the name of the program.
+DONE:
+	Have different binaries for fgrep, egrep and grep.
+	It needs a complete rewrite of the main and how the matcher
+	is call; it should not depend on the name of the program.
 
-Port to Win NT/95 see Delorie or cygnus win32 project
+DONE:
+	Port to Win NT/95 see Delorie or cygnus win32 project
 
-Merge all the modifs that are scattering around in the
-various Linux distribution.
+DONE:
+	Merge all the modifs that are scattering around in the
+	various Linux distribution.
 
 Some test in tests/spencer2.tests should have failed !!!
 Need to filter out some bugs in dfa.[ch]/regex.[ch].
@@ -35,7 +38,9 @@ Grep does 32 bits arithmetic, it needs to move to 64.
 
 Clean up, to many #ifdef's !!
 
-Merge the work done By Paul Eggert(--text, -directory=ACTION, large files).
+DONE:
+	Merge the work done By Paul Eggert
+	(--text, -directory=ACTION, large files).
 
 Check some new Algorithms for matching, talk to Karl Berry and Nelson.
 Sunday's "Quick Search" Algorithm (CACM 33, 8 August 1990 pp. 132-142)
@@ -51,6 +56,7 @@ POSIX Compliance see p10003.x
 
 Moving away from GNU regex API for POSIX regex API.
 
-Finish I18N.
+DONE(well never really finish):
+	Finish I18N.
 
 Better and faster !!
