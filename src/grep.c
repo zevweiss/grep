@@ -173,7 +173,7 @@ static void
 suppressible_error (char const *mesg, int errnum)
 {
   if (! suppress_errors)
-    error (0, errnum, mesg);
+    error (0, errnum, "%s", mesg);
   errseen = 1;
 }
 
@@ -694,7 +694,7 @@ grep (int fd, char const *file, struct stats *stats)
       /* Close fd now, so that we don't open a lot of file descriptors
 	 when we recurse deeply.  */
       if (close (fd) != 0)
-	error (0, errno, file);
+	error (0, errno, "%s", file);
       return grepdir (file, stats) - 2;
     }
 
@@ -830,7 +830,7 @@ grepfile (char const *file, struct stats *stats)
 	    {
 	      if (stat (file, &stats->stat) != 0)
 		{
-		  error (0, errno, file);
+		  error (0, errno, "%s", file);
 		  return 1;
 		}
 
@@ -891,13 +891,13 @@ grepfile (char const *file, struct stats *stats)
 	  if ((bufmapped || required_offset != bufoffset)
 	      && lseek (desc, required_offset, SEEK_SET) < 0
 	      && S_ISREG (stats->stat.st_mode))
-	    error (0, errno, filename);
+	    error (0, errno, "%s", filename);
 	}
       else
 	while (close (desc) != 0)
 	  if (errno != EINTR)
 	    {
-	      error (0, errno, file);
+	      error (0, errno, "%s", file);
 	      break;
 	    }
     }
@@ -1358,7 +1358,7 @@ main (int argc, char **argv)
       case 'f':
 	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
 	if (!fp)
-	  error (2, errno, optarg);
+	  error (2, errno, "%s", optarg);
 	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
 	  ;
 	keys = xrealloc (keys, keyalloc);
@@ -1480,7 +1480,7 @@ main (int argc, char **argv)
         if (add_exclude_file (add_exclude, excluded_patterns, optarg, '\n')
 	    != 0)
           {
-            error (2, errno, optarg);
+            error (2, errno, "%s", optarg);
           }
         break;
 

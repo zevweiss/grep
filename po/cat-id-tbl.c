@@ -70,9 +70,10 @@ Output control:\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
-      --include=PATTERN     files that match PATTERN will be examine\n\
-      --exclude=PATTERN     files that match PATTERN will be skip.\n\
-      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n\
+      --include=PATTERN     files that match PATTERN will be examined\n\
+      --exclude=PATTERN     files that match PATTERN will be skipped.\n\
+      --exclude-from=FILE   files that match PATTERN in FILE will be \
+skipped.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\

@@ -1,3 +1,8 @@
+2001-07-31  Andreas Schwab
+
+	* src/grep.c: Fix all uses of error to pass a proper format
+	string.
+
 2001-07-29  Alain Magloire
 
 	* grep/src/grep.c (usage): Typos corrected.
