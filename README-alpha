@@ -7,4 +7,11 @@ If you are using an old version of cvs, you might have to run
 $ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs login
 first (and just press enter at the password prompt).
 
-Please send comments and problem reports to <bug-grep@gnu.org>.
+Please submit bug reports at
+http://savannah.gnu.org/bugs/?group=grep
+
+If you are interested in the development of GNU grep, you may want to
+subscribe to the grep-devel-list mailing list.
+
+To subscribe, send a message to grep-devel-list-request@arklinux.org with
+"subscribe" (without the quotation marks) in the subject.
