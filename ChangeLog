@@ -229,7 +229,7 @@
 
 2000-01-04  Paul Eggert
 
-	Initial patch from David O'Brien.
+	Initial patch by Ruslan Ermilov.
 
 	Add --binary-files option.
 	* NEWS, doc/grep.1, doc/grep.texi: Document it.
