@@ -17,4 +17,4 @@ else
 	failures=1
 fi
 
-exit $failure
+exit $failures

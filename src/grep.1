@@ -180,6 +180,8 @@ option.
 .TP
 .B \-s, --silent
 Suppress error messages about nonexistent or unreadable files.
+Note that GNU grep follows POSIX.2 behavior, Shell scripts intended
+to be portable to BSD grep should redirect output to /dev/null instead.
 .TP
 .B \-a, --text
 Do not suppress output lines that contain binary data.
