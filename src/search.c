@@ -128,37 +128,27 @@ Gcompile (char const *pattern, size_t size)
   if (match_words || match_lines)
     {
       /* In the whole-word case, we use the pattern:
-	 (^|[^A-Za-z_])(userpattern)([^A-Za-z_]|$).
+	 \(^\|[^[:alnum:]_]\)\(userpattern\)\([^[:alnum:]_]|$\).
 	 In the whole-line case, we use the pattern:
-	 ^(userpattern)$.
-	 BUG: Using [A-Za-z_] is locale-dependent!
-	 So will use [:alnum:] */
+	 ^\(userpattern\)$.  */
 
-      char *n = malloc(size + 50);
-      int i = 0;
-
-      strcpy(n, "");
-
-      if (match_lines)
-	strcpy(n, "^\\(");
-      if (match_words)
-	strcpy(n, "\\(^\\|[^[:alnum:]_]\\)\\(");
-
+      static char const line_beg[] = "^\\(";
+      static char const line_end[] = "\\)$";
+      static char const word_beg[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
+      static char const word_end[] = "\\)\\([^[:alnum:]_]\\|$\\)";
+      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+      size_t i;
+      strcpy (n, match_lines ? line_beg : word_beg);
       i = strlen(n);
       memcpy(n + i, pattern, size);
       i += size;
-
-      if (match_words)
-	strcpy(n + i, "\\)\\([^[:alnum:]_]\\|$\\)");
-      if (match_lines)
-	strcpy(n + i, "\\)$");
-
+      strcpy (n + i, match_lines ? line_end : word_end);
       i += strlen(n + i);
-      dfacomp(n, i, &dfa, 1);
+      pattern = n;
+      size = i;
     }
-  else
-    dfacomp(pattern, size, &dfa, 1);
 
+  dfacomp (pattern, size, &dfa, 1);
   kwsmusts();
 }
 
@@ -188,37 +178,27 @@ Ecompile (char const *pattern, size_t size)
   if (match_words || match_lines)
     {
       /* In the whole-word case, we use the pattern:
-	 (^|[^A-Za-z_])(userpattern)([^A-Za-z_]|$).
+	 (^|[^[:alnum:]_])(userpattern)([^[:alnum:]_]|$).
 	 In the whole-line case, we use the pattern:
-	 ^(userpattern)$.
-	 BUG: Using [A-Za-z_] is locale-dependent!
-	 so will use the char class */
+	 ^(userpattern)$.  */
 
-      char *n = malloc(size + 50);
-      int i = 0;
-
-      strcpy(n, "");
-
-      if (match_lines)
-	strcpy(n, "^(");
-      if (match_words)
-	strcpy(n, "(^|[^[:alnum:]_])(");
-
+      static char const line_beg[] = "^(";
+      static char const line_end[] = ")$";
+      static char const word_beg[] = "(^|[^[:alnum:]_])(";
+      static char const word_end[] = ")([^[:alnum:]_]|$)";
+      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+      size_t i;
+      strcpy (n, match_lines ? line_beg : word_beg);
       i = strlen(n);
       memcpy(n + i, pattern, size);
       i += size;
-
-      if (match_words)
-	strcpy(n + i, ")([^[:alnum:]_]|$)");
-      if (match_lines)
-	strcpy(n + i, ")$");
-
+      strcpy (n + i, match_lines ? line_end : word_end);
       i += strlen(n + i);
-      dfacomp(n, i, &dfa, 1);
+      pattern = n;
+      size = i;
     }
-  else
-    dfacomp(pattern, size, &dfa, 1);
 
+  dfacomp (pattern, size, &dfa, 1);
   kwsmusts();
 }
 

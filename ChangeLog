@@ -1,3 +1,9 @@
+2000-08-16  Paul Eggert
+
+	* src/search.c (Gcompile, Ecompile): -x overrides -w, for
+	consistency with fgrep.  Don't assume that sizes fit in 'int'.
+	Fix comments to match code.
+
 2000-06-06  Paul Eggert
 
 	* src/grep.c (grepdir): Don't look at st_dev when testing for
