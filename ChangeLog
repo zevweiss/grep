@@ -1,3 +1,31 @@
+2001-02-16  Alain Magloire
+
+	* djgpp/config.bat : Fix for 4dos.com.
+	* m4/dosfile.m4 (HAVE_DOS_FILE_CONTENTS) : Was not set.
+	Bugs noted and patched by Juan Manuel Guerrero.
+
+2001-02-16  Alain Magloire
+
+	A much requested feature, the possibility to select
+	files when doing recurse :
+	# find . -name "*.c" | xargs grep main {}
+	# grep --include=*.c main .
+	# find . -not -name "*.c" | xargs grep main {}
+	# grep --exclude=*.c main .
+
+	* src/grep.c (short_options): -R equivalent to -r.
+	(#ifdef) : Fix some inconsistencies in the use of #ifdefs, prefer
+	#if defined() wen possible.
+	(long_options) : Add --color, --include and exclude.
+	(Usage) : Description of new options.
+	(color) : Rename color variable to color_option.
+	Removed 'always|never|auto' arguments, not necessary for grep.
+	(exclude_pattern) : new variable, holder for the file pattern.
+	(include_pattern) : new variable, hoder for the file pattern.
+	* src/savedir.c : Signature change, take two new argmuments.
+	* doc/grep.texi : Document, new options.
+	* doc/grep.man : Document, new options.
+
 2001-02-09  Alain Magloire
 
 	* src/grep.c (long_options) : Added equivalent to -r with -R.

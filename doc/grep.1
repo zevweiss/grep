@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.16 2001/02/08 16:12:10 alainm Exp $
+.Id $Id: grep.1,v 1.17 2001/02/16 05:50:23 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -116,6 +116,11 @@ option.
 might output binary garbage,
 which can have nasty side effects if the output is a terminal and if the
 terminal driver interprets some of it as commands.
+.TP
+.BI \-\^\-colour ", " \-\^\-color
+Surround the matching string with the marker find in
+.B GREP_COLOR
+environment variable.
 .TP
 .BR \-c ", " \-\^\-count
 Suppress normal output; instead print a count of
@@ -274,11 +279,19 @@ or
 .B \-\^\-no-messages
 option.
 .TP
-.BR \-r ", " \-\^\-recursive
+.BR \-R ", " \-r ", " \-\^\-recursive
 Read all files under each directory, recursively;
 this is equivalent to the
 .B "\-d recurse"
 option.
+.TP
+.BR "\fR \fP \-\^\-include=" PATTERN
+Recurse in directories only searching file matching
+.I PATTERN.
+.TP
+.BR "\fR \fP \-\^\-exclude=" PATTERN
+Recurse in directories skip file matching
+.I PATTERN.
 .TP
 .BR \-s ", " \-\^\-no-messages
 Suppress error messages about nonexistent or unreadable files.
@@ -640,6 +653,9 @@ had been specified before any explicit options.
 Option specifications are separated by whitespace.
 A backslash escapes the next character,
 so it can be used to specify an option containing whitespace or a backslash.
+.TP
+.B GREP_COLOR
+Specifies the marker for highlighting.
 .TP
 \fBLC_ALL\fP, \fBLC_COLLATE\fP, \fBLANG\fP
 These variables specify the

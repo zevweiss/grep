@@ -68,7 +68,7 @@ by the Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2000 Free Software Foundation, Inc.
+Copyright @copyright{} 2000, 2001 Free Software Foundation, Inc.
 
 @sp 2
 Published by the Free Software Foundation, @*
@@ -261,6 +261,16 @@ Print @var{num} lines of leading context before matching lines.
 @cindex context
 Print @var{num} lines of output context.
 
+@itemx --color
+@opindex --color
+@cindex highlight, color, colour
+Equivalent to @samp{--colour}.
+
+@itemx --colour
+@opindex --colour
+@cindex highlight, color, colour
+The matching string is surrounded by the marker specify in @var{GREP_COLOR}.
+
 @item -@var{num}
 @opindex -NUM
 Same as @samp{--context=@var{num}} lines of leading and trailing
@@ -371,6 +381,11 @@ it must be either at the end of the line or followed by
 a non-word constituent character.  Word-constituent
 characters are letters, digits, and the underscore.
 
+@item -R
+@cindex recursive search
+@cindex searching directory trees
+Equivalent to @sam{--directories=recurse}.
+
 @item -r
 @itemx --recursive
 @opindex -r
@@ -378,8 +393,21 @@ characters are letters, digits, and the underscore.
 @cindex recursive search
 @cindex searching directory trees
 For each directory mentioned in the command line, read and process all
-files in that directory, recursively.  This is the same as the @samp{-d
-recurse} option.
+files in that directory, recursively.  This is the same as the
+@samp{--directories=recurse} option.
+
+@item --include=@var{pattern}
+@opindex --include
+@cindex recursive search
+@cindex searching directory trees
+When processing directories recursively, only files matching @var{pattern}
+@var{pattern} will be search.
+
+@item --exclude=@var{pattern}
+@opindex --exclude
+@cindex recursive search
+@cindex searching directory trees
+When processing directories recursively, skip files matching @var{pattern}.
 
 @item -m @var{num}
 @itemx --max-count=@var{num}
@@ -527,6 +555,12 @@ behaves as if the two options @samp{--binary-files=without-match} and
 any explicit options.  Option specifications are separated by
 whitespace.  A backslash escapes the next character, so it can be used to
 specify an option containing whitespace or a backslash.
+
+@item GREP_COLOR
+@vindex GREP_COLOR
+@cindex default options environment variable, highlight, color, coulor
+This variable specifies the surrounding markers use to highlight the matching
+text.  The default is control ascii red.
 
 @item LC_ALL
 @itemx LC_COLLATE

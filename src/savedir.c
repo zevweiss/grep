@@ -66,6 +66,7 @@ char *realloc ();
 char *stpcpy ();
 #endif
 
+#include <fnmatch.h>
 #include "savedir.h"
 
 /* Return a freshly allocated string containing the filenames
@@ -76,7 +77,8 @@ char *stpcpy ();
    Return NULL if DIR cannot be opened or if out of memory. */
 
 char *
-savedir (const char *dir, off_t name_size, int include_dirs)
+savedir (const char *dir, off_t name_size,
+	 const char *include_pattern, const char *exclude_pattern)
 {
   DIR *dirp;
   struct dirent *dp;
@@ -102,17 +104,22 @@ savedir (const char *dir, off_t name_size, int include_dirs)
 
   while ((dp = readdir (dirp)) != NULL)
     {
-#ifdef _DIRENT_HAVE_D_TYPE
-      if (! include_dirs && dp->d_type == DT_DIR)
-	continue;
-#endif
-
       /* Skip "." and ".." (some NFS filesystems' directories lack them). */
       if (dp->d_name[0] != '.'
 	  || (dp->d_name[1] != '\0'
 	      && (dp->d_name[1] != '.' || dp->d_name[2] != '\0')))
 	{
 	  off_t size_needed = (namep - name_space) + NAMLEN (dp) + 2;
+
+	  if ((include_pattern || exclude_pattern) && !isdir (dp->d_name))
+	    {
+	      if (include_pattern
+		  && fnmatch (include_pattern, dp->d_name, 0) != 0)
+		continue;
+	      if (exclude_pattern
+		  && fnmatch (exclude_pattern, dp->d_name, 0) == 0)
+		continue;
+	    }
 
 	  if (size_needed > name_size)
 	    {

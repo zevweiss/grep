@@ -62,23 +62,25 @@ static int suppress_errors;
 /* If nonzero, use mmap if possible.  */
 static int mmap_option;
 
-/* Various color settings.  */
-static int color;
+/* If nonzero, use grep_color marker.  */
+static int color_option;
+
+/* The color string used.  The user can overwrite it using the environment
+   variable GREP_COLOR.  The default is to print red.  */
+static const char *grep_color = "31;5";
 
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiLlm:nqrsuvwxyZz";
+"0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiKLlm:nqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
 {
   BINARY_FILES_OPTION = CHAR_MAX + 1,
-  COLOR_OPTION
+  COLOR_OPTION,
+  INCLUDE_OPTION,
+  EXCLUDE_OPTION,
 };
-
-/* The color string used.  The user can overwrite it using the environment
-   variable GREP_COLOR.  The default is to print red.  */
-static const char *grep_color = "31;5";
 
 /* Long options equivalences. */
 static struct option const long_options[] =
@@ -89,17 +91,19 @@ static struct option const long_options[] =
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
   {"byte-offset", no_argument, NULL, 'b'},
   {"context", required_argument, NULL, 'C'},
-  {"color", optional_argument, NULL, COLOR_OPTION},
-  {"colour", optional_argument, NULL, COLOR_OPTION},
+  {"color", no_argument, NULL, COLOR_OPTION},
+  {"colour", no_argument, NULL, COLOR_OPTION},
   {"count", no_argument, NULL, 'c'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
+  {"exclude", required_argument, NULL, EXCLUDE_OPTION},
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
   {"files-without-match", no_argument, NULL, 'L'},
   {"fixed-regexp", no_argument, NULL, 'F'},
   {"fixed-strings", no_argument, NULL, 'F'},
   {"help", no_argument, &show_help, 1},
+  {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
@@ -145,9 +149,11 @@ static enum
   } directories;
 
 static int grepdir PARAMS ((char const *, struct stats const *));
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
 static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
+static const char *include_pattern;
+static const char *exclude_pattern;
 
 /* Functions we'll use to search. */
 static void (*compile) PARAMS ((char const *, size_t));
@@ -294,14 +300,14 @@ reset (int fd, char const *file, struct stats *stats)
 	      return 0;
 	    }
 	}
-#ifdef HAVE_MMAP
+#if defined(HAVE_MMAP)
       initial_bufoffset = bufoffset;
       bufmapped = mmap_option && bufoffset % pagesize == 0;
 #endif
     }
   else
     {
-#ifdef HAVE_MMAP
+#if defined(HAVE_MMAP)
       bufmapped = 0;
 #endif
     }
@@ -439,7 +445,7 @@ fillbuf (size_t save, struct stats const *stats)
     }
 
   bufoffset += fillsize;
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
   if (fillsize)
     fillsize = undossify_input (readbuf, fillsize);
 #endif
@@ -481,7 +487,7 @@ static int pending;		/* Pending lines of output.
 static int done_on_match;	/* Stop scanning file on first match.  */
 static int exit_on_match;	/* Exit on first match.  */
 
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
 # include "dosbuf.c"
 #endif
 
@@ -540,12 +546,12 @@ prline (char const *beg, char const *lim, int sep)
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
       pos = dossified_pos (pos);
 #endif
       print_offset_sep (pos, sep);
     }
-  if (color)
+  if (color_option)
     {
       size_t match_size;
       size_t match_offset;
@@ -877,7 +883,7 @@ grepfile (char const *file, struct stats *stats)
 	      if (directories == SKIP_DIRECTORIES)
 		switch (e)
 		  {
-#ifdef EISDIR
+#if defined(EISDIR)
 		  case EISDIR:
 		    return 1;
 #endif
@@ -897,7 +903,7 @@ grepfile (char const *file, struct stats *stats)
       filename = file;
     }
 
-#ifdef SET_BINARY
+#if defined(SET_BINARY)
   /* Set input to binary mode.  Pipes are simulated with files
      on DOS, so this includes the case of "foo | grep bar".  */
   if (!isatty (desc))
@@ -960,8 +966,8 @@ grepdir (char const *dir, struct stats const *stats)
 	  return 1;
 	}
 
-  name_space = savedir (dir, (unsigned) stats->stat.st_size,
-			directories != SKIP_DIRECTORIES);
+  name_space = savedir (dir, (unsigned) stats->stat.st_size, include_pattern,
+			exclude_pattern);
 
   if (! name_space)
     {
@@ -1045,13 +1051,16 @@ Output control:\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
-                            TYPE is 'binary', 'text', or 'without-match'.\n\
-      --colour, --color     color the matches with ${GREP_COLOR:-red}\n\
+                            TYPE is 'binary', 'text', or 'without-match'\n\
   -a, --text                equivalent to --binary-files=text\n\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
-                            ACTION is 'read', 'recurse', or 'skip'.\n\
-  -r, --recursive           equivalent to --directories=recurse.\n\
+                            ACTION is 'read', 'recurse', or 'skip'\n\
+  -R, -r, --recursive       equivalent to --directories=recurse\n\
+      --include=PATTERN     equivalent to --directories=recurse but only\n\
+                            files that match PATTERN will be examine\n\
+      --exclude=PATTERN     equivalent to --directories=recurse, files that\n\
+                            match PATTERN will be skip.
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\
@@ -1063,6 +1072,7 @@ Context control:\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
+      --color, --colour     use markers to distinguish the matching string\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
@@ -1090,7 +1100,7 @@ static int
 install_matcher (char const *name)
 {
   int i;
-#ifdef HAVE_SETRLIMIT
+#if defined(HAVE_SETRLIMIT)
   struct rlimit rlim;
 #endif
 
@@ -1099,7 +1109,7 @@ install_matcher (char const *name)
       {
 	compile = matchers[i].compile;
 	execute = matchers[i].execute;
-#if HAVE_SETRLIMIT && defined(RLIMIT_STACK)
+#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
 	/* I think every platform needs to do this, so that regex.c
 	   doesn't oveflow the stack.  The default value of
 	   `re_max_failures' is too large for some platforms: it needs
@@ -1279,10 +1289,10 @@ main (int argc, char **argv)
   default_context = 0;
 
 /* Internationalization. */
-#if HAVE_SETLOCALE
+#if defined(HAVE_SETLOCALE)
   setlocale (LC_ALL, "");
 #endif
-#if ENABLE_NLS
+#if defined(ENABLE_NLS)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 #endif
@@ -1322,12 +1332,12 @@ main (int argc, char **argv)
 	binary_files = WITHOUT_MATCH_BINARY_FILES;
 	break;
       case 'U':
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
 	dos_use_file_type = DOS_BINARY;
 #endif
 	break;
       case 'u':
-#if HAVE_DOS_FILE_CONTENTS
+#if defined(HAVE_DOS_FILE_CONTENTS)
 	dos_report_unix_offset = 1;
 #endif
 	break;
@@ -1457,26 +1467,15 @@ main (int argc, char **argv)
 	  fatal (_("unknown binary-files type"), 0);
 	break;
       case COLOR_OPTION:
-	if (optarg == NULL || strcmp (optarg, "always") == 0
-	    || strcmp (optarg, "yes") == 0 || strcmp (optarg, "force") == 0)
-	  color = 1;
-	else if (strcmp (optarg, "never") == 0 || strcmp (optarg, "no") == 0
-		 || strcmp (optarg, "none") == 0)
-	  color = 0;
-	else if (strcmp (optarg, "auto") == 0 || strcmp (optarg, "tty") == 0
-		 || strcmp (optarg, "if-tty") == 0)
-	  color = isatty (STDOUT_FILENO);
-	else
-	  {
-	    fprintf (stderr, _("invalid argument `%s' for `--color'\n\
-Valid arguments are:\n\
-  - `always', `yes', `force'\n\
-  - `never', `no', `none'\n\
-  - `auto', `tty', `if-tty'\n"), optarg);
-	    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-		     prog);
-	    exit (2);
-	  }
+	color_option = 1;
+	break;
+      case EXCLUDE_OPTION:
+	exclude_pattern = optarg;
+	directories = RECURSE_DIRECTORIES;
+	break;
+      case INCLUDE_OPTION:
+	include_pattern = optarg;
+	directories = RECURSE_DIRECTORIES;
 	break;
       case 0:
 	/* long options */
@@ -1502,7 +1501,7 @@ Valid arguments are:\n\
   if (out_before < 0)
     out_before = default_context;
 
-  if (color)
+  if (color_option)
     {
       char *userval = getenv ("GREP_COLOR");
       if (userval != NULL && *userval != '\0')

@@ -35,7 +35,16 @@ if not errorlevel 1 mv -f %XSRC%/po/Makefile.in.in %XSRC%/po/Makefile.in-in
 Rem This is required because DOS/Windows are case-insensitive
 Rem to file names, and "make install" will do nothing if Make
 Rem finds a file called `install'.
-if exist INSTALL ren INSTALL INSTALL.txt
+if exist INSTALL mv -f INSTALL INSTALL.txt
+
+Rem install-sh is required by the configure script but clashes with the
+Rem various Makefile install-foo targets, so we MUST have it before the
+Rem script runs and rename it afterwards
+test -f %XSRC%/install-sh
+if not errorlevel 1 goto NoRen0
+test -f %XSRC%/install-sh.sh
+if not errorlevel 1 mv -f %XSRC%/install-sh.sh %XSRC%/install-sh
+:NoRen0
 
 Rem Set HOSTNAME so it shows in config.status
 if not "%HOSTNAME%" == "" goto hostdone
@@ -49,8 +58,10 @@ if not "%OS%" == "MS-DOS" goto SmallEnv
 :haveos
 if not "%USERNAME%" == "" goto haveuname
 if not "%USER%" == "" goto haveuser
+echo No USERNAME and no USER found in the environment, using default values
 set HOSTNAME=Unknown PC
 if not "%HOSTNAME%" == "Unknown PC" goto SmallEnv
+goto userdone
 :haveuser
 set HOSTNAME=%USER%'s PC
 if not "%HOSTNAME%" == "%USER%'s PC" goto SmallEnv
@@ -59,20 +70,16 @@ goto userdone
 set HOSTNAME=%USERNAME%'s PC
 if not "%HOSTNAME%" == "%USERNAME%'s PC" goto SmallEnv
 :userdone
-set HOSTNAME=%HOSTNAME%, %OS%
-if not "%HOSTNAME%" == "%HOSTNAME%, %OS%" goto SmallEnv
+set _HOSTNAME=%HOSTNAME%, %OS%
+if not "%_HOSTNAME%" == "%HOSTNAME%, %OS%" goto SmallEnv
+set HOSTNAME=%_HOSTNAME%
 :hostdone
+set _HOSTNAME=
 set OS=
-
-Rem install-sh is required by the configure script but clashes with the
-Rem various Makefile install-foo targets, so we MUST have it before the
-Rem script runs and rename it afterwards
-if not exist install-sh if exist install-sh.sh ren install-sh.sh install-sh
 
 echo Running the ./configure script...
 sh ./configure --src=%XSRC% --disable-nls
 if errorlevel 1 goto CfgError
-if not exist install-sh.sh if exist install-sh ren install-sh install-sh.sh
 echo Done.
 goto End
 
@@ -83,5 +90,13 @@ goto End
 :SmallEnv
 echo Your environment size is too small.  Enlarge it and run me again.
 echo Configuration NOT done!
+
 :End
+test -f %XSRC%/install-sh.sh
+if not errorlevel 1 goto NoRen1
+test -f %XSRC%/install-sh
+if not errorlevel 1 mv -f %XSRC%/install-sh %XSRC%/install-sh.sh
+:NoRen1
+set CONFIG_SITE=
+set HOSTNAME=
 set XSRC=
