@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4\n"
-"POT-Creation-Date: 2001-03-04 01:04-0500\n"
+"POT-Creation-Date: 2001-03-07 00:02-0500\n"
 "PO-Revision-Date: 2000-01-21 16:31+0000\n"
 "Last-Translator: Simos Xenitellis <S.Xenitellis@rhbnc.ac.uk>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -15,13 +15,24 @@ msgstr ""
 
 # src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
 # src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:827
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:703
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
 msgid "Memory exhausted"
 msgstr "Η μνήμη εξαντλήθηκε"
 
+# src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
+# src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
+# src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
+# src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
+#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
+#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
+#: src/dfa.c:1045 src/dfa.c:1046
+msgid "Unbalanced ["
+msgstr "Μη ισσοροπημένο ["
+
 # src/dfa.c:444
 # src/dfa.c:452
-#: src/dfa.c:517
+#: src/dfa.c:738
 msgid "Unfinished \\ escape"
 msgstr "Μη τερματισμένος χαρακτήρας διαφυγής \\"
 
@@ -31,46 +42,37 @@ msgstr "Μη τερματισμένος χαρακτήρας διαφυγής \\"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:650 src/dfa.c:656 src/dfa.c:666 src/dfa.c:674 src/dfa.c:689
+#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
 msgid "unfinished repeat count"
 msgstr "μη τερματισμένος μετρητής επανάληψης"
 
 # src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
 # src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
-#: src/dfa.c:663 src/dfa.c:680 src/dfa.c:688 src/dfa.c:692
+#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
 msgid "malformed repeat count"
 msgstr "κακοσχηματισμένος μετρητής επανάληψης"
 
-# src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
-# src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
-# src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-# src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
-#: src/dfa.c:767 src/dfa.c:770 src/dfa.c:794 src/dfa.c:798 src/dfa.c:799
-#: src/dfa.c:802 src/dfa.c:814 src/dfa.c:815
-msgid "Unbalanced ["
-msgstr "Μη ισσοροπημένο ["
-
 # src/dfa.c:841
 # src/dfa.c:849
-#: src/dfa.c:1000
+#: src/dfa.c:1232
 msgid "Unbalanced ("
 msgstr "Μη ισορροπημένο ("
 
 # src/dfa.c:962
 # src/dfa.c:970
-#: src/dfa.c:1125
+#: src/dfa.c:1357
 msgid "No syntax specified"
 msgstr "Δεν ορίστηκε συντακτικό"
 
 # src/dfa.c:970
 # src/dfa.c:978
-#: src/dfa.c:1133
+#: src/dfa.c:1365
 msgid "Unbalanced )"
 msgstr "Μη ισορροπημένο )"
 
 # src/dfa.c:1990
 # src/dfa.c:1998
-#: src/dfa.c:2579
+#: src/dfa.c:2933
 msgid "out of memory"
 msgstr "εξαντλήθηκε η μνήμη"
 
@@ -79,7 +81,7 @@ msgstr "εξαντλήθηκε η μνήμη"
 # src/grep.c:164 src/grep.c:181 src/grep.c:283 src/grep.c:338 src/kwset.c:184
 # src/kwset.c:190
 #: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:102 src/search.c:214 src/search.c:291 src/search.c:488
+#: src/search.c:103 src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "η μνήμη εξαντλήθηκε"
 
@@ -346,7 +348,7 @@ msgstr "%s (GNU grep) %s\n"
 # src/grep.c:1221
 #: src/grep.c:1545
 #, fuzzy
-msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
+msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 
 # src/grep.c:919
@@ -360,11 +362,11 @@ msgstr ""
 "συνθήκες αντιγραφής. ΔΕΝ υπάρχει εγγύηση· ούτε ακόμα για ΧΡΗΣΙΜΟΤΗΤΑ ή\n"
 "ΚΑΤΑΛΛΗΛΟΤΗΤΑ ΓΙΑ ΕΝΑ ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ.\n"
 
-#: src/search.c:620
+#: src/search.c:623
 msgid "The -P option is not supported"
 msgstr ""
 
-#: src/search.c:633
+#: src/search.c:636
 msgid "The -P and -z options cannot be combined"
 msgstr ""
 

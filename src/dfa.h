@@ -152,6 +152,9 @@ typedef enum
   ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
                                   any multibyte(or singlebyte) characters.
 			          It is used only if MB_CUR_MAX > 1.  */
+
+  MBCSET,			/* MBCSET is similar to CSET, but for
+				   multibyte characters.  */
 #endif /* MBS_SUPPORT */
 
   CSET				/* CSET and (and any value greater) is a
@@ -258,6 +261,26 @@ struct dfamust
   struct dfamust *next;
 };
 
+#ifdef MBS_SUPPORT
+/* A bracket operator.
+   e.g. [a-c], [[:alpha:]], etc.  */
+struct mb_char_classes
+{
+  int invert;
+  wchar_t *chars;		/* Normal characters.  */
+  int nchars;
+  wctype_t *ch_classes;		/* Character classes.  */
+  int nch_classes;
+  wchar_t *range_sts;		/* Range characters (start of the range).  */
+  wchar_t *range_ends;		/* Range characters (end of the range).  */
+  int nranges;
+  char **equivs;		/* Equivalent classes.  */
+  int nequivs;
+  char **coll_elems;
+  int ncoll_elems;		/* Collating elements.  */
+};
+#endif
+
 /* A compiled regular expression. */
 struct dfa
 {
@@ -286,6 +309,8 @@ struct dfa
 	         a multibyte character.
 	 bit 0 : tokens[i] is a singlebyte character, or the 1st-byte of
 	         a multibyte character.
+       if tokens[i] = MBCSET
+         ("the index of mbcsets correspnd to this operator" << 2) + 3
 
      e.g.
      tokens
@@ -294,6 +319,11 @@ struct dfa
      multibyte_prop
         = 3     , 1               ,  0              ,  2              , 3
   */
+
+  /* Array of the bracket expressoin in the DFA.  */
+  struct mb_char_classes *mbcsets;
+  int nmbcsets;
+  int mbcsets_alloc;
 #endif
 
   /* Stuff owned by the state builder. */

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0\n"
-"POT-Creation-Date: 2001-03-04 01:04-0500\n"
+"POT-Creation-Date: 2001-03-07 00:02-0500\n"
 "PO-Revision-Date: 1996-08-18 11:24 EDT\n"
 "Last-Translator: Erick Branderhorst <branderh@debian.org>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -13,12 +13,19 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:703
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
 #, fuzzy
 msgid "Memory exhausted"
 msgstr "geen geheugen meer beschikbaar"
 
-#: src/dfa.c:517
+#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
+#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
+#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
+#: src/dfa.c:1045 src/dfa.c:1046
+msgid "Unbalanced ["
+msgstr ""
+
+#: src/dfa.c:738
 msgid "Unfinished \\ escape"
 msgstr ""
 
@@ -26,37 +33,32 @@ msgstr ""
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:650 src/dfa.c:656 src/dfa.c:666 src/dfa.c:674 src/dfa.c:689
+#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
 msgid "unfinished repeat count"
 msgstr ""
 
-#: src/dfa.c:663 src/dfa.c:680 src/dfa.c:688 src/dfa.c:692
+#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
 msgid "malformed repeat count"
 msgstr ""
 
-#: src/dfa.c:767 src/dfa.c:770 src/dfa.c:794 src/dfa.c:798 src/dfa.c:799
-#: src/dfa.c:802 src/dfa.c:814 src/dfa.c:815
-msgid "Unbalanced ["
-msgstr ""
-
-#: src/dfa.c:1000
+#: src/dfa.c:1232
 msgid "Unbalanced ("
 msgstr ""
 
-#: src/dfa.c:1125
+#: src/dfa.c:1357
 msgid "No syntax specified"
 msgstr ""
 
-#: src/dfa.c:1133
+#: src/dfa.c:1365
 msgid "Unbalanced )"
 msgstr ""
 
-#: src/dfa.c:2579
+#: src/dfa.c:2933
 msgid "out of memory"
 msgstr ""
 
 #: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:102 src/search.c:214 src/search.c:291 src/search.c:488
+#: src/search.c:103 src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "geen geheugen meer beschikbaar"
 
@@ -225,7 +227,7 @@ msgid "%s (GNU grep) %s\n"
 msgstr ""
 
 #: src/grep.c:1545
-msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
+msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr ""
 
 #: src/grep.c:1547
@@ -234,11 +236,11 @@ msgid ""
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
-#: src/search.c:620
+#: src/search.c:623
 msgid "The -P option is not supported"
 msgstr ""
 
-#: src/search.c:633
+#: src/search.c:636
 msgid "The -P and -z options cannot be combined"
 msgstr ""
 

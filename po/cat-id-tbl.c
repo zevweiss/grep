@@ -9,10 +9,10 @@
 const struct _msg_ent _msg_tbl[] = {
   {"", 1},
   {"Memory exhausted", 2},
-  {"Unfinished \\ escape", 3},
-  {"unfinished repeat count", 4},
-  {"malformed repeat count", 5},
-  {"Unbalanced [", 6},
+  {"Unbalanced [", 3},
+  {"Unfinished \\ escape", 4},
+  {"unfinished repeat count", 5},
+  {"malformed repeat count", 6},
   {"Unbalanced (", 7},
   {"No syntax specified", 8},
   {"Unbalanced )", 9},
@@ -100,7 +100,7 @@ Report bugs to <bug-gnu-utils@gnu.org>.\n", 28},
   {"invalid max count", 31},
   {"unknown binary-files type", 32},
   {"%s (GNU grep) %s\n", 33},
-  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 34},
+  {"Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n", 34},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 35},

@@ -1,3 +1,50 @@
+2001-03-06  Alain Magloire
+
+	Only the Regex patterns should be split in an array, patterns[].
+	The dfa and KWset compiled patterns should remain global and the
+	patterns compiled all at once.
+
+	* src/search.c : include "error.h" and "xalloc.h" to get prototyping
+	of x*alloc() and error().
+	(kwsinit) : Reverse to previous behaviour and takes no argument.
+	(kwsmusts) : Likewised.
+	(Gcompile) : For the regex pattern, split them and each pattern
+	is put in different compiled structure patterns[]. The patterns
+	are given to dfacomp() and kwsmusts() as is.
+	(Ecompile) : Likewised.
+	(Fcompile) : Reverse to the old behaviour of compiling the enire
+	patterns in one shot.
+	(EGexecute) : If falling to GNU regex for the matching, loop in the
+	array of compile patterns[] to find a match.
+	(error) : Many error () were call with arguments in the wrong order.
+	* tests/file.sh : Simple test to check for pattern in files.
+
+	Reaction to bug report fired by Greg Louis <glouis@dynamicro.on.ca>
+
+2001-03-06  Isamu Hasegawa
+
+	In multibyte environments, handle multibyte characters as single
+	characters in bracket expressions.
+
+	* src/dfa.h (mb_char_classes) : new structure.
+	(mbcsets) : new variable.
+	(nmbcsets) : new variable.
+	(mbcsets_alloc) : new variable.
+	* src/dfa.c (prtok) : handle MBCSET.
+	(fetch_wc) : new function to fetch a wide character.
+	(parse_bracket_exp_mb) : new function to handle multibyte character
+	in lex().
+	(lex) : invoke parse_bracket_exp_mb() for multibyte bracket expression.
+	(atom) : handle MBCSET.
+	(epsclosure) : likewise.
+	(dfaanalyze) : likewise.
+	(dfastate) : likewise.
+	(match_mb_charset) : new function to judge whether a bracket match
+	with a multibyte character.
+	(check_matching_with_multibyte_ops) : handle MBCSET.
+	(dfainit) : initialize new variables.
+	(dfafree) : free new variables.
+
 2001-03-04  Alain Magloire
 
 	To get more in sync with other GNU utilities like GNU tar and fetish
