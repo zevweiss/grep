@@ -4,6 +4,9 @@
 	* src/grep.c: Don't hang forever if fed with an empty string to
 	  grep for and --color enabled
 	* po/*: Sync wiith translation project
+	* src/grep.c, src/Makefile.am, configure.in: Add patch from
+	  Paul Eggert <eggert@twinsun.com> to comply with ridiculous
+	  guidelines (don't act differently if invoked as egrep or fgrep)
 	* configure.in: Bump version number, require a recent autoconf
 
 2002-03-14  Bernhard Rosenkraenzer <bero@redhat.com>
