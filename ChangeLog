@@ -1,3 +1,6 @@
+2003-07-23  Stepan Kasal  <kasal@ucw.cz>
+	* tests/backref.sh: Messages fixed.
+
 2003-07-08  David Kaelbling  <drk@sgi.com>  (tiny change)
 	* src/dfa.c: remove non-constant initializers from dfa.c
 
