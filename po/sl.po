@@ -2,7 +2,7 @@
 # Copyright (C) 1996 Free Software Foundation, Inc.
 # Primoz Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996.
 #
-# $Header: /sources/grep/grep/po/sl.po,v 1.5 1999/02/10 05:49:53 alainm Exp $
+# $Header: /sources/grep/grep/po/sl.po,v 1.6 1999/02/14 17:04:48 alainm Exp $
 #
 msgid ""
 msgstr ""

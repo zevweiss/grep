@@ -1,12 +1,12 @@
-# Greek messages for GNU grep-2.2e.
+# Greek messages for GNU grep-2.2f.
 # Copyright (C) 1998 Free Software Foundation, Inc.
 # Simos KSenitellis <S.Xenitellis@rhbnc.ac.uk>, 1998.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.2e\n"
-"POT-Creation-Date: 1998-12-02 00:30-0500\n"
-"PO-Revision-Date: 1998-12-25 21:11+0000\n"
+"Project-Id-Version: GNU grep 2.2f\n"
+"POT-Creation-Date: 1999-02-03 13:09-0500\n"
+"PO-Revision-Date: 1999-02-09 00:25+0000\n"
 "Last-Translator: Simos KSenitellis <S.Xenitellis@rhbnc.ac.uk>\n"
 "Language-Team: Greek <S.Xenitellis@rhbnc.ac.uk>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 # File: src/dfa.c, line: 155
 # File: src/dfa.c, line: 167
 # File: src/dfa.c, line: 180
-# File: src/grep.c, line: 827
+# File: src/grep.c, line: 858
 msgid "Memory exhausted"
 msgstr "Η μνήμη εξαντλήθηκε"
 
@@ -273,10 +273,10 @@ msgstr "ARGV-στοιχεία που δεν είναι επιλογές: "
 # src/kwset.c:190
 # src/grep.c:164 src/grep.c:181 src/grep.c:283 src/grep.c:338 src/kwset.c:184
 # src/kwset.c:190
-# File: src/grep.c, line: 164
-# File: src/grep.c, line: 181
-# File: src/grep.c, line: 283
-# File: src/grep.c, line: 338
+# File: src/grep.c, line: 169
+# File: src/grep.c, line: 186
+# File: src/grep.c, line: 288
+# File: src/grep.c, line: 344
 # File: src/kwset.c, line: 184
 # File: src/kwset.c, line: 190
 msgid "memory exhausted"
@@ -285,7 +285,8 @@ msgstr "η μνήμη εξαντλήθηκε"
 #
 # src/grep.c:293
 # src/grep.c:366
-# File: src/grep.c, line: 366
+# File: src/grep.c, line: 372
+# File: src/grep.c, line: 843
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: προειδοποίηση: %s: %s\n"
@@ -293,14 +294,14 @@ msgstr "%s: προειδοποίηση: %s: %s\n"
 #
 # src/grep.c:392 src/grep.c:1034
 # src/grep.c:487 src/grep.c:1284
-# File: src/grep.c, line: 487
-# File: src/grep.c, line: 1284
+# File: src/grep.c, line: 497
+# File: src/grep.c, line: 1318
 msgid "writing output"
 msgstr "εγγραφή αποτελέσματος"
 
 #
 # src/grep.c:715
-# File: src/grep.c, line: 715
+# File: src/grep.c, line: 726
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Δυαδικό αρχείο %s ταιριάσματα\n"
@@ -308,14 +309,20 @@ msgstr "Δυαδικό αρχείο %s ταιριάσματα\n"
 #
 # src/grep.c:964 src/grep.c:1015
 # src/grep.c:730
-# File: src/grep.c, line: 730
+# File: src/grep.c, line: 742
 msgid "(standard input)"
 msgstr "(στάνταρτ είσοδος)"
 
 #
+# src/grep.c:844
+# File: src/grep.c, line: 844
+msgid "recursive directory loop"
+msgstr "αναδρομική αλληλοδιαδοχή καταλόγων"
+
+#
 # src/grep.c:597
 # src/grep.c:862
-# File: src/grep.c, line: 862
+# File: src/grep.c, line: 895
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ]...\n"
@@ -323,7 +330,7 @@ msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ]...\n"
 #
 # src/grep.c:598
 # src/grep.c:863
-# File: src/grep.c, line: 863
+# File: src/grep.c, line: 896
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Δοκιμάστε `%s --help' για περισσότερες πληροφορίες.\n"
@@ -331,7 +338,7 @@ msgstr "Δοκιμάστε `%s --help' για περισσότερες πληροφορίες.\n"
 #
 # src/grep.c:602
 # src/grep.c:867
-# File: src/grep.c, line: 867
+# File: src/grep.c, line: 900
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ] ...\n"
@@ -339,7 +346,7 @@ msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ] ...\n"
 #
 # src/grep.c:603
 # src/grep.c:868
-# File: src/grep.c, line: 868
+# File: src/grep.c, line: 901
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -368,7 +375,7 @@ msgstr ""
 #
 # src/grep.c:615
 # src/grep.c:880
-# File: src/grep.c, line: 880
+# File: src/grep.c, line: 913
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -387,7 +394,7 @@ msgstr ""
 #
 # src/grep.c:622
 # src/grep.c:887
-# File: src/grep.c, line: 887
+# File: src/grep.c, line: 920
 msgid ""
 "\n"
 "Output control:\n"
@@ -423,7 +430,7 @@ msgstr ""
 #
 # src/grep.c:633
 # src/grep.c:902
-# File: src/grep.c, line: 902
+# File: src/grep.c, line: 935
 msgid ""
 "\n"
 "Context control:\n"
@@ -431,7 +438,7 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
 "                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -458,45 +465,45 @@ msgstr ""
 #
 # src/grep.c:647
 # src/grep.c:917
-# File: src/grep.c, line: 917
+# File: src/grep.c, line: 950
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nΣτείλτε αναφορές σφαλμάτων στο <bug-gnu-utils@gnu.org>.\n"
 
 #
 # src/grep.c:785 src/grep.c:792
 # src/grep.c:1060 src/grep.c:1067 src/grep.c:1076
-# File: src/grep.c, line: 1060
-# File: src/grep.c, line: 1067
-# File: src/grep.c, line: 1076
+# File: src/grep.c, line: 1093
+# File: src/grep.c, line: 1100
+# File: src/grep.c, line: 1109
 msgid "invalid context length argument"
 msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
 
 #
 # src/grep.c:800 src/grep.c:805 src/grep.c:810
 # src/grep.c:1083 src/grep.c:1088 src/grep.c:1093
-# File: src/grep.c, line: 1083
-# File: src/grep.c, line: 1088
-# File: src/grep.c, line: 1093
+# File: src/grep.c, line: 1116
+# File: src/grep.c, line: 1121
+# File: src/grep.c, line: 1126
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "μπορείτε να ορίσετε μόνο ένα από τα-E, -F ή -G"
 
 #
 # src/grep.c:829
 # src/grep.c:1112
-# File: src/grep.c, line: 1112
+# File: src/grep.c, line: 1145
 msgid "matcher already specified"
 msgstr "το στοιχείο που πρόκειται να αναζητηθεί, έχει ήδη οριστεί"
 
 #
 # src/grep.c:1133
-# File: src/grep.c, line: 1133
+# File: src/grep.c, line: 1166
 msgid "unknown directories method"
 msgstr "άγνωστη μέθοδος καταλόγων"
 
 #
 # src/grep.c:915
 # src/grep.c:1219
-# File: src/grep.c, line: 1219
+# File: src/grep.c, line: 1252
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
@@ -504,14 +511,14 @@ msgstr "grep (GNU grep) %s\n"
 #
 # src/grep.c:917
 # src/grep.c:1221
-# File: src/grep.c, line: 1221
+# File: src/grep.c, line: 1254
 msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, Free Software Foundation, Inc.\n"
 
 #
 # src/grep.c:919
 # src/grep.c:1223
-# File: src/grep.c, line: 1223
+# File: src/grep.c, line: 1256
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -528,12 +535,6 @@ msgid "memory exhausted\n"
 msgstr "η μνήμη εξαντλήθηκε\n"
 
 #~ #
-#~ # src/grep.c:785 src/grep.c:792
-#~ #, fuzzy
-#~ msgid "infalid context length argument"
-#~ msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
-
-#~ #
 #~ # src/grep.c:1027 src/grep.c:1030
 #~ msgid "(standard input)\n"
-#~ msgstr "(στάνταρτ είσοδος)\n"
+#~ msgstr "(κανονική είσοδος)\n"
