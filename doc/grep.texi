@@ -201,11 +201,11 @@ the first match.  Also see the @samp{-s} or @samp{--no-messages} option.
 @opindex --no-messages
 @cindex suppress error messages
 Suppress error messages about nonexistent or unreadable files.
-Portability note: unlike @sc{gnu} @command{grep}, @sc{bsd}
-@command{grep} does not comply with @sc{posix.2}, because @sc{bsd}
-@command{grep} lacks a @samp{-q} option and its @samp{-s} option behaves
+Portability note: unlike @sc{gnu} @command{grep}, traditional
+@command{grep} did not conform to @sc{posix.2}, because traditional
+@command{grep} lacked a @samp{-q} option and its @samp{-s} option behaved
 like @sc{gnu} @command{grep}'s @samp{-q} option.  Shell scripts intended
-to be portable to @sc{bsd} @command{grep} should avoid both
+to be portable to traditional @command{grep} should avoid both
 @samp{-q} and @samp{-s} and should redirect
 output to @file{/dev/null} instead.
 
@@ -751,42 +751,18 @@ instead use the backslashed versions @samp{\?}, @samp{\+}, @samp{\@{},
 @samp{\|}, @samp{\(}, and @samp{\)}.
 
 @cindex interval specifications
-There is a longstanding minor compatibility problem with regular
-expressions like @samp{x@{2,8@}} that use interval specifications.
-Traditional @command{egrep} did not support interval specifications, but
-@sc{posix.2} requires them, and says that the effect of regular
-expressions like @samp{x@{,8@}} or @samp{(@{2,8@})} is undefined because
-their interval specifications are invalid.  In @command{grep} 2.3 and
-earlier, @samp{grep -E} acted as @sc{posix.2} required, but it reported an
-error when it encountered a @samp{@{} that was not the prefix of a valid
-interval specification.  Had @command{egrep} 2.3 been equivalent to
-@samp{grep -E}, it would have broken old-fashioned scripts that assume
-that @samp{@{} is not special in egrep patterns.  So @command{egrep} 2.3
-and earlier did not support interval specifications, even though
-@sc{posix.2} required it.
+Traditional @command{egrep} did not support the @samp{@{} metacharacter,
+and some @command{egrep} implementations support @samp{\@{} instead, so
+portable scripts should avoid @samp{@{} in @samp{egrep} patterns and
+should use @samp{[@{]} to match a literal @samp{@{}.
 
-This compatibility problem has been addressed by changing @samp{grep -E}
-to be less pedantic about invalid interval specifications.  Instead of
-reporting an error, @samp{grep -E} assumes that @samp{@{} is not special
-if it would be the start of an invalid interval specification.  For
-example, @samp{grep -E @{1} now searches for the two-character string
-@samp{@{1} instead of reporting a syntax error in the regular
-expression.  @sc{posix.2} allows this behavior as an extension, and it is
-more compatible with what old-fashioned scripts expect of
-@command{egrep}.
-
-The new behavior is incompatible with the traditional behavior in the
-rare cases where @sc{posix.2} requires it.  For example, @samp{egrep
-x@{5@}} is now equivalent to @samp{egrep xxxxx} as required by
-@sc{posix.2}, whereas it formerly was equivalent to @samp{egrep
-'x\@{5\@}'}.  Incompatibilities like these occur only when a valid
-interval specification is found, not merely when @samp{@{} is found.
-
-This new behavior exists only to support old scripts that do not conform
-to @sc{posix.2}.  @sc{posix.2} does not define the behavior of invalid
-interval specifications, and other @command{grep} implementations have
-differing behavior in this area, so new scripts should avoid them.
-
+@sc{gnu} @command{egrep} attempts to support traditional usage by
+assuming that @samp{@{} is not special if it would be the start of an
+invalid interval specification.  For example, the shell command
+@samp{egrep '@{1'} searches for the two-character string @samp{@{1}
+instead of reporting a syntax error in the regular expression.
+@sc{posix.2} allows this behavior as an extension, but portable scripts
+should avoid it.
 
 @node Reporting Bugs
 @chapter Reporting bugs

@@ -1,4 +1,10 @@
-1999-10-11  Paul Eggert  <eggert@twinsun.com>
+1999-10-12  Paul Eggert
+
+	* doc/grep.texi: Shorten the commentary about egrep and {.
+	"BSD grep" -> "traditional grep".
+	* doc/grep.1: Match recent changes to grep.texi.
+
+1999-10-11  Paul Eggert
 
 	* NEWS, doc/grep.1, doc/grep.texi: New option --mmap.
 	* src/grep.c (mmap_option): New variable.
@@ -6,11 +12,6 @@
 	Default is now read, not mmap.
 
 	* doc/grep.1: Document -Z or --null.
-
-1999-10-11  Paul Eggert
-
-	* doc/grep.texi: Fix texinfo glitches.  POSIX -> POSIX.2 where
-	appropriate.
 
 1999-10-11  Paul Eggert
 

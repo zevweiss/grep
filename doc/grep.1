@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.6 1999/10/12 04:11:35 alainm Exp $
+.Id $Id: grep.1,v 1.7 1999/10/12 20:41:01 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -234,21 +234,21 @@ option.
 .TP
 .BR \-s ", " \-\^\-no-messages
 Suppress error messages about nonexistent or unreadable files.
-Portability note: unlike GNU
+Portability note: unlike \s-1GNU\s0
 .BR grep ,
-BSD
+traditional
 .B grep
-does not comply with POSIX.2, because BSD
+did not conform to \s-1POSIX.2\s0, because traditional
 .B grep
-lacks a
+lacked a
 .B \-q
 option and its
 .B \-s
-option behaves like GNU
+option behaved like \s-1GNU\s0
 .BR grep 's
 .B \-q
 option.
-Shell scripts intended to be portable to BSD
+Shell scripts intended to be portable to traditional
 .B grep
 should avoid both
 .B \-q
@@ -341,11 +341,11 @@ outputs a zero byte after each file name instead of the usual newline.
 This option makes the output unambiguous, even in the presence of file
 names containing unusual characters like newlines.  This option can be
 used with commands like
-.BR "find -print0" ,
-.BR "perl -0" ,
-.BR "sort -z" ,
+.BR "find \-print0" ,
+.BR "perl \-0" ,
+.BR "sort \-z" ,
 and
-.B "xargs -0"
+.B "xargs \-0"
 to process arbitrary file names,
 even those that contain newline characters.
 .PD
@@ -358,7 +358,7 @@ expressions, by using various operators to combine smaller expressions.
 .B Grep
 understands two different versions of regular expression syntax:
 \*(lqbasic\*(rq and \*(lqextended.\*(rq  In
-.RB "GNU\ " grep ,
+.RB "\s-1GNU\s0\ " grep ,
 there is no difference in available functionality using either syntax.
 In other implementations, basic regular expressions are less powerful.
 The following description applies to extended regular expressions;
@@ -519,12 +519,35 @@ versions
 and
 .BR \e) .
 .PP
-In
+Traditional
 .B egrep
-the metacharacter
+did not support the
 .B {
-loses its special meaning; instead use
-.BR \e{ .
+metacharacter, and some
+.B egrep
+implementations support
+.B \e{
+instead, so portable scripts should avoid
+.B {
+in
+.B egrep
+patterns and should use
+.B [{]
+to match a literal
+.BR { .
+.PP
+\s-1GNU\s0
+.B egrep
+attempts to support traditional usage by assuming that
+.B {
+is not special if it would be the start of an invalid interval
+specification.  For example, the shell command
+.B "egrep '{1'"
+searches for the two-character string
+.B {1
+instead of reporting a syntax error in the regular expression.
+\s-1POSIX.2\s0 allows this behavior as an extension, but portable scripts
+should avoid it.
 .SH DIAGNOSTICS
 .PP
 Normally, exit status is 0 if matches were found,
