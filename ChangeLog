@@ -1,3 +1,8 @@
+2004-11-19  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/dfa.c: Added some simple changes from gawk.
+	* src/mbstate.h: Imported from gawk.
+
 2004-11-11  Stepan Kasal  <kasal@ucw.cz>
 
 	* tests/spencer1.awk: Use only lines with 3 fields.

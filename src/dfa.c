@@ -1,5 +1,5 @@
 /* dfa.c - deterministic extended regexp routines for GNU
-   Copyright 1988, 1998, 2000 Free Software Foundation, Inc.
+   Copyright 1988, 1998, 2000, 2002, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,11 @@
 #include <ctype.h>
 #include <stdio.h>
 
+#ifndef VMS
 #include <sys/types.h>
+#else
+#include <stddef.h>
+#endif
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
@@ -44,15 +48,13 @@ extern void free();
 # include <locale.h>
 #endif
 
-#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
-/* We can handle multibyte string.  */
-# define MBS_SUPPORT
-#endif
+#include "mbsupport.h"  /* defined MBS_SUPPORT if appropriate */
 
 #ifdef MBS_SUPPORT
 # include <wchar.h>
 # include <wctype.h>
 #endif
+
 
 #ifndef DEBUG	/* use the same approach as regex.c */
 #undef assert
@@ -99,17 +101,21 @@ extern void free();
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
+/* Don't use gettext if ENABLE_NLS is not defined */
 /* If we (don't) have I18N.  */
 /* glibc defines _ */
-#ifndef _
-# ifdef HAVE_LIBINTL_H
-#  include <libintl.h>
-#  ifndef _
-#   define _(Str) gettext (Str)
+#ifdef ENABLE_NLS
+# ifndef _
+#  ifdef HAVE_LIBINTL_H
+#   include <libintl.h>
+#   ifndef _
+#    define _(Str) gettext (Str)
+#   endif
 #  endif
-# else
-#  define _(Str) (Str)
 # endif
+#endif
+#ifndef _
+# define _(Str) (Str)
 #endif
 
 #include "regex.h"
@@ -125,7 +131,47 @@ extern void free();
 #endif
 
 static void dfamust PARAMS ((struct dfa *dfa));
+
+static ptr_t xcalloc PARAMS ((size_t n, size_t s));
+static ptr_t xmalloc PARAMS ((size_t n));
+static ptr_t xrealloc PARAMS ((ptr_t p, size_t n));
+#ifdef DEBUG
+static void prtok PARAMS ((token t));
+#endif
+static int tstbit PARAMS ((unsigned b, charclass c));
+static void setbit PARAMS ((unsigned b, charclass c));
+static void clrbit PARAMS ((unsigned b, charclass c));
+static void copyset PARAMS ((charclass src, charclass dst));
+static void zeroset PARAMS ((charclass s));
+static void notset PARAMS ((charclass s));
+static int equal PARAMS ((charclass s1, charclass s2));
+static int charclass_index PARAMS ((charclass s));
+static int looking_at PARAMS ((const char *s));
+static token lex PARAMS ((void));
+static void addtok PARAMS ((token t));
+static void atom PARAMS ((void));
+static int nsubtoks PARAMS ((int tindex));
+static void copytoks PARAMS ((int tindex, int ntokens));
+static void closure PARAMS ((void));
+static void branch PARAMS ((void));
 static void regexp PARAMS ((int toplevel));
+static void copy PARAMS ((position_set const *src, position_set *dst));
+static void insert PARAMS ((position p, position_set *s));
+static void merge PARAMS ((position_set const *s1, position_set const *s2, position_set *m));
+static void delete PARAMS ((position p, position_set *s));
+static int state_index PARAMS ((struct dfa *d, position_set const *s,
+			  int newline, int letter));
+static void build_state PARAMS ((int s, struct dfa *d));
+static void build_state_zero PARAMS ((struct dfa *d));
+static char *icatalloc PARAMS ((char *old, char *new));
+static char *icpyalloc PARAMS ((char *string));
+static char *istrstr PARAMS ((char *lookin, char *lookfor));
+static void ifree PARAMS ((char *cp));
+static void freelist PARAMS ((char **cpp));
+static char **enlist PARAMS ((char **cpp, char *new, size_t len));
+static char **comsubs PARAMS ((char *left, char *right));
+static char **addlists PARAMS ((char **old, char **new));
+static char **inboth PARAMS ((char **left, char **right));
 
 static ptr_t
 xcalloc (size_t n, size_t s)
@@ -344,14 +390,14 @@ static int cur_mb_index;        /* Byte index of the current scanning multibyte
 				         ...
 				       nth byte : cur_mb_index = n  */
 static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec().
-                                  Each element store the amount of remain
-                                  byte of corresponding multibyte character
-                                  in the input string.  A element's value
-                                  is 0 if corresponding character is a
-                                  singlebyte chracter.
-                                  e.g. input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
-                                   mblen_buf :   0,       3,       2,       1
-                               */
+				   Each element store the amount of remain
+				   byte of corresponding multibyte character
+				   in the input string.  A element's value
+				   is 0 if corresponding character is a
+				   singlebyte chracter.
+				   e.g. input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
+				    mblen_buf :   0,       3,       2,       1
+				*/
 static wchar_t *inputwcs;	/* Wide character representation of input
 				   string in dfaexec().
 				   The length of this array is same as
@@ -359,7 +405,7 @@ static wchar_t *inputwcs;	/* Wide character representation of input
 				   inputstring[i] is a single-byte char,
 				   or 1st byte of a multibyte char.
 				   And inputwcs[i] is the codepoint.  */
-static unsigned char const *buf_begin;/* reference to begin in dfaexec().  */
+static unsigned char const *buf_begin;	/* reference to begin in dfaexec().  */
 static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 static unsigned long buf_offset; /* Go fast. */
 #endif /* MBS_SUPPORT  */
@@ -454,7 +500,7 @@ fetch_wc (char const *eoferr)
 #endif /* MBS_SUPPORT */
 
 #ifdef MBS_SUPPORT
-/* Multibyte character handling sub-routin for lex.
+/* Multibyte character handling sub-routine for lex.
    This function  parse a bracket expression and build a struct
    mb_char_classes.  */
 static void
@@ -470,7 +516,7 @@ parse_bracket_exp_mb ()
   REALLOC_IF_NECESSARY(dfa->mbcsets, struct mb_char_classes,
 		       dfa->mbcsets_alloc, dfa->nmbcsets + 1);
   /* dfa->multibyte_prop[] hold the index of dfa->mbcsets.
-     We will update dfa->multibyte_prop in addtok(), because we can't
+     We will update dfa->multibyte_prop[] in addtok(), because we can't
      decide the index in dfa->tokens[].  */
 
   /* Initialize work are */
@@ -2316,7 +2362,7 @@ build_state_zero (struct dfa *d)
 }
 
 #ifdef MBS_SUPPORT
-/* Multibyte character handling sub-routins for dfaexec.  */
+/* Multibyte character handling sub-routines for dfaexec.  */
 
 /* Initial state may encounter the byte which is not a singlebyte character
    nor 1st byte of a multibyte character.  But it is incorrect for initial
@@ -2886,7 +2932,7 @@ go_fast:
 		SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
 		if (d->states[s].mbps.nelem != 0)
 		  {
-		    /* Can match with a multibyte character( and multi
+		    /* Can match with a multibyte character (and multi
 		       character collating element).  */
 		    unsigned char const *nextp;
 		    nextp = p;

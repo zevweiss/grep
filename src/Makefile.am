@@ -8,7 +8,7 @@ bin_SCRIPTS = egrep fgrep
 CLEANFILES = egrep fgrep
 grep_SOURCES = grep.c dfa.c kwset.c search.c \
                grepmat.c
-noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h
+noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h mbsupport.h
 
 LDADD = @INTLLIBS@ ../lib/libgreputils.a
 datadir = $(prefix)/@DATADIRNAME@
