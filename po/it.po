@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.4a\n"
 "POT-Creation-Date: 2000-02-02 01:04-0500\n"
-"PO-Revision-Date: 2000-02-15 20:40+01:00\n"
+"PO-Revision-Date: 2000-01-22 12:03+01:00\n"
 "Last-Translator: Marco d'Itri <md@linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -156,7 +156,7 @@ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Uso: %s [OPZIONE]... MODELLO [FILE] ...\n"
 
 #: src/grep.c:944
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "Example: %s -i 'hello world' menu.h main.c\n"
@@ -164,7 +164,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 "Cerca il MODELLO in ogni FILE o nello standard input.\n"
-"Esempio: %s -i 'hello world' menu.h main.c\n"
+"Esempio: %s -i 'hello.*world' menu.h main.c\n"
 "\n"
 "Selezione ed interpretazione delle regexp:\n"
 
@@ -214,6 +214,7 @@ msgstr ""
 "      --mmap                se possibile mappa in memoria l'input\n"
 
 #: src/grep.c:968
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -241,10 +242,9 @@ msgstr ""
 "  -H, --with-filename       stampa il nome del file per ogni corrispondenza\n"
 "  -h, --no-filename         elimina il nome del file davanti all'output\n"
 "  -q, --quiet, --silent     elimina tutto il normale output\n"
+"  -a, --text                equivalente a --binary-files=text\n"
 "      --binary-files=TIPO   suppone che i file binari siano di TIPO 'binary',\n"
 "                            'text' oppure 'without-match'.\n"
-"  -a, --text                equivalente a --binary-files=text\n"
-"  -I                        equivalente a --binary-files=without-match\n"
 "  -d, --directories=AZIONE  come gestire le directory: AZIONE è 'read' (legge),\n"
 "                            'recurse' (ricorsivo) o 'skip' (salta)\n"
 "  -r, --recursive           equivalente a --directories=recurse\n"
@@ -311,8 +311,9 @@ msgid "%s (GNU grep) %s\n"
 msgstr "%s (grep GNU) %s\n"
 
 #: src/grep.c:1380
+#, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:1382
 msgid ""
@@ -325,3 +326,36 @@ msgstr ""
 "Questo è software libero; si veda il sorgente per le condizioni di copiatura.\n"
 "NON c'è garanzia; neppure di COMMERCIABILITÀ o IDONEITÀ AD UN PARTICOLARE\n"
 "SCOPO.\n"
+
+#~ msgid "option %s"
+#~ msgstr "opzione %s"
+
+#~ msgid " with arg %s"
+#~ msgstr " con arg %s"
+
+#~ msgid "digits occur in two different argv-elements.\n"
+#~ msgstr "compaiono cifre in due diversi elementi di argv.\n"
+
+#~ msgid "option %c\n"
+#~ msgstr "opzione %c\n"
+
+#~ msgid "option a\n"
+#~ msgstr "opzione a\n"
+
+#~ msgid "option b\n"
+#~ msgstr "opzione b\n"
+
+#~ msgid "option c with value `%s'\n"
+#~ msgstr "opzione c ha valore `%s'\n"
+
+#~ msgid "option d with value `%s'\n"
+#~ msgstr "opzione d ha valore `%s'\n"
+
+#~ msgid "?? getopt returned character code 0%o ??\n"
+#~ msgstr "?? getopt ha restituito il carattere codice 0%o ??\n"
+
+#~ msgid "non-option ARGV-elements: "
+#~ msgstr "elementi non-opzione di ARGV: "
+
+#~ msgid "memory exhausted\n"
+#~ msgstr "memoria esaurita\n"
