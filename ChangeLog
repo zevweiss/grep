@@ -1,3 +1,6 @@
+2001-11-20  Bernhard Rosenkraenzer <bero@redhat.com>
+	* autogen.sh: Don't hardcode aclocal dir
+
 2001-11-19  Bernhard Rosenkraenzer <bero@redhat.com>
 	* src/grep.c: Add --only-matching (-o) switch (see NEWS)
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes

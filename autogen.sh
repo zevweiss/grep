@@ -11,7 +11,7 @@ if test "$AC_VERSION" -lt 250; then
 	for i in m4/*.m4; do
 		if cat $i |grep -q "jm_"; then
 			cat $i >>acinclude.m4
-		elif test ! -e /usr/share/aclocal/`basename $i`; then
+		elif test ! -e `aclocal --print-ac-dir`/`basename $i`; then
 			cat $i >>acinclude.m4
 		fi
 	done
