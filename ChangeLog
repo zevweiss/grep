@@ -1,3 +1,8 @@
+2004-11-20  Benno Schulenberg  <benno@nietvergeten.nl>  (tiny change)
+
+	* src/grep.c (reset): Move the stat check ...
+	(grepfile): ... here, and also check for a fifo.
+
 2004-11-20  Stepan Kasal  <kasal@ucw.cz>
 
 	This change is based on a suggestion by Elliott Hughes.
