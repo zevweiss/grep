@@ -1,3 +1,29 @@
+2000-06-05  Paul Eggert
+
+	Port to Mingw32, based on suggestions from Christian Groessler
+	<cpg@aladdin.de>.
+
+	* src/isdir.c: New file, taken from fileutils.
+
+	* src/Makefile.am (base_sources): Add isdir.c.
+
+	* src/grep.c (grepfile): Use isdir instead of doing it inline.
+	(grepdir): Suppress ancestor check if the directory's inode and device
+	are both zero, as that occurs only on Mingw32 which doesn't support
+	inode or device.
+
+	* src/system.h (isdir): New decl.
+	(is_EISDIR): Depend on HAVE_DIR_EACCES_BUG, not D_OK.
+	Use isdir, not access.
+
+2000-06-02  Paul Eggert
+
+	Problen noted by Gerald Stoller <gerald_stoller@hotmail.com>
+
+	* src/grep.c (main): POSIX.2 says that -q overrides -l, which
+	in turn overrides the other output options.  Fix grep to
+	behave that way.
+
 2000-05-27  Paul Eggert
 
 	Simplify and tune the buffer allocation strategy.  Do not reserve a

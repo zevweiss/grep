@@ -855,8 +855,7 @@ grepfile (char const *file, struct stats *stats)
 		  case EACCES:
 		    /* When skipping directories, don't worry about
 		       directories that can't be opened.  */
-		    if (stat (file, &stats->stat) == 0
-			&& S_ISDIR (stats->stat.st_mode))
+		    if (isdir (file))
 		      return 1;
 		    break;
 		  }
@@ -919,15 +918,19 @@ grepdir (char const *dir, struct stats const *stats)
   struct stats const *ancestor;
   char *name_space;
 
-  for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
-    if (ancestor->stat.st_ino == stats->stat.st_ino
-	&& ancestor->stat.st_dev == stats->stat.st_dev)
-      {
-	if (!suppress_errors)
-	  fprintf (stderr, _("%s: warning: %s: %s\n"), prog, dir,
-		   _("recursive directory loop"));
-	return 1;
-      }
+  /* Mingw32 does not support st_dev or st_ino.  No known working
+     hosts use zeros here, so assume that the Mingw32 bug applies if
+     they're both zero.  */
+  if (stats->stat.st_ino || stats->stat.st_dev)
+    for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
+      if (ancestor->stat.st_ino == stats->stat.st_ino
+	  && ancestor->stat.st_dev == stats->stat.st_dev)
+	{
+	  if (!suppress_errors)
+	    fprintf (stderr, _("%s: warning: %s: %s\n"), prog, dir,
+		     _("recursive directory loop"));
+	  return 1;
+	}
 
   name_space = savedir (dir, (unsigned) stats->stat.st_size);
 
@@ -1311,7 +1314,6 @@ main (int argc, char **argv)
 	out_byte = 1;
 	break;
       case 'c':
-	out_quiet = 1;
 	count_matches = 1;
 	break;
       case 'd':
@@ -1362,14 +1364,10 @@ main (int argc, char **argv)
       case 'L':
 	/* Like -l, except list files that don't contain matches.
 	   Inspired by the same option in Hume's gre. */
-	out_quiet = 1;
 	list_files = -1;
-	done_on_match = 1;
 	break;
       case 'l':
-	out_quiet = 1;
 	list_files = 1;
-	done_on_match = 1;
 	break;
       case 'm':
 	{
@@ -1394,9 +1392,7 @@ main (int argc, char **argv)
 	out_line = 1;
 	break;
       case 'q':
-	done_on_match = 1;
 	exit_on_match = 1;
-	out_quiet = 1;
 	break;
       case 'r':
 	directories = RECURSE_DIRECTORIES;
@@ -1436,6 +1432,17 @@ main (int argc, char **argv)
 	usage (2);
 	break;
       }
+
+  /* POSIX.2 says that -q overrides -l, which in turn overrides the
+     other output options.  */
+  if (exit_on_match)
+    list_files = 0;
+  if (exit_on_match | list_files)
+    {
+      count_matches = 0;
+      done_on_match = 1;
+    }
+  out_quiet = count_matches | done_on_match;
 
   if (out_after < 0)
     out_after = default_context;

@@ -78,14 +78,15 @@ extern char *sys_errlist[];
 # define FILESYSTEM_PREFIX_LEN(f) 0
 #endif
 
-/* This assumes _WIN32, like DJGPP, has D_OK.  Does it?  In what header?  */
-#ifdef D_OK
+int isdir PARAMS ((char const *));
+
+#ifdef HAVE_DIR_EACCES_BUG
 # ifdef EISDIR
 #  define is_EISDIR(e, f) \
      ((e) == EISDIR \
-      || ((e) == EACCES && access (f, D_OK) == 0 && ((e) = EISDIR, 1)))
+      || ((e) == EACCES && isdir (f) && ((e) = EISDIR, 1)))
 # else
-#  define is_EISDIR(e, f) ((e) == EACCES && access (f, D_OK) == 0)
+#  define is_EISDIR(e, f) ((e) == EACCES && isdir (f))
 # endif
 #endif
 
