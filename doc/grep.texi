@@ -678,7 +678,7 @@ first in the list.  Similarly, to include a literal @samp{^}, place it anywhere
 but first.  Finally, to include a literal @samp{-}, place it last.
 
 The period @samp{.} matches any single character.  The symbol @samp{\w}
-is a synonym for @sam{[[:alnum:]]} and @samp{\W} is a synonym for
+is a synonym for @samp{[[:alnum:]]} and @samp{\W} is a synonym for
 @samp{[^[:alnum]]}.
 
 The caret @samp{^} and the dollar sign @samp{$} are metacharacters that
