@@ -1,6 +1,8 @@
 #if !defined SAVEDIR_H_
 # define SAVEDIR_H_
 
+#include "exclude.h"
+
 # ifndef PARAMS
 #  if defined PROTOTYPES || (defined __STDC__ && __STDC__)
 #   define PARAMS(Args) Args
@@ -9,8 +11,8 @@
 #  endif
 # endif
 
-char *
+extern char *
 savedir PARAMS ((const char *dir, off_t name_size,
-		 const char *include_pattern, const char *exclude_pattern));
+		 struct exclude *, struct exclude *));
 
 #endif

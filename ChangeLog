@@ -1,3 +1,16 @@
+2001-03-01  Alain Magloire
+
+	* src/exclude.c : New file.
+	* src/exclude.h : New file.
+	* src/grep.c (main) : Took the GNU tar code to handle
+	the option --include, --exclude, --exclude-from.
+	Files are check for a match, with exlude_filename ().
+	New option --exclude-from.
+	* src/savedir.c : Call exclude_filename() to check for
+	file pattern exclusion or inclusion.
+	* configure.in : --disable-pcre rename to --disable-perl-regexp.
+
+
 2001-02-25  Alain Magloire
 
 	* src/dfa.c : Typo corrected.

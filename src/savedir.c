@@ -98,10 +98,9 @@ isdir1 (const char *dir, const char *file)
    NAME_SIZE is the number of bytes to initially allocate
    for the string; it will be enlarged as needed.
    Return NULL if DIR cannot be opened or if out of memory. */
-
 char *
-savedir (const char *dir, off_t name_size,
-	 const char *include_pattern, const char *exclude_pattern)
+savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
+	 struct exclude *excluded_patterns)
 {
   DIR *dirp;
   struct dirent *dp;
@@ -134,13 +133,14 @@ savedir (const char *dir, off_t name_size,
 	{
 	  off_t size_needed = (namep - name_space) + NAMLEN (dp) + 2;
 
-	  if ((include_pattern || exclude_pattern) && !isdir1 (dir, dp->d_name))
+	  if ((included_patterns || excluded_patterns)
+	      && !isdir1 (dir, dp->d_name))
 	    {
-	      if (include_pattern
-		  && fnmatch (include_pattern, dp->d_name, 0) != 0)
+	      if (included_patterns
+		  && !excluded_filename (included_patterns, dp->d_name, 0))
 		continue;
-	      if (exclude_pattern
-		  && fnmatch (exclude_pattern, dp->d_name, 0) == 0)
+	      if (excluded_patterns
+		  && excluded_filename (excluded_patterns, dp->d_name, 0))
 		continue;
 	    }
 

@@ -37,6 +37,7 @@
 #include "grep.h"
 #include "savedir.h"
 #include "xstrtol.h"
+#include "exclude.h"
 
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
@@ -69,6 +70,8 @@ static int color_option;
    variable GREP_COLOR.  The default is to print red.  */
 static const char *grep_color = "31;5";
 
+static struct exclude *excluded_patterns;
+static struct exclude *included_patterns;
 /* Short options.  */
 static char const short_options[] =
 "0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiKLlm:nqRrsuvwxyZz";
@@ -80,6 +83,7 @@ enum
   COLOR_OPTION,
   INCLUDE_OPTION,
   EXCLUDE_OPTION,
+  EXCLUDE_FROM_OPTION,
   LINE_BUFFERED_OPTION
 };
 
@@ -98,6 +102,7 @@ static struct option const long_options[] =
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
   {"exclude", required_argument, NULL, EXCLUDE_OPTION},
+  {"exclude-from", required_argument, NULL, EXCLUDE_FROM_OPTION},
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
   {"files-without-match", no_argument, NULL, 'L'},
@@ -154,8 +159,9 @@ static int grepdir PARAMS ((char const *, struct stats const *));
 #if defined(HAVE_DOS_FILE_CONTENTS)
 static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
-static const char *include_pattern;
-static const char *exclude_pattern;
+
+static struct exclude *include_pattern;
+static struct exclude *exclude_pattern;
 
 /* Functions we'll use to search. */
 static void (*compile) PARAMS ((char const *, size_t));
@@ -974,8 +980,8 @@ grepdir (char const *dir, struct stats const *stats)
 	  return 1;
 	}
 
-  name_space = savedir (dir, (unsigned) stats->stat.st_size, include_pattern,
-			exclude_pattern);
+  name_space = savedir (dir, (unsigned) stats->stat.st_size, included_patterns,
+			excluded_patterns);
 
   if (! name_space)
     {
@@ -1292,12 +1298,13 @@ main (int argc, char **argv)
   filename_mask = ~0;
 
   max_count = TYPE_MAXIMUM (off_t);
+
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
   /* Default before/after context: chaged by -C/-NUM options */
   default_context = 0;
 
-/* Internationalization. */
+  /* Internationalization. */
 #if defined(HAVE_SETLOCALE)
   setlocale (LC_ALL, "");
 #endif
@@ -1314,57 +1321,73 @@ main (int argc, char **argv)
       case 'A':
 	context_length_arg (optarg, &out_after);
 	break;
+
       case 'B':
 	context_length_arg (optarg, &out_before);
 	break;
+
       case 'C':
 	/* Set output match context, but let any explicit leading or
 	   trailing amount specified with -A or -B stand. */
 	context_length_arg (optarg, &default_context);
 	break;
+
       case 'E':
 	setmatcher ("egrep");
 	break;
+
       case 'F':
 	setmatcher ("fgrep");
 	break;
+
       case 'P':
 	setmatcher ("perl");
 	break;
+
       case 'G':
 	setmatcher ("grep");
 	break;
+
       case 'H':
 	with_filenames = 1;
 	break;
+
       case 'I':
 	binary_files = WITHOUT_MATCH_BINARY_FILES;
 	break;
+
       case 'U':
 #if defined(HAVE_DOS_FILE_CONTENTS)
 	dos_use_file_type = DOS_BINARY;
 #endif
 	break;
+
       case 'u':
 #if defined(HAVE_DOS_FILE_CONTENTS)
 	dos_report_unix_offset = 1;
 #endif
 	break;
+
       case 'V':
 	show_version = 1;
 	break;
+
       case 'X':
 	setmatcher (optarg);
 	break;
+
       case 'a':
 	binary_files = TEXT_BINARY_FILES;
 	break;
+
       case 'b':
 	out_byte = 1;
 	break;
+
       case 'c':
 	count_matches = 1;
 	break;
+
       case 'd':
 	if (strcmp (optarg, "read") == 0)
 	  directories = READ_DIRECTORIES;
@@ -1375,6 +1398,7 @@ main (int argc, char **argv)
 	else
 	  fatal (_("unknown directories method"), 0);
 	break;
+
       case 'e':
 	cc = strlen (optarg);
 	keys = xrealloc (keys, keycc + cc + 1);
@@ -1382,6 +1406,7 @@ main (int argc, char **argv)
 	keycc += cc;
 	keys[keycc++] = '\n';
 	break;
+
       case 'f':
 	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
 	if (!fp)
@@ -1403,21 +1428,26 @@ main (int argc, char **argv)
 	if (oldcc != keycc && keys[keycc - 1] != '\n')
 	  keys[keycc++] = '\n';
 	break;
+
       case 'h':
 	no_filenames = 1;
 	break;
+
       case 'i':
       case 'y':			/* For old-timers . . . */
 	match_icase = 1;
 	break;
+
       case 'L':
 	/* Like -l, except list files that don't contain matches.
 	   Inspired by the same option in Hume's gre. */
 	list_files = -1;
 	break;
+
       case 'l':
 	list_files = 1;
 	break;
+
       case 'm':
 	{
 	  uintmax_t value;
@@ -1437,34 +1467,44 @@ main (int argc, char **argv)
 	    }
 	}
 	break;
+
       case 'n':
 	out_line = 1;
 	break;
+
       case 'q':
 	exit_on_match = 1;
 	break;
+
       case 'R':
       case 'r':
 	directories = RECURSE_DIRECTORIES;
 	break;
+
       case 's':
 	suppress_errors = 1;
 	break;
+
       case 'v':
 	out_invert = 1;
 	break;
+
       case 'w':
 	match_words = 1;
 	break;
+
       case 'x':
 	match_lines = 1;
 	break;
+
       case 'Z':
 	filename_mask = 0;
 	break;
+
       case 'z':
 	eolbyte = '\0';
 	break;
+
       case BINARY_FILES_OPTION:
 	if (strcmp (optarg, "binary") == 0)
 	  binary_files = BINARY_BINARY_FILES;
@@ -1475,26 +1515,45 @@ main (int argc, char **argv)
 	else
 	  fatal (_("unknown binary-files type"), 0);
 	break;
+
       case COLOR_OPTION:
 	color_option = 1;
 	break;
+
       case EXCLUDE_OPTION:
-	exclude_pattern = optarg;
-	directories = RECURSE_DIRECTORIES;
+	if (!excluded_patterns)
+	  excluded_patterns = new_exclude ();
+	add_exclude (excluded_patterns, optarg);
 	break;
+
+      case EXCLUDE_FROM_OPTION:
+	if (!excluded_patterns)
+	  excluded_patterns = new_exclude ();
+        if (add_exclude_file (add_exclude, excluded_patterns, optarg, '\n')
+	    != 0)
+          {
+            fatal (optarg, errno);
+          }
+        break;
+
       case INCLUDE_OPTION:
-	include_pattern = optarg;
-	directories = RECURSE_DIRECTORIES;
+	if (!included_patterns)
+	  included_patterns = new_exclude ();
+	add_exclude (included_patterns, optarg);
 	break;
+
       case LINE_BUFFERED_OPTION:
 	line_buffered = 1;
 	break;
+
       case 0:
 	/* long options */
 	break;
+
       default:
 	usage (2);
 	break;
+
       }
 
   /* POSIX.2 says that -q overrides -l, which in turn overrides the
@@ -1584,6 +1643,16 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	do
 	{
 	  char *file = argv[optind];
+	  if ((included_patterns || excluded_patterns)
+	      && !isdir (file))
+	    {
+	      if (included_patterns &&
+		  ! excluded_filename (included_patterns, file, 0))
+		continue;
+	      if (excluded_patterns &&
+		  excluded_filename (excluded_patterns, file, 0))
+		continue;
+	    }
 	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file,
 			      &stats_base);
 	}
