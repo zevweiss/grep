@@ -2733,7 +2733,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 
   if (nelem == 0 || maxlen == 0)
     /* This state has no multibyte operator which can match.
-       We need to  check only one singlebyte character.  */
+       We need to check only one singlebyte character.  */
     {
       status_transit_state rs;
       rs = transit_state_singlebyte(d, s, *pp, &s1);

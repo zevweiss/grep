@@ -677,7 +677,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	    --p;
 	  while (p[-1] != eol);
 
-      /* We only print the "--" separator if our output is
+      /* We print the "--" separator only if our output is
 	 discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout)
 	puts ("--");
@@ -1123,21 +1123,21 @@ Output control:\n\
       --label=LABEL         print LABEL as filename for standard input\n\
   -o, --only-matching       show only the part of a line matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
-      --binary-files=TYPE   assume that binary files are TYPE\n\
-                            TYPE is 'binary', 'text', or 'without-match'\n\
+      --binary-files=TYPE   assume that binary files are TYPE;\n\
+                            TYPE is `binary', `text', or `without-match'\n\
   -a, --text                equivalent to --binary-files=text\n\
   -I                        equivalent to --binary-files=without-match\n\
-  -d, --directories=ACTION  how to handle directories\n\
-                            ACTION is 'read', 'recurse', or 'skip'\n\
-  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n\
-                            ACTION is 'read' or 'skip'\n\
+  -d, --directories=ACTION  how to handle directories;\n\
+                            ACTION is `read', `recurse', or `skip'\n\
+  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n\
+                            ACTION is `read' or `skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
-      --include=PATTERN     files that match PATTERN will be examined\n\
-      --exclude=PATTERN     files that match PATTERN will be skipped.\n\
-      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n\
-  -L, --files-without-match only print FILE names containing no match\n\
-  -l, --files-with-matches  only print FILE names containing matches\n\
-  -c, --count               only print a count of matching lines per FILE\n\
+      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
+      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n\
+      --exclude-from=FILE   skip files matching any file pattern from FILE\n\
+  -L, --files-without-match print only names of FILEs containing no match\n\
+  -l, --files-with-matches  print only names of FILEs containing matches\n\
+  -c, --count               print only a count of matching lines per FILE\n\
   -Z, --null                print 0 byte after FILE name\n"));
       printf (_("\
 \n\
@@ -1147,15 +1147,15 @@ Context control:\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
       --color[=WHEN],\n\
-      --colour[=WHEN]       use markers to distinguish the matching string\n\
-                            WHEN may be `always', `never' or `auto'.\n\
+      --colour[=WHEN]       use markers to distinguish the matching string;\n\
+                            WHEN may be `always', `never', or `auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
 `egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
-With no FILE, or when FILE is -, read standard input.  If less than\n\
-two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
-and 2 if trouble.\n"));
+With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
+are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
+if any error occurs and -q was not given, the exit status is 2.\n"));
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);

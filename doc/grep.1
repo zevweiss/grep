@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.25 2004/11/19 13:51:29 kasal Exp $
+.Id $Id: grep.1,v 1.26 2004/12/08 14:18:29 kasal Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -186,15 +186,14 @@ Use
 as the pattern; useful to protect patterns beginning with
 .BR \- .
 .TP
+.BI \-\^\-exclude= FILE_PATTERN
+.RI "Skip files " "and directories" " that match " FILE_PATTERN.
+.TP
 .BR \-F ", " \-\^\-fixed-strings
 Interpret
 .I PATTERN
 as a list of fixed strings, separated by newlines,
 any of which is to be matched.
-.BR \-P ", " \-\^\-perl-regexp
-Interpret
-.I PATTERN
-as a Perl regular expression.
 .TP
 .BI \-f " FILE" "\fR,\fP \-\^\-file=" FILE
 Obtain patterns from
@@ -228,6 +227,11 @@ Ignore case distinctions in both the
 .I PATTERN
 and the input files.
 .TP
+.BI \-\^\-include= FILE_PATTERN
+Search only files that match
+.I FILE_PATTERN
+(using wildcard matching).
+.TP
 .BR \-L ", " \-\^\-files-without-match
 Suppress normal output; instead print the name
 of each input file from which no output would
@@ -239,6 +243,15 @@ Suppress normal output; instead print
 the name of each input file from which output
 would normally have been printed.  The scanning will
 stop on the first match.
+.TP
+.BI \-\^\-label= LABEL
+Displays input actually coming from standard input as input coming from file
+.I LABEL.
+This is especially useful for tools like zgrep, e.g.
+.B "gzip -cd foo.gz |grep --label=foo something"
+.TP
+.BR \-\^\-line-buffered
+Use line buffering, it can be a performance penalty.
 .TP
 .BI \-m " NUM" "\fR,\fP \-\^\-max-count=" NUM
 Stop reading a file after
@@ -294,16 +307,10 @@ within its input file.
 .TP
 .BR \-o ", " \-\^\-only-matching
 Show only the part of a matching line that matches
-.I PATTERN.
+.IR PATTERN .
 .TP
-.BI \-\^\-label= LABEL
-Displays input actually coming from standard input as input coming from file
-.I LABEL.
-This is especially useful for tools like zgrep, e.g.
-.B "gzip -cd foo.gz |grep --label=foo something"
-.TP
-.BR \-\^\-line-buffered
-Use line buffering, it can be a performance penalty.
+.BR \-P ", " \-\^\-perl-regexp
+.RI "Interpret " PATTERN " as a Perl regular expression."
 .TP
 .BR \-q ", " \-\^\-quiet ", " \-\^\-silent
 Quiet; do not write anything to standard output.
@@ -320,14 +327,6 @@ Read all files under each directory, recursively;
 this is equivalent to the
 .B "\-d recurse"
 option.
-.TP
-.BR "\fR \fP \-\^\-include=" PATTERN
-Recurse in directories only searching file matching
-.I PATTERN.
-.TP
-.BR "\fR \fP \-\^\-exclude=" PATTERN
-Recurse in directories skip file matching
-.I PATTERN.
 .TP
 .BR \-s ", " \-\^\-no-messages
 Suppress error messages about nonexistent or unreadable files.

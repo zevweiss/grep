@@ -28,7 +28,7 @@ Version 2.5
     grep -e '\(a\)\1' -e '\(b\)\1'
     The last backref \1 in the second expression refer to \(b\)
 
-  - The new option --include=PATTERN will only search matching files
+  - The new option --include=PATTERN will search only matching files
     when recursing in directories
 
   - The new option --exclude=PATTERN will skip matching files when

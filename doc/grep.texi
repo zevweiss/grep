@@ -416,14 +416,13 @@ files in that directory, recursively.  This is the same as the
 @opindex --include
 @cindex include files
 @cindex searching directory trees
-When processing directories recursively, only files matching @var{file_pattern}
-will be search.
+Search only files matching @var{file_pattern}.
 
 @item --exclude=@var{file_pattern}
 @opindex --exclude
 @cindex exclude files
 @cindex searching directory trees
-When processing directories recursively, skip files matching @var{file_pattern}.
+Skip files @emph{and directories} matching @var{file_pattern}.
 
 @item -m @var{num}
 @itemx --max-count=@var{num}

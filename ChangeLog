@@ -1,3 +1,17 @@
+2004-12-01  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/grep.c (usage): Use ``FILE_PATTERN'' for --include and --exclude,
+	  change ``only print'' to ``print only''.
+	* doc/grep.1: Likewise; state that wildcard matching is used.
+	  Move some options so that they are sorted alphabetically.
+	* dfa.c, NEWS: Fix typos.
+
+2004-11-28  Benno Schulenberg  <benno@nietvergeten.nl>  (tiny change)
+
+	* src/grep.c (usage): Clean up several details in the usage string.
+	* doc/grep.1: Fix descriptions of --include and --exclude.
+	* doc/grep.texi: Likewise.
+
 2004-11-23  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/Makefile.am: The egrep and fgrep script now use their own
@@ -12,7 +26,7 @@
 
 	* src/grep.c (usage): Make sure both copies of the ``usage''
 	  strings match.  Add ``(C)'' to the copyright notice.
-	* src/dfa.c: Changed "out of memory" to "memory exhausted" to
+	* src/dfa.c: Changed ``out of memory'' to ``memory exhausted'' to
 	  match messages elsewhere in the source.
 
 2004-11-22  Stepan Kasal  <kasal@ucw.cz>
@@ -66,7 +80,7 @@
 
 	* tests/spencer1.awk: Use only lines with 3 fields.
 	* tests/spencer1.tests: Disable #55 for now.
-	* tests/ere.tests, tests/bre.tests: Add "TO CORRECT" to disabled
+	* tests/ere.tests, tests/bre.tests: Add ``TO CORRECT'' to disabled
 	  tests which had empty $4.
 	* tests/backref.sh: Modify #2 so that current glibc regex can
 	  handle it in finite time.
@@ -100,7 +114,7 @@
 	* src/dfa.c: remove non-constant initializers from dfa.c
 
 2003-06-16  Stepan Kasal  <kasal@ucw.cz>
-	* doc/grep.1: two typos "--line-buffered [...] penalty"
+	* doc/grep.1: two typos ``--line-buffered [...] penalty''
 	* doc/grep.texi: a typo
 
 2003-06-12  Bernhard Rosenkraenzer <bero@arklinux.org>
