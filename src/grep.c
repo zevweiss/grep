@@ -36,6 +36,7 @@
 #include "getpagesize.h"
 #include "grep.h"
 #include "savedir.h"
+#include "xstrtol.h"
 
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
@@ -204,17 +205,14 @@ xrealloc (char *ptr, size_t size)
 }
 
 /* Convert STR to a positive integer, storing the result in *OUT.
-   If STR is not a valid integer, return -1 (otherwise 0). */
+   Return nonzero if STR is invalid or out of range.  */
 static int
 ck_atoi (char const *str, int *out)
 {
-  char const *p;
-  for (p = str; *p; p++)
-    if (*p < '0' || *p > '9')
-      return -1;
-
-  *out = atoi (optarg);
-  return 0;
+  uintmax_t value;
+  return ! (xstrtoumax (str, 0, 10, &value, "") == LONGINT_OK
+	    && 0 <= (*out = value)
+	    && *out == value);
 }
 
 
@@ -492,9 +490,8 @@ static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
 static int suppress_errors;	/* Suppress diagnostics.  */
-static int max_count;		/* Stop after outputting this many
-				   lines from an input file.
-				   FIXME: should be off_t.  */
+static off_t max_count;		/* Stop after outputting this many
+				   lines from an input file.  */
 
 /* Internal variables to keep track of byte count, context, etc. */
 static off_t totalcc;		/* Total character count before bufbeg. */
@@ -503,8 +500,7 @@ static char *lastout;		/* Pointer after last character output;
 				   NULL if no character has been output
 				   or if it's conceptually before bufbeg. */
 static off_t totalnl;		/* Total newline count before lastnl. */
-static int outleft;		/* Maximum number of lines to be output.
-				   FIXME: should be off_t.  */
+static off_t outleft;		/* Maximum number of lines to be output.  */
 static int pending;		/* Pending lines of output.
 				   Always kept 0 if out_quiet is true.  */
 static int done_on_match;	/* Stop scanning file on first match */
@@ -1226,7 +1222,7 @@ main (int argc, char **argv)
   eolbyte = '\n';
   filename_mask = ~0;
 
-  max_count = INT_MAX;
+  max_count = TYPE_MAXIMUM (off_t);
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
   /* Default before/after context: chaged by -C/-NUM options */
@@ -1390,8 +1386,23 @@ main (int argc, char **argv)
 	done_on_match = 1;
 	break;
       case 'm':
-	if (ck_atoi (optarg, &max_count))
-	  fatal (_("invalid max count"), 0);
+	{
+	  uintmax_t value;
+	  switch (xstrtoumax (optarg, 0, 10, &value, ""))
+	    {
+	    case LONGINT_OK:
+	      max_count = value;
+	      if (0 <= max_count && max_count == value)
+		break;
+	      /* Fall through.  */
+	    case LONGINT_OVERFLOW:
+	      max_count = TYPE_MAXIMUM (off_t);
+	      break;
+
+	    default:
+	      fatal (_("invalid max count"), 0);
+	    }
+	}
 	break;
       case 'n':
 	out_line = 1;

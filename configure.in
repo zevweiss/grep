@@ -24,6 +24,7 @@ AM_C_PROTOTYPES
 AC_TYPE_SIZE_T
 AC_CHECK_TYPE(ssize_t, int)
 AC_C_CONST
+jm_AC_TYPE_UINTMAX_T
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -38,7 +39,17 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
 AC_CHECK_FUNCS(btowc isascii memmove setmode strerror wctype)
-AC_REPLACE_FUNCS(memchr stpcpy)
+AC_REPLACE_FUNCS(memchr stpcpy strtoul)
+jm_AC_PREREQ_XSTRTOUMAX
+
+dnl Replace this with jm_CHECK_DECLS once autoconf 2.15 is out.
+jm_CHECK_DECLARATIONS([#include <stdlib.h>], strtoul strtoull)
+test $jm_cv_func_decl_strtoul != yes
+AC_DEFINE_UNQUOTED(HAVE_DECL_STRTOUL, $?,
+  [Define if <stdlib.h> declares strtoul.])
+test $jm_cv_func_decl_strtoull != yes
+AC_DEFINE_UNQUOTED(HAVE_DECL_STRTOULL, $?,
+  [Define if <stdlib.h> declares strtoull.])
 
 dnl for VC++
 case "$ac_cv_prog_CC" in

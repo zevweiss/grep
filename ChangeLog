@@ -1,3 +1,32 @@
+2000-03-26  Paul Eggert  <eggert@twinsun.com>
+
+	* Makefile.am (ACINCLUDE_INPUTS): Add decl.m4, inttypes_h.m4,
+	uintmax_t.m4, ulonglong.m4, xstrtoumax.m4.
+	* m4/Makefile.am (EXTRA_DIST): Likewise.
+
+	* src/Makefile.am (base_sources):
+	Add xstrtol.c, xstrtol.h, xstrtoumax.c.
+	(EXTRA_DIST): Add strtol.c.
+
+	* configure.in (jm_AC_TYPE_UINTMAX_T, jm_AC_PREREQ_XSTRTOUMAX,
+	HAVE_DECL_STRTOUL, HAVE_DECL_STRTOULL): Add.
+	(AC_REPLACE_FUNCS): Add strtoul.
+
+	* src/grep.c: Include xstrtol.h.
+	(ck_atio): Use xstrtoumax and do proper overflow checking.
+	(max_count, outleft): Now off_t, not int.
+	(main): Likewise. Use xstrtoumax to convert max_count from string.
+
+	* acconfig.h (HAVE_DECL_STRTOUL, HAVE_DECL_STRTOULL): New #undefs.
+	(HAVE_STPCPY, ENABLE_NLS, HAVE_CATGETS, HAVE_GETTEXT,
+	HAVE_LC_MESSAGES): Remove.
+
+	* m4/decl.m4, m4/inttypes_h.m4, m4/uintmax_t.m4, m4/ulonglong.m4,
+	m4/xstrtoumax.m4, src/strtol.c, src/strtoul.c, src/strtoull.c,
+	src/strtoumax.c, src/xstrtol.c, src/xstrtol.h, src/xstrtoumax.c:
+	New files, taken unchanged from textutils, fileutils, sh-utils
+	and/or tar.
+
 2000-03-23  Paul Eggert  <eggert@twinsun.com>
 
 	* src/search.c (Pcompile): Add support for NUL bytes in
