@@ -255,7 +255,7 @@ Print @var{num} lines of leading context before matching lines.
 Print @var{num} lines (default 2) of output context.
 
 
-@item -NUM
+@item -@var{num}
 @opindex -NUM
 Same as @samp{--context=@var{num}} lines of leading and trailing
 context.  However, grep will never print any given line more than once.
@@ -770,12 +770,14 @@ should avoid it.
 @node Usage
 @chapter Usage
 
+@cindex Usage, examples
 Here is an example shell command that invokes @sc{gnu} @command{grep}:
 
 @example
 grep -i 'hello.*world' menu.h main.c
 @end example
 
+@noindent
 This lists all lines in the files @file{menu.h} and @file{main.c} that
 contain the string @samp{hello} followed by the string @samp{world};
 this is because @samp{.*} matches zero or more characters within a line.
@@ -784,6 +786,8 @@ to ignore case, causing it to match the line @samp{Hello, world!}, which
 it would not otherwise match.  @xref{Invoking}, for more details about
 how to invoke @command{grep}.
 
+@cindex Using @command{grep}, Q&A
+@cindex FAQ about @command{grep} usage
 Here are some common questions and answers about @command{grep} usage.
 
 @enumerate
@@ -795,6 +799,7 @@ How can I list just the names of matching files?
 grep -l 'main' *.c
 @end example 
 
+@noindent
 lists the names of all C files in the current directory whose contents
 mention @samp{main}.
 
@@ -805,14 +810,15 @@ How do I search directories recursively?
 grep -r 'hello' /home/gigi
 @end example
 
+@noindent
 searches for @samp{hello} in all files under the directory
 @file{/home/gigi}.  For more control of which files are searched, use
 @command{find}, @command{grep} and @command{xargs}.  For example,
 the following command searches only C files:
 
-@example
+@smallexample
 find /home/gigi -name '*.c' -print | xargs grep 'hello' /dev/null
-@end example
+@end smallexample
 
 @item
 What if a pattern has a leading @samp{-}?
@@ -821,6 +827,7 @@ What if a pattern has a leading @samp{-}?
 grep -e '--cut here--' *
 @end example 
 
+@noindent
 searches for all lines matching @samp{--cut here--}.  Without @samp{-e},
 @command{grep} would attempt to parse @samp{--cut here--} as a list of
 options.
@@ -832,6 +839,7 @@ Suppose I want to search for a whole word, not a part of a word?
 grep -w 'hello' *
 @end example
 
+@noindent
 searches only for instances of @samp{hello} that are entire words; it
 does not match @samp{Othello}.  For more control, use @samp{\<} and
 @samp{\>} to match the start and end of words.  For example:
@@ -840,6 +848,7 @@ does not match @samp{Othello}.  For more control, use @samp{\<} and
 grep 'hello\>' *
 @end example
 
+@noindent
 searches only for words ending in @samp{hello}, so it matches the word
 @samp{Othello}.
 
@@ -850,6 +859,7 @@ How do I output context around the matching lines?
 grep -C 2 'hello' *
 @end example
 
+@noindent
 prints two lines of context around each matching line.
 
 @item
@@ -897,10 +907,11 @@ I can do @sc{or} with @samp{|}, but what about @sc{and}?
 grep 'paul' /etc/motd | grep 'franc,ois'
 @end example
 
+@noindent
 finds all lines that contain both @samp{paul} and @samp{franc,ois}.
 
 @item
-How can I seach in both standard intput and in files?
+How can I search in both standard input and in files?
 
 Use the special file name @samp{-}:
 
