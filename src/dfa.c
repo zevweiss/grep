@@ -361,6 +361,7 @@ static wchar_t *inputwcs;	/* Wide character representation of input
 				   And inputwcs[i] is the codepoint.  */
 static unsigned char const *buf_begin;/* refference to begin in dfaexec().  */
 static unsigned char const *buf_end;	/* refference to end in dfaexec().  */
+static unsigned long buf_offset; /* Go fast. */
 #endif /* MBS_SUPPORT  */
 
 #ifdef MBS_SUPPORT
@@ -2324,14 +2325,12 @@ build_state_zero (struct dfa *d)
 #define SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p)		\
   if (s == 0)						\
     {							\
-      while (inputwcs[p - buf_begin] == 0		\
-            && mblen_buf[p - buf_begin] > 0		\
+      while (inputwcs[p - buf_begin + buf_offset] == 0	\
+            && mblen_buf[p - buf_begin + buf_offset] > 0\
 	    && p < buf_end)				\
         ++p;						\
       if (p >= end)					\
 	{						\
-          free(mblen_buf);				\
-          free(inputwcs);				\
 	  return (size_t) -1;				\
 	}						\
     }
@@ -2424,8 +2423,8 @@ match_anychar (struct dfa *d, int s, position pos, int index)
   wchar_t wc;
   int mbclen;
 
-  wc = inputwcs[index];
-  mbclen = (mblen_buf[index] == 0)? 1 : mblen_buf[index];
+  wc = inputwcs[index + buf_offset];
+  mbclen = (mblen_buf[index + buf_offset] == 0)? 1 : mblen_buf[index + buf_offset];
 
   /* Check context.  */
   if (wc == (wchar_t)eolbyte)
@@ -2474,7 +2473,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   int letter = 0;
   wchar_t wc;		/* Current reffering character.  */
 
-  wc = inputwcs[index];
+  wc = inputwcs[index + buf_offset];
 
   /* Check context.  */
   if (wc == (wchar_t)eolbyte)
@@ -2498,7 +2497,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   /* Assign the current reffering operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
-  match_len = (mblen_buf[index] == 0)? 1 : mblen_buf[index];
+  match_len = (mblen_buf[index + buf_offset] == 0)? 1 : mblen_buf[index + buf_offset];
 
   /* match with a character class?  */
   for (i = 0; i<work_mbc->nch_classes; i++)
@@ -2613,8 +2612,8 @@ transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
 
   /* Calculate the length of the (single/multi byte) character
      to which p points.  */
-  *mbclen = (mblen_buf[*pp - buf_begin] == 0)? 1
-    : mblen_buf[*pp - buf_begin];
+  *mbclen = (mblen_buf[*pp - buf_begin + buf_offset] == 0)? 1
+    : mblen_buf[*pp - buf_begin + buf_offset];
 
   /* Calculate the state which can be reached from the state `s' by
      consuming `*mbclen' single bytes from the buffer.  */
@@ -2708,7 +2707,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
      `maxlen' bytes.  */
   rs = transit_state_consume_1char(d, s, pp, match_lens, &mbclen, &follows);
 
-  wc = inputwcs[*pp - mbclen - buf_begin];
+  wc = inputwcs[*pp - mbclen - buf_begin + buf_offset];
   s1 = state_index(d, &follows, wc == L'\n', iswalnum(wc));
   realloc_trans_if_necessary(d, s1);
 
@@ -2726,7 +2725,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 		     &follows);
 	}
 
-      wc = inputwcs[*pp - mbclen - buf_begin];
+      wc = inputwcs[*pp - mbclen - buf_begin + buf_offset];
       s1 = state_index(d, &follows, wc == L'\n', iswalnum(wc));
       realloc_trans_if_necessary(d, s1);
     }
@@ -2780,12 +2779,21 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
   if (MB_CUR_MAX > 1)
     {
       int remain_bytes, i;
+      buf_begin -= buf_offset;
+      if (buf_begin <= (unsigned char const *)begin && end <= buf_end) {
+	buf_offset = (unsigned char const *)begin - buf_begin;
+	buf_begin = begin;
+	buf_end = end;
+	goto go_fast;
+      }
+
+      buf_offset = 0;
       buf_begin = begin;
       buf_end = end;
 
       /* initialize mblen_buf, and inputwcs.  */
-      MALLOC(mblen_buf, unsigned char, end - (unsigned char const *)begin + 2);
-      MALLOC(inputwcs, wchar_t, end - (unsigned char const *)begin + 2);
+      REALLOC(mblen_buf, unsigned char, end - (unsigned char const *)begin + 2);
+      REALLOC(inputwcs, wchar_t, end - (unsigned char const *)begin + 2);
       memset(&mbs, 0, sizeof(mbstate_t));
       remain_bytes = 0;
       for (i = 0; i < end - (unsigned char const *)begin + 1; i++)
@@ -2817,6 +2825,7 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
       mblen_buf[i] = 0;
       inputwcs[i] = 0; /* sentinel */
     }
+go_fast:
 #endif /* MBS_SUPPORT */
 
   for (;;)
@@ -2855,13 +2864,6 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 	{
 	  if (p == end)
 	    {
-#ifdef MBS_SUPPORT
-	      if (MB_CUR_MAX > 1)
-		{
-		  free(mblen_buf);
-		  free(inputwcs);
-		}
-#endif /* MBS_SUPPORT */
 	      return (size_t) -1;
 	    }
 	  s = 0;
@@ -2872,13 +2874,6 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 	    {
 	      if (backref)
 		*backref = (d->states[s].backref != 0);
-#ifdef MBS_SUPPORT
-	      if (MB_CUR_MAX > 1)
-		{
-		  free(mblen_buf);
-		  free(inputwcs);
-		}
-#endif /* MBS_SUPPORT */
 	      return (char const *) p - begin;
 	    }
 

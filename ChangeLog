@@ -1,3 +1,6 @@
+2003-05-30  Bernhard Rosenkraenzer <bero@arklinux.org>
+	* src/dfa.c: Speed up multibyte support (Patch from Tim Waugh)
+
 2003-01-18  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Fix -i -o combination (Patch from Tim Waugh)
 
