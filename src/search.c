@@ -148,7 +148,8 @@ Gcompile(pattern, size)
 	 (^|[^A-Za-z_])(userpattern)([^A-Za-z_]|$).
 	 In the whole-line case, we use the pattern:
 	 ^(userpattern)$.
-	 BUG: Using [A-Za-z_] is locale-dependent!  */
+	 BUG: Using [A-Za-z_] is locale-dependent!
+	 So will use [:alnum:] */
 
       char *n = malloc(size + 50);
       int i = 0;
@@ -158,14 +159,14 @@ Gcompile(pattern, size)
       if (match_lines)
 	strcpy(n, "^\\(");
       if (match_words)
-	strcpy(n, "\\(^\\|[^0-9A-Za-z_]\\)\\(");
+	strcpy(n, "\\(^\\|[^[:alnum:]_]\\)\\(");
 
       i = strlen(n);
       memcpy(n + i, pattern, size);
       i += size;
 
       if (match_words)
-	strcpy(n + i, "\\)\\([^0-9A-Za-z_]\\|$\\)");
+	strcpy(n + i, "\\)\\([^[:alnum:]_]\\|$\\)");
       if (match_lines)
 	strcpy(n + i, "\\)$");
 
@@ -209,7 +210,8 @@ Ecompile(pattern, size)
 	 (^|[^A-Za-z_])(userpattern)([^A-Za-z_]|$).
 	 In the whole-line case, we use the pattern:
 	 ^(userpattern)$.
-	 BUG: Using [A-Za-z_] is locale-dependent!  */
+	 BUG: Using [A-Za-z_] is locale-dependent!
+	 so will use the char class */
 
       char *n = malloc(size + 50);
       int i = 0;
@@ -219,14 +221,14 @@ Ecompile(pattern, size)
       if (match_lines)
 	strcpy(n, "^(");
       if (match_words)
-	strcpy(n, "(^|[^0-9A-Za-z_])(");
+	strcpy(n, "(^|[^[:alnum:]_])(");
 
       i = strlen(n);
       memcpy(n + i, pattern, size);
       i += size;
 
       if (match_words)
-	strcpy(n + i, ")([^0-9A-Za-z_]|$)");
+	strcpy(n + i, ")([^[:alnum:]_]|$)");
       if (match_lines)
 	strcpy(n + i, ")$");
 
