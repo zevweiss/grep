@@ -40,6 +40,10 @@ extern void free();
 #include <strings.h>
 #endif
 
+#if HAVE_SETLOCALE
+# include <locale.h>
+#endif
+
 #ifndef DEBUG	/* use the same approach as regex.c */
 #undef assert
 #define assert(e)
@@ -100,6 +104,7 @@ extern void free();
 
 #include "regex.h"
 #include "dfa.h"
+#include "hard-locale.h"
 
 /* HPUX, define those as macros in sys/param.h */
 #ifdef setbit
@@ -189,6 +194,7 @@ prtok (token t)
 	case ORTOP: s = "ORTOP"; break;
 	case LPAREN: s = "LPAREN"; break;
 	case RPAREN: s = "RPAREN"; break;
+	case CRANGE: s = "CRANGE"; break;
 	default: s = "CSET"; break;
 	}
       fprintf(stderr, "%s", s);
@@ -307,6 +313,7 @@ static int laststart;		/* True if we're separated from beginning or (, |
 				   only by zero-width characters. */
 static int parens;		/* Count of outstanding left parens. */
 static int minrep, maxrep;	/* Repeat counts for {m,n}. */
+static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
 /* Note that characters become unsigned here. */
 #define FETCH(c, eoferr)   	      \
@@ -385,12 +392,10 @@ looking_at (char const *s)
 static token
 lex (void)
 {
-  token c, c1, c2;
+  unsigned c, c1, c2;
   int backslash = 0, invert;
   charclass ccl;
   int i;
-  char lo[2];
-  char hi[2];
 
   /* Basic plan: We fetch a character.  If it's a backslash,
      we set the backslash flag and go through the loop again.
@@ -646,6 +651,7 @@ lex (void)
 	case '[':
 	  if (backslash)
 	    goto normal_char;
+	  laststart = 0;
 	  zeroset(ccl);
 	  FETCH(c, _("Unbalanced ["));
 	  if (c == '^')
@@ -696,15 +702,10 @@ lex (void)
 			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
 			FETCH(c2, _("Unbalanced ["));
 		      FETCH(c1, _("Unbalanced ["));
-		      lo[0] = c;  lo[1] = '\0';
-		      hi[0] = c2; hi[1] = '\0';
-		      for (c = 0; c < NOTCHAR; c++)
-			{
-			  char ch[2];
-			  ch[0] = c;  ch[1] = '\0';
-			  if (strcoll (lo, ch) <= 0 && strcoll (ch, hi) <= 0)
-			    setbit_case_fold (c, ccl);
-			}
+		      if (hard_LC_COLLATE)
+			return lasttok = CRANGE;
+		      for (; c <= c2; c++)
+			setbit_case_fold (c, ccl);
 		      continue;
 		    }
 		}
@@ -721,7 +722,6 @@ lex (void)
 	      if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
 		clrbit(eolbyte, ccl);
 	    }
-	  laststart = 0;
 	  return lasttok = CSET + charclass_index(ccl);
 
 	default:
@@ -797,6 +797,7 @@ addtok (token t)
      closure QMARK
      closure STAR
      closure PLUS
+     closure REPMN
      atom
 
    atom:
@@ -809,6 +810,8 @@ addtok (token t)
      ENDWORD
      LIMWORD
      NOTLIMWORD
+     CRANGE
+     LPAREN regexp RPAREN
      <empty>
 
    The parser builds a parse tree in postfix form in an array of tokens. */
@@ -822,6 +825,22 @@ atom (void)
     {
       addtok(tok);
       tok = lex();
+    }
+  else if (tok == CRANGE)
+    {
+      /* A character range like "[a-z]" in a locale other than "C" or
+	 "POSIX".  This range might any sequence of one or more
+	 characters.  Unfortunately the POSIX locale primitives give
+	 us no practical way to find what character sequences might be
+	 matched.  Treat this approximately like "(.\1)" -- i.e. match
+	 one character, and then punt to the full matcher.  */
+      charclass ccl;
+      zeroset (ccl);
+      notset (ccl);
+      addtok (CSET + charclass_index (ccl));
+      addtok (BACKREF);
+      addtok (CAT);
+      tok = lex ();
     }
   else if (tok == LPAREN)
     {
@@ -940,6 +959,9 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   lasttok = END;
   laststart = 1;
   parens = 0;
+#if ENABLE_NLS
+  hard_LC_COLLATE = hard_locale (LC_COLLATE);
+#endif
 
   if (! syntax_bits_set)
     dfaerror(_("No syntax specified"));

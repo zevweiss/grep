@@ -142,6 +142,12 @@ typedef enum
 
   RPAREN,			/* RPAREN never appears in the parse tree. */
 
+  CRANGE,			/* CRANGE never appears in the parse tree.
+				   It stands for a character range that can
+				   match a string of one or more characters.
+				   For example, [a-z] can match "ch" in
+				   a Spanish locale.  */
+
   CSET				/* CSET and (and any value greater) is a
 				   terminal symbol that matches any of a
 				   class of characters. */
@@ -361,6 +367,5 @@ extern void dfastate PARAMS ((int, struct dfa *, int []));
 
 /* dfaerror() is called by the regexp routines whenever an error occurs.  It
    takes a single argument, a NUL-terminated string describing the error.
-   The default dfaerror() prints the error message to stderr and exits.
-   The user can provide a different dfafree() if so desired. */
+   The user must supply a dfaerror.  */
 extern void dfaerror PARAMS ((const char *));

@@ -15,6 +15,7 @@ base_sources = grep.c grep.h \
 	       savedir.c savedir.h \
 	       xstrtol.c xstrtol.h xstrtoumax.c \
                getopt.c getopt1.c getopt.h \
+	       hard-locale.c hard-locale.h \
 	       isdir.c \
                search.c getpagesize.h system.h
 egrep_SOURCES = $(base_sources) egrepmat.c

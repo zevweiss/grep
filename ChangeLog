@@ -1,5 +1,28 @@
 2000-08-20  Paul Eggert
 
+	Handle range expressions correctly even when they match
+	strings with two or more characters.
+
+	* src/dfa.h (CRANGE): New enum value.  Comment fix.
+
+	* src/dfa.c: Include <locale.h> if HAVE_SETLOCALE.
+	Include "hard-locale.h".
+	(prtok): Print CRANGE.
+	(hard_LC_COLLATE): New static var.
+	(lex): Return CRANGE when parsing a character range in a hard locale.
+	Don't use strcoll; it's no longer needed and wasn't correct anyway.
+	Use unsigned rather than token to hold unsigned chars.
+	(addtok): Comment fix.
+	(atom): Treat a CRANGE as if it were (.\1), approximately.
+	(dfaparse): Initialize hard_LC_COLLATE.
+
+	* src/Makefile.am (base_sources): Add hard-locale.c, hard-locale.h.
+
+	* src/hard-locale.c, src/hard-locale.h: New files, taken from
+	textutils.
+
+2000-08-20  Paul Eggert
+
 	* tests/Makefile.am (TESTS_ENVIRONMENT): Add LC_ALL=C, since
 	some of the tests assume the C locale.
 
