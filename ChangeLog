@@ -1,4 +1,8 @@
-2000-03-03  Jim Meyering  <meyering@lucent.com>
+2000-03-07  Alain Magloire
+
+	* configure.in: version 2.4.2
+
+2000-03-03  Jim Meyering
 
 	* regex.m4: Make sure re_compile_pattern accepts patterns like `{1'.
 
