@@ -70,13 +70,6 @@ All variants of
 understand the following options:
 .PD 0
 .TP
-.BI \- NUM
-Matches will be printed with
-.I NUM
-lines of leading and trailing context.  However,
-.B grep
-will never print any given line more than once.
-.TP
 .BI \-A " NUM" ", --after-context=" NUM
 Print
 .I NUM
@@ -87,9 +80,15 @@ Print
 .I NUM
 lines of leading context before matching lines.
 .TP
-.B \-C, --context
-Equivalent to
-.BR \-2 .
+.BI \-C ,\  --context"[=NUM]"
+Print 
+.I NUM
+lines (default 2) of output context.
+.TP
+.BI \- NUM \ 
+Same as --context=NUM lines of leading and trailing context.  However,
+.B grep
+will never print any given line more than once.
 .TP
 .B \-V, --version
 Print the version number of

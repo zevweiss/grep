@@ -8,7 +8,7 @@ AC_DEFINE(GREP)
 AC_PREREQ(2.12)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.2)
+AM_INIT_AUTOMAKE(grep, 2.2a)
 AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.

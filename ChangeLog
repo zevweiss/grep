@@ -1,10 +1,29 @@
-1998-11-04 Alain Magloire
+1998-11-05 Alain Magloire
+
+	* src/grep.1: update the man pages according to the
+	changes make by Miles.
+
+	* first beta release for 2.3 (2.2a).
+
+1998-11-04 Miles Bader
+
+	* src/grep.c (main): Rationalize interaction of -C/-NUM/-A/-B
+	options, and allow -C to have an optional argument. -NUM can
+	now be mixed with -C, and -A, -B always take precedence over
+	-C/-NUM, regardless of order.
+	(long_options): Let -C/--context take an optional argument.
+
+1998-11-03 Alain Magloire
+
+	* src/dfa.c: HP-UX define clrbit/setbit as macros in <sys/param.h>
+	we #undef if defined.
+	Fixed by Andreas Ley and Philippe Defert.
 
 	* src/grep.1 : mention that -s follows POSIX.2 behavior.
 	Noted by Paul Eggert and others.
 
 	* tests/khadafy.sh: a typo in failure(s).
-	Spotted By Sotirs Vassilopoulos.
+	Spotted By Sotiros Vassilopoulos.
 
 1998-11-01  Paul Eggert
 

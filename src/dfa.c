@@ -93,6 +93,14 @@ extern void free();
 #include "regex.h"
 #include "dfa.h"
 
+/* HPUX, define those as macros in sys/param.h */
+#ifdef setbit
+# undef setbit
+#endif
+#ifdef clrbit
+# undef clrbit
+#endif
+
 static void dfamust PARAMS ((struct dfa *dfa));
 
 static ptr_t xcalloc PARAMS ((size_t n, size_t s));
