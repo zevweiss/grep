@@ -1,4 +1,6 @@
 Version 2.5
+  - i18n bug fixed ([A-Z0-9] wouldn't match A in locales other than C on
+    systems using recent glibc builds
 
   - GNU grep can now be built with autoconf 2.52.
 
