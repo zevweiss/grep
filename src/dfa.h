@@ -22,18 +22,24 @@
    In addition to clobbering modularity, we eat up valuable
    name space. */
 
-# undef PARAMS
-#if __STDC__
+#ifdef __STDC__
 # ifndef _PTR_T
 # define _PTR_T
   typedef void * ptr_t;
 # endif
-# define PARAMS(x) x
 #else
 # ifndef _PTR_T
 # define _PTR_T
   typedef char * ptr_t;
 # endif
+#endif
+
+#ifdef PARAMS
+# undef PARAMS
+#endif
+#if PROTOTYPES
+# define PARAMS(x) x
+#else
 # define PARAMS(x) ()
 #endif
 
@@ -290,13 +296,6 @@ struct dfa
 				   on a state that potentially could do so. */
   int *success;			/* Table of acceptance conditions used in
 				   dfaexec and computed in build_state. */
-  int *newlines;		/* Transitions on newlines.  The entry for a
-				   newline in any transition table is always
-				   -1 so we can count lines without wasting
-				   too many cycles.  The transition for a
-				   newline is stored separately and handled
-				   as a special case.  Newline is also used
-				   as a sentinel at the end of the buffer. */
   struct dfamust *musts;	/* List of strings, at least one of which
 				   is known to appear in any r.e. matching
 				   the dfa. */
@@ -323,26 +322,21 @@ struct dfa
 /* dfasyntax() takes three arguments; the first sets the syntax bits described
    earlier in this file, the second sets the case-folding flag, and the
    third specifies the line terminator. */
-extern void dfasyntax PARAMS ((reg_syntax_t, int, int));
+extern void dfasyntax PARAMS ((reg_syntax_t, int, unsigned char));
 
 /* Compile the given string of the given length into the given struct dfa.
    Final argument is a flag specifying whether to build a searching or an
    exact matcher. */
-extern void dfacomp PARAMS ((char *, size_t, struct dfa *, int));
+extern void dfacomp PARAMS ((char const *, size_t, struct dfa *, int));
 
 /* Execute the given struct dfa on the buffer of characters.  The
-   first char * points to the beginning, and the second points to the
-   first character after the end of the buffer, which must be a writable
-   place so a sentinel end-of-buffer marker can be stored there.  The
-   second-to-last argument is a flag telling whether to allow newlines to
-   be part of a string matching the regexp.  The next-to-last argument,
-   if non-NULL, points to a place to increment every time we see a
-   newline.  The final argument, if non-NULL, points to a flag that will
+   last byte of the buffer must equal the end-of-line byte.
+   The final argument points to a flag that will
    be set if further examination by a backtracking matcher is needed in
    order to verify backreferencing; otherwise the flag will be cleared.
-   Returns NULL if no match is found, or a pointer to the first
+   Returns (size_t) -1 if no match is found, or the offset of the first
    character after the first & shortest matching string in the buffer. */
-extern char *dfaexec PARAMS ((struct dfa *, char *, char *, int, int *, int *));
+extern size_t dfaexec PARAMS ((struct dfa *, char const *, size_t, int *));
 
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree PARAMS ((struct dfa *));
@@ -353,7 +347,7 @@ extern void dfafree PARAMS ((struct dfa *));
 extern void dfainit PARAMS ((struct dfa *));
 
 /* Incrementally parse a string of given length into a struct dfa. */
-extern void dfaparse PARAMS ((char *, size_t, struct dfa *));
+extern void dfaparse PARAMS ((char const *, size_t, struct dfa *));
 
 /* Analyze a parsed regexp; second argument tells whether to build a searching
    or an exact matcher. */

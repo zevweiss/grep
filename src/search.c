@@ -33,26 +33,6 @@
 
 #define NCHAR (UCHAR_MAX + 1)
 
-static void Gcompile PARAMS((char *, size_t));
-static void Ecompile PARAMS((char *, size_t));
-static char *EGexecute PARAMS((char *, size_t, char **));
-static void Fcompile PARAMS((char *, size_t));
-static char *Fexecute PARAMS((char *, size_t, char **));
-static void Pcompile PARAMS((char *, size_t));
-static char *Pexecute PARAMS((char *, size_t, char **));
-static void kwsinit PARAMS((void));
-
-/* Here is the matchers vector for the main program. */
-struct matcher matchers[] = {
-  { "default", Gcompile, EGexecute },
-  { "grep", Gcompile, EGexecute },
-  { "egrep", Ecompile, EGexecute },
-  { "awk", Ecompile, EGexecute },
-  { "fgrep", Fcompile, Fexecute },
-  { "perl", Pcompile, Pexecute },
-  { 0, 0, 0 },
-};
-
 /* For -w, we also consider _ to be word constituent.  */
 #define WCHAR(C) (ISALNUM(C) || (C) == '_')
 
@@ -67,10 +47,10 @@ static struct re_pattern_buffer regexbuf;
    any string matching the regexp. */
 static kwset_t kwset;
 
-/* Last compiled fixed string known to exactly match the regexp.
-   If kwsexec() returns < lastexact, then we don't need to
+/* Number of compiled fixed strings known to exactly match the regexp.
+   If kwsexec returns < kwset_exact_matches, then we don't need to
    call the regexp matcher at all. */
-static int lastexact;
+static int kwset_exact_matches;
 
 void
 dfaerror (char const *mesg)
@@ -99,8 +79,8 @@ kwsinit (void)
 static void
 kwsmusts (void)
 {
-  struct dfamust *dm;
-  char *err;
+  struct dfamust const *dm;
+  char const *err;
 
   if (dfa.musts)
     {
@@ -112,7 +92,7 @@ kwsmusts (void)
 	{
 	  if (!dm->exact)
 	    continue;
-	  ++lastexact;
+	  ++kwset_exact_matches;
 	  if ((err = kwsincr(kwset, dm->must, strlen(dm->must))) != 0)
 	    fatal(err, 0);
 	}
@@ -131,7 +111,7 @@ kwsmusts (void)
 }
 
 static void
-Gcompile (char *pattern, size_t size)
+Gcompile (char const *pattern, size_t size)
 {
   const char *err;
 
@@ -183,7 +163,7 @@ Gcompile (char *pattern, size_t size)
 }
 
 static void
-Ecompile (char *pattern, size_t size)
+Ecompile (char const *pattern, size_t size)
 {
   const char *err;
 
@@ -242,10 +222,10 @@ Ecompile (char *pattern, size_t size)
   kwsmusts();
 }
 
-static char *
-EGexecute (char *buf, size_t size, char **endp)
+static size_t
+EGexecute (char const *buf, size_t size, size_t *match_size)
 {
-  register char *buflim, *beg, *end, save;
+  register char const *buflim, *beg, *end;
   char eol = eolbyte;
   int backref, start, len;
   struct kwsmatch kwsm;
@@ -254,60 +234,54 @@ EGexecute (char *buf, size_t size, char **endp)
 
   buflim = buf + size;
 
-  for (beg = end = buf; end < buflim; beg = end + 1)
+  for (beg = end = buf; end < buflim; beg = end)
     {
       if (kwset)
 	{
 	  /* Find a possible match using the KWset matcher. */
-	  beg = kwsexec(kwset, beg, buflim - beg, &kwsm);
-	  if (!beg)
-	    goto failure;
+	  size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
+	  if (offset == (size_t) -1)
+	    return (size_t) -1;
+	  beg += offset;
 	  /* Narrow down to the line containing the candidate, and
 	     run it through DFA. */
 	  end = memchr(beg, eol, buflim - beg);
-	  if (!end)
-	    end = buflim;
+	  end++;
 	  while (beg > buf && beg[-1] != eol)
 	    --beg;
-	  save = *end;
-	  if (kwsm.index < lastexact)
+	  if (kwsm.index < kwset_exact_matches)
 	    goto success;
-	  if (!dfaexec(&dfa, beg, end, 0, (int *) 0, &backref))
-	    {
-	      *end = save;
-	      continue;
-	    }
-	  *end = save;
-	  /* Successful, no backreferences encountered. */
-	  if (!backref)
-	    goto success;
+	  if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
+	    continue;
 	}
       else
 	{
 	  /* No good fixed strings; start with DFA. */
-	  save = *buflim;
-	  beg = dfaexec(&dfa, beg, buflim, 0, (int *) 0, &backref);
-	  *buflim = save;
-	  if (!beg)
-	    goto failure;
+	  size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
+	  if (offset == (size_t) -1)
+	    return (size_t) -1;
 	  /* Narrow down to the line we've found. */
+	  beg += offset;
 	  end = memchr(beg, eol, buflim - beg);
-	  if (!end)
-	    end = buflim;
+	  end++;
 	  while (beg > buf && beg[-1] != eol)
 	    --beg;
-	  /* Successful, no backreferences encountered! */
-	  if (!backref)
-	    goto success;
 	}
+
+      /* Successful, no backreferences encountered! */
+      if (!backref)
+	goto success;
+
       /* If we've made it to this point, this means DFA has seen
 	 a probable match, and we need to run it through Regex. */
       regexbuf.not_eol = 0;
-      if ((start = re_search(&regexbuf, beg, end - beg, 0, end - beg, &regs)) >= 0)
+      if (0 <= (start = re_search (&regexbuf, beg,
+				   end - beg - 1, 0,
+				   end - beg - 1, &regs)))
 	{
 	  len = regs.end[0] - start;
 	  if ((!match_lines && !match_words)
-	      || (match_lines && len == end - beg))
+	      || (match_lines && len == end - beg - 1))
 	    goto success;
 	  /* If -w, check if the match aligns with word boundaries.
 	     We do this iteratively because:
@@ -319,7 +293,7 @@ EGexecute (char *buf, size_t size, char **endp)
 	    while (start >= 0)
 	      {
 		if ((start == 0 || !WCHAR ((unsigned char) beg[start - 1]))
-		    && (len == end - beg
+		    && (len == end - beg - 1
 			|| !WCHAR ((unsigned char) beg[start + len])))
 		  goto success;
 		if (len > 0)
@@ -332,30 +306,29 @@ EGexecute (char *buf, size_t size, char **endp)
 		if (len <= 0)
 		  {
 		    /* Try looking further on. */
-		    if (start == end - beg)
+		    if (start == end - beg - 1)
 		      break;
 		    ++start;
 		    regexbuf.not_eol = 0;
-		    start = re_search(&regexbuf, beg, end - beg,
-				      start, end - beg - start, &regs);
+		    start = re_search (&regexbuf, beg, end - beg - 1,
+				       start, end - beg - 1 - start, &regs);
 		    len = regs.end[0] - start;
 		  }
 	      }
 	}
     }
 
- failure:
-  return 0;
+  return -1;
 
  success:
-  *endp = end < buflim ? end + 1 : end;
-  return beg;
+  *match_size = end - beg;
+  return beg - buf;
 }
 
 static void
-Fcompile (char *pattern, size_t size)
+Fcompile (char const *pattern, size_t size)
 {
-  char *beg, *lim, *err;
+  char const *beg, *lim, *err;
 
   kwsinit();
   beg = pattern;
@@ -375,18 +348,20 @@ Fcompile (char *pattern, size_t size)
     fatal(err, 0);
 }
 
-static char *
-Fexecute (char *buf, size_t size, char **endp)
+static size_t
+Fexecute (char const *buf, size_t size, size_t *match_size)
 {
-  register char *beg, *try, *end;
+  register char const *beg, *try, *end;
   register size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
 
   for (beg = buf; beg <= buf + size; ++beg)
     {
-      if (!(beg = kwsexec(kwset, beg, buf + size - beg, &kwsmatch)))
-	return 0;
+      size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
+      if (offset == (size_t) -1)
+	return offset;
+      beg += offset;
       len = kwsmatch.size[0];
       if (match_lines)
 	{
@@ -397,13 +372,16 @@ Fexecute (char *buf, size_t size, char **endp)
 	  goto success;
 	}
       else if (match_words)
-	for (try = beg; len && try;)
+	for (try = beg; len; )
 	  {
 	    if (try > buf && WCHAR((unsigned char) try[-1]))
 	      break;
 	    if (try + len < buf + size && WCHAR((unsigned char) try[len]))
 	      {
-		try = kwsexec(kwset, beg, --len, &kwsmatch);
+		size_t offset = kwsexec (kwset, beg, --len, &kwsmatch);
+		if (offset == (size_t) -1)
+		  return offset;
+		try = beg + offset;
 		len = kwsmatch.size[0];
 	      }
 	    else
@@ -413,17 +391,15 @@ Fexecute (char *buf, size_t size, char **endp)
 	goto success;
     }
 
-  return 0;
+  return -1;
 
  success:
-  if ((end = memchr(beg + len, eol, (buf + size) - (beg + len))) != 0)
-    ++end;
-  else
-    end = buf + size;
-  *endp = end;
-  while (beg > buf && beg[-1] != '\n')
+  end = memchr (beg + len, eol, (buf + size) - (beg + len));
+  end++;
+  while (buf < beg && beg[-1] != eol)
     --beg;
-  return beg;
+  *match_size = end - beg;
+  return beg - buf;
 }
 
 #if HAVE_LIBPCRE
@@ -435,17 +411,17 @@ static pcre_extra *extra;
 #endif
 
 static void
-Pcompile (char *pattern, size_t size)
+Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
   fatal (_("The -P option is not supported"), 0);
 #else
   int e;
   char const *ep;
-  char *re;
+  char *re = xmalloc (4 * size + 7);
   int flags = PCRE_MULTILINE | (match_icase ? PCRE_CASELESS : 0);
   char const *patlim = pattern + size;
-  char *n = re = xmalloc (4 * size + 7);
+  char *n = re;
   char const *p;
   char const *pnul;
 
@@ -453,6 +429,7 @@ Pcompile (char *pattern, size_t size)
   if (eolbyte != '\n')
     fatal (_("The -P and -z options cannot be combined"), 0);
 
+  *n = '\0';
   if (match_lines)
     strcpy (n, "^(");
   if (match_words)
@@ -498,12 +475,12 @@ Pcompile (char *pattern, size_t size)
 #endif
 }
 
-static char *
-Pexecute (char *buf, size_t size, char **endp)
+static size_t
+Pexecute (char const *buf, size_t size, size_t *match_size)
 {
 #if !HAVE_LIBPCRE
   abort ();
-  return 0;
+  return -1;
 #else
   /* This array must have at least two elements; everything after that
      is just for performance improvement in pcre_exec.  */
@@ -517,7 +494,7 @@ Pexecute (char *buf, size_t size, char **endp)
       switch (e)
 	{
 	case PCRE_ERROR_NOMATCH:
-	  return 0;
+	  return -1;
 	  
 	case PCRE_ERROR_NOMEMORY:
 	  fatal (_("Memory exhausted"), 0);
@@ -529,20 +506,27 @@ Pexecute (char *buf, size_t size, char **endp)
   else
     {
       /* Narrow down to the line we've found.  */
-      char *beg = buf + sub[0];
-      char *end = buf + sub[1];
-      char *buflim = buf + size;
+      char const *beg = buf + sub[0];
+      char const *end = buf + sub[1];
+      char const *buflim = buf + size;
       char eol = eolbyte;
       end = memchr (end, eol, buflim - end);
-      if (end)
-	end++;
-      else
-	end = buflim;
+      end++;
       while (buf < beg && beg[-1] != eol)
 	--beg;
 
-      *endp = end;
-      return beg;
+      *match_size = end - beg;
+      return beg - buf;
     }
 #endif
 }
+
+struct matcher const matchers[] = {
+  { "default", Gcompile, EGexecute },
+  { "grep", Gcompile, EGexecute },
+  { "egrep", Ecompile, EGexecute },
+  { "awk", Ecompile, EGexecute },
+  { "fgrep", Fcompile, Fexecute },
+  { "perl", Pcompile, Pexecute },
+  { "", 0, 0 },
+};

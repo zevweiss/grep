@@ -25,15 +25,15 @@ extern char *xmalloc PARAMS ((size_t size));
 extern char *xrealloc PARAMS ((char *ptr, size_t size));
 
 /* Grep.c expects the matchers vector to be terminated
-   by an entry with a NULL name, and to contain at least
+   by an entry with a NULL compile, and to contain at least
    an entry named "default". */
 
 extern struct matcher
 {
-  char *name;
-  void (*compile) PARAMS ((char *, size_t));
-  char *(*execute) PARAMS ((char *, size_t, char **));
-} matchers[];
+  char name[8];
+  void (*compile) PARAMS ((char const *, size_t));
+  size_t (*execute) PARAMS ((char const *, size_t, size_t *));
+} const matchers[];
 
 /* Exported from fgrepmat.c, egrepmat.c, grepmat.c.  */
 extern char const *matcher;

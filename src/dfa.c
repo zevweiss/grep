@@ -36,8 +36,6 @@ extern void free();
 
 #if defined(HAVE_STRING_H) || defined(STDC_HEADERS)
 #include <string.h>
-#undef index
-#define index strchr
 #else
 #include <strings.h>
 #endif
@@ -112,47 +110,7 @@ extern void free();
 #endif
 
 static void dfamust PARAMS ((struct dfa *dfa));
-
-static ptr_t xcalloc PARAMS ((size_t n, size_t s));
-static ptr_t xmalloc PARAMS ((size_t n));
-static ptr_t xrealloc PARAMS ((ptr_t p, size_t n));
-#ifdef DEBUG
-static void prtok PARAMS ((token t));
-#endif
-static int tstbit PARAMS ((int b, charclass c));
-static void setbit PARAMS ((int b, charclass c));
-static void clrbit PARAMS ((int b, charclass c));
-static void copyset PARAMS ((charclass src, charclass dst));
-static void zeroset PARAMS ((charclass s));
-static void notset PARAMS ((charclass s));
-static int equal PARAMS ((charclass s1, charclass s2));
-static int charclass_index PARAMS ((charclass s));
-static int looking_at PARAMS ((const char *s));
-static token lex PARAMS ((void));
-static void addtok PARAMS ((token t));
-static void atom PARAMS ((void));
-static int nsubtoks PARAMS ((int tindex));
-static void copytoks PARAMS ((int tindex, int ntokens));
-static void closure PARAMS ((void));
-static void branch PARAMS ((void));
 static void regexp PARAMS ((int toplevel));
-static void copy PARAMS ((position_set *src, position_set *dst));
-static void insert PARAMS ((position p, position_set *s));
-static void merge PARAMS ((position_set *s1, position_set *s2, position_set *m));
-static void delete PARAMS ((position p, position_set *s));
-static int state_index PARAMS ((struct dfa *d, position_set *s,
-			  int newline, int letter));
-static void build_state PARAMS ((int s, struct dfa *d));
-static void build_state_zero PARAMS ((struct dfa *d));
-static char *icatalloc PARAMS ((char *old, char *new));
-static char *icpyalloc PARAMS ((char *string));
-static char *istrstr PARAMS ((char *lookin, char *lookfor));
-static void ifree PARAMS ((char *cp));
-static void freelist PARAMS ((char **cpp));
-static char **enlist PARAMS ((char **cpp, char *new, size_t len));
-static char **comsubs PARAMS ((char *left, char *right));
-static char **addlists PARAMS ((char **old, char **new));
-static char **inboth PARAMS ((char **left, char **right));
 
 static ptr_t
 xcalloc (size_t n, size_t s)
@@ -194,8 +152,9 @@ xrealloc (ptr_t p, size_t n)
 #define REALLOC_IF_NECESSARY(p, t, nalloc, index) \
   if ((index) >= (nalloc))			  \
     {						  \
-      while ((index) >= (nalloc))		  \
+      do					  \
 	(nalloc) *= 2;				  \
+      while ((index) >= (nalloc));		  \
       REALLOC(p, t, nalloc);			  \
     }
 
@@ -204,7 +163,7 @@ xrealloc (ptr_t p, size_t n)
 static void
 prtok (token t)
 {
-  char *s;
+  char const *s;
 
   if (t < 0)
     fprintf(stderr, "END");
@@ -240,19 +199,19 @@ prtok (token t)
 /* Stuff pertaining to charclasses. */
 
 static int
-tstbit (int b, charclass c)
+tstbit (unsigned b, charclass c)
 {
   return c[b / INTBITS] & 1 << b % INTBITS;
 }
 
 static void
-setbit (int b, charclass c)
+setbit (unsigned b, charclass c)
 {
   c[b / INTBITS] |= 1 << b % INTBITS;
 }
 
 static void
-clrbit (int b, charclass c)
+clrbit (unsigned b, charclass c)
 {
   c[b / INTBITS] &= ~(1 << b % INTBITS);
 }
@@ -260,19 +219,13 @@ clrbit (int b, charclass c)
 static void
 copyset (charclass src, charclass dst)
 {
-  int i;
-
-  for (i = 0; i < CHARCLASS_INTS; ++i)
-    dst[i] = src[i];
+  memcpy (dst, src, sizeof (charclass));
 }
 
 static void
 zeroset (charclass s)
 {
-  int i;
-
-  for (i = 0; i < CHARCLASS_INTS; ++i)
-    s[i] = 0;
+  memset (s, 0, sizeof (charclass));
 }
 
 static void
@@ -287,12 +240,7 @@ notset (charclass s)
 static int
 equal (charclass s1, charclass s2)
 {
-  int i;
-
-  for (i = 0; i < CHARCLASS_INTS; ++i)
-    if (s1[i] != s2[i])
-      return 0;
-  return 1;
+  return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
 
 /* A pointer to the current dfa is kept here during parsing. */
@@ -324,7 +272,7 @@ static unsigned char eolbyte;
 
 /* Entry point to set syntax options. */
 void
-dfasyntax (reg_syntax_t bits, int fold, int eol)
+dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
 {
   syntax_bits_set = 1;
   syntax_bits = bits;
@@ -337,8 +285,8 @@ dfasyntax (reg_syntax_t bits, int fold, int eol)
    reader is referred to the GNU Regex documentation for the
    meaning of the @#%!@#%^!@ syntax bits. */
 
-static char *lexstart;		/* Pointer to beginning of input string. */
-static char *lexptr;		/* Pointer to next input character. */
+static char const *lexstart;	/* Pointer to beginning of input string. */
+static char const *lexptr;	/* Pointer to next input character. */
 static int lexleft;		/* Number of characters remaining. */
 static token lasttok;		/* Previous token returned; initially END. */
 static int laststart;		/* True if we're separated from beginning or (, |
@@ -390,7 +338,7 @@ is_blank (int c)
 static struct {
   const char *name;
   int (*pred) PARAMS ((int));
-} prednames[] = {
+} const prednames[] = {
   { ":alpha:]", is_alpha },
   { ":upper:]", is_upper },
   { ":lower:]", is_lower },
@@ -987,7 +935,7 @@ regexp (int toplevel)
    length of the string, so s can include NUL characters.  D is a pointer to
    the struct dfa to parse into. */
 void
-dfaparse (char *s, size_t len, struct dfa *d)
+dfaparse (char const *s, size_t len, struct dfa *d)
 {
   dfa = d;
   lexstart = lexptr = s;
@@ -1020,7 +968,7 @@ dfaparse (char *s, size_t len, struct dfa *d)
 
 /* Copy one set to another; the destination must be large enough. */
 static void
-copy (position_set *src, position_set *dst)
+copy (position_set const *src, position_set *dst)
 {
   int i;
 
@@ -1059,7 +1007,7 @@ insert (position p, position_set *s)
 /* Merge two sets of positions into a third.  The result is exactly as if
    the positions of both sets were inserted into an initially empty set. */
 static void
-merge (position_set *s1, position_set *s2, position_set *m)
+merge (position_set const *s1, position_set const *s2, position_set *m)
 {
   int i = 0, j = 0;
 
@@ -1099,7 +1047,7 @@ delete (position p, position_set *s)
    state.  Newline and letter tell whether we got here on a newline or
    letter, respectively. */
 static int
-state_index (struct dfa *d, position_set *s, int newline, int letter)
+state_index (struct dfa *d, position_set const *s, int newline, int letter)
 {
   int hash = 0;
   int constraint;
@@ -1165,7 +1113,7 @@ state_index (struct dfa *d, position_set *s, int newline, int letter)
    constraint.  Repeat exhaustively until no funny positions are left.
    S->elems must be large enough to hold the result. */
 static void
-epsclosure (position_set *s, struct dfa *d)
+epsclosure (position_set *s, struct dfa const *d)
 {
   int i, j;
   int *visited;
@@ -1836,7 +1784,6 @@ build_state (int s, struct dfa *d)
 	d->trans = d->realtrans + 1;
 	REALLOC(d->fails, int *, d->tralloc);
 	REALLOC(d->success, int, d->tralloc);
-	REALLOC(d->newlines, int, d->tralloc);
 	while (oldalloc < d->tralloc)
 	  {
 	    d->trans[oldalloc] = NULL;
@@ -1844,9 +1791,7 @@ build_state (int s, struct dfa *d)
 	  }
       }
 
-  /* Keep the newline transition in a special place so we can use it as
-     a sentinel. */
-  d->newlines[s] = trans[eolbyte];
+  /* Newline is a sentinel.  */
   trans[eolbyte] = -1;
 
   if (ACCEPTING(s, *d))
@@ -1864,29 +1809,24 @@ build_state_zero (struct dfa *d)
   d->trans = d->realtrans + 1;
   CALLOC(d->fails, int *, d->tralloc);
   MALLOC(d->success, int, d->tralloc);
-  MALLOC(d->newlines, int, d->tralloc);
   build_state(0, d);
 }
 
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the buffer,
-   and the shortest possible version thereof.  Return a pointer to the first
-   character after the match, or NULL if none is found.  Begin points to
-   the beginning of the buffer, and end points to the first character after
-   its end.  We store a newline in *end to act as a sentinel, so end had
-   better point somewhere valid.  Newline is a flag indicating whether to
-   allow newlines to be in the matching string.  If count is non-
-   NULL it points to a place we're supposed to increment every time we
-   see a newline.  Finally, if backref is non-NULL it points to a place
+   and the shortest possible version thereof.  Return the offset of the first
+   character after the match, or (size_t) -1 if none is found.  BEGIN points to
+   the beginning of the buffer, and SIZE is the size of the buffer.  If SIZE
+   is nonzero, BEGIN[SIZE - 1] must be a newline.  BACKREF points to a place
    where we're supposed to store a 1 if backreferencing happened and the
    match needs to be verified by a backtracking matcher.  Otherwise
    we store a 0 in *backref. */
-char *
-dfaexec (struct dfa *d, char *begin, char *end,
-	 int newline, int *count, int *backref)
+size_t
+dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 {
-  register int s, s1, tmp;	/* Current state. */
-  register unsigned char *p;	/* Current input character. */
+  register int s;	/* Current state. */
+  register unsigned char const *p; /* Current input character. */
+  register unsigned char const *end; /* One past the last input character.  */
   register int **trans, *t;	/* Copy of d->trans so it can be optimized
 				   into a register. */
   register unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
@@ -1906,58 +1846,38 @@ dfaexec (struct dfa *d, char *begin, char *end,
   if (! d->tralloc)
     build_state_zero(d);
 
-  s = s1 = 0;
-  p = (unsigned char *) begin;
+  s = 0;
+  p = (unsigned char const *) begin;
+  end = p + size;
   trans = d->trans;
-  *end = eol;
 
   for (;;)
     {
-      while ((t = trans[s]) != 0) { /* hand-optimized loop */
-	s1 = t[*p++];
-        if ((t = trans[s1]) == 0) {
-           tmp = s ; s = s1 ; s1 = tmp ; /* swap */
-           break;
-        }
+      while ((t = trans[s]))
 	s = t[*p++];
-      }
 
-      if (s >= 0 && p <= (unsigned char *) end && d->fails[s])
+      if (s < 0)
+	{
+	  if (p == end)
+	    return (size_t) -1;
+	  s = 0;
+	}
+      else if ((t = d->fails[s]))
 	{
 	  if (d->success[s] & sbit[*p])
 	    {
 	      if (backref)
 		*backref = (d->states[s].backref != 0);
-	      return (char *) p;
+	      return (char const *) p - begin;
 	    }
 
-	  s1 = s;
-	  s = d->fails[s][*p++];
-	  continue;
+	  s = t[*p++];
 	}
-
-      /* If the previous character was a newline, count it. */
-      if (count && (char *) p <= end && p[-1] == eol)
-	++*count;
-
-      /* Check if we've run off the end of the buffer. */
-      if ((char *) p > end)
-	return NULL;
-
-      if (s >= 0)
+      else
 	{
 	  build_state(s, d);
 	  trans = d->trans;
-	  continue;
 	}
-
-      if (p[-1] == eol && newline)
-	{
-	  s = d->newlines[s1];
-	  continue;
-	}
-
-      s = 0;
     }
 }
 
@@ -1982,7 +1902,7 @@ dfainit (struct dfa *d)
 
 /* Parse and analyze a single string of the given length. */
 void
-dfacomp (char *s, size_t len, struct dfa *d, int searchflag)
+dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
   if (case_fold)	/* dummy folding in service of dfamust() */
     {
@@ -2042,7 +1962,6 @@ dfafree (struct dfa *d)
       free((ptr_t) d->fails[i]);
   if (d->realtrans) free((ptr_t) d->realtrans);
   if (d->fails) free((ptr_t) d->fails);
-  if (d->newlines) free((ptr_t) d->newlines);
   if (d->success) free((ptr_t) d->success);
   for (dm = d->musts; dm; dm = ndm)
     {
@@ -2255,14 +2174,14 @@ comsubs (char *left, char *right)
   for (lcp = left; *lcp != '\0'; ++lcp)
     {
       len = 0;
-      rcp = index(right, *lcp);
+      rcp = strchr (right, *lcp);
       while (rcp != NULL)
 	{
 	  for (i = 1; lcp[i] != '\0' && lcp[i] == rcp[i]; ++i)
 	    continue;
 	  if (i > len)
 	    len = i;
-	  rcp = index(rcp + 1, *lcp);
+	  rcp = strchr (rcp + 1, *lcp);
 	}
       if (len == 0)
 	continue;

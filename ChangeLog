@@ -1,3 +1,98 @@
+2000-04-08  Paul Eggert  <eggert@twinsun.com>
+
+	Now that we know that the input is always terminated by a
+	newline before the matching algorithms see it, clean up the
+	matching algorithms so that they no longer need to modify the
+	input by inserting a sentinel newline, and no longer worry
+	about running off the end of the buffer due to a missing sentinel.
+	
+	* src/grep.c (nlscan, prpending, prtext, grepbuf): Do not
+	worry about running off the end of the input buffer, since
+	it's now guaranteed to end in the sentinel newline.
+	* src/search.c (EGexecute, Pexecute): Likewise.
+
+	* src/dfa.c (prtok, dfasyntax, dfaparse, copy, merge, state_index,
+	epsclosure, dfaexec, dfacomp):
+	Change many instances of "T *" to "T const *", to catch
+	any inadvertent programming errors made during this conversion.
+	* src/dfa.h (dfacomp, dfaexec, dfaparse): Likewise.
+	* src/grep.c (struct stats.parent, long_options, grepdir,
+	compile, execute, fillbuf, lastnl, lastout, nlscan, prline,
+	prpending, prtext, grepbuf, grep, grepfile, grepdir): Likewise.
+	* src/grep.h (struct matcher.compile, struct matcher.execute):
+	Likewise.
+	* src/kwset.c (struct kwset.trans, kwsalloc, kwsincr, treefails,
+	treedelta, hasevery, treenext, bmexec, cwexec, kwsexec): Likewise.
+	* src/kwset.h (kwsalloc, kwsincr, kwsexec): Likewise.
+	* src/search.c (kwsmusts, Gcompile, Ecompile, EGexecute, Pcompile,
+	Pexecute): Likewise.
+
+	* src/dfa.c (dfaexec):
+	Use size_t, not char *, to avoid worrisome casts to convert
+	char const * to char *.
+	* src/dfa.h (dfaexec): Likewise.
+	* src/grep.c (execute): Likewise.
+	* src/grep.h (execute): Likewise.
+	* src/kwset.c (bmexec, cwexec, kwsexec): Likewise.
+	* src/kwset.h (struct kwsmatch.offset, kwsalloc, kwsincr,
+	kwsexec): Likewise.
+	* src/search.c (EGexecute, Fexecute, Pexecute): Likewise.
+
+	* src/dfa.h (_PTR_T): Depend on defined __STDC__, not __STDC__.
+	(PARAMS): Depend on PROTOTYPES, not __STDC__.
+
+	* src/dfa.c (dfasyntax): Last arg is unsigned char, not int.
+	* src/dfa.h (dfasyntax): Likewise.
+	
+	* src/dfa.h (struct dfa): Remove member newlines; no longer needed.
+	* src/dfa.c (build_state, dfaexec, dfafree): Do not worry
+	about special newline state.
+
+	* src/search.c (matchers): Move definition to end of file, so
+	that we don't need forward decls.
+	(lastexact): Remove.
+	(kwset_exact_matches): New var; subsumes old lastexact var.
+	All uses changed.
+
+	* src/dfa.c (index): Remove macro.
+	(REALLOC_IF_NECESSARY): Skip unnecessary test.
+	(tstbit, setbit, clrbit): Declare arg to be unsigned, to help compiler.
+	(copyset, zeroset, equal): Use C builtin primitives, to help compiler.
+	(dfaexec): Do not modify input string.
+	Remove newline parameter; no longer needed.
+	(comsubs): Use strchr, not index.
+
+	* src/grep.h (matchers): Use fixed name size, not pointer (as
+	there's no need for the extra flexibility).  All uses changed.
+
+	* src/kwset.h (struct kwsmatch.offset): Renamed from beg, with
+	change of type to size_t.  All uses changed.
+
+	* src/grep.c (reset): No longer need kludge for dfaexec.  Simplify.
+	(reset, grepbuf): Adjust to new interface for 'execute'.
+	(install_matcher): List is now terminated by null compile,
+	not null name.
+	Do not invoke setrlimit if that wouldn't change the limit.
+
+	* src/dfa.c (xcalloc, xmalloc, xrealloc, prtok, tstbit, setbit,
+	clrbit, copyset, zeroset, notset, equal, charclass_index,
+	looking_at, lex, addtok, atom, nsubtoks, copytoks, closure,
+	branch, regexp, copy, insert, merge, delete, state_index,
+	build_state, build_state_zero, icatalloc, icpyalloc, istrstr,
+	ifree, freelist, enlist, comsubs, addlists, inboth):
+	Remove forward decls; no longer needed.
+	* src/grep.c (ck_atoi, usage, error, setmatcher,
+	install_matcher, prepend_args, prepend_default_options,
+	page_alloc, reset, fillbuf, grepbuf, prtext, prpending, prline,
+	print_offset_sep, nlscan, grep, grepfile): Likewise.
+	* src/kwset.c (enqueue, treefails, treedelta, hasevery,
+	treenext, bmexec, cwexec): Likewise.
+	* src/search.c (Gcompile, Ecompile, EGexecute, Fcompile, Fexecute,
+	Pcompile, Pexecute, kwsinit): Likewise.
+	
+	* src/search.c (Pcompile): Do not assume newly allocated
+	storage is zeroed.
+
 2000-04-06  Paul Eggert
 
 	* doc/grep.1, doc/grep.texi, NEWS: Improve the explanation of

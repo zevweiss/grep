@@ -43,7 +43,7 @@
 
 struct stats
 {
-  struct stats *parent;
+  struct stats const *parent;
   struct stat stat;
 };
 
@@ -70,7 +70,7 @@ enum
 };
 
 /* Long options equivalences. */
-static struct option long_options[] =
+static struct option const long_options[] =
 {
   {"after-context", required_argument, NULL, 'A'},
   {"basic-regexp", no_argument, NULL, 'G'},
@@ -130,32 +130,14 @@ static enum
     SKIP_DIRECTORIES
   } directories;
 
-static int  ck_atoi PARAMS ((char const *, int *));
-static void usage PARAMS ((int)) __attribute__((noreturn));
-static void error PARAMS ((const char *, int));
-static void setmatcher PARAMS ((char const *));
-static int  install_matcher PARAMS ((char const *));
-static int  prepend_args PARAMS ((char const *, char *, char **));
-static void prepend_default_options PARAMS ((char const *, int *, char ***));
-static char *page_alloc PARAMS ((size_t, char **));
-static int  reset PARAMS ((int, char const *, struct stats *));
-static int  fillbuf PARAMS ((size_t, struct stats *));
-static int  grepbuf PARAMS ((char *, char *));
-static void prtext PARAMS ((char *, char *, int *));
-static void prpending PARAMS ((char *));
-static void prline PARAMS ((char *, char *, int));
-static void print_offset_sep PARAMS ((off_t, int));
-static void nlscan PARAMS ((char *));
-static int  grep PARAMS ((int, char const *, struct stats *));
-static int  grepdir PARAMS ((char const *, struct stats *));
-static int  grepfile PARAMS ((char const *, struct stats *));
+static int grepdir PARAMS ((char const *, struct stats const *));
 #if O_BINARY
 static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
 
 /* Functions we'll use to search. */
-static void (*compile) PARAMS ((char *, size_t));
-static char *(*execute) PARAMS ((char *, size_t, char **));
+static void (*compile) PARAMS ((char const *, size_t));
+static size_t (*execute) PARAMS ((char const *, size_t, size_t *));
 
 /* Print a message and possibly an error string.  Remember
    that something awful happened. */
@@ -288,13 +270,9 @@ reset (int fd, char const *file, struct stats *stats)
 #endif
       bufsalloc = ALIGN_TO (ubufsalloc, pagesize);
       bufalloc = PREFERRED_SAVE_FACTOR * bufsalloc;
-      /* The 1 byte of overflow is a kludge for dfaexec(), which
-	 inserts a sentinel newline at the end of the buffer
-	 being searched.  There's gotta be a better way... */
       if (bufsalloc < ubufsalloc
 	  || bufalloc / PREFERRED_SAVE_FACTOR != bufsalloc
-	  || bufalloc + 1 < bufalloc
-	  || ! (buffer = page_alloc (bufalloc + 1, &ubuffer)))
+	  || ! (buffer = page_alloc (bufalloc, &ubuffer)))
 	fatal (_("memory exhausted"), 0);
     }
 
@@ -340,7 +318,7 @@ reset (int fd, char const *file, struct stats *stats)
    to the beginning of the buffer contents, and 'buflim'
    points just after the end.  Return zero if there's an error.  */
 static int
-fillbuf (size_t save, struct stats *stats)
+fillbuf (size_t save, struct stats const *stats)
 {
   size_t fillsize = 0;
   int cc = 1;
@@ -495,8 +473,8 @@ static off_t max_count;		/* Stop after outputting this many
 
 /* Internal variables to keep track of byte count, context, etc. */
 static off_t totalcc;		/* Total character count before bufbeg. */
-static char *lastnl;		/* Pointer after last newline counted. */
-static char *lastout;		/* Pointer after last character output;
+static char const *lastnl;	/* Pointer after last newline counted. */
+static char const *lastout;	/* Pointer after last character output;
 				   NULL if no character has been output
 				   or if it's conceptually before bufbeg. */
 static off_t totalnl;		/* Total newline count before lastnl. */
@@ -510,10 +488,12 @@ static int done_on_match;	/* Stop scanning file on first match */
 #endif
 
 static void
-nlscan (char *lim)
+nlscan (char const *lim)
 {
-  char *beg;
-  for (beg = lastnl;  (beg = memchr (beg, eolbyte, lim - beg));  beg++)
+  char const *beg;
+  for (beg = lastnl;
+       beg != lim;
+       beg = memchr (beg, eolbyte, lim - beg), beg++)
     totalnl++;
   lastnl = lim;
 }
@@ -536,7 +516,7 @@ print_offset_sep (off_t pos, int sep)
 }
 
 static void
-prline (char *beg, char *lim, int sep)
+prline (char const *beg, char const *lim, int sep)
 {
   if (out_file)
     printf ("%s%c", filename, sep & filename_mask);
@@ -563,42 +543,31 @@ prline (char *beg, char *lim, int sep)
 /* Print pending lines of trailing context prior to LIM. Trailing context ends
    at the next matching line when OUTLEFT is 0.  */
 static void
-prpending (char *lim)
+prpending (char const *lim)
 {
-  char *nl, *endp, *b;
-
   if (!lastout)
     lastout = bufbeg;
   while (pending > 0 && lastout < lim)
     {
+      char const *nl = memchr (lastout, eolbyte, lim - lastout);
+      size_t match_size;
       --pending;
-      if ((nl = memchr (lastout, eolbyte, lim - lastout)) != 0)
-	++nl;
+      if (outleft
+	  || (((*execute) (lastout, nl - lastout, &match_size) == (size_t) -1)
+	      == !out_invert))
+	prline (lastout, nl + 1, '-');
       else
-	nl = lim;
-
-      /* prline updates lastout to nl. */
-      if (outleft)
-	prline (lastout, nl, '-');
-      else
-	{
-	  b = (*execute)(lastout, nl - lastout, &endp);
-	  /* b <> 0 if match */
-	  if((b && out_invert) || (!b && !out_invert))
-	    prline (lastout, nl, '-');
-	  else
-	    pending = 0;
-	}
+	pending = 0;
     }
 }
 
 /* Print the lines between BEG and LIM.  Deal with context crap.
    If NLINESP is non-null, store a count of lines between BEG and LIM.  */
 static void
-prtext (char *beg, char *lim, int *nlinesp)
+prtext (char const *beg, char const *lim, int *nlinesp)
 {
   static int used;		/* avoid printing "--" before any output */
-  char *bp, *p, *nl;
+  char const *bp, *p;
   char eol = eolbyte;
   int i, n;
 
@@ -625,9 +594,10 @@ prtext (char *beg, char *lim, int *nlinesp)
 
       while (p < beg)
 	{
-	  nl = memchr (p, eol, beg - p);
-	  prline (p, nl + 1, '-');
-	  p = nl + 1;
+	  char const *nl = memchr (p, eol, beg - p);
+	  nl++;
+	  prline (p, nl, '-');
+	  p = nl;
 	}
     }
 
@@ -636,10 +606,8 @@ prtext (char *beg, char *lim, int *nlinesp)
       /* Caller wants a line count. */
       for (n = 0; p < lim && n < outleft; n++)
 	{
-	  if ((nl = memchr (p, eol, lim - p)) != 0)
-	    ++nl;
-	  else
-	    nl = lim;
+	  char const *nl = memchr (p, eol, lim - p);
+	  nl++;
 	  if (!out_quiet)
 	    prline (p, nl, ':');
 	  p = nl;
@@ -661,19 +629,21 @@ prtext (char *beg, char *lim, int *nlinesp)
    between matching lines if OUT_INVERT is true).  Return a count of
    lines printed. */
 static int
-grepbuf (char *beg, char *lim)
+grepbuf (char const *beg, char const *lim)
 {
   int nlines, n;
-  register char *p, *b;
-  char *endp;
-  char eol = eolbyte;
+  register char const *p;
+  size_t match_offset;
+  size_t match_size;
 
   nlines = 0;
   p = beg;
-  while ((b = (*execute)(p, lim - p, &endp)) != 0)
+  while ((match_offset = (*execute) (p, lim - p, &match_size)) != (size_t) -1)
     {
+      char const *b = p + match_offset;
+      char const *endp = b + match_size;
       /* Avoid matching the empty line at the end of the buffer. */
-      if (b == lim && ((b > beg && b[-1] == eol) || b == beg))
+      if (b == lim)
 	break;
       if (!out_invert)
 	{
@@ -714,7 +684,7 @@ grep (int fd, char const *file, struct stats *stats)
   int nlines, i;
   int not_text;
   size_t residue, save;
-  char *beg, *lim;
+  char const *beg, *lim;
   char eol = eolbyte;
 
   if (!reset (fd, file, stats))
@@ -933,10 +903,10 @@ grepfile (char const *file, struct stats *stats)
 }
 
 static int
-grepdir (char const *dir, struct stats *stats)
+grepdir (char const *dir, struct stats const *stats)
 {
   int status = 1;
-  struct stats *ancestor;
+  struct stats const *ancestor;
   char *name_space;
 
   for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
@@ -967,7 +937,7 @@ grepdir (char const *dir, struct stats *stats)
       int needs_slash = ! (dirlen == FILESYSTEM_PREFIX_LEN (dir)
 			   || IS_SLASH (dir[dirlen - 1]));
       char *file = NULL;
-      char *namep = name_space;
+      char const *namep = name_space;
       struct stats child;
       child.parent = stats;
       out_file += !no_filenames;
@@ -1085,7 +1055,7 @@ install_matcher (char const *name)
   struct rlimit rlim;
 #endif
 
-  for (i = 0; matchers[i].name; ++i)
+  for (i = 0; matchers[i].compile; i++)
     if (strcmp (name, matchers[i].name) == 0)
       {
 	compile = matchers[i].compile;
@@ -1110,9 +1080,10 @@ install_matcher (char const *name)
 		re_max_failures = newlim / (2 * 20 * sizeof (char *));
 	      }
 	    if (rlim.rlim_cur < newlim)
-	      rlim.rlim_cur = newlim;
-
-	    setrlimit (RLIMIT_STACK, &rlim);
+	      {
+		rlim.rlim_cur = newlim;
+		setrlimit (RLIMIT_STACK, &rlim);
+	      }
 	  }
 #endif
 	return 1;
