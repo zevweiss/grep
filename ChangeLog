@@ -1,3 +1,8 @@
+2005-02-22  Claudio Fontana  <sick_soul@users.sourceforge.net>  (tiny change)
+
+	* src/search.c (Pexecute): Consider eof case when delimiting
+	  matching line.  Fixes bug #4531.
+
 2005-02-23  Julian Foad  <julianfoad@btopenworld.com>
 
 	* po/ko.po: Fix email address.

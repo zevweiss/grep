@@ -768,8 +768,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
       char eol = eolbyte;
       if (!exact)
 	{
-	  end = memchr (end, eol, buflim - end);
-	  end++;
+	  if (!(end = memchr (end, eol, buflim - end)))
+	    end = buflim;
+	  else
+	    end++;
 	  while (buf < beg && beg[-1] != eol)
 	    --beg;
 	}
