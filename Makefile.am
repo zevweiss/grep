@@ -1,7 +1,7 @@
 ## Process this file with automake to create Makefile.in
 AUTOMAKE_OPTIONS = no-dependencies
 
-ACLOCAL_AMFLAGS = --acdir=m4
+ACLOCAL_AMFLAGS = --acdir=aclocal
 SUBDIRS = intl po src tests
 
 EXTRA_DIST = TODO README \
@@ -10,4 +10,13 @@ EXTRA_DIST = TODO README \
              djgpp/po2tbl.sed djgpp/intl.mak \
              djgpp/main.mak djgpp/po.mak \
              djgpp/src.mak djgpp/tests.mak \
-             djgpp/README
+             djgpp/README \
+             aclocal/gettext.m4 \
+             aclocal/header.m4 \
+             aclocal/init.m4 \
+             aclocal/install.m4 \
+             aclocal/lcmessage.m4 \
+             aclocal/lfs.m4 \
+             aclocal/missing.m4 \
+             aclocal/progtest.m4 \
+             aclocal/sanity.m4
