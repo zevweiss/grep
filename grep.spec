@@ -2,7 +2,7 @@
 %define rel 1
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.5
+Version: 2.5.1
 %if "%{beta}" != ""
 Release: 0.%{beta}.%{rel}
 %else
