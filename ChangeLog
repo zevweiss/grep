@@ -1,5 +1,11 @@
 2000-01-25  Paul Eggert
 
+	* src/grep.c (grep): If the final byte of an input file is not
+	a newline, grep now silently supplies one.
+	* doc/grep.texi, NEWS: Likewise.  
+
+2000-01-25  Paul Eggert
+
 	* NEWS, doc/grep.1, doc/grep.texi: Add -I option.
 	* src/grep.c (short_options, usage, main): Likewise.
 
