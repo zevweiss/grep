@@ -65,18 +65,18 @@
 0@ab?c@abc
 0@{@{@TO CORRECT
 0@{abc@{abc@TO CORRECT
-2@{1@BADRPT
+0@{1@{1
 2@{1}@BADRPT@TO CORRECT
 0@a{b@a{b@TO CORRECT
 0@a{1}b@ab
 0@a{1,}b@ab
 0@a{1,2}b@aab
-2@a{1@EBRACE
-2@a{1a@EBRACE
-2@a{1a}@BADBR
+0@a{1@a{1
+1@a{1a@aa
+0@a{1a}@a{1a}
 0@a{,2}@a{,2}
 0@a{,}@a{,}
-2@a{1,x}@BADBR
+0@a{1,*}@a{1,,,}
 2@a{1,x@EBRACE@TO CORRECT
 2@a{300}@BADBR@TO CORRECT
 2@a{1,0}@BADBR@TO CORRECT

@@ -1,3 +1,48 @@
+
+1999-10-02  Paul Eggert
+
+	* NEWS: egrep is now equivalent to `grep -E'.
+	The lower bound of an interval is not optional.
+	You can specify a matcher multiple types without error.
+	-u and -U are now allowed on non-DOS hosts, and have no effect.
+	* doc/grep.texi: Likewise.
+	* doc/grep.1: Likewise.
+	Fix some troff bugs that prevented `groff' from rendering the page.
+
+	* src/egrepmat.c, src/fgrepmat.c, src/grepmat.c (default_matcher):
+	Remove.
+	(matcher): Add.
+	* src/grep.h (default_matcher): Remove.
+	(matcher): Now exported from ?grepmat.c, not grep.c.
+
+	* src/dfa.c (lex): If { would start an invalid interval specification,
+        treat it as a normal character.
+        Remove (broken) support for {,M} meaning {0,M}.
+        Diagnose bogus intervals like {1,0}.
+        (closure): maxrep is now -1 to indicate no limit, not zero;
+        zero is a valid value for maxrep, meaning an upper bound of zero.
+
+	* src/grep.c (short_options): New constant.
+	(long_options, main): -u and -U are now supported on Unix,
+	with no effect.
+	(matcher): Removed; now defined by ?grepmat.c.
+	(install_matcher): Renamed from setmatcher.
+	(setmatcher): New function.
+	(usage): Report new, more uniform option scheme.
+	(main): Do not initialize matcher; ?grepmat.c now does this.
+	Rely on setmatcher to catch matcher conflicts.
+	Default matcher is "grep".
+
+	* src/search.c (matchers):
+	Remove "posix-egrep" matcher; no longer needed.
+	(Ecompile): Likewise.
+	The egrep matcher now has POSIX behavior.
+
+	* tests/bre.tests: grep '\{' is no longer an error.
+	Fix test for interval too large, and enable it.
+	* tests/ere.tests: grep -E {1 is no longer an error
+	Likewise for a{1, a{1a, a{1a}, a{1,x}.
+
 1999-09-22  Paul Eggert
 
 	* largefile.m4 (AC_SYS_LARGEFILE_FLAGS): Work around GCC

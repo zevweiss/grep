@@ -2,7 +2,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.4 1999/08/13 14:45:14 alainm Exp $
+.Id $Id: grep.1,v 1.5 1999/10/06 01:12:44 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -61,10 +61,8 @@ and
 .B fgrep
 are available.
 .B Egrep
-is similar (but not identical) to
-.BR "grep\ \-E" ,
-and is compatible with the historical Unix
-.BR egrep .
+is the same as
+.BR "grep\ \-E" .
 .B Fgrep
 is the same as
 .BR "grep\ \-F" .
@@ -85,12 +83,12 @@ Print
 .I NUM
 lines of leading context before matching lines.
 .TP
-.BI \-C " [NUM]" ",  --context"[=NUM]"
-Print 
+.BI \-C " [NUM]" ",  --context" [=NUM]
+Print
 .I NUM
 lines (default 2) of output context.
 .TP
-.BI \- NUM \ 
+.BI \- NUM
 Same as --context=NUM lines of leading and trailing context.  However,
 .B grep
 will never print any given line more than once.
@@ -259,7 +257,8 @@ work correctly).  Specifying
 overrules this guesswork, causing all files to be read and passed to the
 matching mechanism verbatim; if the file is a text file with CR/LF
 pairs at the end of each line, this will cause some regular
-expressions to fail.  This option is only supported on MS-DOS and
+expressions to fail.
+This option has no effect on platforms other than MS-DOS and
 MS-Windows.
 .TP
 .B \-u, --unix-byte-offsets
@@ -270,7 +269,8 @@ CR characters stripped off.  This will produce results identical to running
 .B grep
 on a Unix machine.  This option has no effect unless
 .B \-b
-option is also used; it is only supported on MS-DOS and MS-Windows.
+option is also used;
+it has no effect on platforms other than MS-DOS and MS-Windows.
 .PD
 .SH "REGULAR EXPRESSIONS"
 .PP
@@ -392,11 +392,6 @@ times.
 The preceding item is matched
 .I n
 or more times.
-.TP
-.BI {, m }
-The preceding item is optional and is matched at most
-.I m
-times.
 .TP
 .BI { n , m }
 The preceding item is matched at least

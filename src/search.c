@@ -42,7 +42,6 @@ struct matcher matchers[] = {
   { "default", Gcompile, EGexecute },
   { "grep", Gcompile, EGexecute },
   { "egrep", Ecompile, EGexecute },
-  { "posix-egrep", Ecompile, EGexecute },
   { "awk", Ecompile, EGexecute },
   { "fgrep", Fcompile, Fexecute },
   { 0, 0, 0 },
@@ -186,20 +185,15 @@ Ecompile(pattern, size)
 {
   const char *err;
 
-  if (strcmp(matcher, "posix-egrep") == 0)
-    {
-      re_set_syntax(RE_SYNTAX_POSIX_EGREP);
-      dfasyntax(RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
-    }
-  else if (strcmp(matcher, "awk") == 0)
+  if (strcmp(matcher, "awk") == 0)
     {
       re_set_syntax(RE_SYNTAX_AWK);
       dfasyntax(RE_SYNTAX_AWK, match_icase, eolbyte);
     }
   else
     {
-      re_set_syntax(RE_SYNTAX_EGREP);
-      dfasyntax(RE_SYNTAX_EGREP, match_icase, eolbyte);
+      re_set_syntax (RE_SYNTAX_POSIX_EGREP);
+      dfasyntax (RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
     }
 
   if ((err = re_compile_pattern(pattern, size, &regexbuf)) != 0)

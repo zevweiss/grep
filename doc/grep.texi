@@ -377,7 +377,7 @@ Specifying @samp{-U} overrules this guesswork, causing all
 files  to  be read and passed to the matching mechanism
 verbatim; if the file is a text file with  CR/LF  pairs
 at  the  end of each line, this will cause some regular
-expressions to fail.  This option is only supported  on
+expressions to fail.  This option has no effect on platforms other than
 MS-DOS and MS-Windows.
 
 @item -u
@@ -391,7 +391,7 @@ Report Unix-style byte  offsets.   This  switch  causes
 text file, i.e. the byte offsets ignore the CR characters which were
 stripped  off.  This  will produce results identical to running @sc{grep} on
 a Unix machine.  This option has no  effect  unless  @samp{-b}
-option is also used; it is only supported on MS-DOS and
+option is also used; it has no effect on platforms other than MS-DOS and
 MS-Windows.
 
 @item -Z
@@ -542,8 +542,7 @@ by newlines, any of which is to be matched.
 @end table
 
 In addition, two variant programs @sc{egrep} and @sc{fgrep} are available.
-@sc{egrep} is similar (but not identical) to @samp{grep -E}, and
-is compatible with the historical Unix @sc{egrep}.  @sc{fgrep} is  the
+@sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
 same as @samp{grep -F}.
 
 @node Regular Expressions, Reporting Bugs, Grep Programs, Top
@@ -705,12 +704,6 @@ The preceding item is matched exactly @var{n} times.
 @cindex match sub-expression n or more times
 The preceding item is matched n or more times.
 
-@item @{,@var{m}@}
-@opindex @{,m@}
-@cindex braces, first argument omitted
-@cindex match sub-expression at most m times
-The preceding item is optional and is matched at most @var{m} times.
-
 @item @{@var{n},@var{m}@}
 @opindex @{n,m@}
 @cindex braces, two arguments
@@ -741,8 +734,42 @@ In basic regular expressions the metacharacters @samp{?}, @samp{+},
 instead use the backslashed versions @samp{\?}, @samp{\+}, @samp{\@{},
 @samp{\|}, @samp{\(}, and @samp{\)}.
 
-In @sc{egrep} the metacharacter  @samp{@{}  loses  its  special  meaning;
-instead use @samp{\@{}.  This not true for @samp{grep -E}.
+@cindex interval specifications
+There is a longstanding minor compatibility problem with regular
+expressions like @samp{x@{2,8@}} that use interval specifications.
+Traditional @command{egrep} did not support interval specifications, but
+@sc{posix} requires them, and says that the effect of regular
+expressions like @samp{x@{,8@}} or @samp{(@{2,8@})} is undefined because
+their interval specifications are invalid.  In @command{grep} 2.3 and
+earlier, @samp{grep -E} acted as @sc{posix} required, but it reported an
+error when it encountered a @samp{@{} that was not the prefix of a valid
+interval specification.  Had @command{egrep} 2.3 been equivalent to
+@samp{grep -E}, it would have broken old-fashioned scripts that assume
+that @samp{@{} is not special in egrep patterns.  So @command{egrep} 2.3
+and earlier did not support interval specifications, even though
+@sc{posix} required it.
+
+This compatibility problem has been addressed by changing @samp{grep -E}
+to be less pedantic about invalid interval specifications.  Instead of
+reporting an error, @samp{grep -E} assumes that @samp{@{} is not special
+if it would be the start of an invalid interval specification.  For
+example, @samp{grep -E @{1} now searches for the two-character string
+@samp{@{1} instead of reporting a syntax error in the regular
+expression.  @sc{posix} allows this behavior as an extension, and it is
+more compatible with what old-fashioned scripts expect of
+@command{egrep}.
+
+The new behavior is incompatible with the traditional behavior in the
+rare cases where @sc{posix} requires it.  For example, @samp{egrep
+x@{5@}} is now equivalent to @samp{egrep xxxxx} as required by
+@sc{posix}, whereas it formerly was equivalent to @samp{egrep
+'x\@{5\@}'}.  Incompatibilities like these occur only when a valid
+interval specification is found, not merely when @samp{@{} is found.
+
+This new behavior exists only to support old scripts that do not conform
+to @sc{posix}.  @sc{posix} does not define the behavior of invalid
+interval specifications, and other @command{grep} implementations have
+differing behavior in this area, so new scripts should avoid them.
 
 
 @node Reporting Bugs, Concept Index, Regular Expressions, Top

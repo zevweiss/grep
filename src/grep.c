@@ -55,6 +55,10 @@ static int show_help;
 /* If non-zero, print the version on standard output and exit.  */
 static int show_version;
 
+/* Short options.  */
+static char const short_options[] =
+"0123456789A:B:C::EFGHUVX:abcd:e:f:hiLlnqrsuvwxyZz";
+
 /* Long options equivalences. */
 static struct option long_options[] =
 {
@@ -85,10 +89,8 @@ static struct option long_options[] =
   {"invert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
   {"text", no_argument, NULL, 'a'},
-#if O_BINARY
   {"binary", no_argument, NULL, 'U'},
   {"unix-byte-offsets", no_argument, NULL, 'u'},
-#endif
   {"version", no_argument, NULL, 'V'},
   {"with-filename", no_argument, NULL, 'H'},
   {"word-regexp", no_argument, NULL, 'w'},
@@ -96,7 +98,6 @@ static struct option long_options[] =
 };
 
 /* Define flags declared in grep.h. */
-char const *matcher;
 int match_icase;
 int match_words;
 int match_lines;
@@ -118,7 +119,8 @@ static enum
 static int  ck_atoi PARAMS ((char const *, int *));
 static void usage PARAMS ((int)) __attribute__((noreturn));
 static void error PARAMS ((const char *, int));
-static int  setmatcher PARAMS ((char const *));
+static void setmatcher PARAMS ((char const *));
+static int  install_matcher PARAMS ((char const *));
 static int  prepend_args PARAMS ((char const *, char *, char **));
 static void prepend_default_options PARAMS ((char const *, int *, char ***));
 static char *page_alloc PARAMS ((size_t, char **));
@@ -940,16 +942,10 @@ int status;
 Search for PATTERN in each FILE or standard input.\n\
 \n\
 Regexp selection and interpretation:\n"));
-      if (strcmp (default_matcher, "grep") == 0)
-	printf (_("\
+      printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n\
   -G, --basic-regexp        PATTERN is a basic regular expression\n"));
-      else
-	printf (_("\
-      --extended-regexp     PATTERN is an extended regular expression\n\
-      --fixed-regexp        PATTERN is a fixed string separated by newlines\n\
-      --basic-regexp        PATTERN is a basic regular expression\n"));
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -991,7 +987,7 @@ Context control:\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
-If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n\
+`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
 With no FILE, or when FILE is -, read standard input. If less than\n\
 two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n\
 Exit with 2 if syntax errors or system errors.\n"));
@@ -1000,10 +996,20 @@ Exit with 2 if syntax errors or system errors.\n"));
   exit (status);
 }
 
+/* Set the matcher to M, reporting any conflicts.  */
+static void
+setmatcher (m)
+     char const *m;
+{
+  if (matcher && strcmp (matcher, m) != 0)
+    fatal (_("conflicting matchers specified"), 0);
+  matcher = m;
+}
+
 /* Go through the matchers vector and look for the specified matcher.
    If we find it, install it in compile and execute, and return 1.  */
 static int
-setmatcher (name)
+install_matcher (name)
      char const *name;
 {
   int i;
@@ -1152,7 +1158,6 @@ main (argc, argv)
   keys = NULL;
   keycc = 0;
   with_filenames = 0;
-  matcher = NULL;
   eolbyte = '\n';
   filename_mask = ~0;
 
@@ -1175,16 +1180,8 @@ main (argc, argv)
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
 
-  while ((opt = getopt_long (argc, argv,
-	 (/* POSIX requires that only grep has options -E, -F, and -G.  */
-	  3 * (strcmp (default_matcher, "grep") != 0) +
-#if O_BINARY
-          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyUuZz"
-#else
-          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyZz"
-#endif
-	  ),
-         long_options, NULL)) != EOF)
+  while ((opt = getopt_long (argc, argv, short_options, long_options, NULL))
+	 != -1)
     switch (opt)
       {
       case '0':
@@ -1226,38 +1223,32 @@ main (argc, argv)
 	  default_context = 2;
 	break;
       case 'E':
-	if (matcher && strcmp (matcher, "posix-egrep") != 0)
-	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
-	matcher = "posix-egrep";
+	setmatcher ("egrep");
 	break;
       case 'F':
-	if (matcher && strcmp(matcher, "fgrep") != 0)
-	  fatal(_("you may specify only one of -E, -F, or -G"), 0);;
-	matcher = "fgrep";
+	setmatcher ("fgrep");
 	break;
       case 'G':
-	if (matcher && strcmp (matcher, "grep") != 0)
-	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
-	matcher = "grep";
+	setmatcher ("grep");
 	break;
       case 'H':
 	with_filenames = 1;
 	break;
-#if O_BINARY
       case 'U':
+#if O_BINARY
 	dos_use_file_type = DOS_BINARY;
+#endif
 	break;
       case 'u':
+#if O_BINARY
 	dos_report_unix_offset = 1;
-	break;
 #endif
+	break;
       case 'V':
 	show_version = 1;
 	break;
       case 'X':
-	if (matcher)
-	  fatal (_("matcher already specified"), 0);
-	matcher = optarg;
+	setmatcher (optarg);
 	break;
       case 'a':
 	always_text = 1;
@@ -1367,9 +1358,12 @@ main (argc, argv)
   if (out_before < 0)
     out_before = default_context;
 
+  if (! matcher)
+    matcher = "grep";
+
   if (show_version)
     {
-      printf (_("%s (GNU grep) %s\n"), default_matcher, VERSION);
+      printf (_("%s (GNU grep) %s\n"), matcher, VERSION);
       printf ("\n");
       printf (_("\
 Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"));
@@ -1401,10 +1395,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     else
       usage (2);
 
-  if (! matcher)
-    matcher = default_matcher;
-
-  if (!setmatcher (matcher) && !setmatcher ("default"))
+  if (!install_matcher (matcher) && !install_matcher ("default"))
     abort ();
 
   (*compile)(keys, keycc);

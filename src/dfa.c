@@ -560,11 +560,32 @@ lex()
 	    goto normal_char;
 	  if (backslash != ((syntax_bits & RE_NO_BK_BRACES) == 0))
 	    goto normal_char;
-	  minrep = maxrep = 0;
+	  if (!(syntax_bits & RE_CONTEXT_INDEP_OPS) && laststart)
+	    goto normal_char;
+
+	  if (syntax_bits & RE_NO_BK_BRACES)
+	    {
+	      /* Scan ahead for a valid interval; if it's not valid,
+		 treat it as a literal '{'.  */
+	      int lo = -1, hi = -1;
+	      char const *p = lexptr;
+	      char const *lim = p + lexleft;
+	      for (;  p != lim && ISDIGIT (*p);  p++)
+		lo = (lo < 0 ? 0 : lo * 10) + *p - '0';
+	      if (p != lim && *p == ',')
+		while (++p != lim && ISDIGIT (*p))
+		  hi = (hi < 0 ? 0 : hi * 10) + *p - '0';
+	      else
+		hi = lo;
+	      if (p == lim || *p != '}'
+		  || lo < 0 || RE_DUP_MAX < hi || (0 <= hi && hi < lo))
+		goto normal_char;
+	    }
+
+	  minrep = 0;
 	  /* Cases:
 	     {M} - exact count
 	     {M,} - minimum count, maximum is infinity
-	     {,M} - 0 through M
 	     {M,N} - M through N */
 	  FETCH(c, _("unfinished repeat count"));
 	  if (ISDIGIT(c))
@@ -578,16 +599,27 @@ lex()
 		  minrep = 10 * minrep + c - '0';
 		}
 	    }
-	  else if (c != ',')
+	  else
 	    dfaerror(_("malformed repeat count"));
 	  if (c == ',')
-	    for (;;)
-	      {
-		FETCH(c, _("unfinished repeat count"));
-		if (!ISDIGIT(c))
-		  break;
-		maxrep = 10 * maxrep + c - '0';
-	      }
+	    {
+	      FETCH (c, _("unfinished repeat count"));
+	      if (! ISDIGIT (c))
+		maxrep = -1;
+	      else
+		{
+		  maxrep = c - '0';
+		  for (;;)
+		    {
+		      FETCH (c, _("unfinished repeat count"));
+		      if (! ISDIGIT (c))
+			break;
+		      maxrep = 10 * maxrep + c - '0';
+		    }
+		  if (0 <= maxrep && maxrep < minrep)
+		    dfaerror (_("malformed repeat count"));
+		}
+	    }
 	  else
 	    maxrep = minrep;
 	  if (!(syntax_bits & RE_NO_BK_BRACES))
@@ -903,7 +935,7 @@ closure()
       {
 	ntokens = nsubtoks(dfa->tindex);
 	tindex = dfa->tindex - ntokens;
-	if (maxrep == 0)
+	if (maxrep < 0)
 	  addtok(PLUS);
 	if (minrep == 0)
 	  addtok(QMARK);

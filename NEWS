@@ -1,3 +1,11 @@
+  - egrep is now equivalent to `grep -E' as required by POSIX,
+    removing a longstanding source of confusion and incompatibility.
+    `grep' is now more forgiving about stray `{'s, for backward
+    compatibility with traditional egrep.
+
+  - The lower bound of an interval is not optional.
+    You must use an explicit zero, e.g. `x{0,10}' instead of `x{,10}'.
+    (The old documentation incorrectly claimed that it was optional.)
 
   - The --revert-match option has been renamed to --invert-match.
 
@@ -18,8 +26,11 @@
     e.g. GREP_OPTIONS='--directories=skip' reestablishes grep 2.1's
     behavior of silently skipping directories.
 
-  - Options -F, -E, -G are only possible on grep driver, since
-    the matcher is already set for {e,f}grep. Posix behaviour.
+  - You can specify a matcher multiple times without error, e.g.
+    `grep -E -E' or `fgrep -F'.  It is still an error to specify
+    conflicting matchers.
+
+  - -u and -U are now allowed on non-DOS hosts, and have no effect.
 
   - Modifications of the tests scripts to go around the "Broken Pipe"
     errors from bash. See Bash FAQ.
