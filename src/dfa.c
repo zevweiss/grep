@@ -359,8 +359,8 @@ static wchar_t *inputwcs;	/* Wide character representation of input
 				   inputstring[i] is a single-byte char,
 				   or 1st byte of a multibyte char.
 				   And inputwcs[i] is the codepoint.  */
-static unsigned char const *buf_begin;/* refference to begin in dfaexec().  */
-static unsigned char const *buf_end;	/* refference to end in dfaexec().  */
+static unsigned char const *buf_begin;/* reference to begin in dfaexec().  */
+static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 static unsigned long buf_offset; /* Go fast. */
 #endif /* MBS_SUPPORT  */
 
@@ -2466,12 +2466,12 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   char buffer[128];
   wchar_t wcbuf[6];
 
-  /* Pointer to the structure to which we are currently reffering.  */
+  /* Pointer to the structure to which we are currently refering.  */
   struct mb_char_classes *work_mbc;
 
   int newline = 0;
   int letter = 0;
-  wchar_t wc;		/* Current reffering character.  */
+  wchar_t wc;		/* Current refering character.  */
 
   wc = inputwcs[index + buf_offset];
 
@@ -2494,7 +2494,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
 			   newline, d->states[s].letter, letter))
     return 0;
 
-  /* Assign the current reffering operator to work_mbc.  */
+  /* Assign the current refering operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
   match_len = (mblen_buf[index + buf_offset] == 0)? 1 : mblen_buf[index + buf_offset];

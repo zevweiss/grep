@@ -1,3 +1,6 @@
+2003-06-04  Stepan Kasal  <kasal@ucw.cz>
+	* src/dfa.c: typos fixed.
+
 2003-05-30  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/dfa.c: Speed up multibyte support (Patch from Tim Waugh)
 
@@ -12,7 +15,7 @@
 	* src/grep.c: Fix infinite loop on
 	  echo "1 one" | grep -E "[0-9]*" -o
 	  echo "1 one" | grep -E "[0-9]*" --color
-	* po/*: Sync wiith translation project
+	* po/*: Sync with translation project
 	* src/grep.c, src/Makefile.am, configure.in: Add patch from
 	  Paul Eggert <eggert@twinsun.com> to comply with ridiculous
 	  guidelines (don't act differently if invoked as egrep or fgrep)
