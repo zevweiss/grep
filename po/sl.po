@@ -2,7 +2,7 @@
 # Copyright (C) 1996 Free Software Foundation, Inc.
 # Primoz Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999.
 #
-# $Id: sl.po,v 1.10 1999/08/16 15:04:54 alainm Exp $
+# $Id: sl.po,v 1.11 1999/10/06 02:23:31 alainm Exp $
 #
 msgid ""
 msgstr ""
