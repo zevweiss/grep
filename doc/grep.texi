@@ -118,9 +118,10 @@ This document was produced for version @value{VERSION} of @sc{GNU} @sc{grep}.
 
 @cindex Searching for a pattern.
 @sc{grep} searches the input files for lines containing a match to a given
-pattern list.  When a match is found, the line is written to standard
-output (default behaviour).  @sc{grep} expects to do the matching on text,
-since newline is also a separator for the list of patterns, there
+pattern list.  When it finds a match in a line, it copies the line to standard
+output (by default), or does whatever othre sort of output you have requested
+with options.  @sc{grep} expects to do the matching on text.
+Since newline is also a separator for the list of patterns, there
 is no way to match newline characters in a text.
 
 @node Invoking, Diagnostics, Introduction, Top
@@ -128,10 +129,6 @@ is no way to match newline characters in a text.
 @chapter Invoking @sc{grep}
 
 @sc{grep} comes with a rich set of options from POSIX.2 and GNU extensions.
-
-@section POSIX.2
-
-@sc{grep} may be invoked with the following command-line options:
 
 @table @samp
 
@@ -399,6 +396,7 @@ provide internationalization support, if compiled with this feature.
 
 @node Diagnostics, Grep Programs, Invoking, Top
 @comment  node-name,  next,  previous,  up
+@chapter Diagnostics
 Normally, exit status is 0 if matches were found, and 1 if no matches
 were found (the @samp{-v} option inverts the sense of the exit status).
 Exit status is 2  if  there  were  syntax errors  in  the  pattern,
@@ -653,7 +651,7 @@ Backreferences are very slow, and  may  require  exponential time.
 
 @page
 @node Concept Index , Index, Reporting Bugs, Top
-@comment  node-name,  next,  previous,  up
+@comment node-name,  next,  previous,  up
 @unnumbered Concept Index
 
 This is a general index of all issues discussed in this manual, with the
