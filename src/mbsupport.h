@@ -1,8 +1,5 @@
-/*
- * mbsupport.h --- Localize determination of whether we have multibyte stuff.
- */
+/* mbsupport.h --- Localize determination of whether we have multibyte stuff.
 
-/* 
    Copyright (C) 2004, 2005 Free Software Foundation, Inc.
    
    This program is free software; you can redistribute it and/or modify
@@ -20,14 +17,14 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
-/*
- * This file is needed because we test for 1i8n support in 3 different
- * places, and we want a consistent definition in all of them.  Following
- * the ``Don't Repeat Yourself'' principle from "The Pragmatic Programmer",
- * we centralize the tests here.
- *
- * This test is the union of all the current tests.
- */
+
+/* This file is needed so that we test for i18n support in just one place.
+   This gives us a consistent definition for all uses of MBS_SUPPORT. This
+   follows the ``Don't Repeat Yourself'' principle from "The Pragmatic
+   Programmer".
+  
+   The tests should be *all* the ones that are needed for an individual
+   application.  */
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>

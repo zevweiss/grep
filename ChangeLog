@@ -1,6 +1,8 @@
-2005-02-08  Stepan Kasal  <kasal@ucw.cz>
+2005-02-08  Arnold D. Robbins  <arnold@skeeve.com>
+	    Stepan Kasal  <kasal@ucw.cz>
 
 	* src/mbsupport.h: Don't say the file is part of GAWK.
+	Make wording in explanatory comment more generic.
 
 2005-02-07  Stepan Kasal  <kasal@ucw.cz>
 
