@@ -1297,7 +1297,6 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
 	 diagnostic on strings like 00000000000.  */
       p -= buf[0] == '0';
 
-      *p++ = opt;
       if (p == buf + sizeof buf - 4)
 	{
 	  /* Too many digits.  Append "..." to make context_length_arg
@@ -1307,6 +1306,7 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
 	  p += 3;
 	  break;
 	}
+      *p++ = opt;
     }
   if (p != buf)
     {
