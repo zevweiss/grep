@@ -19,13 +19,10 @@ EXTRA_DIST = \
              dosbuf.c \
              vms_fab.c vms_fab.h
 
-egrep:
-	echo '#!/bin/sh' >$@
-	echo 'exec grep -E $${1+"$$@"}' >>$@
-	chmod a+x $@
+OPTION_for_egrep = -E
+OPTION_for_fgrep = -F
 
-fgrep:
+egrep fgrep: Makefile
 	echo '#!/bin/sh' >$@
-	echo 'exec grep -F $${1+"$$@"}' >>$@
+	echo 'exec grep $(OPTION_for_$@) $${1+"$$@"}' >>$@
 	chmod a+x $@
-

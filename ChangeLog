@@ -1,5 +1,10 @@
 2004-11-23  Stepan Kasal  <kasal@ucw.cz>
 
+	* src/Makefile.am: Merged the rules for creating the egrep and
+	fgrep script.
+
+2004-11-23  Stepan Kasal  <kasal@ucw.cz>
+
 	* src/grep.c (usage): Make sure both copies of the ``usage''
 	  strings match.  Add ``(C)'' to the copyright notice.
 	* src/dfa.c: Changed "out of memory" to "memory exhausted" to
