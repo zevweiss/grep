@@ -69,7 +69,7 @@ case "$ac_cv_prog_CC" in
 esac
 
 dnl I18N feature
-ALL_LINGUAS="cs de el eo es et fr hr id it ja ko nl no pl pt_BR ru sl sv"
+ALL_LINGUAS="cs de el eo es et fr gl hr id it ja ko nl no pl pt_BR ru sl sv"
 AM_GNU_GETTEXT
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")

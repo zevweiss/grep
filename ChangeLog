@@ -1,3 +1,13 @@
+2001-08-30  Alain Magloire
+
+	* configure.in:  Add gl in ALL_LINGUAS.
+
+2001-08-30  Kurt D Schwehr
+
+	* doc/grep.1: Warn that grep insert a "--" between groups of matches,
+	when using the context options.
+	* doc/grep.texi: Likewised.
+
 2001-08-25  Heikki Korpela
 
 	* doc/grep.texi: Point out that some Platforms do not support

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.19 2001/07/29 19:32:15 alainm Exp $
+.Id $Id: grep.1,v 1.20 2001/08/31 00:45:25 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -62,6 +62,9 @@ is the same as
 Print
 .I NUM
 lines of trailing context after matching lines.
+Places a line containing
+.B \-\^\-
+between contiguous groups of matches.
 .TP
 .BR \-a ", " \-\^\-text
 Process a binary file as if it were text; this is equivalent to the
@@ -72,11 +75,17 @@ option.
 Print
 .I NUM
 lines of leading context before matching lines.
+Places a line containing
+.B \-\^\-
+between contiguous groups of matches.
 .TP
 .BI \-C " NUM" "\fR,\fP \-\^\-context=" NUM
 Print
 .I NUM
 lines of output context.
+Places a line containing
+.B \-\^\-
+between contiguous groups of matches.
 .TP
 .BR \-b ", " \-\^\-byte-offset
 Print the byte offset within the input file before
