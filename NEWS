@@ -1,3 +1,5 @@
+Version 2.4.1
+
   - If the final byte of an input file is not a newline, grep now silently
     supplies one.
 
