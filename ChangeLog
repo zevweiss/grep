@@ -20,6 +20,27 @@
 
 	* dfa.c (dfacomp), search.c (EGexecute): Don't assume char is unsigned.
 
+1998-11-13  Eli Zaretskii  <eliz@is.elta.co.il>
+
+	* djgpp/config.bat: Rewrite to run the configure script via Bash.
+	* djgpp/config.site, djgpp/getconf: New files.
+	* djgpp/config.h, djgpp/*.mak, djgpp/po2tbl.sed: Remove.
+	* djgpp/README: Update instructions.
+
+	* Makefile.am (EXTRA_DIST): Update the list of DJGPP files.
+
+	* src/system.h (IS_SLASH): New macro.
+	(is_EISDIR): Define it here for DOS and Windows.
+
+	* src/grep.c (main) [O_BINARY]: Set stdout to binary mode, so the
+	EOL formats of the input and output files match, unless stdout is
+	the console device.
+	(is_EISDIR): Don't define if already defined.  Accept a second
+	argument, the file name; all callers changed.
+	(grepdir): Don't free `file', inside the loop.  Use IS_SLASH to
+	check whether `dir' needs a slash.
+	(grepfile): If file is a directory, set e to EISDIR.
+
 1998-11-11  Alain Magloire
 
 	* src/regex.c : On Apple, grep is overriding the regex library

@@ -39,9 +39,27 @@
 int open(), read(), close();
 #endif
 
+#include <errno.h>
+#ifndef errno
+extern int errno;
+#endif
+
+#ifndef HAVE_STRERROR
+extern int sys_nerr;
+extern char *sys_errlist[];
+# define strerror(E) ((E) < sys_nerr ? sys_errlist[(E)] : "bogus error number")
+#endif
+
 /* Some operating systems treat text and binary files differently.  */
 #if defined(O_BINARY) && O_BINARY
+# define IS_SLASH(c)      ((c) == '/' || (c) == '\\' || (c) == ':')
 # include <io.h>
+/* This assumes _WIN32, like DJGPP, has D_OK.  Does it?  In what header?  */
+# ifdef EISDIR
+#  define is_EISDIR(e,f)  ((e) == EISDIR || ((e) == EACCES && !access(f,D_OK)))
+# else
+#  define is_EISDIR(e,f)  ((e) == EACCES && !access(f,D_OK))
+# endif
 # ifdef __DJGPP__
 #  define SET_BINARY(fd)  setmode(fd,O_BINARY)
 # else
@@ -49,6 +67,7 @@ int open(), read(), close();
 # endif
 static inline int undossify_input PARAMS((char *, size_t));
 #else
+# define IS_SLASH(c)       ((c) == '/')
 # ifndef O_BINARY
 #  define O_BINARY 0
 #  define SET_BINARY(fd)   (void)0
@@ -98,17 +117,6 @@ void free();
 #endif
 #ifndef HAVE_MEMCHR
 ptr_t memchr();
-#endif
-
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-
-#ifndef HAVE_STRERROR
-extern int sys_nerr;
-extern char *sys_errlist[];
-# define strerror(E) ((E) < sys_nerr ? sys_errlist[(E)] : "bogus error number")
 #endif
 
 #include <ctype.h>

@@ -1,20 +1,76 @@
 @echo off
-echo Configuring Grep for DJGPP...
-update djgpp/config.h ./config.h
-sed -e /@VERSION@/d djgpp/main.mak > Makefile
-sed -n -e /^VERSION/p configure >> Makefile
-sed -e /@VERSION@/d djgpp/src.mak > src\Makefile
-sed -n -e /^VERSION/p configure >> src\Makefile
-sed -e /@VERSION@/d djgpp/tests.mak > tests\Makefile
-sed -n -e /^VERSION/p configure >> tests\Makefile
-sed -e /@VERSION@/d djgpp/intl.mak > intl\Makefile
-sed -n -e /^VERSION/p configure >> intl\Makefile
-sed -e /@VERSION@/d djgpp/po.mak > po\Makefile
-sed -n -e /^VERSION/p configure >> po\Makefile
-sed -e '/^#/d' ./intl/linux-msg.sed > intl\po2msg.sed
-sed -e '/^#.*[^\\]$/d' -e '/^#$/d' djgpp/po2tbl.sed > intl\po2tbl.sed
-if exist make.com ren make.com vmsmake.com
-if exist config.h.in REN config.h.in config.h-in
-if exist intl\po2tbl.sed.in REN intl\po2tbl.sed.in po2tbl-in.sed
-if exist intl\Makefile.in.in REN intl\Makefile.in.in Makefile.in-in
+echo Configuring GNU Grep for DJGPP v2.x...
+
+Rem The SmallEnv tests protect against fixed and too small size
+Rem of the environment in stock DOS shell.
+
+Rem Find out where the sources are
+set XSRC=.
+if not "%XSRC%" == "." goto SmallEnv
+if "%1" == "" goto InPlace
+set XSRC=%1
+if not "%XSRC%" == "%1" goto SmallEnv
+
+:InPlace
+Rem Make sure they have a config.site file
+set CONFIG_SITE=%XSRC%/djgpp/config.site
+if not "%CONFIG_SITE%" == "%XSRC%/djgpp/config.site" goto SmallEnv
+
+Rem Make sure crucial file names are not munged by unpacking
+Rem This is only needed if the original file names are not renamed.
+REM  if exist intl\po2tbl.sed.in ren intl\po2tbl.sed.in po2tblsed.in
+REM  if not exist intl\po2tblsed.in ren intl\po2tbl.sed po2tblsed.in
+
+Rem This is required because DOS/Windows are case-insensitive
+Rem to file names, and "make install" will do nothing if Make
+Rem finds a file called `install'.
+if exist INSTALL ren INSTALL INSTALL.txt
+
+Rem Set HOSTNAME so it shows in config.status
+if not "%HOSTNAME%" == "" goto hostdone
+if "%windir%" == "" goto msdos
+set OS=MS-Windows
+if not "%OS%" == "MS-Windows" goto SmallEnv
+goto haveos
+:msdos
+set OS=MS-DOS
+if not "%OS%" == "MS-DOS" goto SmallEnv
+:haveos
+if not "%USERNAME%" == "" goto haveuname
+if not "%USER%" == "" goto haveuser
+echo No USERNAME and no USER found in the environment, using default values
+set HOSTNAME=Unknown PC
+if not "%HOSTNAME%" == "Unknown PC" goto SmallEnv
+:haveuser
+set HOSTNAME=%USER%'s PC
+if not "%HOSTNAME%" == "%USER%'s PC" goto SmallEnv
+goto userdone
+:haveuname
+set HOSTNAME=%USERNAME%'s PC
+if not "%HOSTNAME%" == "%USERNAME%'s PC" goto SmallEnv
+:userdone
+set HOSTNAME=%HOSTNAME%, %OS%
+if not "%HOSTNAME%" == "%HOSTNAME%, %OS%" goto SmallEnv
+:hostdone
+set OS=
+
+Rem install-sh is required by the configure script but clashes with the
+Rem various Makefile install-foo targets, so we MUST have it before the
+Rem script runs and rename it afterwards
+if not exist install-sh if exist install-sh.sh ren install-sh.sh install-sh
+echo Running the ./configure script...
+sh %XSRC%/configure --src=%XSRC% --disable-nls
+if errorlevel 1 goto CfgError
+if not exist install-sh.sh if exist install-sh ren install-sh install-sh.sh
 echo Done.
+goto End
+
+:CfgError
+echo ./configure script exited abnormally!
+goto End
+
+:SmallEnv
+echo Your environment size is too small.  Enlarge it and run me again.
+echo Configuration NOT done!
+:End
+set XSRC=

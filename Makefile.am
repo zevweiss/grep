@@ -6,11 +6,8 @@ SUBDIRS = intl po src tests
 
 EXTRA_DIST = TODO README \
              vms/make.com vms/README \
-             djgpp/config.bat djgpp/config.h \
-             djgpp/po2tbl.sed djgpp/intl.mak \
-             djgpp/main.mak djgpp/po.mak \
-             djgpp/src.mak djgpp/tests.mak \
-             djgpp/README \
+             djgpp/config.bat djgpp/config.site \
+             djgpp/getconf djgpp/README \
              aclocal/gettext.m4 \
              aclocal/header.m4 \
              aclocal/init.m4 \

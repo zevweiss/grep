@@ -40,10 +40,12 @@
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
+#ifndef is_EISDIR
 #ifdef EISDIR
-# define is_EISDIR(e) ((e) == EISDIR)
+# define is_EISDIR(e,f) ((e) == EISDIR)
 #else
-# define is_EISDIR(e) 0
+# define is_EISDIR(e,f) 0
+#endif
 #endif
 
 /* if non-zero, display usage information and exit */
@@ -635,7 +637,7 @@ grep (fd, file)
 
   if (fillbuf (save) < 0)
     {
-      if (! (is_EISDIR (errno) && suppress_errors))
+      if (! (is_EISDIR (errno, file) && suppress_errors))
 	error (filename, errno);
       return nlines;
     }
@@ -681,7 +683,7 @@ grep (fd, file)
 	nlscan (beg);
       if (fillbuf (save) < 0)
 	{
-	  if (! (is_EISDIR (errno) && suppress_errors))
+	  if (! (is_EISDIR (errno, file) && suppress_errors))
 	    error (filename, errno);
 	  goto finish_grep;
 	}
@@ -722,8 +724,14 @@ grepfile (file)
 	{
 	  int e = errno;
 	    
-	  if (is_EISDIR (e) && directories == RECURSE_DIRECTORIES)
-	    return grepdir (file, BUFSIZ);
+	  if (is_EISDIR (e, file))
+	    {
+	      if (directories == RECURSE_DIRECTORIES)
+		return grepdir (file, BUFSIZ);
+#ifdef EISDIR
+	      e = EISDIR;	/* so that error message makes sense */
+#endif
+	    }
 
 	  if (!suppress_errors)
 	    {
@@ -814,7 +822,7 @@ grepdir (dir, name_size)
   else
     {
       size_t dirlen = strlen (dir);
-      int needs_slash = dir[dirlen - 1] != '/';
+      int needs_slash = !IS_SLASH (dir[dirlen - 1]);
       char *file = NULL;
       char *namep = name_space;
       out_file += !no_filenames;
@@ -827,7 +835,6 @@ grepdir (dir, name_size)
 	  strcpy (file + dirlen + needs_slash, namep);
 	  namep += namelen + 1;
 	  status &= grepfile (file);
-	  free (file);
 	}
       out_file -= !no_filenames;
       free (file);
@@ -1242,6 +1249,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
+
+#if O_BINARY
+  /* Output is set to binary mode because we shouldn't convert
+     NL to CR-LF pairs, especially when grepping binary files.  */
+  if (!isatty(1))
+    SET_BINARY(1);
+#endif
 
 
   if (optind < argc)
