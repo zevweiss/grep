@@ -1,11 +1,10 @@
-This is a test release of GNU grep.
+Newer ALPHA versions of this code are available through
+anonymous CVS:
 
-The code is available through
-anonymous CVS.
-$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs login
-Password: [just hit enter]
 $ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs checkout grep
 
-Please send comments and problem reports to <bug-grep@gnu.org>.
+If you are using an old version of cvs, you might have to run
+$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs login
+first (and just press enter at the password prompt).
 
-This is a RELEASE CANDIDATE for grep 2.5.
+Please send comments and problem reports to <bug-grep@gnu.org>.

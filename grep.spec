@@ -1,4 +1,4 @@
-%define beta g
+%define beta %nil
 %define rel 1
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
