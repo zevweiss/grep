@@ -1,3 +1,10 @@
+2004-11-23  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/grep.c (usage): Make sure both copies of the ``usage''
+	  strings match.  Add ``(C)'' to the copyright notice.
+	* src/dfa.c: Changed "out of memory" to "memory exhausted" to
+	  match messages elsewhere in the source.
+
 2004-11-22  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/search.c: Use mbsupport.h .

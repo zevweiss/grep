@@ -1,5 +1,5 @@
 /* grep.c - main driver file for grep.
-   Copyright 1992, 1997-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1997-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1085,7 +1085,7 @@ usage (int status)
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE] ...\n"), program_name);
+      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), program_name);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n\
 Example: %s -i 'hello world' menu.h main.c\n\
@@ -1694,7 +1694,7 @@ main (int argc, char **argv)
     {
       printf ("%s\n\n", PACKAGE_STRING);
       printf (_("\
-Copyright 1988, 1992-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.\n"));
+Copyright (C) 1988, 1992-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.\n"));
       printf (_("\
 This is free software; see the source for copying conditions. There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));

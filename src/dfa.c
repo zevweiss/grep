@@ -3002,7 +3002,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 
       lcopy = malloc(len);
       if (!lcopy)
-	dfaerror(_("out of memory"));
+	dfaerror(_("memory exhausted"));
 
       /* This is a kludge. */
       case_fold = 0;
