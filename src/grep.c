@@ -44,6 +44,15 @@
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
+struct stats
+{
+  struct stats *parent;
+  struct stat stat;
+};
+
+/* base of chain of stat buffers, used to detect directory loops */
+static struct stats stats_base;
+
 /* if non-zero, display usage information and exit */
 static int show_help;
 
@@ -112,17 +121,17 @@ static void usage PARAMS ((int)) __attribute__((noreturn));
 static void error PARAMS ((const char *, int));
 static int  setmatcher PARAMS ((char const *));
 static char *page_alloc PARAMS ((size_t, char **));
-static int  reset PARAMS ((int, char const *));
-static int  fillbuf PARAMS ((size_t));
+static int  reset PARAMS ((int, char const *, struct stats *));
+static int  fillbuf PARAMS ((size_t, struct stats *));
 static int  grepbuf PARAMS ((char *, char *));
 static void prtext PARAMS ((char *, char *, int *));
 static void prpending PARAMS ((char *));
 static void prline PARAMS ((char *, char *, int));
 static void print_offset_sep PARAMS ((off_t, int));
 static void nlscan PARAMS ((char *));
-static int  grep PARAMS ((int, char const *));
-static int  grepdir PARAMS ((char const *, unsigned));
-static int  grepfile PARAMS ((char const *));
+static int  grep PARAMS ((int, char const *, struct stats *));
+static int  grepdir PARAMS ((char const *, struct stats *));
+static int  grepfile PARAMS ((char const *, struct stats *));
 
 /* Functions we'll use to search. */
 static void (*compile) PARAMS ((char *, size_t));
@@ -210,7 +219,6 @@ static size_t bufalloc;		/* Total buffer size. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
-static struct stat bufstat;	/* From fstat(). */
 static size_t pagesize;		/* alignment of memory pages */
 
 #if defined(HAVE_MMAP)
@@ -257,9 +265,10 @@ page_alloc (size, up)
 /* Reset the buffer for a new file, returning zero if we should skip it.
    Initialize on the first time through. */
 static int
-reset (fd, file)
+reset (fd, file, stats)
      int fd;
      char const *file;
+     struct stats *stats;
 {
   if (pagesize == 0)
     {
@@ -293,15 +302,15 @@ reset (fd, file)
       directories != READ_DIRECTORIES
 #endif
       )
-    if (fstat (fd, &bufstat) != 0)
+    if (fstat (fd, &stats->stat) != 0)
       {
 	error ("fstat", errno);
 	return 0;
       }
-  if (directories == SKIP_DIRECTORIES && S_ISDIR (bufstat.st_mode))
+  if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
     return 0;
 #if defined(HAVE_MMAP)
-  if (!S_ISREG (bufstat.st_mode))
+  if (!S_ISREG (stats->stat.st_mode))
     bufmapped = 0;
   else
     {
@@ -317,8 +326,9 @@ reset (fd, file)
    to the beginning of the buffer contents, and 'buflim'
    points just after the end.  Return count of new stuff. */
 static int
-fillbuf (save)
+fillbuf (save, stats)
      size_t save;
+     struct stats *stats;
 {
   int cc;
 #if defined(HAVE_MMAP)
@@ -351,7 +361,7 @@ fillbuf (save)
 
 #if defined(HAVE_MMAP)
   if (bufmapped && bufoffset % pagesize == 0
-      && bufstat.st_size - bufoffset >= bufalloc - bufsalloc)
+      && stats->stat.st_size - bufoffset >= bufalloc - bufsalloc)
     {
       maddr = buffer + bufsalloc;
       maddr = mmap (maddr, bufalloc - bufsalloc, PROT_READ | PROT_WRITE,
@@ -617,26 +627,27 @@ grepbuf (beg, lim)
    but if the file is a directory and we search it recursively, then
    return -2 if there was a match, and -1 otherwise.  */
 static int
-grep (fd, file)
+grep (fd, file, stats)
      int fd;
      char const *file;
+     struct stats *stats;
 {
   int nlines, i;
   int not_text;
   size_t residue, save;
   char *beg, *lim;
 
-  if (!reset (fd, file))
+  if (!reset (fd, file, stats))
     return 0;
 
   if (file && directories == RECURSE_DIRECTORIES
-      && S_ISDIR (bufstat.st_mode))
+      && S_ISDIR (stats->stat.st_mode))
     {
       /* Close fd now, so that we don't open a lot of file descriptors
 	 when we recurse deeply.  */
       if (close (fd) != 0)
 	error (file, errno);
-      return grepdir (file, (unsigned) bufstat.st_size) - 2;
+      return grepdir (file, stats) - 2;
     }
 
   totalcc = 0;
@@ -648,7 +659,7 @@ grep (fd, file)
   residue = 0;
   save = 0;
 
-  if (fillbuf (save) < 0)
+  if (fillbuf (save, stats) < 0)
     {
       if (! (is_EISDIR (errno, file) && suppress_errors))
 	error (filename, errno);
@@ -694,7 +705,7 @@ grep (fd, file)
       totalcc += buflim - bufbeg - save;
       if (out_line)
 	nlscan (beg);
-      if (fillbuf (save) < 0)
+      if (fillbuf (save, stats) < 0)
 	{
 	  if (! (is_EISDIR (errno, file) && suppress_errors))
 	    error (filename, errno);
@@ -717,8 +728,9 @@ grep (fd, file)
 }
 
 static int
-grepfile (file)
+grepfile (file, stats)
      char const *file;
+     struct stats *stats;
 {
   int desc;
   int count;
@@ -738,8 +750,16 @@ grepfile (file)
 	  int e = errno;
 	    
 	  if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
-	    return grepdir (file, BUFSIZ);
+	    {
+	      if (stat (file, &stats->stat) != 0)
+		{
+		  error (file, errno);
+		  return 1;
+		}
 
+	      return grepdir (file, stats);
+	    }
+	      
 	  if (!suppress_errors)
 	    {
 	      if (directories == SKIP_DIRECTORIES)
@@ -752,11 +772,9 @@ grepfile (file)
 		  case EACCES:
 		    /* When skipping directories, don't worry about
 		       directories that can't be opened.  */
-		    {
-		      struct stat st;
-		      if (stat (file, &st) == 0 && S_ISDIR (st.st_mode))
-			return 1;
-		    }
+		    if (stat (file, &stats->stat) == 0
+			&& S_ISDIR (stats->stat.st_mode))
+		      return 1;
 		    break;
 		  }
 
@@ -776,7 +794,7 @@ grepfile (file)
     SET_BINARY (desc);
 #endif
 
-  count = grep (desc, file);
+  count = grep (desc, file, stats);
   if (count < 0)
     status = count + 2;
   else
@@ -809,12 +827,25 @@ grepfile (file)
 }
 
 static int
-grepdir (dir, name_size)
+grepdir (dir, stats)
      char const *dir;
-     unsigned name_size;
+     struct stats *stats;
 {
   int status = 1;
-  char *name_space = savedir (dir, name_size);
+  struct stats *ancestor;
+  char *name_space;
+
+  for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
+    if (! ((ancestor->stat.st_ino ^ stats->stat.st_ino)
+	   | (ancestor->stat.st_dev ^ stats->stat.st_dev)))
+      {
+	if (!suppress_errors)
+	  fprintf (stderr, _("%s: warning: %s: %s\n"), prog, dir,
+		   _("recursive directory loop"));
+	return 1;
+      }
+
+  name_space = savedir (dir, (unsigned) stats->stat.st_size);
 
   if (! name_space)
     {
@@ -833,6 +864,8 @@ grepdir (dir, name_size)
 			   || IS_SLASH (dir[dirlen - 1]));
       char *file = NULL;
       char *namep = name_space;
+      struct stats child;
+      child.parent = stats;
       out_file += !no_filenames;
       while (*namep)
 	{
@@ -842,7 +875,7 @@ grepdir (dir, name_size)
 	  file[dirlen] = '/';
 	  strcpy (file + dirlen + needs_slash, namep);
 	  namep += namelen + 1;
-	  status &= grepfile (file);
+	  status &= grepfile (file, &child);
 	}
       out_file -= !no_filenames;
       if (file)
@@ -1050,7 +1083,7 @@ main (argc, argv)
       case '7':
       case '8':
       case '9':
-	digit_args_val = 10 * digit_args_val - opt - '0';
+	digit_args_val = 10 * digit_args_val + opt - '0';
 	default_context = digit_args_val;
 	break;
       case 'A':
@@ -1273,12 +1306,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	do
 	{
 	  char *file = argv[optind];
-	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file);
+	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file,
+			      &stats_base);
 	}
 	while ( ++optind < argc);
     }
   else
-    status = grepfile ((char *)NULL);
+    status = grepfile ((char *) NULL, &stats_base);
 
   if (fclose (stdout) == EOF)
     error (_("writing output"), errno);
