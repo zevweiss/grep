@@ -904,10 +904,18 @@ int status;
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n\
 \n\
-Regexp selection and interpretation:\n\
+Regexp selection and interpretation:\n"));
+      if (strcmp (default_matcher, "grep") == 0)
+	printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression\n\
+  -G, --basic-regexp        PATTERN is a basic regular expression\n"));
+      else
+	printf (_("\
+      --extended-regexp     PATTERN is an extended regular expression\n\
+      --fixed-regexp        PATTERN is a fixed string separated by newlines\n\
+      --basic-regexp        PATTERN is a basic regular expression\n"));
+      printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
@@ -1068,11 +1076,14 @@ main (argc, argv)
 #endif
 
   while ((opt = getopt_long (argc, argv,
+	 (/* POSIX requires that only grep has options -E, -F, and -G.  */
+	  3 * (strcmp (default_matcher, "grep") != 0) +
 #if O_BINARY
-         "0123456789A:B:C::EFGHVX:abcd:e:f:hiLlnqrsvwxyUu",
+          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyUu"
 #else
-         "0123456789A:B:C::EFGHVX:abcd:e:f:hiLlnqrsvwxy",
+          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxy"
 #endif
+	  ),
          long_options, NULL)) != EOF)
     switch (opt)
       {
@@ -1117,22 +1128,16 @@ main (argc, argv)
       case 'E':
 	if (matcher && strcmp (matcher, "posix-egrep") != 0)
 	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
-	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "posix-egrep";
 	break;
       case 'F':
 	if (matcher && strcmp(matcher, "fgrep") != 0)
 	  fatal(_("you may specify only one of -E, -F, or -G"), 0);;
-	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "fgrep";
 	break;
       case 'G':
 	if (matcher && strcmp (matcher, "grep") != 0)
 	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
-	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "grep";
 	break;
       case 'H':

@@ -1,3 +1,10 @@
+1999-03-07 Paul Eggert
+
+	* src/grep.c (usage): Don't report -E, -F, and -G unless we're grep.
+	(main): Don't match options -E, -F, and -G unless we're grep.
+	Remove after-the-fact check for options -E, -F, and -G, since
+	they're no longer needed.
+
 1999-03-05  Eli Zaretskii
 
 	* src/grep.c (main): Print the name of the default matcher instead
