@@ -1,5 +1,9 @@
 2000-04-20  Paul Eggert
 
+	* tests/status.sh: Fix typo: test -b -> test -r.
+
+2000-04-20  Paul Eggert
+
 	* src/dfa.c (lex):
 	Do not assume that [c] is equivalent to [c-c]; this isn't true
 	if LC_COLLATE specifies that some characters are equivalent.

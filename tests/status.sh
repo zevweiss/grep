@@ -25,7 +25,7 @@ fi
 
 # the filename MMMMMMMM.MMM should not exist hopefully
 # should return 2 file not found
-if test -b MMMMMMMM.MMM; then
+if test -r MMMMMMMM.MMM; then
 	echo "Please remove MMMMMMMM.MMM to run check"
 else
 	${GREP} -E -e 'abc' MMMMMMMM.MMM> /dev/null 2>&1
