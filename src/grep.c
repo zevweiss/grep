@@ -763,6 +763,8 @@ main(argc, argv)
   FILE *fp;
   extern char *optarg;
   extern int optind;
+  char **argp;
+  char *arg;
 
   prog = argv[0];
   if (prog && strrchr(prog, '/'))
@@ -1023,18 +1025,20 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 
   status = 1;
 
-  if (optind < argc)
-    while (optind < argc)
+  argp = EXPAND_WILDCARDS (argv + optind);
+
+  if (*argp)
+    while ((arg = *argp++) != NULL)
       {
-	if (strcmp(argv[optind], "-") == 0)
+	if (strcmp (arg, "-") == 0)
 	  {
 	    filename = _("(standard input)");
 	    desc = 0;
 	  }
 	else
 	  {
-	    filename = argv[optind];
-	    desc = open(argv[optind], O_RDONLY);
+	    filename = arg;
+	    desc = open (arg, O_RDONLY);
 	  }
 	if (desc < 0)
 	  {
@@ -1048,14 +1052,14 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	       with EISDIR if both errno values are valid.  */
 	    struct stat st;
 	    if (e == EACCES
-		&& stat(argv[optind], &st) == 0 && S_ISDIR(st.st_mode))
+		&& stat (arg, &st) == 0 && S_ISDIR (st.st_mode))
 	      e = EISDIR;
 #endif
 
 	    if (! (suppress_errors
 		   || (directories == SKIP_DIRECTORIES
 		       && IS_DIRECTORY_ERRNO (e))))
-	      error(argv[optind], e);
+	      error (arg, e);
 	  }
 	else
 	  {
@@ -1083,7 +1087,6 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	    if (desc != 0)
 	      close(desc);
 	  }
-	++optind;
       }
   else
     {

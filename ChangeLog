@@ -1,3 +1,9 @@
+1998-08-10  Paul Eggert
+
+	* src/system.h (EXPAND_WILDCARDS): New macro.
+	* src/grep.c (main): Expand wildcards, on systems where the
+	shell doesn't do this for you already.
+
 1998-04-29  Paul Eggert
 
 	* NEWS, src/grep.1: Describe new -a and -d options.
