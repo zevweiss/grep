@@ -1,3 +1,7 @@
+1999-08-13  Paul Eggert
+
+	* 2.3d snapshot on ftp server.
+
 1999-07-26  Paul Eggert
 
 Several GNU tools have options to process arbitrary file names, even
