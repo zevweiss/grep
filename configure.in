@@ -78,12 +78,18 @@ dnl Many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(src/regex.c)
 
-dnl Be very vocal about the fact, we are not using regex.c part of the dist.
-dnl Some people ask for this because there are so many variants
-dnl of Linux machines with different libc.
+dnl Some installers want to be informed if we do not use our regex.
+dnl For example, if the host platform uses dynamic linking and the installer
+dnl knows that the grep may be invoked on other hosts with buggy libraries,
+dnl then the installer should configure --with-included-regex.
 if test $ac_use_included_regex = no; then
-	AC_MSG_WARN(Included src/regex.c not use)
+	AC_MSG_WARN(Included src/regex.c not used)
 fi
+
+# This no-op line works around a bug in automake 1.4:
+# it doesn't recognize the assignment to LIBOBJS
+# in m4/regex.m4.
+: LIBOBJS="$LIBOBJS regex.o"
 
 # This is necessary so that .o files in LIBOBJS are also built via
 # the ANSI2KNR-filtering rules.

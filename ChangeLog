@@ -1,3 +1,11 @@
+2000-02-25  Paul Eggert
+
+	* configure.in (LIBOBJS): Work around automake 1.4 bug:
+	regex.c wasn't being passed through ansi2knr on pre-ANSI hosts.
+	(ac_use_included_regex): Fix typo in warning.
+	* src/Makefile.am (EXTRA_DIST): Remove regex.c, as the LIBOBJS
+	workaround means that automake now puts regex.c into DIST_COMMON.
+
 2000-02-25  Alain Magloire
 
 	* po/*.po: update of the PO files.
