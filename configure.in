@@ -141,4 +141,25 @@ if test x"$testpcre" = x"yes"; then
 	AC_CHECK_LIB(pcre, pcre_exec)
 fi
 
+dnl Check how to create the {e,f}grep links
+AC_MSG_CHECKING([How to create links])
+rm -f test00 test01
+touch test00
+ln -s test00 test01 || :
+LINK=""
+if test -L test01; then
+	LINK="ln -s"
+else
+	rm -f test01
+	ln test00 test01 || :
+	if test -e test01; then
+		LINK="ln"
+	else
+		LINK="cp"
+	fi
+fi
+AC_MSG_RESULT($LINK)
+AC_SUBST(LINK)
+rm -f test00 test01
+
 AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

@@ -3,6 +3,12 @@
 	  Don't set LIBOBJS directly, autoconf 2.53 doesn't like it
 	* intl/*: Sync with gettext 0.11
 	* po/*: Sync with translation project
+	* configure.in, src/Makefile.am: Don't duplicate code - make
+	  egrep and fgrep links to grep and set matcher based on
+	  application name, suggestion from
+	  Guillaume Cottenceau <gc@mandrakesoft.com>
+	* src/grep.c: (prline) Add fix for -i --color from
+	  Jim Meyering <meyering@lucent.com>
 
 2002-01-23  Bernhard Rosenkraenzer <bero@redhat.com>
 	* configure.in: Version 2.5g

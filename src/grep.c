@@ -559,26 +559,27 @@ prline (char const *beg, char const *lim, int sep)
       if(match_icase)
         {
 	  /* Yuck, this is tricky */
-          char *ibeg, *ilim;
+          char *buf = (char*) xmalloc (lim - beg);
+	  char *ibeg = buf;
+	  char *ilim = ibeg + (lim - beg);
 	  int i;
-	  ibeg=(char*)malloc(strlen(beg));
-	  ilim=ibeg+(lim-beg);
-	  for(i=0; i<strlen(beg); i++)
-	    ibeg[i]=tolower(beg[i]);
-	  while ((match_offset = (*execute) (ibeg, ilim - ibeg, &match_size, 1))
-	      != (size_t) -1)
+	  for (i = 0; i < lim - beg; i++)
+	    ibeg[i] = tolower (beg[i]);
+	  while ((match_offset = (*execute) (ibeg, ilim-ibeg, &match_size, 1))
+		 != (size_t) -1)
 	    {
-	      char const *b=beg + match_offset;
-	      if(b == lim)
+	      char const *b = beg + match_offset;
+	      if (b == lim)
 		break;
-	      fwrite(beg, sizeof (char), match_offset, stdout);
-	      printf("\33[%sm", grep_color);
-	      fwrite(b, sizeof(char), match_size, stdout);
-	      fputs("\33[00m", stdout);
+	      fwrite (beg, sizeof (char), match_offset, stdout);
+	      printf ("\33[%sm", grep_color);
+	      fwrite (b, sizeof (char), match_size, stdout);
+	      fputs ("\33[00m", stdout);
 	      beg = b + match_size;
 	      ibeg = ibeg + match_offset + match_size;
 	    }
 	  fwrite (beg, 1, lim - beg, stdout);
+	  free (buf);
 	  lastout = lim;
 	  return;
 	}
@@ -1287,6 +1288,11 @@ main (int argc, char **argv)
   program_name = argv[0];
   if (program_name && strrchr (program_name, '/'))
     program_name = strrchr (program_name, '/') + 1;
+
+  if (!strcmp(program_name, "egrep"))
+    setmatcher ("egrep");
+  if (!strcmp(program_name, "fgrep"))
+    setmatcher ("fgrep");
 
 #if defined(__MSDOS__) || defined(_WIN32)
   /* DOS and MS-Windows use backslashes as directory separators, and usually
