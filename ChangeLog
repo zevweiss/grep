@@ -4,8 +4,9 @@
 	lead to confusion when progname is 'fgrep.
 	Noted by Akim Demaille.
 
-	* configure.in : Reenable, jm_INCLUDE_REGEX() since we now
+	* configure.in: Reenable, jm_INCLUDE_REGEX() since we now
 	track GNU lib C.
+	* src/Makefile.am: EXTRA_DIST new macros with regex.c regex.h. 
 	Requested By Ulrich Drepper.
   
 2000-01-25  Paul Eggert
