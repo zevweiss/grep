@@ -1,3 +1,18 @@
+2001-02-19  Isamu Hasegawa
+
+	Handle a multibyte character followed by '*', '+', and '{n,m}'
+	correctly.
+
+	* dfa.c (update_mb_len_index): new function.
+	Support for multibyte string.
+	(FETCH) : call update_mb_len_index.
+	(lex) : check cur_mb_index not to misunderstand multibyte characters.
+	(atom) : make a tree from a multibyte character.
+	(dfaparse) : initialize new variables.
+	(mbs) : new variable.
+	(cur_mb_len) : new variable.
+	(cur_mb_index) : new variable.
+
 2001-02-18  Jim Meyering
 
 	* m4/dosfile.m4 (AC_DOSFILE): Move AC_DEFINEs out of AC_CACHE_CHECK.

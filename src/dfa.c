@@ -44,6 +44,16 @@ extern void free();
 # include <locale.h>
 #endif
 
+#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
+/* We can handle multibyte string.  */
+# define MBS_SUPPORT
+#endif
+
+#ifdef MBS_SUPPORT
+# include <wchar.h>
+# include <wctype.h>
+#endif
+
 #ifndef DEBUG	/* use the same approach as regex.c */
 #undef assert
 #define assert(e)
@@ -315,8 +325,72 @@ static int parens;		/* Count of outstanding left parens. */
 static int minrep, maxrep;	/* Repeat counts for {m,n}. */
 static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
+#ifdef MBS_SUPPORT
+static mbstate_t mbs;		/* Mbstate for mbrlen().  */
+static int cur_mb_len;		/* Byte length of the current scanning
+				   multibyte character.  */
+static int cur_mb_index;        /* Byte index of the current scanning multibyte
+                                   character.
+
+				   singlebyte character : cur_mb_index = 0
+				   multibyte character
+				       1st byte : cur_mb_index = 1
+				       2nd byte : cur_mb_index = 2
+				         ...
+				       nth byte : cur_mb_index = n  */
+#endif /* MBS_SUPPORT  */
+
+#ifdef MBS_SUPPORT
+/* This function update cur_mb_len, and cur_mb_index.
+   p points current lexptr, len is the remaining buffer length.  */
+static void
+update_mb_len_index (unsigned char const *p, int len)
+{
+  /* If last character is a part of a multibyte character,
+     we update cur_mb_index.  */
+  if (cur_mb_index)
+    cur_mb_index = (cur_mb_index >= cur_mb_len)? 0
+			: cur_mb_index + 1;
+
+  /* If last character is a single byte character, or the
+     last portion of a multibyte character, we check whether
+     next character is a multibyte character or not.  */
+  if (! cur_mb_index)
+    {
+      cur_mb_len = mbrlen(p, len, &mbs);
+      if (cur_mb_len > 1)
+	/* It is a multibyte character.
+	   cur_mb_len was already set by mbrlen().  */
+	cur_mb_index = 1;
+      else if (cur_mb_len < 1)
+	/* Invalid sequence.  We treat it as a singlebyte character.
+	   cur_mb_index is aleady 0.  */
+	cur_mb_len = 1;
+      /* Otherwise, cur_mb_len == 1, it is a singlebyte character.
+	 cur_mb_index is aleady 0.  */
+    }
+}
+#endif /* MBS_SUPPORT */
+
+#ifdef MBS_SUPPORT
 /* Note that characters become unsigned here. */
-#define FETCH(c, eoferr)   	      \
+# define FETCH(c, eoferr)			\
+  {						\
+    if (! lexleft)				\
+     {						\
+	if (eoferr != 0)			\
+	  dfaerror (eoferr);			\
+	else					\
+	  return lasttok = END;			\
+      }						\
+    if (MB_CUR_MAX > 1)				\
+      update_mb_len_index(lexptr, lexleft);	\
+    (c) = (unsigned char) *lexptr++;		\
+    --lexleft;					\
+  }
+#else
+/* Note that characters become unsigned here. */
+# define FETCH(c, eoferr)   	      \
   {			   	      \
     if (! lexleft)	   	      \
       {				      \
@@ -328,6 +402,7 @@ static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
     (c) = (unsigned char) *lexptr++;  \
     --lexleft;		   	      \
   }
+#endif /* MBS_SUPPORT */
 
 #ifdef __STDC__
 #define FUNC(F, P) static int F(int c) { return P(c); }
@@ -406,6 +481,14 @@ lex (void)
   for (i = 0; i < 2; ++i)
     {
       FETCH(c, 0);
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1 && cur_mb_index)
+	/* If this is a part of a multi-byte character, we must treat
+	   this byte data as a normal character.
+	   e.g. In case of SJIS encoding, some character contains '\',
+	        but they must not be backslash.  */
+	goto normal_char;
+#endif /* MBS_SUPPORT  */
       switch (c)
 	{
 	case '\\':
@@ -802,6 +885,7 @@ addtok (token t)
 
    atom:
      <normal character>
+     <multibyte character>
      CSET
      BACKREF
      BEGLINE
@@ -825,6 +909,24 @@ atom (void)
     {
       addtok(tok);
       tok = lex();
+#ifdef MBS_SUPPORT
+      /* We treat a multibyte character as a single atom, so that DFA
+	 can treat a multibyte character as a single expression.
+
+         e.g. We construct following tree from "<mb1><mb2>".
+              <mb1(1st-byte)><mb1(2nd-byte)><CAT><mb1(3rd-byte)><CAT>
+              <mb2(1st-byte)><mb2(2nd-byte)><CAT><mb2(3rd-byte)><CAT><CAT>
+      */
+      if (MB_CUR_MAX > 1)
+	{
+	  while (cur_mb_index > 1 && tok >= 0 && tok < NOTCHAR)
+	    {
+	      addtok(tok);
+	      addtok(CAT);
+	      tok = lex();
+	    }
+	}
+#endif /* MBS_SUPPORT  */
     }
   else if (tok == CRANGE)
     {
@@ -962,6 +1064,14 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #if ENABLE_NLS
   hard_LC_COLLATE = hard_locale (LC_COLLATE);
 #endif
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      cur_mb_index = 0;
+      cur_mb_len = 0;
+      memset(&mbs, 0, sizeof(mbstate_t));
+    }
+#endif /* MBS_SUPPORT  */
 
   if (! syntax_bits_set)
     dfaerror(_("No syntax specified"));
