@@ -1519,6 +1519,7 @@ main (int argc, char **argv)
 
       case 'q':
 	exit_on_match = 1;
+	close_stdout_set_status(0);
 	break;
 
       case 'R':
