@@ -1655,3 +1655,4 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   /* We register via atexit() to test stdout.  */
   exit (errseen ? 2 : status);
 }
+/* vim:set shiftwidth=2: */

@@ -18,6 +18,7 @@
 	* Makefile.am: add cvs-clean target
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes
 	  (--color, --devices, -D)
+	* src/dfa.c, src/grep.c: Add vim modelines
 
 2001-08-30  Alain Magloire
 

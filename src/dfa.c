@@ -3580,3 +3580,4 @@ dfamust (struct dfa *dfa)
     }
   free((char *) mp);
 }
+/* vim:set shiftwidth=2: */
