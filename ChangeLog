@@ -1,3 +1,6 @@
+2003-07-08  David Kaelbling  <drk@sgi.com>  (tiny change)
+	* src/dfa.c: remove non-constant initializers from dfa.c
+
 2003-06-16  Stepan Kasal  <kasal@ucw.cz>
 	* doc/grep.1: two typos "--line-buffered [...] penalty"
 	* doc/grep.texi: a typo

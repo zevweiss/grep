@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-06-05 08:13+0200\n"
+"POT-Creation-Date: 2003-07-08 16:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:704
 msgid "Memory exhausted"
 msgstr ""
 
@@ -43,24 +43,24 @@ msgstr ""
 msgid "malformed repeat count"
 msgstr ""
 
-#: src/dfa.c:1254
+#: src/dfa.c:1257
 msgid "Unbalanced ("
 msgstr ""
 
-#: src/dfa.c:1379
+#: src/dfa.c:1382
 msgid "No syntax specified"
 msgstr ""
 
-#: src/dfa.c:1387
+#: src/dfa.c:1390
 msgid "Unbalanced )"
 msgstr ""
 
-#: src/dfa.c:2951
+#: src/dfa.c:2954
 msgid "out of memory"
 msgstr ""
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:224
+#: src/search.c:308 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr ""
 
@@ -240,11 +240,11 @@ msgid ""
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
-#: src/search.c:606
+#: src/search.c:621
 msgid "The -P option is not supported"
 msgstr ""
 
-#: src/search.c:619
+#: src/search.c:634
 msgid "The -P and -z options cannot be combined"
 msgstr ""
 
