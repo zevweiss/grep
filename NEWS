@@ -1,4 +1,8 @@
 Version 2.5
+  - The internal lib/getopt* files are no longer used on systems providing
+    getopt functionality in their libc (e.g. glibc 2.2.x).
+    If you need the old getopt files, use --with-included-getopt.
+
   - The new option --only-matching (-o) will print only the part of matching
     lines that matches the pattern. This is useful, for example, to extract
     IP addresses from log files.
