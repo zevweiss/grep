@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2f\n"
-"POT-Creation-Date: 2001-02-18 00:21-0500\n"
+"POT-Creation-Date: 2001-03-04 01:04-0500\n"
 "PO-Revision-Date: 1999-04-15 15:26\n"
 "Last-Translator: Denis Y. Pershin <dyp@siblug.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:985
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:703
 msgid "Memory exhausted"
 msgstr "Память исчерпана"
 
-#: src/dfa.c:415
+#: src/dfa.c:517
 msgid "Unfinished \\ escape"
 msgstr "Незавершенная \\ последовательность"
 
@@ -25,145 +25,86 @@ msgstr "Незавершенная \\ последовательность"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:548 src/dfa.c:554 src/dfa.c:564 src/dfa.c:572 src/dfa.c:587
+#: src/dfa.c:650 src/dfa.c:656 src/dfa.c:666 src/dfa.c:674 src/dfa.c:689
 msgid "unfinished repeat count"
 msgstr "незавершенное количество повторений"
 
-#: src/dfa.c:561 src/dfa.c:578 src/dfa.c:586 src/dfa.c:590
+#: src/dfa.c:663 src/dfa.c:680 src/dfa.c:688 src/dfa.c:692
 msgid "malformed repeat count"
 msgstr "некорректно указано количество повторений"
 
-#: src/dfa.c:656 src/dfa.c:659 src/dfa.c:683 src/dfa.c:687 src/dfa.c:688
-#: src/dfa.c:691 src/dfa.c:703 src/dfa.c:704
+#: src/dfa.c:767 src/dfa.c:770 src/dfa.c:794 src/dfa.c:798 src/dfa.c:799
+#: src/dfa.c:802 src/dfa.c:814 src/dfa.c:815
 msgid "Unbalanced ["
 msgstr "Несбалансированная ["
 
-#: src/dfa.c:850
+#: src/dfa.c:1000
 msgid "Unbalanced ("
 msgstr "Несбалансированная ("
 
-#: src/dfa.c:967
+#: src/dfa.c:1125
 msgid "No syntax specified"
 msgstr "Не указано синтаксиса"
 
-#: src/dfa.c:975
+#: src/dfa.c:1133
 msgid "Unbalanced )"
 msgstr "Несбалансированная )"
 
-#: src/dfa.c:1933
+#: src/dfa.c:2579
 msgid "out of memory"
 msgstr "закончилась память"
 
-#: src/getopt.c:675
-#, c-format
-msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: опция '%s' неоднозначна\n"
-
-#: src/getopt.c:700
-#, c-format
-msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: опция `--%s' не разрешает аргумента\n"
-
-#: src/getopt.c:705
-#, c-format
-msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: опция `%c%s' не разрешает аргумента\n"
-
-#: src/getopt.c:723 src/getopt.c:896
-#, c-format
-msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: опция `%s' требует аргумент\n"
-
-#. --option
-#: src/getopt.c:752
-#, c-format
-msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: неизвестная опция `--%s'\n"
-
-#. +option or -option
-#: src/getopt.c:756
-#, c-format
-msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: неизвестная опция `%c%s'\n"
-
-#. 1003.2 specifies the format of this message.
-#: src/getopt.c:782
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: неверная опция -- %c\n"
-
-#: src/getopt.c:785
-#, c-format
-msgid "%s: invalid option -- %c\n"
-msgstr "%s: неверная опция -- %c\n"
-
-#. 1003.2 specifies the format of this message.
-#: src/getopt.c:815 src/getopt.c:945
-#, c-format
-msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: опция требует аргумент -- %c\n"
-
-#: src/getopt.c:862
-#, c-format
-msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: опция `-W %s' неоднозначна\n"
-
-#: src/getopt.c:880
-#, c-format
-msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: опция `-W %s' не разрешает аргумента\n"
-
-#: src/grep.c:200 src/grep.c:215 src/grep.c:384 src/kwset.c:171
-#: src/kwset.c:177 src/obstack.c:471
+#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
+#: src/search.c:102 src/search.c:214 src/search.c:291 src/search.c:488
 msgid "memory exhausted"
 msgstr "память исчерпана"
 
-#: src/grep.c:231
+#: src/grep.c:191
 msgid "invalid context length argument"
 msgstr "неверный аргумент длины контекста"
 
-#: src/grep.c:507
+#: src/grep.c:466
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:580 src/grep.c:1596
+#: src/grep.c:539
 msgid "writing output"
 msgstr "записываю выходные данные"
 
-#: src/grep.c:853
+#: src/grep.c:812
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Бинарный файл %s совпадает\n"
 
-#: src/grep.c:867
+#: src/grep.c:826
 msgid "(standard input)"
 msgstr "(стандартный ввод)"
 
-#: src/grep.c:972
-#, c-format
-msgid "%s: warning: %s: %s\n"
+#: src/grep.c:931
+#, fuzzy, c-format
+msgid "warning: %s: %s\n"
 msgstr "%s: предупреждение: %s: %s\n"
 
-#: src/grep.c:973
+#: src/grep.c:932
 msgid "recursive directory loop"
 msgstr "каталоги зациклены"
 
-#: src/grep.c:1021
+#: src/grep.c:980
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Использование: %s [OPTION]... PATTERN [FILE]...\n"
 
-#: src/grep.c:1022
+#: src/grep.c:982
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Попробуйте `%s --help' для получения более подробного описания.\n"
 
-#: src/grep.c:1026
+#: src/grep.c:987
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Использование: %s [OPTION]... PATTERN [FILE] ...\n"
 
-#: src/grep.c:1027
+#: src/grep.c:988
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -172,7 +113,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 
-#: src/grep.c:1032
+#: src/grep.c:993
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -180,7 +121,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 
-#: src/grep.c:1037
+#: src/grep.c:998
 #, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
@@ -203,7 +144,7 @@ msgstr ""
 "  -w, --word-regexp         PATTERN должен подходить ко всему слову\n"
 "  -x, --line-regexp         PATTERN должен подходить ко всей строке\n"
 
-#: src/grep.c:1044
+#: src/grep.c:1005
 #, fuzzy
 msgid ""
 "\n"
@@ -221,7 +162,7 @@ msgstr ""
 "  -V, --version             напечатать информацию о версии и выйти\n"
 "      --help                показать помощь и выйти\n"
 
-#: src/grep.c:1052
+#: src/grep.c:1013
 #, fuzzy
 msgid ""
 "\n"
@@ -240,10 +181,9 @@ msgid ""
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     equivalent to --directories=recurse but only\n"
-"                            files that match PATTERN will be examine\n"
-"      --exclude=PATTERN     equivalent to --directories=recurse, files that\n"
-"                            match PATTERN will be skip.\n"
+"      --include=PATTERN     files that match PATTERN will be examine\n"
+"      --exclude=PATTERN     files that match PATTERN will be skip.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -270,7 +210,7 @@ msgstr ""
 "  -c, --count               печатать только количество совпадающих строк на "
 "файл\n"
 
-#: src/grep.c:1077
+#: src/grep.c:1037
 #, fuzzy
 msgid ""
 "\n"
@@ -306,7 +246,7 @@ msgstr ""
 "совпадения,\n"
 "с 1, если нет. Выходит с 2, если есть синтаксическио или системные ошибки.\n"
 
-#: src/grep.c:1092
+#: src/grep.c:1052
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -314,35 +254,35 @@ msgstr ""
 "\n"
 "Об ошибках сообщайте <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1102
+#: src/grep.c:1062
 #, fuzzy
 msgid "conflicting matchers specified"
 msgstr "образец уже задан"
 
-#: src/grep.c:1376
+#: src/grep.c:1355
 msgid "unknown directories method"
 msgstr "неизвестный метод для каталогов"
 
-#: src/grep.c:1436
+#: src/grep.c:1422
 #, fuzzy
 msgid "invalid max count"
 msgstr "незавершенное количество повторений"
 
-#: src/grep.c:1476
+#: src/grep.c:1472
 msgid "unknown binary-files type"
 msgstr ""
 
-#: src/grep.c:1528
+#: src/grep.c:1543
 #, fuzzy, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1530
+#: src/grep.c:1545
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1532
+#: src/grep.c:1547
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -350,6 +290,99 @@ msgstr ""
 "Это свободно распространяемое программное обеспечение; смотрите исходные\n"
 "тексты для условий копирования. НЕ дается никакой гарантии, даже о\n"
 "ПОДХОДИМОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ.\n"
+
+#: src/search.c:620
+msgid "The -P option is not supported"
+msgstr ""
+
+#: src/search.c:633
+msgid "The -P and -z options cannot be combined"
+msgstr ""
+
+#: lib/error.c:117
+msgid "Unknown system error"
+msgstr ""
+
+#: lib/getopt.c:675
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: опция '%s' неоднозначна\n"
+
+#: lib/getopt.c:700
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: опция `--%s' не разрешает аргумента\n"
+
+#: lib/getopt.c:705
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: опция `%c%s' не разрешает аргумента\n"
+
+#: lib/getopt.c:723 lib/getopt.c:896
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: опция `%s' требует аргумент\n"
+
+#. --option
+#: lib/getopt.c:752
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: неизвестная опция `--%s'\n"
+
+#. +option or -option
+#: lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: неизвестная опция `%c%s'\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:782
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: неверная опция -- %c\n"
+
+#: lib/getopt.c:785
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: неверная опция -- %c\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:815 lib/getopt.c:945
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: опция требует аргумент -- %c\n"
+
+#: lib/getopt.c:862
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: опция `-W %s' неоднозначна\n"
+
+#: lib/getopt.c:880
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: опция `-W %s' не разрешает аргумента\n"
+
+#. Get translations for open and closing quotation marks.
+#.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  If the catalog has no translation,
+#. locale_quoting_style quotes `like this', and
+#. clocale_quoting_style quotes "like this".
+#.
+#. For example, an American English Unicode locale should
+#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
+#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
+#. MARK).  A British English Unicode locale should instead
+#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#: lib/quotearg.c:265
+msgid "`"
+msgstr ""
+
+#: lib/quotearg.c:266
+msgid "'"
+msgstr ""
 
 #~ msgid "option %s"
 #~ msgstr "опция %s"

@@ -46,9 +46,10 @@ dnl Checks for functions.
 AC_FUNC_ALLOCA
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
+
 dnl getpagesize is checked for by AC_FUNC_MMAP.
 AC_CHECK_FUNCS(btowc isascii memmove setmode strerror wctype mbrtowc)
-AC_REPLACE_FUNCS(memchr stpcpy strtoul fnmatch)
+AC_REPLACE_FUNCS(memchr stpcpy strtoul atexit fnmatch)
 jm_AC_PREREQ_XSTRTOUMAX
 
 dnl Replace this with jm_CHECK_DECLS once autoconf 2.15 is out.
@@ -65,7 +66,6 @@ case "$ac_cv_prog_CC" in
  cl*)  AC_DEFINE(alloca, _alloca) ;;
  *)    ;;
 esac
-
 
 dnl I18N feature
 ALL_LINGUAS="cs de el eo es et fr hr id it ja ko nl no pl pt_BR ru sl sv"
@@ -96,15 +96,24 @@ dnl if glibc2 regex is not included
 
 dnl Many GNU/Linux people have different
 dnl glibc versions with buggy regex.
-jm_INCLUDED_REGEX(src/regex.c)
+jm_INCLUDED_REGEX(lib/regex.c)
 
 dnl Some installers want to be informed if we do not use our regex.
 dnl For example, if the host platform uses dynamic linking and the installer
 dnl knows that the grep may be invoked on other hosts with buggy libraries,
 dnl then the installer should configure --with-included-regex.
-if test $jm_with_regex = no; then
-	AC_MSG_WARN(Included src/regex.c not used)
+if test "$jm_with_regex" = no; then
+	AC_MSG_WARN(Included lib/regex.c not used)
 fi
+
+dnl These are the prerequisite macros for GNU's error.c file.
+AC_FUNC_STRERROR_R
+jm_PREREQ_ERROR
+
+dnl Determine whether malloc accepts 0 as its argument.
+dnl If it doesn't, arrange to use the replacement function.
+jm_FUNC_MALLOC
+jm_FUNC_REALLOC
 
 # This no-op line works around a bug in automake 1.4:
 # it doesn't recognize the assignment to LIBOBJS
@@ -120,4 +129,4 @@ if test x"$testpcre" = x"yes"; then
 	AC_CHECK_LIB(pcre, pcre_exec)
 fi
 
-AC_OUTPUT(Makefile src/Makefile src/posix/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
+AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

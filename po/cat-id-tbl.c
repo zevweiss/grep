@@ -17,45 +17,34 @@ const struct _msg_ent _msg_tbl[] = {
   {"No syntax specified", 8},
   {"Unbalanced )", 9},
   {"out of memory", 10},
-  {"%s: option `%s' is ambiguous\n", 11},
-  {"%s: option `--%s' doesn't allow an argument\n", 12},
-  {"%s: option `%c%s' doesn't allow an argument\n", 13},
-  {"%s: option `%s' requires an argument\n", 14},
-  {"%s: unrecognized option `--%s'\n", 15},
-  {"%s: unrecognized option `%c%s'\n", 16},
-  {"%s: illegal option -- %c\n", 17},
-  {"%s: invalid option -- %c\n", 18},
-  {"%s: option requires an argument -- %c\n", 19},
-  {"%s: option `-W %s' is ambiguous\n", 20},
-  {"%s: option `-W %s' doesn't allow an argument\n", 21},
-  {"memory exhausted", 22},
-  {"invalid context length argument", 23},
-  {"input is too large to count", 24},
-  {"writing output", 25},
-  {"Binary file %s matches\n", 26},
-  {"(standard input)", 27},
-  {"%s: warning: %s: %s\n", 28},
-  {"recursive directory loop", 29},
-  {"Usage: %s [OPTION]... PATTERN [FILE]...\n", 30},
-  {"Try `%s --help' for more information.\n", 31},
-  {"Usage: %s [OPTION]... PATTERN [FILE] ...\n", 32},
+  {"memory exhausted", 11},
+  {"invalid context length argument", 12},
+  {"input is too large to count", 13},
+  {"writing output", 14},
+  {"Binary file %s matches\n", 15},
+  {"(standard input)", 16},
+  {"warning: %s: %s\n", 17},
+  {"recursive directory loop", 18},
+  {"Usage: %s [OPTION]... PATTERN [FILE]...\n", 19},
+  {"Try `%s --help' for more information.\n", 20},
+  {"Usage: %s [OPTION]... PATTERN [FILE] ...\n", 21},
   {"\
 Search for PATTERN in each FILE or standard input.\n\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n", 33},
+Regexp selection and interpretation:\n", 22},
   {"\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression\n\
-  -P, --perl-regexp         PATTERN is a Perl regular expression\n", 34},
+  -P, --perl-regexp         PATTERN is a Perl regular expression\n", 23},
   {"\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
   -w, --word-regexp         force PATTERN to match only whole words\n\
   -x, --line-regexp         force PATTERN to match only whole lines\n\
-  -z, --null-data           a data line ends in 0 byte, not newline\n", 35},
+  -z, --null-data           a data line ends in 0 byte, not newline\n", 24},
   {"\
 \n\
 Miscellaneous:\n\
@@ -63,7 +52,7 @@ Miscellaneous:\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
       --help                display this help and exit\n\
-      --mmap                use memory-mapped input if possible\n", 36},
+      --mmap                use memory-mapped input if possible\n", 25},
   {"\
 \n\
 Output control:\n\
@@ -81,14 +70,13 @@ Output control:\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
-      --include=PATTERN     equivalent to --directories=recurse but only\n\
-                            files that match PATTERN will be examine\n\
-      --exclude=PATTERN     equivalent to --directories=recurse, files that\n\
-                            match PATTERN will be skip.\n\
+      --include=PATTERN     files that match PATTERN will be examine\n\
+      --exclude=PATTERN     files that match PATTERN will be skip.\n\
+      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\
-  -Z, --null                print 0 byte after FILE name\n", 37},
+  -Z, --null                print 0 byte after FILE name\n", 26},
   {"\
 \n\
 Context control:\n\
@@ -103,19 +91,35 @@ Context control:\n\
 `egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
 With no FILE, or when FILE is -, read standard input.  If less than\n\
 two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
-and 2 if trouble.\n", 38},
+and 2 if trouble.\n", 27},
   {"\
 \n\
-Report bugs to <bug-gnu-utils@gnu.org>.\n", 39},
-  {"conflicting matchers specified", 40},
-  {"unknown directories method", 41},
-  {"invalid max count", 42},
-  {"unknown binary-files type", 43},
-  {"%s (GNU grep) %s\n", 44},
-  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 45},
+Report bugs to <bug-gnu-utils@gnu.org>.\n", 28},
+  {"conflicting matchers specified", 29},
+  {"unknown directories method", 30},
+  {"invalid max count", 31},
+  {"unknown binary-files type", 32},
+  {"%s (GNU grep) %s\n", 33},
+  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 34},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 46},
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 35},
+  {"The -P option is not supported", 36},
+  {"The -P and -z options cannot be combined", 37},
+  {"Unknown system error", 38},
+  {"%s: option `%s' is ambiguous\n", 39},
+  {"%s: option `--%s' doesn't allow an argument\n", 40},
+  {"%s: option `%c%s' doesn't allow an argument\n", 41},
+  {"%s: option `%s' requires an argument\n", 42},
+  {"%s: unrecognized option `--%s'\n", 43},
+  {"%s: unrecognized option `%c%s'\n", 44},
+  {"%s: illegal option -- %c\n", 45},
+  {"%s: invalid option -- %c\n", 46},
+  {"%s: option requires an argument -- %c\n", 47},
+  {"%s: option `-W %s' is ambiguous\n", 48},
+  {"%s: option `-W %s' doesn't allow an argument\n", 49},
+  {"`", 50},
+  {"'", 51},
 };
 
-int _msg_tbl_length = 46;
+int _msg_tbl_length = 51;

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.4a\n"
-"POT-Creation-Date: 2001-02-18 00:21-0500\n"
+"POT-Creation-Date: 2001-03-04 01:04-0500\n"
 "PO-Revision-Date: 2000-01-22 12:03+01:00\n"
 "Last-Translator: Marco d'Itri <md@linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:985
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:703
 msgid "Memory exhausted"
 msgstr "Memoria esurita"
 
-#: src/dfa.c:415
+#: src/dfa.c:517
 msgid "Unfinished \\ escape"
 msgstr "escape \\ incompleto"
 
@@ -25,145 +25,86 @@ msgstr "escape \\ incompleto"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:548 src/dfa.c:554 src/dfa.c:564 src/dfa.c:572 src/dfa.c:587
+#: src/dfa.c:650 src/dfa.c:656 src/dfa.c:666 src/dfa.c:674 src/dfa.c:689
 msgid "unfinished repeat count"
 msgstr "conto di ripetizioni incompleto"
 
-#: src/dfa.c:561 src/dfa.c:578 src/dfa.c:586 src/dfa.c:590
+#: src/dfa.c:663 src/dfa.c:680 src/dfa.c:688 src/dfa.c:692
 msgid "malformed repeat count"
 msgstr "conto di ripetizioni malformato"
 
-#: src/dfa.c:656 src/dfa.c:659 src/dfa.c:683 src/dfa.c:687 src/dfa.c:688
-#: src/dfa.c:691 src/dfa.c:703 src/dfa.c:704
+#: src/dfa.c:767 src/dfa.c:770 src/dfa.c:794 src/dfa.c:798 src/dfa.c:799
+#: src/dfa.c:802 src/dfa.c:814 src/dfa.c:815
 msgid "Unbalanced ["
 msgstr "[ non bilanciata"
 
-#: src/dfa.c:850
+#: src/dfa.c:1000
 msgid "Unbalanced ("
 msgstr "( non bilanciata"
 
-#: src/dfa.c:967
+#: src/dfa.c:1125
 msgid "No syntax specified"
 msgstr "Nessuna sintassi specificata"
 
-#: src/dfa.c:975
+#: src/dfa.c:1133
 msgid "Unbalanced )"
 msgstr ") non bilanciata"
 
-#: src/dfa.c:1933
+#: src/dfa.c:2579
 msgid "out of memory"
 msgstr "memoria esaurita"
 
-#: src/getopt.c:675
-#, c-format
-msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: l'opzione `%s' è ambigua\n"
-
-#: src/getopt.c:700
-#, c-format
-msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: l'opzione `--%s' non accetta argomenti\n"
-
-#: src/getopt.c:705
-#, c-format
-msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: l'opzione `%c%s' non accetta argomenti\n"
-
-#: src/getopt.c:723 src/getopt.c:896
-#, c-format
-msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: l'opzione `%s' richiede un argomento\n"
-
-#. --option
-#: src/getopt.c:752
-#, c-format
-msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: opzione `--%s' non riconosciuta\n"
-
-#. +option or -option
-#: src/getopt.c:756
-#, c-format
-msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: opzione `%c%s' non riconosciuta\n"
-
-#. 1003.2 specifies the format of this message.
-#: src/getopt.c:782
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: opzione illegale -- %c\n"
-
-#: src/getopt.c:785
-#, c-format
-msgid "%s: invalid option -- %c\n"
-msgstr "%s: opzione non valida -- %c\n"
-
-#. 1003.2 specifies the format of this message.
-#: src/getopt.c:815 src/getopt.c:945
-#, c-format
-msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: l'opzione richiede un argomento -- %c\n"
-
-#: src/getopt.c:862
-#, c-format
-msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: l'opzione `-W %s' è ambigua\n"
-
-#: src/getopt.c:880
-#, c-format
-msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: l'opzione `-W %s' non accetta argomenti\n"
-
-#: src/grep.c:200 src/grep.c:215 src/grep.c:384 src/kwset.c:171
-#: src/kwset.c:177 src/obstack.c:471
+#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
+#: src/search.c:102 src/search.c:214 src/search.c:291 src/search.c:488
 msgid "memory exhausted"
 msgstr "memoria esaurita"
 
-#: src/grep.c:231
+#: src/grep.c:191
 msgid "invalid context length argument"
 msgstr "argomento della lunghezza del contesto non valido"
 
-#: src/grep.c:507
+#: src/grep.c:466
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:580 src/grep.c:1596
+#: src/grep.c:539
 msgid "writing output"
 msgstr "scrittura dell'output"
 
-#: src/grep.c:853
+#: src/grep.c:812
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Il file binario %s corrisponde\n"
 
-#: src/grep.c:867
+#: src/grep.c:826
 msgid "(standard input)"
 msgstr "(standard input)"
 
-#: src/grep.c:972
-#, c-format
-msgid "%s: warning: %s: %s\n"
+#: src/grep.c:931
+#, fuzzy, c-format
+msgid "warning: %s: %s\n"
 msgstr "%s: attenzione: %s: %s\n"
 
-#: src/grep.c:973
+#: src/grep.c:932
 msgid "recursive directory loop"
 msgstr "loop ricorsivo di directory"
 
-#: src/grep.c:1021
+#: src/grep.c:980
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Uso: %s [OPZIONE]... MODELLO [FILE]...\n"
 
-#: src/grep.c:1022
+#: src/grep.c:982
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Usare `%s --help' per ulteriori informazioni.\n"
 
-#: src/grep.c:1026
+#: src/grep.c:987
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Uso: %s [OPZIONE]... MODELLO [FILE] ...\n"
 
-#: src/grep.c:1027
+#: src/grep.c:988
 #, fuzzy, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -176,7 +117,7 @@ msgstr ""
 "\n"
 "Selezione ed interpretazione delle regexp:\n"
 
-#: src/grep.c:1032
+#: src/grep.c:993
 #, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
@@ -189,7 +130,7 @@ msgstr ""
 "                            newline\n"
 "  -G, --basic-regexp        il MODELLO è una regular expression semplice\n"
 
-#: src/grep.c:1037
+#: src/grep.c:998
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -208,7 +149,7 @@ msgstr ""
 "  -z, --null-data           una riga di dati termina con \\0 invece che "
 "newline\n"
 
-#: src/grep.c:1044
+#: src/grep.c:1005
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -226,7 +167,7 @@ msgstr ""
 "      --help                mostra questo aiuto ed esce\n"
 "      --mmap                se possibile mappa in memoria l'input\n"
 
-#: src/grep.c:1052
+#: src/grep.c:1013
 #, fuzzy
 msgid ""
 "\n"
@@ -245,10 +186,9 @@ msgid ""
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     equivalent to --directories=recurse but only\n"
-"                            files that match PATTERN will be examine\n"
-"      --exclude=PATTERN     equivalent to --directories=recurse, files that\n"
-"                            match PATTERN will be skip.\n"
+"      --include=PATTERN     files that match PATTERN will be examine\n"
+"      --exclude=PATTERN     files that match PATTERN will be skip.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -277,7 +217,7 @@ msgstr ""
 "FILE\n"
 "  -Z, --null                stampa il byte 0 dopo ogni nome di FILE\n"
 
-#: src/grep.c:1077
+#: src/grep.c:1037
 #, fuzzy
 msgid ""
 "\n"
@@ -311,7 +251,7 @@ msgstr ""
 "specificati meno di due file presume -h. Esce con 0 se corrisponde,\n"
 "altrimenti con 1. Esce con 2 se ci sono problemi.\n"
 
-#: src/grep.c:1092
+#: src/grep.c:1052
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -319,34 +259,34 @@ msgstr ""
 "\n"
 "Segnalare i bug a <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1102
+#: src/grep.c:1062
 msgid "conflicting matchers specified"
 msgstr "specificate corrispondenze in conflitto"
 
-#: src/grep.c:1376
+#: src/grep.c:1355
 msgid "unknown directories method"
 msgstr "metodo delle directory sconosciuto"
 
-#: src/grep.c:1436
+#: src/grep.c:1422
 #, fuzzy
 msgid "invalid max count"
 msgstr "conto di ripetizioni incompleto"
 
-#: src/grep.c:1476
+#: src/grep.c:1472
 msgid "unknown binary-files type"
 msgstr "tipo di file binario sconosciuto"
 
-#: src/grep.c:1528
+#: src/grep.c:1543
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (grep GNU) %s\n"
 
-#: src/grep.c:1530
+#: src/grep.c:1545
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1532
+#: src/grep.c:1547
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -358,6 +298,99 @@ msgstr ""
 "copiatura.\n"
 "NON c'è garanzia; neppure di COMMERCIABILITÀ o IDONEITÀ AD UN PARTICOLARE\n"
 "SCOPO.\n"
+
+#: src/search.c:620
+msgid "The -P option is not supported"
+msgstr ""
+
+#: src/search.c:633
+msgid "The -P and -z options cannot be combined"
+msgstr ""
+
+#: lib/error.c:117
+msgid "Unknown system error"
+msgstr ""
+
+#: lib/getopt.c:675
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: l'opzione `%s' è ambigua\n"
+
+#: lib/getopt.c:700
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: l'opzione `--%s' non accetta argomenti\n"
+
+#: lib/getopt.c:705
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: l'opzione `%c%s' non accetta argomenti\n"
+
+#: lib/getopt.c:723 lib/getopt.c:896
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: l'opzione `%s' richiede un argomento\n"
+
+#. --option
+#: lib/getopt.c:752
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: opzione `--%s' non riconosciuta\n"
+
+#. +option or -option
+#: lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: opzione `%c%s' non riconosciuta\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:782
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: opzione illegale -- %c\n"
+
+#: lib/getopt.c:785
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: opzione non valida -- %c\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:815 lib/getopt.c:945
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: l'opzione richiede un argomento -- %c\n"
+
+#: lib/getopt.c:862
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: l'opzione `-W %s' è ambigua\n"
+
+#: lib/getopt.c:880
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: l'opzione `-W %s' non accetta argomenti\n"
+
+#. Get translations for open and closing quotation marks.
+#.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  If the catalog has no translation,
+#. locale_quoting_style quotes `like this', and
+#. clocale_quoting_style quotes "like this".
+#.
+#. For example, an American English Unicode locale should
+#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
+#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
+#. MARK).  A British English Unicode locale should instead
+#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#: lib/quotearg.c:265
+msgid "`"
+msgstr ""
+
+#: lib/quotearg.c:266
+msgid "'"
+msgstr ""
 
 #~ msgid "option %s"
 #~ msgstr "opzione %s"
