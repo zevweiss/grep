@@ -42,7 +42,7 @@ You can configure and build Grep from a directory other than where you
 unpack its sources, by giving it the directory with the sources as an
 argument.  For example:
 
-	  d:\gnu\grep-2.3\djgpp\config d:/gnu/grep-2.3
+	  d:\gnu\grep-2.3.1\djgpp\config d:/gnu/grep-2.3.1
 
 Note that the argument *must* use Unix-style forward slashes, or else
 config.bat might fail.
