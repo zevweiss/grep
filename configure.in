@@ -82,7 +82,7 @@ ALL_LINGUAS="de es el fr ko nl no pl ru sl sv"
 AM_GNU_GETTEXT
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
-AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
+#AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...

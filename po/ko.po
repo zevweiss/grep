@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0f\n"
-"POT-Creation-Date: 1997-09-01 20:51-0300\n"
+"POT-Creation-Date: 1998-04-26 19:31-0400\n"
 "PO-Revision-Date: 1997-09-03 11:19+0900\n"
 "Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 msgid "Memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/dfa.c:441
+#: src/dfa.c:444
 msgid "Unfinished \\ escape"
 msgstr "완결되지 않은 \\ 이스케이프"
 
@@ -26,32 +26,32 @@ msgstr "완결되지 않은 \\ 이스케이프"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:553 src/dfa.c:559 src/dfa.c:570 src/dfa.c:581
+#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
 msgid "unfinished repeat count"
 msgstr "완결되지 않은 반복 회수"
 
-#: src/dfa.c:566 src/dfa.c:580 src/dfa.c:584
+#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
 msgid "malformed repeat count"
 msgstr "잘못 주어진 반복 회수"
 
-#: src/dfa.c:650 src/dfa.c:653 src/dfa.c:680 src/dfa.c:684 src/dfa.c:685
-#: src/dfa.c:688 src/dfa.c:701 src/dfa.c:702
+#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
+#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "짝이 맞지 않는 ["
 
-#: src/dfa.c:839
+#: src/dfa.c:841
 msgid "Unbalanced ("
 msgstr "짝이 맞지 않는 ("
 
-#: src/dfa.c:960
+#: src/dfa.c:962
 msgid "No syntax specified"
 msgstr "문법이 지정되지 않았음"
 
-#: src/dfa.c:968
+#: src/dfa.c:970
 msgid "Unbalanced )"
 msgstr "짝이 맞지 않는 )"
 
-#: src/dfa.c:1988
+#: src/dfa.c:1990
 msgid "out of memory"
 msgstr "메모리 부족"
 
@@ -160,210 +160,245 @@ msgstr "?? getopt가 문자 코드 0%o를 돌려주었습니다 ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "비옵션 ARGV 원소: "
 
-#: src/grep.c:140 src/grep.c:157 src/grep.c:200 src/grep.c:241 src/kwset.c:184
+#: src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/grep.c:266
+#: src/grep.c:293
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: 경고: %s: %s\n"
 
-#: src/grep.c:364 src/grep.c:990
+#: src/grep.c:392 src/grep.c:1034
 msgid "writing output"
 msgstr "출력을 기록하고 있습니다"
 
-#: src/grep.c:569
+#: src/grep.c:597
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일]...\n"
 
-#: src/grep.c:570
+#: src/grep.c:598
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "더 많은 정보를 보려면 `%s --help' 하십시오.\n"
 
-#: src/grep.c:574
+#: src/grep.c:602
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일] ...\n"
 
-#: src/grep.c:576
-msgid "Regexp selection and interpretation:\n"
-msgstr "정규식 선택과 해석:\n"
-
-#: src/grep.c:577
-msgid "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-msgstr "  -E, --extended-regexp     패턴은 확장 정규식이 됩니다\n"
-
-#: src/grep.c:578
+#: src/grep.c:603
 msgid ""
-"  -F, --fixed-strings       PATTERN is a fixed string separated by newlines\n"
-msgstr ""
-"  -F, --fixed-strings       패턴은 줄바꿈 문자로 분리된 고정 문자열이 됩니다\n"
-
-#: src/grep.c:579
-msgid "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
-msgstr "  -G, --basic-regexp        패턴은 기본 정규식이 됩니다\n"
-
-#: src/grep.c:580
-msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
-msgstr "  -e, --regexp=패턴         패턴을 정규식으로 사용합니다\n"
-
-#: src/grep.c:581
-msgid "  -f, --file=FILE         obtain PATTERN from FILE\n"
-msgstr "  -f, --file=파일           패턴을 파일에서 가져옵니다\n" 
-
-#: src/grep.c:582
-msgid "  -i, --ignore-case         ignore case distinctions\n"
-msgstr "  -i, --ignore-case         대소문자 구별을 무시합니다\n"
-
-#: src/grep.c:583
-msgid "  -w, --word-regexp         force PATTERN to match only whole words\n"
-msgstr "  -w, --word-regexp         패턴을 전체 단어와 일치하는 것으로만 제한합니다\n"
-
-#: src/grep.c:584
-msgid "  -x, --line-regexp         force PATTERN to match only whole lines\n"
-msgstr "  -x, --line-regexp         패턴을 전체 행과 일치하는 것으로만 제한합니다\n"
-
-#: src/grep.c:586
-msgid "Miscellaneous:\n"
-msgstr "기타:\n"
-
-#: src/grep.c:587
-msgid "  -s, --no-messages         suppress error messages\n"
-msgstr "  -s, --no-messages         오류 메시지를 표시하지 않습니다\n"
-
-#: src/grep.c:588
-msgid "  -v, --revert-match        select non-matching lines\n"
-msgstr "  -v, --revert-match        일치하지 않는 행들을 선택합니다\n"
-
-#: src/grep.c:589
-msgid "  -V, --version             print version information and exit\n"
-msgstr "  -V, --version             버전 정보를 표시하고 종료합니다\n"
-
-#: src/grep.c:590
-msgid "      --help                display this help and exit\n"
-msgstr "      --help                이 도움말을 표시하고 종료합니다\n"
-
-#: src/grep.c:592
-msgid "Output control:\n"
-msgstr "출력 제어:\n"
-
-#: src/grep.c:593
-msgid "  -b, --byte-offset         print the byte offset with output lines\n"
-msgstr "  -b, --byte-offset         출력되는 행에 바이트 오프셋을 표시합니다\n"
-
-#: src/grep.c:594
-msgid "  -n, --line-number         print line number with output lines\n"
-msgstr "  -n, --line-number         출력되는 행에 행번호를 표시합니다\n"
-
-#: src/grep.c:595
-msgid "  -H, --with-filename       print the filename for each match\n"
-msgstr "  -H, --with-filename       각각의 일치 결과에 대해 파일명을 표시합니다\n"
-
-#: src/grep.c:596
-msgid "  -h, --no-filename         suppress the prefixing filename on ouput\n"
+"Search for PATTERN in each FILE or standard input.\n"
+"\n"
+"Regexp selection and interpretation:\n"
+"  -E, --extended-regexp     PATTERN is an extended regular expression\n"
+"  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
 msgstr ""
 
-#: src/grep.c:597
-msgid "  -q, --quiet, --silent     suppress all normal output\n"
-msgstr "  -q, --quiet, --silent     일반적인 모든 출력을 표시하지 않습니다\n"
-
-#: src/grep.c:598
-msgid "  -L, --files-without-match only print FILE names containing no match\n"
-msgstr "  -L, --files-without-match 일치 결과가 없는 파일 이름만 표시합니다\n"
-
-#: src/grep.c:599
-msgid "  -l, --files-with-matches  only print FILE names containing matches\n"
-msgstr "  -l, --files-with-matches  일치 결과가 포함된 파일 이름만 표시합니다\n"
-
-#: src/grep.c:600
+#: src/grep.c:615
 msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --revert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+msgstr ""
+
+#: src/grep.c:622
+msgid ""
+"\n"
+"Output control:\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"  -H, --with-filename       print the filename for each match\n"
+"  -h, --no-filename         suppress the prefixing filename on output\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"  -L, --files-without-match only print FILE names containing no match\n"
+"  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 msgstr ""
-"  -c, --count               파일당 일치하는 행의 개수만을 표시합니다\n"
 
-#: src/grep.c:602
-msgid "Context control:\n"
-msgstr "문맥 제어:\n"
-
-#: src/grep.c:603
-msgid "  -B, --before-context=NUM  print NUM lines of leading context\n"
+#: src/grep.c:633
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -NUM                      same as both -B NUM and -A NUM\n"
+"  -C, --context             same as -2\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
+"\n"
+"If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n"
+"With no FILE, or when FILE is -, read standard input. If less than\n"
+"two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
+"Exit with 2 if syntax errors or system errors.\n"
 msgstr ""
 
-#: src/grep.c:604
-msgid "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-msgstr ""
-
-#: src/grep.c:605
-msgid "  -NUM                      same as both -B NUM and -A NUM\n"
-msgstr "  -숫자                     -B 숫자나 -A 숫자와 같음\n"
-
-#: src/grep.c:606
-msgid "  -C, --context             same as -2\n"
-msgstr "  -C, --context             -2와 같음\n"
-
-#: src/grep.c:608
-msgid "  -U, --binary              do not strip CR characters at EOL\n"
-msgstr "  -U, --binary              행끝의 CR 문자를 잘라내지 않습니다\n"
-
-#: src/grep.c:609
-msgid "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
-msgstr "  -u, --unix-byte-offsets   CR을 제외하고 오프셋을 산출합니다\n"
-
-#: src/grep.c:612
-msgid "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
-msgstr ""
-
-#: src/grep.c:613
-msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
-msgstr "`egrep'으로 호출되면 -E로 가정되고 `fgrep'일 때에는 -F가 가정됩니다.\n"
-
-#: src/grep.c:614
-msgid "If no -[GEF], then -G is assumed.\n"
-msgstr "-[GEF]가 주어지지 않으면 -G로 가정합니다.\n"
-
-#: src/grep.c:616
-msgid "Report bugs to <bug-gnu-utils@prep.ai.mit.edu>.\n"
+#: src/grep.c:647
+#, fuzzy
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "문제점은 <bug0gnu-utils@prep.ai.mit.edu>로 보고해 주십시오.\n"
 
-#: src/grep.c:764 src/grep.c:769 src/grep.c:774
+#: src/grep.c:785 src/grep.c:792
+msgid "invalid context length argument"
+msgstr ""
+
+#: src/grep.c:800 src/grep.c:805 src/grep.c:810
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "-E, -F, -G 중에서 하나만 지정할 수 있습니다"
 
-#: src/grep.c:790
+#: src/grep.c:829
 msgid "matcher already specified"
 msgstr "짝이 이미 지정되었음"
 
-#: src/grep.c:881
+#: src/grep.c:915
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:883
+#: src/grep.c:917
 msgid ""
 "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 msgstr ""
 "저작권 (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:885
+#: src/grep.c:919
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"이 프로그램은 공개 소프트웨어입니다. 복사에 관한 조건은 소스를 참조하십시오.\n"
+"이 프로그램은 공개 소프트웨어입니다. 복사에 관한 조건은 소스를 "
+"참조하십시오.\n"
 "상품성이나 특정 목적에 대한 적합성을 비롯하여, 어떠한 보증도 하지 않습니다.\n"
 
-#: src/grep.c:948 src/grep.c:971
+#: src/grep.c:964 src/grep.c:1015
 msgid "(standard input)"
 msgstr "(표준 입력)"
 
-#: src/grep.c:983 src/grep.c:986
+#: src/grep.c:1027 src/grep.c:1030
 msgid "(standard input)\n"
 msgstr "(표준 입력)\n"
 
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "메모리가 바닥남\n"
+
+#~ msgid "Regexp selection and interpretation:\n"
+#~ msgstr "정규식 선택과 해석:\n"
+
+#~ msgid ""
+#~ "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
+#~ msgstr "  -E, --extended-regexp     패턴은 확장 정규식이 됩니다\n"
+
+#~ msgid ""
+#~ "  -F, --fixed-strings       PATTERN is a fixed string separated by newlines\n"
+#~ msgstr ""
+#~ "  -F, --fixed-strings       패턴은 줄바꿈 문자로 분리된 고정 문자열이 "
+#~ "됩니다\n"
+
+#~ msgid "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+#~ msgstr "  -G, --basic-regexp        패턴은 기본 정규식이 됩니다\n"
+
+#~ msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+#~ msgstr "  -e, --regexp=패턴         패턴을 정규식으로 사용합니다\n"
+
+#~ msgid "  -f, --file=FILE         obtain PATTERN from FILE\n"
+#~ msgstr "  -f, --file=파일           패턴을 파일에서 가져옵니다\n"
+
+#~ msgid "  -i, --ignore-case         ignore case distinctions\n"
+#~ msgstr "  -i, --ignore-case         대소문자 구별을 무시합니다\n"
+
+#~ msgid ""
+#~ "  -w, --word-regexp         force PATTERN to match only whole words\n"
+#~ msgstr ""
+#~ "  -w, --word-regexp         패턴을 전체 단어와 일치하는 것으로만 제한합니다\n"
+
+#~ msgid ""
+#~ "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+#~ msgstr ""
+#~ "  -x, --line-regexp         패턴을 전체 행과 일치하는 것으로만 제한합니다\n"
+
+#~ msgid "Miscellaneous:\n"
+#~ msgstr "기타:\n"
+
+#~ msgid "  -s, --no-messages         suppress error messages\n"
+#~ msgstr "  -s, --no-messages         오류 메시지를 표시하지 않습니다\n"
+
+#~ msgid "  -v, --revert-match        select non-matching lines\n"
+#~ msgstr "  -v, --revert-match        일치하지 않는 행들을 선택합니다\n"
+
+#~ msgid "  -V, --version             print version information and exit\n"
+#~ msgstr "  -V, --version             버전 정보를 표시하고 종료합니다\n"
+
+#~ msgid "      --help                display this help and exit\n"
+#~ msgstr "      --help                이 도움말을 표시하고 종료합니다\n"
+
+#~ msgid "Output control:\n"
+#~ msgstr "출력 제어:\n"
+
+#~ msgid ""
+#~ "  -b, --byte-offset         print the byte offset with output lines\n"
+#~ msgstr ""
+#~ "  -b, --byte-offset         출력되는 행에 바이트 오프셋을 표시합니다\n"
+
+#~ msgid "  -n, --line-number         print line number with output lines\n"
+#~ msgstr "  -n, --line-number         출력되는 행에 행번호를 표시합니다\n"
+
+#~ msgid "  -H, --with-filename       print the filename for each match\n"
+#~ msgstr ""
+#~ "  -H, --with-filename       각각의 일치 결과에 대해 파일명을 표시합니다\n"
+
+#~ msgid "  -q, --quiet, --silent     suppress all normal output\n"
+#~ msgstr ""
+#~ "  -q, --quiet, --silent     일반적인 모든 출력을 표시하지 않습니다\n"
+
+#~ msgid ""
+#~ "  -L, --files-without-match only print FILE names containing no match\n"
+#~ msgstr ""
+#~ "  -L, --files-without-match 일치 결과가 없는 파일 이름만 표시합니다\n"
+
+#~ msgid ""
+#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
+#~ msgstr ""
+#~ "  -l, --files-with-matches  일치 결과가 포함된 파일 이름만 표시합니다\n"
+
+#~ msgid ""
+#~ "  -c, --count               only print a count of matching lines per FILE\n"
+#~ msgstr ""
+#~ "  -c, --count               파일당 일치하는 행의 개수만을 표시합니다\n"
+
+#~ msgid "Context control:\n"
+#~ msgstr "문맥 제어:\n"
+
+#~ msgid "  -NUM                      same as both -B NUM and -A NUM\n"
+#~ msgstr "  -숫자                     -B 숫자나 -A 숫자와 같음\n"
+
+#~ msgid "  -C, --context             same as -2\n"
+#~ msgstr "  -C, --context             -2와 같음\n"
+
+#~ msgid "  -U, --binary              do not strip CR characters at EOL\n"
+#~ msgstr "  -U, --binary              행끝의 CR 문자를 잘라내지 않습니다\n"
+
+#~ msgid ""
+#~ "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+#~ msgstr "  -u, --unix-byte-offsets   CR을 제외하고 오프셋을 산출합니다\n"
+
+#~ msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
+#~ msgstr ""
+#~ "`egrep'으로 호출되면 -E로 가정되고 `fgrep'일 때에는 -F가 가정됩니다.\n"
+
+#~ msgid "If no -[GEF], then -G is assumed.\n"
+#~ msgstr "-[GEF]가 주어지지 않으면 -G로 가정합니다.\n"

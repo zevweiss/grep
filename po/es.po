@@ -265,7 +265,8 @@ msgstr ""
 "                            que no contienen ninguna coincidencia\n"
 "  -l, --files-with-matches  muestra solamente los nombres de FICHEROs\n"
 "                            que contienen alguna coincidencia\n"
-"  -c, --count               muestra solamente el total de líneas que coinciden\n"
+"  -c, --count               muestra solamente el total de líneas que "
+"coinciden\n"
 "                            por cada FICHERO\n"
 
 #: src/grep.c:633
@@ -295,15 +296,22 @@ msgstr ""
 "  -u, --unix-byte-offsets   cuenta los desplazamientos como si no hubiera\n"
 "                            retornos de carro (MSDOS)\n"
 "\n"
-"Si no se especifica ninguna de las opciones -[GEF], entonces `egrep' supone -E,\n"
-"`fgrep' supone -F, y en caso contrario -G. Si no se especifica ningún FICHERO,\n"
+"Si no se especifica ninguna de las opciones -[GEF], entonces `egrep' supone "
+"-E,\n"
+"`fgrep' supone -F, y en caso contrario -G. Si no se especifica ningún "
+"FICHERO,\n"
 "o cuando es -, lee la entrada estándar. Si se dan menos de dos FICHEROs, se\n"
-"supone -h. La salida es 0 si hay coincidencias, 1 si no las hay. La salida es\n"
+"supone -h. La salida es 0 si hay coincidencias, 1 si no las hay. La salida "
+"es\n"
 "2 si hay errores de sintaxis o del sistema.\n"
 
 #: src/grep.c:647
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nComunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Comunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
 
 #: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
@@ -334,8 +342,10 @@ msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgid ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""
@@ -358,19 +368,20 @@ msgstr "(salida estándar)\n"
 msgid "memory exhausted\n"
 msgstr "memoria agotada\n"
 
-#~ # FIXME: El original está mal.
-#~ # Ahora mismo no me acuerdo de por qué escribí esto así que
-#~ # no lo borro de momento. sv
+# FIXME: El original está mal.
+# Ahora mismo no me acuerdo de por qué escribí esto así que
+# no lo borro de momento. sv
 #~ msgid "  -f, --file=FILE         obtain PATTERN from FILE\n"
 #~ msgstr "  -f, --file=FICHERO        obtiene PATRÓN de FICHERO\n"
 
-#~ # Prefiero dejarlo en solamente un patrón
-#~ # Pero entonces no queda claro que *debe haber uno*, y parece que
-#~ # es uno como máximo (siendo el mínimo 0). sv
-#~ msgid "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
+# Prefiero dejarlo en solamente un patrón
+# Pero entonces no queda claro que *debe haber uno*, y parece que
+# es uno como máximo (siendo el mínimo 0). sv
+#~ msgid ""
+#~ "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
 #~ msgstr "Debe haber un y solamente un PATRÓN, `-e PATRÓN', o `-f FICHERO'.\n"
 
-#~ # No es muy claro el original que digamos... sv
+# No es muy claro el original que digamos... sv
 #~ msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
 #~ msgstr "Si se llama como `egrep', esto implica -E y `fgrep' para -F.\n"
 

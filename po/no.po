@@ -209,11 +209,13 @@ msgstr ""
 "\n"
 "Regexp valg og fortolkning:\n"
 "  -E, --extended-regexp     MØNSTER er et utvidet regulært uttrykk\n"
-"  -F, --fixed-regexp        MØNSTER er en fast streng separert med linjeskift\n"
+"  -F, --fixed-regexp        MØNSTER er en fast streng separert med "
+"linjeskift\n"
 "  -G, --basic-regexp        MØNSTER er et grunnleggende regulært uttrykk\n"
 "  -e, --regexp=MØNSTER      bruk MØNSTER som et regulært uttrykk\n"
 "  -f, --file=FIL            hent MØNSTER fra FIL\n"
-"  -i, --ignore-case         se bort ifra forskjellen på store og små bokstaver\n"
+"  -i, --ignore-case         se bort ifra forskjellen på store og små "
+"bokstaver\n"
 "  -w, --word-regexp         MØNSTER må stemme overens med hele ord\n"
 "  -x, --line-regexp         MØNSTER må stemme overens med hele linjer\n"
 
@@ -257,7 +259,8 @@ msgstr ""
 "                            inneholder treff\n"
 "  -l, --files-with-matches  skriv bare ut navnene på FILene som inneholder\n"
 "                            treff\n"
-"  -c, --count               skriv bare ut antall linjer som inneholder treff\n"
+"  -c, --count               skriv bare ut antall linjer som inneholder "
+"treff\n"
 "                            per FIL\n"
 
 #: src/grep.c:633
@@ -287,8 +290,12 @@ msgstr ""
 "                            (MSDOS)\n"
 
 #: src/grep.c:647
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nRapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Rapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
 
 #: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
@@ -308,8 +315,10 @@ msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgid ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""

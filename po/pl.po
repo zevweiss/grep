@@ -254,7 +254,8 @@ msgstr ""
 "  -q, --quiet, --silent     wy³±cz wypisywanie wyniku\n"
 "  -L, --files-without-match wypisz tylko nazwy PLIKÓW bez trafieñ\n"
 "  -l, --files-with-matches  wypisz tylko nazwy PLIKÓW z trafieniami\n"
-"  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym PLIKu\n"
+"  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym "
+"PLIKu\n"
 
 #: src/grep.c:633
 msgid ""
@@ -288,8 +289,12 @@ msgstr ""
 "systemowe.\n"
 
 #: src/grep.c:647
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nRaporty o b³êdach wysy³aj do bug-gnu-utils@gnu.org.\n"
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Raporty o b³êdach wysy³aj do bug-gnu-utils@gnu.org.\n"
 
 #: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
@@ -317,16 +322,20 @@ msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgid ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Oprogramowanie darmowe. Warunki kopiowania zamieszczone s± w kodzie ¼ród³owym.\n"
-"Nie podlega ¿adnej gwarancji, nawet gwarancji przydatno¶ci do jakiegokolwiek\n"
+"Oprogramowanie darmowe. Warunki kopiowania zamieszczone s± w kodzie "
+"¼ród³owym.\n"
+"Nie podlega ¿adnej gwarancji, nawet gwarancji przydatno¶ci do "
+"jakiegokolwiek\n"
 "zastosowania lub sprzeda¿y.\n"
 
 #: src/grep.c:964 src/grep.c:1015

@@ -3,6 +3,8 @@
 /* Define if using alloca.c.  */
 #undef C_ALLOCA
 
+/* Define if the closedir function returns void instead of int.  */
+#undef CLOSEDIR_VOID
 
 /* Define to empty if the keyword does not work.  */
 #undef const
@@ -11,29 +13,23 @@
    This function is required for alloca.c support on those systems.  */
 #undef CRAY_STACKSEG_END
 
-
 /* Define if you have alloca, as a function or macro.  */
 #undef HAVE_ALLOCA
 
 /* Define if you have <alloca.h> and it should be used (not on Ultrix).  */
 #undef HAVE_ALLOCA_H
 
-
 /* Define if you have a working `mmap' system call.  */
 #undef HAVE_MMAP
-
 
 /* Define as __inline if that's what the C compiler calls it.  */
 #undef inline
 
-
 /* Define to `long' if <sys/types.h> doesn't define.  */
 #undef off_t
 
-
 /* Define if you need to in order for stat and other things to work.  */
 #undef _POSIX_SOURCE
-
 
 /* Define to `unsigned' if <sys/types.h> doesn't define.  */
 #undef size_t
@@ -53,7 +49,6 @@
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
-
 /* Define to use grep's error-checking malloc in the kwset routines.  */
 #undef GREP
 
@@ -62,7 +57,6 @@
 
 /* Version number. */
 #undef VERSION
-
 
 #undef HAVE_STPCPY
 
@@ -73,7 +67,6 @@
 #undef HAVE_GETTEXT
 
 #undef HAVE_LC_MESSAGES
-
 
 /* Define if you have the __argz_count function.  */
 #undef HAVE___ARGZ_COUNT
@@ -123,6 +116,9 @@
 /* Define if you have the strchr function.  */
 #undef HAVE_STRCHR
 
+/* Define if you have the strdup function.  */
+#undef HAVE_STRDUP
+
 /* Define if you have the strerror function.  */
 #undef HAVE_STRERROR
 
@@ -131,6 +127,9 @@
 
 /* Define if you have the <argz.h> header file.  */
 #undef HAVE_ARGZ_H
+
+/* Define if you have the <dirent.h> header file.  */
+#undef HAVE_DIRENT_H
 
 /* Define if you have the <libintl.h> header file.  */
 #undef HAVE_LIBINTL_H
@@ -147,6 +146,9 @@
 /* Define if you have the <memory.h> header file.  */
 #undef HAVE_MEMORY_H
 
+/* Define if you have the <ndir.h> header file.  */
+#undef HAVE_NDIR_H
+
 /* Define if you have the <nl_types.h> header file.  */
 #undef HAVE_NL_TYPES_H
 
@@ -156,14 +158,17 @@
 /* Define if you have the <string.h> header file.  */
 #undef HAVE_STRING_H
 
+/* Define if you have the <sys/dir.h> header file.  */
+#undef HAVE_SYS_DIR_H
+
+/* Define if you have the <sys/ndir.h> header file.  */
+#undef HAVE_SYS_NDIR_H
+
 /* Define if you have the <sys/param.h> header file.  */
 #undef HAVE_SYS_PARAM_H
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
-
-/* Define if you have the <values.h> header file.  */
-#undef HAVE_VALUES_H
 
 /* Define if you have the <wchar.h> header file.  */
 #undef HAVE_WCHAR_H

@@ -208,7 +208,8 @@ msgstr ""
 "\n"
 "Val och tolkning av reguljära uttryck:\n"
 " -E, --extended-regexp      MÖNSTER är ett utökat reguljärt uttryck\n"
-" -F, --fixed-regexp         MÖNSTER är en fixerad sträng separerad med nyrad\n"
+" -F, --fixed-regexp         MÖNSTER är en fixerad sträng separerad med "
+"nyrad\n"
 " -G, --basic-regexp         MÖNSTER är ett enkelt reguljärt uttryck\n"
 " -e, --regexp=MÖNSTER       använd MÖNSTER som ett reguljärt uttryck\n"
 " -f, --file=FIL             hämta MÖNSTER från FIL\n"
@@ -254,7 +255,8 @@ msgstr ""
 "  -q, --quiet, --silent     undvik all normal utskrift\n"
 "  -L, --files-without-match skriv bara ut FILnamn utan träffar\n"
 "  -l, --files-with-matches  skriv bara ut FILnamn med träffar\n"
-"  -c, --count               skriv för varje FIL bara ut antal träffade rader\n"
+"  -c, --count               skriv för varje FIL bara ut antal träffade "
+"rader\n"
 
 #: src/grep.c:633
 msgid ""
@@ -288,7 +290,9 @@ msgstr ""
 "matchar, 1 om inget matchade och 2 vid syntaxfel eller systemrelaterade fel\n"
 
 #: src/grep.c:647
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Rapportera buggar till <bug-gnu-utils@gnu.org>.\n"
@@ -298,6 +302,11 @@ msgstr ""
 msgid "invalid context length argument"
 msgstr "ogiltigt argument till -A, -B eller -C"
 
+#: src/grep.c:800 src/grep.c:805 src/grep.c:810
+msgid "you may specify only one of -E, -F, or -G"
+msgstr ""
+
+#: src/grep.c:829
 msgid "matcher already specified"
 msgstr "söksträng redan specificerad"
 
@@ -307,8 +316,10 @@ msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
 #: src/grep.c:917
-msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgid ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr ""
+"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:919
 msgid ""
