@@ -583,12 +583,15 @@ prline (char const *beg, char const *lim, int sep)
 	  lastout = lim;
 	  return;
 	}
-      while ((match_offset = (*execute) (beg, lim - beg, &match_size, 1))
+      while (lim-beg && (match_offset = (*execute) (beg, lim - beg, &match_size, 1))
 	     != (size_t) -1)
 	{
 	  char const *b = beg + match_offset;
 	  /* Avoid matching the empty line at the end of the buffer. */
 	  if (b == lim)
+	    break;
+	  /* Avoid hanging on grep --color "" foo */
+	  if (match_size == 0)
 	    break;
 	  fwrite (beg, sizeof (char), match_offset, stdout);
 	  printf ("\33[%sm", grep_color);

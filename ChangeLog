@@ -1,6 +1,8 @@
 2002-03-26  Bernhard Rosenkraenzer <bero@redhat.com>
 	* src/grep.c: Don't fail if we don't have an stdout fd and -q
 	  is used (happens e.g. on calls from hotplug scripts)
+	* src/grep.c: Don't hang forever if fed with an empty string to
+	  grep for and --color enabled
 
 2002-03-14  Bernhard Rosenkraenzer <bero@redhat.com>
 	* src/Makefile.am, po/Makefile.in.in: Support DESTDIR properly
