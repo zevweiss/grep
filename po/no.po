@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 1998-04-26 19:31-0400\n"
+"POT-Creation-Date: 1999-02-03 13:09-0500\n"
 "PO-Revision-Date: 1998-08-01 13:45+0200\n"
 "Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:858
 msgid "Memory exhausted"
 msgstr "Minnet oppbrukt"
 
-#: src/dfa.c:444
+#: src/dfa.c:452
 msgid "Unfinished \\ escape"
 msgstr "Uferdig \\-beskyttelse"
 
@@ -28,32 +28,32 @@ msgstr "Uferdig \\-beskyttelse"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
+#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
 msgid "unfinished repeat count"
 msgstr "uferdig gjentagelsesantall"
 
-#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
+#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
 msgid "malformed repeat count"
 msgstr "feilaktig gjentagelsesantall"
 
-#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
-#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
+#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
+#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
 msgid "Unbalanced ["
 msgstr "Ubalansert ["
 
-#: src/dfa.c:841
+#: src/dfa.c:849
 msgid "Unbalanced ("
 msgstr "Ubalansert ("
 
-#: src/dfa.c:962
+#: src/dfa.c:970
 msgid "No syntax specified"
 msgstr "Ingen syntaks spesifisert"
 
-#: src/dfa.c:970
+#: src/dfa.c:978
 msgid "Unbalanced )"
 msgstr "Ubalansert )"
 
-#: src/dfa.c:1990
+#: src/dfa.c:1998
 msgid "out of memory"
 msgstr "tomt for minne"
 
@@ -162,36 +162,49 @@ msgstr "?? getopt returnerte tegnverdien 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "ARGV-elementer som ikke er flagg: "
 
-#: src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
+#: src/grep.c:169 src/grep.c:186 src/grep.c:288 src/grep.c:344 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "minnet oppbrukt"
 
-#: src/grep.c:293
+#: src/grep.c:372 src/grep.c:843
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: advarsel: %s: %s\n"
 
-#: src/grep.c:392 src/grep.c:1034
+#: src/grep.c:497 src/grep.c:1318
 msgid "writing output"
 msgstr "skriver utdata"
 
-#: src/grep.c:597
+#: src/grep.c:726
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr ""
+
+#: src/grep.c:742
+msgid "(standard input)"
+msgstr "(standard inn)"
+
+#: src/grep.c:844
+msgid "recursive directory loop"
+msgstr ""
+
+#: src/grep.c:895
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL]...\n"
 
-#: src/grep.c:598
+#: src/grep.c:896
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Prøv «%s --help» for mer informasjon.\n"
 
-#: src/grep.c:602
+#: src/grep.c:900
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL] ...\n"
 
-#: src/grep.c:603
+#: src/grep.c:901
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -217,7 +230,7 @@ msgstr ""
 "  -w, --word-regexp         MØNSTER må stemme overens med hele ord\n"
 "  -x, --line-regexp         MØNSTER må stemme overens med hele linjer\n"
 
-#: src/grep.c:615
+#: src/grep.c:913
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -233,7 +246,8 @@ msgstr ""
 "  -V, --version             vis versioninformasjon og avslutt\n"
 "      --help                vis denne helpeteksten og avslutt\n"
 
-#: src/grep.c:622
+#: src/grep.c:920
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -242,6 +256,10 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
+"  -a, --text                do not suppress binary output\n"
+"  -d, --directories=ACTION  how to handle directories\n"
+"                            ACTION is 'read', 'recurse', or 'skip'.\n"
+"  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -260,14 +278,16 @@ msgstr ""
 "  -c, --count               skriv bare ut antall linjer som inneholder treff\n"
 "                            per FIL\n"
 
-#: src/grep.c:633
+#: src/grep.c:935
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -NUM                      same as both -B NUM and -A NUM\n"
-"  -C, --context             same as -2\n"
+"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
+"                            unless overriden by -A or -B\n"
+"  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -286,32 +306,37 @@ msgstr ""
 "  -u, --unix-byte-offsets   rapporter posisjoner som om CRene ikke var der\n"
 "                            (MSDOS)\n"
 
-#: src/grep.c:647
+#: src/grep.c:950
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nRapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
 
-#: src/grep.c:785 src/grep.c:792
+#: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
 msgid "invalid context length argument"
 msgstr "ugyldig kontekstlengde"
 
-#: src/grep.c:800 src/grep.c:805 src/grep.c:810
+#: src/grep.c:1116 src/grep.c:1121 src/grep.c:1126
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "du kan bare spesifisere en av -E, -F eller -G"
 
-#: src/grep.c:829
+#: src/grep.c:1145
 msgid "matcher already specified"
 msgstr "søkeuttrykk er allerede spesifisert"
 
-#: src/grep.c:915
+#: src/grep.c:1166
+msgid "unknown directories method"
+msgstr ""
+
+#: src/grep.c:1252
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:917
-msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:1254
+#, fuzzy
+msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:919
+#: src/grep.c:1256
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -320,14 +345,9 @@ msgstr ""
 "er INGEN garanti, ikke en gang for SALGBARHET eller EGNETHET FOR NOEN \n"
 "SPESIELL OPPGAVE.\n"
 
-#: src/grep.c:964 src/grep.c:1015
-msgid "(standard input)"
-msgstr "(standard inn)"
-
-#: src/grep.c:1027 src/grep.c:1030
-msgid "(standard input)\n"
-msgstr "(standard inn)\n"
-
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "minnet oppbrukt\n"
+
+#~ msgid "(standard input)\n"
+#~ msgstr "(standard inn)\n"
