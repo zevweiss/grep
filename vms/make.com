@@ -11,7 +11,7 @@ $ WRITE SYS$OUTPUT "Compiling GETOPT1..."
 $ CC GETOPT1.C   /DEFINE=(HAVE_STRING_H,HAVE_MEMCHR,HAVE_STRERROR)
 $ WRITE SYS$OUTPUT "Compiling GREP..."
 $ CC GREP.C     /DEFINE=(HAVE_STRING_H,HAVE_MEMCHR,HAVE_STRERROR, -
-             VERSION="2.2",initialize_main(argc, argv)="argv=vms_fab(argv)")
+             VERSION="2.2",initialize_main="vms_fab")
 $ WRITE SYS$OUTPUT "Compiling KWSET..."
 $ CC KWSET.C    /DEFINE=(HAVE_STRING_H,HAVE_MEMCHR,HAVE_STRERROR)
 $ WRITE SYS$OUTPUT "Compiling OBSTACK..."
