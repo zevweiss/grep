@@ -460,7 +460,7 @@ update_mb_len_index (unsigned char const *p, int len)
 
 /* This function fetch a wide character, and update cur_mb_len,
    used only if the current locale is a multibyte environment.  */
-static wchar_t
+static wint_t
 fetch_wc (char const *eoferr)
 {
   wchar_t wc;
@@ -469,7 +469,7 @@ fetch_wc (char const *eoferr)
       if (eoferr != 0)
 	dfaerror (eoferr);
       else
-	return -1;
+	return WEOF;
     }
 
   cur_mb_len = mbrtowc(&wc, lexptr, lexleft, &mbs);
@@ -505,7 +505,7 @@ fetch_wc (char const *eoferr)
 static void
 parse_bracket_exp_mb ()
 {
-  wchar_t wc, wc1, wc2;
+  wint_t wc, wc1, wc2;
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
@@ -542,7 +542,7 @@ parse_bracket_exp_mb ()
     work_mbc->invert = 0;
   do
     {
-      wc1 = -1; /* mark wc1 is not initialized".  */
+      wc1 = WEOF; /* mark wc1 is not initialized".  */
 
       /* Note that if we're looking at some other [:...:] construct,
 	 we just treat it as a bunch of ordinary characters.  We can do
@@ -597,7 +597,7 @@ parse_bracket_exp_mb ()
 		  wt = wctype (str);
 
 		  if (ch_classes_al == 0)
-		    MALLOC(work_mbc->ch_classes, wchar_t, ++ch_classes_al);
+		    MALLOC(work_mbc->ch_classes, wctype_t, ++ch_classes_al);
 		  REALLOC_IF_NECESSARY(work_mbc->ch_classes, wctype_t,
 				       ch_classes_al,
 				       work_mbc->nch_classes + 1);
@@ -632,7 +632,7 @@ parse_bracket_exp_mb ()
 		      work_mbc->coll_elems[work_mbc->ncoll_elems++] = elem;
 		    }
  		}
-	      wc = -1;
+	      wc = WEOF;
 	    }
 	  else
 	    /* We treat '[' as a normal character here.  */
@@ -646,7 +646,7 @@ parse_bracket_exp_mb ()
 	    wc = fetch_wc(("Unbalanced ["));
 	}
 
-      if (wc1 == -1)
+      if (wc1 == WEOF)
 	wc1 = fetch_wc(_("Unbalanced ["));
 
       if (wc1 == L'-')
@@ -676,17 +676,17 @@ parse_bracket_exp_mb ()
 	    }
 	  REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
 			       range_sts_al, work_mbc->nranges + 1);
-	  work_mbc->range_sts[work_mbc->nranges] = wc;
+	  work_mbc->range_sts[work_mbc->nranges] = (wchar_t)wc;
 	  REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
 			       range_ends_al, work_mbc->nranges + 1);
-	  work_mbc->range_ends[work_mbc->nranges++] = wc2;
+	  work_mbc->range_ends[work_mbc->nranges++] = (wchar_t)wc2;
 	}
-      else if (wc != -1)
+      else if (wc != WEOF)
 	/* build normal characters.  */
 	{
 	  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
 			       work_mbc->nchars + 1);
-	  work_mbc->chars[work_mbc->nchars++] = wc;
+	  work_mbc->chars[work_mbc->nchars++] = (wchar_t)wc;
 	}
     }
   while ((wc = wc1) != L']');

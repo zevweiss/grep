@@ -1,3 +1,12 @@
+2004-12-16  Isamu Hasegawa  <isamuh@jp.ibm.com>
+
+	From http://oss.software.ibm.com/linux/patches/?patch_id=25
+
+	* src/search.c: Patch for i18n correctness.
+	* src/grep.c: Likewise.
+	* src/dfa.c: Likewise.
+	* lib/regex.c: Likewise.
+
 2004-12-15  Julian Foad  <julianfoad@btopenworld.com>
 
 	* doc/grep.texi: Minor fixes of phrasing.

@@ -153,20 +153,30 @@ check_multibyte_string(char const *buf, size_t size)
 {
   char *mb_properties = xmalloc(size);
   mbstate_t cur_state;
+  wchar_t wc;
   int i;
 
   memset(&cur_state, 0, sizeof(mbstate_t));
   memset(mb_properties, 0, sizeof(char)*size);
+
   for (i = 0; i < size ;)
     {
       size_t mbclen;
-      mbclen = mbrlen(buf + i, size - i, &cur_state);
+      mbclen = mbrtowc(&wc, buf + i, size - i, &cur_state);
 
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
 	{
 	  /* An invalid sequence, or a truncated multibyte character.
 	     We treat it as a singlebyte character.  */
 	  mbclen = 1;
+	}
+      else if (match_icase)
+	{
+	  if (iswupper((wint_t)wc))
+	    {
+	      wc = towlower((wint_t)wc);
+	      wcrtomb(buf + i, wc, &cur_state);
+	    }
 	}
       mb_properties[i] = mbclen;
       i += mbclen;
@@ -342,14 +352,20 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
   char eol = eolbyte;
   int backref, start, len;
   struct kwsmatch kwsm;
-  size_t i;
+  size_t i, ret_val;
 #ifdef MBS_SUPPORT
   char *mb_properties = NULL;
-#endif /* MBS_SUPPORT */
-
-#ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && kwset)
-    mb_properties = check_multibyte_string(buf, size);
+  if (MB_CUR_MAX > 1)
+    {
+      if (match_icase)
+        {
+          char *case_buf = malloc(size);
+          memcpy(case_buf, buf, size);
+          buf = case_buf;
+        }
+      if (kwset)
+        mb_properties = check_multibyte_string(buf, size);
+    }
 #endif /* MBS_SUPPORT */
 
   buflim = buf + size;
@@ -366,8 +382,12 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 		{
 #ifdef MBS_SUPPORT
 		  if (MB_CUR_MAX > 1)
-		    free(mb_properties);
-#endif
+                    {
+                      if (match_icase)
+                        free ((char*)buf);
+                      free(mb_properties);
+                    }
+#endif /* MBS_SUPPORT */
 		  return (size_t)-1;
 		}
 	      beg += offset;
@@ -465,18 +485,29 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	} /* for Regex patterns.  */
     } /* for (beg = end ..) */
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && mb_properties)
-    free (mb_properties);
+  if (MB_CUR_MAX > 1)
+    {
+      if (match_icase)
+        free((char*)buf);
+      if (mb_properties)
+        free(mb_properties);
+    }
 #endif /* MBS_SUPPORT */
   return (size_t) -1;
 
  success:
+  ret_val = beg - buf;
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && mb_properties)
-    free (mb_properties);
+  if (MB_CUR_MAX > 1)
+    {
+      if (match_icase)
+        free((char*)buf);
+      if (mb_properties)
+        free(mb_properties);
+    }
 #endif /* MBS_SUPPORT */
   *match_size = end - beg;
-  return beg - buf;
+  return ret_val;
 }
 
 static void
@@ -509,10 +540,19 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
   register size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
+  size_t ret_val;
 #ifdef MBS_SUPPORT
-  char *mb_properties;
+  char *mb_properties = NULL;
   if (MB_CUR_MAX > 1)
-    mb_properties = check_multibyte_string (buf, size);
+    {
+      if (match_icase)
+        {
+          char *case_buf = malloc(size);
+          memcpy(case_buf, buf, size);
+          buf = case_buf;
+        }
+      mb_properties = check_multibyte_string(buf, size);
+    }
 #endif /* MBS_SUPPORT */
 
   for (beg = buf; beg <= buf + size; ++beg)
@@ -521,8 +561,12 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
       if (offset == (size_t) -1)
 	{
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
-	    free(mb_properties);
+          if (MB_CUR_MAX > 1)
+            {
+              if (match_icase)
+                free ((char*)buf);
+              free(mb_properties);
+            }
 #endif /* MBS_SUPPORT */
 	  return offset;
 	}
@@ -535,11 +579,16 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
       if (exact)
 	{
 	  *match_size = len;
+          ret_val = beg - buf;
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
-	    free (mb_properties);
+          if (MB_CUR_MAX > 1)
+            {
+              if (match_icase)
+                free ((char*)buf);
+              free(mb_properties);
+            }
 #endif /* MBS_SUPPORT */
-	  return beg - buf;
+	  return ret_val;
 	}
       if (match_lines)
 	{
@@ -560,8 +609,12 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 		if (offset == (size_t) -1)
 		  {
 #ifdef MBS_SUPPORT
-		    if (MB_CUR_MAX > 1)
-		      free (mb_properties);
+                    if (MB_CUR_MAX > 1)
+                      {
+                        if (match_icase)
+                          free ((char*)buf);
+                        free(mb_properties);
+                      }
 #endif /* MBS_SUPPORT */
 		    return offset;
 		  }
@@ -577,7 +630,12 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
-    free (mb_properties);
+    {
+      if (match_icase)
+        free((char*)buf);
+      if (mb_properties)
+        free(mb_properties);
+    }
 #endif /* MBS_SUPPORT */
   return -1;
 
@@ -587,11 +645,17 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
   while (buf < beg && beg[-1] != eol)
     --beg;
   *match_size = end - beg;
+  ret_val = beg - buf;
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
-    free (mb_properties);
+    {
+      if (match_icase)
+        free((char*)buf);
+      if (mb_properties)
+        free(mb_properties);
+    }
 #endif /* MBS_SUPPORT */
-  return beg - buf;
+  return ret_val;
 }
 
 #if HAVE_LIBPCRE

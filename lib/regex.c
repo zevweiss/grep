@@ -60,6 +60,10 @@
 #ifdef MBS_SUPPORT
 # define CHAR_TYPE wchar_t
 # define US_CHAR_TYPE wchar_t/* unsigned character type */
+# define CHAR_T_SIGN (1 << (sizeof(CHAR_TYPE) * 8 - 1))
+# if defined _AIX
+#  define WCHAR_T_NEED_SIGNEXTEND 1
+# endif /* _AIX */
 # define COMPILED_BUFFER_VAR wc_buffer
 # define OFFSET_ADDRESS_SIZE 1 /* the size which STORE_NUMBER macro use */
 # define CHAR_CLASS_SIZE ((__alignof__(wctype_t)+sizeof(wctype_t))/sizeof(CHAR_TYPE)+1)
@@ -618,10 +622,13 @@ typedef enum
 /* ifdef MBS_SUPPORT, we store NUMBER in 1 element.  */
 
 #ifdef MBS_SUPPORT
-# define EXTRACT_NUMBER(destination, source)				\
-  do {									\
-    (destination) = *(source);						\
-  } while (0)
+# ifdef WCHAR_T_NEED_SIGNEXTEND
+#  define EXTRACT_NUMBER(destination, source)				\
+     (destination) = (*(source) ^ CHAR_T_SIGN) - CHAR_T_SIGN;
+# else
+#  define EXTRACT_NUMBER(destination, source)				\
+     (destination) = *(source)
+# endif /* WCHAR_T_NEED_SIGNEXTEND */
 #else
 # define EXTRACT_NUMBER(destination, source)				\
   do {									\
@@ -638,7 +645,11 @@ extract_number (dest, source)
     US_CHAR_TYPE *source;
 {
 #ifdef MBS_SUPPORT
+# ifdef WCHAR_T_NEED_SIGNEXTEND
+  *dest = (*source ^ CHAR_T_SIGN) - CHAR_T_SIGN;
+# else
   *dest = *source;
+# endif /* WCHAR_T_NEED_SIGNEXTEND */
 #else
   int temp = SIGN_EXTEND_CHAR (*(source + 1));
   *dest = *source & 0377;
