@@ -764,6 +764,7 @@ grep (int fd, char const *file, struct stats *stats)
     }
   if (residue)
     {
+      *buflim++ = eol;
       nlines += grepbuf (bufbeg + save - residue, buflim);
       if (pending)
 	prpending (buflim);
