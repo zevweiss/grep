@@ -5,6 +5,7 @@
 
 2000-01-30 Alain Magloire
 
+	* vms/Makefile.am: added config_vms.h to EXTRA_DIST.
 	* vms/config_vms.h: New File, contains macros specific to VMS and
 	avoid namespace collision with operating system supplied C library.
 	* vms/make.com: Updated.
