@@ -36,6 +36,13 @@
 /* For -w, we also consider _ to be word constituent.  */
 #define WCHAR(C) (ISALNUM(C) || (C) == '_')
 
+#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
+/* We can handle multibyte string.  */
+# define MBS_SUPPORT
+# include <wchar.h>
+# include <wctype.h>
+#endif
+
 /* DFA compiled regexp. */
 static struct dfa dfa;
 
@@ -109,6 +116,52 @@ kwsmusts (void)
 	fatal(err, 0);
     }
 }
+
+#ifdef MBS_SUPPORT
+/* This function allocate the array which correspond to "buf".
+   Then this check multibyte string and mark on the positions which
+   are not singlebyte character nor the first byte of a multibyte
+   character.  Caller must free the array.  */
+static char*
+check_multibyte_string(char const *buf, size_t size)
+{
+  char *mb_properties = malloc(size);
+  mbstate_t last_state, cur_state;
+  int i, front_of_char;
+  memset(&last_state, 0, sizeof(mbstate_t));
+  for (front_of_char = i = 0; i < size; i++)
+    {
+      size_t mbclen;
+      cur_state = last_state;
+      mbclen = mbrlen(buf + front_of_char, i - front_of_char + 1, &cur_state);
+
+      if (mbclen == (size_t) -1 || mbclen == 1)
+	{
+	  /* singlebyte character.  */
+	  mbclen = 1;
+	  front_of_char = i + 1;
+	}
+      else if (mbclen == (size_t) -2)
+	{
+	  /* a part of a multibyte character.  */
+	  mbclen = 0;
+	}
+      else if (mbclen > 1)
+	{
+	  /* the end of a multibyte character.  */
+	  mbclen = 0;
+	  front_of_char = i + 1;
+	  last_state = cur_state;
+	}
+      else
+	{
+	  /* Can't reach.  */
+	}
+      mb_properties[i] = mbclen;
+    }
+  return mb_properties;
+}
+#endif
 
 static void
 Gcompile (char const *pattern, size_t size)
@@ -211,6 +264,11 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
   struct kwsmatch kwsm;
   static struct re_registers regs; /* This is static on account of a BRAIN-DEAD
 				    Q@#%!# library interface in regex.c.  */
+#ifdef MBS_SUPPORT
+  char *mb_properties;
+  if (MB_CUR_MAX > 1 && kwset)
+    mb_properties = check_multibyte_string(buf, size);
+#endif /* MBS_SUPPORT */
 
   buflim = buf + size;
 
@@ -223,7 +281,13 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      /* Find a possible match using the KWset matcher. */
 	      size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
 	      if (offset == (size_t) -1)
-		return (size_t) -1;
+		{
+#ifdef MBS_SUPPORT
+		  if (MB_CUR_MAX > 1)
+		    free(mb_properties);
+#endif
+		  return (size_t) -1;
+		}
 	      beg += offset;
 	      /* Narrow down to the line containing the candidate, and
 		 run it through DFA. */
@@ -232,7 +296,14 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      while (beg > buf && beg[-1] != eol)
 		--beg;
 	      if (kwsm.index < kwset_exact_matches)
-		goto success;
+		{
+#ifdef MBS_SUPPORT
+		  if (MB_CUR_MAX == 1 || mb_properties[beg - buf] != 0)
+		    goto success;
+#else
+	        goto success;
+#endif
+		}
 	      if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
 		continue;
 	    }
@@ -241,7 +312,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      /* No good fixed strings; start with DFA. */
 	      size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
 	      if (offset == (size_t) -1)
-		return (size_t) -1;
+		  return (size_t) -1;
 	      /* Narrow down to the line we've found. */
 	      beg += offset;
 	      end = memchr(beg, eol, buflim - beg);
@@ -307,9 +378,17 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	}
     }
 
-  return -1;
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1 && kwset)
+    free(mb_properties);
+#endif /* MBS_SUPPORT */
+  return (size_t) -1;
 
  success:
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1 && kwset)
+    free(mb_properties);
+#endif /* MBS_SUPPORT */
   *match_size = end - beg;
   return beg - buf;
 }
@@ -344,17 +423,36 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
   register size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
+#ifdef MBS_SUPPORT
+  char *mb_properties;
+  if (MB_CUR_MAX > 1)
+    mb_properties = check_multibyte_string(buf, size);
+#endif /* MBS_SUPPORT */
 
   for (beg = buf; beg <= buf + size; ++beg)
     {
       size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
       if (offset == (size_t) -1)
-	return offset;
+	{
+#ifdef MBS_SUPPORT
+	  if (MB_CUR_MAX > 1)
+	    free(mb_properties);
+#endif /* MBS_SUPPORT */
+	  return offset;
+	}
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1 && mb_properties[offset] == 0)
+	continue; /* It is a part of multibyte character.  */
+#endif /* MBS_SUPPORT */
       beg += offset;
       len = kwsmatch.size[0];
       if (exact)
 	{
 	  *match_size = len;
+#ifdef MBS_SUPPORT
+	  if (MB_CUR_MAX > 1)
+	    free(mb_properties);
+#endif /* MBS_SUPPORT */
 	  return beg - buf;
 	}
       if (match_lines)
@@ -374,7 +472,13 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      {
 		size_t offset = kwsexec (kwset, beg, --len, &kwsmatch);
 		if (offset == (size_t) -1)
-		  return offset;
+		  {
+#ifdef MBS_SUPPORT
+		    if (MB_CUR_MAX > 1)
+		      free(mb_properties);
+#endif /* MBS_SUPPORT */
+		    return offset;
+		  }
 		try = beg + offset;
 		len = kwsmatch.size[0];
 	      }
@@ -385,6 +489,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	goto success;
     }
 
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    free(mb_properties);
+#endif /* MBS_SUPPORT */
   return -1;
 
  success:
@@ -393,6 +501,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
   while (buf < beg && beg[-1] != eol)
     --beg;
   *match_size = end - beg;
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    free(mb_properties);
+#endif /* MBS_SUPPORT */
   return beg - buf;
 }
 

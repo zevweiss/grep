@@ -1,5 +1,14 @@
 2001-02-16  Alain Magloire
 
+	Patch from Isamu Hasegawa, for multibyte support.
+
+	* configure.in : Add check for mbrtowc.
+	* src/search.c (check_multibyte_string) : new function.
+	Support for multibyte string.
+	(MBS_SUPPORT) : new macro.
+
+2001-02-16  Alain Magloire
+
 	* djgpp/config.bat : Fix for 4dos.com.
 	* m4/dosfile.m4 (HAVE_DOS_FILE_CONTENTS) : Was not set.
 	Bugs noted and patched by Juan Manuel Guerrero.
