@@ -40,6 +40,12 @@
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
+#ifdef EISDIR
+# define is_EISDIR(e) ((e) == EISDIR)
+#else
+# define is_EISDIR(e) 0
+#endif
+
 /* if non-zero, display usage information and exit */
 static int show_help;
 
@@ -592,7 +598,8 @@ grep (fd, file)
 
   if (fillbuf (save) < 0)
     {
-      error (filename, errno);
+      if (! (is_EISDIR (errno) && suppress_errors))
+	error (filename, errno);
       return nlines;
     }
 
@@ -637,7 +644,8 @@ grep (fd, file)
 	nlscan (beg);
       if (fillbuf (save) < 0)
 	{
-	  error (filename, errno);
+	  if (! (is_EISDIR (errno) && suppress_errors))
+	    error (filename, errno);
 	  goto finish_grep;
 	}
     }
@@ -677,10 +685,8 @@ grepfile (file)
 	{
 	  int e = errno;
 	    
-#ifdef EISDIR
-	  if (e == EISDIR && directories == RECURSE_DIRECTORIES)
+	  if (is_EISDIR (e) && directories == RECURSE_DIRECTORIES)
 	    return grepdir (file, BUFSIZ);
-#endif
 
 	  if (!suppress_errors)
 	    {
@@ -761,7 +767,10 @@ grepdir (dir, name_size)
   if (! name_space)
     {
       if (errno)
-	error (dir, errno);
+	{
+	  if (!suppress_errors)
+	    error (dir, errno);
+	}
       else
 	fatal (_("Memory exhausted"), 0);
     }
@@ -1157,7 +1166,7 @@ main (argc, argv)
       printf (_("grep (GNU grep) %s\n"), VERSION);
       printf ("\n");
       printf (_("\
-Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"));
+Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"));
       printf (_("\
 This is free software; see the source for copying conditions. There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));

@@ -1,3 +1,22 @@
+1998-11-09  Paul Eggert
+
+	* src/grep.1: Fix `Last Change' of output by generating the date
+	from the RCS Id.
+
+	* src/grep.c (is_EISDIR): New macro.
+	(grep): If -s, suppress errors from trying to read directories.
+	(grepfile): Use is_EISDIR to simplify code.
+	(grepdir): If -s, suppress errors from trying to read directories.
+
+	* src/grep.1: Fix -q -r -s problems; describe BSD grep better.
+
+	* src/grep.c (main): Update copyright.
+
+1998-11-08 Alain Magloire
+
+	* src/grep.1: `prep.ai.mit.edu' should be replaced with `gnu.org'.
+	Nit from Paul Eggert.
+
 1998-11-06 Alain Magloire
 
 	* src/grep.c: The Matcher is not set to argv[0] but
@@ -6,7 +25,7 @@
 	* aclocal/: NEW dir. provides our own *.m4
 
 	* configure.in: Move Paul's Large Files to AC_LFS.(aclocal/lfs.m4)
-	Taken from Jim meyering fileutils.
+	Taken from Jim Meyering fileutils.
 
 1998-11-05 Alain Magloire
 
@@ -28,7 +47,7 @@
 1998-11-03 Alain Magloire
 
 	* src/dfa.c: HP-UX define clrbit/setbit as macros in <sys/param.h>
-	we #undef if defined.
+	#undef if defined.
 	Fixed by Andreas Ley and Philippe Defert.
 
 	* src/grep.1 : mention that -s follows POSIX.2 behavior.

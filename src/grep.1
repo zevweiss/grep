@@ -1,4 +1,9 @@
-.TH GREP 1 "1992 September 10" "GNU Project"
+.\" grep man page
+.de Id
+.ds Dt \\$4
+..
+.Id $Id: grep.1,v 1.6 1998/11/10 00:29:38 alainm Exp $
+.TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
 .SH SYNOPSIS
@@ -167,20 +172,44 @@ stop on the first match.
 Prefix each line of output with the line number
 within its input file.
 .TP
-.B \-q, --quiet
+.B \-q, --quiet, --silent
 Quiet; suppress normal output. The scanning will stop
 on the first match.
+Also see the
+.B \-s
+or
+.B --no-messages
+option below.
 .TP
-.B \-q, --recursive
+.B \-r, --recursive
 Read all files under each directory, recursively;
 this is equivalent to the
 .B "\-d recurse"
 option.
 .TP
-.B \-s, --silent
+.B \-s, --no-messages
 Suppress error messages about nonexistent or unreadable files.
-Note that GNU grep follows POSIX.2 behavior, Shell scripts intended
-to be portable to BSD grep should redirect output to /dev/null instead.
+Portability note: unlike GNU
+.BR grep ,
+BSD
+.B grep
+does not comply with POSIX.2, because BSD
+.B grep
+lacks a
+.B \-q
+option and its
+.B \-s
+option behaves like GNU
+.BR grep 's
+.B \-q
+option.
+Shell scripts intended to be portable to BSD
+.B grep
+should avoid both
+.B \-q
+and
+.B \-s
+and should redirect output to /dev/null instead.
 .TP
 .B \-a, --text
 Do not suppress output lines that contain binary data.
@@ -433,7 +462,7 @@ other system errors.
 .SH BUGS
 .PP
 Email bug reports to
-.BR bug-gnu-utils@prep.ai.mit.edu .
+.BR bug-gnu-utils@gnu.org .
 Be sure to include the word ``grep'' somewhere in the ``Subject:'' field.
 .PP
 Large repetition counts in the
