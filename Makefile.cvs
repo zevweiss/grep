@@ -4,9 +4,9 @@ SRCDIR = $(shell pwd)
 all: autogen.sh configure.in
 	./autogen.sh
 
-grep-$(VERSION).tar: cvs-clean all
+grep-$(VERSION).tar:
 	[ -e configure.in ] || ( echo Must be run from grep source dir ; exit 1 )
-	cp -aR $(SRCDIR) /tmp/grep-$(VERSION) && cd /tmp && tar cf $(SRCDIR)/grep-$(VERSION).tar grep-$(VERSION)
+	rm -rf /tmp/grep-$(VERSION) && cp -aR $(SRCDIR) /tmp/grep-$(VERSION) && cd /tmp/grep-$(VERSION) && make -f Makefile.cvs cvs-clean && make -f Makefile.cvs && rm -rf autom4te.cache && (find . -type d -name CVS |xargs rm -rf) && cd .. && tar chf $(SRCDIR)/grep-$(VERSION).tar grep-$(VERSION)
 
 grep-$(VERSION).tar.bz2: grep-$(VERSION).tar
 	bzip2 -9f grep-$(VERSION).tar
