@@ -1,3 +1,8 @@
+2005-02-08  Bruno Haible  <bruno@clisp.org>  (tiny change)
+
+	* src/kwset.h (kwsincr, kwsprep): Change return type to 'const char *'.
+	* src/kwset.c (kwsincr, kwsprep): Likewise.
+
 2005-02-08  Arnold D. Robbins  <arnold@skeeve.com>
 	    Stepan Kasal  <kasal@ucw.cz>
 

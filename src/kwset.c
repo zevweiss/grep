@@ -1,5 +1,5 @@
 /* kwset.c - search for any of a set of keywords.
-   Copyright 1989, 1998, 2000 Free Software Foundation, Inc.
+   Copyright 1989, 1998, 2000, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ kwsalloc (char const *trans)
 
 /* Add the given string to the contents of the keyword set.  Return NULL
    for success, an error message otherwise. */
-char *
+const char *
 kwsincr (kwset_t kws, char const *text, size_t len)
 {
   struct kwset *kwset;
@@ -371,7 +371,7 @@ treenext (struct tree const *tree, struct trie *next[])
 
 /* Compute the shift for each trie node, as well as the delta
    table and next cache for the given keyword set. */
-char *
+const char *
 kwsprep (kwset_t kws)
 {
   register struct kwset *kwset;

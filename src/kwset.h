@@ -1,5 +1,5 @@
 /* kwset.h - header declaring the keyword set library.
-   Copyright (C) 1989, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1989, 1998, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ extern kwset_t kwsalloc PARAMS((char const *));
 /* Incrementally extend the keyword set to include the given string.
    Return NULL for success, or an error message.  Remember an index
    number for each keyword included in the set. */
-extern char *kwsincr PARAMS((kwset_t, char const *, size_t));
+extern const char *kwsincr PARAMS((kwset_t, char const *, size_t));
 
 /* When the keyword set has been completely built, prepare it for
    use.  Return NULL for success, or an error message. */
-extern char *kwsprep PARAMS((kwset_t));
+extern const char *kwsprep PARAMS((kwset_t));
 
 /* Search through the given buffer for a member of the keyword set.
    Return a pointer to the leftmost longest match found, or NULL if
