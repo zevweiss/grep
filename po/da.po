@@ -1,26 +1,26 @@
-# Mensagens em Português do Brazil (pt_BR) para o grep da GNU.
-# Copyright (C) 1997 Free Software Foundation, Inc.
-# Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>, 1997
-# Based on Spanish Version
+# Danish messages for GNU Grep version 2.4f.
+# Copyright (C) 1996, 1997, 1998 Free Software Foundation, Inc.
+# Kenneth Christiansen <kenneth@gnome.org>, 1999.
+# Keld Simonsen <keld@dkuug.dk>, 2000
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.4f\n"
+"Project-Id-Version: grep 2.4f.da.po\n"
 "POT-Creation-Date: 2000-02-02 01:04-0500\n"
-"PO-Revision-Date: 2000-10-27 16:55-02:00\n"
-"Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
-"Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
+"PO-Revision-Date: 2000-10-14 02:04+02:00\n"
+"Last-Translator: Birger Langkjer <birger.langkjer@image.dk>\n"
+"Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
 #: src/dfa.c:163 src/dfa.c:174 src/dfa.c:185 src/grep.c:902
 msgid "Memory exhausted"
-msgstr "Memória esgotada"
+msgstr "Hukommelse opbrugt"
 
 #: src/dfa.c:448
 msgid "Unfinished \\ escape"
-msgstr "escape inacabado"
+msgstr "Ufærdig \\-beskyttelse"
 
 #. Cases:
 #. {M} - exact count
@@ -28,133 +28,133 @@ msgstr "escape inacabado"
 #. {M,N} - M through N
 #: src/dfa.c:581 src/dfa.c:587 src/dfa.c:597 src/dfa.c:605 src/dfa.c:620
 msgid "unfinished repeat count"
-msgstr "contador de repetição inválido"
+msgstr "ufærdigt gentagelsesantal"
 
 #: src/dfa.c:594 src/dfa.c:611 src/dfa.c:619 src/dfa.c:623
 msgid "malformed repeat count"
-msgstr "contador de repetição inválido"
+msgstr "ugyldigt gentagelsesantal"
 
 #: src/dfa.c:688 src/dfa.c:691 src/dfa.c:718 src/dfa.c:722 src/dfa.c:723
 #: src/dfa.c:726 src/dfa.c:739 src/dfa.c:740
 msgid "Unbalanced ["
-msgstr "[ desbalanceado"
+msgstr "Ubalanceret ["
 
 #: src/dfa.c:886
 msgid "Unbalanced ("
-msgstr "( desbalanceado"
+msgstr "Ubalanceret ("
 
 #: src/dfa.c:1000
 msgid "No syntax specified"
-msgstr "Sintaxe não especificada"
+msgstr "Ingen syntaks angivet"
 
 #: src/dfa.c:1008
 msgid "Unbalanced )"
-msgstr ") desbalanceado"
+msgstr "Ubalanceret )"
 
 #: src/dfa.c:1994
 msgid "out of memory"
-msgstr "memória esgotada"
+msgstr "ikke nok hukommelse"
 
 #: src/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: opção `%s' é ambígua\n"
+msgstr "%s: flaget '%s' er flertydigt\n"
 
 #: src/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: opção `--%s' não aceita um argumento\n"
+msgstr "%s: flaget '--%s' tillader ikke argumenter\n"
 
 #: src/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: opção `%c%s' não aceita um argumento\n"
+msgstr "%s: flaget '%c%s' tillader ikke argumenter\n"
 
 #: src/getopt.c:723 src/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: opção `%s' requer um argumento\n"
+msgstr "%s: flaget '%s' kræver et argument\n"
 
 #. --option
 #: src/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: opção `--%s' não reconhecida\n"
+msgstr "%s: ukendt flag '--%s'\n"
 
 #. +option or -option
 #: src/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: opção `%c%s' não reconhecida\n"
+msgstr "%s: ukendt flag '%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
 #: src/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: opção ilegal -- %c\n"
+msgstr "%s: ulovligt flag -- %c\n"
 
 #: src/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: opção inválida -- %c\n"
+msgstr "%s: ugyldigt flag -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: src/getopt.c:815 src/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: opção espera um argumento -- %c\n"
+msgstr "%s: flaget kræver et argument -- %c\n"
 
 #: src/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: opção `-W %s' é ambígua\n"
+msgstr "%s: flaget '-W %s' er flertydigt\n"
 
 #: src/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: opção `-W %s' não aceita um argumento\n"
+msgstr "%s: flaget '-W %s' tillader ikke argumenter\n"
 
 #: src/grep.c:185 src/grep.c:200 src/grep.c:293 src/grep.c:399 src/kwset.c:180
 #: src/kwset.c:186 src/obstack.c:471
 msgid "memory exhausted"
-msgstr "memória esgotada"
+msgstr "hukommelse opbrugt"
 
 #: src/grep.c:550 src/grep.c:1441
 msgid "writing output"
-msgstr "escrevendo saída"
+msgstr "skriver uddata"
 
 #: src/grep.c:777
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "Arquivo binário %s casa com o padrão\n"
+msgstr "Binær fil %s stemmer\n"
 
 #: src/grep.c:791
 msgid "(standard input)"
-msgstr "(entrada padrão)"
+msgstr "(standard inddata)"
 
 #: src/grep.c:887
 #, c-format
 msgid "%s: warning: %s: %s\n"
-msgstr "%s: aviso: %s: %s\n"
+msgstr "%s: advarsel: %s: %s\n"
 
 #: src/grep.c:888
 msgid "recursive directory loop"
-msgstr "loop de diretório recursivo"
+msgstr "rekursiv katalogsløjfe"
 
 #: src/grep.c:938
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "Uso: %s [opção]... padrão [arquivo]...\n"
+msgstr "Brug: %s [FLAG]... MØNSTER [FIL]...\n"
 
 #: src/grep.c:939
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "Tente `%s --help' para mais informações.\n"
+msgstr "Prøv '%s --help' for mere information.\n"
 
 #: src/grep.c:943
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "Uso: %s [opção]... padrão [arquivo]...\n"
+msgstr "Brug: %s [FLAG]... MØNSTER [FIL] ...\n"
 
 #: src/grep.c:944
 #, c-format
@@ -164,10 +164,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"Procura por PADRÃO em cada ARQUIVO ou entrada padrão.\n"
-"Exemplo: %s -i 'hello world' menu.h main.c\n"
+"Søg efter MØNSTER i hver en FIL eller i standard inddata.\n"
+"Eksempel: %s -i 'hello verden' menu.h main.c\n"
 "\n"
-"Seleção de expressão regular e interpretação:\n"
+"Regexp tilvalg og betydning:\n"
 
 #: src/grep.c:949
 msgid ""
@@ -175,9 +175,9 @@ msgid ""
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     PADRÃO é um expressão regular extendida\n"
-"  -F, --fixed-strings       PADRÃO é uma cadeia fixa separada por nova linha\n"
-"  -G, --basic-regexp        PADRÃO é um expressão regular básica\n"
+"  -E, --extended-regexp     MØNSTER er et udvidet regulært udtryk\n"
+"  -F, --fixed-strings       MØNSTER er et sæt af nylinje-separerede strenge\n"
+"  -G, --basic-regexp        MØNSTER er et basalt regulært udtryk\n"
 
 #: src/grep.c:953
 msgid ""
@@ -188,12 +188,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=PADRÃO      use PADRÃO como uma expressão regular\n"
-"  -f, --file=ARQUIVO       obtain PADRÃO from FILE\n"
-"  -i, --ignore-case        ignora caixa do texto\n"
-"  -w, --word-regexp        força PADRÃO encontrar apenas palavras inteiras\n"
-"  -x, --line-regexp        força PADRÃO encontrar apenas linhas inteiras\n"
-"  -z, --null-data          uma linha de dados acaba com 0 bytes, não nova linha\n"
+"  -e, --regexp=MØNSTER      brug MØNSTER som et regulært udtryk\n"
+"  -f, --file=FIL            tag MØNSTER fra FIL\n"
+"  -i, --ignore-case         ignorér forskelle mellem store og små bogstaver\n"
+"  -w, --word-regexp         få MØNSTER til at passe kun på hele ord\n"
+"  -x, --line-regexp         få MØNSTER til at passe kun på hele linjer\n"
+"  -z, --null-data           en datalinje slutter med en 0 byte, ikke ny linje\n"
 
 #: src/grep.c:960
 msgid ""
@@ -206,12 +206,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"Miscelânea:\n"
-"  -s, --no-messages         suprime mensagens de erro\n"
-"  -v, --revert-match        seleciona somente linhas não coincidentes\n"
-"  -V, --version             mostra informações sobre versão e sai\n"
-"      --help                exibe esta ajuda e sai\n"
-"      --mmap                usa entrada de memória mapeada se possível\n"
+"Forskelligt:\n"
+"  -s, --no-messages         undertryk fejlmeddelser\n"
+"  -v, --invert-match        vælg linjer der ikke passer\n"
+"  -V, --version             udskriv versionsinformation og afslut\n"
+"      --help                vis denne hjælpetekst og afslut\n"
+"      --mmap                brug inddata via hukommelse om muligt\n"
 
 #: src/grep.c:968
 msgid ""
@@ -235,26 +235,23 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"Controle de saída:\n"
-"  -b, --byte-offset         exibe o deslocamento juntamente com a saída\n"
-"  -n, --line-number         exibe o número da linha juntamente com a saída\n"
-"  -H, --with-filename       exibe o nome do arquivo para cada padrão\n"
-"                            encontrado\n"
-"  -h, --no-filename         inibe o nome de arquivo na saída\n"
-"  -q, --quiet, --silent     inibe todas as saídas normais\n"
-"  -a, --text                não suprima saída de arquivos binários\n"
-"      --binary-files=TIPO   assume que arquivos binários são TIPO\n"
-"                            TIPO é 'binary'. 'text', ou 'without-match'.\n"
-"  -d, --directories=AÇÃO    como tratar diretórios\n"
-"                            AÇÃO pode ser: 'read' (ler), 'recurse' (recursivo),\n"
-"                            ou 'skip' (não considerar).\n"
-"  -r, --recursive           equivalente a --directories=recurse.\n"
-"  -L, --files-without-match exibe somente os nomes dos arquivos onde não foi\n"
-"                            encontrado o padrão\n"
-"  -l, --files-with-matches  exibe somente os nomes dos arquivos onde foi\n"
-"                            encontrado o padrão\n"
-"  -c, --count               exibe o número de padrões encontrados por arquivo\n"
-"  -Z, --null                mostra 0 bytes depois do nome do ARQUIVO\n"
+"Output control:\n"
+"  -b, --byte-offset         udskriv byte afsættet i uddatalinjer\n"
+"  -n, --line-number         udskriv linjenummer i uddatalinjer\n"
+"  -H, --with-filename       udskriv filnavn for hver træffer\n"
+"  -h, --no-filename         undgå indledende filnavn i uddata\n"
+"  -q, --quiet, --silent     undgå al normal uddata\n"
+"      --binary-files=TYPE   antag at binære filer er TYPE\n"
+"                            TYPE er 'binary', 'text', eller 'without-match'.\n"
+"  -a, --text                det samme som --binary-files=text\n"
+"  -I                        det samme som --binary-files=without-match\n"
+"  -d, --directories=HANDLING hvordan kataloger skal behandles\n"
+"                            HANDLING er 'read', 'recurse', eller 'skip'.\n"
+"  -r, --recursive           det samme som --directories=recurse.\n"
+"  -L, --files-without-match udskriv kun FIL navne der ikke indeholder træffere match\n"
+"  -l, --files-with-matches  udskriv kun FIL navne der indeholder træffere\n"
+"  -c, --count               udskriv kun antal af linjer med træffere per FIL\n"
+"  -Z, --null                udskriv en 0 byte efter FIL navn\n"
 
 #: src/grep.c:987
 msgid ""
@@ -274,44 +271,40 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Controle de contexto:\n"
-"  -B, --before-context=NUM  exibe NUM linhas até o padrão\n"
-"  -A, --after-context=NUM   exibe NUM linhas após o padrão\n"
-"  -C, --context=[NUM]       exibe NUM (default 2) linhas do padrão\n"
-"                            a menos que anulada por -A ou -B\n"
-"  -NUM                      o mesmo que --context=NUM\n"
-"  -U, --binary              não elimina caracteres CR em final de linha\n"
-"                            (MSDOS)\n"
-"  -u, --unix-byte-offsets   relata deslocamentos como se não existissem\n"
-"                            CRs (MSDOS)\n"
+"Kontekst bestemmelse:\n"
+"  -B, --before-context=NUM  udskriv NUM linjer med foregående tekst\n"
+"  -A, --after-context=NUM   udskriv NUM linjer med efterfølgende tekst\n"
+"  -C, --context[=NUM]       udskriv NUM (forvalgt 2) linjer af omgivende tekst\n"
+"                            medmindre andet angivet med -A eller -B\n"
+"  -NUM                      det samme som --context=NUM\n"
+"  -U, --binary              fjern ikke CR tegn ved linieslut (MSDOS)\n"
+"  -u, --unix-byte-offsets   rapportér afsæt som om CR tegn ikke var der (MSDOS)\n"
 "\n"
-"`egrep' é o mesmo que `grep -E', `fgrep' é `grep -F'.\n"
-"Se não informado o ARQUIVO, ou se ARQUIVO é -, lê da entrada padrão.\n"
-"Se menos que dois arquivos forem especificados, assume-se -h.\n"
-"Retorna 0 se encontra o padrão, 1 se não encontra.\n"
-"Retorna 2 se houver erro de sintaxe ou erros do sistema.\n"
+"`egrep' betyder `grep -E'.  `fgrep' betyder `grep -F'.\n"
+"Uden en FIL, eller hvis FIL er -, læs standard inddata.  Hvis mindre end\n"
+"to FILer er angivet, antag -h.  Afslutningsstatus er 0 ved træffer, 1 ved ingen træffer,\n"
+"og 2 ved problemer.\n"
 
 #: src/grep.c:1002
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nInforme problemas para <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nRapportér fejl til <bug-gnu-utils@gnu.org>.\n"
 
 #: src/grep.c:1012
 msgid "conflicting matchers specified"
-msgstr "padrões de procura especificados conflitam"
+msgstr "konfliktende søgeudtryk angivet"
 
 #: src/grep.c:1203 src/grep.c:1210 src/grep.c:1219
 msgid "invalid context length argument"
-msgstr "argumento tamanho do contexto inválido"
+msgstr "ugyldigt kontekstlængdeargument"
 
 #: src/grep.c:1273
 msgid "unknown directories method"
-msgstr "método desconhecido de diretórios"
+msgstr "ukendt katalogmetode"
 
 #: src/grep.c:1358
 msgid "unknown binary-files type"
-msgstr "tipo de arquivo binário desconhecido"
+msgstr "ukendt binær filtype"
 
-# msgstr "la expresión a buscar ya fue especificada"
 #: src/grep.c:1378
 #, c-format
 msgid "%s (GNU grep) %s\n"
@@ -319,49 +312,13 @@ msgstr "%s (GNU grep) %s\n"
 
 #: src/grep.c:1380
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
+msgstr "Ophavsret 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:1382
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Este é um free software; olhe o fonte para as condições de cópia. Não \n"
-"existe garantia; nem mesmo para cópias compradas ou adaptadas para um \n"
-"propósito particular\n"
-
-#~ msgid "option %s"
-#~ msgstr "opção %s"
-
-#~ msgid " with arg %s"
-#~ msgstr "com argumento %s"
-
-#~ msgid "digits occur in two different argv-elements.\n"
-#~ msgstr "dígitos ocorrem em dois elementos diferentes de argv.\n"
-
-#~ msgid "option %c\n"
-#~ msgstr "opção %c\n"
-
-#~ msgid "option a\n"
-#~ msgstr "opção a\n"
-
-#~ msgid "option b\n"
-#~ msgstr "opção b\n"
-
-#~ msgid "option c with value `%s'\n"
-#~ msgstr "opção c com valor `%s'\n"
-
-#~ msgid "option d with value `%s'\n"
-#~ msgstr "opção d com valor `%s'\n"
-
-#~ msgid "?? getopt returned character code 0%o ??\n"
-#~ msgstr "?? getopt retornou caracter código 0%o ??\n"
-
-#~ msgid "non-option ARGV-elements: "
-#~ msgstr "elementos ARGV que não são opções: "
-
-#~ msgid "memory exhausted\n"
-#~ msgstr "memória esgotada\n"
-
-#~ msgid "you may specify only one of -E, -F, or -G"
-#~ msgstr "especifique somente uma das opções -E, -F, ou -G"
+"Dette er frit programmel, se kildekoden for kopieringsbetingelser.  Der\n"
+"er INGEN garanti, ikke engang for SALGBARHED eller EGNETHED FOR NOGET \n"
+"SPECIELT FORMÅL.\n"

@@ -2,12 +2,12 @@
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Thomas Olsson <cid95tho@student1.lu.se>, 1996.
 # Daniel Resare <daniel@resare.com>, 1998, 1999, 2000, 2001
-# $Id: sv.po,v 1.20 2001/08/31 00:45:25 alainm Exp $
+# $Id: sv.po,v 1.21 2002/03/13 13:45:56 bero Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.5e\n"
-"POT-Creation-Date: 2001-07-31 16:17-0400\n"
+"POT-Creation-Date: 2001-03-07 00:02-0500\n"
 "PO-Revision-Date: 2001-08-23 09:46+02:00\n"
 "Last-Translator: Daniel Resare <daniel@resare.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -15,18 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
 msgid "Memory exhausted"
 msgstr "Minnet slut"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
-#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
-#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
-#: src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
+#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
+#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
+#: src/dfa.c:1045 src/dfa.c:1046
 msgid "Unbalanced ["
 msgstr "Obalanserad ["
 
-#: src/dfa.c:741
+#: src/dfa.c:738
 msgid "Unfinished \\ escape"
 msgstr "Oavslutad \\-sekvens"
 
@@ -34,32 +34,32 @@ msgstr "Oavslutad \\-sekvens"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
 msgid "unfinished repeat count"
 msgstr "oavslutad repetitionsräknare"
 
-#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
 msgid "malformed repeat count"
 msgstr "felformaterad repetionsräknare"
 
-#: src/dfa.c:1239
+#: src/dfa.c:1232
 msgid "Unbalanced ("
 msgstr "Obalanserad ("
 
-#: src/dfa.c:1364
+#: src/dfa.c:1357
 msgid "No syntax specified"
 msgstr "Ingen specificerad syntax"
 
-#: src/dfa.c:1372
+#: src/dfa.c:1365
 msgid "Unbalanced )"
 msgstr "Obalanserad )"
 
-#: src/dfa.c:2942
+#: src/dfa.c:2933
 msgid "out of memory"
 msgstr "minnet slut"
 
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
-#: src/search.c:209 src/search.c:293
+#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
+#: src/search.c:103 src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "minnet slut"
 
@@ -67,48 +67,48 @@ msgstr "minnet slut"
 msgid "invalid context length argument"
 msgstr "ogiltigt argument till -A, -B eller -C"
 
-#: src/grep.c:458
+#: src/grep.c:466
 msgid "input is too large to count"
 msgstr "det är för mycket indata för att räkna"
 
-#: src/grep.c:531
+#: src/grep.c:539
 msgid "writing output"
 msgstr "skriver utdata"
 
-#: src/grep.c:804
+#: src/grep.c:812
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Binär fil %s matchar\n"
 
-#: src/grep.c:818
+#: src/grep.c:826
 msgid "(standard input)"
 msgstr "(standard in)"
 
-#: src/grep.c:923
+#: src/grep.c:931
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "varning: %s: %s\n"
 
-#: src/grep.c:924
+#: src/grep.c:932
 msgid "recursive directory loop"
 msgstr "rekursiv katalogloop"
 
-#: src/grep.c:972
+#: src/grep.c:980
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
 
-#: src/grep.c:974
+#: src/grep.c:982
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Försök med \"%s --help\" för mer information\n"
 
-#: src/grep.c:979
+#: src/grep.c:987
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
 
-#: src/grep.c:980
+#: src/grep.c:988
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -121,7 +121,7 @@ msgstr ""
 "\n"
 "Val och tolkning av reguljära uttryck:\n"
 
-#: src/grep.c:985
+#: src/grep.c:993
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -129,12 +129,11 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 " -E, --extended-regexp      MÖNSTER är ett utökat reguljärt uttryck\n"
-" -F, --fixed-strings        MÖNSTER är ett antal strängar separerade med "
-"nyrad\n"
+" -F, --fixed-strings        MÖNSTER är ett antal strängar separerade med nyrad\n"
 " -G, --basic-regexp         MÖNSTER är ett enkelt reguljärt uttryck\n"
 " -P, --perl-regexp          MÖNSTER är ett reguljärt uttryck som i Perl\n"
 
-#: src/grep.c:990
+#: src/grep.c:998
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -151,7 +150,7 @@ msgstr ""
 " -z, --null-data            en rad indata begränsas av en nolltecken, inte\n"
 "                            av ett nyrad-tecken\n"
 
-#: src/grep.c:997
+#: src/grep.c:1005
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -170,8 +169,7 @@ msgstr ""
 "      --mmap                använd om möjligt minesmappning vid\n"
 "                            läsning av indata.\n"
 
-#: src/grep.c:1005
-#, fuzzy
+#: src/grep.c:1013
 msgid ""
 "\n"
 "Output control:\n"
@@ -189,10 +187,9 @@ msgid ""
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examined\n"
-"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be "
-"skipped.\n"
+"      --include=PATTERN     files that match PATTERN will be examine\n"
+"      --exclude=PATTERN     files that match PATTERN will be skip.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -208,8 +205,7 @@ msgstr ""
 "  -h, --no-filename         skriv inte filnamn vid varje visad rad\n"
 "  -q, --quiet, --silent     undvik all normal utskrift\n"
 "      --binary-files=TYP    antag att binära filer är av TYP\n"
-"                            TYP är \"binary\", \"text\" eller "
-"\"without-match\"\n"
+"                            TYP är \"binary\", \"text\" eller \"without-match\"\n"
 "  -a, --text                motsvarar --binary-files=text\n"
 "  -I                        motsvarar --binary-files=without-match\n"
 "  -d, --directories=ÅTGÄRD  hur kataloger skall hanteras\n"
@@ -220,11 +216,10 @@ msgstr ""
 "      --exclude-from=FIL    filer som matchar mönster i FIL hoppas över\n"
 "  -L, --files-without-match skriv bara ut FILnamn utan träffar\n"
 "  -l, --files-with-matches  skriv bara ut FILnamn med träffar\n"
-"  -c, --count               skriv för varje FIL bara ut antal träffade "
-"rader\n"
+"  -c, --count               skriv för varje FIL bara ut antal träffade rader\n"
 "  -Z, --null                skriv 0-byte efter FILnamn\n"
 
-#: src/grep.c:1029
+#: src/grep.c:1037
 msgid ""
 "\n"
 "Context control:\n"
@@ -256,41 +251,39 @@ msgstr ""
 "två FILer är angivna, sätts flaggan -h. Programmet returnerar 0 om något\n"
 "matchar, 1 om inget matchade och 2 om något fel uppstått.\n"
 
-#: src/grep.c:1044
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+#: src/grep.c:1052
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Rapportera buggar till <bug-gnu-utils@gnu.org>.\n"
 "Skicka anmärkningar på översättningar till <sv@li.org>\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1062
 msgid "conflicting matchers specified"
 msgstr "motstridiga söksträngar specificerade"
 
-#: src/grep.c:1347
+#: src/grep.c:1355
 msgid "unknown directories method"
 msgstr "okänd metod gällande kataloger"
 
-#: src/grep.c:1414
+#: src/grep.c:1422
 msgid "invalid max count"
 msgstr "ogiltigt värde för antal träffar"
 
-#: src/grep.c:1464
+#: src/grep.c:1472
 msgid "unknown binary-files type"
 msgstr "okänd binärfiltyp"
 
-#: src/grep.c:1535
+#: src/grep.c:1543
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1537
+#: src/grep.c:1545
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1539
+#: src/grep.c:1547
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -299,11 +292,11 @@ msgstr ""
 "finns INGEN garanti, inte ens för SÄLJBARHET eller LÄMPLIGHET FÖR NÅGOT\n"
 "SPECIELLT ÄNDAMÅL.\n"
 
-#: src/search.c:606
+#: src/search.c:623
 msgid "The -P option is not supported"
 msgstr "Flaggan -P stöds inte"
 
-#: src/search.c:619
+#: src/search.c:636
 msgid "The -P and -z options cannot be combined"
 msgstr "Flaggorna -P och -z kan inte kombineras"
 
@@ -388,10 +381,10 @@ msgstr "%s: flaggan \"-W %s\" tillåter inget argument\n"
 #. MARK).  A British English Unicode locale should instead
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
-#: lib/quotearg.c:259
+#: lib/quotearg.c:265
 msgid "`"
 msgstr "\""
 
-#: lib/quotearg.c:260
+#: lib/quotearg.c:266
 msgid "'"
 msgstr "\""

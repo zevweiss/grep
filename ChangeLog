@@ -2,6 +2,7 @@
 	* configure.in, m4/regex.m4, m4/malloc.m4, m4/realloc.m4:
 	  Don't set LIBOBJS directly, autoconf 2.53 doesn't like it
 	* intl/*: Sync with gettext 0.11
+	* po/*: Sync with translation project
 
 2002-01-23  Bernhard Rosenkraenzer <bero@redhat.com>
 	* configure.in: Version 2.5g
