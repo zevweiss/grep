@@ -1,3 +1,22 @@
+2000-01-30 Alain Magloire
+
+	* doc/grep.1:  corrected typo.
+	Noted by Ruslan Ermilob.
+
+2000-01-30 Alain Magloire
+
+	* vms/config_vms.h: New File, contains macros specific to VMS and
+	avoid namespace collision with operating system supplied C library.
+	* vms/make.com: Updated.
+	* src/getpagesize.h: New macros for VMS.
+	* src/vms_fab.c: Cast to some assigments.
+	* src/vms_fab.h: Added new include files.
+	Those patches were provided by zinser@decus.de (Martin).
+
+2000-01-30  Paul Eggert
+
+        * src/grep.c (main): Update copyright notice.
+
 2000-01-28  Alain Magloire
 
 	* src/grep.c (usage):  The example "%s -i 'hello.*world' could
@@ -6,14 +25,14 @@
 
 	* configure.in: Reenable, jm_INCLUDE_REGEX() since we now
 	track GNU lib C.
-	* src/Makefile.am: EXTRA_DIST new macros with regex.c regex.h. 
+	* src/Makefile.am: EXTRA_DIST new macros with regex.c regex.h.
 	Requested By Ulrich Drepper.
-  
+
 2000-01-25  Paul Eggert
 
 	* src/grep.c (grep): If the final byte of an input file is not
 	a newline, grep now silently supplies one.
-	* doc/grep.texi, NEWS: Likewise.  
+	* doc/grep.texi, NEWS: Likewise.
 
 2000-01-25  Paul Eggert
 

@@ -8,7 +8,7 @@ AC_DEFINE(GREP)
 AC_PREREQ(2.13)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.4d)
+AM_INIT_AUTOMAKE(grep, 2.4e)
 AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Checks for programs.
@@ -79,7 +79,7 @@ dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(src/regex.c)
 
 dnl Be very vocal about the fact, we are not using regex.c part of the dist.
-dnl Some people ask for this because there are so many variants 
+dnl Some people ask for this because there are so many variants
 dnl of Linux machines with different libc.
 if test $ac_use_included_regex = no; then
 	AC_MSG_WARN(Included src/regex.c not use)

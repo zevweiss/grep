@@ -6,6 +6,19 @@
 #include <rms.h>
 #include <ssdef.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <starlet.h>
+
+#if defined(VMS) && defined(__DECC) /* need function prototype */
+# if (__DECC_VER<50790004)           /* have an own one         */
+char *alloca(unsigned int);
+# else
+#  define alloca __ALLOCA
+# endif
+#endif
+
 
 struct FAB fab;
 struct NAM nam;
