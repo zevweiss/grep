@@ -4,7 +4,6 @@ AUTOMAKE_OPTIONS=no-dependencies
 LN = ln
 
 bin_PROGRAMS = grep egrep fgrep
-common_SOURCES = grep.c
 grep_SOURCES = grep.h \
                dfa.c dfa.h \
                kwset.c  kwset.h \
@@ -29,8 +28,8 @@ man_MANS = grep.1 fgrep.1 egrep.1
 
 EXTRA_DIST = grep.c \
              regex.c regex.h \
-             dosbuf.c
-             grep.1 egrep.man fgrep.man \
+             dosbuf.c \
+             grep.1 egrep.man fgrep.man
 
 CLEANFILES = egrep.1 fgrep.1
 
