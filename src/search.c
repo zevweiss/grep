@@ -149,9 +149,23 @@ kwsmusts (void)
 static char*
 check_multibyte_string(char const *buf, size_t size)
 {
+  static char const *precalc_buf = NULL;
+  static size_t precalc_size = 0;
+  static char *precalc_mb_properties = NULL;
   char *mb_properties = malloc(size);
   mbstate_t cur_state;
   int i;
+
+  if (!size ||
+      buf >= precalc_buf && (buf + size) <= (precalc_buf + precalc_size))
+    {
+      memcpy(mb_properties, precalc_mb_properties + (buf - precalc_buf), size);
+      return mb_properties;
+    }
+
+  precalc_mb_properties = xrealloc(precalc_mb_properties, size);
+  precalc_buf = buf;
+  precalc_size = size;
   memset(&cur_state, 0, sizeof(mbstate_t));
   memset(mb_properties, 0, sizeof(char)*size);
   for (i = 0; i < size ;)
@@ -169,6 +183,7 @@ check_multibyte_string(char const *buf, size_t size)
       i += mbclen;
     }
 
+  memcpy(precalc_mb_properties, mb_properties, size);
   return mb_properties;
 }
 #endif
