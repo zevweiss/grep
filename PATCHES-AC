@@ -19,16 +19,40 @@
 >
 --------------------------------------------------------------------
 1998-12-01
-	* acgeneral.m4: added support for DJGPP, 'test -f' changed
-	for 'test $ac_x'. Support for DOS DRIVE:xx\xx path '/*)'
-	changed for '/*|[A-z]:/*)'
+	* acgeneral.m4: added support for DJGPP
+	- "test -f" should be replaced by "test -x" where the script
+	looks for an executable binary which will be called gcc.exe
+	etc. on DOS/Windows.  A simple test for $COMSPEC being not
+	defined is suggested as a means to determine which option is
+	required.  (You cannot use "test -x" on all systems because some
+	variants of Unix shell don't support -x.)
+
+	- File patterns used to distinguish between absolute and relative
+	file names need to be changed as follows:
+
+		/*)    -->  /*|[A-z]:/*)
+		[/$]*  -->  [/$]*/[A-z]:/*)
+
+	This is because absolute file names on DOS/Windows may include a
+	drive letter and a colon before the leading slash.  Note that the
+	lower-case `z' in [A-z] is intentional, since some network
+	clients allow filesystems to be identified by the six letters
+	between the uppercase `Z' and lowercase `a', and because the
+	drive letter can come in either letter-case.
+
+	- The line which computes ac_file_inputs by replacing the colon in
+	foo:foo.in needs its two Sed commands to be swapped, because
+	once you put in the $ac_given_srcdir part, the colon after the
+	drive letter in it will be replaced instead of the original
+	colon.
+	From Eli Zarestskii.
 
 	* acspecific.m4: check opendir in libc before -ldir
 	gethosbyname/connect check in -lsocket also
+	From Tim Rice.
 
-diff -ru autoconf-2.12.orig/acgeneral.m4 autoconf-2.12/acgeneral.m4
 --- autoconf-2.12.orig/acgeneral.m4	Tue Nov 26 13:09:42 1996
-+++ autoconf-2.12/acgeneral.m4	Tue Dec  1 19:44:17 1998
++++ autoconf-2.12/acgeneral.m4	Tue Dec  1 20:19:21 1998
 @@ -635,6 +635,9 @@
    esac
  done
@@ -125,6 +149,15 @@ diff -ru autoconf-2.12.orig/acgeneral.m4 autoconf-2.12/acgeneral.m4
  changequote([, ])dnl
    *) INSTALL="$ac_dots$ac_given_INSTALL" ;;
    esac
+@@ -2133,7 +2141,7 @@
+   *) ac_comsub= ;;
+   esac
+ 
+-  ac_file_inputs=`echo $ac_file_in|sed -e "s%^%$ac_given_srcdir/%" -e "s%:% $ac_given_srcdir/%g"`
++  ac_file_inputs=`echo $ac_file_in|sed -e "s%:%$ac_given_srcdir/%g" -e "s%^% $ac_given_srcdir/%"`
+   sed -e "$ac_comsub
+ s%@configure_input@%$configure_input%g
+ s%@srcdir@%$srcdir%g
 @@ -2325,7 +2333,7 @@
  
    case "$srcdir" in
@@ -164,62 +197,3 @@ diff -ru autoconf-2.12.orig/acgeneral.m4 autoconf-2.12/acgeneral.m4
  changequote([, ])dnl
          *) INSTALL="$ac_dots$ac_given_INSTALL" ;;
          esac
-diff -ru autoconf-2.12.orig/acspecific.m4 autoconf-2.12/acspecific.m4
---- autoconf-2.12.orig/acspecific.m4	Wed Nov 20 00:10:49 1996
-+++ autoconf-2.12/acspecific.m4	Tue Dec  1 19:55:00 1998
-@@ -444,15 +444,21 @@
-     *)
-       # OSF1 and SCO ODT 3.0 have their own names for install.
-       for ac_prog in ginstall installbsd scoinst install; do
--        if test -f $ac_dir/$ac_prog; then
-+        if test $ac_x $ac_dir/$ac_prog; then
- 	  if test $ac_prog = install &&
-             grep dspmsg $ac_dir/$ac_prog >/dev/null 2>&1; then
- 	    # AIX install.  It has an incompatible calling convention.
- 	    # OSF/1 installbsd also uses dspmsg, but is usable.
- 	    :
- 	  else
--	    ac_cv_path_install="$ac_dir/$ac_prog -c"
--	    break 2
-+	    if test $ac_prog = installbsd &&
-+	      grep src/bos $ac_dir/$ac_prog >/dev/null 2>&1; then
-+	      # AIX installbsd doesn't work without option "-g".
-+	      :
-+	    else
-+	      ac_cv_path_install="$ac_dir/$ac_prog -c"
-+	      break 2
-+	    fi
- 	  fi
- 	fi
-       done
-@@ -592,7 +598,10 @@
-   [ac_header_dirent=$ac_hdr; break])
- # Two versions of opendir et al. are in -ldir and -lx on SCO Xenix.
- if test $ac_header_dirent = dirent.h; then
--AC_CHECK_LIB(dir, opendir, LIBS="$LIBS -ldir")
-+AC_CHECK_FUNC(opendir)
-+if test $ac_cv_func_opendir = no; then
-+ AC_CHECK_LIB(dir, opendir, LIBS="$LIBS -ldir")
-+fi
- else
- AC_CHECK_LIB(x, opendir, LIBS="$LIBS -lx")
- fi
-@@ -2089,6 +2098,9 @@
-     AC_CHECK_FUNC(gethostbyname)
-     if test $ac_cv_func_gethostbyname = no; then
-       AC_CHECK_LIB(nsl, gethostbyname, X_EXTRA_LIBS="$X_EXTRA_LIBS -lnsl")
-+      if test $ac_cv_func_gethostbyname = no; then
-+        AC_CHECK_LIB(socket, gethostbyname, X_EXTRA_LIBS="$X_EXTRA_LIBS -lsocket -lnsl", , -lnsl)
-+      fi
-     fi
- 
-     # lieder@skyler.mavd.honeywell.com says without -lsocket,
-@@ -2100,7 +2112,7 @@
-     # We assume that if connect needs -lnsl, so does gethostbyname.
-     AC_CHECK_FUNC(connect)
-     if test $ac_cv_func_connect = no; then
--      AC_CHECK_LIB(socket, connect, X_EXTRA_LIBS="-lsocket $X_EXTRA_LIBS", ,
-+      AC_CHECK_LIB(socket, connect, X_EXTRA_LIBS="-lsocket -lnsl $X_EXTRA_LIBS", ,
- 	$X_EXTRA_LIBS)
-     fi
- 

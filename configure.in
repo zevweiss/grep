@@ -71,4 +71,4 @@ AC_ARG_WITH(included-regex,
 	USE_REGEX=$withval, USE_REGEX=yes)
 test "$USE_REGEX" = "yes" && LIBOBJS="$LIBOBJS regex.o"
 
-AC_OUTPUT(Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
+AC_OUTPUT(Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

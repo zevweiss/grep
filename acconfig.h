@@ -20,3 +20,8 @@
 #undef HAVE_GETTEXT
 
 #undef HAVE_LC_MESSAGES
+
+/*
+ * DOS specific
+ */
+#undef HAVE_DOS_FILE_NAMES

@@ -1,3 +1,22 @@
+1998-12-01  Alain Magloire
+
+	* doc/Makefile.am djgpp/Makefile.am m4/Makefile.am vms/Makefile.am:
+	New files.
+
+	* m4/progtest.m4: proctect '[]' from m4.
+	Noted by Eli Z.
+
+	* PATCHES-AC: New file, add the patch for autoconf in the dist.
+
+	* acconfig.h: (HAVE_DOS_FILENAME)
+
+	* TODO: updated.
+
+	* src/search.c: remove obsolete 'gegrep,ggrep,gnugrep'
+	matchers. grep no longer depend on argv[0]. 
+
+	* grep-2.2e beta to test DJGPP port.
+
 1998-11-28  Paul Eggert
 
 	Various portability enhancements:
