@@ -1,5 +1,10 @@
 1999-02-10 Alain Magloire
 
+	* bootstrap/{Makefile{try,am},REAMDE} : skeleton
+	provided for system lacking the tools to autoconfigure.
+
+1999-02-10 Alain Magloire
+
 	* PATCHES-AC, PATCHES-AM: updated.
 
 	* m4/regex.m4 : updated.

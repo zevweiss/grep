@@ -5,8 +5,6 @@ dnl Mostly written by Jim Meyering.
 
 AC_DEFUN(jm_INCLUDED_REGEX,
   [
-    AC_REQUIRE([AM_GLIBC])
-
     dnl Even packages that don't use regex.c can use this macro.
     dnl Of course, for them it doesn't do anything.
 
@@ -14,6 +12,8 @@ AC_DEFUN(jm_INCLUDED_REGEX,
     # in the older regex will not be detected so test for everyone.
     # The failing regular expression is from `Spencer ere test
     # #75' in grep-2.2f.
+    dnl AC_REQUIRE([AM_GLIBC])
+
     ac_use_included_regex=yes
 
     # Without this run-test, on older glibc2 systems we'd end up
@@ -31,23 +31,24 @@ AC_DEFUN(jm_INCLUDED_REGEX,
 	      static struct re_pattern_buffer regex;
 	      const char *s;
 	      re_set_syntax (RE_SYNTAX_POSIX_EGREP);
-	      /* Add this third left square bracket, [, to balance the
+	      /* Add this third left square bracket, XX, to balance the
 		 three right ones below.  Otherwise autoconf-2.14 chokes.  */
-	      s = re_compile_pattern ("a[[:]:]]b\n", 9, &regex);
+	      s = re_compile_pattern ("a[[:XX:]]b\n", 9, &regex);
 	      /* This should fail with _Invalid character class name_ error.  */
 	      exit (s ? 0 : 1);
 	    }
 	  >>,
 	  changequote([, ])dnl
 
-		 jm_cv_func_working_re_compile_pattern=yes,
-		 jm_cv_func_working_re_compile_pattern=no,
-		 dnl When crosscompiling, assume it's broken.
-		 jm_cv_func_working_re_compile_pattern=no))
-      if test $jm_cv_func_working_re_compile_pattern = yes; then
-	ac_use_included_regex=no
-      fi
+	 jm_cv_func_working_re_compile_pattern=yes,
+	 jm_cv_func_working_re_compile_pattern=no,
+	 dnl When crosscompiling, assume it's broken.
+	 jm_cv_func_working_re_compile_pattern=no))
+    if test "$jm_cv_func_working_re_compile_pattern" = yes; then
+      ac_use_included_regex=no
+     fi
 
+    AC_SUBST(LIBOJS)dnl
     test -n "$1" || AC_MSG_ERROR([missing argument])
     syscmd([test -f $1])
     ifelse(sysval, 0,
@@ -60,10 +61,9 @@ AC_DEFUN(jm_INCLUDED_REGEX,
 		    jm_with_regex=$withval,
 		    jm_with_regex=$ac_use_included_regex)
 	if test "$jm_with_regex" = yes; then
-	  LIBOBJS="$LIBOBJS regex.o"
+	  LIBOBJS="$LIBOBJS regex.${ac_objext}"
 	fi
       ],
     )
-    AC_SUBST(LIBOJS)dnl
   ]
 )
