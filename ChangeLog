@@ -1,5 +1,10 @@
 2000-04-20  Paul Eggert
 
+	* tests/Makefile.am (TESTS_ENVIRONMENT):
+	Set GREP_OPTIONS to the empty string.
+
+2000-04-20  Paul Eggert
+
 	* tests/status.sh: Fix typo: test -b -> test -r.
 
 2000-04-20  Paul Eggert

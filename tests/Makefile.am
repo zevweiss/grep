@@ -9,7 +9,7 @@ EXTRA_DIST = $(TESTS) \
              spencer1.awk spencer1.tests \
              bre.awk ere.awk bre.tests ere.tests 
 CLEANFILES = spencer1.script bre.script ere.script khadafy.out
-TESTS_ENVIRONMENT = GREP=$(top_builddir)/src/grep AWK=$(AWK)
+TESTS_ENVIRONMENT = GREP=$(top_builddir)/src/grep GREP_OPTIONS='' AWK=$(AWK)
 
 # the *.sh when checkout does not have the right permission
 # make sure everyting is ok.
