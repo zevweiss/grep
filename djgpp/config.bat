@@ -25,8 +25,10 @@ set CONFIG_SITE=%XSRC%/djgpp/config.site
 if not "%CONFIG_SITE%" == "%XSRC%/djgpp/config.site" goto SmallEnv
 
 Rem Make sure crucial file names are not munged by unpacking
-if exist intl\po2tbl.sed.in ren intl\po2tbl.sed.in po2tblsed.in
-if not exist intl\po2tblsed.in ren intl\po2tbl.sed po2tblsed.in
+test -f %XSRC%/intl/po2tbl.sed.in
+if not errorlevel 1 mv -f %XSRC%/intl/po2tbl.sed.in %XSRC%/intl/po2tblsed.in
+test -f %XSRC%/intl/po2tblsed.in
+if errorlevel 1 mv -f %XSRC%/intl/po2tbl.sed %XSRC%/intl/po2tblsed.in
 
 Rem This is required because DOS/Windows are case-insensitive
 Rem to file names, and "make install" will do nothing if Make
@@ -66,7 +68,7 @@ Rem script runs and rename it afterwards
 if not exist install-sh if exist install-sh.sh ren install-sh.sh install-sh
 
 echo Running the ./configure script...
-sh %XSRC%/configure --src=%XSRC% --disable-nls
+sh ./configure --src=%XSRC% --disable-nls
 if errorlevel 1 goto CfgError
 if not exist install-sh.sh if exist install-sh ren install-sh install-sh.sh
 echo Done.

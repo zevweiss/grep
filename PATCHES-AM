@@ -37,69 +37,42 @@ depending on the results of the "$COMSPEC$ComSpec" test.
 	* texinfos.am: uses $(sep) as the separator
 	caveat one set @SEP@.
 
-*** texinfos.am.orig	Fri Jan 29 00:21:59 1999
---- texinfos.am	Fri Jan 29 00:24:47 1999
-***************
-*** 16,21 ****
---- 16,24 ----
-  ## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  ## 02111-1307, USA.
-  
-+ ## Provide path separator for OS that uses ':'
-+ sep=@SEP@
-+ 
-  ## FIXME: should repeat all the stuff in this file.  Instead should
-  ## generate the contents in a smarter way.
-  
-***************
-*** 35,41 ****
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .texi.dvi:
-! 	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
---- 38,44 ----
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .texi.dvi:
-! 	TEXINPUTS=@TEXINFODIR@$(sep)$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
-***************
-*** 86,92 ****
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .texinfo.dvi:
-! 	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
---- 89,95 ----
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .texinfo.dvi:
-! 	TEXINPUTS=@TEXINFODIR@$(sep)$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
-***************
-*** 107,113 ****
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .txi.dvi:
-! 	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
---- 110,116 ----
-  CYGNUS	$(MAKEINFO) -I $(srcdir) $<
-  
-  .txi.dvi:
-! 	TEXINPUTS=@TEXINFODIR@$(sep)$$TEXINPUTS \
-  ## Must set MAKEINFO like this so that version.texi will be found even
-  ## if it is in srcdir.
-  	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
-
+--- texinfos.am.orig	Fri Jan 29 00:21:59 1999
++++ texinfos.am	Tue Feb  9 22:30:54 1999
+@@ -16,6 +16,9 @@
+ ## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ ## 02111-1307, USA.
+ 
++## Provide path separator for OS that uses ':'
++sep=@SEP@
++
+ ## FIXME: should repeat all the stuff in this file.  Instead should
+ ## generate the contents in a smarter way.
+ 
+@@ -35,7 +38,7 @@
+ CYGNUS	$(MAKEINFO) -I $(srcdir) $<
+ 
+ .texi.dvi:
+-	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
++	TEXINPUTS="@TEXINFODIR@$(sep)$$TEXINPUTS" \
+ ## Must set MAKEINFO like this so that version.texi will be found even
+ ## if it is in srcdir.
+ 	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
+@@ -86,7 +89,7 @@
+ CYGNUS	$(MAKEINFO) -I $(srcdir) $<
+ 
+ .texinfo.dvi:
+-	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
++	TEXINPUTS="@TEXINFODIR@$(sep)$$TEXINPUTS" \
+ ## Must set MAKEINFO like this so that version.texi will be found even
+ ## if it is in srcdir.
+ 	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
+@@ -107,7 +110,7 @@
+ CYGNUS	$(MAKEINFO) -I $(srcdir) $<
+ 
+ .txi.dvi:
+-	TEXINPUTS=@TEXINFODIR@:$$TEXINPUTS \
++	TEXINPUTS="@TEXINFODIR@$(sep)$$TEXINPUTS" \
+ ## Must set MAKEINFO like this so that version.texi will be found even
+ ## if it is in srcdir.
+ 	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
