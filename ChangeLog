@@ -1,3 +1,40 @@
+1998-11-28  Paul Eggert
+
+	Various portability enhancements:
+	- Don't assume that O_BINARY implies DOS.  Use separate
+	macros D_OK (for DOS-like directory access) and
+	HAVE_DOS_FILE_NAMES (for DOS-like file names).
+	- Don't assume that off_t fits into long; it doesn't on Solaris 2.6.
+	- Have is_EISDIR set errno properly on hosts with screwed-up EISDIR.
+	- Treat ':' specially in DOS file names only if it's the end of a
+	drive specifier.
+	- Protect against errno < 0.
+
+	* src/grep.c (is_EISDIR): Move defn to system.h.
+	(print_offset_sep): New function.
+	(fillbuf): Remove redundant test of O_BINARY.
+	(totalcc, totalnl): Now of type off_t.
+	(prline): Use print_offset_sep to print file offsets.
+	(grepfile): Don't set e to EISDIR; that's is_EISDIR's responsibility
+	on machines that don't work properly with EISDIR.
+	(grepdir): Don't assume ':' means slash on all DOS filenames;
+	it means it only in the file prefix.
+
+	* src/system.h (strerror): Check for negative error numbers.
+	(is_EISDIR): Depend on D_OK, not O_BINARY.
+	(SET_BINARY): Depend on HAVE_SETMODE, not __DJGPP__.
+	(IS_SLASH, FILESYSTEM_PREFIX_LEN): Depend on HAVE_DOS_FILE_NAMES,
+	not O_BINARY.
+	(CHAR_BIT): New macro.
+
+	* src/dosbuf.c (struct dos_map):
+	pos and add members are now of type off_t.
+	(dos_stripped_crs): Now of type off_t.
+	(dossified_pos): Now accepts arg and returns value of type off_t.
+
+	* configure.in (AC_CHECK_FUNCS): Add setmode.
+	(HAVE_DOS_FILENAMES): New macro
+
 1998-11-24  Jim Meyering
 
 	* src/grep.c : Typo s/infalid/invalid/
@@ -288,7 +325,7 @@
 	* src/dfa.c: by "popular" demand reverse
 	back to '_' not word-constituent.
 
-	* grep-1.1.1c available for testing.
+	* grep-2.1.1c available for testing.
 
 1998-04-13  Karl Heuer
 

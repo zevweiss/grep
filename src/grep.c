@@ -37,16 +37,12 @@
 #include "grep.h"
 #include "savedir.h"
 
+#if O_BINARY
+# include "dosbuf.c"
+#endif
+
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
-
-#ifndef is_EISDIR
-#ifdef EISDIR
-# define is_EISDIR(e,f) ((e) == EISDIR)
-#else
-# define is_EISDIR(e,f) 0
-#endif
-#endif
 
 /* if non-zero, display usage information and exit */
 static int show_help;
@@ -122,6 +118,7 @@ static int  grepbuf PARAMS ((char *, char *));
 static void prtext PARAMS ((char *, char *, int *));
 static void prpending PARAMS ((char *));
 static void prline PARAMS ((char *, char *, int));
+static void print_offset_sep PARAMS ((off_t, int));
 static void nlscan PARAMS ((char *));
 static int  grep PARAMS ((int, char const *));
 static int  grepdir PARAMS ((char const *, unsigned));
@@ -398,7 +395,7 @@ fillbuf (save)
   cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
 #endif /*HAVE_MMAP*/
 #if O_BINARY
-  if (O_BINARY && cc > 0)
+  if (cc > 0)
     cc = undossify_input (buffer + bufsalloc, cc);
 #endif
   if (cc > 0)
@@ -423,18 +420,14 @@ static int no_filenames;	/* Suppress file names.  */
 static int suppress_errors;	/* Suppress diagnostics.  */
 
 /* Internal variables to keep track of byte count, context, etc. */
-static size_t totalcc;		/* Total character count before bufbeg. */
+static off_t totalcc;		/* Total character count before bufbeg. */
 static char *lastnl;		/* Pointer after last newline counted. */
 static char *lastout;		/* Pointer after last character output;
 				   NULL if no character has been output
 				   or if it's conceptually before bufbeg. */
-static size_t totalnl;		/* Total newline count before lastnl. */
+static off_t totalnl;		/* Total newline count before lastnl. */
 static int pending;		/* Pending lines of output. */
 static int done_on_match;		/* Stop scanning file on first match */
-
-#if O_BINARY
-# include "dosbuf.c"
-#endif
 
 static void
 nlscan (lim)
@@ -449,6 +442,25 @@ nlscan (lim)
 }
 
 static void
+print_offset_sep (pos, sep)
+     off_t pos;
+     int sep;
+{
+  /* Do not rely on printf to print pos, since off_t may be longer than long,
+     and long long is not portable.  */
+
+  char buf[sizeof pos * CHAR_BIT];
+  char *p = buf + sizeof buf - 1;
+  *p = sep;
+
+  do
+    *--p = '0' + pos % 10;
+  while ((pos /= 10) != 0);
+
+  fwrite (p, 1, buf + sizeof buf - p, stdout);
+}
+
+static void
 prline (beg, lim, sep)
      char *beg;
      char *lim;
@@ -459,16 +471,17 @@ prline (beg, lim, sep)
   if (out_line)
     {
       nlscan (beg);
-      printf ("%u%c", (unsigned int)++totalnl, sep);
+      print_offset_sep (++totalnl, sep);
       lastnl = lim;
     }
   if (out_byte)
+    {
+      off_t pos = totalcc + (beg - bufbeg);
 #if O_BINARY
-    printf ("%lu%c",
-	   (unsigned long int) dossified_pos (totalcc + (beg - bufbeg)), sep);
-#else
-    printf ("%lu%c", (unsigned long int) (totalcc + (beg - bufbeg)), sep);
+      pos = dossified_pos (pos);
 #endif
+      print_offset_sep (pos, sep);
+    }
   fwrite (beg, 1, lim - beg, stdout);
   if (ferror (stdout))
     error (_("writing output"), errno);
@@ -724,14 +737,8 @@ grepfile (file)
 	{
 	  int e = errno;
 	    
-	  if (is_EISDIR (e, file))
-	    {
-	      if (directories == RECURSE_DIRECTORIES)
-		return grepdir (file, BUFSIZ);
-#ifdef EISDIR
-	      e = EISDIR;	/* so that error message makes sense */
-#endif
-	    }
+	  if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
+	    return grepdir (file, BUFSIZ);
 
 	  if (!suppress_errors)
 	    {
@@ -822,7 +829,8 @@ grepdir (dir, name_size)
   else
     {
       size_t dirlen = strlen (dir);
-      int needs_slash = !IS_SLASH (dir[dirlen - 1]);
+      int needs_slash = ! (dirlen == FILESYSTEM_PREFIX_LEN (dir)
+			   || IS_SLASH (dir[dirlen - 1]));
       char *file = NULL;
       char *namep = name_space;
       out_file += !no_filenames;
@@ -1254,8 +1262,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 #if O_BINARY
   /* Output is set to binary mode because we shouldn't convert
      NL to CR-LF pairs, especially when grepping binary files.  */
-  if (!isatty(1))
-    SET_BINARY(1);
+  if (!isatty (1))
+    SET_BINARY (1);
 #endif
 
 

@@ -47,30 +47,53 @@ extern int errno;
 #ifndef HAVE_STRERROR
 extern int sys_nerr;
 extern char *sys_errlist[];
-# define strerror(E) ((E) < sys_nerr ? sys_errlist[(E)] : "bogus error number")
+# define strerror(E) (0 <= (E) && (E) < sys_nerr ? _(sys_errlist[E]) : _("Unknown system error"))
 #endif
 
 /* Some operating systems treat text and binary files differently.  */
-#if defined(O_BINARY) && O_BINARY
-# define IS_SLASH(c)      ((c) == '/' || (c) == '\\' || (c) == ':')
+#if O_BINARY
 # include <io.h>
-/* This assumes _WIN32, like DJGPP, has D_OK.  Does it?  In what header?  */
-# ifdef EISDIR
-#  define is_EISDIR(e,f)  ((e) == EISDIR || ((e) == EACCES && !access(f,D_OK)))
+# ifdef HAVE_SETMODE
+#  define SET_BINARY(fd)  setmode (fd, O_BINARY)
 # else
-#  define is_EISDIR(e,f)  ((e) == EACCES && !access(f,D_OK))
+#  define SET_BINARY(fd)  _setmode (fd, O_BINARY)
 # endif
-# ifdef __DJGPP__
-#  define SET_BINARY(fd)  setmode(fd,O_BINARY)
-# else
-#  define SET_BINARY(fd)  _setmode(fd,O_BINARY)
-# endif
-static inline int undossify_input PARAMS((char *, size_t));
 #else
-# define IS_SLASH(c)       ((c) == '/')
 # ifndef O_BINARY
 #  define O_BINARY 0
 #  define SET_BINARY(fd)   (void)0
+# endif
+#endif
+
+#ifdef HAVE_DOS_FILE_NAMES
+# define IS_SLASH(c) ((c) == '/' || (c) == '\\')
+# define FILESYSTEM_PREFIX_LEN(f) ((f)[0] && (f)[1] == ':' ? 2 : 0)
+#endif
+
+#ifndef IS_SLASH
+# define IS_SLASH(c) ((c) == '/')
+#endif
+
+#ifndef FILESYSTEM_PREFIX_LEN
+# define FILESYSTEM_PREFIX_LEN(f) 0
+#endif
+
+/* This assumes _WIN32, like DJGPP, has D_OK.  Does it?  In what header?  */
+#ifdef D_OK
+# ifdef EISDIR
+#  define is_EISDIR(e, f) \
+     ((e) == EISDIR \
+      || ((e) == EACCES && access (f, D_OK) == 0 && ((e) = EISDIR, 1)))
+# else
+#  define is_EISDIR(e, f) ((e) == EACCES && access (f, D_OK) == 0)
+# endif
+#endif
+
+#ifndef is_EISDIR
+# ifdef EISDIR
+#  define is_EISDIR(e, f) ((e) == EISDIR)
+# else
+#  define is_EISDIR(e, f) 0
 # endif
 #endif
 
@@ -93,6 +116,9 @@ void free();
 #endif
 #ifdef STDC_HEADERS
 # include <limits.h>
+#endif
+#ifndef CHAR_BIT
+# define CHAR_BIT 8
 #endif
 #ifndef INT_MAX
 # define INT_MAX 2147483647

@@ -15,15 +15,15 @@ typedef enum {
 } File_type;
 
 struct dos_map {
-  size_t pos;       /* position in buffer passed to matcher */
-  int    add;       /* how much to add when reporting char position */
+  off_t pos;	/* position in buffer passed to matcher */
+  off_t add;	/* how much to add when reporting char position */
 };
 
 static int       dos_report_unix_offset = 0;
 
 static File_type dos_file_type     = UNKNOWN;
 static File_type dos_use_file_type = UNKNOWN;
-static size_t    dos_stripped_crs  = 0;
+static off_t     dos_stripped_crs  = 0;
 static struct dos_map *dos_pos_map;
 static int       dos_pos_map_size  = 0;
 static int       dos_pos_map_used  = 0;
@@ -121,7 +121,7 @@ undossify_input(register char *buf, size_t buflen)
                     }
 
                   /* Put the new entry.  If the stripped CR characters
-                     preceed a Newline (the usual case), pretend that
+                     precede a Newline (the usual case), pretend that
                      they were found *after* the Newline.  This makes
                      displayed byte offsets more reasonable in some
                      cases, and fits better the intuitive notion that
@@ -145,11 +145,11 @@ undossify_input(register char *buf, size_t buflen)
 }
 
 /* Convert internal byte count into external.  */
-static inline size_t
-dossified_pos(size_t byteno)
+static inline off_t
+dossified_pos (off_t byteno)
 {
-  size_t pos_lo;
-  size_t pos_hi;
+  off_t pos_lo;
+  off_t pos_hi;
 
   if (dos_file_type != DOS_TEXT || dos_report_unix_offset)
     return byteno;

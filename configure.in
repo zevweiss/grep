@@ -38,7 +38,7 @@ AC_FUNC_ALLOCA
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
-AC_CHECK_FUNCS(strerror isascii)
+AC_CHECK_FUNCS(strerror isascii setmode)
 AC_REPLACE_FUNCS(memchr stpcpy)
 dnl This test replaces the obsolescent AC_ISC_POSIX kludge.
 dnl AC_CHECK_LIB(cposix, strerror, [LIBS="$LIBS -lcposix"])
@@ -58,6 +58,11 @@ AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 dnl for future try to integrate cygwin and djpp
 dnl to make it less painful for modification.
 AM_CYGWIN32
+
+if test -d '.\.'
+then
+	AC_DEFINE(HAVE_DOS_FILE_NAMES)
+fi
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
