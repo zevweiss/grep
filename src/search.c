@@ -330,8 +330,9 @@ EGexecute(buf, size, endp)
 	  if (match_words)
 	    while (start >= 0)
 	      {
-		if ((start == 0 || !WCHAR(beg[start - 1]))
-		    && (len == end - beg || !WCHAR(beg[start + len])))
+		if ((start == 0 || !WCHAR ((unsigned char) beg[start - 1]))
+		    && (len == end - beg
+			|| !WCHAR ((unsigned char) beg[start + len])))
 		  goto success;
 		if (len > 0)
 		  {

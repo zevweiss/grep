@@ -1,3 +1,7 @@
+1998-11-15  Paul Eggert
+
+	* dfa.c (dfacomp), search.c (EGexecute): Don't assume char is unsigned.
+
 1998-11-11  Alain Magloire
 
 	* src/regex.c : On Apple, grep is overriding the regex library

@@ -2000,8 +2000,8 @@ dfacomp(s, len, d, searchflag)
       /* This is a kludge. */
       case_fold = 0;
       for (i = 0; i < len; ++i)
-	if (ISUPPER(s[i]))
-	  lcopy[i] = tolower(s[i]);
+	if (ISUPPER ((unsigned char) s[i]))
+	  lcopy[i] = tolower ((unsigned char) s[i]);
 	else
 	  lcopy[i] = s[i];
 
