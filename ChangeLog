@@ -1,3 +1,28 @@
+1999-09-12  Paul Eggert
+
+	* configure.in (AC_CHECK_FUNCS): Add memmove.
+
+	* src/system.h (S_ISREG): New macro.
+	(memmove): Define if ! defined HAVE_MEMMOVE && ! defined memmove,
+	not if !defined STDC_HEADERS.  This is needed for SunOS 4.1.4,
+	which defines STDC_HEADERS but lacks memmove.
+
+	* src/grep.c (bufoffset): Needed even if !defined HAVE_MMAP.
+	(reset): Always fstat the file, since we always need its size if it is
+	regular.
+	Similarly, get the buffer offset of every regular file.
+	Set bufmapped to 0 if the file's initial offset is not a multiple
+	of the page size.
+	(fillbuf): Calculate an upper bound on how much memory we should
+	allocate only for regular files, since we don't know the sizes of
+	other files.
+	Don't bother to check whether the file offset is a multiple of the page
+	size, since we now do that just once in `reset'.
+	When an mmapped area would fall past the end of the file, trim it to
+	just before instead of giving up immediately and doing a `read';
+	that avoids a worst-case behavior that could read half an mmapped file.
+	Fix bug when computing offsets on hosts that don't have mmap.
+
 1999-08-27  Paul Eggert
 
 	* src/system.h (memmove): New macro.

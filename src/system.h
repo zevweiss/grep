@@ -99,9 +99,13 @@ extern char *sys_errlist[];
 
 #if STAT_MACROS_BROKEN
 # undef S_ISDIR
+# undef S_ISREG
 #endif
 #if !defined(S_ISDIR) && defined(S_IFDIR)
 # define S_ISDIR(Mode) (((Mode) & S_IFMT) == S_IFDIR)
+#endif
+#if !defined(S_ISREG) && defined(S_IFREG)
+# define S_ISREG(Mode) (((Mode) & S_IFMT) == S_IFREG)
 #endif
 
 #ifdef STDC_HEADERS
@@ -141,11 +145,12 @@ void free();
 # define strrchr rindex
 # undef memcpy
 # define memcpy(d, s, n) bcopy (s, d, n)
-# undef memmove
-# define memmove(d, s, n) bcopy (s, d, n)
 #endif
 #ifndef HAVE_MEMCHR
 ptr_t memchr();
+#endif
+#if ! defined HAVE_MEMMOVE && ! defined memmove
+# define memmove(d, s, n) bcopy (s, d, n)
 #endif
 
 #include <ctype.h>

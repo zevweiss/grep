@@ -224,10 +224,10 @@ static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
+static off_t bufoffset;		/* Read offset; defined on regular files.  */
 
 #if defined(HAVE_MMAP)
 static int bufmapped;		/* True for ordinary files. */
-static off_t bufoffset;		/* What read() normally remembers. */
 static off_t initial_bufoffset;	/* Initial value of bufoffset. */
 #endif
 
@@ -293,29 +293,25 @@ reset (fd, file, stats)
     }
   bufdesc = fd;
 
-  if (
-#if defined(HAVE_MMAP)
-      1
-#else
-      directories != READ_DIRECTORIES
-#endif
-      )
-    if (fstat (fd, &stats->stat) != 0)
-      {
-	error ("fstat", errno);
-	return 0;
-      }
+  if (fstat (fd, &stats->stat) != 0)
+    {
+      error ("fstat", errno);
+      return 0;
+    }
   if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
     return 0;
 #if defined(HAVE_MMAP)
-  if (!S_ISREG (stats->stat.st_mode))
-    bufmapped = 0;
-  else
-    {
-      bufmapped = 1;
-      bufoffset = initial_bufoffset = file ? 0 : lseek (fd, 0, 1);
-    }
+  bufmapped = S_ISREG (stats->stat.st_mode);
 #endif
+  if (S_ISREG (stats->stat.st_mode))
+    {
+      bufoffset = file ? 0 : lseek (fd, 0, 1);
+#ifdef HAVE_MMAP
+      initial_bufoffset = bufoffset;
+      if (bufoffset % pagesize != 0)
+	bufmapped = 0;
+#endif
+    }
   return 1;
 }
 
@@ -340,15 +336,21 @@ fillbuf (save, stats)
   if (bufsalloc < save)
     {
       size_t aligned_save = ALIGN_TO (save, pagesize);
-
-      /* We can't use ALIGN_TO here, since off_t might be longer than
-         size_t.  */
-      off_t to_be_read = stats->stat.st_size - bufoffset;
-      size_t slop = to_be_read % pagesize;
-      off_t aligned_to_be_read = to_be_read + (slop ? pagesize - slop : 0);
-
-      off_t maxalloc = aligned_save + aligned_to_be_read;
+      size_t maxalloc = (size_t) -1;
       size_t newalloc;
+
+      if (S_ISREG (stats->stat.st_mode))
+	{
+	  /* Calculate an upper bound on how much memory we should allocate.
+	     We can't use ALIGN_TO here, since off_t might be longer than
+	     size_t.  Watch out for arithmetic overflow.  */
+	  off_t to_be_read = stats->stat.st_size - bufoffset;
+	  size_t slop = to_be_read % pagesize;
+	  off_t aligned_to_be_read = to_be_read + (slop ? pagesize - slop : 0);
+	  off_t maxalloc_off = aligned_save + aligned_to_be_read;
+	  if (0 <= maxalloc_off && maxalloc_off == (size_t) maxalloc_off)
+	    maxalloc = maxalloc_off;
+	}
 
       /* Grow bufsalloc until it is at least as great as `save'; but
 	 if there is an overflow, just grow it to the next page boundary.  */
@@ -387,11 +389,22 @@ fillbuf (save, stats)
   memmove (bufbeg, ubuffer + saved_offset, save);
 
 #if defined(HAVE_MMAP)
-  if (bufmapped && bufoffset % pagesize == 0
-      && stats->stat.st_size - bufoffset >= bufalloc - bufsalloc)
+  if (bufmapped)
     {
+      size_t mmapsize = bufalloc - bufsalloc;
+
+      /* Don't mmap past the end of the file; some hosts don't allow this.
+	 Use `read' on the last page.  */
+      if (stats->stat.st_size - bufoffset < mmapsize)
+	{
+	  mmapsize = stats->stat.st_size - bufoffset;
+	  mmapsize -= mmapsize % pagesize;
+	  if (! mmapsize)
+	    goto tryread;
+	}
+
       maddr = buffer + bufsalloc;
-      maddr = mmap (maddr, bufalloc - bufsalloc, PROT_READ | PROT_WRITE,
+      maddr = mmap (maddr, mmapsize, PROT_READ | PROT_WRITE,
 		   MAP_PRIVATE | MAP_FIXED, bufdesc, bufoffset);
       if (maddr == (caddr_t) -1)
 	{
@@ -409,10 +422,9 @@ fillbuf (save, stats)
       /* You might thing this (or MADV_WILLNEED) would help,
 	 but it doesn't, at least not on a Sun running 4.1.
 	 In fact, it actually slows us down about 30%! */
-      madvise (maddr, bufalloc - bufsalloc, MADV_SEQUENTIAL);
+      madvise (maddr, mmapsize, MADV_SEQUENTIAL);
 #endif
-      cc = bufalloc - bufsalloc;
-      bufoffset += cc;
+      cc = mmapsize;
     }
   else
     {
@@ -431,6 +443,8 @@ fillbuf (save, stats)
 #else
   cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
 #endif /*HAVE_MMAP*/
+  if (cc > 0)
+    bufoffset += cc;
 #if O_BINARY
   if (cc > 0)
     cc = undossify_input (buffer + bufsalloc, cc);
