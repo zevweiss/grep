@@ -35,6 +35,7 @@
 #include "getopt.h"
 #include "getpagesize.h"
 #include "grep.h"
+#include "savedir.h"
 
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
@@ -68,6 +69,7 @@ static struct option long_options[] =
   {"no-filename", no_argument, NULL, 'h'},
   {"no-messages", no_argument, NULL, 's'},
   {"quiet", no_argument, NULL, 'q'},
+  {"recursive", no_argument, NULL, 'r'},
   {"regexp", required_argument, NULL, 'e'},
   {"revert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
@@ -90,7 +92,7 @@ int match_lines;
 
 /* For error messages. */
 static char *prog;
-static char *filename;
+static char const *filename;
 static int errseen;
 
 static int ck_atoi PARAMS((char const *, int *));
@@ -99,26 +101,23 @@ static int ck_atoi PARAMS((char const *, int *));
 static enum
   {
     READ_DIRECTORIES,
+    RECURSE_DIRECTORIES,
     SKIP_DIRECTORIES
   } directories;
-
-#ifdef EISDIR
-# define IS_DIRECTORY_ERRNO(e) ((e) == EISDIR)
-#else
-# define IS_DIRECTORY_ERRNO(e) 0
-#endif
 
 static void usage PARAMS((int));
 static void error PARAMS((const char *, int));
 static int  setmatcher PARAMS((char *));
-static int  reset PARAMS((int));
+static int  reset PARAMS((int, char const *));
 static int  fillbuf PARAMS((size_t));
 static int  grepbuf PARAMS((char *, char *));
 static void prtext PARAMS((char *, char *, int *));
 static void prpending PARAMS((char *));
 static void prline PARAMS((char *, char *, int));
 static void nlscan PARAMS((char *));
-static int  grep PARAMS((int));
+static int  grep PARAMS((int, char const *));
+static int  grepdir PARAMS((char const *, unsigned));
+static int  grepfile PARAMS((char const *));
 
 /* Functions we'll use to search. */
 static void (*compile) PARAMS((char *, size_t));
@@ -211,13 +210,15 @@ static struct stat bufstat;	/* From fstat(). */
 #if defined(HAVE_MMAP)
 static int bufmapped;		/* True for ordinary files. */
 static off_t bufoffset;		/* What read() normally remembers. */
+static off_t initial_bufoffset;	/* Initial value of bufoffset. */
 #endif
 
 /* Reset the buffer for a new file, returning zero if we should skip it.
    Initialize on the first time through. */
 static int
-reset(fd)
+reset (fd, file)
      int fd;
+     char const *file;
 {
   static int initialized;
 
@@ -261,7 +262,7 @@ reset(fd)
   else
     {
       bufmapped = 1;
-      bufoffset = lseek(fd, 0, 1);
+      bufoffset = initial_bufoffset = file ? 0 : lseek(fd, 0, 1);
     }
 #endif
   return 1;
@@ -345,7 +346,8 @@ fillbuf(save)
       if (bufmapped)
 	{
 	  bufmapped = 0;
-	  lseek(bufdesc, bufoffset, 0);
+	  if (bufoffset != initial_bufoffset)
+	    lseek (bufdesc, bufoffset, 0);
 	}
       cc = read(bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
     }
@@ -372,6 +374,10 @@ static int out_line;		/* Print line numbers. */
 static int out_byte;		/* Print byte offsets. */
 static int out_before;		/* Lines of leading context. */
 static int out_after;		/* Lines of trailing context. */
+static int count_matches;	/* Count matching lines.  */
+static int list_files;		/* List matching files.  */
+static int no_filenames;	/* Suppress file names.  */
+static int suppress_errors;	/* Suppress diagnostics.  */
 
 /* Internal variables to keep track of byte count, context, etc. */
 static size_t totalcc;		/* Total character count before bufbeg. */
@@ -551,18 +557,31 @@ grepbuf(beg, lim)
   return nlines;
 }
 
-/* Search a given file.  Return a count of lines printed. */
+/* Search a given file.  Normally, return a count of lines printed;
+   but if the file is a directory and we search it recursively, then
+   return -2 if there was a match, and -1 otherwise.  */
 static int
-grep(fd)
+grep (fd, file)
      int fd;
+     char const *file;
 {
   int nlines, i;
   int not_text;
   size_t residue, save;
   char *beg, *lim;
 
-  if (!reset(fd))
+  if (!reset (fd, file))
     return 0;
+
+  if (file && directories == RECURSE_DIRECTORIES
+      && S_ISDIR (bufstat.st_mode))
+    {
+      /* Close fd now, so that we don't open a lot of file descriptors
+	 when we recurse deeply.  */
+      if (close (fd) != 0)
+	error (file, errno);
+      return grepdir (file, (unsigned) bufstat.st_size) - 2;
+    }
 
   totalcc = 0;
   lastout = 0;
@@ -639,6 +658,140 @@ grep(fd)
   return nlines;
 }
 
+static int
+grepfile (file)
+     char const *file;
+{
+  int desc;
+  int count;
+  int status;
+
+  if (! file)
+    {
+      desc = 0;
+      filename = _("(standard input)");
+    }
+  else
+    {
+      desc = open (file, O_RDONLY);
+
+      if (desc < 0)
+	{
+	  int e = errno;
+	    
+#ifdef EISDIR
+	  if (e == EISDIR && directories == RECURSE_DIRECTORIES)
+	    return grepdir (file, BUFSIZ);
+#endif
+
+	  if (!suppress_errors)
+	    {
+	      if (directories == SKIP_DIRECTORIES)
+		switch (e)
+		  {
+#ifdef EISDIR
+		  case EISDIR:
+		    return 1;
+#endif
+		  case EACCES:
+		    /* When skipping directories, don't worry about
+		       directories that can't be opened.  */
+		    {
+		      struct stat st;
+		      if (stat (file, &st) == 0 && S_ISDIR (st.st_mode))
+			return 1;
+		    }
+		    break;
+		  }
+
+	      error (file, e);
+	    }
+
+	  return 1;
+	}
+
+      filename = file;
+    }
+
+#if O_BINARY
+  /* Set input to binary mode.  Pipes are simulated with files
+     on DOS, so this includes the case of "foo | grep bar".  */
+  if (!isatty (desc))
+    SET_BINARY (desc);
+#endif
+
+  count = grep (desc, file);
+  if (count < 0)
+    status = count + 2;
+  else
+    {
+      if (count_matches)
+	{
+	  if (out_file)
+	    printf("%s:", filename);
+	  printf("%d\n", count);
+	}
+
+      if (count)
+	{
+	  status = 0;
+	  if (list_files == 1)
+	    printf("%s\n", filename);
+	}
+      else
+	{
+	  status = 1;
+	  if (list_files == -1)
+	    printf("%s\n", filename);
+	}
+
+      if (file && close (desc) != 0)
+	error (file, errno);
+    }
+
+  return status;
+}
+
+static int
+grepdir (dir, name_size)
+     char const *dir;
+     unsigned name_size;
+{
+  int status = 1;
+  char *name_space = savedir (dir, name_size);
+
+  if (! name_space)
+    {
+      if (errno)
+	error (dir, errno);
+      else
+	fatal (_("Memory exhausted"), 0);
+    }
+  else
+    {
+      size_t dirlen = strlen (dir);
+      int needs_slash = dir[dirlen - 1] != '/';
+      char *file = NULL;
+      char *namep = name_space;
+      out_file += !no_filenames;
+      while (*namep)
+	{
+	  size_t namelen = strlen (namep);
+	  file = xrealloc (file, dirlen + 1 + namelen + 1);
+	  strcpy (file, dir);
+	  file[dirlen] = '/';
+	  strcpy (file + dirlen + needs_slash, namep);
+	  namep += namelen + 1;
+	  status &= grepfile (file);
+	  free (file);
+	}
+      out_file -= !no_filenames;
+      free (file);
+      free (name_space);
+    }
+
+  return status;
+}
 
 static void
 usage(status)
@@ -681,7 +834,8 @@ Output control:\n\
   -q, --quiet, --silent     suppress all normal output\n\
   -a, --text                do not suppress binary output\n\
   -d, --directories=ACTION  how to handle directories\n\
-                            ACTION is 'read' or 'skip'.\n\
+                            ACTION is 'read', 'recurse', or 'skip'.\n\
+  -r, --recursive           equivalent to --directories=recurse.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n"));
@@ -757,9 +911,8 @@ main(argc, argv)
 {
   char *keys;
   size_t keycc, oldcc, keyalloc;
-  int count_matches, no_filenames, list_files, suppress_errors;
   int with_filenames;
-  int opt, cc, desc, count, status;
+  int opt, cc, status;
   FILE *fp;
   extern char *optarg;
   extern int optind;
@@ -797,11 +950,7 @@ main(argc, argv)
 
   keys = NULL;
   keycc = 0;
-  count_matches = 0;
-  no_filenames = 0;
   with_filenames = 0;
-  list_files = 0;
-  suppress_errors = 0;
   matcher = NULL;
 
 /* Internationalization. */
@@ -815,9 +964,9 @@ main(argc, argv)
 
   while ((opt = getopt_long(argc, argv,
 #if O_BINARY
-         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqsvwxyUu",
+         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqrsvwxyUu",
 #else
-         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqsvwxy",
+         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqrsvwxy",
 #endif
          long_options, NULL)) != EOF)
     switch (opt)
@@ -901,6 +1050,8 @@ main(argc, argv)
 	  directories = READ_DIRECTORIES;
 	else if (strcmp (optarg, "skip") == 0)
 	  directories = SKIP_DIRECTORIES;
+	else if (strcmp (optarg, "recurse") == 0)
+	  directories = RECURSE_DIRECTORIES;
 	else
 	  fatal(_("unknown directories method"), 0);
 	break;
@@ -957,6 +1108,9 @@ main(argc, argv)
       case 'q':
 	done_on_match = 1;
 	out_quiet = 1;
+	break;
+      case 'r':
+	directories = RECURSE_DIRECTORIES;
 	break;
       case 's':
 	suppress_errors = 1;

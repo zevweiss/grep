@@ -1,3 +1,35 @@
+1998-08-18  Paul Eggert  <eggert@twinsun.com>
+
+	Add support for new -r or --recursive (or -d recurse or
+	--directories=recurse) option.
+
+	* src/Makefile.am (grep_SOURCES): Add savedir.c, savedir.h, stpcpy.c.
+
+	* src/grep.1: Describe new options.
+
+	* src/grep.c: Include "savedir.h".
+	(long_options): Add -r or --recursive.
+	(RECURSE_DIRECTORIES): New enum value.
+	(IS_DIRECTORY_ERRNO): Remove.
+	(reset, grep): Add file name arg.
+	(grepdir, grepfile): New functions.
+	(initial_bufoffset): New var.
+	(reset): Initialize it.
+	(fillbuf): Use it.
+	(count_matches, list_files, no_filenames, suppress_errors): New static
+	vars; formerly were local to `main'.
+	(grep): Recurse through directories if the user asks for this.
+	(usage, main): Add new options.
+	(main): Change some local vars to be static, as described above.
+	Move most of the guts into grepfile function.
+	so that it can be recursed through.
+
+	* configure.in (AC_HEADER_DIRENT, AC_FUNC_CLOSEDIR_VOID): Add.
+	(AC_REPLACE_FUNCS): Add stpcpy.
+
+	* src/savedir.c, src/savedir.h, src/stpcpy.c: New files;
+	taken from fileutils 3.16u.
+
 1998-08-10  Paul Eggert
 
 	* src/system.h (EXPAND_WILDCARDS): New macro.

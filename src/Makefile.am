@@ -8,6 +8,7 @@ grep_SOURCES = grep.c grep.h \
                dfa.c dfa.h \
                kwset.c  kwset.h \
                obstack.c obstack.h \
+	       savedir.c savedir.h stpcpy.c \
                getopt.c getopt1.c getopt.h \
                search.c getpagesize.h system.h
 egrep_SOURCES = $(grep_SOURCES)

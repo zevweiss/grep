@@ -3,7 +3,7 @@
 grep, egrep, fgrep \- print lines matching a pattern
 .SH SYNOPSIS
 .B grep
-[-[AB] NUM] [-CEFGVabchiLlnqsvwxyUu] [-e PATTERN | -f FILE]
+[-[AB] NUM] [-CEFGVabchiLlnqrsvwxyUu] [-e PATTERN | -f FILE]
 [-d ACTION] [--directories=ACTION]
 [--extended-regexp] [--fixed-strings] [--basic-regexp]
 [--regexp=PATTERN] [--file=FILE] [--ignore-case] [--word-regexp]
@@ -12,7 +12,7 @@ grep, egrep, fgrep \- print lines matching a pattern
 [--with-filename] [--no-filename] [--quiet] [--silent] [--text]
 [--files-without-match] [--files-with-matcces] [--count]
 [--before-context=NUM] [--after-context=NUM] [--context]
-[--binary] [--unix-byte-offsets]
+[--binary] [--unix-byte-offsets] [--recursive]
 .I files...
 .SH DESCRIPTION
 .PP
@@ -121,6 +121,15 @@ If
 is
 .BR skip ,
 directories are silently skipped.
+If
+.I ACTION
+is
+.BR recurse ,
+.B
+grep reads all files under each directory, recursively;
+this is equivalent to the
+.B \-r
+option.
 .TP
 .BI \-e " PATTERN" ", --regexp=" PATTERN
 Use
@@ -162,6 +171,12 @@ within its input file.
 .B \-q, --quiet
 Quiet; suppress normal output. The scanning will stop
 on the first match.
+.TP
+.B \-q, --recursive
+Read all files under each directory, recursively;
+this is equivalent to the
+.B "\-d recurse"
+option.
 .TP
 .B \-s, --silent
 Suppress error messages about nonexistent or unreadable files.
