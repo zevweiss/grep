@@ -1,3 +1,7 @@
+2000-02-25  Alain Magloire
+
+	* po/*.po: update of the PO files.
+
 2000-02-22  Eli Zaretskii
 
 	* doc/grep.1:  Two small glitches(typos).

@@ -5,16 +5,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.3f\n"
-"POT-Creation-Date: 1999-10-05 22:33-0400\n"
-"PO-Revision-Date: 1999-10-07 11:39-03:00\n"
+"Project-Id-Version: GNU grep 2.4a\n"
+"POT-Creation-Date: 2000-01-16 21:06-0500\n"
+"PO-Revision-Date: 2000-01-21 22:08-02:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:898
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:936
 msgid "Memory exhausted"
 msgstr "Memória esgotada"
 
@@ -160,69 +160,72 @@ msgstr "?? getopt retornou caracter código 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "elementos ARGV que não são opções: "
 
-#: src/grep.c:179 src/grep.c:196 src/grep.c:292 src/grep.c:387 src/kwset.c:184
+#: src/grep.c:190 src/grep.c:207 src/grep.c:307 src/grep.c:415 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "memória esgotada"
 
-#: src/grep.c:418 src/grep.c:883
-#, c-format
-msgid "%s: warning: %s: %s\n"
-msgstr "%s: aviso: %s: %s\n"
-
-#: src/grep.c:543 src/grep.c:1429
+#: src/grep.c:572 src/grep.c:1481
 msgid "writing output"
 msgstr "escrevendo saída"
 
-#: src/grep.c:775
+#: src/grep.c:807
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Arquivo binário %s casa com o padrão\n"
 
-#: src/grep.c:791
+#: src/grep.c:823
 msgid "(standard input)"
 msgstr "(entrada padrão)"
 
-#: src/grep.c:884
+#: src/grep.c:921
+#, c-format
+msgid "%s: warning: %s: %s\n"
+msgstr "%s: aviso: %s: %s\n"
+
+#: src/grep.c:922
 msgid "recursive directory loop"
 msgstr "loop de diretório recursivo"
 
-#: src/grep.c:935
+#: src/grep.c:973
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Uso: %s [opção]... padrão [arquivo]...\n"
 
-#: src/grep.c:936
+#: src/grep.c:974
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Tente `%s --help' para mais informações.\n"
 
-#: src/grep.c:940
+#: src/grep.c:978
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Uso: %s [opção]... padrão [arquivo]...\n"
 
-#: src/grep.c:941
+#: src/grep.c:979
+#, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
+"Example: %s -i 'hello.*world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
 "Procura por PADRÃO em cada ARQUIVO ou entrada padrão.\n"
+"Exemplo: %s -i 'hello.*world' menu.h main.c\n"
 "\n"
 "Seleção de expressão regular e interpretação:\n"
 
-#: src/grep.c:945
+#: src/grep.c:984
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 msgstr ""
 "  -E, --extended-regexp     PADRÃO é um expressão regular extendida\n"
-"  -F, --fixed-regexp        PADRÃO é uma cadeia fixa separada por nova linha\n"
+"  -F, --fixed-strings       PADRÃO é uma cadeia fixa separada por nova linha\n"
 "  -G, --basic-regexp        PADRÃO é um expressão regular básica\n"
 
-#: src/grep.c:949
+#: src/grep.c:988
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -238,7 +241,7 @@ msgstr ""
 "  -x, --line-regexp        força PADRÃO encontrar apenas linhas inteiras\n"
 "  -z, --null-data          uma linha de dados acaba com 0 bytes, não nova linha\n"
 
-#: src/grep.c:956
+#: src/grep.c:995
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -246,6 +249,7 @@ msgid ""
 "  -v, --invert-match        select non-matching lines\n"
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
+"      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
 "Miscelânea:\n"
@@ -253,8 +257,9 @@ msgstr ""
 "  -v, --revert-match        seleciona somente linhas não coincidentes\n"
 "  -V, --version             mostra informações sobre versão e sai\n"
 "      --help                exibe esta ajuda e sai\n"
+"      --mmap                usa entrada de memória mapeada se possível\n"
 
-#: src/grep.c:963
+#: src/grep.c:1003
 msgid ""
 "\n"
 "Output control:\n"
@@ -263,7 +268,9 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+"      --binary-files=TYPE   assume that binary files are TYPE\n"
+"                            TYPE is 'binary', 'text', or 'without-match'.\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'.\n"
 "  -r, --recursive           equivalent to --directories=recurse.\n"
@@ -281,6 +288,8 @@ msgstr ""
 "  -h, --no-filename         inibe o nome de arquivo na saída\n"
 "  -q, --quiet, --silent     inibe todas as saídas normais\n"
 "  -a, --text                não suprima saída de arquivos binários\n"
+"      --binary-files=TIPO   assume que arquivos binários são TIPO\n"
+"                            TIPO é 'binary'. 'text', ou 'without-match'.\n"
 "  -d, --directories=AÇÃO    como tratar diretórios\n"
 "                            AÇÃO pode ser: 'read' (ler), 'recurse' (recursivo),\n"
 "                            ou 'skip' (não considerar).\n"
@@ -292,22 +301,22 @@ msgstr ""
 "  -c, --count               exibe o número de padrões encontrados por arquivo\n"
 "  -Z, --null                mostra 0 bytes depois do nome do ARQUIVO\n"
 
-#: src/grep.c:979
+#: src/grep.c:1021
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
+"                            unless overridden by -A or -B\n"
 "  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
 "`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
-"With no FILE, or when FILE is -, read standard input. If less than\n"
-"two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
-"Exit with 2 if syntax errors or system errors.\n"
+"With no FILE, or when FILE is -, read standard input.  If less than\n"
+"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
+"and 2 if trouble.\n"
 msgstr ""
 "\n"
 "Controle de contexto:\n"
@@ -322,41 +331,42 @@ msgstr ""
 "                            CRs (MSDOS)\n"
 "\n"
 "`egrep' é o mesmo que `grep -E', `fgrep' é `grep -F'.\n"
-"\n"
-"Se não especificadas as opções -[GEF], então o `egrep' assume -E e o `fgrep'\n"
-"assume -F; a opção -G é assumida noutros casos.\n"
 "Se não informado o ARQUIVO, ou se ARQUIVO é -, lê da entrada padrão.\n"
 "Se menos que dois arquivos forem especificados, assume-se -h.\n"
 "Retorna 0 se encontra o padrão, 1 se não encontra.\n"
 "Retorna 2 se houver erro de sintaxe ou erros do sistema.\n"
 
-#: src/grep.c:994
+#: src/grep.c:1036
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nInforme problemas para <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1005
+#: src/grep.c:1047
 msgid "conflicting matchers specified"
 msgstr "padrões de procura especificados conflitam"
 
-#: src/grep.c:1204 src/grep.c:1211 src/grep.c:1220
+#: src/grep.c:1246 src/grep.c:1253 src/grep.c:1262
 msgid "invalid context length argument"
 msgstr "argumento tamanho do contexto inválido"
 
-#: src/grep.c:1271
+#: src/grep.c:1313
 msgid "unknown directories method"
 msgstr "método desconhecido de diretórios"
 
+#: src/grep.c:1398
+msgid "unknown binary-files type"
+msgstr "tipo de arquivo binário desconhecido"
+
 # msgstr "la expresión a buscar ya fue especificada"
-#: src/grep.c:1366
+#: src/grep.c:1418
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1368
+#: src/grep.c:1420
 msgid "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1370
+#: src/grep.c:1422
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
