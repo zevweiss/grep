@@ -7,6 +7,7 @@
 	* m4/{djgpp,envsep,glibc,regex,dosfile,isc-posix}.m4 :
 	New files to aid configuration and unload configure.in.
 	* m4/Makefile.am : updated.
+	* src/btowc.c : protect for wchar.h
 
 1999-01-28 Alain Magloire
 

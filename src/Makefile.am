@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS=no-dependencies
 
 LN = ln
 
-bin_PROGRAMS = grep$(EXEEXT) egrep$(EXEEXT) fgrep$(EXEEXT)
+bin_PROGRAMS = grep egrep fgrep
 base_sources = grep.c grep.h \
                dfa.c dfa.h \
                kwset.c  kwset.h \
@@ -20,7 +20,7 @@ datadir = $(prefix)/@DATADIRNAME@
 localedir = $(datadir)/locale
 INCLUDES = -I../intl -DLOCALEDIR=\"$(localedir)\"
 
-EXTRA_DIST = regex.h \
+EXTRA_DIST = regex.h regex.c \
              dosbuf.c \
              vms_fab.c vms_fab.h
 

@@ -17,14 +17,28 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <stdio.h>
-#include <wchar.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
+#include <stdio.h>
+
+#if ! defined(HAVE_WCHAR_H) || defined(__CYGWIN__)
+typedef unsigned int wint_t;
+# undef WEOF
+# define WEOF ((wint_t)-1)
+#else
+#include <wchar.h>
+#endif
+
+#ifndef weak_alias
+#  define __btowc btowc
+#endif
 
 /* We use UTF8 encoding for multibyte strings and therefore a valid
    one byte multibyte string only can have a value from 0 to 0x7f.  */
 wint_t
-btowc (c)
+__btowc (c)
      int c;
 {
   if (WEOF != (wint_t) EOF || c < 0 || c > 0x7f)
@@ -32,3 +46,7 @@ btowc (c)
   else
     return (wint_t) c;
 }
+
+#ifdef weak_alias
+weak_alias (__btowc, btowc)
+#endif

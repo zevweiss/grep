@@ -9,15 +9,12 @@ AC_REQUIRE([AC_MINGW32])
 AC_REQUIRE([AC_DJGPP])
 AC_MSG_CHECKING([for environ variable separator])
 AC_CACHE_VAL(ac_cv_sep,
-[if test "$CYGWIN" = yes || test "$MINGW32" = yes || "$DJGPP" = yes ; then
+[if test "$CYGWIN" = yes || test "$MINGW32" = yes || test "$DJGPP" = yes ; then
   ac_cv_sep=yes
 else
   ac_cv_sep=no
 fi])
-if test x"$ac_cv_sep" = xyes ; then
-	SEP=";"
-else
-	SEP=":"
-fi
+SEP=":"
+test x"$ac_cv_sep" = xyes && SEP=";"
 AC_MSG_RESULT(${SEP})
 AC_SUBST(SEP)])
