@@ -70,6 +70,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Tue Mar 26 2002 Bernhard Rosenkraenzer <bero@redhat.com> 2.5.1-1
+- 2.5.1
+
 * Wed Mar 13 2002 Bernhard Rosenkraenzer <bero@redhat.com> 2.5-1
 - 2.5 final
 
