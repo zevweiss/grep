@@ -77,6 +77,16 @@ extern void free();
 #define ISCNTRL(C) (isascii(C) && iscntrl(C))
 #endif
 
+/* ISASCIIDIGIT differs from ISDIGIT, as follows:
+   - Its arg may be any int or unsigned int; it need not be an unsigned char.
+   - It's guaranteed to evaluate its argument exactly once.
+   - It's typically faster.
+   Posix 1003.2-1992 section 2.5.2.1 page 50 lines 1556-1558 says that
+   only '0' through '9' are digits.  Prefer ISASCIIDIGIT to ISDIGIT unless
+   it's important to use the locale's definition of `digit' even when the
+   host does not conform to Posix.  */
+#define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
+
 /* If we (don't) have I18N.  */
 /* glibc defines _ */
 #ifndef _
@@ -340,10 +350,12 @@ static int minrep, maxrep;	/* Repeat counts for {m,n}. */
 #define FETCH(c, eoferr)   	      \
   {			   	      \
     if (! lexleft)	   	      \
-      if (eoferr != 0)	   	      \
-	dfaerror(eoferr);  	      \
-      else		   	      \
-	return lasttok = END;	      \
+      {				      \
+	if (eoferr != 0)	      \
+	  dfaerror (eoferr);	      \
+	else		   	      \
+	  return lasttok = END;	      \
+      }				      \
     (c) = (unsigned char) *lexptr++;  \
     --lexleft;		   	      \
   }
@@ -415,6 +427,8 @@ lex (void)
   int backslash = 0, invert;
   charclass ccl;
   int i;
+  char lo[2];
+  char hi[2];
 
   /* Basic plan: We fetch a character.  If it's a backslash,
      we set the backslash flag and go through the loop again.
@@ -547,10 +561,10 @@ lex (void)
 	      int lo = -1, hi = -1;
 	      char const *p = lexptr;
 	      char const *lim = p + lexleft;
-	      for (;  p != lim && ISDIGIT (*p);  p++)
+	      for (;  p != lim && ISASCIIDIGIT (*p);  p++)
 		lo = (lo < 0 ? 0 : lo * 10) + *p - '0';
 	      if (p != lim && *p == ',')
-		while (++p != lim && ISDIGIT (*p))
+		while (++p != lim && ISASCIIDIGIT (*p))
 		  hi = (hi < 0 ? 0 : hi * 10) + *p - '0';
 	      else
 		hi = lo;
@@ -565,13 +579,13 @@ lex (void)
 	     {M,} - minimum count, maximum is infinity
 	     {M,N} - M through N */
 	  FETCH(c, _("unfinished repeat count"));
-	  if (ISDIGIT(c))
+	  if (ISASCIIDIGIT (c))
 	    {
 	      minrep = c - '0';
 	      for (;;)
 		{
 		  FETCH(c, _("unfinished repeat count"));
-		  if (!ISDIGIT(c))
+		  if (! ISASCIIDIGIT (c))
 		    break;
 		  minrep = 10 * minrep + c - '0';
 		}
@@ -581,7 +595,7 @@ lex (void)
 	  if (c == ',')
 	    {
 	      FETCH (c, _("unfinished repeat count"));
-	      if (! ISDIGIT (c))
+	      if (! ISASCIIDIGIT (c))
 		maxrep = -1;
 	      else
 		{
@@ -589,7 +603,7 @@ lex (void)
 		  for (;;)
 		    {
 		      FETCH (c, _("unfinished repeat count"));
-		      if (! ISDIGIT (c))
+		      if (! ISASCIIDIGIT (c))
 			break;
 		      maxrep = 10 * maxrep + c - '0';
 		    }
@@ -728,16 +742,26 @@ lex (void)
 		}
 	      else
 		c2 = c;
-	      while (c <= c2)
+
+	      lo[0] = c;  lo[1] = '\0';
+	      hi[0] = c2; hi[1] = '\0';
+	      for (c = 0; c < NOTCHAR; c++)
 		{
-		  setbit(c, ccl);
-		  if (case_fold)
-		    if (ISUPPER(c))
-		      setbit(tolower(c), ccl);
-		    else if (ISLOWER(c))
-		      setbit(toupper(c), ccl);
-		  ++c;
+		  char ch[2];
+		  ch[0] = c;  ch[1] = '\0';
+		  if (strcoll (lo, ch) <= 0 && strcoll (ch, hi) <= 0)
+		    {
+		      setbit (c, ccl);
+		      if (case_fold)
+			{
+			  if (ISUPPER (c))
+			    setbit (tolower (c), ccl);
+			  else if (ISLOWER (c))
+			    setbit (toupper (c), ccl);
+			}
+		    }
 		}
+
 	    skip:
 	      ;
 	    }

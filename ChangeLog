@@ -1,3 +1,20 @@
+2000-01-23  Paul Eggert
+
+	* src/dfa.c (FETCH, lex): Put brackets around if-body to avoid
+	GCC warning about ambiguous if-then-else.
+
+2000-01-23  Paul Eggert
+
+	* src/regex.c (GET_UNSIGNED_NUMBER): Allow only ASCII digits.
+	* src/dfa.c (ISASCIIDIGIT): New macro.
+	(lex): Use it instead of ISDIGIT.
+
+2000-01-23  Paul Eggert
+
+	* src/regex.c (compile_range): When matching a character
+	range, use the current collating sequence, as POSIX requires.
+	* src/dfa.c (lex): Likewise.
+
 2000-01-20  Alain Magloire
 
 	* tests/Makefile.am (dist-hook): Added new rule to make sure
