@@ -11,7 +11,7 @@ EXTRA_DIST = djgpp.m4 \
              install.m4 \
              isc-posix.m4 \
              lcmessage.m4 \
-             lfs.m4 \
+             largefile.m4 \
              missing.m4 \
              progtest.m4 \
              regex.m4 \

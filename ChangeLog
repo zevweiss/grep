@@ -1,3 +1,23 @@
+1999-08-16  Paul Eggert  <eggert@twinsun.com>
+
+	Upgrade large-file support to the version used in tar and
+	textutils.
+
+	* Makefile.am (ACLOCAL_AMFLAGS): Define to be empty.
+	(M4DIR, ACINCLUDE_INPUTS): New macros.
+	($(srcdir)/acinclude.m4): New rule.
+
+	* configure.in (AC_CANONICAL_HOST, AM_C_PROTOTYPES): Add.
+	(AC_SYS_LARGEFILE): Renamed from AC_LFS, for compatibility
+	with what should appear in the next autoconf release.
+
+	* m4/largefile.m4: Renamed from m4/lfs.m4.
+
+	* src/ansi2knr.1, src/ansi2knr.c, config.guess, config.sub:
+	New files.  config.guess and config.sub ar needed by the new
+	AC_SYS_LARGEFILE.  ansi2knr is needed by AM_C_PROTOTYPES,
+	which in turn is needed by the new AC_SYS_LARGEFILE.
+
 1999-08-16  Alain Magloire
 
 	* 2.3d snapshot on ftp server.
@@ -13,7 +33,6 @@ for the data, and one for the file names.  (Sometimes one wants
 null-terminated file names in the output, and sometimes one wants to
 process lists of null-terminated strings, and these are orthogonal
 axes.)
-
 
         * NEWS, doc/grep.texi: New -z or --null-data and -Z or --null options.
         * src/grep.c (long_options, usage, main): Likewise.
