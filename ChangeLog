@@ -1,3 +1,7 @@
+2005-02-08  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/mbsupport.h: Don't say the file is part of GAWK.
+
 2005-02-07  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/grep.c: Document that -X is undocumented.
