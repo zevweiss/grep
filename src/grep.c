@@ -77,6 +77,8 @@ static struct option long_options[] =
   {"line-regexp", no_argument, NULL, 'x'},
   {"no-filename", no_argument, NULL, 'h'},
   {"no-messages", no_argument, NULL, 's'},
+  {"null", no_argument, NULL, 'Z'},
+  {"null-data", no_argument, NULL, 'z'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
   {"regexp", required_argument, NULL, 'e'},
@@ -98,6 +100,7 @@ char const *matcher;
 int match_icase;
 int match_words;
 int match_lines;
+unsigned char eolbyte;
 
 /* For error messages. */
 static char *prog;
@@ -418,6 +421,7 @@ fillbuf (save, stats)
 
 /* Flags controlling the style of output. */
 static int always_text;		/* Assume the input is always text. */
+static int filename_mask;	/* If zero, output nulls after filenames.  */
 static int out_quiet;		/* Suppress all normal output. */
 static int out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
@@ -449,11 +453,9 @@ nlscan (lim)
      char *lim;
 {
   char *beg;
-
-  for (beg = lastnl; beg < lim; ++beg)
-    if (*beg == '\n')
-      ++totalnl;
-  lastnl = beg;
+  for (beg = lastnl;  (beg = memchr (beg, eolbyte, lim - beg));  beg++)
+    totalnl++;
+  lastnl = lim;
 }
 
 static void
@@ -482,7 +484,7 @@ prline (beg, lim, sep)
      int sep;
 {
   if (out_file)
-    printf ("%s%c", filename, sep);
+    printf ("%s%c", filename, sep & filename_mask);
   if (out_line)
     {
       nlscan (beg);
@@ -515,7 +517,7 @@ prpending (lim)
   while (pending > 0 && lastout < lim)
     {
       --pending;
-      if ((nl = memchr (lastout, '\n', lim - lastout)) != 0)
+      if ((nl = memchr (lastout, eolbyte, lim - lastout)) != 0)
 	++nl;
       else
 	nl = lim;
@@ -533,6 +535,7 @@ prtext (beg, lim, nlinesp)
 {
   static int used;		/* avoid printing "--" before any output */
   char *bp, *p, *nl;
+  char eol = eolbyte;
   int i, n;
 
   if (!out_quiet && pending > 0)
@@ -549,7 +552,7 @@ prtext (beg, lim, nlinesp)
 	if (p > bp)
 	  do
 	    --p;
-	  while (p > bp && p[-1] != '\n');
+	  while (p > bp && p[-1] != eol);
 
       /* We only print the "--" separator if our output is
 	 discontiguous from the last output in the file. */
@@ -558,7 +561,7 @@ prtext (beg, lim, nlinesp)
 
       while (p < beg)
 	{
-	  nl = memchr (p, '\n', beg - p);
+	  nl = memchr (p, eol, beg - p);
 	  prline (p, nl + 1, '-');
 	  p = nl + 1;
 	}
@@ -569,7 +572,7 @@ prtext (beg, lim, nlinesp)
       /* Caller wants a line count. */
       for (n = 0; p < lim; ++n)
 	{
-	  if ((nl = memchr (p, '\n', lim - p)) != 0)
+	  if ((nl = memchr (p, eol, lim - p)) != 0)
 	    ++nl;
 	  else
 	    nl = lim;
@@ -598,13 +601,14 @@ grepbuf (beg, lim)
   int nlines, n;
   register char *p, *b;
   char *endp;
+  char eol = eolbyte;
 
   nlines = 0;
   p = beg;
   while ((b = (*execute)(p, lim - p, &endp)) != 0)
     {
       /* Avoid matching the empty line at the end of the buffer. */
-      if (b == lim && ((b > beg && b[-1] == '\n') || b == beg))
+      if (b == lim && ((b > beg && b[-1] == eol) || b == beg))
 	break;
       if (!out_invert)
 	{
@@ -641,6 +645,7 @@ grep (fd, file, stats)
   int not_text;
   size_t residue, save;
   char *beg, *lim;
+  char eol = eolbyte;
 
   if (!reset (fd, file, stats))
     return 0;
@@ -672,7 +677,7 @@ grep (fd, file, stats)
     }
 
   not_text = (! (always_text | out_quiet)
-	      && memchr (bufbeg, '\0', buflim - bufbeg));
+	      && memchr (bufbeg, eol ? '\0' : '\200', buflim - bufbeg));
   done_on_match += not_text;
   out_quiet += not_text;
 
@@ -684,7 +689,7 @@ grep (fd, file, stats)
       if (buflim - bufbeg == save)
 	break;
       beg = bufbeg + save - residue;
-      for (lim = buflim; lim > beg && lim[-1] != '\n'; --lim)
+      for (lim = buflim; lim > beg && lim[-1] != eol; --lim)
 	;
       residue = buflim - lim;
       if (beg < lim)
@@ -702,7 +707,7 @@ grep (fd, file, stats)
 	  ++i;
 	  do
 	    --beg;
-	  while (beg > bufbeg && beg[-1] != '\n');
+	  while (beg > bufbeg && beg[-1] != eol);
 	}
       if (beg != lastout)
 	lastout = 0;
@@ -807,22 +812,13 @@ grepfile (file, stats)
       if (count_matches)
 	{
 	  if (out_file)
-	    printf ("%s:", filename);
+	    printf ("%s%c", filename, ':' & filename_mask);
 	  printf ("%d\n", count);
 	}
 
-      if (count)
-	{
-	  status = 0;
-	  if (list_files == 1)
-	    printf ("%s\n", filename);
-	}
-      else
-	{
-	  status = 1;
-	  if (list_files == -1)
-	    printf ("%s\n", filename);
-	}
+      status = !count;
+      if (list_files == 1 - 2 * status)
+	printf ("%s%c", filename, '\n' & filename_mask);
 
       if (file && close (desc) != 0)
 	error (file, errno);
@@ -922,7 +918,8 @@ Regexp selection and interpretation:\n"));
   -f, --file=FILE           obtain PATTERN from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
   -w, --word-regexp         force PATTERN to match only whole words\n\
-  -x, --line-regexp         force PATTERN to match only whole lines\n"));
+  -x, --line-regexp         force PATTERN to match only whole lines\n\
+  -z, --null-data           a data line ends in 0 byte, not newline\n"));
       printf (_("\
 \n\
 Miscellaneous:\n\
@@ -944,7 +941,8 @@ Output control:\n\
   -r, --recursive           equivalent to --directories=recurse.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
-  -c, --count               only print a count of matching lines per FILE\n"));
+  -c, --count               only print a count of matching lines per FILE\n\
+  -Z, --null                print 0 byte after FILE name\n"));
       printf (_("\
 \n\
 Context control:\n\
@@ -1118,6 +1116,8 @@ main (argc, argv)
   keycc = 0;
   with_filenames = 0;
   matcher = NULL;
+  eolbyte = '\n';
+  filename_mask = ~0;
 
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
@@ -1142,9 +1142,9 @@ main (argc, argv)
 	 (/* POSIX requires that only grep has options -E, -F, and -G.  */
 	  3 * (strcmp (default_matcher, "grep") != 0) +
 #if O_BINARY
-          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyUu"
+          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyUuZz"
 #else
-          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxy"
+          "EFG0123456789A:B:C::HVX:abcd:e:f:hiLlnqrsvwxyZz"
 #endif
 	  ),
          long_options, NULL)) != EOF)
@@ -1310,6 +1310,12 @@ main (argc, argv)
 	break;
       case 'x':
 	match_lines = 1;
+	break;
+      case 'Z':
+	filename_mask = 0;
+	break;
+      case 'z':
+	eolbyte = '\0';
 	break;
       case 0:
 	/* long options */

@@ -394,6 +394,30 @@ a Unix machine.  This option has no  effect  unless  @samp{-b}
 option is also used; it is only supported on MS-DOS and
 MS-Windows.
 
+@item -Z
+@itemx --null
+@opindex -Z
+@opindex --null
+@cindex zero-terminated file names
+Output a zero byte (the @sc{ASCII} @sc{NUL} character) instead of the
+character that normally follows a file name.  For example, @samp{grep
+-lZ} outputs a zero byte after each file name instead of the usual
+newline.  This option makes the output unambiguous, even in the presence
+of file names containing unusual characters like newlines.  This option
+can be used with commands like @samp{find -print0}, @samp{perl -0},
+@samp{sort -z}, and @samp{xargs -0} to process arbitrary file names,
+even those that contain newline characters.
+
+@item -z
+@itemx --null-data
+@opindex -z
+@opindex --null-data
+@cindex zero-terminated lines
+Treat the input as a set of lines, each terminated by a zero byte (the
+@sc{ASCII} @sc{NUL} character) instead of a newline.  Like the @samp{-Z}
+or @samp{--null} option, this option can be used with commands like
+@samp{sort -z} to process arbitrary file names.
+
 @end table
 
 Several additional options control which variant of the @sc{grep}

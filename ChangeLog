@@ -1,4 +1,37 @@
-!999-06-15 Alain Magloire
+1999-07-26  Paul Eggert
+
+Several GNU tools have options to process arbitrary file names, even
+file names that contain newline characters.  These include `find
+-print0', `perl -0', `sort -z', and `xargs -0'.  It'd be handy if GNU
+grep also processed such file names.  Here's a proposed patch to do
+this, relative to grep 2.3c.  This patch introduces two options, one
+for the data, and one for the file names.  (Sometimes one wants
+null-terminated file names in the output, and sometimes one wants to
+process lists of null-terminated strings, and these are orthogonal
+axes.)
+
+
+        * NEWS, doc/grep.texi: New -z or --null-data and -Z or --null options.
+        * src/grep.c (long_options, usage, main): Likewise.
+
+        * src/dfa.h (dfasyntax): New eol parameter.
+        * src/dfa.c (eolbyte): New var.
+        (dfasyntax): Set it from new parameter.
+        (lex, dfastat, build_state, dfaexec): Use it instead of '\n'.
+
+        * src/grep.h (eolbyte): New decl.
+        * src/grep.c (eolbyte): New var.
+        (nlscan, prpending, prtext, grepbuf, grep): Use it instead of '\n'.
+        (filename_mask): New var.
+        (prline, grepfile): Output NUL separator if filename_mask is zero.
+        (grep): Look for '\200' as the hallmark of a binary file, not '\0',
+        if -z or --null-data is specified, since it implies that '\0' is
+        expected as text.
+
+        * src/search.c (Gcompile, Ecompile): Pass eolbyte to dfasyntax.
+        (EGexecute, Fexecute): Use eolbyte instead of '\n'.
+
+1999-06-15 Alain Magloire
 
 	* src/grep.c, doc/grep{1,texi} : 
 	--revert-match should be --invert-match.

@@ -1,7 +1,13 @@
-Version 2.3.1:
+  - The new option -z or --null-data causes `grep' to treat a zero byte
+    (the ASCII NUL character) as a line terminator in input data, and
+    to treat newlines as ordinary data.
 
-    Minor release to correct some configuration problems
-    on certain platforms.
+  - The new option -Z or --null causes `grep' to output a zero byte
+    instead of the normal separator after a file name.
+
+  - These two options can be used with commands like `find -print0',
+    `perl -0', `sort -z', and `xargs -0' to process arbitrary file names,
+    even those that contain newlines.
 
   - The environment variable GREP_OPTIONS specifies default options;
     e.g. GREP_OPTIONS='--directories=skip' reestablishes grep 2.1's

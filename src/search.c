@@ -134,7 +134,7 @@ Gcompile(pattern, size)
   const char *err;
 
   re_set_syntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
-  dfasyntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase);
+  dfasyntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase, eolbyte);
 
   if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
     fatal(err, 0);
@@ -189,17 +189,17 @@ Ecompile(pattern, size)
   if (strcmp(matcher, "posix-egrep") == 0)
     {
       re_set_syntax(RE_SYNTAX_POSIX_EGREP);
-      dfasyntax(RE_SYNTAX_POSIX_EGREP, match_icase);
+      dfasyntax(RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
     }
   else if (strcmp(matcher, "awk") == 0)
     {
       re_set_syntax(RE_SYNTAX_AWK);
-      dfasyntax(RE_SYNTAX_AWK, match_icase);
+      dfasyntax(RE_SYNTAX_AWK, match_icase, eolbyte);
     }
   else
     {
       re_set_syntax(RE_SYNTAX_EGREP);
-      dfasyntax(RE_SYNTAX_EGREP, match_icase);
+      dfasyntax(RE_SYNTAX_EGREP, match_icase, eolbyte);
     }
 
   if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
@@ -252,6 +252,7 @@ EGexecute(buf, size, endp)
      char **endp;
 {
   register char *buflim, *beg, *end, save;
+  char eol = eolbyte;
   int backref, start, len;
   struct kwsmatch kwsm;
   static struct re_registers regs; /* This is static on account of a BRAIN-DEAD
@@ -269,10 +270,10 @@ EGexecute(buf, size, endp)
 	    goto failure;
 	  /* Narrow down to the line containing the candidate, and
 	     run it through DFA. */
-	  end = memchr(beg, '\n', buflim - beg);
+	  end = memchr(beg, eol, buflim - beg);
 	  if (!end)
 	    end = buflim;
-	  while (beg > buf && beg[-1] != '\n')
+	  while (beg > buf && beg[-1] != eol)
 	    --beg;
 	  save = *end;
 	  if (kwsm.index < lastexact)
@@ -296,10 +297,10 @@ EGexecute(buf, size, endp)
 	  if (!beg)
 	    goto failure;
 	  /* Narrow down to the line we've found. */
-	  end = memchr(beg, '\n', buflim - beg);
+	  end = memchr(beg, eol, buflim - beg);
 	  if (!end)
 	    end = buflim;
-	  while (beg > buf && beg[-1] != '\n')
+	  while (beg > buf && beg[-1] != eol)
 	    --beg;
 	  /* Successful, no backreferences encountered! */
 	  if (!backref)
@@ -390,6 +391,7 @@ Fexecute(buf, size, endp)
 {
   register char *beg, *try, *end;
   register size_t len;
+  char eol = eolbyte;
   struct kwsmatch kwsmatch;
 
   for (beg = buf; beg <= buf + size; ++beg)
@@ -399,9 +401,9 @@ Fexecute(buf, size, endp)
       len = kwsmatch.size[0];
       if (match_lines)
 	{
-	  if (beg > buf && beg[-1] != '\n')
+	  if (beg > buf && beg[-1] != eol)
 	    continue;
-	  if (beg + len < buf + size && beg[len] != '\n')
+	  if (beg + len < buf + size && beg[len] != eol)
 	    continue;
 	  goto success;
 	}
@@ -425,7 +427,7 @@ Fexecute(buf, size, endp)
   return 0;
 
  success:
-  if ((end = memchr(beg + len, '\n', (buf + size) - (beg + len))) != 0)
+  if ((end = memchr(beg + len, eol, (buf + size) - (beg + len))) != 0)
     ++end;
   else
     end = buf + size;

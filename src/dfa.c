@@ -328,15 +328,20 @@ static reg_syntax_t syntax_bits, syntax_bits_set;
 /* Flag for case-folding letters into sets. */
 static int case_fold;
 
+/* End-of-line byte in data.  */
+static unsigned char eolbyte;
+
 /* Entry point to set syntax options. */
 void
-dfasyntax(bits, fold)
+dfasyntax(bits, fold, eol)
      reg_syntax_t bits;
      int fold;
+     int eol;
 {
   syntax_bits_set = 1;
   syntax_bits = bits;
   case_fold = fold;
+  eolbyte = eol;
 }
 
 /* Lexical analyzer.  All the dross that deals with the obnoxious
@@ -634,7 +639,7 @@ lex()
 	  zeroset(ccl);
 	  notset(ccl);
 	  if (!(syntax_bits & RE_DOT_NEWLINE))
-	    clrbit('\n', ccl);
+	    clrbit(eolbyte, ccl);
 	  if (syntax_bits & RE_DOT_NOT_NULL)
 	    clrbit('\0', ccl);
 	  laststart = 0;
@@ -732,7 +737,7 @@ lex()
 	    {
 	      notset(ccl);
 	      if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
-		clrbit('\n', ccl);
+		clrbit(eolbyte, ccl);
 	    }
 	  laststart = 0;
 	  return lasttok = CSET + charclass_index(ccl);
@@ -1561,7 +1566,7 @@ dfastate(s, d, trans)
       for (i = 0; i < NOTCHAR; ++i)
 	if (IS_WORD_CONSTITUENT(i))
 	  setbit(i, letters);
-      setbit('\n', newline);
+      setbit(eolbyte, newline);
     }
 
   zeroset(matches);
@@ -1582,7 +1587,7 @@ dfastate(s, d, trans)
 	{
 	  if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
 					 d->states[s].newline, 1))
-	    clrbit('\n', matches);
+	    clrbit(eolbyte, matches);
 	  if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
 					 d->states[s].newline, 0))
 	    for (j = 0; j < CHARCLASS_INTS; ++j)
@@ -1693,7 +1698,7 @@ dfastate(s, d, trans)
 	state_letter = state;
       for (i = 0; i < NOTCHAR; ++i)
 	trans[i] = (IS_WORD_CONSTITUENT(i)) ? state_letter : state;
-      trans['\n'] = state_newline;
+      trans[eolbyte] = state_newline;
     }
   else
     for (i = 0; i < NOTCHAR; ++i)
@@ -1717,7 +1722,7 @@ dfastate(s, d, trans)
 
       /* Find out if the new state will want any context information. */
       wants_newline = 0;
-      if (tstbit('\n', labels[i]))
+      if (tstbit(eolbyte, labels[i]))
 	for (j = 0; j < follows.nelem; ++j)
 	  if (PREV_NEWLINE_DEPENDENT(follows.elems[j].constraint))
 	    wants_newline = 1;
@@ -1749,7 +1754,7 @@ dfastate(s, d, trans)
 	    {
 	      int c = j * INTBITS + k;
 
-	      if (c == '\n')
+	      if (c == eolbyte)
 		trans[c] = state_newline;
 	      else if (IS_WORD_CONSTITUENT(c))
 		trans[c] = state_letter;
@@ -1840,8 +1845,8 @@ build_state(s, d)
 
   /* Keep the newline transition in a special place so we can use it as
      a sentinel. */
-  d->newlines[s] = trans['\n'];
-  trans['\n'] = -1;
+  d->newlines[s] = trans[eolbyte];
+  trans[eolbyte] = -1;
 
   if (ACCEPTING(s, *d))
     d->fails[s] = trans;
@@ -1889,6 +1894,7 @@ dfaexec(d, begin, end, newline, count, backref)
   register unsigned char *p;	/* Current input character. */
   register int **trans, *t;	/* Copy of d->trans so it can be optimized
 				   into a register. */
+  register unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
   static int sbit[NOTCHAR];	/* Table for anding with d->success. */
   static int sbit_init;
 
@@ -1899,7 +1905,7 @@ dfaexec(d, begin, end, newline, count, backref)
       sbit_init = 1;
       for (i = 0; i < NOTCHAR; ++i)
 	sbit[i] = (IS_WORD_CONSTITUENT(i)) ? 2 : 1;
-      sbit['\n'] = 4;
+      sbit[eol] = 4;
     }
 
   if (! d->tralloc)
@@ -1908,7 +1914,7 @@ dfaexec(d, begin, end, newline, count, backref)
   s = s1 = 0;
   p = (unsigned char *) begin;
   trans = d->trans;
-  *end = '\n';
+  *end = eol;
 
   for (;;)
     {
@@ -1936,7 +1942,7 @@ dfaexec(d, begin, end, newline, count, backref)
 	}
 
       /* If the previous character was a newline, count it. */
-      if (count && (char *) p <= end && p[-1] == '\n')
+      if (count && (char *) p <= end && p[-1] == eol)
 	++*count;
 
       /* Check if we've run off the end of the buffer. */
@@ -1950,7 +1956,7 @@ dfaexec(d, begin, end, newline, count, backref)
 	  continue;
 	}
 
-      if (p[-1] == '\n' && newline)
+      if (p[-1] == eol && newline)
 	{
 	  s = d->newlines[s1];
 	  continue;
