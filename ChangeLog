@@ -1,3 +1,6 @@
+2003-06-05  Stepan Kasal  <kasal@ucw.cz>
+	* intl/Makefile: remove generated file.
+
 2003-06-04  Stepan Kasal  <kasal@ucw.cz>
 	* src/dfa.c: typos fixed.
 
