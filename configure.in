@@ -50,7 +50,7 @@ esac
 
 
 dnl I18N feature
-ALL_LINGUAS="de es el fr ko nl no pl ru sl sv"
+ALL_LINGUAS="de es el fr ko nl no pl pt_BR ru sl sv"
 AM_GNU_GETTEXT
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
