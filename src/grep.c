@@ -1543,7 +1543,7 @@ main (int argc, char **argv)
       printf (_("%s (GNU grep) %s\n"), matcher, VERSION);
       printf ("\n");
       printf (_("\
-Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"));
+Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"));
       printf (_("\
 This is free software; see the source for copying conditions. There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));

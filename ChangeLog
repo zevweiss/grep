@@ -5,6 +5,7 @@
 
 	* src/grep.c (fatal) : Function removed, using error () from
 	lib/error.c instead.
+	(usage) : Copyright updated.
 	(error) : Function removed, using error () from lib/error.c instead,
 	adjust prototypes.
 	(prog) : Global variable rename to program_name, to work with new
