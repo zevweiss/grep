@@ -1,4 +1,12 @@
-2000-04-17  Paul Eggert  <eggert@twinsun.com>
+2000-04-20  Paul Eggert
+
+	* src/dfa.c (lex):
+	Do not assume that [c] is equivalent to [c-c]; this isn't true
+	if LC_COLLATE specifies that some characters are equivalent.
+	(setbit_case_fold): New function.
+	(lex): Use it to simplify the code a bit.
+
+2000-04-17  Paul Eggert
 
 	Do CRLF munging only if HAVE_DOS_FILE_CONTENTS, instead of
 	having it depend on O_BINARY (which leads to incorrect results

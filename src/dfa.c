@@ -280,6 +280,20 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
   eolbyte = eol;
 }
 
+/* Like setbit, but if case is folded, set both cases of a letter.  */
+static void
+setbit_case_fold (unsigned b, charclass c)
+{
+  setbit (b, c);
+  if (case_fold)
+    {
+      if (ISUPPER (b))
+	setbit (tolower (b), c);
+      else if (ISLOWER (b))
+	setbit (toupper (b), c);
+    }
+}
+
 /* Lexical analyzer.  All the dross that deals with the obnoxious
    GNU Regex syntax bits is located here.  The poor, suffering
    reader is referred to the GNU Regex documentation for the
@@ -653,14 +667,11 @@ lex (void)
 		for (c1 = 0; prednames[c1].name; ++c1)
 		  if (looking_at(prednames[c1].name))
 		    {
-			int (*pred)() = prednames[c1].pred;
-			if (case_fold
-			    && (pred == is_upper || pred == is_lower))
-				pred = is_alpha;
+		      int (*pred) PARAMS ((int)) = prednames[c1].pred;
 
 		      for (c2 = 0; c2 < NOTCHAR; ++c2)
 			if ((*pred)(c2))
-			  setbit(c2, ccl);
+			  setbit_case_fold (c2, ccl);
 		      lexptr += strlen(prednames[c1].name);
 		      lexleft -= strlen(prednames[c1].name);
 		      FETCH(c1, _("Unbalanced ["));
@@ -678,7 +689,6 @@ lex (void)
 			 which is left in c1, the lookahead character. */
 		      --lexptr;
 		      ++lexleft;
-		      c2 = c;
 		    }
 		  else
 		    {
@@ -686,29 +696,20 @@ lex (void)
 			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
 			FETCH(c2, _("Unbalanced ["));
 		      FETCH(c1, _("Unbalanced ["));
-		    }
-		}
-	      else
-		c2 = c;
-
-	      lo[0] = c;  lo[1] = '\0';
-	      hi[0] = c2; hi[1] = '\0';
-	      for (c = 0; c < NOTCHAR; c++)
-		{
-		  char ch[2];
-		  ch[0] = c;  ch[1] = '\0';
-		  if (strcoll (lo, ch) <= 0 && strcoll (ch, hi) <= 0)
-		    {
-		      setbit (c, ccl);
-		      if (case_fold)
+		      lo[0] = c;  lo[1] = '\0';
+		      hi[0] = c2; hi[1] = '\0';
+		      for (c = 0; c < NOTCHAR; c++)
 			{
-			  if (ISUPPER (c))
-			    setbit (tolower (c), ccl);
-			  else if (ISLOWER (c))
-			    setbit (toupper (c), ccl);
+			  char ch[2];
+			  ch[0] = c;  ch[1] = '\0';
+			  if (strcoll (lo, ch) <= 0 && strcoll (ch, hi) <= 0)
+			    setbit_case_fold (c, ccl);
 			}
+		      continue;
 		    }
 		}
+
+	      setbit_case_fold (c, ccl);
 
 	    skip:
 	      ;
@@ -729,11 +730,7 @@ lex (void)
 	  if (case_fold && ISALPHA(c))
 	    {
 	      zeroset(ccl);
-	      setbit(c, ccl);
-	      if (isupper(c))
-		setbit(tolower(c), ccl);
-	      else
-		setbit(toupper(c), ccl);
+	      setbit_case_fold (c, ccl);
 	      return lasttok = CSET + charclass_index(ccl);
 	    }
 	  return c;
