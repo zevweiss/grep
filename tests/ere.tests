@@ -14,10 +14,10 @@
 1@a$b@a$b
 0@^@abc
 0@$@abc
-0@^$@@
-0@$^@@
-0@^^@@
-0@$$@@
+0@^$@@TO CORRECT
+0@$^@@TO CORRECT
+0@^^@@TO CORRECT
+0@$$@@TO CORRECT
 0@a*(^b$)c*@b
 2@|@EMPTY@NO ALTERNATION
 2@*@BADRPT@TO CORRECT

@@ -1,3 +1,12 @@
+2004-11-11  Stepan Kasal  <kasal@ucw.cz>
+
+	* tests/spencer1.awk: Use only lines with 3 fields.
+	* tests/spencer1.tests: Disable #55 for now.
+	* tests/ere.tests, tests/bre.tests: Add "TO CORRECT" to disabled
+	  tests which had empty $4.
+	* tests/backref.sh: Modify #2 so that current glibc regex can
+	  handle it in finite time.
+
 2004-11-12  Stepan Kasal  <kasal@ucw.cz>
 
 	Change bug-gnu-utils address to bug-grep, on many places; there
