@@ -1,4 +1,8 @@
 2003-07-23  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/Makefile.am: Add the egrep and fgrep scripts to CLEANFILES.
+
+2003-07-23  Stepan Kasal  <kasal@ucw.cz>
 	* tests/backref.sh: Messages fixed.
 
 2003-07-08  David Kaelbling  <drk@sgi.com>  (tiny change)

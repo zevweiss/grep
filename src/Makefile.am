@@ -5,6 +5,7 @@ LN = ln
 
 bin_PROGRAMS = grep
 bin_SCRIPTS = egrep fgrep
+CLEANFILES = egrep fgrep
 grep_SOURCES = grep.c dfa.c kwset.c search.c \
                grepmat.c
 noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h
