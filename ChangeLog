@@ -1,3 +1,11 @@
+1999-08-25  Paul Eggert  <eggert@twinsun.com>
+
+	* src/grep.c (grepdir):
+	Don't assume that st_ino and st_dev must be integers;
+	POSIX.1 allows them to be floating-point (!).
+
+	* src/vms_fab.h (arr_ptr): `:' -> `;' to fix typo.
+
 1999-08-18  Alain Magloire
 
 	* 2.3e snapshot.
