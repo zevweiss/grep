@@ -959,14 +959,6 @@ main (argc, argv)
   /* Accumulated value of individual digits in a -NUM option */
   digit_args_val = 0;
 
-  /* We now define explicitly the alogrithm "grep"/"fgrep"/"egrep" 
-   * at compilation by passing the -DMATCHER="xxx"
-   * We don't rely on the program name.
-   */
-#ifndef MATCHER
-# define MATCHER "grep"
-#endif
-  matcher = MATCHER;
 
 /* Internationalization. */
 #if HAVE_SETLOCALE
@@ -1193,6 +1185,16 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
       }
     else
       usage (2);
+
+  /* We now define explicitly the alogrithm "grep"/"fgrep"/"egrep" 
+   * at compilation by passing the -DMATCHER="xxx"
+   * We don't rely on the program name.
+   */
+#ifndef MATCHER
+# define MATCHER "grep"
+#endif
+  if (! matcher)
+    matcher = MATCHER;
 
   if (!setmatcher (matcher) && !setmatcher ("default"))
     abort ();
