@@ -1,3 +1,7 @@
+2000-09-01  Brian Youmans
+
+	* doc/grep.texi : Typo fixes.
+
 2000-08-30  Paul Eggert
 
 	* doc/grep.texi (Usage): Talk about what "grep -r hello *.c"

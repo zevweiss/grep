@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
+"POT-Creation-Date: 2001-02-08 17:32-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,294 +14,267 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:941
 msgid "Memory exhausted"
 msgstr ""
 
-#: src/dfa.c:452
+#: src/dfa.c:415
 msgid "Unfinished \\ escape"
 msgstr ""
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
-#. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:548 src/dfa.c:554 src/dfa.c:564 src/dfa.c:572 src/dfa.c:587
 msgid "unfinished repeat count"
 msgstr ""
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:561 src/dfa.c:578 src/dfa.c:586 src/dfa.c:590
 msgid "malformed repeat count"
 msgstr ""
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:656 src/dfa.c:659 src/dfa.c:683 src/dfa.c:687 src/dfa.c:688
+#: src/dfa.c:691 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr ""
 
-#: src/dfa.c:849
+#: src/dfa.c:850
 msgid "Unbalanced ("
 msgstr ""
 
-#: src/dfa.c:970
+#: src/dfa.c:967
 msgid "No syntax specified"
 msgstr ""
 
-#: src/dfa.c:978
+#: src/dfa.c:975
 msgid "Unbalanced )"
 msgstr ""
 
-#: src/dfa.c:1998
+#: src/dfa.c:1933
 msgid "out of memory"
 msgstr ""
 
-#: src/getopt.c:628
+#: src/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr ""
 
-#: src/getopt.c:652
+#: src/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr ""
 
-#: src/getopt.c:657
+#: src/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr ""
 
-#: src/getopt.c:674 src/getopt.c:847
+#: src/getopt.c:723 src/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
 #. --option
-#: src/getopt.c:703
+#: src/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr ""
 
 #. +option or -option
-#: src/getopt.c:707
+#: src/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr ""
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:733
+#: src/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr ""
 
-#: src/getopt.c:736
+#: src/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr ""
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:766 src/getopt.c:896
+#: src/getopt.c:815 src/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr ""
 
-#: src/getopt.c:813
+#: src/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr ""
 
-#: src/getopt.c:831
+#: src/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: src/getopt1.c:132
-#, c-format
-msgid "option %s"
-msgstr ""
-
-#: src/getopt1.c:134
-#, c-format
-msgid " with arg %s"
-msgstr ""
-
-#: src/getopt1.c:149
-msgid "digits occur in two different argv-elements.\n"
-msgstr ""
-
-#: src/getopt1.c:151
-#, c-format
-msgid "option %c\n"
-msgstr ""
-
-#: src/getopt1.c:155
-msgid "option a\n"
-msgstr ""
-
-#: src/getopt1.c:159
-msgid "option b\n"
-msgstr ""
-
-#: src/getopt1.c:163
-#, c-format
-msgid "option c with value `%s'\n"
-msgstr ""
-
-#: src/getopt1.c:167
-#, c-format
-msgid "option d with value `%s'\n"
-msgstr ""
-
-#: src/getopt1.c:174
-#, c-format
-msgid "?? getopt returned character code 0%o ??\n"
-msgstr ""
-
-#: src/getopt1.c:180
-msgid "non-option ARGV-elements: "
-msgstr ""
-
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
-#: src/kwset.c:190
+#: src/grep.c:181 src/grep.c:196 src/grep.c:365 src/kwset.c:171
+#: src/kwset.c:177 src/obstack.c:471
 msgid "memory exhausted"
 msgstr ""
 
-#: src/grep.c:324
-#, c-format
-msgid "%s: warning: %s: %s\n"
+#: src/grep.c:212
+msgid "invalid context length argument"
 msgstr ""
 
-#: src/grep.c:429 src/grep.c:1222
+#: src/grep.c:484
+msgid "input is too large to count"
+msgstr ""
+
+#: src/grep.c:539 src/grep.c:1524
 msgid "writing output"
 msgstr ""
 
-#: src/grep.c:655
+#: src/grep.c:810
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr ""
 
-#: src/grep.c:670
+#: src/grep.c:824
 msgid "(standard input)"
 msgstr ""
 
-#: src/grep.c:800
+#: src/grep.c:929
+#, c-format
+msgid "%s: warning: %s: %s\n"
+msgstr ""
+
+#: src/grep.c:930
+msgid "recursive directory loop"
+msgstr ""
+
+#: src/grep.c:977
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr ""
 
-#: src/grep.c:801
+#: src/grep.c:978
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/grep.c:805
+#: src/grep.c:982
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr ""
 
-#: src/grep.c:806
+#: src/grep.c:983
+#, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
+"Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
+msgstr ""
+
+#: src/grep.c:988
+msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+
+#: src/grep.c:993
+msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
 
-#: src/grep.c:818
+#: src/grep.c:1000
 msgid ""
 "\n"
 "Miscellaneous:\n"
 "  -s, --no-messages         suppress error messages\n"
-"  -v, --revert-match        select non-matching lines\n"
+"  -v, --invert-match        select non-matching lines\n"
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
+"      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 
-#: src/grep.c:825
+#: src/grep.c:1008
 msgid ""
 "\n"
 "Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
 "  -b, --byte-offset         print the byte offset with output lines\n"
 "  -n, --line-number         print line number with output lines\n"
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE\n"
+"                            TYPE is 'binary', 'text', or 'without-match'.\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+"  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'.\n"
 "  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
+"  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 
-#: src/grep.c:840
+#: src/grep.c:1028
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+"  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n"
-"With no FILE, or when FILE is -, read standard input. If less than\n"
-"two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
-"Exit with 2 if syntax errors or system errors.\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"With no FILE, or when FILE is -, read standard input.  If less than\n"
+"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
+"and 2 if trouble.\n"
 msgstr ""
 
-#: src/grep.c:855
+#: src/grep.c:1042
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 
-#: src/grep.c:998 src/grep.c:1005
-msgid "invalid context length argument"
+#: src/grep.c:1052
+msgid "conflicting matchers specified"
 msgstr ""
 
-#: src/grep.c:1014
-msgid "infalid context length argument"
-msgstr ""
-
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
-msgid "you may specify only one of -E, -F, or -G"
-msgstr ""
-
-#: src/grep.c:1050
-msgid "matcher already specified"
-msgstr ""
-
-#: src/grep.c:1071
+#: src/grep.c:1326
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1157
+#: src/grep.c:1386
+msgid "invalid max count"
+msgstr ""
+
+#: src/grep.c:1425
+msgid "unknown binary-files type"
+msgstr ""
+
+#: src/grep.c:1456
 #, c-format
-msgid "grep (GNU grep) %s\n"
+msgid "%s (GNU grep) %s\n"
 msgstr ""
 
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:1458
+msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/grep.c:1161
+#: src/grep.c:1460
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-msgstr ""
-
-#: src/obstack.c:467
-msgid "memory exhausted\n"
 msgstr ""

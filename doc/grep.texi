@@ -988,6 +988,12 @@ Append @file{/dev/null}:
 grep 'eli' /etc/passwd /dev/null
 @end example
 
+gets you:
+
+@smallexample
+/etc/passwd:eli:DNGUTF58.IMe.:98:11:Eli Smith:/home/do/eli:/bin/bash
+@end smallexample
+
 @item
 Why do people use strange regular expressions on @command{ps} output?
 

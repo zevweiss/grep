@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4f\n"
-"POT-Creation-Date: 2000-02-02 01:04-0500\n"
+"POT-Creation-Date: 2001-02-08 17:32-0500\n"
 "PO-Revision-Date: 2000-02-15 20:48+01:00\n"
 "Last-Translator: Martin von Löwis <martin@mira.isdn.cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:163 src/dfa.c:174 src/dfa.c:185 src/grep.c:902
+#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:941
 msgid "Memory exhausted"
 msgstr "Virtueller Speicher erschöpft."
 
-#: src/dfa.c:448
+#: src/dfa.c:415
 msgid "Unfinished \\ escape"
 msgstr "Unbeendete \\-Escape-Sequenz."
 
@@ -25,34 +25,34 @@ msgstr "Unbeendete \\-Escape-Sequenz."
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:581 src/dfa.c:587 src/dfa.c:597 src/dfa.c:605 src/dfa.c:620
+#: src/dfa.c:548 src/dfa.c:554 src/dfa.c:564 src/dfa.c:572 src/dfa.c:587
 msgid "unfinished repeat count"
 msgstr "Unbeendeter Wiederholungszähler."
 
-#: src/dfa.c:594 src/dfa.c:611 src/dfa.c:619 src/dfa.c:623
+#: src/dfa.c:561 src/dfa.c:578 src/dfa.c:586 src/dfa.c:590
 msgid "malformed repeat count"
 msgstr "Unförmiger Wiederholungszähler."
 
 # Is this message used only for [ without matching ],
 # or for ] without [ as well?
-#: src/dfa.c:688 src/dfa.c:691 src/dfa.c:718 src/dfa.c:722 src/dfa.c:723
-#: src/dfa.c:726 src/dfa.c:739 src/dfa.c:740
+#: src/dfa.c:656 src/dfa.c:659 src/dfa.c:683 src/dfa.c:687 src/dfa.c:688
+#: src/dfa.c:691 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "Öffnende [ ohne schließende."
 
-#: src/dfa.c:886
+#: src/dfa.c:850
 msgid "Unbalanced ("
 msgstr "Öffnende ( ohne schließende."
 
-#: src/dfa.c:1000
+#: src/dfa.c:967
 msgid "No syntax specified"
 msgstr "Keine Syntax angegeben."
 
-#: src/dfa.c:1008
+#: src/dfa.c:975
 msgid "Unbalanced )"
 msgstr "Schließende ) ohne öffnende."
 
-#: src/dfa.c:1994
+#: src/dfa.c:1933
 msgid "out of memory"
 msgstr "Speicher ist alle."
 
@@ -115,49 +115,57 @@ msgstr "%s: Option »-W %s« ist zweideutig.\n"
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: Option »-W %s« erlaubt keinen Parameter.\n"
 
-#: src/grep.c:185 src/grep.c:200 src/grep.c:293 src/grep.c:399 src/kwset.c:180
-#: src/kwset.c:186 src/obstack.c:471
+#: src/grep.c:181 src/grep.c:196 src/grep.c:365 src/kwset.c:171
+#: src/kwset.c:177 src/obstack.c:471
 msgid "memory exhausted"
 msgstr "Virtueller Speicher erschöpft."
 
-#: src/grep.c:550 src/grep.c:1441
+#: src/grep.c:212
+msgid "invalid context length argument"
+msgstr "Ungültige Kontextlänge."
+
+#: src/grep.c:484
+msgid "input is too large to count"
+msgstr ""
+
+#: src/grep.c:539 src/grep.c:1524
 msgid "writing output"
 msgstr "schreibe Ausgabe"
 
-#: src/grep.c:777
+#: src/grep.c:810
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Übereinstimmungen in Binärdatei %s.\n"
 
-#: src/grep.c:791
+#: src/grep.c:824
 msgid "(standard input)"
 msgstr "(Standardeingabe)"
 
-#: src/grep.c:887
+#: src/grep.c:929
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: Warnung: %s: %s\n"
 
-#: src/grep.c:888
+#: src/grep.c:930
 msgid "recursive directory loop"
 msgstr "Rekursive Verzeichnisschleife."
 
-#: src/grep.c:938
+#: src/grep.c:977
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Aufruf: %s [OPTION]... MUSTER [DATEI]...\n"
 
-#: src/grep.c:939
+#: src/grep.c:978
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "»%s --help« gibt Ihnen mehr Informationen.\n"
 
-#: src/grep.c:943
+#: src/grep.c:982
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Aufruf: %s [OPTION]... MUSTER [DATEI] ...\n"
 
-#: src/grep.c:944
+#: src/grep.c:983
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -170,18 +178,20 @@ msgstr ""
 "\n"
 "Auswahl und Interpretation regulärer Ausdrücke:\n"
 
-#: src/grep.c:949
+#: src/grep.c:988
+#, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 "  -E, --extended-regexp     MUSTER ist ein erweiterter regulärer Ausdruck.\n"
 "  -F, --fixed-strings       MUSTER ist eine Menge Newline-getrennter \n"
 "                            Zeichenketten.\n"
 "  -G, --basic-regexp        MUSTER ist ein regulärer Standardausdruck.\n"
 
-#: src/grep.c:953
+#: src/grep.c:993
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -198,7 +208,7 @@ msgstr ""
 "  -x, --line-regexp         MUSTER paßt nur auf ganze Zeilen.\n"
 "  -z, --null-data           Eine Zeile endet mit Nullbyte, nicht Newline.\n"
 
-#: src/grep.c:960
+#: src/grep.c:1000
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -216,10 +226,12 @@ msgstr ""
 "      --help                Diese Hilfe ausgeben und beenden.\n"
 "      --mmap                Wenn möglich, Eingabe in den Speicher mappen.\n"
 
-#: src/grep.c:968
+#: src/grep.c:1008
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
 "  -b, --byte-offset         print the byte offset with output lines\n"
 "  -n, --line-number         print line number with output lines\n"
 "  -H, --with-filename       print the filename for each match\n"
@@ -254,17 +266,18 @@ msgstr ""
 "  -L, --files-without-match Nur Namen von Dateien ausgeben, die keine\n"
 "                            Übereinstimmung enthalten.\n"
 "  -l, --files-with-matches  Nur Dateinamen mit Übereinstimmungen ausgeben.\n"
-"  -c, --count               Nur Zahl der passenden Zeilen pro Datei ausgeben.\n"
+"  -c, --count               Nur Zahl der passenden Zeilen pro Datei "
+"ausgeben.\n"
 "  -Z, --null                Null-Byte nach jedem Dateinamen ausgeben.\n"
 
-#: src/grep.c:987
+#: src/grep.c:1028
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overridden by -A or -B\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
@@ -276,53 +289,62 @@ msgid ""
 msgstr ""
 "\n"
 "Kontextkontrolle:\n"
-"  -B, --before-context=ZAHL ZAHL Zeilen von vorausgehendem Kontext anzeigen.\n"
+"  -B, --before-context=ZAHL ZAHL Zeilen von vorausgehendem Kontext "
+"anzeigen.\n"
 "  -A, --after-context=ZAHL  ZAHL Zeilen von folgendem Kontext anzeigen.\n"
 "  -C, --context[=ZAHL]      ZAHL (Standard ist 2) Zeilen Kontext anzeigen,\n"
-"                            wenn nicht mit -A oder -B anderes festgelegt ist.\n"
+"                            wenn nicht mit -A oder -B anderes festgelegt "
+"ist.\n"
 "  -ZAHL                     Wie --context=ZAHL.\n"
 "  -U, --binary              CR-Zeichen am Zeilenende belassen (MSDOS).\n"
-"  -u, --unix-byte-offsets   Offsets ausgeben, als fehlten CR-Zeichen (MSDOS).\n"
+"  -u, --unix-byte-offsets   Offsets ausgeben, als fehlten CR-Zeichen "
+"(MSDOS).\n"
 "\n"
 "»egrep« bedeutet »grep -E«. »fgrep« bedeutet »grep -F«.\n"
 "Wenn DATEI fehlt oder »-« ist, wird die Standardeingabe gelesen.\n"
 "Weniger als zwei DATEIen implizieren -h. Status ist 0 bei \n"
 "Übereinstimmungen, 1 ohne, 2 bei Problemen.\n"
 
-#: src/grep.c:1002
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nFehlerberichte bitte an <bug-gnu-utils@gnu.org>.\n"
+#: src/grep.c:1042
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Fehlerberichte bitte an <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1012
+#: src/grep.c:1052
 msgid "conflicting matchers specified"
 msgstr "Festgelegte Vergleicher widersprechen einander."
 
-#: src/grep.c:1203 src/grep.c:1210 src/grep.c:1219
-msgid "invalid context length argument"
-msgstr "Ungültige Kontextlänge."
-
-#: src/grep.c:1273
+#: src/grep.c:1326
 msgid "unknown directories method"
 msgstr "Unbekannte Methode für Verzeichnisse."
 
-#: src/grep.c:1358
+#: src/grep.c:1386
+#, fuzzy
+msgid "invalid max count"
+msgstr "Unbeendeter Wiederholungszähler."
+
+#: src/grep.c:1425
 msgid "unknown binary-files type"
 msgstr "Unbekannter Typ für »--binary-files«."
 
-#: src/grep.c:1378
+#: src/grep.c:1456
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1380
+#: src/grep.c:1458
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1382
+#: src/grep.c:1460
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Dies ist freie Software; in den Quellen befinden sich die Lizenzbedingungen.\n"
+"Dies ist freie Software; in den Quellen befinden sich die "
+"Lizenzbedingungen.\n"
 "Es gibt KEINERLEI Garantie; nicht einmal für die TAUGLICHKEIT oder\n"
 "VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.\n"

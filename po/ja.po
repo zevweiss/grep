@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4f\n"
-"POT-Creation-Date: 2000-02-02 01:04-0500\n"
+"POT-Creation-Date: 2001-02-08 17:32-0500\n"
 "PO-Revision-Date: 2000-02-16 21:05+09:00\n"
 "Last-Translator: IIDA Yosiaki <iida@secom.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:163 src/dfa.c:174 src/dfa.c:185 src/grep.c:902
+#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:941
 msgid "Memory exhausted"
 msgstr "メモリーが足りません"
 
-#: src/dfa.c:448
+#: src/dfa.c:415
 msgid "Unfinished \\ escape"
 msgstr "\\ エスケープが終了していません"
 
@@ -30,32 +30,32 @@ msgstr "\\ エスケープが終了していません"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:581 src/dfa.c:587 src/dfa.c:597 src/dfa.c:605 src/dfa.c:620
+#: src/dfa.c:548 src/dfa.c:554 src/dfa.c:564 src/dfa.c:572 src/dfa.c:587
 msgid "unfinished repeat count"
 msgstr "繰返しカウントが終了しません"
 
-#: src/dfa.c:594 src/dfa.c:611 src/dfa.c:619 src/dfa.c:623
+#: src/dfa.c:561 src/dfa.c:578 src/dfa.c:586 src/dfa.c:590
 msgid "malformed repeat count"
 msgstr "繰返しカウントが異常です"
 
-#: src/dfa.c:688 src/dfa.c:691 src/dfa.c:718 src/dfa.c:722 src/dfa.c:723
-#: src/dfa.c:726 src/dfa.c:739 src/dfa.c:740
+#: src/dfa.c:656 src/dfa.c:659 src/dfa.c:683 src/dfa.c:687 src/dfa.c:688
+#: src/dfa.c:691 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "「[」が釣り合いません"
 
-#: src/dfa.c:886
+#: src/dfa.c:850
 msgid "Unbalanced ("
 msgstr "「(」が釣り合いません"
 
-#: src/dfa.c:1000
+#: src/dfa.c:967
 msgid "No syntax specified"
 msgstr "構文が特定されていません"
 
-#: src/dfa.c:1008
+#: src/dfa.c:975
 msgid "Unbalanced )"
 msgstr "「)」が釣り合いません"
 
-#: src/dfa.c:1994
+#: src/dfa.c:1933
 msgid "out of memory"
 msgstr "メモリーが足りません"
 
@@ -118,49 +118,57 @@ msgstr "%s: オプションの指定`-W %s'が曖昧です\n"
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: オプション`-W %s'は引数をとりません\n"
 
-#: src/grep.c:185 src/grep.c:200 src/grep.c:293 src/grep.c:399 src/kwset.c:180
-#: src/kwset.c:186 src/obstack.c:471
+#: src/grep.c:181 src/grep.c:196 src/grep.c:365 src/kwset.c:171
+#: src/kwset.c:177 src/obstack.c:471
 msgid "memory exhausted"
 msgstr "メモリーが足りません"
 
-#: src/grep.c:550 src/grep.c:1441
+#: src/grep.c:212
+msgid "invalid context length argument"
+msgstr "行数の指定が間違っています"
+
+#: src/grep.c:484
+msgid "input is too large to count"
+msgstr ""
+
+#: src/grep.c:539 src/grep.c:1524
 msgid "writing output"
 msgstr "出力の書込み"
 
-#: src/grep.c:777
+#: src/grep.c:810
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "バイナリー・ファイル%sと一致します\n"
 
-#: src/grep.c:791
+#: src/grep.c:824
 msgid "(standard input)"
 msgstr "(標準入力)"
 
-#: src/grep.c:887
+#: src/grep.c:929
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: 警告: %s: %s\n"
 
-#: src/grep.c:888
+#: src/grep.c:930
 msgid "recursive directory loop"
 msgstr "ディレクトリーが再帰的ループをしています"
 
-#: src/grep.c:938
+#: src/grep.c:977
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "使用法: %s [オプション]‥‥ 文字列パターン [ファイル]‥‥\n"
 
-#: src/grep.c:939
+#: src/grep.c:978
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "詳しくは`%s --help'を実行してください。\n"
 
-#: src/grep.c:943
+#: src/grep.c:982
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "使用法: %s [オプション]‥‥ 文字列パターン [ファイル] ‥‥\n"
 
-#: src/grep.c:944
+#: src/grep.c:983
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -173,17 +181,20 @@ msgstr ""
 "\n"
 "正規表現の選択と解釈方法:\n"
 
-#: src/grep.c:949
+#: src/grep.c:988
+#, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 "  -E, --extended-regexp     「パターン」を拡張された正規表現とする\n"
-"  -F, --fixed-regexp        「パターン」を改行で区切られた固定の文字列とする\n"
+"  -F, --fixed-regexp        "
+"「パターン」を改行で区切られた固定の文字列とする\n"
 "  -G, --basic-regexp        「パターン」を基本的な正規表現とする\n"
 
-#: src/grep.c:953
+#: src/grep.c:993
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -199,7 +210,7 @@ msgstr ""
 "  -x, --line-regexp         パターン一致を行全体(行単位)で行なう\n"
 "  -z, --null-data           出力を改行でなく、ヌル値のバイトで区切る\n"
 
-#: src/grep.c:960
+#: src/grep.c:1000
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -217,10 +228,12 @@ msgstr ""
 "      --help                使い方を標準出力に表示する\n"
 "      --mmap                もし可能なら、入力をメモリー・マップする\n"
 
-#: src/grep.c:968
+#: src/grep.c:1008
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
 "  -b, --byte-offset         print the byte offset with output lines\n"
 "  -n, --line-number         print line number with output lines\n"
 "  -H, --with-filename       print the filename for each match\n"
@@ -257,14 +270,14 @@ msgstr ""
 "  -c, --count               一致した行数のみを表示する\n"
 "  -Z, --null                ファイル名の後に、ヌル値のバイトを表示\n"
 
-#: src/grep.c:987
+#: src/grep.c:1028
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overridden by -A or -B\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
@@ -292,39 +305,45 @@ msgstr ""
 "標準入力から読み込みます。ファイルが二つ未満の場合、-hと仮定します。\n"
 "もし一致があると0で、ないと1で、障害があると2で、終了します。\n"
 
-#: src/grep.c:1002
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nバグは <bug-gnu-utils@gnu.org> へ報告してください。\n"
+#: src/grep.c:1042
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"バグは <bug-gnu-utils@gnu.org> へ報告してください。\n"
 
-#: src/grep.c:1012
+#: src/grep.c:1052
 msgid "conflicting matchers specified"
 msgstr "衝突したmatcherが指定されています"
 
-#: src/grep.c:1203 src/grep.c:1210 src/grep.c:1219
-msgid "invalid context length argument"
-msgstr "行数の指定が間違っています"
-
-#: src/grep.c:1273
+#: src/grep.c:1326
 msgid "unknown directories method"
 msgstr "ディレクトリー操作の指定が不明です"
 
-#: src/grep.c:1358
+#: src/grep.c:1386
+#, fuzzy
+msgid "invalid max count"
+msgstr "繰返しカウントが終了しません"
+
+#: src/grep.c:1425
 msgid "unknown binary-files type"
 msgstr "バイナリー・ファイルの指定が不明です"
 
-#: src/grep.c:1378
+#: src/grep.c:1456
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) バージョン %s\n"
 
-#: src/grep.c:1380
+#: src/grep.c:1458
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1382
+#: src/grep.c:1460
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 "これはフリー・ソフトウェアです。複製に関する条件はソースをご覧ください。\n"
-"これは無保証です。営利目的やある特定の目的にむけた適正のものでもありません。\n"
+"これは無保証です。営利目的やある特定の目的にむけた適正のものでもありません。"
+"\n"
