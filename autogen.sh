@@ -1,7 +1,5 @@
 #!/bin/sh
-set -x
-cat m4/*.m4 > acinclude.m4
-aclocal
+aclocal -I `dirname $0`/m4
 autoheader
 automake -a
 autoconf
