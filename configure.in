@@ -8,7 +8,7 @@ AC_DEFINE(GREP)
 AC_PREREQ(2.13)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.5e)
+AM_INIT_AUTOMAKE(grep, 2.5f)
 AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Check for arguments
@@ -41,6 +41,7 @@ AC_CHECK_HEADERS(string.h stdlib.h sys/param.h memory.h unistd.h libintl.h)
 AC_CHECK_HEADERS(wctype.h wchar.h)
 AC_HEADER_DIRENT
 AC_HEADER_STAT
+AC_MBSTATE_T
 
 dnl Checks for functions.
 AC_FUNC_ALLOCA
