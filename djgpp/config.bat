@@ -29,6 +29,8 @@ test -f %XSRC%/intl/po2tbl.sed.in
 if not errorlevel 1 mv -f %XSRC%/intl/po2tbl.sed.in %XSRC%/intl/po2tblsed.in
 test -f %XSRC%/intl/po2tblsed.in
 if errorlevel 1 mv -f %XSRC%/intl/po2tbl.sed %XSRC%/intl/po2tblsed.in
+test -f %XSRC%/po/Makefile.in.in
+if not errorlevel 1 mv -f %XSRC%/po/Makefile.in.in %XSRC%/po/Makefile.in-in
 
 Rem This is required because DOS/Windows are case-insensitive
 Rem to file names, and "make install" will do nothing if Make
