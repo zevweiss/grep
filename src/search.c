@@ -768,6 +768,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
       char eol = eolbyte;
       if (!exact)
 	{
+	  /* FIXME: The case when '\n' is not found indicates a bug:
+	     Since grep is line oriented, the match should never contain
+	     a newline, so there _must_ be a newline following.
+	   */
 	  if (!(end = memchr (end, eol, buflim - end)))
 	    end = buflim;
 	  else

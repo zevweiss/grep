@@ -1,6 +1,8 @@
 2005-02-26  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/grep.c (get_nondigit_option): Don't give up too early.
+	* src/search.c (Pexecute): Add a comment explaining that this
+	  situation should not happen.
 
 2005-02-22  Claudio Fontana  <sick_soul@users.sourceforge.net>  (tiny change)
 
