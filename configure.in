@@ -4,7 +4,7 @@
 #
 dnl Process this file with autoconf to produce a configure script
 AC_INIT(src/grep.c)
-AC_DEFINE(GREP)
+AC_DEFINE(GREP, 1, [We are building grep])
 AC_PREREQ(2.13)
 
 dnl Automake stuff.
@@ -56,23 +56,21 @@ jm_AC_PREREQ_XSTRTOUMAX
 dnl Replace this with jm_CHECK_DECLS once autoconf 2.15 is out.
 jm_CHECK_DECLARATIONS([#include <stdlib.h>], strtoul strtoull)
 test $jm_cv_func_decl_strtoul != yes
-AC_DEFINE_UNQUOTED(HAVE_DECL_STRTOUL, $?,
+AC_DEFINE_UNQUOTED([HAVE_DECL_STRTOUL], $?,
   [Define if <stdlib.h> declares strtoul.])
 test $jm_cv_func_decl_strtoull != yes
-AC_DEFINE_UNQUOTED(HAVE_DECL_STRTOULL, $?,
+AC_DEFINE_UNQUOTED([HAVE_DECL_STRTOULL], $?,
   [Define if <stdlib.h> declares strtoull.])
 
 dnl for VC++
 case "$ac_cv_prog_CC" in
- cl*)  AC_DEFINE(alloca, _alloca) ;;
+ cl*)  AC_DEFINE([alloca], _alloca, [Define if your compiler is broken]) ;;
  *)    ;;
 esac
 
 dnl I18N feature
 ALL_LINGUAS="cs de el eo es et fr gl hr id it ja ko nl no pl pt_BR ru sl sv"
 AM_GNU_GETTEXT
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 
 dnl DOS file name convention
 dnl sets HAVE_DOS_FILE_NAMES

@@ -21,7 +21,7 @@ AC_DEFUN(AM_WITH_NLS,
 
     dnl If we use NLS figure out what method
     if test "$USE_NLS" = "yes"; then
-      AC_DEFINE(ENABLE_NLS)
+      AC_DEFINE(ENABLE_NLS, 1, [Define if you want to use NLS support])
       AC_MSG_CHECKING([whether included gettext is requested])
       AC_ARG_WITH(included-gettext,
         [  --with-included-gettext use the GNU gettext library included here],
@@ -61,7 +61,7 @@ AC_DEFUN(AM_WITH_NLS,
 
 	   if test "$gt_cv_func_gettext_libc" = "yes" \
 	      || test "$gt_cv_func_gettext_libintl" = "yes"; then
-	      AC_DEFINE(HAVE_GETTEXT)
+	      AC_DEFINE(HAVE_GETTEXT, 1, [Define if you have gettext])
 	      AM_PATH_PROG_WITH_TEST(MSGFMT, msgfmt,
 		[test -z "`$ac_dir/$ac_word -h 2>&1 | grep 'dv '`"], no)dnl
 	      if test "$MSGFMT" != "no"; then
@@ -91,7 +91,7 @@ AC_DEFUN(AM_WITH_NLS,
 	    dnl No gettext in C library.  Try catgets next.
 	    AC_CHECK_LIB(i, main)
 	    AC_CHECK_FUNC(catgets,
-	      [AC_DEFINE(HAVE_CATGETS)
+	      [AC_DEFINE(HAVE_CATGETS, 1, [Define if you have catgets])
 	       INTLOBJS="\$(CATOBJS)"
 	       AC_PATH_PROG(GENCAT, gencat, no)dnl
 	       if test "$GENCAT" != "no"; then
@@ -224,7 +224,7 @@ strdup __argz_count __argz_stringify __argz_next])
      AC_CHECK_FUNCS(stpcpy)
    fi
    if test "${ac_cv_func_stpcpy}" = "yes"; then
-     AC_DEFINE(HAVE_STPCPY)
+     AC_DEFINE(HAVE_STPCPY, 1, [Define if you have stpcpy])
    fi
 
    AM_LC_MESSAGES

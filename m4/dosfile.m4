@@ -14,7 +14,7 @@ AC_DEFUN(AC_DOSFILE,
     ])
 
   if test $ac_cv_dosfile = yes; then
-    AC_DEFINE(HAVE_DOS_FILE_NAMES)
+    AC_DEFINE(HAVE_DOS_FILE_NAMES, 1, [Define if your OS uses backslashes as directory separators])
     AC_DEFINE(HAVE_DOS_FILE_CONTENTS, 1,
       [Define if text file lines end in CRLF.])
   fi

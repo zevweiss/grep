@@ -32,6 +32,6 @@ AC_DEFUN(jm_CHECK_DECLARATIONS,
     jm_CHECK_DECLARATION($jm_func, [$1],
     [
       jm_tr_func=HAVE_DECL_`echo $jm_func | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
-      AC_DEFINE_UNQUOTED($jm_tr_func) $3], [$4])dnl
+      AC_DEFINE_UNQUOTED($jm_tr_func, 1, [Define if your system declares $1]) $3], [$4])dnl
   done
 ])

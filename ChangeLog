@@ -1,12 +1,16 @@
 2001-09-25  Bernhard Rosenkraenzer <bero@redhat.com>
 	* configure.in: Detect pcre correctly even when it's in
-	non-standard locations, using pcre-config
+	  non-standard locations, using pcre-config
 	* src/grep.c: Add --color={always,never,tty} argument (like in ls)
 	* src/grep.c: Turn off blinking in the default colorization
 	* src/grep.c: Add --devices (-D) switch (analogous to --directories)
-	* doc/grep.texi, doc/grep.1, NEWS: Document changes
-	(--color, --devices, -D)
 	* AUTHORS: Change maintainer, credit Alain for his work until now
+	* configure.in, m4/decl.m4, m4/dosfile.m4, m4/gettext.m4,
+	  m4/init.m4, m4/install.m4, m4/largefile.m4, m4/lcmessage.m4:
+	  Fix build with autoconf 2.5x, retain 2.1x compatibility for now
+	* acconfig.h: removed (no longer required)
+	* doc/grep.texi, doc/grep.1, NEWS: Document changes
+	  (--color, --devices, -D)
 
 2001-08-30  Alain Magloire
 

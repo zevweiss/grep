@@ -1,5 +1,7 @@
 Version 2.5
 
+  - GNU grep can now be built with autoconf 2.52.
+
   - The new option --devices controls how grep handles device files. Its usage
     is analogous to --directories.
 

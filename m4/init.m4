@@ -18,8 +18,8 @@ if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
 fi
 ifelse([$3],,
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION"))
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Package name])
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Package version]))
 AC_REQUIRE([AM_SANITY_CHECK])
 AC_REQUIRE([AC_ARG_PROGRAM])
 dnl FIXME This is truly gross.
