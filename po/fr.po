@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4a\n"
-"POT-Creation-Date: 2000-01-16 21:06-0500\n"
+"POT-Creation-Date: 2000-02-02 01:04-0500\n"
 "PO-Revision-Date: 2000-01-31 12:45-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:936
+#: src/dfa.c:163 src/dfa.c:174 src/dfa.c:185 src/grep.c:902
 msgid "Memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/dfa.c:457
+#: src/dfa.c:448
 msgid "Unfinished \\ escape"
 msgstr "séquence d'échappement \\ non terminée."
 
@@ -25,16 +25,16 @@ msgstr "séquence d'échappement \\ non terminée."
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:590 src/dfa.c:596 src/dfa.c:606 src/dfa.c:614 src/dfa.c:629
+#: src/dfa.c:581 src/dfa.c:587 src/dfa.c:597 src/dfa.c:605 src/dfa.c:620
 msgid "unfinished repeat count"
 msgstr "décompte de répétition non terminé."
 
-#: src/dfa.c:603 src/dfa.c:620 src/dfa.c:628 src/dfa.c:632
+#: src/dfa.c:594 src/dfa.c:611 src/dfa.c:619 src/dfa.c:623
 msgid "malformed repeat count"
 msgstr "décompte de répétition mal formé."
 
-#: src/dfa.c:697 src/dfa.c:700 src/dfa.c:727 src/dfa.c:731 src/dfa.c:732
-#: src/dfa.c:735 src/dfa.c:748 src/dfa.c:749
+#: src/dfa.c:688 src/dfa.c:691 src/dfa.c:718 src/dfa.c:722 src/dfa.c:723
+#: src/dfa.c:726 src/dfa.c:739 src/dfa.c:740
 msgid "Unbalanced ["
 msgstr "[ non pairé"
 
@@ -42,170 +42,124 @@ msgstr "[ non pairé"
 msgid "Unbalanced ("
 msgstr "( non pairé"
 
-#: src/dfa.c:1007
+#: src/dfa.c:1000
 msgid "No syntax specified"
 msgstr "Aucune syntaxe spécifié"
 
-#: src/dfa.c:1015
+#: src/dfa.c:1008
 msgid "Unbalanced )"
 msgstr ") non pairé"
 
-#: src/dfa.c:2036
+#: src/dfa.c:1994
 msgid "out of memory"
 msgstr "Mémoire épuisée."
 
-#: src/getopt.c:628
+#: src/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr "%s: l'option `%s' est ambiguë.\n"
 
-#: src/getopt.c:652
+#: src/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr "%s: l'option `--%s' ne permet pas de paramètre.\n"
 
-#: src/getopt.c:657
+#: src/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr "%s: l'option `%c%s' ne permet pas de paramètre.\n"
 
-#: src/getopt.c:674 src/getopt.c:847
+#: src/getopt.c:723 src/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr "%s: l'option `%s' requiert un paramètre.\n"
 
 #. --option
-#: src/getopt.c:703
+#: src/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s: l'option `--%s' n'est pas reconnue.\n"
 
 #. +option or -option
-#: src/getopt.c:707
+#: src/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s: l'option `%c%s' n'est pas reconnue.\n"
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:733
+#: src/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr "%s: l'option -- %c est illégale.\n"
 
-#: src/getopt.c:736
+#: src/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "%s: l'option -- %c est invalide.\n"
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:766 src/getopt.c:896
+#: src/getopt.c:815 src/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr "%s: l'option  -- %c requiert un paramètre.\n"
 
-#: src/getopt.c:813
+#: src/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr "%s: l'option `-W %s' est ambiguë.\n"
 
-#: src/getopt.c:831
+#: src/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: l'option `-W %s' ne permet pas de paramètre.\n"
 
-#: src/getopt1.c:132
-#, c-format
-msgid "option %s"
-msgstr "option %s"
-
-#: src/getopt1.c:134
-#, c-format
-msgid " with arg %s"
-msgstr " avec le paramètre %s"
-
-#: src/getopt1.c:149
-msgid "digits occur in two different argv-elements.\n"
-msgstr "Des chiffres apparaissent dans 2 paramètres différents.\n"
-
-#: src/getopt1.c:151
-#, c-format
-msgid "option %c\n"
-msgstr "option %c\n"
-
-#: src/getopt1.c:155
-msgid "option a\n"
-msgstr "option a\n"
-
-#: src/getopt1.c:159
-msgid "option b\n"
-msgstr "option b\n"
-
-#: src/getopt1.c:163
-#, c-format
-msgid "option c with value `%s'\n"
-msgstr "option c ayant pour valeur `%s'\n"
-
-#: src/getopt1.c:167
-#, c-format
-msgid "option d with value `%s'\n"
-msgstr "option d ayant pour valeur `%s'\n"
-
-#: src/getopt1.c:174
-#, c-format
-msgid "?? getopt returned character code 0%o ??\n"
-msgstr "?? getopt() a retourné le code de caractère 0%o ??\n"
-
-#: src/getopt1.c:180
-msgid "non-option ARGV-elements: "
-msgstr "Des élément ARGV qui ne sont pas des options: "
-
-#: src/grep.c:190 src/grep.c:207 src/grep.c:307 src/grep.c:415 src/kwset.c:184
-#: src/kwset.c:190
+#: src/grep.c:185 src/grep.c:200 src/grep.c:293 src/grep.c:399 src/kwset.c:180
+#: src/kwset.c:186 src/obstack.c:471
 msgid "memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/grep.c:572 src/grep.c:1481
+#: src/grep.c:550 src/grep.c:1441
 msgid "writing output"
 msgstr "Génération du résultat."
 
-#: src/grep.c:807
+#: src/grep.c:777
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Fichier binaire %s concorde\n"
 
-#: src/grep.c:823
+#: src/grep.c:791
 msgid "(standard input)"
 msgstr "(entrée standard)"
 
-#: src/grep.c:921
+#: src/grep.c:887
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: AVERTISSEMENT: %s: %s\n"
 
-#: src/grep.c:922
+#: src/grep.c:888
 msgid "recursive directory loop"
 msgstr "boucle récursive sur le répertoire"
 
-#: src/grep.c:973
+#: src/grep.c:938
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER]...\n"
 
-#: src/grep.c:974
+#: src/grep.c:939
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pour en savoir davantage, faites: `%s --help'.\n"
 
-#: src/grep.c:978
+#: src/grep.c:943
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER] ...\n"
 
-#: src/grep.c:979
-#, c-format
+#: src/grep.c:944
+#, fuzzy, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
-"Example: %s -i 'hello.*world' menu.h main.c\n"
+"Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
@@ -214,7 +168,7 @@ msgstr ""
 "Exemple: %s -i 'hello.*world' menu.h main.c\n"
 "Sélection et interprétation de l'expression régulière:\n"
 
-#: src/grep.c:984
+#: src/grep.c:949
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -224,7 +178,7 @@ msgstr ""
 "  -F, --fixed-regexp        PATRON est une chaîne fixe séparée par des retour de chariot\n"
 "  -G, --basic-regexp        PATRON est une expression régulière de base\n"
 
-#: src/grep.c:988
+#: src/grep.c:953
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -241,7 +195,7 @@ msgstr ""
 "  -z, --null-data           terminer la ligne de données par ZÉRO et\n"
 "                            non pas par un retour de chariot\n"
 
-#: src/grep.c:995
+#: src/grep.c:960
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -259,7 +213,8 @@ msgstr ""
 "      --help                afficher l'aide et quitter\n"
 "      --mmap                utiliser la table de mémoire à l'entrée si possible\n"
 
-#: src/grep.c:1003
+#: src/grep.c:968
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -268,9 +223,10 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                equivalent to --binary-files=text\n"
 "      --binary-files=TYPE   assume that binary files are TYPE\n"
 "                            TYPE is 'binary', 'text', or 'without-match'.\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+"  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'.\n"
 "  -r, --recursive           equivalent to --directories=recurse.\n"
@@ -305,7 +261,7 @@ msgstr ""
 "                            concordantes par fichier\n"
 "  -Z, --null                afficher l'octet ZÉRO après le nom du fichier\n"
 
-#: src/grep.c:1021
+#: src/grep.c:987
 msgid ""
 "\n"
 "Context control:\n"
@@ -340,38 +296,39 @@ msgstr ""
 "est implicite. Termine avec 0 s'il y a concordance avec 1 si aucune.\n"
 "Termine avec 2 s'il y a des erreurs de syntaxe ou de système.\n"
 
-#: src/grep.c:1036
+#: src/grep.c:1002
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nRapporter toutes anomalies à <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1047
+#: src/grep.c:1012
 msgid "conflicting matchers specified"
 msgstr "opérateurs de concordance spécifiés en conflit"
 
-#: src/grep.c:1246 src/grep.c:1253 src/grep.c:1262
+#: src/grep.c:1203 src/grep.c:1210 src/grep.c:1219
 msgid "invalid context length argument"
 msgstr "paramètre de contexte de longueur invalide"
 
-#: src/grep.c:1313
+#: src/grep.c:1273
 msgid "unknown directories method"
 msgstr "méthode inconnue des répertoires"
 
-#: src/grep.c:1398
+#: src/grep.c:1358
 msgid "unknown binary-files type"
 msgstr "type de fichier binaire inconnu"
 
 # msgid "GNU grep version %s"
 # msgstr "«grep» de GNU version %s"
-#: src/grep.c:1418
+#: src/grep.c:1378
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (grep de GNU) %s\n"
 
-#: src/grep.c:1420
-msgid "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
+#: src/grep.c:1380
+#, fuzzy
+msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1422
+#: src/grep.c:1382
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -380,9 +337,38 @@ msgstr ""
 "reproduction. AUCUNE garantie n'est donnée; tant pour des raisons\n"
 "COMMERÇIALES que pour RÉPONDRE À UN BESOIN PARTICULIER.\n"
 
-#: src/obstack.c:467
-msgid "memory exhausted\n"
-msgstr "Mémoire épuisée.\n"
+#~ msgid "option %s"
+#~ msgstr "option %s"
+
+#~ msgid " with arg %s"
+#~ msgstr " avec le paramètre %s"
+
+#~ msgid "digits occur in two different argv-elements.\n"
+#~ msgstr "Des chiffres apparaissent dans 2 paramètres différents.\n"
+
+#~ msgid "option %c\n"
+#~ msgstr "option %c\n"
+
+#~ msgid "option a\n"
+#~ msgstr "option a\n"
+
+#~ msgid "option b\n"
+#~ msgstr "option b\n"
+
+#~ msgid "option c with value `%s'\n"
+#~ msgstr "option c ayant pour valeur `%s'\n"
+
+#~ msgid "option d with value `%s'\n"
+#~ msgstr "option d ayant pour valeur `%s'\n"
+
+#~ msgid "?? getopt returned character code 0%o ??\n"
+#~ msgstr "?? getopt() a retourné le code de caractère 0%o ??\n"
+
+#~ msgid "non-option ARGV-elements: "
+#~ msgstr "Des élément ARGV qui ne sont pas des options: "
+
+#~ msgid "memory exhausted\n"
+#~ msgstr "Mémoire épuisée.\n"
 
 #~ msgid "you may specify only one of -E, -F, or -G"
 #~ msgstr "Un seul des paramètres suivants peut être spécifié -E, -F ou -G"

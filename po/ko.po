@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0f\n"
-"POT-Creation-Date: 1999-02-03 13:09-0500\n"
+"POT-Creation-Date: 2000-02-02 01:04-0500\n"
 "PO-Revision-Date: 1997-09-03 11:19+0900\n"
 "Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -13,221 +13,186 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-KR\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:858
+#: src/dfa.c:163 src/dfa.c:174 src/dfa.c:185 src/grep.c:902
 msgid "Memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/dfa.c:452
+#: src/dfa.c:448
 msgid "Unfinished \\ escape"
 msgstr "완결되지 않은 \\ 이스케이프"
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
-#. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:581 src/dfa.c:587 src/dfa.c:597 src/dfa.c:605 src/dfa.c:620
 msgid "unfinished repeat count"
 msgstr "완결되지 않은 반복 회수"
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:594 src/dfa.c:611 src/dfa.c:619 src/dfa.c:623
 msgid "malformed repeat count"
 msgstr "잘못 주어진 반복 회수"
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:688 src/dfa.c:691 src/dfa.c:718 src/dfa.c:722 src/dfa.c:723
+#: src/dfa.c:726 src/dfa.c:739 src/dfa.c:740
 msgid "Unbalanced ["
 msgstr "짝이 맞지 않는 ["
 
-#: src/dfa.c:849
+#: src/dfa.c:886
 msgid "Unbalanced ("
 msgstr "짝이 맞지 않는 ("
 
-#: src/dfa.c:970
+#: src/dfa.c:1000
 msgid "No syntax specified"
 msgstr "문법이 지정되지 않았음"
 
-#: src/dfa.c:978
+#: src/dfa.c:1008
 msgid "Unbalanced )"
 msgstr "짝이 맞지 않는 )"
 
-#: src/dfa.c:1998
+#: src/dfa.c:1994
 msgid "out of memory"
 msgstr "메모리 부족"
 
-#: src/getopt.c:628
+#: src/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr "%s: `%s'는 모호한 옵션입니다\n"
 
-#: src/getopt.c:652
+#: src/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr "%s: `--%s' 옵션은 인수를 허용하지 않습니다\n"
 
-#: src/getopt.c:657
+#: src/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr "%s: `%c%s' 옵션은 인수를 허용하지 않습니다\n"
 
-#: src/getopt.c:674 src/getopt.c:847
+#: src/getopt.c:723 src/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr "%s: `%s' 옵션은 인수가 필요합니다\n"
 
 #. --option
-#: src/getopt.c:703
+#: src/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s: 인식할 수 없는 옵션 `--%s'\n"
 
 #. +option or -option
-#: src/getopt.c:707
+#: src/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s: 인식할 수 없는 옵션 `%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:733
+#: src/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr "%s: 잘못된 옵션 -- %c\n"
 
-#: src/getopt.c:736
+#: src/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "%s: 부적절한 옵션 -- %c\n"
 
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:766 src/getopt.c:896
+#: src/getopt.c:815 src/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr "%s: 이 옵션은 인수가 필요합니다 -- %c\n"
 
-#: src/getopt.c:813
+#: src/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr "%s: `-W %s'는 모호한 옵션입니다\n"
 
-#: src/getopt.c:831
+#: src/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: `-W %s' 옵션은 인수를 허용하지 않습니다\n"
 
-#: src/getopt1.c:132
-#, c-format
-msgid "option %s"
-msgstr "%s 옵션"
-
-#: src/getopt1.c:134
-#, c-format
-msgid " with arg %s"
-msgstr " %s 인수를 가짐"
-
-#: src/getopt1.c:149
-msgid "digits occur in two different argv-elements.\n"
-msgstr "숫자가 서로 다른 두 군데의 argv 원소에서 발견되었습니다.\n"
-
-#: src/getopt1.c:151
-#, c-format
-msgid "option %c\n"
-msgstr "%c 옵션\n"
-
-#: src/getopt1.c:155
-msgid "option a\n"
-msgstr "a 옵션\n"
-
-#: src/getopt1.c:159
-msgid "option b\n"
-msgstr "b 옵션\n"
-
-#: src/getopt1.c:163
-#, c-format
-msgid "option c with value `%s'\n"
-msgstr "`%s'를 값으로 갖는 c 옵션\n"
-
-#: src/getopt1.c:167
-#, c-format
-msgid "option d with value `%s'\n"
-msgstr "`%s'를 값으로 갖는 d 옵션\n"
-
-#: src/getopt1.c:174
-#, c-format
-msgid "?? getopt returned character code 0%o ??\n"
-msgstr "?? getopt가 문자 코드 0%o를 돌려주었습니다 ??\n"
-
-#: src/getopt1.c:180
-msgid "non-option ARGV-elements: "
-msgstr "비옵션 ARGV 원소: "
-
-#: src/grep.c:169 src/grep.c:186 src/grep.c:288 src/grep.c:344 src/kwset.c:184
-#: src/kwset.c:190
+#: src/grep.c:185 src/grep.c:200 src/grep.c:293 src/grep.c:399 src/kwset.c:180
+#: src/kwset.c:186 src/obstack.c:471
 msgid "memory exhausted"
 msgstr "메모리가 바닥남"
 
-#: src/grep.c:372 src/grep.c:843
-#, c-format
-msgid "%s: warning: %s: %s\n"
-msgstr "%s: 경고: %s: %s\n"
-
-#: src/grep.c:497 src/grep.c:1318
+#: src/grep.c:550 src/grep.c:1441
 msgid "writing output"
 msgstr "출력을 기록하고 있습니다"
 
-#: src/grep.c:726
+#: src/grep.c:777
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr ""
 
-#: src/grep.c:742
+#: src/grep.c:791
 msgid "(standard input)"
 msgstr "(표준 입력)"
 
-#: src/grep.c:844
+#: src/grep.c:887
+#, c-format
+msgid "%s: warning: %s: %s\n"
+msgstr "%s: 경고: %s: %s\n"
+
+#: src/grep.c:888
 msgid "recursive directory loop"
 msgstr ""
 
-#: src/grep.c:895
+#: src/grep.c:938
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일]...\n"
 
-#: src/grep.c:896
+#: src/grep.c:939
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "더 많은 정보를 보려면 `%s --help' 하십시오.\n"
 
-#: src/grep.c:900
+#: src/grep.c:943
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "사용법: %s [옵션]... 패턴 [파일] ...\n"
 
-#: src/grep.c:901
+#: src/grep.c:944
+#, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
+"Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
+msgstr ""
+
+#: src/grep.c:949
+msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+msgstr ""
+
+#: src/grep.c:953
+msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
 
-#: src/grep.c:913
+#: src/grep.c:960
 msgid ""
 "\n"
 "Miscellaneous:\n"
 "  -s, --no-messages         suppress error messages\n"
-"  -v, --revert-match        select non-matching lines\n"
+"  -v, --invert-match        select non-matching lines\n"
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
+"      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 
-#: src/grep.c:920
+#: src/grep.c:968
 msgid ""
 "\n"
 "Output control:\n"
@@ -236,65 +201,70 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE\n"
+"                            TYPE is 'binary', 'text', or 'without-match'.\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+"  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'.\n"
 "  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
+"  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 
-#: src/grep.c:935
+#: src/grep.c:987
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
+"                            unless overridden by -A or -B\n"
 "  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n"
-"With no FILE, or when FILE is -, read standard input. If less than\n"
-"two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
-"Exit with 2 if syntax errors or system errors.\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"With no FILE, or when FILE is -, read standard input.  If less than\n"
+"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
+"and 2 if trouble.\n"
 msgstr ""
 
-#: src/grep.c:950
+#: src/grep.c:1002
 #, fuzzy
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "문제점은 <bug0gnu-utils@prep.ai.mit.edu>로 보고해 주십시오.\n"
 
-#: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
+#: src/grep.c:1012
+#, fuzzy
+msgid "conflicting matchers specified"
+msgstr "짝이 이미 지정되었음"
+
+#: src/grep.c:1203 src/grep.c:1210 src/grep.c:1219
 msgid "invalid context length argument"
 msgstr ""
 
-#: src/grep.c:1116 src/grep.c:1121 src/grep.c:1126
-msgid "you may specify only one of -E, -F, or -G"
-msgstr "-E, -F, -G 중에서 하나만 지정할 수 있습니다"
-
-#: src/grep.c:1145
-msgid "matcher already specified"
-msgstr "짝이 이미 지정되었음"
-
-#: src/grep.c:1166
+#: src/grep.c:1273
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1252
-#, c-format
-msgid "grep (GNU grep) %s\n"
+#: src/grep.c:1358
+msgid "unknown binary-files type"
+msgstr ""
+
+#: src/grep.c:1378
+#, fuzzy, c-format
+msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1254
+#: src/grep.c:1380
 #, fuzzy
-msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "저작권 (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1256
+#: src/grep.c:1382
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -302,9 +272,41 @@ msgstr ""
 "이 프로그램은 공개 소프트웨어입니다. 복사에 관한 조건은 소스를 참조하십시오.\n"
 "상품성이나 특정 목적에 대한 적합성을 비롯하여, 어떠한 보증도 하지 않습니다.\n"
 
-#: src/obstack.c:467
-msgid "memory exhausted\n"
-msgstr "메모리가 바닥남\n"
+#~ msgid "option %s"
+#~ msgstr "%s 옵션"
+
+#~ msgid " with arg %s"
+#~ msgstr " %s 인수를 가짐"
+
+#~ msgid "digits occur in two different argv-elements.\n"
+#~ msgstr "숫자가 서로 다른 두 군데의 argv 원소에서 발견되었습니다.\n"
+
+#~ msgid "option %c\n"
+#~ msgstr "%c 옵션\n"
+
+#~ msgid "option a\n"
+#~ msgstr "a 옵션\n"
+
+#~ msgid "option b\n"
+#~ msgstr "b 옵션\n"
+
+#~ msgid "option c with value `%s'\n"
+#~ msgstr "`%s'를 값으로 갖는 c 옵션\n"
+
+#~ msgid "option d with value `%s'\n"
+#~ msgstr "`%s'를 값으로 갖는 d 옵션\n"
+
+#~ msgid "?? getopt returned character code 0%o ??\n"
+#~ msgstr "?? getopt가 문자 코드 0%o를 돌려주었습니다 ??\n"
+
+#~ msgid "non-option ARGV-elements: "
+#~ msgstr "비옵션 ARGV 원소: "
+
+#~ msgid "you may specify only one of -E, -F, or -G"
+#~ msgstr "-E, -F, -G 중에서 하나만 지정할 수 있습니다"
+
+#~ msgid "memory exhausted\n"
+#~ msgstr "메모리가 바닥남\n"
 
 #~ msgid "Regexp selection and interpretation:\n"
 #~ msgstr "정규식 선택과 해석:\n"

@@ -1,3 +1,7 @@
+2000-03-02  Alain Magloire
+
+	* 2.4.1 Release
+
 2000-02-25  Paul Eggert
 
 	* configure.in (LIBOBJS): Work around automake 1.4 bug:
@@ -165,6 +169,10 @@
 	* savedir.c (savedir): Don't store past the end of an array if
 	name_size is zero and the directory is empty.
 	Reported by Dima Barsky <dima@pwd.hp.com>.
+
+1999-12-03  Alain Magloire
+
+	* 2.4 Release.
 
 1999-11-18  Paul Eggert
 
