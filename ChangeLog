@@ -1,3 +1,8 @@
+1998-11-06 Alain Magloire
+
+	* src/grep.c: The Matcher is not set to argv[0] but
+	explicitly by a #define MATCHER at compile time default is "grep".
+
 1998-11-05 Alain Magloire
 
 	* src/grep.1: update the man pages according to the
@@ -25,7 +30,7 @@
 	Noted by Paul Eggert and others.
 
 	* tests/khadafy.sh: a typo in failure(s).
-	Spotted By Sotiros Vassilopoulos.
+	Spotted By Sotiris Vassilopoulos.
 
 1998-11-01  Paul Eggert
 

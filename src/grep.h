@@ -16,9 +16,9 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
-extern void fatal PARAMS((const char *, int));
-extern char *xmalloc PARAMS((size_t size));
-extern char *xrealloc PARAMS((char *ptr, size_t size));
+extern void fatal PARAMS ((const char *, int));
+extern char *xmalloc PARAMS ((size_t size));
+extern char *xrealloc PARAMS ((char *ptr, size_t size));
 
 /* Grep.c expects the matchers vector to be terminated
    by an entry with a NULL name, and to contain at least
@@ -27,8 +27,8 @@ extern char *xrealloc PARAMS((char *ptr, size_t size));
 extern struct matcher
 {
   char *name;
-  void (*compile) PARAMS((char *, size_t));
-  char *(*execute) PARAMS((char *, size_t, char **));
+  void (*compile) PARAMS ((char *, size_t));
+  char *(*execute) PARAMS ((char *, size_t, char **));
 } matchers[];
 
 /* Exported from grep.c. */

@@ -95,8 +95,6 @@ static char *prog;
 static char const *filename;
 static int errseen;
 
-static int ck_atoi PARAMS((char const *, int *));
-
 /* How to handle directories.  */
 static enum
   {
@@ -105,77 +103,77 @@ static enum
     SKIP_DIRECTORIES
   } directories;
 
-static void usage PARAMS((int));
-static void error PARAMS((const char *, int));
-static int  setmatcher PARAMS((char *));
-static int  reset PARAMS((int, char const *));
-static int  fillbuf PARAMS((size_t));
-static int  grepbuf PARAMS((char *, char *));
-static void prtext PARAMS((char *, char *, int *));
-static void prpending PARAMS((char *));
-static void prline PARAMS((char *, char *, int));
-static void nlscan PARAMS((char *));
-static int  grep PARAMS((int, char const *));
-static int  grepdir PARAMS((char const *, unsigned));
-static int  grepfile PARAMS((char const *));
+static int  ck_atoi PARAMS ((char const *, int *));
+static void usage PARAMS ((int));
+static void error PARAMS ((const char *, int));
+static int  setmatcher PARAMS ((char *));
+static int  reset PARAMS ((int, char const *));
+static int  fillbuf PARAMS ((size_t));
+static int  grepbuf PARAMS ((char *, char *));
+static void prtext PARAMS ((char *, char *, int *));
+static void prpending PARAMS ((char *));
+static void prline PARAMS ((char *, char *, int));
+static void nlscan PARAMS ((char *));
+static int  grep PARAMS ((int, char const *));
+static int  grepdir PARAMS ((char const *, unsigned));
+static int  grepfile PARAMS ((char const *));
 
 /* Functions we'll use to search. */
-static void (*compile) PARAMS((char *, size_t));
-static char *(*execute) PARAMS((char *, size_t, char **));
+static void (*compile) PARAMS ((char *, size_t));
+static char *(*execute) PARAMS ((char *, size_t, char **));
 
 /* Print a message and possibly an error string.  Remember
    that something awful happened. */
 static void
-error(mesg, errnum)
+error (mesg, errnum)
      const char *mesg;
      int errnum;
 {
   if (errnum)
-    fprintf(stderr, "%s: %s: %s\n", prog, mesg, strerror(errnum));
+    fprintf (stderr, "%s: %s: %s\n", prog, mesg, strerror (errnum));
   else
-    fprintf(stderr, "%s: %s\n", prog, mesg);
+    fprintf (stderr, "%s: %s\n", prog, mesg);
   errseen = 1;
 }
 
-/* Like error(), but die horribly after printing. */
+/* Like error (), but die horribly after printing. */
 void
-fatal(mesg, errnum)
+fatal (mesg, errnum)
      const char *mesg;
      int errnum;
 {
-  error(mesg, errnum);
-  exit(2);
+  error (mesg, errnum);
+  exit (2);
 }
 
 /* Interface to handle errors and fix library lossage. */
 char *
-xmalloc(size)
+xmalloc (size)
      size_t size;
 {
   char *result;
 
-  result = malloc(size);
+  result = malloc (size);
   if (size && !result)
-    fatal(_("memory exhausted"), 0);
+    fatal (_("memory exhausted"), 0);
   return result;
 }
 
 /* Interface to handle errors and fix some library lossage. */
 char *
-xrealloc(ptr, size)
+xrealloc (ptr, size)
      char *ptr;
      size_t size;
 {
   char *result;
 
   if (ptr)
-    result = realloc(ptr, size);
+    result = realloc (ptr, size);
   else
-    result = malloc(size);
+    result = malloc (size);
   if (size && !result)
-    fatal(_("memory exhausted"), 0);
+    fatal (_("memory exhausted"), 0);
   return result;
-
 }
 
 /* Convert STR to a positive integer, storing the result in *OUT.
@@ -226,7 +224,7 @@ reset (fd, file)
     {
       initialized = 1;
 #ifndef BUFSALLOC
-      bufsalloc = MAX(8192, getpagesize());
+      bufsalloc = MAX (8192, getpagesize ());
 #else
       bufsalloc = BUFSALLOC;
 #endif
@@ -234,9 +232,9 @@ reset (fd, file)
       /* The 1 byte of overflow is a kludge for dfaexec(), which
 	 inserts a sentinel newline at the end of the buffer
 	 being searched.  There's gotta be a better way... */
-      buffer = valloc(bufalloc + 1);
+      buffer = valloc (bufalloc + 1);
       if (!buffer)
-	fatal(_("memory exhausted"), 0);
+	fatal (_("memory exhausted"), 0);
       bufbeg = buffer;
       buflim = buffer;
     }
@@ -249,20 +247,20 @@ reset (fd, file)
       directories != READ_DIRECTORIES
 #endif
       )
-    if (fstat(fd, &bufstat) != 0)
+    if (fstat (fd, &bufstat) != 0)
       {
-	error("fstat", errno);
+	error ("fstat", errno);
 	return 0;
       }
-  if (directories == SKIP_DIRECTORIES && S_ISDIR(bufstat.st_mode))
+  if (directories == SKIP_DIRECTORIES && S_ISDIR (bufstat.st_mode))
     return 0;
 #if defined(HAVE_MMAP)
-  if (!S_ISREG(bufstat.st_mode))
+  if (!S_ISREG (bufstat.st_mode))
     bufmapped = 0;
   else
     {
       bufmapped = 1;
-      bufoffset = initial_bufoffset = file ? 0 : lseek(fd, 0, 1);
+      bufoffset = initial_bufoffset = file ? 0 : lseek (fd, 0, 1);
     }
 #endif
   return 1;
@@ -273,7 +271,7 @@ reset (fd, file)
    to the beginning of the buffer contents, and 'buflim'
    points just after the end.  Return count of new stuff. */
 static int
-fillbuf(save)
+fillbuf (save)
      size_t save;
 {
   char *nbuffer, *dp, *sp;
@@ -283,17 +281,17 @@ fillbuf(save)
 #endif
   static int pagesize;
 
-  if (pagesize == 0 && (pagesize = getpagesize()) == 0)
-    abort();
+  if (pagesize == 0 && (pagesize = getpagesize ()) == 0)
+    abort ();
 
   if (save > bufsalloc)
     {
       while (save > bufsalloc)
 	bufsalloc *= 2;
       bufalloc = 5 * bufsalloc;
-      nbuffer = valloc(bufalloc + 1);
+      nbuffer = valloc (bufalloc + 1);
       if (!nbuffer)
-	fatal(_("memory exhausted"), 0);
+	fatal (_("memory exhausted"), 0);
     }
   else
     nbuffer = buffer;
@@ -305,7 +303,7 @@ fillbuf(save)
     *dp++ = *sp++;
 
   /* We may have allocated a new, larger buffer.  Since
-     there is no portable vfree(), we just have to forget
+     there is no portable vfree (), we just have to forget
      about the old one.  Sorry. */
   buffer = nbuffer;
 
@@ -314,7 +312,7 @@ fillbuf(save)
       && bufstat.st_size - bufoffset >= bufalloc - bufsalloc)
     {
       maddr = buffer + bufsalloc;
-      maddr = mmap(maddr, bufalloc - bufsalloc, PROT_READ | PROT_WRITE,
+      maddr = mmap (maddr, bufalloc - bufsalloc, PROT_READ | PROT_WRITE,
 		   MAP_PRIVATE | MAP_FIXED, bufdesc, bufoffset);
       if (maddr == (caddr_t) -1)
 	{
@@ -323,8 +321,8 @@ fillbuf(save)
              other process has an advisory read lock on the file.
              There's no point alarming the user about this misfeature.  */
 #if 0
-	  fprintf(stderr, _("%s: warning: %s: %s\n"), prog, filename,
-		  strerror(errno));
+	  fprintf (stderr, _("%s: warning: %s: %s\n"), prog, filename,
+		  strerror (errno));
 #endif
 	  goto tryread;
 	}
@@ -332,7 +330,7 @@ fillbuf(save)
       /* You might thing this (or MADV_WILLNEED) would help,
 	 but it doesn't, at least not on a Sun running 4.1.
 	 In fact, it actually slows us down about 30%! */
-      madvise(maddr, bufalloc - bufsalloc, MADV_SEQUENTIAL);
+      madvise (maddr, bufalloc - bufsalloc, MADV_SEQUENTIAL);
 #endif
       cc = bufalloc - bufsalloc;
       bufoffset += cc;
@@ -349,14 +347,14 @@ fillbuf(save)
 	  if (bufoffset != initial_bufoffset)
 	    lseek (bufdesc, bufoffset, 0);
 	}
-      cc = read(bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
+      cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
     }
 #else
-  cc = read(bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
-#endif
+  cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
+#endif /*HAVE_MMAP*/
 #if O_BINARY
   if (O_BINARY && cc > 0)
-    cc = undossify_input(buffer + bufsalloc, cc);
+    cc = undossify_input (buffer + bufsalloc, cc);
 #endif
   if (cc > 0)
     buflim = buffer + bufsalloc + cc;
@@ -394,7 +392,7 @@ static int done_on_match;		/* Stop scanning file on first match */
 #endif
 
 static void
-nlscan(lim)
+nlscan (lim)
      char *lim;
 {
   char *beg;
@@ -406,35 +404,35 @@ nlscan(lim)
 }
 
 static void
-prline(beg, lim, sep)
+prline (beg, lim, sep)
      char *beg;
      char *lim;
      int sep;
 {
   if (out_file)
-    printf("%s%c", filename, sep);
+    printf ("%s%c", filename, sep);
   if (out_line)
     {
-      nlscan(beg);
-      printf("%u%c", (unsigned int)++totalnl, sep);
+      nlscan (beg);
+      printf ("%u%c", (unsigned int)++totalnl, sep);
       lastnl = lim;
     }
   if (out_byte)
 #if O_BINARY
-    printf("%lu%c",
-	   (unsigned long int) dossified_pos(totalcc + (beg - bufbeg)), sep);
+    printf ("%lu%c",
+	   (unsigned long int) dossified_pos (totalcc + (beg - bufbeg)), sep);
 #else
-    printf("%lu%c", (unsigned long int) (totalcc + (beg - bufbeg)), sep);
+    printf ("%lu%c", (unsigned long int) (totalcc + (beg - bufbeg)), sep);
 #endif
-  fwrite(beg, 1, lim - beg, stdout);
-  if (ferror(stdout))
-    error(_("writing output"), errno);
+  fwrite (beg, 1, lim - beg, stdout);
+  if (ferror (stdout))
+    error (_("writing output"), errno);
   lastout = lim;
 }
 
 /* Print pending lines of trailing context prior to LIM. */
 static void
-prpending(lim)
+prpending (lim)
      char *lim;
 {
   char *nl;
@@ -444,18 +442,18 @@ prpending(lim)
   while (pending > 0 && lastout < lim)
     {
       --pending;
-      if ((nl = memchr(lastout, '\n', lim - lastout)) != 0)
+      if ((nl = memchr (lastout, '\n', lim - lastout)) != 0)
 	++nl;
       else
 	nl = lim;
-      prline(lastout, nl, '-');
+      prline (lastout, nl, '-');
     }
 }
 
 /* Print the lines between BEG and LIM.  Deal with context crap.
    If NLINESP is non-null, store a count of lines between BEG and LIM. */
 static void
-prtext(beg, lim, nlinesp)
+prtext (beg, lim, nlinesp)
      char *beg;
      char *lim;
      int *nlinesp;
@@ -465,7 +463,7 @@ prtext(beg, lim, nlinesp)
   int i, n;
 
   if (!out_quiet && pending > 0)
-    prpending(beg);
+    prpending (beg);
 
   p = beg;
 
@@ -483,12 +481,12 @@ prtext(beg, lim, nlinesp)
       /* We only print the "--" separator if our output is
 	 discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout)
-	puts("--");
+	puts ("--");
 
       while (p < beg)
 	{
-	  nl = memchr(p, '\n', beg - p);
-	  prline(p, nl + 1, '-');
+	  nl = memchr (p, '\n', beg - p);
+	  prline (p, nl + 1, '-');
 	  p = nl + 1;
 	}
     }
@@ -498,19 +496,19 @@ prtext(beg, lim, nlinesp)
       /* Caller wants a line count. */
       for (n = 0; p < lim; ++n)
 	{
-	  if ((nl = memchr(p, '\n', lim - p)) != 0)
+	  if ((nl = memchr (p, '\n', lim - p)) != 0)
 	    ++nl;
 	  else
 	    nl = lim;
 	  if (!out_quiet)
-	    prline(p, nl, ':');
+	    prline (p, nl, ':');
 	  p = nl;
 	}
       *nlinesp = n;
     }
   else
     if (!out_quiet)
-      prline(beg, lim, ':');
+      prline (beg, lim, ':');
 
   pending = out_after;
   used = 1;
@@ -520,7 +518,7 @@ prtext(beg, lim, nlinesp)
    between matching lines if OUT_INVERT is true).  Return a count of
    lines printed. */
 static int
-grepbuf(beg, lim)
+grepbuf (beg, lim)
      char *beg;
      char *lim;
 {
@@ -537,21 +535,21 @@ grepbuf(beg, lim)
 	break;
       if (!out_invert)
 	{
-	  prtext(b, endp, (int *) 0);
+	  prtext (b, endp, (int *) 0);
 	  nlines += 1;
 	  if (done_on_match)
 	    return nlines;
 	}
       else if (p < b)
 	{
-	  prtext(p, b, &n);
+	  prtext (p, b, &n);
 	  nlines += n;
 	}
       p = endp;
     }
   if (out_invert && p < lim)
     {
-      prtext(p, lim, &n);
+      prtext (p, lim, &n);
       nlines += n;
     }
   return nlines;
@@ -592,9 +590,9 @@ grep (fd, file)
   residue = 0;
   save = 0;
 
-  if (fillbuf(save) < 0)
+  if (fillbuf (save) < 0)
     {
-      error(filename, errno);
+      error (filename, errno);
       return nlines;
     }
 
@@ -616,9 +614,9 @@ grep (fd, file)
       residue = buflim - lim;
       if (beg < lim)
 	{
-	  nlines += grepbuf(beg, lim);
+	  nlines += grepbuf (beg, lim);
 	  if (pending)
-	    prpending(lim);
+	    prpending (lim);
 	  if (nlines && done_on_match && !out_invert)
 	    goto finish_grep;
 	}
@@ -636,25 +634,25 @@ grep (fd, file)
       save = residue + lim - beg;
       totalcc += buflim - bufbeg - save;
       if (out_line)
-	nlscan(beg);
-      if (fillbuf(save) < 0)
+	nlscan (beg);
+      if (fillbuf (save) < 0)
 	{
-	  error(filename, errno);
+	  error (filename, errno);
 	  goto finish_grep;
 	}
     }
   if (residue)
     {
-      nlines += grepbuf(bufbeg + save - residue, buflim);
+      nlines += grepbuf (bufbeg + save - residue, buflim);
       if (pending)
-	prpending(buflim);
+	prpending (buflim);
     }
 
  finish_grep:
   done_on_match -= not_text;
   out_quiet -= not_text;
   if ((not_text & ~out_quiet) && nlines != 0)
-    printf(_("Binary file %s matches\n"), filename);
+    printf (_("Binary file %s matches\n"), filename);
   return nlines;
 }
 
@@ -728,21 +726,21 @@ grepfile (file)
       if (count_matches)
 	{
 	  if (out_file)
-	    printf("%s:", filename);
-	  printf("%d\n", count);
+	    printf ("%s:", filename);
+	  printf ("%d\n", count);
 	}
 
       if (count)
 	{
 	  status = 0;
 	  if (list_files == 1)
-	    printf("%s\n", filename);
+	    printf ("%s\n", filename);
 	}
       else
 	{
 	  status = 1;
 	  if (list_files == -1)
-	    printf("%s\n", filename);
+	    printf ("%s\n", filename);
 	}
 
       if (file && close (desc) != 0)
@@ -856,13 +854,13 @@ two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n\
 Exit with 2 if syntax errors or system errors.\n"));
       printf (_("\nReport bugs to <bug-gnu-utils@gnu.org>.\n"));
     }
-  exit(status);
+  exit (status);
 }
 
 /* Go through the matchers vector and look for the specified matcher.
    If we find it, install it in compile and execute, and return 1.  */
 static int
-setmatcher(name)
+setmatcher (name)
      char *name;
 {
   int i;
@@ -871,7 +869,7 @@ setmatcher(name)
 #endif
 
   for (i = 0; matchers[i].name; ++i)
-    if (strcmp(name, matchers[i].name) == 0)
+    if (strcmp (name, matchers[i].name) == 0)
       {
 	compile = matchers[i].compile;
 	execute = matchers[i].execute;
@@ -906,7 +904,7 @@ setmatcher(name)
 }
 
 int
-main(argc, argv)
+main (argc, argv)
      int argc;
      char *argv[];
 {
@@ -921,8 +919,8 @@ main(argc, argv)
 
   initialize_main (&argc, &argv);
   prog = argv[0];
-  if (prog && strrchr(prog, '/'))
-    prog = strrchr(prog, '/') + 1;
+  if (prog && strrchr (prog, '/'))
+    prog = strrchr (prog, '/') + 1;
 
 #if defined(__MSDOS__) || defined(_WIN32)
   /* DOS and MS-Windows use backslashes as directory separators, and usually
@@ -930,7 +928,7 @@ main(argc, argv)
   if (prog)
     {
       char *p = prog;
-      char *bslash = strrchr(argv[0], '\\');
+      char *bslash = strrchr (argv[0], '\\');
 
       if (bslash && bslash >= prog) /* for mixed forward/backslash case */
 	prog = bslash + 1;
@@ -944,7 +942,7 @@ main(argc, argv)
 	  *p += 'a' - 'A';
 
       /* Remove the .exe extension, if any.  */
-      if ((p = strrchr(prog, '.')) && strcmp(p, ".exe") == 0)
+      if ((p = strrchr (prog, '.')) && strcmp (p, ".exe") == 0)
 	*p = '\0';
     }
 #endif
@@ -961,6 +959,15 @@ main(argc, argv)
   /* Accumulated value of individual digits in a -NUM option */
   digit_args_val = 0;
 
+  /* We now define explicitly the alogrithm "grep"/"fgrep"/"egrep" 
+   * at compilation by passing the -DMATCHER="xxx"
+   * We don't rely on the program name.
+   */
+#ifndef MATCHER
+# define MATCHER "grep"
+#endif
+  matcher = MATCHER;
+
 /* Internationalization. */
 #if HAVE_SETLOCALE
   setlocale (LC_ALL, "");
@@ -970,7 +977,7 @@ main(argc, argv)
   textdomain (PACKAGE);
 #endif
 
-  while ((opt = getopt_long(argc, argv,
+  while ((opt = getopt_long (argc, argv,
 #if O_BINARY
          "0123456789A:B:C::EFGHVX:abcd:e:f:hiLlnqrsvwxyUu",
 #else
@@ -1018,8 +1025,8 @@ main(argc, argv)
 	  default_context = 2;
 	break;
       case 'E':
-	if (matcher && strcmp(matcher, "posix-egrep") != 0)
-	  fatal(_("you may specify only one of -E, -F, or -G"), 0);
+	if (matcher && strcmp (matcher, "posix-egrep") != 0)
+	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
 	matcher = "posix-egrep";
 	break;
       case 'F':
@@ -1028,8 +1035,8 @@ main(argc, argv)
 	matcher = "fgrep";
 	break;
       case 'G':
-	if (matcher && strcmp(matcher, "grep") != 0)
-	  fatal(_("you may specify only one of -E, -F, or -G"), 0);
+	if (matcher && strcmp (matcher, "grep") != 0)
+	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
 	matcher = "grep";
 	break;
       case 'H':
@@ -1048,7 +1055,7 @@ main(argc, argv)
 	break;
       case 'X':
 	if (matcher)
-	  fatal(_("matcher already specified"), 0);
+	  fatal (_("matcher already specified"), 0);
 	matcher = optarg;
 	break;
       case 'a':
@@ -1069,29 +1076,29 @@ main(argc, argv)
 	else if (strcmp (optarg, "recurse") == 0)
 	  directories = RECURSE_DIRECTORIES;
 	else
-	  fatal(_("unknown directories method"), 0);
+	  fatal (_("unknown directories method"), 0);
 	break;
       case 'e':
-	cc = strlen(optarg);
-	keys = xrealloc(keys, keycc + cc + 1);
-	strcpy(&keys[keycc], optarg);
+	cc = strlen (optarg);
+	keys = xrealloc (keys, keycc + cc + 1);
+	strcpy (&keys[keycc], optarg);
 	keycc += cc;
 	keys[keycc++] = '\n';
 	break;
       case 'f':
-	fp = strcmp(optarg, "-") != 0 ? fopen(optarg, "r") : stdin;
+	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
 	if (!fp)
-	  fatal(optarg, errno);
+	  fatal (optarg, errno);
 	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
 	  ;
-	keys = xrealloc(keys, keyalloc);
+	keys = xrealloc (keys, keyalloc);
 	oldcc = keycc;
-	while (!feof(fp)
-	       && (cc = fread(keys + keycc, 1, keyalloc - 1 - keycc, fp)) > 0)
+	while (!feof (fp)
+	       && (cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) > 0)
 	  {
 	    keycc += cc;
 	    if (keycc == keyalloc - 1)
-	      keys = xrealloc(keys, keyalloc *= 2);
+	      keys = xrealloc (keys, keyalloc *= 2);
 	  }
 	if (fp != stdin)
 	  fclose(fp);
@@ -1144,7 +1151,7 @@ main(argc, argv)
 	/* long options */
 	break;
       default:
-	usage(2);
+	usage (2);
 	break;
       }
 
@@ -1167,7 +1174,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     }
 
   if (show_help)
-    usage(0);
+    usage (0);
 
   if (keys)
     {
@@ -1182,16 +1189,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     if (optind < argc)
       {
 	keys = argv[optind++];
-	keycc = strlen(keys);
+	keycc = strlen (keys);
       }
     else
-      usage(2);
+      usage (2);
 
-  if (!matcher)
-    matcher = prog;
-
-  if (!setmatcher(matcher) && !setmatcher("default"))
-    abort();
+  if (!setmatcher (matcher) && !setmatcher ("default"))
+    abort ();
 
   (*compile)(keys, keycc);
 
@@ -1215,5 +1219,5 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   if (fclose (stdout) == EOF)
     error (_("writing output"), errno);
 
-  exit(errseen ? 2 : status);
+  exit (errseen ? 2 : status);
 }

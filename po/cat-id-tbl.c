@@ -41,9 +41,11 @@ const struct _msg_ent _msg_tbl[] = {
   {"memory exhausted", 32},
   {"%s: warning: %s: %s\n", 33},
   {"writing output", 34},
-  {"Usage: %s [OPTION]... PATTERN [FILE]...\n", 35},
-  {"Try `%s --help' for more information.\n", 36},
-  {"Usage: %s [OPTION]... PATTERN [FILE] ...\n", 37},
+  {"Binary file %s matches\n", 35},
+  {"(standard input)", 36},
+  {"Usage: %s [OPTION]... PATTERN [FILE]...\n", 37},
+  {"Try `%s --help' for more information.\n", 38},
+  {"Usage: %s [OPTION]... PATTERN [FILE] ...\n", 39},
   {"\
 Search for PATTERN in each FILE or standard input.\n\
 \n\
@@ -55,14 +57,14 @@ Regexp selection and interpretation:\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
   -w, --word-regexp         force PATTERN to match only whole words\n\
-  -x, --line-regexp         force PATTERN to match only whole lines\n", 38},
+  -x, --line-regexp         force PATTERN to match only whole lines\n", 40},
   {"\
 \n\
 Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --revert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
-      --help                display this help and exit\n", 39},
+      --help                display this help and exit\n", 41},
   {"\
 \n\
 Output control:\n\
@@ -71,38 +73,43 @@ Output control:\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
+  -a, --text                do not suppress binary output\n\
+  -d, --directories=ACTION  how to handle directories\n\
+                            ACTION is 'read', 'recurse', or 'skip'.\n\
+  -r, --recursive           equivalent to --directories=recurse.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
-  -c, --count               only print a count of matching lines per FILE\n", 40},
+  -c, --count               only print a count of matching lines per FILE\n", 42},
   {"\
 \n\
 Context control:\n\
   -B, --before-context=NUM  print NUM lines of leading context\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
-  -NUM                      same as both -B NUM and -A NUM\n\
-  -C, --context             same as -2\n\
+  -C, --context[=NUM]       print NUM (default 2) lines of output context\n\
+                            unless overriden by -A or -B\n\
+  -NUM                      same as --contex=NUM\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
 If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n\
 With no FILE, or when FILE is -, read standard input. If less than\n\
 two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n\
-Exit with 2 if syntax errors or system errors.\n", 41},
+Exit with 2 if syntax errors or system errors.\n", 43},
   {"\
 \n\
-Report bugs to <bug-gnu-utils@gnu.org>.\n", 42},
-  {"invalid context length argument", 43},
-  {"you may specify only one of -E, -F, or -G", 44},
-  {"matcher already specified", 45},
-  {"grep (GNU grep) %s\n", 46},
+Report bugs to <bug-gnu-utils@gnu.org>.\n", 44},
+  {"invalid context length argument", 45},
+  {"infalid context length argument", 46},
+  {"you may specify only one of -E, -F, or -G", 47},
+  {"matcher already specified", 48},
+  {"unknown directories method", 49},
+  {"grep (GNU grep) %s\n", 50},
   {"\
-Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n", 47},
+Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n", 51},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 48},
-  {"(standard input)", 49},
-  {"(standard input)\n", 50},
-  {"memory exhausted\n", 51},
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 52},
+  {"memory exhausted\n", 53},
 };
 
-int _msg_tbl_length = 51;
+int _msg_tbl_length = 53;
