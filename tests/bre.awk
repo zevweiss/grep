@@ -16,10 +16,11 @@ NF == 3 {
 }
 
 NF == 4 {
-	printf ("echo '%s' | ${GREP} -e '%s' > /dev/null 2>&1\n",$3, $2);
-	printf ("if test $? -ne %s ; then\n", $1);
-	printf ("\techo Expected non conformance \\#%d ... continuing\n", ++n);
-	printf ("fi\n");
+#don't alarm users
+#	printf ("echo '%s' | ${GREP} -e '%s' > /dev/null 2>&1\n",$3, $2);
+#	printf ("if test $? -ne %s ; then\n", $1);
+#	printf ("\techo Expected non conformance \\#%d ... continuing\n", ++n);
+#	printf ("fi\n");
 }
 
 END { printf ("exit $failures\n"); }

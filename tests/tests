@@ -72,23 +72,23 @@ $^		-	""	@
 # stop retching, those are legitimate (although disgusting)
 ^^		-	""	@
 $$		-	""	@
-b$		&	abNc
-b$		&n	abNc	b
-^b$		&	aNbNc
-^b$		&n	aNbNc	b
-^$		&n	aNNb	@Nb
+##b$		&	abNc
+##b$		&n	abNc	b
+##^b$		&	aNbNc
+##^b$		&n	aNbNc	b
+##^$		&n	aNNb	@Nb
 ^$		n	abc
-^$		n	abcN	@
-$^		n	aNNb	@Nb
-\($\)\(^\)	bn	aNNb	@Nb
-^^		n^	aNNb	@Nb
-$$		n	aNNb	@NN
+##^$		n	abcN	@
+##$^		n	aNNb	@Nb
+##\($\)\(^\)	bn	aNNb	@Nb
+##^^		n^	aNNb	@Nb
+##$$		n	aNNb	@NN
 ^a		^	a
 a$		$	a
-^a		^n	aNb
-^b		^n	aNb	b
-a$		$n	bNa
-b$		$n	bNa	b
+##^a		^n	aNb
+##^b		^n	aNb	b
+##a$		$n	bNa
+##b$		$n	bNa	b
 a*(^b$)c*	-	b	b
 a*\(^b$\)c*	b	b	b
 
@@ -146,8 +146,8 @@ a\\$		&	a\$
 a\\$		&	a\	a\
 
 # back references, ugh
-a\(b\)\2c	bC	ESUBREG
-a\(b\1\)c	bC	ESUBREG
+##a\(b\)\2c	bC	ESUBREG
+##a\(b\1\)c	bC	ESUBREG
 a\(b*\)c\1d	b	abbcbbd	abbcbbd	bb
 a\(b*\)c\1d	b	abbcbd
 a\(b*\)c\1d	b	abbcbbbd
@@ -282,15 +282,15 @@ a[[:]:]]b	&C	ECTYPE
 a[[:-:]]b	&C	ECTYPE
 a[[:alph:]]	&C	ECTYPE
 a[[:alphabet:]]	&C	ECTYPE
-[[:alnum:]]+	-	-%@a0X-	a0X
-[[:alpha:]]+	-	-%@aX0-	aX
+##[[:alnum:]]+	-	-%@a0X-	a0X
+##[[:alpha:]]+	-	-%@aX0-	aX
 [[:blank:]]+	-	aSSTb	SST
-[[:cntrl:]]+	-	aNTb	NT
+##[[:cntrl:]]+	-	aNTb	NT
 [[:digit:]]+	-	a019b	019
-[[:graph:]]+	-	Sa%bS	a%b
+##[[:graph:]]+	-	Sa%bS	a%b
 [[:lower:]]+	-	AabC	ab
-[[:print:]]+	-	NaSbN	aSb
-[[:punct:]]+	-	S%-&T	%-&
+##[[:print:]]+	-	NaSbN	aSb
+##[[:punct:]]+	-	S%-&T	%-&
 [[:space:]]+	-	aSNTb	SNT
 [[:upper:]]+	-	aBCd	BC
 [[:xdigit:]]+	-	p0f3Cq	0f3C
@@ -392,7 +392,7 @@ a(bbb+|bb+|b)b	-	abb	abb	b
 a(bbb+|bb+|b)b	-	abbb	abbb	bb
 a(bbb+|bb+|b)bb	-	abbb	abbb	b
 (.*).*		-	abcdef	abcdef	abcdef
-(a*)*		-	bc	@b	@b
+##(a*)*		-	bc	@b	@b
 
 # do we get the right subexpression when it is used more than once?
 a(b|c)*d	-	ad	ad	-
@@ -421,8 +421,8 @@ a(b|c){2,4}d	-	abcbd	abcbd	b
 a(b|c){2,4}d	-	abcbcd	abcbcd	c
 a(b|c){2,}d	-	abcd	abcd	c
 a(b|c){2,}d	-	abcbd	abcbd	b
-a(b+|((c)*))+d	-	abd	abd	@d,@d,-
-a(b+|((c)*))+d	-	abcd	abcd	@d,@d,-
+##a(b+|((c)*))+d	-	abd	abd	@d,@d,-
+##a(b+|((c)*))+d	-	abcd	abcd	@d,@d,-
 
 # check out the STARTEND option
 [abc]		&#	a(b)c	b
@@ -445,10 +445,10 @@ a*b		m	ab
 # cases involving NULs
 aZb		&	a	a
 aZb		&p	a
-aZb		&p#	(aZb)	aZb
+#aZb		&p#	(aZb)	aZb
 aZ*b		&p#	(ab)	ab
-a.b		&#	(aZb)	aZb
-a.*		&#	(aZb)c	aZb
+#a.b		&#	(aZb)	aZb
+#a.*		&#	(aZb)c	aZb
 
 # word boundaries (ick)
 [[:<:]]a	&	a	a

@@ -1,7 +1,7 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
-@setfilename sed.info
-@settitle sed, a stream editor
+@setfilename grep.info
+@settitle grep, print lines matching a pattern
 @c %**end of header
 
 @c This file has the new style title page commands.
@@ -25,9 +25,9 @@
 
 @ifinfo
 @direntry
-* sed: (sed).                   Stream EDitor.
+* grep: (grep).                   print lines matching a pattern.
 @end direntry
-This file documents @sc{sed}, a stream editor.
+This file documents @sc{grep}, a pattern matching engine.
 
 
 Published by the Free Software Foundation,
@@ -61,9 +61,9 @@ by the Foundation.
 @setchapternewpage off
 
 @titlepage
-@title sed, a stream editor
+@title grep, searching for a pattern
 @subtitle version @value{VERSION}, @value{UPDATED}
-@author by Ken Pizzini
+@author Alain et al.
 
 @page
 @vskip 0pt plus 1filll
@@ -96,53 +96,171 @@ by the Foundation.
 @comment  node-name,  next,  previous,  up
 
 @ifinfo
-This document was produced for version @value{VERSION} of @sc{GNU} @sc{sed}.
+This document was produced for version @value{VERSION} of @sc{GNU} @sc{grep}.
 @end ifinfo
 
 @menu
 * Introduction::                Introduction
-* Invoking SED::                Invocation
-* sed Programs::                @sc{sed} programs
-* Examples::                    Some sample scripts
-* Limitations::                 About the (non-)limitations on line length
-* Other Resources::             Other resources for learning about @sc{sed}
-* Reporting Bugs::              Reporting bugs
+* Options::                     Options
+* Diagnosis::                   Diagnosis
+* Grep Programs::               @sc{grep} programs
+* Regular Expressions::         Regular Expressions
+* Reporting Bugs::              Reporting Bugs
 * Concept Index::               A menu with all the topics in this manual.
-* Command and Option Index::    A menu with all @sc{sed} commands and
-                                 command-line options.
+* Index::                       A menu with all @sc{grep} commands
+                                 and command-line options.
 @end menu
 
 
-@node Introduction, Invoking SED, Top, Top
+@node Introduction,  Options, Top, Top
+@comment  node-name,  next,  previous,  up
 @chapter Introduction
 
-@cindex Stream editor
-@sc{sed} is a stream editor.
-A stream editor is used to perform basic text
-transformations on an input stream
-(a file or input from a pipeline).
-While in some ways similar to an editor which
-permits scripted edits (such as @sc{ed}),
-@sc{sed} works by making only one pass over the
-input(s), and is consequently more efficient.
-But it is @sc{sed}'s ability to filter text in a pipeline
-which particularly distinguishes it from other types of
-editors.
+@cindex Searching for a pattern.
+@sc{grep} searches the input files for lines containning a match to a given
+pattern list. When a match is found the line is written to standard
+ouput(default behaviour). @sc{grep} expects to do the matching on text,
+since newline is also a separator for the list of patterns, there
+is no way to match newline characters in a text.
 
+@node Options, Diagnosis, Introduction, Top
+@comment  node-name,  next,  previous,  up
+@chapter Options
 
-@node Invoking SED, sed Programs, Introduction, Top
-@chapter Invocation
+@sc{grep} comes with a rich set of options from POSIX.2 and GNU extensions.
 
-@sc{sed} may be invoked with the following command-line options:
+@section POSIX.2
+
+@sc{grep} may be invoked with the following command-line options:
 
 @table @samp
+
+@item -c
+@itemx --count
+@opindex -c
+@opindex -count
+@cindex counting lines
+Suppress normal output; instead print a count of matching
+lines for each input file.  With the -v, --revert-match option,
+count non-matching lines.
+
+@item -e @var{PATTERN}
+@itemx --regexp=@var{PATTERN}
+@opindex -e
+@opindex --regexp=@var{PATTERN}
+@cindex pattern list
+Use PATTERN as the pattern; useful to protect  patterns
+beginning with -.
+
+@item  -f @var{FILE}
+@itemx --file=@var{FILE}
+@opindex  -f
+@opindex  --file 
+@itemx --file=@var{FILE}
+@cindex pattern from file
+Obtain patterns from FILE, one  per  line.   The  empty
+file contains zero patterns, and therfore matches nothing.
+
+@item -i
+@itemx --ignore-case
+@opindex -i
+@opindex --ignore-case
+@cindex case insensitive
+Ignore case distinctions in both the  pattern  and  the input files.
+
+@item -l
+@itemx --files-with-matches
+@opindex -l
+@opindex --files-with-matches
+@cindex name of files
+Suppress normal output; instead print the name of  each input
+file  from which output would normally have been printed.
+The scanning will stop on the first match.
+
+@item -n
+@itemx --line-number
+@opindex -n
+@opindex --line-number
+@cindex line numbering
+Prefix each line of output with the line number  within its input file.
+
+@item -q
+@itemx --quiet
+@itemx --silent
+@opindex -q
+@opindex --quiet
+@opindex --silent
+@cindex quiet, silent
+Quiet; suppress normal output. The scanning  will  stop on  the
+first match.  Also see the -s or --no-messages option.
+
+@item -s
+@itemx --no-messages
+@opindex -s
+@opindex --no-messages
+@cindex suppress error messages
+Suppress error messages about nonexistent or unreadable files.
+Portability  note:  unlike  GNU grep, BSD grep does not comply
+with POSIX.2, because BSD grep lacks  a -q  option and its -s option
+behaves like GNU grep's -q option. Shell scripts intended to be portable
+to  BSD grep  should  avoid  both -q and -s and should redirect
+output to /dev/null instead.
+
+@item -v
+@itemx --revert-match
+@opindex -v
+@opindex --revert-match
+@cindex revert matching
+Invert the sense of matching,  to  select  non-matching lines.
+
+@item -x
+@itemx --line-regexp
+@opindex -x
+@opindex --line-regexp
+@cindex match the whole line
+Select only those matches that exactly match the  whole line.
+
+@end table
+
+@section GNU Extensions
+
+@table @samp
+
+@item -A @var{NUM}
+@item --after-context=@var{NUM}
+@opindex -A
+@opindex --after-context
+@cindex after context
+Print NUM lines  of  trailing  context  after  matching lines.
+
+@item -B @var{NUM}
+@itemx --before-context=@var{NUM}
+@opindex -B
+@opindex --before-context
+@cindex before context
+Print NUM lines  of  leading  context  before  matching lines.
+
+@item -C
+@itemx --context@var{[=NUM]}
+@opindex -C
+@opindex --context
+@cindex context
+Print NUM lines (default 2) of output context.
+
+
+@item -NUM
+@opindex -NUM
+Same as --context=NUM lines  of  leading  and  trailing
+context.  However, grep will never print any given line more than once.
+
+
 @item -V
 @itemx --version
 @opindex -V
 @opindex --version
 @cindex Version, printing
-Print out the version of @sc{sed} that is being run and a copyright notice,
-then exit.
+Print the version number of  @sc{grep}  to  standard  error.
+This  version  number  should  be  included  in all bug reports.
 
 @item -h
 @itemx --help
@@ -150,613 +268,357 @@ then exit.
 @opindex --help
 @cindex Usage summary, printing
 Print a usage message briefly summarizing these command-line options
-and the bug-reporting address,
-then exit.
+and the bug-reporting address, then exit.
 
-@item -n
-@itemx --quiet
-@itemx --silent
-@opindex -n
-@opindex --quiet
-@opindex --silent
-By default, @sc{sed} will print out the pattern space
-at the end of each cycle through the script.
-These options disable this automatic printing,
-and @sc{sed} will only produce output when explicitly told to
-via the @code{p} command.
+@item -b
+@itemx --byte-offset
+@opindex -b
+@opindex --byte-offset
+@cindex byte offset
+Print the byte offset within the input file before each line of output.
 
-@item -e @var{script}
-@itemx --expression=@var{script}
-@opindex -e
-@opindex --expression
-@cindex Script, from command line
-Add the commands in @var{script} to the set of commands to be
-run while processing the input.
+@item -d @var{ACTION}
+@itemx --directories=@var{ACTION}
+@opindex -d 
+@opindex --directories
+@cindex directory search
+If an input file is a directory, use ACTION to  process it.
+By  default,  ACTION  is  read,  which means that directories are
+read just  as  if  they  were  ordinary files. If  ACTION  is  skip,
+directories are silently skipped.  If ACTION is recurse, grep  reads
+all  files under  each  directory, recursively; this is equivalent
+to the -r option.
 
-@item -f @var{script-file}
-@itemx --file=@var{script-file}
-@opindex -f
-@opindex --file
-@cindex Script, from a file
-Add the commands contained in the file @var{script-file}
-to the set of commands to be run while processing the input.
+@item -h
+@itemx --no-filename
+@opindex -h
+@opindex --no-filename
+@cindex no filename prefix
+Suppress the prefixing of filenames on output when multiple files are searched.
 
-@end table
+@item -L
+@itemx --files-without-match
+@opindex -L
+@opindex --files-without-match
+@cindex files  without match
+Suppress normal output; instead print the name of  each input
+file  from  which  no output would normally have been printed.
+The  scanning  will  stop  on  the  first match.
 
-If no @code{-e}, @code{-f}, @code{--expression}, or @code{--file}
-options are given on the command-line,
-then the first non-option argument on the command line is
-taken to be the @var{script} to be executed.
+@item -a
+@itemx --text
+@opindex -a
+@opindex --text
+@cindex suppress binary data
+Do not suppress output lines that contain binary  data.
+Normally,  if  the  first  few bytes of a file indicate
+that the file contains binary data, grep outputs only a
+message saying that the file matches the pattern.  This
+option causes grep to act as if  the  file  is  a  text
+file, even if it would otherwise be treated as binary.
 
-@cindex Files to be processed as input
-If any command-line parameters remain after processing the above,
-these parameters are interpreted as the names of input files to
-be processed.
-@cindex Standard input, processing as input
-A file name of @code{-} refers to the standard input stream.
-The standard input will be processed if no file names are specified.
+@item -w
+@itemx --word-regexp
+@opindex -w
+@opindex --word-regexp
+@cindex matching a word
+Select only those lines containing  matches  that  form
+whole  words.   The test is that the matching substring
+must either be at the beginning of the  line,  or  preceded 
+by a non-word constituent character.  Similarly,
+it must be either at the end of the line or followed by
+a  non-word  constituent  character.   Word-constituent
+characters are letters, digits, and the underscore.
 
+@item -y
+@opindex -y
+@cindex case insensitive
+Obsolete synonym for -i.
 
-@node sed Programs, Examples, Invoking SED, Top
-@chapter @sc{sed} Programs
+@item -U
+@itemx --binary
+@opindex -U
+@opindex --binary
+@cindex DOS binary files
+Treat the file(s) as binary.  By default, under  MS-DOS
+and  MS-Windows,  grep guesses the file type by looking
+at the contents of the first 32KB read from  the  file.
+If  grep decides the file is a text file, it strips the
+CR characters from the original file contents (to  make
+regular  expressions  with  ^  and  $  work correctly).
+Specifying -U overrules  this  guesswork,  causing  all
+files  to  be read and passed to the matching mechanism
+verbatim; if the file is a text file with  CR/LF  pairs
+at  the  end of each line, this will cause some regular
+expressions to fail.  This option is only supported  on
+MS-DOS and MS-Windows.
 
-@cindex @sc{sed} program structure
-@cindex Script structure
-A @sc{sed} program consists of one or more @sc{sed} commands,
-passed in by one or more of the
-@code{-e}, @code{-f}, @code{--expression}, and @code{--file}
-options, or the first non-option argument if zero of these
-options are used.
-This document will refer to ``the'' @sc{sed} script;
-this will be understood to mean the in-order catenation
-of all of the @var{script}s and @var{script-file}s passed in.
-
-Each @sc{sed} command consists of an optional address or
-address range, followed by a one-character command name
-and any additional command-specific code.
-
-@menu
-* Addresses::                Selecting lines with @sc{sed}
-* Regular Expressions::      Overview of regular expression syntax
-* Data Spaces::              Where @sc{sed} buffers data
-* Common Commands::          Often used commands
-* Other Commands::           Less frequently used commands
-* Programming Commands::     Commands for die-hard @sc{sed} programmers
-@end menu
-
-
-@node Addresses, Regular Expressions, sed Programs, sed Programs
-@section Selecting lines with @sc{sed}
-@cindex Addresses, in @sc{sed} scripts
-@cindex Line selection
-@cindex Selecting lines to process
-
-Addresses in a @sc{sed} script can be in any of the following forms:
-@table @samp
-@item @var{number}
-@cindex Address, numeric
-@cindex Line, selecting by number
-Specifying a line number will match only that line in the input.
-(Note that @sc{sed} counts lines continuously across all input files.)
-
-@item @var{first}~@var{step}
-@cindex @sc{GNU} extensions, @code{@var{n}~@var{m}} addresses
-This @sc{GNU} extension matches every @var{step}th line
-starting with line @var{first}.
-In particular, lines will be selected when there exists
-a non-negative @var{n} such that the current line-number equals
-@var{first} + (@var{n} * @var{step}).
-Thus, to select the odd-numbered lines,
-one would use @code{1~2};
-to pick every third line starting with the second, @code{2~3} would be used;
-to pick every fifth line starting with the tenth, use @code{10~5};
-and @code{50~0} is just an obscure way of saying @code{50}.
-
-@item $
-@cindex Address, last line
-@cindex Last line, selecting
-@cindex Line, selecting last
-This address matches the last line of the last file of input.
-
-@item /@var{regexp}/
-@cindex Address, as a regular expression
-@cindex Line, selecting by regular expression match
-This will select any line which matches the regular expression @var{regexp}.
-If @var{regexp} itself includes any @code{/} characters,
-each must be escaped by a backslash (@code{\}).
-
-@item \%@var{regexp}%
-(The @code{%} may be replaced by any other single character.)
-
-@cindex Slash character, in regular expressions
-This also matches the regular expression @var{regexp},
-but allows one to use a different delimiter than @code{/}.
-This is particularly useful if the @var{regexp} itself contains
-a lot of @code{/}s, since it avoids the tedious escaping of every @code{/}.
-If @var{regexp} itself includes any delimiter characters,
-each must be escaped by a backslash (@code{\}).
-
-@item /@var{regexp}/I
-@itemx \%@var{regexp}%I
-@cindex @sc{GNU} extensions, @code{I} modifier
-The @code{I} modifier to regular-expression matching is a @sc{GNU}
-extension which causes the @var{regexp} to be matched in
-a case-insensitive manner.
+@item -u
+@itemx --unix-byte-offsets
+@opindex -u
+@opindex --unix-byte-offsets
+@cindex DOS byte offsets
+Report Unix-style byte  offsets.   This  switch  causes
+grep  to  report byte offsets as if the file were Unix style
+text file, i.e. with CR characters stripped  off.
+This  will produce results identical to running grep on
+a Unix machine.  This option has no  effect  unless  -b
+option is also used; it is only supported on MS-DOS and
+MS-Windows.
 
 @end table
 
-If no addresses are given, then all lines are matched;
-if one address is given, then only lines matching that
-address are matched.
+@sc{grep} uses the environment variable @var{LANG} to
+provide internationalization suports, if compile with this feature.
 
-@cindex Range of lines
-@cindex Several lines, selecting
-An address range can be specified by specifying two addresses
-separated by a comma (@code{,}).
-An address range matches lines starting from where the first
-address matches, and continues until the second address matches
-(inclusively).
-If the second address is a @var{regexp}, then checking for the
-ending match will start with the line @emph{following} the
-line which matched the first address.
-If the second address is a @var{number} less than (or equal to)
-the line matching the first address,
-then only the one line is matched.
+@node Diagnosis, Grep Programs, Options, Top
+@comment  node-name,  next,  previous,  up
+Normally, exit status is 0 if matches were found, and 1 if no matches
+were found (The -v option inverts the sense of the exit status).
+Exit status is 2  if  there  were  syntax errors  in  the  pattern,
+inaccessible input files, or other system errors.
 
-@cindex Excluding lines
-@cindex Selecting non-matching lines
-Appending the @code{!} character to the end of an address
-specification will negate the sense of the match.
-That is, if the @code{!} character follows an address range,
-then only lines which do @emph{not} match the address range
-will be selected.
-This also works for singleton addresses,
-and, perhaps perversely, for the null address.
+@node Grep Programs, Regular Expressions, Diagnosis, Top
+@comment  node-name,  next,  previous,  up
+@chapter @sc{grep} programs
 
-
-@node Regular Expressions, Data Spaces, Addresses, sed Programs
-@section Overview of regular expression syntax
-
-@c XXX FIXME
-[[I may add a brief overview of regular expressions at a later date;
-for now see any of the various other documentations for regular
-expressions, such as the @sc{awk} info page.]]
-
-
-@node Data Spaces, Common Commands, Regular Expressions, sed Programs
-@section Where @sc{sed} buffers data
-
-@cindex Buffer spaces, pattern and hold
-@cindex Spaces, pattern and hold
-@cindex Pattern space, definition
-@cindex Hold space, definition
-@sc{sed} maintains two data buffers: the active @emph{pattern} space,
-and the auxiliary @emph{hold} space.
-In ``normal'' operation, @sc{sed} reads in one line from the
-input stream and places it in the pattern space.
-This pattern space is where text manipulations occur.
-The hold space is initially empty, but there are commands
-for moving data between the pattern and hold spaces.
-@c XXX FIXME: explain why this is useful/interesting to know.
-
-
-@node Common Commands, Other Commands, Data Spaces, sed Programs
-@section Often used commands
-
-If you use @sc{sed} at all, you will quite likely want to know
-these commands.
+@sc{grep} searches the named input files (or standard input if no
+files are named, or the file name - is given) for lines containing
+a match to the  given  pattern.   By  default,  grep prints the matching lines.
+There are three major variants of grep,  controlled  by  the following options.
 
 @table @samp
-@item #
-[No addresses allowed.]
 
-@findex # (comment) command
-@cindex Comments, in scripts
-The @code{#} ``command'' begins a comment;
-the comment continues until the next newline.
+@item -G
+@itemx --basic-regexp
+@opindex -G
+@opindex --basic-regexp
+@cindex Basic Regular Expression
+Interpret pattern as a basic  regular  expression.  This is the default.
 
-@cindex Portability, comments
-If you are concerned about portability, be aware that
-some implementations of @sc{sed} (which are not POSIX.2
-conformant) may only support a single one-line comment,
-and then only when the very first character of the script is a @code{#}.
+@item -E
+@item --extended-regexp
+@opindex -E
+@opindex --extended-regexp
+@cindex Extended Regular Expression
+Interpret pattern as  an  extended  regular  expression.
 
-@findex -n, forcing from within a script
-@cindex Caveat --- #n on first line
-Warning: if the first two characters of the @sc{sed} script
-are @code{#n}, then the @code{-n} (no-autoprint) option is forced.
-If you want to put a comment in the first line of your script
-and that comment begins with the letter `n'
-and you do not want this behavior,
-then be sure to either use a capital `N',
-or place at least one space before the `n'.
 
-@item s/@var{regexp}/@var{replacement}/@var{flags}
-(The @code{/} characters may be uniformly replaced by
-any other single character within any given @code{s} command.)
+@item -F
+@itemx --fixed-strings
+@opindex -F
+@opindex --fixed-strings
+@cindex Fixed Strings
+Interpret pattern as a list of fixed strings, separated
+by newlines, any of which is to be matched.
+In addition, two variant programs @sc{egrep} and @sc{fgrep} are available.
+@sc{egrep} is similar (but not identical) to @sc{grep -E}, and
+is compatible with the historical Unix egrep.  @sc{fgrep} is  the
+same as @sc{grep -F}.
 
-@findex s (substitute) command
-@cindex Substitution of text
-@cindex Replacing text matching regexp
-The @code{/} character (or whatever other character is used in its stead)
-can appear in the @var{regexp} or @var{replacement}
-only if it is preceded by a @code{\} character.
-Also newlines may appear in the @var{regexp} using the two
-character sequence @code{\n}.
+@end table
 
-The @code{s} command attempts to match the pattern
-space against the supplied @var{regexp}.
-If the match is successful, then that portion of the pattern
-space which was matched is replaced with @var{replacement}.
+@node Regular Expressions, Reporting Bugs, Grep Programs, Top
+@comment  node-name,  next,  previous,  up
+@chapter Regular Expressions
 
-@cindex Backreferences, in regular expressions
-@cindex Parenthesized substrings
-The @var{replacement} can contain @code{\@var{n}} (@var{n} being
-a number from 1 to 9, inclusive) references, which refer to
-the portion of the match which is contained between the @var{n}th
-@code{\(} and its matching @code{\)}.
-Also, the @var{replacement} can contain unescaped @code{&}
-characters which will reference the whole matched portion
-of the pattern space.
-To include a literal @code{\}, @code{&}, or newline in the final
-replacement, be sure to precede the desired @code{\}, @code{&},
-or newline in the @var{replacement} with a @code{\}.
-
-@findex s command, option flags
-@cindex Substitution of text, options
-@cindex Replacing text matching regexp, options
-The @code{s} command can be followed with zero or more of the
-following @var{flags}:
+A regular expression is a pattern that describes  a  set  of strings.
+Regular expressions are constructed analogously to arithmetic expressions,
+by using various operators  to  combine smaller expressions.
+@sc{grep} understands two different versions of  regular  expression
+syntax:   ``basic''  and  ``extended''. In GNU @sc{grep}, there is no
+difference  in  available  functionality  using either  syntax. 
+In  other  implementations,  basic regular expressions are less powerful.
+The  following  description applies  to  extended  regular  expressions;
+differences for basic regular expressions are summarized afterwards.
+The fundamental building blocks are the regular  expressions that  match
+a single character.  Most characters, including all letters and digits,
+are regular expressions  that  match themselves. Any  metacharacter
+with special meaning may be quoted by preceding it with a backslash.
+A list of characters enclosed by [ and ] matches any  single character
+in  that list; if the first character of the list is the caret ^ then it
+matches  any  character  not  in  the list.  For  example,  the  regular
+expression [0123456789] matches any single digit.
+A range of ASCII  characters  may be  specified  by  giving  the  first
+and  last characters, separated by a hyphen.  Finally, certain  named
+classes  of characters  are  predefined.   Their names are self explanatory,
+and  they  are :
 
 @table @samp
-@item g
-@cindex Global substitution
-@cindex Replacing all text matching regexp in a line
-Apply the replacement to @emph{all} matches to the @var{regexp},
-not just the first.
-@item p
-@cindex Printing text after substitution
-If the substitution was made, then print the new pattern space.
-@item @var{number}
-@cindex Replacing only @var{n}th match of regexp in a line
-Only replace the @var{number}th match of the @var{regexp}.
-@item w @var{file-name}
-@cindex Write result of a substitution to file
-If the substitution was made, then write out the result to the named file.
-@item I
-(This is a @sc{GNU} extension.)
 
-@cindex @sc{GNU} extensions, @code{I} modifier
-@cindex Case-insensitive matching
-Match @var{regexp} in a case-insensitive manner.
-@end table
+@item [:alnum:]
+@opindex [:alnum:] 
+@cindex  alphanumeric class
+Any of [:digit:] or [:alpha:]
 
-@item q
-[At most one address allowed.]
+@item [:alpha:]
+@opindex [:alpha:]
+@cindex alphabetic class
+Any local-specific or
+a b c d e f g h i j k l m n o p q r s t u v w x y z, 
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 
-@findex q (quit) command
-@cindex Quitting
-Exit @sc{sed} without processing any more commands or input.
-Note that the current pattern space is printed
-if auto-print is not disabled.
+@item [:cntrl:]
+@opindex [:cntrl:]
+@cindex control char
+Any of BEL BS CR FF HT NL VT
 
-@item d
-@findex d (delete) command
-@cindex Deleting lines
-Delete the pattern space;
-immediately start next cycle.
+@item [:digit:]
+@opindex [:digit:]
+@cindex digit class
+Any of 0 1 2 3 4 5 6 7 8 9
 
-@item p
-@findex p (print) command
-@cindex Print selected lines
-Print out the pattern space (to the standard output).
-This command is usually only used in conjunction with the @code{-n}
-command-line option.
+@item [:graph:]
+@opindex [:graph:]
+@cindex graphic class
+Anything that is not a [:alphanum:] or [:punct:]
 
-@cindex Caveat --- @code{p} command and -n flag
-Note: some implementations of @sc{sed}, such as this one, will
-double-print lines when auto-print is not disabled and the @code{p}
-command is given.
-Other implementations will only print the line once.
-Both ways conform with the POSIX.2 standard, and so neither
-way can be considered to be in error.
-@cindex Portability, @code{p} command and -n flag
-Portable @sc{sed} scripts should thus avoid relying on either behavior;
-either use the @code{-n} option and explicitly print what you want,
-or avoid use of the @code{p} command (and also the @code{p} flag to the
-@code{s} command).
+@item [:lower:]
+@opindex [:lower:]
+@cindex class lower
+Any a b c d e f g h i j k l m n o p q r s t u v w x y z, 
 
-@item n
-@findex n (next-line) command
-@cindex Next input line, replace pattern space with
-@cindex Read next input line
-If auto-print is not disabled, print the pattern space,
-then, regardless, replace the pattern space with the next line of input.
-If there is no more input then @sc{sed} exits without processing
-any more commands.
+@item [:print:]
+@opindex [:print:]
+@cindex printable class
+Any [:space:] or not [:isgraph:]
 
-@item @{ @var{commands} @}
-@findex @{@} command grouping
-@cindex Grouping commands
-@cindex Command groups
-A group of commands may be enclosed between
-@code{@{} and @code{@}} characters.
-(The @code{@}} must appear in a zero-address command context.)
-This is particularly useful when you want a group of commands
-to be triggered by a single address (or address-range) match.
+@item [:punct:]
+@opindex [:punct:]
+@cindex punctuation class
+Any ! " #% & ' ( ) ; < = > ? [ \ ] * + , - . / : ^ _ @{ | @}
+
+
+@item [:space:]
+@opindex [:space:]
+@cindex space class
+any CR FF HT NL VT space
+
+@item [:upper:]
+@opindex [:upper:]
+@cindex upper class
+Any A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+
+@item [:xdigit:]
+@opindex [:xdigit:]
+@cindex xdigit class
+any a b c d e f A B C D E F 0 1 2 3 4 5 6 7 8 9
 
 @end table
+For   example, [[:alnum:]]  means  [0-9A-Za-z],  except  the latter
+form is dependent upon the ASCII  character  encoding,  whereas  the
+former  is portable.  (Note that the brackets in these class names are
+part of the symbolic names, and must  be  included in  addition  to
+the brackets delimiting the bracket list).  Most metacharacters lose
+their special meaning inside lists. To  include  a  literal ] place it
+first in the list.  Similarly, to include a literal ^ place it anywhere
+but  first.  Finally, to include a literal - place it last.
 
+The period . matches any single character.  The symbol \w is a synonym 
+for  [[:alnum:]]  and  \W  is  a  synonym  for [^[:alnum]].
 
-@node Other Commands, Programming Commands, Common Commands, sed Programs
-@section Less frequently used commands
+The caret ^ and the dollar sign $  are  metacharacters  that
+respectively match the empty string at the beginning and end
+of a line.  The symbols \< and  \>  respectively  match  the
+empty string at the beginning and end of a word.  The symbol
+\b matches the empty string at the edge of a  word,  and  \B
+matches  the empty string provided it's not at the edge of a word.
 
-Though perhaps less frequently used than those in the previous
-section, some very small yet useful @sc{sed} scripts can be built with
-these commands.
+A regular expression may  be  followed  by  one  of  several
+repetition operators:
+
 
 @table @samp
-@item y/@var{source-chars}/@var{dest-chars}/
-(The @code{/} characters may be uniformly replaced by
-any other single character within any given @code{y} command.)
 
-@findex y (transliterate) command
-@cindex Transliteration
-Transliterate any characters in the pattern space which match
-any of the @var{source-chars} with the corresponding character
-in @var{dest-chars}.
+@item ?
+@opindex ?
+@cindex question mark
+The preceding item is  optional  and  matched  at  most once.
 
-Instances of the @code{/} (or whatever other character is used in its stead),
-@code{\}, or newlines can appear in the @var{source-chars} or @var{dest-chars}
-lists, provide that each instance is escaped by a @code{\}.
-The @var{source-chars} and @var{dest-chars} lists @emph{must}
-contain the same number of characters (after de-escaping).
+@item *
+@opindex *
+@cindex asterik
+The preceding item will be matched zero or more times.
 
-@c XXX was getting a bad page break; remove this @need if formatting changes
-@need 1000
-@item a\
-@itemx @var{text}
-[At most one address allowed.]
+@item +
+@opindex +
+@cindex plus sign 
+The preceding item will be matched one or more times.
 
-@findex a (append text lines) command
-@cindex Adding a block of text after a line
-@cindex Text, appending
-Queue the lines of text which follow this command
-(each but the last ending with a @code{\},
-which will be removed from the output)
-to be output at the end of the current cycle,
-or when the next input line is read.
+@item @{n@}
+@opindex @{n@}
+@cindex brackets
+The preceding item is matched exactly n times.
 
-@item i\
-@itemx @var{text}
-[At most one address allowed.]
+@item @{n,@}
+@opindex @{n,@}
+@cindex brackets
+The preceding item is matched n or more times.
 
-@findex i (insert text lines) command
-@cindex Inserting a block of text before a line
-@cindex Text, insertion
-Immediately output the lines of text which follow this command
-(each but the last ending with a @code{\},
-which will be removed from the output).
+@item @{,m@}
+@opindex @{,m@}
+@cindex brackets
+The preceding item is optional and is matched at most m times.
 
-@item c\
-@itemx @var{text}
-@findex c (change to text lines) command
-@cindex Replace specific input lines
-@cindex Selected lines, replacing
-Delete the lines matching the address or address-range,
-and output the lines of text which follow this command
-(each but the last ending with a @code{\},
-which will be removed from the output)
-in place of the last line
-(or in place of each line, if no addresses were specified).
-A new cycle is started after this command is done,
-since the pattern space will have been deleted.
-
-@item =
-[At most one address allowed.]
-
-@findex = (print line number) command
-@cindex Print line number
-@cindex Line number, print
-Print out the current input line number (with a trailing newline).
-
-@item l
-@findex l (list unambiguously) command
-@cindex List pattern space
-@cindex Print unambiguous representation of pattern space
-Print the pattern space in an unambiguous form:
-non-printable characters (and the @code{\} character)
-are printed in C-style escaped form;
-long lines are split, with a trailing @code{\} character
-to indicate the split; the end of each line is marked
-with a @code{$}.
-
-@item r @var{filename}
-[At most one address allowed.]
-
-@findex r (read file) command
-@cindex Read text from a file
-@cindex Insert text from a file
-Queue the contents of @var{filename} to be read and
-inserted into the output stream at the end of the current cycle,
-or when the next input line is read.
-Note that if @var{filename} cannot be read, it is treated as
-if it were an empty file, without any error indication.
-
-@item w @var{filename}
-@findex w (write file) command
-@cindex Write to a file
-Write the pattern space to @var{filename}.
-The @var{filename} will be created (or truncated) before the
-first input line is read; all @code{w} commands (including
-instances of @code{w} flag on successful @code{s} commands)
-which refer to the same @var{filename} are output through
-the same @sc{FILE} stream.
-
-@item D
-@findex D (delete first line) command
-@cindex Delete first line from pattern space
-Delete text in the pattern space up to the first newline.
-If any text is left, restart cycle with the resultant
-pattern space (without reading a new line of input),
-otherwise start a normal new cycle.
-
-@item N
-@findex N (append Next line) command
-@cindex Next input line, append to pattern space
-@cindex Append next input line to pattern space
-Add a newline to the pattern space,
-then append the next line of input to the pattern space.
-If there is no more input then @sc{sed} exits without processing
-any more commands.
-
-@item P
-@findex P (print first line) command
-@cindex Print first line from pattern space
-Print out the portion of the pattern space up to the first newline.
-
-@item h
-@findex h (hold) command
-@cindex Copy pattern space into hold space
-@cindex Replace hold space with copy of pattern space
-@cindex Hold space, copying pattern space into
-Replace the contents of the hold space with the contents of the pattern space.
-
-@item H
-@findex H (append Hold) command
-@cindex Append pattern space to hold space
-@cindex Hold space, appending from pattern space
-Append a newline to the contents of the hold space,
-and then append the contents of the pattern space to that of the hold space.
-
-@item g
-@findex g (get) command
-@cindex Copy hold space into pattern space
-@cindex Replace pattern space with copy of hold space
-@cindex Hold space, copy into pattern space
-Replace the contents of the pattern space with the contents of the hold space.
-
-@item G
-@findex G (appending Get) command
-@cindex Append hold space to pattern space
-@cindex Hold space, appending to pattern space
-Append a newline to the contents of the pattern space,
-and then append the contents of the hold space to that of the pattern space.
-
-@item x
-@findex x (eXchange) command
-@cindex Exchange hold space with pattern space
-@cindex Hold space, exchange with pattern space
-Exchange the contents of the hold and pattern spaces.
+@item @{n,m@}
+@opindex @{n,m@}
+@cindex brackets
+The preceding item is matched at least n times, but not more than m times.
 
 @end table
 
+Two regular expressions may be concatenated;  the  resulting regular
+expression matches any string formed by concatenating two substrings
+that respectively match the  concatenated subexpressions.
 
-@node Programming Commands, , Other Commands, sed Programs
-@section Commands for die-hard @sc{sed} programmers
+Two regular expressions may be joined by the infix  operator |; the
+resulting  regular  expression  matches  any string matching either
+subexpression.
 
-In most cases, use of these commands indicates that you are
-probably better off programming in something like @sc{perl}.
-But occasionally one is committed to sticking with @sc{sed},
-and these commands can enable one to write quite convoluted
-scripts.
+Repetition takes precedence  over  concatenation,  which  inturn
+takes precedence over alternation.  A whole subexpression may be
+enclosed in parentheses to override  these  precedence rules.
 
-@cindex Flow of control in scripts
-@table @samp
-@item : @var{label}
-[No addresses allowed.]
+The backreference \n, where n is a single digit, matches the
+substring previously matched by the nth parenthesized subexpression
+of the regular expression.
 
-@findex : (label) command
-@cindex Labels, in scripts
-Specify the location of @var{label} for the @code{b} and @code{t} commands.
-In all other respects, a no-op.
+In basic regular expressions the metacharacters ?, +, @{,  |,
+(,  and  )  lose  their  special  meaning;  instead  use the
+backslashed versions \?, \+, \@{, \|, \(, and \).
 
-@item b @var{label}
-@findex b (branch) command
-@cindex Branch to a label, unconditionally
-@cindex Goto, in scripts
-Unconditionally branch to @var{label}.
-The @var{label} may be omitted, in which case the next cycle is started.
-
-@item t @var{label}
-@findex t (conditional branch) command
-@cindex Branch to a label, if @code{s///} succeeded
-@cindex Conditional branch
-Branch to @var{label} only if there has been a successful @code{s}ubstitution
-since the last input line was read or @code{t} branch was taken.
-The @var{label} may be omitted, in which case the next cycle is started.
-
-@end table
+In @sc{egrep} the metacharacter  @{  loses  its  special  meaning;
+instead use \@{. This not true for @sc{grep -E}.
 
 
-@node Examples, Limitations, sed Programs, Top
-@chapter Some sample scripts
-
-@c XXX FIXME
-[[Not this release, sorry.
-But check out the scripts in the testsuite directory,
-and the amazing dc.sed script in the
-top-level directory of this distribution.]]
-
-
-@node Limitations, Other Resources, Examples, Top
-@chapter About the (non-)limitations on line length
-
-@cindex @sc{GNU} extensions, unlimited line length
-@cindex Portability, line length limitations
-For those who want to write portable @sc{sed} scripts,
-be aware that some implementations have been known to
-limit line lengths (for the pattern and hold spaces)
-to be no more than 4000 bytes.
-The POSIX.2 standard specifies that conforming @sc{sed}
-implementations shall support at least 8192 byte line lengths.
-@sc{GNU} @sc{sed} has no built-in limit on line length;
-as long as @sc{sed} can malloc() more (virtual) memory,
-it will allow lines as long as you care to feed it
-(or construct within it).
-
-@node Other Resources, Reporting Bugs, Limitations, Top
-@chapter Other resources for learning about @sc{sed}
-
-@cindex Addtional reading about @sc{sed}
-In addition to several books that have been written about @sc{sed}
-(either specifically or as chapters in books which discuss
-shell programming), one can find out more about @sc{sed}
-(including suggestions of a few books) from the FAQ
-for the seders mailing list, available from any of:
-@display
- @uref{http://www.dbnet.ece.ntua.gr/~george/sed/sedfaq.html}
- @uref{http://www.ptug.org/sed/sedfaq.htm}
-@end display
-Also of interest is @uref{http://seders.icheme.org/tutorials/}.
-
-There is an informal ``seders'' mailing list manually maintained
-by Al Aab.  To subscribe, send e-mail to @email{af137@@torfree.net}
-with a brief description of your interest.
-
-@node Reporting Bugs, Concept Index, Other Resources, Top
+@node Reporting Bugs, Concept Index, Regular Expressions, Top
+@comment  node-name,  next,  previous,  up
 @chapter Reporting bugs
 
 @cindex Bugs, reporting
 Email bug reports to @email{bug-gnu-utils@@gnu.org}.
-Be sure to include the word ``sed'' somewhere in the ``Subject:'' field.
-
-@c XXX FIXME: the term "cycle" is never defined...
+Be sure to include the word ``grep'' somewhere in the ``Subject:'' field.
+Large repetition counts in the  @{m,n@}  construct  may  cause
+grep  to  use  lots  of  memory.  In addition, certain other
+obscure regular expressions  require  exponential  time  and
+space, and may cause grep to run out of memory.
+Backreferences are very slow, and  may  require  exponential time.
 
 @page
-@node Concept Index, Command and Option Index, Reporting Bugs, Top
+@node Concept Index , Index, Reporting Bugs, Top
+@comment  node-name,  next,  previous,  up
 @unnumbered Concept Index
 
 This is a general index of all issues discussed in this manual, with the
-exception of the @sc{sed} commands and command-line options.
+exception of the @sc{grep} commands and command-line options.
 
 @printindex cp
 
 @page
-@node Command and Option Index, , Concept Index, Top
-@unnumbered Command and Option Index
+@node Index, , Concept Index, Top
+@unnumbered Index
 
-This is an alphabetical list of all @sc{sed} commands and command-line
+This is an alphabetical list of all @sc{grep} commands and command-line
 opions.
 
 @printindex fn

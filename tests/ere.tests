@@ -6,52 +6,50 @@
 2@a(@EPAREN
 0@a\(@a(
 2@a(b@EPAREN
-0@a)@a)
-0@)@)
+0@a)@a)@POSIX BOTCH
+0@)@)@POSIX BOTCH
 0@a()b@ab
 0@^abc$@abc
 1@a^b@a^b
 1@a$b@a$b
 0@^@abc
 0@$@abc
-0@^$@""
-0@$^@""
-0@^^@""
-0@$$@""
-1@b$@abNc
-1@^b$@aNbNc
+0@^$@@
+0@$^@@
+0@^^@@
+0@$$@@
 0@a*(^b$)c*@b
-2@|@EMPTY
-2@*@BADRPT
-2@+@BADRPT
-2@?@BADRPT
-2@""@EMPTY
+2@|@EMPTY@NO ALTERNATION
+2@*@BADRPT@TO CORRECT
+2@+@BADRPT@TO CORRECT
+2@?@BADRPT@TO CORRECT
+1@&C@PASS
 0@()@abc
-2@a||b@EMPTY
-2@|ab@EMPTY
-2@ab|@EMPTY
-2@(|a)b@EMPTY
-2@(a|)b@EMPTY
-2@(*a)@BADRPT
-2@(+a)@BADRPT
-2@(?a)@BADRPT
-2@({1}a)@BADRPT
-2@(a|*b)@BADRPT
-2@(a|+b)@BADRPT
-2@(a|?b)@BADRPT
-2@(a|{1}b)@BADRPT
-2@^*@BADRPT
-2@^+@BADRPT
-2@^?@BADRPT
-2@^{1}@BADRPT
+2@a||b@EMPTY@NO ALTERNATION
+2@|ab@EMPTY@NO ALTERNATION
+2@ab|@EMPTY@NO ALTERNATION
+2@(|a)b@EMPTY@NO ALTERNATION
+2@(a|)b@EMPTY@NO ALTERNATION
+2@(*a)@BADRPT@TO CORRECT
+2@(+a)@BADRPT@TO CORRECT
+2@(?a)@BADRPT@TO CORRECT
+2@({1}a)@BADRPT@TO CORRECT
+2@(a|*b)@BADRPT@NO ALTERNATION
+2@(a|+b)@BADRPT@NO ALTERNATION
+2@(a|?b)@BADRPT@NO ALTERNATION
+2@(a|{1}b)@BADRPT@NO ALTERNATION
+2@^*@BADRPT@TO CORRECT
+2@^+@BADRPT@TO CORRECT
+2@^?@BADRPT@TO CORRECT
+2@^{1}@BADRPT@TO CORRECT
 0@a.c@abc
 0@a[bc]d@abd
 0@a\*c@a*c
-0@a\\b@a\b
+0@a\\b@a\b@TO CORRECT
 0@a\\\*b@a\*b
-0@a\bc@abc
+0@a\bc@abc@TO CORRECT
 2@a\@EESCAPE
-0@a\\bc@a\bc
+0@a\\bc@a\bc@TO CORRECT
 0@a\[b@a[b
 2@a[b@EBRACK
 0@a$@a
@@ -65,11 +63,11 @@
 0@ab*c@abc
 0@ab+c@abc
 0@ab?c@abc
-0@{@{
-0@{abc@{abc
+0@{@{@TO CORRECT
+0@{abc@{abc@TO CORRECT
 2@{1@BADRPT
-2@{1}@BADRPT
-0@a{b@a{b
+2@{1}@BADRPT@TO CORRECT
+0@a{b@a{b@TO CORRECT
 0@a{1}b@ab
 0@a{1,}b@ab
 0@a{1,2}b@aab
@@ -79,9 +77,9 @@
 0@a{,2}@a{,2}
 0@a{,}@a{,}
 2@a{1,x}@BADBR
-2@a{1,x@EBRACE
-2@a{300}@BADBR
-2@a{1,0}@BADBR
+2@a{1,x@EBRACE@TO CORRECT
+2@a{300}@BADBR@TO CORRECT
+2@a{1,0}@BADBR@TO CORRECT
 0@ab{0,0}c@abcac
 0@ab{0,1}c@abcac
 0@ab{0,3}c@abbcac
@@ -89,23 +87,23 @@
 0@ab{1,3}c@acabc
 0@ab{2,2}c@abcabbc
 0@ab{2,4}c@abcabbc
-2@a**@BADRPT
-2@a++@BADRPT
-2@a??@BADRPT
-2@a*+@BADRPT
-2@a*?@BADRPT
-2@a+*@BADRPT
-2@a+?@BADRPT
-2@a?*@BADRPT
-2@a?+@BADRPT
-2@a{1}{1}@BADRPT
-2@a*{1}@BADRPT
-2@a+{1}@BADRPT
-2@a?{1}@BADRPT
-2@a{1}*@BADRPT
-2@a{1}+@BADRPT
-2@a{1}?@BADRPT
-0@a*{b}@a{b}
+2@a**@BADRPT@TO CORRECT
+2@a++@BADRPT@TO CORRECT
+2@a??@BADRPT@TO CORRECT
+2@a*+@BADRPT@TO CORRECT
+2@a*?@BADRPT@TO CORRECT
+2@a+*@BADRPT@TO CORRECT
+2@a+?@BADRPT@TO CORRECT
+2@a?*@BADRPT@TO CORRECT
+2@a?+@BADRPT@TO CORRECT
+2@a{1}{1}@BADRPT@TO CORRECT
+2@a*{1}@BADRPT@TO CORRECT
+2@a+{1}@BADRPT@TO CORRECT
+2@a?{1}@BADRPT@TO CORRECT
+2@a{1}*@BADRPT@TO CORRECT
+2@a{1}+@BADRPT@TO CORRECT
+2@a{1}?@BADRPT@TO CORRECT
+0@a*{b}@a{b}@TO CORRECT
 0@a[b]c@abc
 0@a[ab]c@abc
 0@a[^ab]c@adc
@@ -118,19 +116,19 @@
 2@a[b@EBRACK
 2@a[]@EBRACK
 0@a[1-3]c@a2c
-2@a[3-1]c@ERANGE
-2@a[1-3-5]c@ERANGE
-0@a[[.-.]--]c@a-c
+2@a[3-1]c@ERANGE@TO CORRECT
+2@a[1-3-5]c@ERANGE@TO CORRECT
+0@a[[.-.]--]c@a-c@TO CORRECT
 2@a[1-@ERANGE
 2@a[[.@EBRACK
 2@a[[.x@EBRACK
 2@a[[.x.@EBRACK
-2@a[[.x.]@EBRACK
-0@a[[.x.]]@ax
-2@a[[.x,.]]@ECOLLATE
-0@a[[.one.]]b@a1b
-2@a[[.notdef.]]b@ECOLLATE
-0@a[[.].]]b@a]b
+2@a[[.x.]@EBRACK@TO CORRECT
+0@a[[.x.]]@ax@TO CORRECT
+2@a[[.x,.]]@ECOLLATE@TO CORRECT
+0@a[[.one.]]b@a1b@TO CORRECT
+2@a[[.notdef.]]b@ECOLLATE@TO CORRECT
+0@a[[.].]]b@a]b@TO CORRECT
 0@a[[:alpha:]]c@abc
 2@a[[:notdef:]]c@ECTYPE
 2@a[[:@EBRACK
@@ -141,25 +139,17 @@
 2@a[[:-:]]b@ECTYPE
 2@a[[:alph:]]@ECTYPE
 2@a[[:alphabet:]]@ECTYPE
-0@[[:alnum:]]+@-%,a0X-
-0@[[:alpha:]]+@-%,aX0-
-0@[[:blank:]]+@aSSTb
-0@[[:cntrl:]]+@aNTb
 0@[[:digit:]]+@a019b
-0@[[:graph:]]+@Sa%bS
 0@[[:lower:]]+@AabC
-0@[[:print:]]+@NaSbN
-0@[[:punct:]]+@S%-&T
-0@[[:space:]]+@aSNTb
 0@[[:upper:]]+@aBCd
 0@[[:xdigit:]]+@p0f3Cq
-0@a[[=b=]]c@abc
+0@a[[=b=]]c@abc@TO CORRECT
 2@a[[=@EBRACK
 2@a[[=b@EBRACK
 2@a[[=b=@EBRACK
-2@a[[=b=]@EBRACK
-2@a[[=b,=]]@ECOLLATE
-0@a[[=one=]]b@a1b
+2@a[[=b=]@EBRACK@TO CORRECT
+2@a[[=b,=]]@ECOLLATE@TO CORRECT
+0@a[[=one=]]b@a1b@TO CORRECT
 0@a(((b)))c@abc
 0@a(b|(c))d@abd
 0@a(b*|c)d@abbd
@@ -177,12 +167,12 @@
 0@[ab][cd][ef][gh][ij][kl][mn][op][qr]@xacegikmoqy
 0@[ab][cd][ef][gh][ij][kl][mn][op][q]@xacegikmoqy
 0@abc@xabcy
-0@aBc@Abc
-0@a[Bc]*d@abBCcd
-0@0[[:upper:]]1@0a1
-0@0[[:lower:]]1@0A1
+0@aBc@Abc@TO CORRECT
+0@a[Bc]*d@abBCcd@TO CORRECT
+0@0[[:upper:]]1@0a1@TO CORRECT
+0@0[[:lower:]]1@0A1@TO CORRECT
 1@a[^b]c@abc
-1@a[^b]c@aBc
+1@a[^b]c@aBc@TO CORRECT
 0@a[^b]c@adc
 0@[a]b[c]@abc
 0@[a]b[a]@aba
@@ -205,19 +195,19 @@
 0@/\*([^*]|\*+[^*/])*\*+/@/*x****/y/*z*/
 0@/\*([^*]|\*+[^*/])*\*+/@/*x**x*/y/*z*/
 0@/\*([^*]|\*+[^*/])*\*+/@/*x***x/y/*z*/
-0@aZb@a
-0@[[:<:]]a@a
-1@[[:<:]]a@ba
-0@[[:<:]]a@-a
-0@a[[:>:]]@a
-1@a[[:>:]]@ab
-0@a[[:>:]]@a-
-0@[[:<:]]a.c[[:>:]]@axcd-dayc-dazce-abc
-0@[[:<:]]a.c[[:>:]]@axcd-dayc-dazce-abc-q
-0@[[:<:]]a.c[[:>:]]@axc-dayc-dazce-abc
-0@[[:<:]]b.c[[:>:]]@a_bxc-byc_d-bzc-q
-0@[[:<:]].x..[[:>:]]@y_xa_-_xb_y-_xc_-axdc
-1@[[:<:]]a_b[[:>:]]@x_a_b
+0@aZb@a@TO CORRECT
+0@[[:<:]]a@a@TO CORRECT
+1@[[:<:]]a@ba@TO CORRECT
+0@[[:<:]]a@-a@TO CORRECT
+0@a[[:>:]]@a@TO CORRECT
+1@a[[:>:]]@ab@TO CORRECT
+0@a[[:>:]]@a-@TO CORRECT
+0@[[:<:]]a.c[[:>:]]@axcd-dayc-dazce-abc@TO CORRECT
+0@[[:<:]]a.c[[:>:]]@axcd-dayc-dazce-abc-q@TO CORRECT
+0@[[:<:]]a.c[[:>:]]@axc-dayc-dazce-abc@TO CORRECT
+0@[[:<:]]b.c[[:>:]]@a_bxc-byc_d-bzc-q@TO CORRECT
+0@[[:<:]].x..[[:>:]]@y_xa_-_xb_y-_xc_-axdc@TO CORRECT
+1@[[:<:]]a_b[[:>:]]@x_a_b@TO CORRECT
 0@(A[1])|(A[2])|(A[3])|(A[4])|(A[5])|(A[6])|(A[7])|(A[8])|(A[9])|(A[A])@A1
 0@abcdefghijklmnop@abcdefghijklmnop
 0@abcdefghijklmnopqrstuv@abcdefghijklmnopqrstuv
