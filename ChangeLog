@@ -1,5 +1,6 @@
 2005-02-23  Julian Foad  <julianfoad@btopenworld.com>
 
+	* po/ko.po: Fix email address.
 	* README-alpha: Fix email addresses and clarify the notes.
 	* tests/backref.sh: Fix trivial typos.
 
