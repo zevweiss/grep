@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4a\n"
-"POT-Creation-Date: 2001-03-18 20:59-0500\n"
+"POT-Creation-Date: 2001-04-18 23:45-0400\n"
 "PO-Revision-Date: 2000-01-21 22:08-02:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
 msgstr "Memória esgotada"
 
@@ -58,7 +58,7 @@ msgid "out of memory"
 msgstr "memória esgotada"
 
 #: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
-#: src/search.c:223 src/search.c:307
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "memória esgotada"
 
@@ -301,11 +301,11 @@ msgstr ""
 "existe garantia; nem mesmo para cópias compradas ou adaptadas para um \n"
 "propósito particular\n"
 
-#: src/search.c:623
+#: src/search.c:606
 msgid "The -P option is not supported"
 msgstr ""
 
-#: src/search.c:636
+#: src/search.c:619
 msgid "The -P and -z options cannot be combined"
 msgstr ""
 
@@ -386,11 +386,11 @@ msgstr "%s: opção `-W %s' não aceita um argumento\n"
 #. MARK).  A British English Unicode locale should instead
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
-#: lib/quotearg.c:265
+#: lib/quotearg.c:259
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:266
+#: lib/quotearg.c:260
 msgid "'"
 msgstr ""
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0f\n"
-"POT-Creation-Date: 2001-03-18 20:59-0500\n"
+"POT-Creation-Date: 2001-04-18 23:45-0400\n"
 "PO-Revision-Date: 1997-09-03 11:19+0900\n"
 "Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-KR\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
 msgstr "메모리가 바닥남"
 
@@ -57,7 +57,7 @@ msgid "out of memory"
 msgstr "메모리 부족"
 
 #: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
-#: src/search.c:223 src/search.c:307
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "메모리가 바닥남"
 
@@ -234,11 +234,11 @@ msgstr ""
 "참조하십시오.\n"
 "상품성이나 특정 목적에 대한 적합성을 비롯하여, 어떠한 보증도 하지 않습니다.\n"
 
-#: src/search.c:623
+#: src/search.c:606
 msgid "The -P option is not supported"
 msgstr ""
 
-#: src/search.c:636
+#: src/search.c:619
 msgid "The -P and -z options cannot be combined"
 msgstr ""
 
@@ -319,11 +319,11 @@ msgstr "%s: `-W %s' 옵션은 인수를 허용하지 않습니다\n"
 #. MARK).  A British English Unicode locale should instead
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
-#: lib/quotearg.c:265
+#: lib/quotearg.c:259
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:266
+#: lib/quotearg.c:260
 msgid "'"
 msgstr ""
 
