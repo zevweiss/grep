@@ -14,6 +14,7 @@
 	* autogen.sh: Use aclocal -I rather than the crude
 	  cat m4/* >acinclude.m4 hack
 	* acconfig.h: removed (no longer required)
+	* Makefile.am: add cvs-clean target
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes
 	  (--color, --devices, -D)
 
