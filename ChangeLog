@@ -1,3 +1,15 @@
+1999-02-06 Alain Magloire
+
+	* tests/*.awk : Linux users are seeing "Broken Pipe" on make check.
+	The problem is that grep does not drain its stdin, thus the previous
+	process in the pipeline receives a SIGPIPE.  Other shells are silent
+	about this.  There is actually no failure, since the broken pipe is
+	expected.  You can work around it by changing the pipeline, so that
+	the input is drained, like this:
+	status=`echo 'check' | { ${GREP} -E -e pattern >/dev/null 2>&1;
+	echo $?; cat >/dev/null; }`; if test $status -ne $errnu then ... fi
+	Excerpt from email exchange with Andreas Schwab.                              
+
 1999-02-23 Alain Magloire
 
 	* src/grep.c : Restrict the use of -E, -F, -G

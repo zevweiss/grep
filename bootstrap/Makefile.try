@@ -18,7 +18,7 @@ OBJS = alloca.$(OBJEXT) \
       regex.$(OBJEXT) \
       savedir.$(OBJEXT) \
       search.$(OBJEXT) \
-      stpcpy.$(OBJEXT) \
+      stpcpy.$(OBJEXT)
 
 # Where is DIR and opendir/readdir defined.
 #  or -DHAVE_DIRENT_H
@@ -40,14 +40,15 @@ DEFS = -I. \
 	 -Dsize_t=unsigned
 
 # SunOS-4.1.x k&r cc
-DEFS =  -DSTDC_HEADERS -DHAVE_MEMCHR -DHAVE_DIRENT_H -Dconst= 
+#DEFS =  -DSTDC_HEADERS -DHAVE_MEMCHR -DHAVE_DIRENT_H -Dconst= 
 
 # Solaris
 #DEFS = -DSTDC_HEADERS -DHAVE_MEMCHR -DHAVE_DIRENT_H -DHAVE_STRERROR
 
 # DOS/WIN (change also OBJEXT/EXEEXT, see above)
 # DJGPP: also add -DHAVE_UNISTD_H -DHAVE_SETMODE
-DEFS = -DSTDC_HEADERS -DHAVE_MEMCHR -DHAVE_STRERROR -DHAVE_DIRENT_H -DHAVE_DOS_FILE_NAMES -DHAVE_UNISTD_H -DHAVE_SETMODE
+DEFS = -DSTDC_HEADERS -DHAVE_MEMCHR -DHAVE_STRERROR -DHAVE_DIRENT_H \
+       -DHAVE_DOS_FILE_NAMES -DHAVE_UNISTD_H -DHAVE_SETMODE
 
 ####
 

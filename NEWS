@@ -1,7 +1,13 @@
 Version 2.3.1:
 
-  - Minor release to correct some configurtion problems
+  - Minor release to correct some configuration problems
     on certain platforms.
+
+  - Options -F, -E, -G are only possible on grep driver, since
+    the matcher is already set for {e,f}grep. Posix behaviour.
+
+  - Modifications of the tests scripts to go around the "Broken Pipe"
+    errors from bash. See Bash FAQ.
 
 Version 2.3:
 
