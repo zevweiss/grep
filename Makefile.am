@@ -1,7 +1,7 @@
 ## Process this file with automake to create Makefile.in
 AUTOMAKE_OPTIONS = no-dependencies
 
-SUBDIRS = intl po lib doc src tests djgpp m4 vms bootstrap
+SUBDIRS = intl po lib doc src tests m4 vms bootstrap
 
 EXTRA_DIST = TODO README README-alpha PATCHES.AC PATCHES.AM
 

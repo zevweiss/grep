@@ -2,10 +2,10 @@
 	* configure.in: Version 2.5g
 	Merge djgpp changes from Andrew Cottrell <anddjgpp@ihug.coml.au>:
 	* src/grep.c: Added conditional compilation for DJGPP
-	* Moved djgpp/readme to readme.dos
-	* removed djgpp directory as it is no longer required with DJGPP 2.03
-        (or 2.04 when released)
-	* deleted patches.* files - redundant files
+	* djgpp: remove directory as it is no longer required with DJGPP 2.03
+                 (or 2.04 when released)
+	* README.DOS: Moved djgpp/readme to readme.dos
+	* PATCHES.AC, PATCHES.AM: delete files - redundant
 
 2002-01-22  Bernhard Rosenkraenzer <bero@redhat.com>
 	* doc/grep.texi, doc/grep.1, NEWS: Document --label
