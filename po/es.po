@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2f\n"
-"POT-Creation-Date: 1999-02-03 13:09-0500\n"
+"POT-Creation-Date: 1999-10-05 22:33-0400\n"
 "PO-Revision-Date: 1999-02-09 00:04+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -14,46 +14,45 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:858
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:898
 msgid "Memory exhausted"
 msgstr "Memoria agotada"
 
-#: src/dfa.c:452
+#: src/dfa.c:457
 msgid "Unfinished \\ escape"
 msgstr "Secuencia de escape \\ sin terminar"
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
-#. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:590 src/dfa.c:596 src/dfa.c:606 src/dfa.c:614 src/dfa.c:629
 msgid "unfinished repeat count"
 msgstr "contador de repetición sin terminar"
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:603 src/dfa.c:620 src/dfa.c:628 src/dfa.c:632
 msgid "malformed repeat count"
 msgstr "contador de repetición erróneo"
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:697 src/dfa.c:700 src/dfa.c:727 src/dfa.c:731 src/dfa.c:732
+#: src/dfa.c:735 src/dfa.c:748 src/dfa.c:749
 msgid "Unbalanced ["
 msgstr "[ desemparejado"
 
-#: src/dfa.c:849
+#: src/dfa.c:886
 msgid "Unbalanced ("
 msgstr "( desemparejado"
 
-#: src/dfa.c:970
+#: src/dfa.c:1007
 msgid "No syntax specified"
 msgstr "No se ha especificado ninguna sintaxis"
 
-#: src/dfa.c:978
+#: src/dfa.c:1015
 msgid "Unbalanced )"
 msgstr ") desemparejado"
 
 # FIXME. Comunicar al autor que esto es repetición...
-#: src/dfa.c:1998
+#: src/dfa.c:2036
 msgid "out of memory"
 msgstr "memoria agotada"
 
@@ -162,62 +161,72 @@ msgstr "?? getopt ha devuelto el carácter código 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "elementos de ARGV que no son opciones: "
 
-#: src/grep.c:169 src/grep.c:186 src/grep.c:288 src/grep.c:344 src/kwset.c:184
+#: src/grep.c:179 src/grep.c:196 src/grep.c:292 src/grep.c:387 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "memoria agotada"
 
-#: src/grep.c:372 src/grep.c:843
+#: src/grep.c:418 src/grep.c:883
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: atención: %s: %s\n"
 
-#: src/grep.c:497 src/grep.c:1318
+#: src/grep.c:543 src/grep.c:1429
 msgid "writing output"
 msgstr "escribiendo el resultado"
 
-#: src/grep.c:726
+#: src/grep.c:775
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Coincidencia en el fichero binario %s\n"
 
-#: src/grep.c:742
+#: src/grep.c:791
 msgid "(standard input)"
 msgstr "(entrada estándar)"
 
-#: src/grep.c:844
+#: src/grep.c:884
 msgid "recursive directory loop"
 msgstr "bucle de directorio recursivo"
 
-#: src/grep.c:895
+#: src/grep.c:935
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Modo de empleo: %s [OPCIÓN]... PATRÓN [FICHERO]...\n"
 
-#: src/grep.c:896
+#: src/grep.c:936
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pruebe `%s --help' para más información.\n"
 
 # FIXME: Dice [FILE] ... en vez de [FILE]... ¿Será un error?
-#: src/grep.c:900
+#: src/grep.c:940
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Modo de empleo: %s [OPCIÓN]... PATRÓN [FICHERO] ...\n"
 
-#: src/grep.c:901
+#: src/grep.c:941
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
 "Regexp selection and interpretation:\n"
+msgstr ""
+
+#: src/grep.c:945
+msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+msgstr ""
+
+#: src/grep.c:949
+#, fuzzy
+msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
 "Busca PATRÓN en cada FICHERO o en la entrada estándar.\n"
 "\n"
@@ -234,12 +243,13 @@ msgstr ""
 "  -x, --line-regexp         obliga a que PATRÓN coincida solamente\n"
 "                            con líneas completas\n"
 
-#: src/grep.c:913
+#: src/grep.c:956
+#, fuzzy
 msgid ""
 "\n"
 "Miscellaneous:\n"
 "  -s, --no-messages         suppress error messages\n"
-"  -v, --revert-match        select non-matching lines\n"
+"  -v, --invert-match        select non-matching lines\n"
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
 msgstr ""
@@ -250,7 +260,8 @@ msgstr ""
 "  -V, --version             muestra la versión y finaliza\n"
 "      --help                muestra esta ayuda y finaliza\n"
 
-#: src/grep.c:920
+#: src/grep.c:963
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -266,6 +277,7 @@ msgid ""
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
+"  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
 "Control del resultado:\n"
@@ -289,7 +301,8 @@ msgstr ""
 "  -c, --count               muestra solamente el total de líneas que coinciden\n"
 "                            por cada FICHERO\n"
 
-#: src/grep.c:935
+#: src/grep.c:979
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
@@ -301,7 +314,7 @@ msgid ""
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
 "With no FILE, or when FILE is -, read standard input. If less than\n"
 "two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
 "Exit with 2 if syntax errors or system errors.\n"
@@ -324,17 +337,9 @@ msgstr ""
 "supone -h. La salida es 0 si hay coincidencias, 1 si no las hay. La salida es\n"
 "2 si hay errores de sintaxis o del sistema.\n"
 
-#: src/grep.c:950
+#: src/grep.c:994
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nComunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
-
-#: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
-msgid "invalid context length argument"
-msgstr "longitud de contexto inválida"
-
-#: src/grep.c:1116 src/grep.c:1121 src/grep.c:1126
-msgid "you may specify only one of -E, -F, or -G"
-msgstr "sólo se puede especificar una de las opciones -E, -F, o -G"
 
 #  viendo los fuentes , hay varias opciones
 #  que hay sin documentar. O quizá es que getopt() lo he entendido mal
@@ -347,26 +352,32 @@ msgstr "sólo se puede especificar una de las opciones -E, -F, o -G"
 #
 # No me gusta nada lo de opción "a buscar".
 # Se admiten sugerencias. sv
-#: src/grep.c:1145
-msgid "matcher already specified"
+#: src/grep.c:1005
+#, fuzzy
+msgid "conflicting matchers specified"
 msgstr "la expresión a buscar ya fue especificada"
+
+#: src/grep.c:1204 src/grep.c:1211 src/grep.c:1220
+msgid "invalid context length argument"
+msgstr "longitud de contexto inválida"
 
 # Nota: Se refiere a la opción --directories=ACCIÓN cuando ACCIÓN
 # no es `read', `recurse' o `skip'.
-#: src/grep.c:1166
+#: src/grep.c:1271
 msgid "unknown directories method"
 msgstr "método de directorios desconocido"
 
-#: src/grep.c:1252
-#, c-format
-msgid "grep (GNU grep) %s\n"
+#: src/grep.c:1366
+#, fuzzy, c-format
+msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1254
-msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+#: src/grep.c:1368
+#, fuzzy
+msgid "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1256
+#: src/grep.c:1370
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -378,6 +389,9 @@ msgstr ""
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "memoria agotada\n"
+
+#~ msgid "you may specify only one of -E, -F, or -G"
+#~ msgstr "sólo se puede especificar una de las opciones -E, -F, o -G"
 
 #~ msgid "(standard input)\n"
 #~ msgstr "(salida estándar)\n"

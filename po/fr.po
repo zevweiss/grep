@@ -4,54 +4,53 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.2f\n"
-"POT-Creation-Date: 1999-02-03 13:09-0500\n"
-"PO-Revision-Date: 1999-08-13 08:43-0500\n"
+"Project-Id-Version: GNU grep 2.3f\n"
+"POT-Creation-Date: 1999-10-05 22:33-0400\n"
+"PO-Revision-Date: 1999-10-13 08:10-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:858
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:898
 msgid "Memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/dfa.c:452
+#: src/dfa.c:457
 msgid "Unfinished \\ escape"
 msgstr "séquence d'échappement \\ non terminée."
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
-#. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:590 src/dfa.c:596 src/dfa.c:606 src/dfa.c:614 src/dfa.c:629
 msgid "unfinished repeat count"
 msgstr "décompte de répétition non terminé."
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:603 src/dfa.c:620 src/dfa.c:628 src/dfa.c:632
 msgid "malformed repeat count"
 msgstr "décompte de répétition mal formé."
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:697 src/dfa.c:700 src/dfa.c:727 src/dfa.c:731 src/dfa.c:732
+#: src/dfa.c:735 src/dfa.c:748 src/dfa.c:749
 msgid "Unbalanced ["
 msgstr "[ non pairé"
 
-#: src/dfa.c:849
+#: src/dfa.c:886
 msgid "Unbalanced ("
 msgstr "( non pairé"
 
-#: src/dfa.c:970
+#: src/dfa.c:1007
 msgid "No syntax specified"
 msgstr "Aucune syntaxe spécifié"
 
-#: src/dfa.c:978
+#: src/dfa.c:1015
 msgid "Unbalanced )"
 msgstr ") non pairé"
 
-#: src/dfa.c:1998
+#: src/dfa.c:2036
 msgid "out of memory"
 msgstr "Mémoire épuisée."
 
@@ -160,80 +159,91 @@ msgstr "?? getopt() a retourné le code de caractère 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "Des élément ARGV qui ne sont pas des options: "
 
-#: src/grep.c:169 src/grep.c:186 src/grep.c:288 src/grep.c:344 src/kwset.c:184
+#: src/grep.c:179 src/grep.c:196 src/grep.c:292 src/grep.c:387 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/grep.c:372 src/grep.c:843
+#: src/grep.c:418 src/grep.c:883
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: AVERTISSEMENT: %s: %s\n"
 
-#: src/grep.c:497 src/grep.c:1318
+#: src/grep.c:543 src/grep.c:1429
 msgid "writing output"
 msgstr "Génération du résultat."
 
-#: src/grep.c:726
+#: src/grep.c:775
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Fichier binaire %s concorde\n"
 
-#: src/grep.c:742
+#: src/grep.c:791
 msgid "(standard input)"
 msgstr "(entrée standard)"
 
-#: src/grep.c:844
+#: src/grep.c:884
 msgid "recursive directory loop"
 msgstr "boucle récursive sur le répertoire"
 
-#: src/grep.c:895
+#: src/grep.c:935
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER]...\n"
 
-#: src/grep.c:896
+#: src/grep.c:936
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pour en savoir davantage, faites: `%s --help'.\n"
 
-#: src/grep.c:900
+#: src/grep.c:940
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER] ...\n"
 
-#: src/grep.c:901
+#: src/grep.c:941
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
 "Regexp selection and interpretation:\n"
+msgstr ""
+"Recherche du PATRON dans chaque FICHIER ou sur l'entrée standard.\n"
+"\n"
+"Sélection et interprétation de l'expression régulière:\n"
+
+#: src/grep.c:945
+msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+msgstr ""
+"  -E, --extended-regexp     PATRON est une expression regulière étendue\n"
+"  -F, --fixed-regexp        PATRON est une chaîne fixe séparée par des retour de chariot\n"
+"  -G, --basic-regexp        PATRON est une expression régulière de base\n"
+
+#: src/grep.c:949
+msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"Recherche du PATRON dans chaque FICHIER ou sur l'entrée standard.\n"
-"\n"
-"Sélection et interprétation de l'expression régulière:\n"
-"  -E, --extended-regexp     PATRON est une expression regulière étendue\n"
-"  -F, --fixed-regexp        PATRON est une chaîne fixe séparée par des retour de chariot\n"
-"  -G, --basic-regexp        PATRON est une expression régulière de base\n"
 "  -e, --regexp=PATTERN      utiliser le PATRON comme expression régulière\n"
 "  -f, --file=FILE           obtenir le PATRON du FICHIER\n"
 "  -i, --ignore-case         ignorer la distrinction de la casse\n"
 "  -w, --word-regexp         forcer l'appariement du PATRON que sur des mots complets\n"
 "  -x, --line-regexp         forcer l'appariement du PATRON que sur des lignes entières\n"
+"  -z, --null-data           terminer la ligne de données par ZÉRO et\n"
+"                            non pas par un retour de chariot\n"
 
-#: src/grep.c:913
+#: src/grep.c:956
 msgid ""
 "\n"
 "Miscellaneous:\n"
 "  -s, --no-messages         suppress error messages\n"
-"  -v, --revert-match        select non-matching lines\n"
+"  -v, --invert-match        select non-matching lines\n"
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
 msgstr ""
@@ -244,7 +254,7 @@ msgstr ""
 "  -V, --version             afficher le nom et la version du logiciel\n"
 "      --help                afficher l'aide et quitter\n"
 
-#: src/grep.c:920
+#: src/grep.c:963
 msgid ""
 "\n"
 "Output control:\n"
@@ -260,6 +270,7 @@ msgid ""
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
+"  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
 "Contrôle de sortie:\n"
@@ -283,8 +294,9 @@ msgstr ""
 "                            contenant des concordances\n"
 "  -c, --count               afficher seulement le décompte des lignes\n"
 "                            concordantes par fichier\n"
+"  -Z, --null                afficher l'octet ZÉRO après le nom du fichier\n"
 
-#: src/grep.c:935
+#: src/grep.c:979
 msgid ""
 "\n"
 "Context control:\n"
@@ -296,7 +308,7 @@ msgid ""
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"If no -[GEF], then `egrep' assumes -E, `fgrep' -F, else -G.\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
 "With no FILE, or when FILE is -, read standard input. If less than\n"
 "two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n"
 "Exit with 2 if syntax errors or system errors.\n"
@@ -313,45 +325,41 @@ msgstr ""
 "  -u, --unix-byte-offsets   afficher les adresses relatives comme si\n"
 "                            aucun CR n'était présent (MS-DOS)\n"
 "\n"
+"`egrep' est équivalent à `grep -E'. `fgrep' est équivalent à `grep -F'.\n"
 "Si aucune des options -[GEF] n'est utilisée, alors `egrep' assume\n"
 "l'option -E, `fgrep' l'option -F autrement l'option -G.\n"
 "Sans FICHIER, ou si - est utilisé comme nom de FICHIER, la lecture\n"
 "se fait de l'entrée standard. S'il y a moins de 2 FICHIERS, l'option -h\n"
 "est implicite. Termine avec 0 s'il y a concordance avec 1 si aucune.\n"
-"Termine avec 2 s'il y a des erreurs de syntaxe ou du système.\n"
+"Termine avec 2 s'il y a des erreurs de syntaxe ou de système.\n"
 
-#: src/grep.c:950
+#: src/grep.c:994
 msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "\nRapporter toutes anomalies à <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
+#: src/grep.c:1005
+msgid "conflicting matchers specified"
+msgstr "opérateurs de concordance spécifiés en conflit"
+
+#: src/grep.c:1204 src/grep.c:1211 src/grep.c:1220
 msgid "invalid context length argument"
 msgstr "paramètre de contexte de longueur invalide"
 
-#: src/grep.c:1116 src/grep.c:1121 src/grep.c:1126
-msgid "you may specify only one of -E, -F, or -G"
-msgstr "Un seul des paramètres suivants peut être spécifié -E, -F ou -G"
-
-#: src/grep.c:1145
-msgid "matcher already specified"
-msgstr "L'opérateur de concordance a déjà été spécifié."
-
-#: src/grep.c:1166
+#: src/grep.c:1271
 msgid "unknown directories method"
 msgstr "méthode inconnue des répertoires"
 
 # msgid "GNU grep version %s"
 # msgstr "«grep» de GNU version %s"
-#: src/grep.c:1252
-#, c-format
-msgid "grep (GNU grep) %s\n"
-msgstr "grep de GNU %s\n"
+#: src/grep.c:1366
+msgid "%s (GNU grep) %s\n"
+msgstr "%s (grep de GNU) %s\n"
 
-#: src/grep.c:1254
-msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+#: src/grep.c:1368
+msgid "Copyright (C) 1988, 1992-1998, 1999 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1256
+#: src/grep.c:1370
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -363,6 +371,9 @@ msgstr ""
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "Mémoire épuisée.\n"
+
+#~ msgid "you may specify only one of -E, -F, or -G"
+#~ msgstr "Un seul des paramètres suivants peut être spécifié -E, -F ou -G"
 
 #~ msgid "(standard input)\n"
 #~ msgstr "(entrée standard)\n"
