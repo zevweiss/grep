@@ -1,3 +1,8 @@
+1998-11-18  Alain Magloire
+
+	* src/regex.[ch] : Updated from GLibc, previous was
+	integrate by Ulrich Drepper and some added ones.
+
 1998-11-16  Paul Eggert
 
 	* grep.h (__attribute__): New macro, if not GCC.
