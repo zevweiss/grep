@@ -1,3 +1,6 @@
+	* src/grep.c : Typo in contex -->context
+	Noted by  Vladimir Michl.
+
 1998-12-01  Alain Magloire
 
 	* doc/Makefile.am djgpp/Makefile.am m4/Makefile.am vms/Makefile.am:
