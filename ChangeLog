@@ -1,8 +1,33 @@
+1999-01-27 Volker Borchert
+
+	* grep.c: fgrep -NUM not working correctly.
+	add the argument number to digit_args_val.
+
+1999-01-22 Paul Eggert
+
+	Prevent grep -r from recursing infinitely through directory loops via
+	symbolic links.
+
+	* grep.c (struct stats): New type.
+	(stats_base): New var.
+	(bufstat): Remove; subsumed by stats->stat.
+	(reset, fillbuf, grep, grepdir, grepfile): Pass struct stats * arg,
+	for directory loop checking; use this instead of the bufstat global.
+	All callers changed.
+	(grepfile): Stat the file before invoking grepdir.
+	(grepdir): Assume that the argument has already been statted.
+	No longer a need for a directory size argument, since it
+	can be gotten from the struct stats * argument.
+	Check for directory loops.
+	Create linked list of directories currently being visited,
+	to detect loops.
+
 1998-12-29 Kaveh R. Ghazi
 
-	intl/localealias.c: When building grep-2.2e using cc on Irix4, I needed the following
-	patch to intl/localealias.c.  (Its the same patch used by fileutils-4.0.)
-	The patch resolves conflicts between char* and unsigned char* in the i18n code.
+	intl/localealias.c: When building grep-2.2e using cc on Irix4,
+	I needed the following patch to intl/localealias.c.
+	(Its the same patch used by fileutils-4.0.) The patch resolves
+	conflicts between char* and unsigned char* in the i18n code.
 
 1998-12-10 Alain Magloire
 
