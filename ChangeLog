@@ -8,7 +8,7 @@
 
 	* src/grep.c: Document that -X is undocumented.
 
-2005-01-16  Bruno Haible  <bruno@clisp.org>
+2005-01-16  Bruno Haible  <bruno@clisp.org>  (tiny change)
 	    Stepan Kasal  <kasal@ucw.cz>
 
 	* configure.in: Add tests for iswctype, mbrlen, wcrtomb, wcscoll;
