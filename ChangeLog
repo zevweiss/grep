@@ -6,6 +6,7 @@
                  (or 2.04 when released)
 	* README.DOS: Moved djgpp/readme to readme.dos
 	* PATCHES.AC, PATCHES.AM: delete files - redundant
+	* configure.in, Makefile.am: remove djgpp directory from list
 
 2002-01-22  Bernhard Rosenkraenzer <bero@redhat.com>
 	* doc/grep.texi, doc/grep.1, NEWS: Document --label
