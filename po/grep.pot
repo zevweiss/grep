@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-09-25 14:34+0200\n"
+"POT-Creation-Date: 2001-09-26 18:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,19 +41,19 @@ msgstr ""
 msgid "malformed repeat count"
 msgstr ""
 
-#: src/dfa.c:1239
+#: src/dfa.c:1253
 msgid "Unbalanced ("
 msgstr ""
 
-#: src/dfa.c:1364
+#: src/dfa.c:1378
 msgid "No syntax specified"
 msgstr ""
 
-#: src/dfa.c:1372
+#: src/dfa.c:1386
 msgid "Unbalanced )"
 msgstr ""
 
-#: src/dfa.c:2942
+#: src/dfa.c:2956
 msgid "out of memory"
 msgstr ""
 

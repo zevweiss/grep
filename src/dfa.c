@@ -1047,10 +1047,24 @@ lex (void)
 			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
 			FETCH(c2, _("Unbalanced ["));
 		      FETCH(c1, _("Unbalanced ["));
-		      if (hard_LC_COLLATE)
-			return lasttok = CRANGE;
-		      for (; c <= c2; c++)
-			setbit_case_fold (c, ccl);
+		      if (!hard_LC_COLLATE) {
+		        for (; c <= c2; c++)
+			  setbit_case_fold (c, ccl);
+		      } else {
+			/* POSIX locales are painful - leave the decision to libc */
+			char expr[6] = { '[', c, '-', c2, ']', '\0' };
+			regex_t re;
+			if (regcomp (&re, expr, case_fold ? REG_ICASE : 0) == REG_NOERROR) {
+			  for (c = 0; c < NOTCHAR; ++c) {
+			    char buf[2] = { c, '\0' };
+			    regmatch_t mat;
+			    if (regexec (&re, buf, 1, &mat, 0) == REG_NOERROR
+                               && mat.rm_so == 0 && mat.rm_eo == 1)
+                              setbit_case_fold (c, ccl);
+			  }
+			  regfree (&re);
+			}
+		      }
 		      continue;
 		    }
 		}
