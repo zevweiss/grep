@@ -64,6 +64,14 @@ then
 	AC_DEFINE(HAVE_DOS_FILE_NAMES)
 fi
 
+# Path separator for DOS/DJGPP
+if test -n "$COMSPEC$ComSpec"
+then
+	AC_SUSBT(SEP, ';')
+else
+	AC_SUSBT(SEP, ':')
+fi
+
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
 AC_ARG_WITH(included-regex,

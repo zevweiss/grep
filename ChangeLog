@@ -1,3 +1,9 @@
+1999-01-28 Alain Magloire
+
+	* PATCHES-AM: New file. A small patch for automake-1.4, use $(sep)
+	as the path separator base on @SEP@.
+	* PATCHES-AC configure.in : updated for autoconf-13.
+ 
 1999-01-27 Volker Borchert
 
 	* grep.c: fgrep -NUM not working correctly.
