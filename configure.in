@@ -64,17 +64,23 @@ AM_SEP
 dnl OS specifics
 dnl sets {EXE,OBJ}EXT
 AC_EXEEXT
-AC_OBJEXT
+dnl Invoke the (capitalized) ac_objext macro without spelling its name.
+dnl This works around a bug in automake 1.4 with ansi2knr.
+dnl Automake looks for (capitalized) ac_objext by grepping for it,
+dnl so it won't find it in this file.
+ifelse(,, [AC][_OBJEXT])
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
 dnl if glibc2 regex is not included
 
-dnl This commented out now.
-dnl I no longer follow GLibC regex, glibc maitainers decided
-dnl to drop support for k&r semantics.  And beside, it was
-dnl a real pain since on many GNU/Linux people have different
+dnl This is commented out now, since
+dnl many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 #jm_INCLUDED_REGEX(src/regex.c)
 
-AC_OUTPUT(Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
+# This is necessary so that .o files in LIBOBJS are also built via
+# the ANSI2KNR-filtering rules.
+LIBOBJS=`echo $LIBOBJS|sed 's/\.o /\$U.o /g;s/\.o$/\$U.o/'`
+
+AC_OUTPUT(Makefile src/Makefile src/posix/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
