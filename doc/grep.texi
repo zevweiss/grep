@@ -357,7 +357,7 @@ Suppress the prefixing of filenames on output when multiple files are searched.
 @item --line-buffered
 @opindex --line-buffered
 @cindex line buffering
-Set the line buffering policy, this can be a performance penality.
+Set the line buffering policy, this can be a performance penalty.
 
 @item --label=@var{LABEL}
 @opindex --label

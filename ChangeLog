@@ -1,3 +1,7 @@
+2003-06-16  Stepan Kasal  <kasal@ucw.cz>
+	* doc/grep.1: two typos "--line-buffered [...] penalty"
+	* doc/grep.texi: a typo
+
 2003-06-12  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* README-alpha: Mention bug tracking system and grep-devel-list
 
