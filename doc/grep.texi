@@ -293,6 +293,13 @@ directories are silently skipped.  If @var{action} is @samp{recurse},
 @sc{grep} reads all files under each directory, recursively; this is
 equivalent to the @samp{-r} option.
 
+@item -H
+@itemx --with-filename
+@opindex -H
+@opindex --With-filename
+@cindex with filename prefix
+Print the filename for each match.
+
 @item -h
 @itemx --no-filename
 @opindex -h
