@@ -444,6 +444,7 @@ Pcompile (char *pattern, size_t size)
   const	char	*ep;
   register	char	*re, *p = pattern;
   register	int	flags = 0, l;
+  register	int	flags = PCRE_MULTILINE, l;
 
   while (*p && size > 0)
     {
