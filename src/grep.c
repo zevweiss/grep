@@ -488,12 +488,12 @@ static off_t max_count;		/* Stop after outputting this many
 				   lines from an input file.  */
 
 /* Internal variables to keep track of byte count, context, etc. */
-static off_t totalcc;		/* Total character count before bufbeg. */
+static uintmax_t totalcc;	/* Total character count before bufbeg. */
 static char const *lastnl;	/* Pointer after last newline counted. */
 static char const *lastout;	/* Pointer after last character output;
 				   NULL if no character has been output
 				   or if it's conceptually before bufbeg. */
-static off_t totalnl;		/* Total newline count before lastnl. */
+static uintmax_t totalnl;	/* Total newline count before lastnl. */
 static off_t outleft;		/* Maximum number of lines to be output.  */
 static int pending;		/* Pending lines of output.
 				   Always kept 0 if out_quiet is true.  */
@@ -504,22 +504,39 @@ static int exit_on_match;	/* Exit on first match.  */
 # include "dosbuf.c"
 #endif
 
-static void
-nlscan (char const *lim)
+/* Add two numbers that count input bytes or lines, and report an
+   error if the addition overflows.  */
+static uintmax_t
+add_count (uintmax_t a, uintmax_t b)
 {
-  char const *beg;
-  for (beg = lastnl;
-       beg != lim;
-       beg = memchr (beg, eolbyte, lim - beg), beg++)
-    totalnl++;
-  lastnl = lim;
+  uintmax_t sum = a + b;
+  if (sum < a)
+    fatal (_("input is too large to count"), 0);
+  return sum;
 }
 
 static void
-print_offset_sep (off_t pos, int sep)
+nlscan (char const *lim)
 {
-  /* Do not rely on printf to print pos, since off_t may be longer than long,
-     and long long is not portable.  */
+  if (out_line)
+    {
+      size_t newlines = 0;
+      char const *beg;
+      for (beg = lastnl;
+	   beg != lim;
+	   beg = memchr (beg, eolbyte, lim - beg), beg++)
+	newlines++;
+      totalnl = add_count (totalnl, newlines);
+    }
+  lastnl = lim;
+}
+
+/* Print a byte offset, followed by a character separator.  */
+static void
+print_offset_sep (uintmax_t pos, char sep)
+{
+  /* Do not rely on printf to print pos, since uintmax_t may be longer
+     than long, and long long is not portable.  */
 
   char buf[sizeof pos * CHAR_BIT];
   char *p = buf + sizeof buf - 1;
@@ -540,12 +557,13 @@ prline (char const *beg, char const *lim, int sep)
   if (out_line)
     {
       nlscan (beg);
-      print_offset_sep (++totalnl, sep);
+      totalnl = add_count (totalnl, 1);
+      print_offset_sep (totalnl, sep);
       lastnl = lim;
     }
   if (out_byte)
     {
-      off_t pos = totalcc + (beg - bufbeg);
+      uintmax_t pos = add_count (totalcc, beg - bufbeg);
 #if HAVE_DOS_FILE_CONTENTS
       pos = dossified_pos (pos);
 #endif
@@ -792,7 +810,8 @@ grep (int fd, char const *file, struct stats *stats)
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
-      totalcc += buflim - bufbeg - save;
+      if (out_byte)
+	totalcc = add_count (totalcc, buflim - bufbeg - save);
       if (out_line)
 	nlscan (beg);
       if (! fillbuf (save, stats))

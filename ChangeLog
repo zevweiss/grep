@@ -1,3 +1,15 @@
+2000-05-24  Paul Eggert  <eggert@twinsun.com>
+
+	Handle very large input counts better. Bug noted by Jim Meyering.
+
+	* src/grep.c (totalcc, totalnl): Use uintmax_t, not off_t.
+	(add_count): New function.
+	(nlscan, prline, grep): Use it to check line and byte count overflows.
+	(nlscan, grep): Don't keep track of counts when not asked to; this
+	avoids unnecessary overflow diagnostics.
+	(print_offset_sep): Now takes args of type uintmax_t and char,
+	not off_t and int.
+
 2000-05-16  Paul Eggert
 
 	Problem reported by Bob Proulx <rwp@hprwp.fc.hp.com>, this patch
