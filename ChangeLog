@@ -3,6 +3,8 @@
 	  is used (happens e.g. on calls from hotplug scripts)
 	* src/grep.c: Don't hang forever if fed with an empty string to
 	  grep for and --color enabled
+	* po/*: Sync wiith translation project
+	* configure.in: Bump version number, require a recent autoconf
 
 2002-03-14  Bernhard Rosenkraenzer <bero@redhat.com>
 	* src/Makefile.am, po/Makefile.in.in: Support DESTDIR properly
