@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.26 2004/12/08 14:18:29 kasal Exp $
+.Id $Id: grep.1,v 1.27 2004/12/15 13:30:38 julianfoad Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -127,9 +127,12 @@ which can have nasty side effects if the output is a terminal and if the
 terminal driver interprets some of it as commands.
 .TP
 .BI \-\^\-colour[=\fIWHEN\fR] ", " \-\^\-color[=\fIWHEN\fR]
-Surround the matching string with the marker find in
+Surround the matching string with escape sequences to display them in color
+on the terminal.  The color is defined by the environment variable
 .B GREP_COLOR
-environment variable. WHEN may be `never', `always', or `auto'
+and defaults to `01;31' which means the text is red.
+.I WHEN
+is `never', `always', or `auto'.
 .TP
 .BR \-c ", " \-\^\-count
 Suppress normal output; instead print a count of
@@ -245,7 +248,7 @@ would normally have been printed.  The scanning will
 stop on the first match.
 .TP
 .BI \-\^\-label= LABEL
-Displays input actually coming from standard input as input coming from file
+Display input actually coming from standard input as input coming from file
 .I LABEL.
 This is especially useful for tools like zgrep, e.g.
 .B "gzip -cd foo.gz |grep --label=foo something"

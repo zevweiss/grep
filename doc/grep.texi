@@ -265,8 +265,10 @@ Print @var{num} lines of output context.
 @itemx --color[=@var{WHEN}]
 @opindex --colour
 @cindex highlight, color, colour
-The matching string is surrounded by the marker specify in @var{GREP_COLOR}.
-@var{WHEN} may be `never', `always', or `auto'.
+Surround the matching string with escape sequences to display them in color
+on the terminal.  The color is defined by the environment variable
+@var{GREP_COLOR} and defaults to `01;31' which means the text is red.
+@var{WHEN} is `never', `always', or `auto'.
 
 @item -@var{num}
 @opindex -NUM
@@ -362,7 +364,7 @@ Set the line buffering policy, this can be a performance penalty.
 @item --label=@var{LABEL}
 @opindex --label
 @cindex changing name of standard input
-Displays input actually coming from standard input as input coming from file
+Display input actually coming from standard input as input coming from file
 @var{LABEL}. This is especially useful for tools like zgrep, e.g.
 @command{gzip -cd foo.gz |grep --label=foo something}
 
@@ -574,8 +576,8 @@ specify an option containing whitespace or a backslash.
 @item GREP_COLOR
 @vindex GREP_COLOR
 @cindex highlight markers
-This variable specifies the surrounding markers use to highlight the matching
-text.  The default is control ascii red.
+This variable specifies the color used to highlight the matching text.
+The default is `01;31' which means red text on the default background.
 
 @item LC_ALL
 @itemx LC_COLLATE

@@ -1,3 +1,9 @@
+2004-12-15  Julian Foad  <julianfoad@btopenworld.com>
+
+	* doc/grep.texi: Minor fixes of phrasing.
+	* doc/grep.1: Likewise.
+	* src/grep.c: Likewise.
+
 2004-12-01  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/grep.c (usage): Use ``FILE_PATTERN'' for --include and --exclude,
