@@ -8,6 +8,8 @@
 	echo '-' | { ${GREP} -E -e pattern >/dev/null 2>&1; cat >/dev/null; }
 	Email exchange with Andreas Schwab.
 
+	* beta 2.3a
+
 1999-02-23 Alain Magloire
 
 	* src/grep.c : Restrict the use of -E, -F, -G
@@ -16,8 +18,6 @@
 	scripts, warn in NEWS.
 
 	* doc/grep.{1,texi} : -C takes arguments, upgrade manual.
-
-	* beta 2.3a
 
 1999-02-23 Alain Magloire
 
