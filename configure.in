@@ -78,6 +78,10 @@ dnl This is commented out now, since
 dnl many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(src/regex.c)
+dnl be loud if we don't use the included regex
+if test $ac_use_included_regex = no; then
+	AC_MSG_WARN(We will we use not use the regex provided by grep)
+fi
 
 # This is necessary so that .o files in LIBOBJS are also built via
 # the ANSI2KNR-filtering rules.
