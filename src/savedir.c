@@ -67,6 +67,7 @@ char *stpcpy ();
 #endif
 
 #include <fnmatch.h>
+#include "system.h"
 #include "savedir.h"
 
 char *path;

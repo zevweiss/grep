@@ -160,9 +160,6 @@ static int grepdir PARAMS ((char const *, struct stats const *));
 static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
 
-static struct exclude *include_pattern;
-static struct exclude *exclude_pattern;
-
 /* Functions we'll use to search. */
 static void (*compile) PARAMS ((char const *, size_t));
 static size_t (*execute) PARAMS ((char const *, size_t, size_t *, int));
@@ -1072,10 +1069,9 @@ Output control:\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
-      --include=PATTERN     equivalent to --directories=recurse but only\n\
-                            files that match PATTERN will be examine\n\
-      --exclude=PATTERN     equivalent to --directories=recurse, files that\n\
-                            match PATTERN will be skip.\n\
+      --include=PATTERN     files that match PATTERN will be examine\n\
+      --exclude=PATTERN     files that match PATTERN will be skip.\n\
+      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\

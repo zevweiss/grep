@@ -1,3 +1,26 @@
+2001-03-01  Isamu Hasegawa
+
+	Implement the mechanism to match with multibyte characters,
+	and use it for `period' in multibyte environments.
+
+	* dfa.h (mbps) : new variable.
+	* dfa.c (prtok) : handle ANYCHAR.
+	(lex) : use ANYCHAR for `period' in multibyte environments.
+	(atom) : handle ANYCHAR.
+	(state_index) : initialize mbps in multibyte environments.
+	(epsclosure) : handle ANYCHAR.
+	(dfaanalyze) : handle ANYCHAR.
+	(dfastate) : handle ANYCHAR.
+	(realloc_trans_if_necessary) : new function.
+	(transit_state_singlebyte) : new function.
+	(match_anychar) : new function.
+	(check_matching_with_multibyte_ops) : new function.
+	(transit_state_consume_1char) : new function.
+	(transit_state) : new function.
+	(dfaexec) : invoke transit_state if expression can match with
+	a multibyte character in multibyte environments.
+	(dfamust) : handle ANYCHAR.
+
 2001-03-01  Alain Magloire
 
 	* src/exclude.c : New file.

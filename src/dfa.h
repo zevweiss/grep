@@ -148,6 +148,12 @@ typedef enum
 				   For example, [a-z] can match "ch" in
 				   a Spanish locale.  */
 
+#ifdef MBS_SUPPORT
+  ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
+                                  any multibyte(or singlebyte) characters.
+			          It is used only if MB_CUR_MAX > 1.  */
+#endif /* MBS_SUPPORT */
+
   CSET				/* CSET and (and any value greater) is a
 				   terminal symbol that matches any of a
 				   class of characters. */
@@ -235,6 +241,12 @@ typedef struct
   char backref;			/* True if this state matches a \<digit>. */
   unsigned char constraint;	/* Constraint for this state to accept. */
   int first_end;		/* Token value of the first END in elems. */
+#ifdef MBS_SUPPORT
+  position_set mbps;           /* Positions which can match multibyte
+                                  characters.  e.g. period.
+				  These staff are used only if
+				  MB_CUR_MAX > 1.  */
+#endif
 } dfa_state;
 
 /* Element of a list of strings, at least one of which is known to
