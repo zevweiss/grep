@@ -53,7 +53,7 @@ static struct option long_options[] =
   {"basic-regexp", no_argument, NULL, 'G'},
   {"before-context", required_argument, NULL, 'B'},
   {"byte-offset", no_argument, NULL, 'b'},
-  {"context", no_argument, NULL, 'C'},
+  {"context", optional_argument, NULL, 'C'},
   {"count", no_argument, NULL, 'c'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
@@ -844,8 +844,9 @@ Output control:\n\
 Context control:\n\
   -B, --before-context=NUM  print NUM lines of leading context\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
-  -NUM                      same as both -B NUM and -A NUM\n\
-  -C, --context             same as -2\n\
+  -C, --context[=NUM]       print NUM (default 2) lines of output context\n\
+                            unless overriden by -A or -B\n\
+  -NUM                      same as --contex=NUM\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
@@ -913,6 +914,7 @@ main(argc, argv)
   size_t keycc, oldcc, keyalloc;
   int with_filenames;
   int opt, cc, status;
+  unsigned digit_args_val, default_context;
   FILE *fp;
   extern char *optarg;
   extern int optind;
@@ -952,6 +954,13 @@ main(argc, argv)
   with_filenames = 0;
   matcher = NULL;
 
+  /* The value -1 means to use DEFAULT_CONTEXT. */
+  out_after = out_before = -1;
+  /* Default before/after context: chaged by -C/-NUM options */
+  default_context = 0;
+  /* Accumulated value of individual digits in a -NUM option */
+  digit_args_val = 0;
+
 /* Internationalization. */
 #if HAVE_SETLOCALE
   setlocale (LC_ALL, "");
@@ -963,9 +972,9 @@ main(argc, argv)
 
   while ((opt = getopt_long(argc, argv,
 #if O_BINARY
-         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqrsvwxyUu",
+         "0123456789A:B:C::EFGHVX:abcd:e:f:hiLlnqrsvwxyUu",
 #else
-         "0123456789A:B:CEFGHVX:abcd:e:f:hiLlnqrsvwxy",
+         "0123456789A:B:C::EFGHVX:abcd:e:f:hiLlnqrsvwxy",
 #endif
          long_options, NULL)) != EOF)
     switch (opt)
@@ -980,8 +989,8 @@ main(argc, argv)
       case '7':
       case '8':
       case '9':
-	out_before = 10 * out_before + opt - '0';
-	out_after = 10 * out_after + opt - '0';
+	digit_args_val = 10 * digit_args_val - opt - '0';
+	default_context = digit_args_val;
 	break;
       case 'A':
 	if (optarg)
@@ -998,7 +1007,15 @@ main(argc, argv)
 	  }
 	break;
       case 'C':
-	out_before = out_after = 2;
+	/* Set output match context, but let any explicit leading or
+	   trailing amount specified with -A or -B stand. */
+	if (optarg)
+	  {
+	    if (ck_atoi (optarg, &default_context))
+	      fatal (_("infalid context length argument"), 0);
+	  }
+	else
+	  default_context = 2;
 	break;
       case 'E':
 	if (matcher && strcmp(matcher, "posix-egrep") != 0)
@@ -1130,6 +1147,11 @@ main(argc, argv)
 	usage(2);
 	break;
       }
+
+  if (out_after < 0)
+    out_after = default_context;
+  if (out_before < 0)
+    out_before = default_context;
 
   if (show_version)
     {
