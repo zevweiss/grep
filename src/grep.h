@@ -32,7 +32,10 @@ extern struct matcher
 } matchers[];
 
 /* Exported from grep.c. */
-extern char *matcher;
+extern char const *matcher;
+
+/* Exported from fgrepmat.c, egrepmat.c, grepmat.c.  */
+extern char const default_matcher[];
 
 /* The following flags are exported from grep for the matchers
    to look at. */

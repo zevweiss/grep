@@ -91,7 +91,7 @@ static struct option long_options[] =
 };
 
 /* Define flags declared in grep.h. */
-char *matcher;
+char const *matcher;
 int match_icase;
 int match_words;
 int match_lines;
@@ -112,7 +112,7 @@ static enum
 static int  ck_atoi PARAMS ((char const *, int *));
 static void usage PARAMS ((int));
 static void error PARAMS ((const char *, int));
-static int  setmatcher PARAMS ((char *));
+static int  setmatcher PARAMS ((char const *));
 static int  reset PARAMS ((int, char const *));
 static int  fillbuf PARAMS ((size_t));
 static int  grepbuf PARAMS ((char *, char *));
@@ -870,7 +870,7 @@ Exit with 2 if syntax errors or system errors.\n"));
    If we find it, install it in compile and execute, and return 1.  */
 static int
 setmatcher (name)
-     char *name;
+     char const *name;
 {
   int i;
 #ifdef HAVE_SETRLIMIT
@@ -1195,15 +1195,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     else
       usage (2);
 
-  /* We now define explicitly the alogrithm "grep"/"fgrep"/"egrep" 
-   * at compilation by passing the -DMATCHER="xxx"
-   * We don't rely on the program name.
-   */
-#ifndef MATCHER
-# define MATCHER "grep"
-#endif
   if (! matcher)
-    matcher = MATCHER;
+    matcher = default_matcher;
 
   if (!setmatcher (matcher) && !setmatcher ("default"))
     abort ();
