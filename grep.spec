@@ -15,7 +15,7 @@ Prefix: %{_prefix}
 Prereq: /sbin/install-info
 Buildroot: %{_tmppath}/%{name}-%{version}-root
 Requires: pcre
-Buildrequires: pcre-devel autoconf >= 2.52
+Buildrequires: pcre-devel
 
 %description
 The GNU versions of commonly used grep utilities.  Grep searches
