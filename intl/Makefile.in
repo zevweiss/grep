@@ -42,7 +42,6 @@ INSTALL_DATA = @INSTALL_DATA@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 
 l = @l@
-OBJEXT = $l@OBJEXT@
 
 AR = ar
 CC = @CC@
@@ -63,20 +62,19 @@ SOURCES = $(COMSRCS) intl-compat.c cat-compat.c
 COMSRCS = bindtextdom.c dcgettext.c dgettext.c gettext.c \
 finddomain.c loadmsgcat.c localealias.c textdomain.c l10nflist.c \
 explodename.c
-OBJECTS = @INTLOBJS@ bindtextdom.$(OBJEXT) dcgettext.$(OBJEXT)\
-dgettext.$(OBJEXT) gettext.$(OBJEXT) finddomain.$(OBJEXT) \
-loadmsgcat.$(OBJEXT) localealias.$(OBJEXT) textdomain.$(OBJEXT) \
-l10nflist.$(OBJEXT) explodename.$(OBJEXT)
-CATOBJS = cat-compat.$(OBJEXT) ../po/cat-id-tbl.$(OBJEXT)
-GETTOBJS = intl-compat.$(OBJEXT)
+OBJECTS = @INTLOBJS@ bindtextdom.$lo dcgettext.$lo dgettext.$lo gettext.$lo \
+finddomain.$lo loadmsgcat.$lo localealias.$lo textdomain.$lo l10nflist.$lo \
+explodename.$lo
+CATOBJS = cat-compat.$lo ../po/cat-id-tbl.$lo
+GETTOBJS = intl-compat.$lo
 DISTFILES.common = ChangeLog Makefile.in linux-msg.sed po2tbl.sed.in \
 xopen-msg.sed $(HEADERS) $(SOURCES)
 DISTFILES.normal = VERSION
 DISTFILES.gettext = libintl.glibc intlh.inst.in
 
 .SUFFIXES:
-.SUFFIXES: .c .$(OBJEXT) .lo
-.c.$(OBJEXT):
+.SUFFIXES: .c .o .lo
+.c.o:
 	$(COMPILE) $<
 .c.lo:
 	$(LIBTOOL) --mode=compile $(COMPILE) $<
@@ -97,8 +95,8 @@ libintl.la: $(OBJECTS)
 	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o $@ $(OBJECTS) \
 		   -version-info 1:0 -rpath $(libdir)
 
-../po/cat-id-tbl.$(OBJEXT): ../po/cat-id-tbl.c $(top_srcdir)/po/$(PACKAGE).pot
-	cd ../po && $(MAKE) cat-id-tbl.$(OBJEXT)
+../po/cat-id-tbl.$lo: ../po/cat-id-tbl.c $(top_srcdir)/po/$(PACKAGE).pot
+	cd ../po && $(MAKE) cat-id-tbl.$lo
 
 check: all
 
@@ -145,17 +143,20 @@ install-data: all
 installcheck:
 
 uninstall:
-	dists="$(DISTFILES.common)"; \
-	for file in $$dists; do \
-	  rm -f $(gettextsrcdir)/$$file; \
-	done
+	if test "$(PACKAGE)" = "gettext"; then \
+	  dists="$(DISTFILES.common)"; \
+	  for file in $$dists; do \
+	    rm -f $(gettextsrcdir)/$$file; \
+	  done; \
+	else \
+	  : ; \
+	fi
 
 info dvi:
 
 $(OBJECTS): ../config.h libgettext.h
-bindtextdom.$(OBJEXT) finddomain.$(OBJEXT) loadmsgcat.$(OBJEXT): gettextP.h \
-gettext.h loadinfo.h
-dcgettext.$(OBJEXT): gettextP.h gettext.h hash-string.h loadinfo.h
+bindtextdom.$lo finddomain.$lo loadmsgcat.$lo: gettextP.h gettext.h loadinfo.h
+dcgettext.$lo: gettextP.h gettext.h hash-string.h loadinfo.h
 
 tags: TAGS
 
@@ -169,7 +170,7 @@ ID: $(HEADERS) $(SOURCES)
 
 
 mostlyclean:
-	rm -f *.a *.$(OBJECTS) core core.*
+	rm -f *.a *.o *.lo core core.*
 
 clean: mostlyclean
 

@@ -85,8 +85,10 @@ extern int _msg_tbl_length;
 
 
 /* For automatical extraction of messages sometimes no real
-   translation is needed.  Instead the string itself is the result.  */
-#define gettext_noop(Str) (Str)
+   translation is needed.  Instead the string itself is the result.
+   Do not parenthesize Str in the definiens,
+   as that breaks string literal concatenation.  */
+#define gettext_noop(Str) Str
 
 /* Look up MSGID in the current default message catalog for the current
    LC_MESSAGES locale.  If not found, returns MSGID itself (the default

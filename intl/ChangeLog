@@ -1,3 +1,28 @@
+2000-03-06  Paul Eggert  <eggert@twinsun.com>
+
+	* libgettext.h (gettext_noop): Do not parenthesize Str in the
+	definiens, as that breaks string literal concatenation.
+
+1999-08-12  Paul Eggert  <eggert@twinsun.com>
+
+	* localealias.c (memcpy): Return 2nd argument, so that it's
+	compatible with memcpy spec.
+
+1998-10-20  Paul Eggert  <eggert@twinsun.com>
+
+	* po2tbl.sed.in: Escape trigraphs.
+
+1999-08-11  Paul Eggert  <eggert@twinsun.com>
+
+	* Makefile.in (uninstall): Fix problem in most recent change,
+	on old BSD/OS hosts whose buggy shells report nonzero exit status
+	for `if false; then true; fi'.
+
+1998-10-05  Jim Meyering  <meyering@ascend.com>
+
+	* Makefile.in (uninstall): Uninstall only if the current package is
+	gettext.  From Akim Demaille.
+
 1998-04-29  Ulrich Drepper  <drepper@cygnus.com>
 
 	* intl/localealias.c (read_alias_file): Use unsigned char for

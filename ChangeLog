@@ -1,6 +1,16 @@
-2000-03-07  Alain Magloire
+2000-03-08  Alain Magloire
 
 	* configure.in: version 2.4.2
+
+2000-03-07  Paul Eggert
+
+	* Make intl subdirectory match fileutils, tar, etc.;
+	see intl/ChangeLog for details.
+
+	* src/getpagesize.h: Reformat to match latest fileutils.
+
+	* src/savedir.c (savedir): Work even if directory size is
+	negative; this can happen with some NFS screwups.
 
 2000-03-03  Jim Meyering
 
