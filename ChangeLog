@@ -1,3 +1,16 @@
+1998-11-10  Alain Magloire
+
+	* src/vms_fab.{c,h}: New file for VMS wildcard expansion
+	Written by Phillip C. Brisco.
+
+	* vms/make.com : add line to compile vms_fab.c and 
+	{e,f,}grepmat.c with link for each grep/fgrep/egrep.
+	Base on patch send by Phillib C. Brisco.
+
+1998-11-09  Alain Magloire
+
+	* grep-2.2c on alpha for testing.
+
 1998-11-09  Paul Eggert
 
 	* src/grep.1: Fix `Last Change' of output by generating the date

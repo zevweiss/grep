@@ -24,7 +24,8 @@ man_MANS = grep.1 fgrep.1 egrep.1
 
 EXTRA_DIST = grep.1 egrep.man fgrep.man \
              regex.h \
-             dosbuf.c
+             dosbuf.c \
+             vms_fab.c   vms_fab.h
 
 CLEANFILES = egrep.1 fgrep.1
 
