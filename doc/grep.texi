@@ -632,7 +632,7 @@ Any one of @code{0 1 2 3 4 5 6 7 8 9}.
 @item [:graph:]
 @opindex graph
 @cindex graphic characters
-Anything that is not a @samp{[:alphanum:]} or @samp{[:punct:]}.
+Anything that is not a @samp{[:alnum:]} or @samp{[:punct:]}.
 
 @item [:lower:]
 @opindex lower
@@ -643,7 +643,7 @@ Any one of @code{a b c d e f g h i j k l m n o p q r s t u v w x y z}.
 @opindex print
 @cindex printable characters
 Any character from the @samp{[:space:]} class, and any character that is
-@strong{not} in the @samp{[:isgraph:]} class.
+@strong{not} in the @samp{[:graph:]} class.
 
 @item [:punct:]
 @opindex punct

@@ -15,7 +15,7 @@ these tools are available are in parentheses):
 	  -  GNU Fileutils (v2gnu/filNNNb.zip), Textutils
              (v2gnu/txtNNNb.zip) and Diffutils (v2gnu/difNNNb.zip).
 
-	  -  A (previous version of) Grep (v2gnu/grepNNb.zip).
+	  -  A (previous version of) GNU Grep (v2gnu/grepNNb.zip).
 
 Running the tests ("make check" in the top-level directory)
 additionally requires Gawk (v2gnu/gwkNNNb.zip).  TAGS and ID targets
@@ -31,7 +31,7 @@ To build Grep, run the djgpp\config.bat batch file, then run Make:
 
 Source distributions on DJGPP sites usually come pre-configured, so
 all you need to do in order to build the programs is to say "make".
-However, source distributions on GNU ftp sites, like gnudist.gnu.org,
+However, source distributions on GNU ftp sites, like ftp.gnu.org,
 need to be configured by running djgpp\config.bat.  You will also need
 to run it if you need to configure Grep differently than for the
 default configuration, for example if you want to install the programs
@@ -42,7 +42,7 @@ You can configure and build Grep from a directory other than where you
 unpack its sources, by giving it the directory with the sources as an
 argument.  For example:
 
-	  d:\gnu\grep-2.3.1\djgpp\config d:/gnu/grep-2.3.1
+	  d:\gnu\grep-2.4\djgpp\config d:/gnu/grep-2.4
 
 Note that the argument *must* use Unix-style forward slashes, or else
 config.bat might fail.
