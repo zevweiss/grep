@@ -1065,7 +1065,7 @@ main (argc, argv)
 	if (optarg)
 	  {
 	    if (ck_atoi (optarg, &default_context))
-	      fatal (_("infalid context length argument"), 0);
+	      fatal (_("invalid context length argument"), 0);
 	  }
 	else
 	  default_context = 2;

@@ -1,3 +1,27 @@
+1998-11-24  Jim Meyering
+
+	* src/grep.c : Typo s/infalid/invalid/
+	Also noted by Stanislav Brabec.
+
+1998-11-24  Eli Zaretskii 
+
+	* doc/grep.texi: I found and corrected several typos.
+	I believe the GNU standards require the section that describes the
+	options to the programs to be called ``Invoking'' or ``Invoking
+	<program-name>''.  This is so users and programs can easily find
+	that node in any Info file.  So I changed the name of the
+	`Options' chapter to `Invoking', and corrected the
+	cross-references accordingly.
+	I added some markup to things like file names and options.
+	I added some additional index entries where that seemed useful.
+	I also corrected some index entries, such as "@cindex [:alnum:]",
+	which used a colon in them (the colons confuse Info readers).
+
+1998-11-24  Alain Magloire
+
+	* grep/doc/grep.texi : -h is not use for help.
+	Nit spotted by Jim Meyering.
+
 1998-11-23  Alain Magloire
 
 	* doc: New directory, grep.1, {e,f}grep.man move here
@@ -8,6 +32,8 @@
 	in two ere/bre.
 	* config.hin: New, config.h.in rename to config.hin for OS
 	with limited file system aka DOS.
+
+	* grep-2.2d release for beta.
 
 1998-11-18  Alain Magloire
 
@@ -44,7 +70,7 @@
 	since dfacomp does it for us, and if we also do it then we
 	leak memory.
 
-1998-11-13  Eli Zaretskii  <eliz@is.elta.co.il>
+1998-11-13  Eli Zaretskii 
 
 	* djgpp/config.bat: Rewrite to run the configure script via Bash.
 	* djgpp/config.site, djgpp/getconf: New files.
