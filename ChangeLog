@@ -1,4 +1,17 @@
-1999-08-25  Paul Eggert  <eggert@twinsun.com>
+1999-08-27  Paul Eggert
+
+	* src/system.h (memmove): New macro.
+
+	* src/grep.c (page_alloc): Reallocate the old buffer instead
+	of having both old and new buffers active simultaneously.
+	Remove valloc debugging variant, which no longer applies.
+
+	(fillbuf): Rejigger the buffer allocation mechanism.  The old
+	mechanism could allocate more than 10*N bytes for an N-byte
+	file, which was excessive.  Check for arithmetic overflow a
+	bit more carefully.
+
+1999-08-25  Paul Eggert
 
 	* src/grep.c (grepdir):
 	Don't assume that st_ino and st_dev must be integers;

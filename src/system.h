@@ -140,7 +140,9 @@ void free();
 # undef strrchr
 # define strrchr rindex
 # undef memcpy
-# define memcpy(d, s, n) bcopy((s), (d), (n))
+# define memcpy(d, s, n) bcopy (s, d, n)
+# undef memmove
+# define memmove(d, s, n) bcopy (s, d, n)
 #endif
 #ifndef HAVE_MEMCHR
 ptr_t memchr();

@@ -238,32 +238,26 @@ static off_t initial_bufoffset;	/* Initial value of bufoffset. */
    ? (val) \
    : (val) + ((alignment) - (size_t) (val) % (alignment)))
 
-/* Return the address of a new page-aligned buffer of size SIZE.  Set
-   *UP to the newly allocated (but possibly unaligned) buffer used to
-   *build the aligned buffer.  To free the buffer, free (*UP).  */
+/* Return the address of a page-aligned buffer of size SIZE,
+   reallocating it from *UP.  Set *UP to the newly allocated (but
+   possibly unaligned) buffer used to build the aligned buffer.  To
+   free the buffer, free (*UP).  */
 static char *
 page_alloc (size, up)
      size_t size;
      char **up;
 {
-  /* HAVE_WORKING_VALLOC means that valloc is properly declared, and
-     you can free the result of valloc.  This symbol is not (yet)
-     autoconfigured.  It can be useful to define HAVE_WORKING_VALLOC
-     while debugging, since some debugging memory allocators might
-     catch more bugs if this symbol is enabled.  */
-#if HAVE_WORKING_VALLOC
-  *up = valloc (size);
-  return *up;
-#else
   size_t asize = size + pagesize - 1;
   if (size <= asize)
     {
-      *up = malloc (asize);
-      if (*up)
-	return ALIGN_TO (*up, pagesize);
+      char *p = *up ? realloc (*up, asize) : malloc (asize);
+      if (p)
+	{
+	  *up = p;
+	  return ALIGN_TO (p, pagesize);
+	}
     }
   return NULL;
-#endif
 }
 
 /* Reset the buffer for a new file, returning zero if we should skip it.
@@ -339,29 +333,58 @@ fillbuf (save, stats)
   caddr_t maddr;
 #endif
 
-  if (save > bufsalloc)
-    {
-      char *nubuffer;
-      char *nbuffer;
+  /* Offset from start of unaligned buffer to start of old stuff
+     that we want to save.  */
+  size_t saved_offset = buflim - ubuffer - save;
 
-      while (save > bufsalloc)
-	bufsalloc *= 2;
-      bufalloc = 5 * bufsalloc;
-      if (bufalloc / 5 != bufsalloc || bufalloc + 1 < bufalloc
-	  || ! (nbuffer = page_alloc (bufalloc + 1, &nubuffer)))
+  if (bufsalloc < save)
+    {
+      size_t aligned_save = ALIGN_TO (save, pagesize);
+
+      /* We can't use ALIGN_TO here, since off_t might be longer than
+         size_t.  */
+      off_t to_be_read = stats->stat.st_size - bufoffset;
+      size_t slop = to_be_read % pagesize;
+      off_t aligned_to_be_read = to_be_read + (slop ? pagesize - slop : 0);
+
+      off_t maxalloc = aligned_save + aligned_to_be_read;
+      size_t newalloc;
+
+      /* Grow bufsalloc until it is at least as great as `save'; but
+	 if there is an overflow, just grow it to the next page boundary.  */
+      while (bufsalloc < save)
+	if (bufsalloc < bufsalloc * 2)
+	  bufsalloc *= 2;
+	else
+	  {
+	    bufsalloc = aligned_save;
+	    break;
+	  }
+
+      /* Grow the buffer size to be 5 times bufsalloc....  */
+      newalloc = 5 * bufsalloc;
+      if (maxalloc < newalloc)
+	{
+	  /* ... except don't grow it more than a pagesize past the
+	     file size, as that might cause unnecessary memory
+	     exhaustion if the file is large.  */
+	  newalloc = maxalloc;
+	  bufsalloc = aligned_save;
+	}
+
+      /* Check that the above calculations made progress, which might
+         not occur if there is arithmetic overflow.  If there's no
+	 progress, or if the new buffer size is larger than the old
+	 and buffer reallocation fails, report memory exhaustion.  */
+      if (bufsalloc < save || newalloc <= bufsalloc
+	  || (bufalloc < newalloc
+	      && ! (buffer
+		    = page_alloc ((bufalloc = newalloc) + 1, &ubuffer))))
 	fatal (_("memory exhausted"), 0);
+    }
 
-      bufbeg = nbuffer + bufsalloc - save;
-      memcpy (bufbeg, buflim - save, save);
-      free (ubuffer);
-      ubuffer = nubuffer;
-      buffer = nbuffer;
-    }
-  else
-    {
-      bufbeg = buffer + bufsalloc - save;
-      memcpy (bufbeg, buflim - save, save);
-    }
+  bufbeg = buffer + bufsalloc - save;
+  memmove (bufbeg, ubuffer + saved_offset, save);
 
 #if defined(HAVE_MMAP)
   if (bufmapped && bufoffset % pagesize == 0
