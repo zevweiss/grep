@@ -1118,21 +1118,21 @@ main (argc, argv)
 	if (matcher && strcmp (matcher, "posix-egrep") != 0)
 	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
 	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matcher can only be specified with grep"), 0);
+	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "posix-egrep";
 	break;
       case 'F':
 	if (matcher && strcmp(matcher, "fgrep") != 0)
 	  fatal(_("you may specify only one of -E, -F, or -G"), 0);;
 	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matcher can only be specified with grep"), 0);
+	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "fgrep";
 	break;
       case 'G':
 	if (matcher && strcmp (matcher, "grep") != 0)
 	  fatal (_("you may specify only one of -E, -F, or -G"), 0);
 	if (strcmp (default_matcher, "grep") != 0)
-	  fatal (_("different matcher can only be specified with grep"), 0);
+	  fatal (_("different matchers can only be specify with grep"), 0);
 	matcher = "grep";
 	break;
       case 'H':
