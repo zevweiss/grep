@@ -142,8 +142,6 @@ Gcompile(pattern, size)
   if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
     fatal(err, 0);
 
-  dfainit(&dfa);
-
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.
      Then if DFA succeeds we do some hairy stuff using the regex matcher
@@ -209,8 +207,6 @@ Ecompile(pattern, size)
 
   if ((err = re_compile_pattern(pattern, size, &regex)) != 0)
     fatal(err, 0);
-
-  dfainit(&dfa);
 
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.

@@ -20,6 +20,14 @@
 
 	* dfa.c (dfacomp), search.c (EGexecute): Don't assume char is unsigned.
 
+1998-11-14  Paul Eggert
+
+	* src/grep.c (grepdir): Fix bug: memory freed twice.
+
+	* src/search.c (Gcompile, Ecompile): Don't invoke dfainit,
+	since dfacomp does it for us, and if we also do it then we
+	leak memory.
+
 1998-11-13  Eli Zaretskii  <eliz@is.elta.co.il>
 
 	* djgpp/config.bat: Rewrite to run the configure script via Bash.

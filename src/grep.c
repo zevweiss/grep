@@ -837,7 +837,8 @@ grepdir (dir, name_size)
 	  status &= grepfile (file);
 	}
       out_file -= !no_filenames;
-      free (file);
+      if (file)
+        free (file);
       free (name_space);
     }
 
