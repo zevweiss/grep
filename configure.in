@@ -69,6 +69,12 @@ AC_OBJEXT
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
 dnl if glibc2 regex is not included
-jm_INCLUDED_REGEX(src/regex.c)
+
+dnl This commented out now.
+dnl I no longer follow GLibC regex, glibc maitainers decided
+dnl to drop support for k&r semantics.  And beside, it was
+dnl a real pain since on many GNU/Linux people have different
+dnl glibc versions with buggy regex.
+#jm_INCLUDED_REGEX(src/regex.c)
 
 AC_OUTPUT(Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
