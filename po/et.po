@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.4f\n"
-"POT-Creation-Date: 2001-02-09 01:58-0500\n"
+"POT-Creation-Date: 2001-02-18 00:21-0500\n"
 "PO-Revision-Date: 2000-02-16 11:50+02:00\n"
 "Last-Translator: Toomas Soome <tsoome@ut.ee>\n"
 "Language-Team: Estonian <linux-ee@eenet.ee>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-15\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:969
+#: src/dfa.c:126 src/dfa.c:137 src/dfa.c:148 src/grep.c:985
 msgid "Memory exhausted"
 msgstr "Mälu on otsas"
 
@@ -113,57 +113,57 @@ msgstr "%s: võti `-W %s' on segane\n"
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: võti `-W %s' ei luba argumenti\n"
 
-#: src/grep.c:190 src/grep.c:205 src/grep.c:374 src/kwset.c:171
+#: src/grep.c:200 src/grep.c:215 src/grep.c:384 src/kwset.c:171
 #: src/kwset.c:177 src/obstack.c:471
 msgid "memory exhausted"
 msgstr "mälu on otsas"
 
-#: src/grep.c:221
+#: src/grep.c:231
 msgid "invalid context length argument"
 msgstr "vigane konteksti pikkuse argument"
 
-#: src/grep.c:493
+#: src/grep.c:507
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:566 src/grep.c:1581
+#: src/grep.c:580 src/grep.c:1596
 msgid "writing output"
 msgstr "kirjutan väljundit"
 
-#: src/grep.c:837
+#: src/grep.c:853
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Kahendfail %s sobib\n"
 
-#: src/grep.c:851
+#: src/grep.c:867
 msgid "(standard input)"
 msgstr "(standardsisend)"
 
-#: src/grep.c:956
+#: src/grep.c:972
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: hoiatus: %s: %s\n"
 
-#: src/grep.c:957
+#: src/grep.c:973
 msgid "recursive directory loop"
 msgstr "rekursiivne kataloogipuu tsükkel"
 
-#: src/grep.c:1005
+#: src/grep.c:1021
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Kasuta: %s [VÕTI]... MUSTER [FAIL] ...\n"
 
-#: src/grep.c:1006 src/grep.c:1472
+#: src/grep.c:1022
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Lisainfo saamiseks proovige võtit `%s --help'.\n"
 
-#: src/grep.c:1010
+#: src/grep.c:1026
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Kasuta: %s [VÕTI]... MUSTER [FAIL] ...\n"
 
-#: src/grep.c:1011
+#: src/grep.c:1027
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -176,7 +176,7 @@ msgstr ""
 "\n"
 "Regulaaravaldise valik ja interpreteerimine:\n"
 
-#: src/grep.c:1016
+#: src/grep.c:1032
 #, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
@@ -188,7 +188,7 @@ msgstr ""
 "  -F, --fixed-strings       MUSTER on hulk reavahetustega eraldatud sõnesid\n"
 "  -G, --basic-regexp        MUSTER on lihtne regulaaravaldis\n"
 
-#: src/grep.c:1021
+#: src/grep.c:1037
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -204,7 +204,7 @@ msgstr ""
 "  -x, --line-regexp         kasuta MUSTRIT ridade leidmiseks\n"
 "  -z, --null-data           andmerida lõppeb baidil 0, mitte reavahetusel\n"
 
-#: src/grep.c:1028
+#: src/grep.c:1044
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -222,7 +222,7 @@ msgstr ""
 "      --help                esita see abiinfo ja lõpeta töö\n"
 "      --mmap                kasuta kui võimalik sisendi mällu laadimist\n"
 
-#: src/grep.c:1036
+#: src/grep.c:1052
 #, fuzzy
 msgid ""
 "\n"
@@ -230,16 +230,21 @@ msgid ""
 "  -m, --max-count=NUM       stop after NUM matches\n"
 "  -b, --byte-offset         print the byte offset with output lines\n"
 "  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE\n"
-"                            TYPE is 'binary', 'text', or 'without-match'.\n"
+"                            TYPE is 'binary', 'text', or 'without-match'\n"
 "  -a, --text                equivalent to --binary-files=text\n"
 "  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'.\n"
-"  -r, --recursive           equivalent to --directories=recurse.\n"
+"                            ACTION is 'read', 'recurse', or 'skip'\n"
+"  -R, -r, --recursive       equivalent to --directories=recurse\n"
+"      --include=PATTERN     equivalent to --directories=recurse but only\n"
+"                            files that match PATTERN will be examine\n"
+"      --exclude=PATTERN     equivalent to --directories=recurse, files that\n"
+"                            match PATTERN will be skip.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -264,7 +269,7 @@ msgstr ""
 "  -c, --count               trüki ainult leitud ridade arv faili kaupa\n"
 "  -Z, --null                trüki peale filinime 0 bait\n"
 
-#: src/grep.c:1056
+#: src/grep.c:1077
 #, fuzzy
 msgid ""
 "\n"
@@ -273,6 +278,7 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
+"      --color, --colour     use markers to distinguish the matching string\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -299,7 +305,7 @@ msgstr ""
 "lõpetab programm töö staatusega 0, kui ei leita, siis staatusega 1 ja\n"
 "kui oli mingi muu probleem, siis staatusega 2.\n"
 
-#: src/grep.c:1070
+#: src/grep.c:1092
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -307,43 +313,33 @@ msgstr ""
 "\n"
 "Teatage palun vigadest aadressil <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1080
+#: src/grep.c:1102
 msgid "conflicting matchers specified"
 msgstr "määrati konfliktsed otsijad"
 
-#: src/grep.c:1354
+#: src/grep.c:1376
 msgid "unknown directories method"
 msgstr "tundmatu kataloogide meetod"
 
-#: src/grep.c:1414
+#: src/grep.c:1436
 #, fuzzy
 msgid "invalid max count"
 msgstr "lõpetamata korduste arv"
 
-#: src/grep.c:1453
+#: src/grep.c:1476
 msgid "unknown binary-files type"
 msgstr "tundmatu kahendfailide tüüp"
 
-#: src/grep.c:1467
-#, c-format
-msgid ""
-"invalid argument `%s' for `--color'\n"
-"Valid arguments are:\n"
-"  - `always', `yes', `force'\n"
-"  - `never', `no', `none'\n"
-"  - `auto', `tty', `if-tty'\n"
-msgstr ""
-
-#: src/grep.c:1513
+#: src/grep.c:1528
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1515
+#: src/grep.c:1530
 msgid "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 msgstr "Autoriõigus 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1517
+#: src/grep.c:1532
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

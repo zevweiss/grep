@@ -70,16 +70,21 @@ Output control:\n\
   -m, --max-count=NUM       stop after NUM matches\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
+      --line-buffered       flush output on every line\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
-                            TYPE is 'binary', 'text', or 'without-match'.\n\
+                            TYPE is 'binary', 'text', or 'without-match'\n\
   -a, --text                equivalent to --binary-files=text\n\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
-                            ACTION is 'read', 'recurse', or 'skip'.\n\
-  -r, --recursive           equivalent to --directories=recurse.\n\
+                            ACTION is 'read', 'recurse', or 'skip'\n\
+  -R, -r, --recursive       equivalent to --directories=recurse\n\
+      --include=PATTERN     equivalent to --directories=recurse but only\n\
+                            files that match PATTERN will be examine\n\
+      --exclude=PATTERN     equivalent to --directories=recurse, files that\n\
+                            match PATTERN will be skip.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\
@@ -91,6 +96,7 @@ Context control:\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
+      --color, --colour     use markers to distinguish the matching string\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
@@ -105,17 +111,11 @@ Report bugs to <bug-gnu-utils@gnu.org>.\n", 39},
   {"unknown directories method", 41},
   {"invalid max count", 42},
   {"unknown binary-files type", 43},
-  {"\
-invalid argument `%s' for `--color'\n\
-Valid arguments are:\n\
-  - `always', `yes', `force'\n\
-  - `never', `no', `none'\n\
-  - `auto', `tty', `if-tty'\n", 44},
-  {"%s (GNU grep) %s\n", 45},
-  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 46},
+  {"%s (GNU grep) %s\n", 44},
+  {"Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n", 45},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 47},
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 46},
 };
 
-int _msg_tbl_length = 47;
+int _msg_tbl_length = 46;
