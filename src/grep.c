@@ -1,5 +1,5 @@
 /* grep.c - main driver file for grep.
-   Copyright 1992, 1997-1999, 2000 Free Software Foundation, Inc.
+   Copyright 1992, 1997-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1692,10 +1692,9 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      printf (_("%s (GNU grep) %s\n"), matcher, VERSION);
-      printf ("\n");
+      printf ("%s\n\n", PACKAGE_STRING);
       printf (_("\
-Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"));
+Copyright 1988, 1992-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.\n"));
       printf (_("\
 This is free software; see the source for copying conditions. There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));

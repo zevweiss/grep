@@ -1,3 +1,7 @@
+2004-11-22  Stepan Kasal  <kasal@ucw.cz>
+
+	* src/grep.c (main): Use PACKAGE_STRING for --version.
+
 2004-11-20  Benno Schulenberg  <benno@nietvergeten.nl>  (tiny change)
 
 	* src/grep.c (reset): Move the stat check ...
@@ -34,7 +38,7 @@
 2004-11-19  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/dfa.c: Added some simple changes from gawk.
-	* src/mbstate.h: Imported from gawk.
+	* src/mbsupport.h: Imported from gawk.
 
 2004-11-11  Stepan Kasal  <kasal@ucw.cz>
 
