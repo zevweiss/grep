@@ -439,8 +439,9 @@ static void
 Pcompile (char *pattern, size_t size)
 {
 #ifndef HAVE_LIBPCRE
-  fprintf (stderr, _("PCRE not supported"));
-  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre");
+  fprintf (stderr, _("PCRE not supported\n"));
+  fprintf (stderr, _("It can be fetch at :\n"));
+  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre\n");
   exit (2);
 #else
   auto	int	e;
@@ -484,8 +485,9 @@ static char *
 Pexecute (char *buf, size_t size, char **endp)
 {
 #ifndef HAVE_LIBPCRE
-  fprintf (stderr, _("PCRE not supported"));
-  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre");
+  fprintf (stderr, _("PCRE not supported\n"));
+  fprintf (stderr, _("It can be fetch at :\n"));
+  fprintf (stderr, "ftp://ftp.cus.cam.ac.uk/pub/software/programs/pcre\n");
   exit (2);
 #else
   auto	int	e, i;
