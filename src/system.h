@@ -53,6 +53,9 @@ extern char *sys_errlist[];
 #endif
 
 /* Some operating systems treat text and binary files differently.  */
+#ifdef __BEOS__
+# undef O_BINARY /* BeOS 5 has O_BINARY and O_TEXT, but they have no effect. */
+#endif
 #if O_BINARY
 # include <io.h>
 # ifdef HAVE_SETMODE
