@@ -1,3 +1,15 @@
+1999-02-14 Alain Magloire
+
+	* m4/gettext.m4 : Guard [] with changequote.
+	From Elie Zaretskii.
+
+	* djgpp/config.bat : Makefile.in.in --> Makefile.in-in
+	From Elie Zaretskii.
+
+	* src/dosbuf: k&r function parameter.
+
+	* release of 2.3.
+
 1999-02-10 Alain Magloire
 
 	* bootstrap/{Makefile{try,am},REAMDE} : skeleton
