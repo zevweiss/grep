@@ -1,4 +1,7 @@
-2002-03-26  Bernhard Rosenkraenzer <bero@redhat.com>
+2003-01-18  Bernhard Rosenkraenzer <bero@arklinux.org>
+	* src/grep.c: Fix -i -o combination (Patch from Tim Waugh)
+
+2002-03-26  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Don't fail if we don't have an stdout fd and -q
 	  is used (happens e.g. on calls from hotplug scripts)
 	* src/grep.c: Don't hang forever if fed with an empty string to
@@ -12,12 +15,12 @@
 	  guidelines (don't act differently if invoked as egrep or fgrep)
 	* configure.in: Bump version number, require a recent autoconf
 
-2002-03-14  Bernhard Rosenkraenzer <bero@redhat.com>
+2002-03-14  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/Makefile.am, po/Makefile.in.in: Support DESTDIR properly
 	* tests/bre.tests: Add fix from
 	  Peter Breitenlohner <peb@mppmu.mpg.de>
 
-2002-03-13  Bernhard Rosenkraenzer <bero@redhat.com>
+2002-03-13  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* configure.in, m4/regex.m4, m4/malloc.m4, m4/realloc.m4:
 	  Don't set LIBOBJS directly, autoconf 2.53 doesn't like it
 	* intl/*: Sync with gettext 0.11
@@ -30,7 +33,7 @@
 	  Jim Meyering <meyering@lucent.com>
 	* configure.in: Version 2.5; release
 
-2002-01-23  Bernhard Rosenkraenzer <bero@redhat.com>
+2002-01-23  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* configure.in: Version 2.5g
 	* Makefile.cvs, grep.spec: Add packaging tools
 	Merge djgpp changes from Andrew Cottrell <anddjgpp@ihug.coml.au>:
@@ -41,24 +44,24 @@
 	* PATCHES.AC, PATCHES.AM: delete files - redundant
 	* configure.in, Makefile.am: remove djgpp directory from list
 
-2002-01-22  Bernhard Rosenkraenzer <bero@redhat.com>
+2002-01-22  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* doc/grep.texi, doc/grep.1, NEWS: Document --label
 	* po/ru.po: Sync with translation project
 	* po/grep.pot: Sync with source
 
-2002-01-18  Bernhard Rosenkraenzer <bero@redhat.com>
+2002-01-18  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Add --label, based on patch from Stepan Koltsov
 
-2001-11-20  Bernhard Rosenkraenzer <bero@redhat.com>
+2001-11-20  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* autogen.sh: Don't hardcode aclocal dir
 
-2001-11-19  Bernhard Rosenkraenzer <bero@redhat.com>
+2001-11-19  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Add --only-matching (-o) switch (see NEWS)
 	* doc/grep.texi, doc/grep.1, NEWS: Document changes
 	* configure.in, lib/Makefile.am: Don't use internal getopt if
           we're on a system that provides a working getopt function
 
-2001-09-25  Bernhard Rosenkraenzer <bero@redhat.com>
+2001-09-25  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* configure.in: Detect pcre correctly even when it's in
 	  non-standard locations, using pcre-config
 	* src/grep.c: Add --color={always,never,tty} argument (like in ls)

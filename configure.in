@@ -1,7 +1,7 @@
 # Configuration for grep
 #
 # Alain Magloire <alainm@gnu.org>
-# Bernhard Rosenkraenzer <bero@redhat.com>
+# Bernhard Rosenkraenzer <bero@arklinux.org>
 #
 dnl Process this file with autoconf to produce a configure script
 AC_INIT(src/grep.c)
