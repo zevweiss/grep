@@ -254,12 +254,11 @@ Print @var{num} lines of trailing context after matching lines.
 Print @var{num} lines of leading context before matching lines.
 
 @item -C @var{num}
-@itemx --context=[@var{num}]
+@itemx --context=@var{num}
 @opindex -C
 @opindex --context
 @cindex context
-Print @var{num} lines (default 2) of output context.
-
+Print @var{num} lines of output context.
 
 @item -@var{num}
 @opindex -NUM

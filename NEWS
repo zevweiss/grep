@@ -1,3 +1,7 @@
+  - The -C or --context option now requires an argument, partly for
+    consistency, and partly because POSIX.2 recommends against
+    optional arguments.
+
   - Bracket regular expressions like [a-z] are now locale-dependent,
     as POSIX.2 requires.  For example, many locales sort characters in
     dictionary order, and in these locales the regular expression

@@ -1,4 +1,16 @@
-2000-04-08  Paul Eggert  <eggert@twinsun.com>
+2000-04-10  Paul Eggert
+
+	* doc/grep.1, doc/grep.texi, NEWS: -C now requires an operand.
+	* src/grep.c (short_options, long_options, main, usage): Likewise.
+	(context_length_arg): Renamed from ck_atoi.  Now reports an error
+	and exits if the number is out of range for a context length.
+	(get_nondigit_option): New function, which checks for overflow
+	correctly, and which does not parse nonadjacent strings of digits
+	into a single number.
+	(main): Use get_nondigit_option instead of doing the code inline.
+	With -A, -B, and -C, optarg is now guaranteed to be nonzero.
+
+2000-04-08  Paul Eggert
 
 	Now that we know that the input is always terminated by a
 	newline before the matching algorithms see it, clean up the

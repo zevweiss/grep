@@ -61,7 +61,7 @@ static int mmap_option;
 
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C::EFGHIPUVX:abcd:e:f:hiLlm:nqrsuvwxyZz";
+"0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiLlm:nqrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -77,7 +77,7 @@ static struct option const long_options[] =
   {"before-context", required_argument, NULL, 'B'},
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
   {"byte-offset", no_argument, NULL, 'b'},
-  {"context", optional_argument, NULL, 'C'},
+  {"context", required_argument, NULL, 'C'},
   {"count", no_argument, NULL, 'c'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
@@ -187,14 +187,20 @@ xrealloc (char *ptr, size_t size)
 }
 
 /* Convert STR to a positive integer, storing the result in *OUT.
-   Return nonzero if STR is invalid or out of range.  */
-static int
-ck_atoi (char const *str, int *out)
+   STR must be a valid context length argument; report an error if it
+   isn't.  */
+static void
+context_length_arg (char const *str, int *out)
 {
   uintmax_t value;
-  return ! (xstrtoumax (str, 0, 10, &value, "") == LONGINT_OK
-	    && 0 <= (*out = value)
-	    && *out == value);
+  if (! (xstrtoumax (str, 0, 10, &value, "") == LONGINT_OK
+	 && 0 <= (*out = value)
+	 && *out == value))
+    {
+      fprintf (stderr, "%s: %s: %s\n", prog, str,
+	       _("invalid context length argument"));
+      exit (2);
+    }
 }
 
 
@@ -1021,8 +1027,7 @@ Output control:\n\
 Context control:\n\
   -B, --before-context=NUM  print NUM lines of leading context\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
-  -C, --context[=NUM]       print NUM (default 2) lines of output context\n\
-                            unless overridden by -A or -B\n\
+  -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
@@ -1144,6 +1149,47 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
     }
 }
 
+/* Get the next non-digit option from ARGC and ARGV.
+   Return -1 if there are no more options.
+   Process any digit options that were encountered on the way,
+   and store the resulting integer into *DEFAULT_CONTEXT.  */
+static int
+get_nondigit_option (int argc, char *const *argv, int *default_context)
+{
+  int opt;
+  char buf[sizeof (uintmax_t) * CHAR_BIT + 4];
+  char *p = buf;
+
+  /* Set buf[0] to anything but '0', for the leading-zero test below.  */
+  buf[0] = '\0';
+
+  while (opt = getopt_long (argc, argv, short_options, long_options, NULL),
+	 '0' <= opt && opt <= '9')
+    {
+      /* Suppress trivial leading zeros, to avoid incorrect
+	 diagnostic on strings like 00000000000.  */
+      p -= buf[0] == '0';
+
+      *p++ = opt;
+      if (p == buf + sizeof buf - 4)
+	{
+	  /* Too many digits.  Append "..." to make context_length_arg
+	     complain about "X...", where X contains the digits seen
+	     so far.  */
+	  strcpy (p, "...");
+	  p += 3;
+	  break;
+	}
+    }
+  if (p != buf)
+    {
+      *p = '\0';
+      context_length_arg (buf, default_context);
+    }
+
+  return opt;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -1152,7 +1198,6 @@ main (int argc, char **argv)
   int with_filenames;
   int opt, cc, status;
   int default_context;
-  unsigned digit_args_val;
   FILE *fp;
   extern char *optarg;
   extern int optind;
@@ -1198,9 +1243,6 @@ main (int argc, char **argv)
   out_after = out_before = -1;
   /* Default before/after context: chaged by -C/-NUM options */
   default_context = 0;
-  /* Accumulated value of individual digits in a -NUM option */
-  digit_args_val = 0;
-
 
 /* Internationalization. */
 #if HAVE_SETLOCALE
@@ -1213,47 +1255,19 @@ main (int argc, char **argv)
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
 
-  while ((opt = getopt_long (argc, argv, short_options, long_options, NULL))
-	 != -1)
+  while ((opt = get_nondigit_option (argc, argv, &default_context)) != -1)
     switch (opt)
       {
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-	digit_args_val = 10 * digit_args_val + opt - '0';
-	default_context = digit_args_val;
-	break;
       case 'A':
-	if (optarg)
-	  {
-	    if (ck_atoi (optarg, &out_after))
-	      fatal (_("invalid context length argument"), 0);
-	  }
+	context_length_arg (optarg, &out_after);
 	break;
       case 'B':
-	if (optarg)
-	  {
-	    if (ck_atoi (optarg, &out_before))
-	      fatal (_("invalid context length argument"), 0);
-	  }
+	context_length_arg (optarg, &out_before);
 	break;
       case 'C':
 	/* Set output match context, but let any explicit leading or
 	   trailing amount specified with -A or -B stand. */
-	if (optarg)
-	  {
-	    if (ck_atoi (optarg, &default_context))
-	      fatal (_("invalid context length argument"), 0);
-	  }
-	else
-	  default_context = 2;
+	context_length_arg (optarg, &default_context);
 	break;
       case 'E':
 	setmatcher ("egrep");
