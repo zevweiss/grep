@@ -74,13 +74,15 @@ dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
 dnl if glibc2 regex is not included
 
-dnl This is commented out now, since
-dnl many GNU/Linux people have different
+dnl Many GNU/Linux people have different
 dnl glibc versions with buggy regex.
 jm_INCLUDED_REGEX(src/regex.c)
-dnl be loud if we don't use the included regex
+
+dnl be very vocal about the fact we are not using are regex.c
+dnl some people ask for this because there is so many variants 
+dln of Linux machines
 if test $ac_use_included_regex = no; then
-	AC_MSG_WARN(We will we use not use the regex provided by grep)
+	AC_MSG_WARN(Included src/regex.c not use)
 fi
 
 # This is necessary so that .o files in LIBOBJS are also built via
