@@ -1,5 +1,15 @@
 1999-02-23 Alain Magloire
 
+	* tests/*.awk : The problem is that grep does not drain its stdin,
+	thus the previous process in the pipeline receives a SIGPIPE.
+	Other shells are silent about this.  There is actually no failure,
+	since the broken pipe is expected.  You can work around it by
+	changing the pipeline, so that the input is drained, like this:
+	echo '-' | { ${GREP} -E -e pattern >/dev/null 2>&1; cat >/dev/null; }
+	Email exchange with Andreas Schwab.
+
+1999-02-23 Alain Magloire
+
 	* src/grep.c : Restrict the use of -E, -F, -G
 	to only grep driver, Posix behaviour. {f,e}grep
 	the matcher is already set. This change may brake
