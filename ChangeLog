@@ -1,3 +1,28 @@
+2001-04-02  Alain Magloire
+
+	* lib/regex.c: Update from GNU lib C, with the changes
+	provided by Paul Eggert.
+	* lib/posix/regex.h: Likewise.
+
+2001-02-17  Paul Eggert
+
+	Stop trying to support hosts that have nonstandard declarations for
+	mbrtowc and/or mbstate_t.  It's not worth the portability hassle.
+
+	* lib/quotearg.c (mbrtowc, mbsinit): Remove workaround macros
+	for hosts that have mbrtowc but not mbstate_t, as we now
+	insist on proper declarations for both before using mbrtowc.
+
+2001-03-18  Alain Magloire
+
+	* configure.in: Call AC_MBSTATE_T.
+	* Makefile.am: Add mbstate_t.m4
+	* m4/Makefile.am: Add mbstate_t.m4
+	* m4/mbstate_t.m4: New m4 macro.
+	* lib/strtol.c: Define CHAR_BITS.
+	Uwe H. Steinfeld, Ruslan Ermilov, Volkert Bochert, noted
+	that mbstate_t was not define for certain platforms.
+
 2001-03-18  Paul Eggert
 
 	* src/grep.c (fillbuf): Fix storage allocation performance
