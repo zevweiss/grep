@@ -1,3 +1,24 @@
+2001-04-27  Isamu Hasegawa
+
+	* dfa.c (mblen_buf) : New variable contains the amount of remain
+	byte of corresponding multibyte character in the input string.
+	(SKIP_REMAIN_MB_IF_INITIAL_STATE) : Use mblen_buf.
+	(match_anychar) : Use mblen_buf.
+	(match_mb_charset) : Use mblen_buf.
+	(transit_state_consume_1char) : Use mblen_buf.
+	(transit_state) : Use inputwcs to get current (multibyte) character.
+	(dfaexec) : Add initialization of mblen_buf.
+
+2001-04-27  Isamu Hasegawa
+
+	* dfa.c (addtok) : Set appropriate value to multibyte_prop.
+	(dfastate) : Add the initialization of the variable.
+	(dfaexec) : Call transit_state if d->fail may transit by
+	multibyte characters.
+	(transit_state_singlebyte) : Clean up unnecessary code.
+	(transit_state_consume_1char) : Likewise.
+        (transit_state) : Add checking for word and newline.
+
 2001-04-19  Isamu Hasegawa
 
 	* search.c (check_multibyte_string) : Check the case when mbclen == 0.

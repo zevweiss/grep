@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2f\n"
-"POT-Creation-Date: 2001-04-18 23:45-0400\n"
+"POT-Creation-Date: 2001-04-27 22:05-0400\n"
 "PO-Revision-Date: 1999-04-15 15:26\n"
 "Last-Translator: Denis Y. Pershin <dyp@siblug.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -17,14 +17,14 @@ msgstr ""
 msgid "Memory exhausted"
 msgstr "Память исчерпана"
 
-#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
-#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
-#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
-#: src/dfa.c:1045 src/dfa.c:1046
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "Несбалансированная ["
 
-#: src/dfa.c:738
+#: src/dfa.c:741
 msgid "Unfinished \\ escape"
 msgstr "Незавершенная \\ последовательность"
 
@@ -32,27 +32,27 @@ msgstr "Незавершенная \\ последовательность"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
+#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
 msgstr "незавершенное количество повторений"
 
-#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
+#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
 msgstr "некорректно указано количество повторений"
 
-#: src/dfa.c:1232
+#: src/dfa.c:1239
 msgid "Unbalanced ("
 msgstr "Несбалансированная ("
 
-#: src/dfa.c:1357
+#: src/dfa.c:1364
 msgid "No syntax specified"
 msgstr "Не указано синтаксиса"
 
-#: src/dfa.c:1365
+#: src/dfa.c:1372
 msgid "Unbalanced )"
 msgstr "Несбалансированная )"
 
-#: src/dfa.c:2933
+#: src/dfa.c:2942
 msgid "out of memory"
 msgstr "закончилась память"
 
