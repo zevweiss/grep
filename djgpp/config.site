@@ -13,7 +13,7 @@ PATH_SEPARATOR=:
 PATH_EXPAND=y
 
 # The root of the DJGPP tree serves as the default prefix
-test "x$prefix" = xNONE && prefix='${DJDIR}'
+test "x$prefix" = xNONE && prefix='/dev/env/DJDIR'
 
 # This is required for config.status script to be run, since
 # ./configure runs it by invoking ${CONFIG_SHELL-/bin/sh}
@@ -24,6 +24,6 @@ CONFIG_SHELL=${CONFIG_SHELL='sh'}
 # package was configured.
 # $INSTALL must be an absolute path name, otherwise config.status
 # will try to prepend ./ and ../ to it when it goes into subdirs.
-INSTALL=${INSTALL='${DJDIR}/bin/ginstall -c'}
+INSTALL=${INSTALL='/dev/env/DJDIR/bin/ginstall -c'}
 RANLIB=${RANLIB='ranlib'}
 

@@ -1,3 +1,13 @@
+2000-02-22  Eli Zaretskii
+
+	* doc/grep.1:  Two small glitches(typos).
+
+2000-02-18  Eli Zaretskii
+
+	* djgpp/config.site (prefix, INSTALL): Use /dev/env/DJDIR instead
+	of ${DJDIR}, so that the produced Makefile's work on any DJGPP
+	installation.
+
 2000-01-30 Alain Magloire
 
 	* doc/grep.1:  corrected typo.
