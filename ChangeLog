@@ -21,6 +21,8 @@
 
 2004-12-15  Julian Foad  <julianfoad@btopenworld.com>
 
+	Changes to documentation and help text, mostly from Stepan Kasal.
+
 	* doc/grep.texi: Minor fixes of phrasing.
 	* doc/grep.1: Likewise.
 	* src/grep.c: Likewise.
@@ -147,6 +149,7 @@
 2003-06-12  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* README-alpha: Mention bug tracking system and grep-devel-list
 	* tests/spencer1.tests: Fix test 55, as noted by Tim Waugh
+	* src/search.c: Speed up multibyte support (Patch from Tim Waugh)
 
 2003-06-05  Stepan Kasal  <kasal@ucw.cz>
 	* tests/formatbre.awk, tests/formatere.awk: probably unused, so
@@ -160,7 +163,6 @@
 
 2003-05-30  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/dfa.c: Speed up multibyte support (Patch from Tim Waugh)
-	* src/search.c: Speed up multibyte support (Patch from Tim Waugh)
 
 2003-01-18  Bernhard Rosenkraenzer <bero@arklinux.org>
 	* src/grep.c: Fix -i -o combination (Patch from Tim Waugh)
