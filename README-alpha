@@ -1,11 +1,9 @@
-Newer ALPHA versions of this code are available in CVS on savannah,
-see http://savannah.gnu.org/cvs/?group=grep for details.
+Newer, ALPHA (i.e. unstable) versions of this code are available in CVS on
+Savannah.  See http://savannah.gnu.org/cvs/?group=grep for details.
 
-Please submit bug reports at
-http://savannah.gnu.org/bugs/?group=grep
+Please submit bug reports to <bug-grep@gnu.org>.
 
 If you are interested in the development of GNU grep, you may want to
-subscribe to the grep-devel-list mailing list.
-
-To subscribe, send a message to grep-devel-list-request@arklinux.org with
-"subscribe" (without the quotation marks) in the subject.
+subscribe to the development mailing list.  To subscribe, send a message to
+<bug-grep-request@gnu.org> with "subscribe" (without the quotation marks)
+in the subject, or visit http://lists.gnu.org/mailman/listinfo/bug-grep .

@@ -1,5 +1,6 @@
 2005-02-23  Julian Foad  <julianfoad@btopenworld.com>
 
+	* README-alpha: Fix email addresses and clarify the notes.
 	* tests/backref.sh: Fix trivial typos.
 
 2005-02-08  Bruno Haible  <bruno@clisp.org>  (tiny change)
