@@ -1,3 +1,8 @@
+2005-01-13  Arnold D. Robbins  <arnold@skeeve.com>
+
+	* src/dfa.c (dfaparse): Use LC_COLLATE whenever it is defined;
+	  ENABLE_NLS has nothing to do with this.
+
 2005-01-07  Stepan Kasal  <kasal@ucw.cz>
 
 	* tests/status.sh: Added two tests--option `-s' should have no
