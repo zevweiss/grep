@@ -144,20 +144,20 @@ Suppress normal output; instead print a count of matching
 lines for each input file.  With the @samp{-v}, @samp{--revert-match} option,
 count non-matching lines.
 
-@item -e @var{PATTERN}
-@itemx --regexp=@var{PATTERN}
+@item -e @var{pattern}
+@itemx --regexp=@var{pattern}
 @opindex -e
-@opindex --regexp=@var{PATTERN}
+@opindex --regexp=@var{pattern}
 @cindex pattern list
-Use @var{PATTERN} as the pattern; useful to protect  patterns
+Use @var{pattern} as the pattern; useful to protect  patterns
 beginning with a @samp{-}.
 
-@item  -f @var{FILE}
-@itemx --file=@var{FILE}
+@item  -f @var{file}
+@itemx --file=@var{file}
 @opindex  -f
 @opindex  --file 
 @cindex pattern from file
-Obtain patterns from @var{FILE}, one  per  line.   The  empty
+Obtain patterns from @var{file}, one  per  line.   The  empty
 file contains zero patterns, and therefore matches nothing.
 
 @item -i
@@ -227,33 +227,33 @@ Select only those matches that exactly match the  whole line.
 
 @table @samp
 
-@item -A @var{NUM}
-@itemx --after-context=@var{NUM}
+@item -A @var{num}
+@itemx --after-context=@var{num}
 @opindex -A
 @opindex --after-context
 @cindex after context
 @cindex context lines, after match
-Print @var{NUM} lines of trailing context after matching lines.
+Print @var{num} lines of trailing context after matching lines.
 
-@item -B @var{NUM}
-@itemx --before-context=@var{NUM}
+@item -B @var{num}
+@itemx --before-context=@var{num}
 @opindex -B
 @opindex --before-context
 @cindex before context
 @cindex context lines, before match
-Print @var{NUM} lines of leading context before matching lines.
+Print @var{num} lines of leading context before matching lines.
 
 @item -C
-@itemx --context@var{[=NUM]}
+@itemx --context@var{[=num]}
 @opindex -C
 @opindex --context
 @cindex context
-Print @var{NUM} lines (default 2) of output context.
+Print @var{num} lines (default 2) of output context.
 
 
 @item -NUM
 @opindex -NUM
-Same as @samp{--context=@var{NUM}} lines  of  leading  and  trailing
+Same as @samp{--context=@var{num}} lines  of  leading  and  trailing
 context.  However, grep will never print any given line more than once.
 
 
@@ -281,17 +281,17 @@ When @sc{grep} runs on MS-DOS or MS-Windows, the printed byte offsets
 depend on whether the @samp{-u} (@samp{--unix-byte-offsets}) option is
 used; see below.
 
-@item -d @var{ACTION}
-@itemx --directories=@var{ACTION}
+@item -d @var{action}
+@itemx --directories=@var{action}
 @opindex -d 
 @opindex --directories
 @cindex directory search
-If an input file is a directory, use @var{ACTION} to  process it.
-By  default, @var{ACTION} is @samp{read}, which means that directories are
+If an input file is a directory, use @var{action} to  process it.
+By  default, @var{action} is @samp{read}, which means that directories are
 read just  as  if  they  were  ordinary files (some operating systems
 and filesystems disallow this, and will cause @sc{grep} to print error
-messages for every directory).  If @var{ACTION} is @samp{skip},
-directories are silently skipped.  If @var{ACTION} is @samp{recurse},
+messages for every directory).  If @var{action} is @samp{skip},
+directories are silently skipped.  If @var{action} is @samp{recurse},
 @sc{grep} reads all files under each directory, recursively; this is
 equivalent to the @samp{-r} option.
 
