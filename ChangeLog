@@ -1,4 +1,22 @@
-1999-08-16  Paul Eggert  <eggert@twinsun.com>
+1999-08-18  Alain Magloire
+
+	* 2.3e snapshot.
+
+1999-08-18  Alain Magloire
+
+	* src/search.c: On a CRAY J90 system running UNICOS 8.0.
+	Compilation of ./src/search.c failed because the declaration of
+	the variable "regex":
+	  static struct re_pattern_buffer regex;
+	conflicted with a previous declaration search.c #includes "system.h",
+	which #includes <stdlib.h>, which declares :
+        extern char *regex __((char *_Re, char *_Subject, ...));
+	The declaration in search.c is local to that one source file.
+	I just changed its name to something less likely to conflict.
+	(I called it "regexbuf", but you could pick any name you want.)
+	Excerpt email from Dean Kopesky.
+
+1999-08-16  Paul Eggert
 
 	Upgrade large-file support to the version used in tar and
 	textutils.
@@ -103,7 +121,7 @@ axes.)
 	the input is drained, like this:
 	status=`echo 'check' | { ${GREP} -E -e pattern >/dev/null 2>&1;
 	echo $?; cat >/dev/null; }`; if test $status -ne $errnu then ... fi
-	Excerpt from email exchange with Andreas Schwab.                              
+	Excerpt email from Andreas Schwab.                              
 
 1999-02-23 Alain Magloire
 
