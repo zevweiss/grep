@@ -1,7 +1,9 @@
-1998-11-22  Alain Magloire
+1998-11-23  Alain Magloire
 
-	* doc/: New directory, grep.1, {e,f}grep.man move here
-	with a draft of grep.texi(base of sed.texi).
+	* doc: New directory, grep.1, {e,f}grep.man move here
+	* doc/grep.texi: New info manual
+	* doc/version.texi: New 
+	* doc/Makefile.am: New 
 	* tests/{ere,bre}.*: New files. The spencer2 test is split
 	in two ere/bre.
 	* config.hin: New, config.h.in rename to config.hin for OS
