@@ -326,7 +326,7 @@ fillbuf (size_t save, struct stats const *stats)
       /* Double the buffer size, except don't let it overflow, and
 	 don't let it grow past the file size as that might cause
 	 unnecessary memory exhaustion if the file is large.  */
-      newsize = (newsize * 2 / 2 == newsize && newsize * 2 < maxsize
+      newsize = (newsize <= newsize * 2 && newsize * 2 < maxsize
 		 ? newsize * 2 : maxsize);
 
       /* Add enough room so that the buffer is aligned and has room
@@ -334,14 +334,12 @@ fillbuf (size_t save, struct stats const *stats)
       newalloc = newsize + pagesize + 1;
 
       /* Check that the above calculations made progress, which might
-         not occur if there is arithmetic overflow.  If there's no
-	 progress, or if the new buffer size is larger than the old
-	 and buffer reallocation fails, report memory exhaustion.  */
-      if (newalloc <= minsize
-	  || (bufalloc < newalloc
-	      && ! (buffer = xrealloc (buffer, bufalloc = newalloc))))
-	error (2, 0,  _("memory exhausted"));
+         not occur if there is arithmetic overflow.  */
+      if (newalloc <= minsize)
+	xalloc_die ();
 
+      if (bufalloc < newalloc)
+	buffer = xrealloc (buffer, bufalloc = newalloc);
       readbuf = ALIGN_TO (buffer + 1 + save, pagesize);
       bufbeg = readbuf - save;
       memmove (bufbeg, buffer + saved_offset, save);
@@ -941,7 +939,7 @@ grepdir (char const *dir, struct stats const *stats)
       if (errno)
 	suppressible_error (dir, errno);
       else
-	error (2, 0, _("Memory exhausted"));
+	xalloc_die ();
     }
   else
     {
