@@ -36,6 +36,8 @@
 # include <unistd.h>
 #else
 # define O_RDONLY 0
+# define SEEK_SET 0
+# define SEEK_CUR 1
 int open(), read(), close();
 #endif
 

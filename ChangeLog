@@ -1,4 +1,49 @@
+1999-10-11  Paul Eggert  <eggert@twinsun.com>
 
+	* NEWS, doc/grep.1, doc/grep.texi: New option --mmap.
+	* src/grep.c (mmap_option): New variable.
+	(long_options, reset, usage): Add --mmap.
+	Default is now read, not mmap.
+
+	* doc/grep.1: Document -Z or --null.
+
+1999-10-11  Paul Eggert
+
+	* doc/grep.texi: Fix texinfo glitches.  POSIX -> POSIX.2 where
+	appropriate.
+
+1999-10-11  Paul Eggert
+
+	* doc/grep.texi: Fix texinfo glitches.  POSIX -> POSIX.2 where
+	appropriate.
+
+1999-10-11  Paul Eggert
+
+	* acconfig.h (ssize_t): New #undef.
+
+	* configure.in (AC_CHECK_TYPE): Add ssize_t.
+
+	* src/grep.c (PREFERRED_SAVE_FACTOR): New macro.
+	(reset): If the buffer has already been allocated, set bufsalloc to
+	be bufalloc / PREFERRED_SAVE_FACTOR.  This avoids problems when
+	bufsalloc == bufalloc (possible after reading a large binary file).
+	(reset): Use PREFERRED_SAVE_FACTOR instead of magic constant.
+	Do not set bufbeg; nobody uses it.
+	Always set buflim.
+	Check for lseek error.
+	Use SEEK_CUR, not a magic constant.
+	(fillbuf): Return an error indication, not a count.
+	All callers changed.
+	Do not assume ssize_t fits in int.
+	Use PREFERRED_SAVE_FACTOR instead of magic constant.
+	Clean up mmap code.
+	Do not attempt to mmap zero bytes.
+	Check for lseek error.
+	Use SEEK_SET, not a magic constant.
+	Work correctly if read is interrupted.
+	(grepfile): Work correctly if open or close is interrupted.
+
+	* src/system.h (SEEK_SET, SEEK_CUR): New macros.
 1999-10-02 Alain Magloire
 
 	* src/regex.[ch]: upgrade from GNU lib C source tree.

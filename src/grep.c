@@ -55,6 +55,9 @@ static int show_help;
 /* If non-zero, print the version on standard output and exit.  */
 static int show_version;
 
+/* If nonzero, use mmap if possible.  */
+static int mmap_option;
+
 /* Short options.  */
 static char const short_options[] =
 "0123456789A:B:C::EFGHUVX:abcd:e:f:hiLlnqrsuvwxyZz";
@@ -79,6 +82,7 @@ static struct option long_options[] =
   {"ignore-case", no_argument, NULL, 'i'},
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
+  {"mmap", no_argument, &mmap_option, 1},
   {"no-filename", no_argument, NULL, 'h'},
   {"no-messages", no_argument, NULL, 's'},
   {"null", no_argument, NULL, 'Z'},
@@ -222,6 +226,7 @@ static char *ubuffer;		/* Unaligned base of buffer. */
 static char *buffer;		/* Base of buffer. */
 static size_t bufsalloc;	/* Allocated size of buffer save region. */
 static size_t bufalloc;		/* Total buffer size. */
+#define PREFERRED_SAVE_FACTOR 5	/* Preferred value of bufalloc / bufsalloc.  */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
@@ -229,7 +234,7 @@ static size_t pagesize;		/* alignment of memory pages */
 static off_t bufoffset;		/* Read offset; defined on regular files.  */
 
 #if defined(HAVE_MMAP)
-static int bufmapped;		/* True for ordinary files. */
+static int bufmapped;		/* True if buffer is memory-mapped.  */
 static off_t initial_bufoffset;	/* Initial value of bufoffset. */
 #endif
 
@@ -270,7 +275,9 @@ reset (fd, file, stats)
      char const *file;
      struct stats *stats;
 {
-  if (pagesize == 0)
+  if (pagesize)
+    bufsalloc = ALIGN_TO (bufalloc / PREFERRED_SAVE_FACTOR, pagesize);
+  else
     {
       size_t ubufsalloc;
       pagesize = getpagesize ();
@@ -282,17 +289,18 @@ reset (fd, file, stats)
       ubufsalloc = BUFSALLOC;
 #endif
       bufsalloc = ALIGN_TO (ubufsalloc, pagesize);
-      bufalloc = 5 * bufsalloc;
+      bufalloc = PREFERRED_SAVE_FACTOR * bufsalloc;
       /* The 1 byte of overflow is a kludge for dfaexec(), which
 	 inserts a sentinel newline at the end of the buffer
 	 being searched.  There's gotta be a better way... */
       if (bufsalloc < ubufsalloc
-	  || bufalloc / 5 != bufsalloc || bufalloc + 1 < bufalloc
+	  || bufalloc / PREFERRED_SAVE_FACTOR != bufsalloc
+	  || bufalloc + 1 < bufalloc
 	  || ! (buffer = page_alloc (bufalloc + 1, &ubuffer)))
 	fatal (_("memory exhausted"), 0);
-      bufbeg = buffer;
-      buflim = buffer;
     }
+
+  buflim = buffer;
   bufdesc = fd;
 
   if (fstat (fd, &stats->stat) != 0)
@@ -302,16 +310,28 @@ reset (fd, file, stats)
     }
   if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
     return 0;
-#if defined(HAVE_MMAP)
-  bufmapped = S_ISREG (stats->stat.st_mode);
-#endif
   if (S_ISREG (stats->stat.st_mode))
     {
-      bufoffset = file ? 0 : lseek (fd, 0, 1);
+      if (file)
+	bufoffset = 0;
+      else
+	{
+	  bufoffset = lseek (fd, 0, SEEK_CUR);
+	  if (bufoffset < 0)
+	    {
+	      error ("lseek", errno);
+	      return 0;
+	    }
+	}
 #ifdef HAVE_MMAP
       initial_bufoffset = bufoffset;
-      if (bufoffset % pagesize != 0)
-	bufmapped = 0;
+      bufmapped = mmap_option && bufoffset % pagesize == 0;
+#endif
+    }
+  else
+    {
+#ifdef HAVE_MMAP
+      bufmapped = 0;
 #endif
     }
   return 1;
@@ -320,16 +340,15 @@ reset (fd, file, stats)
 /* Read new stuff into the buffer, saving the specified
    amount of old stuff.  When we're done, 'bufbeg' points
    to the beginning of the buffer contents, and 'buflim'
-   points just after the end.  Return count of new stuff. */
+   points just after the end.  Return zero if there's an error.  */
 static int
 fillbuf (save, stats)
      size_t save;
      struct stats *stats;
 {
-  int cc;
-#if defined(HAVE_MMAP)
-  caddr_t maddr;
-#endif
+  size_t fillsize = 0;
+  int cc = 1;
+  size_t readsize;
 
   /* Offset from start of unaligned buffer to start of old stuff
      that we want to save.  */
@@ -365,8 +384,9 @@ fillbuf (save, stats)
 	    break;
 	  }
 
-      /* Grow the buffer size to be 5 times bufsalloc....  */
-      newalloc = 5 * bufsalloc;
+      /* Grow the buffer size to be PREFERRED_SAVE_FACTOR times
+	 bufsalloc....  */
+      newalloc = PREFERRED_SAVE_FACTOR * bufsalloc;
       if (maxalloc < newalloc)
 	{
 	  /* ... except don't grow it more than a pagesize past the
@@ -389,11 +409,12 @@ fillbuf (save, stats)
 
   bufbeg = buffer + bufsalloc - save;
   memmove (bufbeg, ubuffer + saved_offset, save);
+  readsize = bufalloc - bufsalloc;
 
 #if defined(HAVE_MMAP)
   if (bufmapped)
     {
-      size_t mmapsize = bufalloc - bufsalloc;
+      size_t mmapsize = readsize;
 
       /* Don't mmap past the end of the file; some hosts don't allow this.
 	 Use `read' on the last page.  */
@@ -401,60 +422,55 @@ fillbuf (save, stats)
 	{
 	  mmapsize = stats->stat.st_size - bufoffset;
 	  mmapsize -= mmapsize % pagesize;
-	  if (! mmapsize)
-	    goto tryread;
 	}
 
-      maddr = buffer + bufsalloc;
-      maddr = mmap (maddr, mmapsize, PROT_READ | PROT_WRITE,
-		   MAP_PRIVATE | MAP_FIXED, bufdesc, bufoffset);
-      if (maddr == (caddr_t) -1)
+      if (mmapsize
+	  && (mmap ((caddr_t) (buffer + bufsalloc), mmapsize,
+		    PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_FIXED,
+		    bufdesc, bufoffset)
+	      != (caddr_t) -1))
 	{
-          /* This used to issue a warning, but on some hosts
-             (e.g. Solaris 2.5) mmap can fail merely because some
-             other process has an advisory read lock on the file.
-             There's no point alarming the user about this misfeature.  */
-#if 0
-	  fprintf (stderr, _("%s: warning: %s: %s\n"), prog, filename,
-		  strerror (errno));
-#endif
-	  goto tryread;
+	  /* Do not bother to use madvise with MADV_SEQUENTIAL or
+	     MADV_WILLNEED on the mmapped memory.  One might think it
+	     would help, but it slows us down about 30% on SunOS 4.1.  */
+	  fillsize = mmapsize;
 	}
-#if 0
-      /* You might thing this (or MADV_WILLNEED) would help,
-	 but it doesn't, at least not on a Sun running 4.1.
-	 In fact, it actually slows us down about 30%! */
-      madvise (maddr, mmapsize, MADV_SEQUENTIAL);
-#endif
-      cc = mmapsize;
-    }
-  else
-    {
-    tryread:
-      /* We come here when we're not going to use mmap() any more.
-	 Note that we need to synchronize the file offset the
-	 first time through. */
-      if (bufmapped)
+      else
 	{
+	  /* Stop using mmap on this file.  Synchronize the file
+	     offset.  Do not warn about mmap failures.  On some hosts
+	     (e.g. Solaris 2.5) mmap can fail merely because some
+	     other process has an advisory read lock on the file.
+	     There's no point alarming the user about this misfeature.  */
 	  bufmapped = 0;
-	  if (bufoffset != initial_bufoffset)
-	    lseek (bufdesc, bufoffset, 0);
+	  if (bufoffset != initial_bufoffset
+	      && lseek (bufdesc, bufoffset, SEEK_SET) < 0)
+	    {
+	      error ("lseek", errno);
+	      cc = 0;
+	    }
 	}
-      cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
     }
-#else
-  cc = read (bufdesc, buffer + bufsalloc, bufalloc - bufsalloc);
 #endif /*HAVE_MMAP*/
-  if (cc > 0)
-    bufoffset += cc;
+
+  if (! fillsize)
+    {
+      ssize_t bytesread;
+      while ((bytesread = read (bufdesc, buffer + bufsalloc, readsize)) < 0
+	     && errno == EINTR)
+	continue;
+      if (bytesread < 0)
+	cc = 0;
+      else
+	fillsize = bytesread;
+    }
+
+  bufoffset += fillsize;
 #if O_BINARY
-  if (cc > 0)
-    cc = undossify_input (buffer + bufsalloc, cc);
+  if (fillsize)
+    fillsize = undossify_input (buffer + bufsalloc, fillsize);
 #endif
-  if (cc > 0)
-    buflim = buffer + bufsalloc + cc;
-  else
-    buflim = buffer + bufsalloc;
+  buflim = buffer + bufsalloc + fillsize;
   return cc;
 }
 
@@ -708,7 +724,7 @@ grep (fd, file, stats)
   residue = 0;
   save = 0;
 
-  if (fillbuf (save, stats) < 0)
+  if (! fillbuf (save, stats))
     {
       if (! (is_EISDIR (errno, file) && suppress_errors))
 	error (filename, errno);
@@ -754,7 +770,7 @@ grep (fd, file, stats)
       totalcc += buflim - bufbeg - save;
       if (out_line)
 	nlscan (beg);
-      if (fillbuf (save, stats) < 0)
+      if (! fillbuf (save, stats))
 	{
 	  if (! (is_EISDIR (errno, file) && suppress_errors))
 	    error (filename, errno);
@@ -792,7 +808,8 @@ grepfile (file, stats)
     }
   else
     {
-      desc = open (file, O_RDONLY);
+      while ((desc = open (file, O_RDONLY)) < 0 && errno == EINTR)
+	continue;
 
       if (desc < 0)
 	{
@@ -859,8 +876,13 @@ grepfile (file, stats)
       if (list_files == 1 - 2 * status)
 	printf ("%s%c", filename, '\n' & filename_mask);
 
-      if (file && close (desc) != 0)
-	error (file, errno);
+      if (file)
+	while (close (desc) != 0)
+	  if (errno != EINTR)
+	    {
+	      error (file, errno);
+	      break;
+	    }
     }
 
   return status;
@@ -959,7 +981,8 @@ Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
-      --help                display this help and exit\n"));
+      --help                display this help and exit\n\
+      --mmap                use memory-mapped input if possible\n"));
       printf (_("\
 \n\
 Output control:\n\

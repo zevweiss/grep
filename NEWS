@@ -13,6 +13,9 @@ Version 2.4:
 
   - New option -H or --with-filename.
 
+  - New option --mmap.  By default, GNU grep now uses read instead of mmap.
+    This is faster on some hosts, and is safer on all.
+
   - The new option -z or --null-data causes `grep' to treat a zero byte
     (the ASCII NUL character) as a line terminator in input data, and
     to treat newlines as ordinary data.
