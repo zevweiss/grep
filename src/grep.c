@@ -1177,90 +1177,19 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-  status = 1;
-
   argp = EXPAND_WILDCARDS (argv + optind);
 
   if (*argp)
-    while ((arg = *argp++) != NULL)
-      {
-	if (strcmp (arg, "-") == 0)
-	  {
-	    filename = _("(standard input)");
-	    desc = 0;
-	  }
-	else
-	  {
-	    filename = arg;
-	    desc = open (arg, O_RDONLY);
-	  }
-	if (desc < 0)
-	  {
-	    int e = errno;
-	    
-#ifdef EISDIR
-	    /* If a file is a directory, and is not readable, then `open'
-	       can report either EACCES or EISDIR when we try to open it.
-	       We'd rather see EISDIR so that the error is ignored when
-	       skipping directories, so if we see EACCES we replace it
-	       with EISDIR if both errno values are valid.  */
-	    struct stat st;
-	    if (e == EACCES
-		&& stat (arg, &st) == 0 && S_ISDIR (st.st_mode))
-	      e = EISDIR;
-#endif
-
-	    if (! (suppress_errors
-		   || (directories == SKIP_DIRECTORIES
-		       && IS_DIRECTORY_ERRNO (e))))
-	      error (arg, e);
-	  }
-	else
-	  {
-#if O_BINARY
-	    /* Set input to binary mode.  Pipes are simulated with files
-	       on DOS, so this includes the case of "foo | grep bar".  */
-	    if (!isatty(desc))
-	      SET_BINARY(desc);
-#endif
-	    count = grep(desc);
-	    if (count_matches)
-	      {
-		if (out_file)
-		  printf("%s:", filename);
-		printf("%d\n", count);
-	      }
-	    if (count)
-	      {
-		status = 0;
-		if (list_files == 1)
-		  printf("%s\n", filename);
-	      }
-	    else if (list_files == -1)
-	      printf("%s\n", filename);
-	    if (desc != 0)
-	      close(desc);
-	  }
-      }
-  else
     {
-      filename = _("(standard input)");
-#if O_BINARY
-      if (!isatty(0))
-	SET_BINARY(0);
-#endif
-      count = grep(0);
-      if (count_matches)
-	printf("%d\n", count);
-      if (count)
+	status = 1;
+	while ((arg = *argp++) != NULL)
 	{
-	  status = 0;
-	  if (list_files == 1)
-	    printf(_("(standard input)\n"));
+	  char *file = arg;
+	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file);
 	}
-      else if (list_files == -1)
-	printf(_("(standard input)\n"));
     }
+  else
+    status = grepfile ((char *)NULL);
 
   if (fclose (stdout) == EOF)
     error (_("writing output"), errno);
