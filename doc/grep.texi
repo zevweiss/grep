@@ -109,6 +109,7 @@ This document was produced for version @value{VERSION} of @sc{gnu}
 * Diagnostics::                 Exit status returned by @command{grep}.
 * Grep Programs::               @command{grep} programs.
 * Regular Expressions::         Regular Expressions.
+* Usage::                       Examples.
 * Reporting Bugs::              Reporting Bugs.
 * Concept Index::               A menu with all the topics in this manual.
 * Index::                       A menu with all @command{grep} commands
@@ -438,6 +439,8 @@ or @samp{--null} option, this option can be used with commands like
 Several additional options control which variant of the @command{grep}
 matching engine is used.  @xref{Grep Programs}.
 
+@section Environment Variables
+
 Grep's behavior is affected by the following environment variables.
 @cindex environment variables
 
@@ -763,6 +766,125 @@ invalid interval specification.  For example, the shell command
 instead of reporting a syntax error in the regular expression.
 @sc{posix.2} allows this behavior as an extension, but portable scripts
 should avoid it.
+
+@node Usage
+@chapter Usage
+
+@sc{gnu} @command{grep} comes with a variety of options.  The general form
+of grep is to specified the optionnal flags, the pattern and the file(s).
+
+@itemize @bullet
+@item
+How to disable case sensitive search ?
+The option @samp{--ignore-case} or @sam{-i} will find the pattern
+ignoring the distinction between uppercase and lowercase.
+@example
+grep -i ghislaine /etc/password
+@end example
+
+@item
+How to get only the filenames that matches ?
+The @samp{--files-with-matches} or @samp{-l}, for example, it can be use with
+the backquote shell construct to edit a certain number of files.
+@example
+vi `grep -l main *.c`
+@end example 
+
+@item
+What's the command to search recursively ?
+Searching files recursively through directories can be done in many
+ways.  Looking for pattern "French" or "french". 
+@example
+#find /home/gigi -exec grep "[Ff]rench"
+...
+@end example
+This is a very inefficient solution, the reason is that @command{grep}
+is being invoked for every files.  Another possibility is to construct
+the files and passed them to @command{grep}.
+@example
+grep "[Ff]rench" `find /home/gigi -print`
+@end example
+A better approach but not portable, you may reach the
+maximum arguments on the command line.  The general solution
+is to use xargs.
+@example
+find /home/gigi -type f -print | xargs grep "[Ff]rench" /dev/null
+@end example
+Starting from @sc{gnu} @command{grep} 2.3, the recommanded solution
+is to use @samp{--directories=recuse} or the short-hands @samp{--recuse}
+and @samp{-r}.
+@example
+# grep -r "[Ff]rench" /home/gigi
+@end example
+
+@item
+What to do if a pattern has a leading '-'?
+The @sc{gnu} @code{getopt} understands '--'.  If looking for pattern '-r,'
+@example
+grep --help | grep -- -r,
+@end 
+For POSIX.2 implementations, the option @samp{-e} is handy.
+@example
+grep --help | grep -e -r,
+@end example
+
+@item
+How to search for a whole word, not a pattern part of a word ?
+Option @samp{-w}.  For example for the word 'as' not for 'case' .
+@example
+grep --help | grep -w as
+@end example
+In fact @samp{--word-regexp} is a short-hand for this:
+@example
+grep --help | grep -E -e '[^[:alpha:]]as[^[:alpha:]]' 
+@end example
+Another way is to use the special symbols.
+@example
+grep --help | grep -E -e '\<as\>'
+@end example
+
+@item
+How to get some context with grep ?
+Use options @samp{--before-context}, @samp{--after-context} or
+@samp{--context}
+@example
+grep -C 4 -i paul /etc/passwd
+@end example
+
+@item
+How do I force grep to put print the name of the file ?
+When searching in one file @command{grep} does not show the
+filename, this can be a problem when running scripts.  The usual
+way is to add "/dev/null" as an empty file.
+@example
+grep eli /etc/passwd /dev/null
+@example
+The option @samp{-H}, @samp{--with-filename}
+@example
+grep -H eli /etc/passwd
+@end example
+
+@item
+When  I use the @{@{} @{@}}, it does not work, is my regex correct ?
+Many versions of @command{egrep} does not support intervals, but starting
+from version 2.4 @sc{GNU} @command{egrep} will be equivalent to @code{grep -E}
+that supports intervals.
+
+@item
+I saw someone do these  .. why ?
+@example
+ps -ef | grep '[p]attern'
+ps -ef | grep \\pattern
+ps -ef | grep .pattern
+@example
+The command line no longer matches what you are grepping, thus eliminating
+it from the output.  It's more reliable then using @samp{-v}.
+@example
+ps -ef | grep pattern | grep -v grep
+@end example
+which as the side effect of filtering any command with the pattern "grep".
+
+@end itemize
 
 @node Reporting Bugs
 @chapter Reporting bugs
