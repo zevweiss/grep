@@ -146,23 +146,23 @@ AC_MSG_CHECKING([How to create links])
 rm -f test00 test01
 touch test00
 ln -s test00 test01 || :
-LINK=""
-LINKSRC="grep"
+SYMLINK=""
+SYMLINKFROM="grep"
 if test -L test01; then
-	LINK="ln -s"
+	SYMLINK="ln -s"
 else
-	LINKSRC="${bindir}/grep"
+	SYMLINKFROM="${bindir}/grep"
 	rm -f test01
 	ln test00 test01 || :
 	if test -e test01; then
-		LINK="ln"
+		SYMLINK="ln"
 	else
-		LINK="cp"
+		SYMLINK="cp"
 	fi
 fi
-AC_MSG_RESULT($LINK)
-AC_SUBST(LINK)
-AC_SUBST(LINKSRC)
+AC_MSG_RESULT($SYMLINK)
+AC_SUBST(SYMLINK)
+AC_SUBST(SYMLINKFROM)
 rm -f test00 test01
 
 AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

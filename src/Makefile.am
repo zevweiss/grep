@@ -3,14 +3,10 @@ AUTOMAKE_OPTIONS = ansi2knr no-dependencies
 
 LN = ln
 
-# We let configure figure out whether we need
-# regex.c, strtoul.c, strtoull.c, and strtoumax.c.
 bin_PROGRAMS = grep
-grep_SOURCES = grep.c grep.h \
-               dfa.c dfa.h \
-               kwset.c  kwset.h \
-               search.c getpagesize.h system.h \
+grep_SOURCES = grep.c dfa.c kwset.c search.c \
                grepmat.c egrepmat.c fgrepmat.c
+noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h
 
 LDADD = @INTLLIBS@ ../lib/libgreputils.a
 datadir = $(prefix)/@DATADIRNAME@
@@ -22,5 +18,5 @@ EXTRA_DIST = \
              vms_fab.c vms_fab.h
 
 install-exec-local:
-	@LINK@ @LINKSRC@ $(bindir)/egrep
-	@LINK@ @LINKSRC@ $(bindir)/fgrep
+	@SYMLINK@ @SYMLINKFROM@ $(bindir)/egrep
+	@SYMLINK@ @SYMLINKFROM@ $(bindir)/fgrep
