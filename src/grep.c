@@ -539,6 +539,8 @@ prline (char const *beg, char const *lim, int sep)
 	  char const *b = beg + match_offset;
 	  if (b == lim)
 	    break;
+	  if (match_size == 0)
+	    break;
 	  if(color_option)
 	    printf("\33[%sm", grep_color);
 	  fwrite(b, sizeof (char), match_size, stdout);

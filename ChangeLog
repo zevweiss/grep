@@ -3,6 +3,9 @@
 	  is used (happens e.g. on calls from hotplug scripts)
 	* src/grep.c: Don't hang forever if fed with an empty string to
 	  grep for and --color enabled
+	* src/grep.c: Fix infinite loop on
+	  echo "1 one" | grep -E "[0-9]*" -o
+	  echo "1 one" | grep -E "[0-9]*" --color
 	* po/*: Sync wiith translation project
 	* src/grep.c, src/Makefile.am, configure.in: Add patch from
 	  Paul Eggert <eggert@twinsun.com> to comply with ridiculous
