@@ -1,4 +1,10 @@
 
+1999-10-02 Alain Magloire
+
+	* src/regex.[ch]: upgrade from GNU lib C source tree.
+
+	* make beta 2.3f available.
+
 1999-10-02  Paul Eggert
 
 	* NEWS: egrep is now equivalent to `grep -E'.
