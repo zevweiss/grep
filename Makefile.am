@@ -2,7 +2,7 @@
 AUTOMAKE_OPTIONS = no-dependencies
 
 ACLOCAL_AMFLAGS = --acdir=m4
-SUBDIRS = intl po src tests
+SUBDIRS = intl po doc src tests
 
 EXTRA_DIST = TODO README \
              vms/make.com vms/README \
