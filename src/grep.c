@@ -90,6 +90,7 @@ static struct option const long_options[] =
   {"byte-offset", no_argument, NULL, 'b'},
   {"context", required_argument, NULL, 'C'},
   {"color", optional_argument, NULL, COLOR_OPTION},
+  {"colour", optional_argument, NULL, COLOR_OPTION},
   {"count", no_argument, NULL, 'c'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
@@ -111,6 +112,7 @@ static struct option const long_options[] =
   {"perl-regexp", no_argument, NULL, 'P'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
+  {"recursive", no_argument, NULL, 'R'},
   {"regexp", required_argument, NULL, 'e'},
   {"invert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
@@ -1044,6 +1046,7 @@ Output control:\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
                             TYPE is 'binary', 'text', or 'without-match'.\n\
+      --colour, --color     color the matches with ${GREP_COLOR:-red}\n\
   -a, --text                equivalent to --binary-files=text\n\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
@@ -1421,6 +1424,7 @@ main (int argc, char **argv)
       case 'q':
 	exit_on_match = 1;
 	break;
+      case 'R':
       case 'r':
 	directories = RECURSE_DIRECTORIES;
 	break;

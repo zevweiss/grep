@@ -1,5 +1,11 @@
 2001-02-09  Alain Magloire
 
+	* src/grep.c (long_options) : Added equivalent to -r with -R.
+	* src/grep.c (usage): added --color and --colour.
+	Noted with patch from, H.Merijn Brand and Wichert Akkerman.
+
+2001-02-09  Alain Magloire
+
 	Patch from Ulrich Drepper to provide hilighting.
 
 	* src/grep.c : New option --color.
