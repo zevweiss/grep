@@ -71,13 +71,13 @@ static int color_option;
 
 /* The color string used.  The user can overwrite it using the environment
    variable GREP_COLOR.  The default is to print red.  */
-static const char *grep_color = "31;5";
+static const char *grep_color = "01;31";
 
 static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:EFGHIPUVX:abcd:e:f:hiKLlm:nqRrsuvwxyZz";
+"0123456789A:B:C:D:EFGHIPUVX:abcd:e:f:hiKLlm:nqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -99,9 +99,10 @@ static struct option const long_options[] =
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
   {"byte-offset", no_argument, NULL, 'b'},
   {"context", required_argument, NULL, 'C'},
-  {"color", no_argument, NULL, COLOR_OPTION},
-  {"colour", no_argument, NULL, COLOR_OPTION},
+  {"color", optional_argument, NULL, COLOR_OPTION},
+  {"colour", optional_argument, NULL, COLOR_OPTION},
   {"count", no_argument, NULL, 'c'},
+  {"devices", required_argument, NULL, 'D'},
   {"directories", required_argument, NULL, 'd'},
   {"extended-regexp", no_argument, NULL, 'E'},
   {"exclude", required_argument, NULL, EXCLUDE_OPTION},
@@ -157,7 +158,14 @@ static enum
     READ_DIRECTORIES,
     RECURSE_DIRECTORIES,
     SKIP_DIRECTORIES
-  } directories;
+  } directories = READ_DIRECTORIES;
+
+/* How to handle devices. */
+static enum
+  {
+    READ_DEVICES,
+    SKIP_DEVICES
+  } devices = READ_DEVICES;
 
 static int grepdir PARAMS ((char const *, struct stats const *));
 #if defined(HAVE_DOS_FILE_CONTENTS)
@@ -247,6 +255,8 @@ reset (int fd, char const *file, struct stats *stats)
       return 0;
     }
   if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
+    return 0;
+  if (devices == SKIP_DEVICES && (S_ISCHR(stats->stat.st_mode) || S_ISBLK(stats->stat.st_mode) || S_ISSOCK(stats->stat.st_mode)))
     return 0;
   if (S_ISREG (stats->stat.st_mode))
     {
@@ -1018,6 +1028,8 @@ Output control:\n\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'\n\
+  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n\
+                            ACTION is 'read' or 'skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
       --include=PATTERN     files that match PATTERN will be examined\n\
       --exclude=PATTERN     files that match PATTERN will be skipped.\n\
@@ -1033,7 +1045,9 @@ Context control:\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
-      --color, --colour     use markers to distinguish the matching string\n\
+      --color[=WHEN],
+      --colour[=WHEN]       use markers to distinguish the matching string\n\
+                            WHEN may be `always', `never' or `auto'.\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
@@ -1280,6 +1294,15 @@ main (int argc, char **argv)
 	context_length_arg (optarg, &default_context);
 	break;
 
+      case 'D':
+	if (strcmp (optarg, "read") == 0)
+	  devices = READ_DEVICES;
+	else if (strcmp (optarg, "skip") == 0)
+	  devices = SKIP_DEVICES;
+	else
+	  error (2, 0, _("unknown devices method"));
+	break;
+
       case 'E':
 	setmatcher ("egrep");
 	break;
@@ -1465,7 +1488,27 @@ main (int argc, char **argv)
 	break;
 
       case COLOR_OPTION:
-	color_option = 1;
+        if(optarg) {
+          if(!strcasecmp(optarg, "always") || !strcasecmp(optarg, "yes") ||
+             !strcasecmp(optarg, "force"))
+            color_option = 1;
+          else if(!strcasecmp(optarg, "never") || !strcasecmp(optarg, "no") ||
+                  !strcasecmp(optarg, "none"))
+            color_option = 0;
+          else if(!strcasecmp(optarg, "auto") || !strcasecmp(optarg, "tty") ||
+                  !strcasecmp(optarg, "if-tty"))
+            color_option = 2;
+          else
+            show_help = 1;
+        } else
+          color_option = 2;
+        if(color_option == 2) {
+          if(isatty(STDOUT_FILENO) && getenv("TERM") &&
+	     strcmp(getenv("TERM"), "dumb"))
+                  color_option = 1;
+          else
+            color_option = 0;
+        }
 	break;
 
       case EXCLUDE_OPTION:

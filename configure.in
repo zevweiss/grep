@@ -127,6 +127,10 @@ LIBOBJS=`echo $LIBOBJS|sed 's/\.o /\$U.o /g;s/\.o$/\$U.o/'`
 
 # support for pcre
 if test x"$testpcre" = x"yes"; then
+	if pcre-config --cflags >/dev/null 2>&1; then
+		CFLAGS="$CFLAGS `pcre-config --cflags`"
+		LIBS="$LIBS `pcre-config --libs`"
+	fi
 	AC_CHECK_LIB(pcre, pcre_exec)
 fi
 

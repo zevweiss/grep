@@ -261,11 +261,12 @@ Print @var{num} lines of leading context before matching lines.
 @cindex context
 Print @var{num} lines of output context.
 
-@item --colour
-@itemx --color
+@item --colour[=@var{WHEN}]
+@itemx --color[=@var{WHEN}]
 @opindex --colour
 @cindex highlight, color, colour
 The matching string is surrounded by the marker specify in @var{GREP_COLOR}.
+@var{WHEN} may be `never', `always', or `auto'.
 
 @item -@var{num}
 @opindex -NUM
@@ -313,6 +314,17 @@ When @command{grep} runs on @sc{ms-dos} or MS-Windows, the printed
 byte offsets
 depend on whether the @samp{-u} (@samp{--unix-byte-offsets}) option is
 used; see below.
+
+@item -D @var{action}
+@itemx --devices=@var{action}
+@opindex -D
+@opindex --devices
+@cindex device search
+If an input file is a device, FIFO or socket, use @var{action} to process it.
+By default, @var{action} is @samp{read}, which means that devices are
+read just as if they were ordinary files.
+If @var{action} is @samp{skip}, devices, FIFOs and sockets are silently
+skipped.
 
 @item -d @var{action}
 @itemx --directories=@var{action}
