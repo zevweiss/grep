@@ -13,7 +13,6 @@ libgreputils_a_SOURCES = \
   isdir.c obstack.c quotearg.c savedir.c xmalloc.c xstrtol.c  xstrtoumax.c
 
 libgreputils_a_LIBADD = @LIBOBJS@ @ALLOCA@
-libgreputils_a_DEPENDENCIES = $(libgreputils_a_LIBADD)
 noinst_HEADERS = \
   closeout.h error.h exclude.h fnmatch.h getopt.h \
   hard-locale.h obstack.h quotearg.h regex.h savedir.h xalloc.h xstrtol.h

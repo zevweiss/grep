@@ -8,7 +8,7 @@
 
 # serial 105
 
-AC_DEFUN(AM_WITH_NLS,
+AC_DEFUN([AM_WITH_NLS],
   [AC_MSG_CHECKING([whether NLS is requested])
     dnl Default is enabled NLS
     AC_ARG_ENABLE(nls,
@@ -61,8 +61,8 @@ AC_DEFUN(AM_WITH_NLS,
 
 	   if test "$gt_cv_func_gettext_libc" = "yes" \
 	      || test "$gt_cv_func_gettext_libintl" = "yes"; then
-	      AC_DEFINE(HAVE_GETTEXT, 1, [Define if you have gettext])
-	      AM_PATH_PROG_WITH_TEST(MSGFMT, msgfmt,
+	      AC_DEFINE([HAVE_GETTEXT], 1, [Define if you have gettext])
+	      AM_PATH_PROG_WITH_TEST([MSGFMT], [msgfmt],
 		[test -z "`$ac_dir/$ac_word -h 2>&1 | grep 'dv '`"], no)dnl
 	      if test "$MSGFMT" != "no"; then
 		AC_CHECK_FUNCS(dcgettext)

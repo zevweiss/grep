@@ -20,3 +20,31 @@ ACINCLUDE_INPUTS = $(M4DIR)/decl.m4 $(M4DIR)/djgpp.m4 $(M4DIR)/dosfile.m4 \
   $(M4DIR)/uintmax_t.m4 $(M4DIR)/ulonglong.m4 $(M4DIR)/xstrtoumax.m4
 $(srcdir)/acinclude.m4 : $(ACINCLUDE_INPUTS)
 	cat $(ACINCLUDE_INPUTS) >$(srcdir)/acinclude.m4
+
+cvs-clean:
+	@if test ! -d CVS; then \
+	  echo "You don't have a toplevel CVS directory."; \
+	  echo "You most certainly didn't use cvs to get these sources."; \
+	  echo "But this function depends on cvs's information."; \
+	  exit 1 ;\
+	fi;\
+	pwd=`pwd` ;\
+	dirs=`find . -type d | grep -v CVS | sed -e "s#^./##"` ;\
+	for i in $$dirs; do \
+	  if test ! -d "$$pwd/$$i/CVS"; then \
+	    echo "D $$i" ;\
+	    rm -rf "$$pwd/$$i"; \
+	    continue; \
+	  fi ;\
+	  cd $$pwd/$$i ;\
+	  for f in * .*; do \
+	    if test ! -d "$$f"; then \
+	      if grep "^/$$f/" CVS/Entries > /dev/null; then \
+		a="b"; \
+	      else \
+	        echo "F $$i/$$f"; \
+		rm -f "$$pwd/$$i/$$f"; \
+	      fi; \
+	    fi ; \
+	  done; \
+	done

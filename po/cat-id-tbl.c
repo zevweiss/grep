@@ -69,6 +69,8 @@ Output control:\n\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'\n\
+  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n\
+                            ACTION is 'read' or 'skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
       --include=PATTERN     files that match PATTERN will be examined\n\
       --exclude=PATTERN     files that match PATTERN will be skipped.\n\
@@ -85,42 +87,36 @@ Context control:\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
   -NUM                      same as --context=NUM\n\
-      --color, --colour     use markers to distinguish the matching string\n\
-  -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
-  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
-\n\
-`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
-With no FILE, or when FILE is -, read standard input.  If less than\n\
-two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
-and 2 if trouble.\n", 27},
+      --color[=WHEN],", 27},
   {"\
 \n\
 Report bugs to <bug-gnu-utils@gnu.org>.\n", 28},
   {"conflicting matchers specified", 29},
-  {"unknown directories method", 30},
-  {"invalid max count", 31},
-  {"unknown binary-files type", 32},
-  {"%s (GNU grep) %s\n", 33},
-  {"Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n", 34},
+  {"unknown devices method", 30},
+  {"unknown directories method", 31},
+  {"invalid max count", 32},
+  {"unknown binary-files type", 33},
+  {"%s (GNU grep) %s\n", 34},
+  {"Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n", 35},
   {"\
 This is free software; see the source for copying conditions. There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 35},
-  {"The -P option is not supported", 36},
-  {"The -P and -z options cannot be combined", 37},
-  {"Unknown system error", 38},
-  {"%s: option `%s' is ambiguous\n", 39},
-  {"%s: option `--%s' doesn't allow an argument\n", 40},
-  {"%s: option `%c%s' doesn't allow an argument\n", 41},
-  {"%s: option `%s' requires an argument\n", 42},
-  {"%s: unrecognized option `--%s'\n", 43},
-  {"%s: unrecognized option `%c%s'\n", 44},
-  {"%s: illegal option -- %c\n", 45},
-  {"%s: invalid option -- %c\n", 46},
-  {"%s: option requires an argument -- %c\n", 47},
-  {"%s: option `-W %s' is ambiguous\n", 48},
-  {"%s: option `-W %s' doesn't allow an argument\n", 49},
-  {"`", 50},
-  {"'", 51},
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n", 36},
+  {"The -P option is not supported", 37},
+  {"The -P and -z options cannot be combined", 38},
+  {"Unknown system error", 39},
+  {"%s: option `%s' is ambiguous\n", 40},
+  {"%s: option `--%s' doesn't allow an argument\n", 41},
+  {"%s: option `%c%s' doesn't allow an argument\n", 42},
+  {"%s: option `%s' requires an argument\n", 43},
+  {"%s: unrecognized option `--%s'\n", 44},
+  {"%s: unrecognized option `%c%s'\n", 45},
+  {"%s: illegal option -- %c\n", 46},
+  {"%s: invalid option -- %c\n", 47},
+  {"%s: option requires an argument -- %c\n", 48},
+  {"%s: option `-W %s' is ambiguous\n", 49},
+  {"%s: option `-W %s' doesn't allow an argument\n", 50},
+  {"`", 51},
+  {"'", 52},
 };
 
-int _msg_tbl_length = 51;
+int _msg_tbl_length = 52;
