@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
+"POT-Creation-Date: 1998-04-26 19:31-0400\n"
 "PO-Revision-Date: 1998-08-05 14:08+0200\n"
 "Last-Translator: Rafa³ Maszkowski <rzm@icm.edu.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+#: src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
 msgid "Memory exhausted"
 msgstr "Pamiêæ wyczerpana"
 
-#: src/dfa.c:452
+#: src/dfa.c:444
 msgid "Unfinished \\ escape"
 msgstr "Niedokoñczona sekwencja \\"
 
@@ -26,32 +26,32 @@ msgstr "Niedokoñczona sekwencja \\"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
 msgid "unfinished repeat count"
 msgstr "niedokoñczona liczba powtórzeñ"
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
 msgid "malformed repeat count"
 msgstr "¼le sformatowana liczba powtórzeñ"
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
+#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "[ nie do pary"
 
-#: src/dfa.c:849
+#: src/dfa.c:841
 msgid "Unbalanced ("
 msgstr "( nie do pary"
 
-#: src/dfa.c:970
+#: src/dfa.c:962
 msgid "No syntax specified"
 msgstr "Brak specyfikacji sk³adni"
 
-#: src/dfa.c:978
+#: src/dfa.c:970
 msgid "Unbalanced )"
 msgstr ") nie do pary"
 
-#: src/dfa.c:1998
+#: src/dfa.c:1990
 msgid "out of memory"
 msgstr "brak pamiêci"
 
@@ -161,45 +161,36 @@ msgstr "?? getopt zwróci³ znak o kodzie 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "elementy ARGV nie bêd±ce opcjami: "
 
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
+#: src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "pamiêæ wyczerpana"
 
-#: src/grep.c:324
+#: src/grep.c:293
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: uwaga: %s: %s\n"
 
-#: src/grep.c:429 src/grep.c:1222
+#: src/grep.c:392 src/grep.c:1034
 msgid "writing output"
 msgstr "zapisujê wyniki"
 
-#: src/grep.c:655
-#, c-format
-msgid "Binary file %s matches\n"
-msgstr ""
-
-#: src/grep.c:670
-msgid "(standard input)"
-msgstr "(standardowe wej¶cie)"
-
-#: src/grep.c:800
+#: src/grep.c:597
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
-#: src/grep.c:801
+#: src/grep.c:598
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Spróbuj `%s --help' dla uzyskania informacji.\n"
 
-#: src/grep.c:805
+#: src/grep.c:602
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
-#: src/grep.c:806
+#: src/grep.c:603
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -225,7 +216,7 @@ msgstr ""
 "  -w, --word-regexp         dopasuj WZORZEC tylko do pe³nych s³ów\n"
 "  -x, --line-regexp         dopasuj WZORZEC tylko do ca³ych linii\n"
 
-#: src/grep.c:818
+#: src/grep.c:615
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -241,8 +232,7 @@ msgstr ""
 "  -V, --version             wypisz informacjê o wersji i zakoñcz\n"
 "      --help                wy¶wietl tê informacjê i zakoñcz\n"
 
-#: src/grep.c:825
-#, fuzzy
+#: src/grep.c:622
 msgid ""
 "\n"
 "Output control:\n"
@@ -251,10 +241,6 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'.\n"
-"  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -268,19 +254,16 @@ msgstr ""
 "  -q, --quiet, --silent     wy³±cz wypisywanie wyniku\n"
 "  -L, --files-without-match wypisz tylko nazwy PLIKÓW bez trafieñ\n"
 "  -l, --files-with-matches  wypisz tylko nazwy PLIKÓW z trafieniami\n"
-"  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym "
-"PLIKu\n"
+"  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym PLIKu\n"
 
-#: src/grep.c:840
-#, fuzzy
+#: src/grep.c:633
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -NUM                      same as both -B NUM and -A NUM\n"
+"  -C, --context             same as -2\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -304,24 +287,15 @@ msgstr ""
 "pasuje, z 1, je¿eli nie, z 2, je¿eli napotkano b³êdy syntaktyczne lub\n"
 "systemowe.\n"
 
-#: src/grep.c:855
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr ""
-"\n"
-"Raporty o b³êdach wysy³aj do bug-gnu-utils@gnu.org.\n"
+#: src/grep.c:647
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nRaporty o b³êdach wysy³aj do bug-gnu-utils@gnu.org.\n"
 
-#: src/grep.c:998 src/grep.c:1005
+#: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
 msgstr "b³êdny argument d³ugo¶ci kontekstowej"
 
-#: src/grep.c:1014
-#, fuzzy
-msgid "infalid context length argument"
-msgstr "b³êdny argument d³ugo¶ci kontekstowej"
-
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
+#: src/grep.c:800 src/grep.c:805 src/grep.c:810
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "mo¿esz podaæ tylko jedn± opcjê z -E -F -G"
 
@@ -333,39 +307,36 @@ msgstr "mo¿esz podaæ tylko jedn± opcjê z -E -F -G"
 #  grep --help ->
 #  usage: grep [-[[AB] ]<num>] [-[CEFGVchilnqsvwx]] [-[ef]] <expr> [<files...>]
 #  La opción -X es a la que corresponde esta línea.
-#: src/grep.c:1050
+#: src/grep.c:829
 msgid "matcher already specified"
 msgstr "wzorzec ju¿ podany"
 
-#: src/grep.c:1071
-msgid "unknown directories method"
-msgstr ""
-
-#: src/grep.c:1157
+#: src/grep.c:915
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:917
+msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1161
+#: src/grep.c:919
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Oprogramowanie darmowe. Warunki kopiowania zamieszczone s± w kodzie "
-"¼ród³owym.\n"
-"Nie podlega ¿adnej gwarancji, nawet gwarancji przydatno¶ci do "
-"jakiegokolwiek\n"
+"Oprogramowanie darmowe. Warunki kopiowania zamieszczone s± w kodzie ¼ród³owym.\n"
+"Nie podlega ¿adnej gwarancji, nawet gwarancji przydatno¶ci do jakiegokolwiek\n"
 "zastosowania lub sprzeda¿y.\n"
+
+#: src/grep.c:964 src/grep.c:1015
+msgid "(standard input)"
+msgstr "(standardowe wej¶cie)"
+
+#: src/grep.c:1027 src/grep.c:1030
+msgid "(standard input)\n"
+msgstr "(standardowe wyj¶cie)\n"
 
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "pamiêæ wyczerpana\n"
-
-#~ msgid "(standard input)\n"
-#~ msgstr "(standardowe wyj¶cie)\n"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.1.1b\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
+"POT-Creation-Date: 1998-03-26 23:45-0500\n"
 "PO-Revision-Date: 1998-05-23 15:26\n"
 "Last-Translator: Denis Y. Pershin <dyp@siblug.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -14,11 +14,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8-bit\n"
 
 #
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+#: src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
 msgid "Memory exhausted"
 msgstr "Память исчерпана"
 
-#: src/dfa.c:452
+#: src/dfa.c:444
 msgid "Unfinished \\ escape"
 msgstr "Незавершенная \\ последовательность"
 
@@ -27,32 +27,32 @@ msgstr "Незавершенная \\ последовательность"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
 msgid "unfinished repeat count"
 msgstr "незавершенное количество повторений"
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
 msgid "malformed repeat count"
 msgstr "некорректно указано количество повторений"
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
+#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "Несбалансированная ["
 
-#: src/dfa.c:849
+#: src/dfa.c:841
 msgid "Unbalanced ("
 msgstr "Несбалансированная ("
 
-#: src/dfa.c:970
+#: src/dfa.c:962
 msgid "No syntax specified"
 msgstr "Не указано синтаксиса"
 
-#: src/dfa.c:978
+#: src/dfa.c:970
 msgid "Unbalanced )"
 msgstr "Несбалансированная )"
 
-#: src/dfa.c:1998
+#: src/dfa.c:1990
 msgid "out of memory"
 msgstr "закончилась память"
 
@@ -161,45 +161,36 @@ msgstr "?? gotopt вернул символ с кодом 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "ARGV-элементы - не опции: "
 
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
+#: src/grep.c:143 src/grep.c:160 src/grep.c:203 src/grep.c:244 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "память исчерпана"
 
-#: src/grep.c:324
+#: src/grep.c:274
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: предупреждение: %s: %s\n"
 
-#: src/grep.c:429 src/grep.c:1222
+#: src/grep.c:373 src/grep.c:1044
 msgid "writing output"
 msgstr "записываю выходные данные"
 
-#: src/grep.c:655
-#, c-format
-msgid "Binary file %s matches\n"
-msgstr ""
-
-#: src/grep.c:670
-msgid "(standard input)"
-msgstr "(стандартный ввод)"
-
-#: src/grep.c:800
+#: src/grep.c:578
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Использование: %s [OPTION]... PATTERN [FILE]...\n"
 
-#: src/grep.c:801
+#: src/grep.c:579
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Попробуйте `%s --help' для получения более подробного описания.\n"
 
-#: src/grep.c:805
+#: src/grep.c:583
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Использование: %s [OPTION]... PATTERN [FILE] ...\n"
 
-#: src/grep.c:806
+#: src/grep.c:584
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -226,7 +217,7 @@ msgstr ""
 "  -w, --word-regexp         PATTERN должен подходить ко всему слову\n"
 "  -x, --line-regexp         PATTERN должен подходить ко всей строке\n"
 
-#: src/grep.c:818
+#: src/grep.c:596
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -242,8 +233,7 @@ msgstr ""
 "  -V, --version             напечатать информацию о версии и выйти\n"
 "      --help                показать помощь и выйти\n"
 
-#: src/grep.c:825
-#, fuzzy
+#: src/grep.c:603
 msgid ""
 "\n"
 "Output control:\n"
@@ -252,39 +242,30 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'.\n"
-"  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 msgstr ""
 "\n"
 "Управление выводом:\n"
-"  -b, --byte-offset         печатать вместе с выходными строчками смещение "
-"в\n"
+"  -b, --byte-offset         печатать вместе с выходными строчками смещение в\n"
 "                            байтах\n"
-"  -n, --line-number         печатать номер строки вместе с выходными "
-"строчками\n"
+"  -n, --line-number         печатать номер строки вместе с выходными строчками\n"
 "  -H, --with-filename       печатать имя файла для каждого совпадения\n"
 "  -h, --no-filename         подавить вывод имени файла на выходе\n"
 "  -q, --quiet, --silent     подавить весь обычный вывод\n"
 "  -L, --files-without-match печатать только имена файлов без совпадений\n"
 "  -l, --files-with-matches  печатать только имена файлов с совпадениями\n"
-"  -c, --count               печатать только количество совпадающих строк на "
-"файл\n"
+"  -c, --count               печатать только количество совпадающих строк на файл\n"
 
-#: src/grep.c:840
-#, fuzzy
+#: src/grep.c:614
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -NUM                      same as both -B NUM and -A NUM\n"
+"  -C, --context             same as -2\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -302,53 +283,81 @@ msgstr ""
 "  -U, --binary              не удалять сиволы CR в конце строки (MSDOS)\n"
 "  -u, --unix-byte-offsets   выдавать смещение, как-будто нет CR-ов (MSDOS)\n"
 "\n"
-"Если не указано -[GEF], тогда `egrep' предполагает -E, `fgrep' -F, иначе "
-"-G.\n"
-"Когда нет FILE'а, или когда FILE это -, читает стандартный ввод. Если "
-"задано\n"
-"меньше, чем два файла, предполагает -h. Выходит с 0 если найдены "
-"совпадения,\n"
+"Если не указано -[GEF], тогда `egrep' предполагает -E, `fgrep' -F, иначе -G.\n"
+"Когда нет FILE'а, или когда FILE это -, читает стандартный ввод. Если задано\n"
+"меньше, чем два файла, предполагает -h. Выходит с 0 если найдены совпадения,\n"
 "с 1, если нет. Выходит с 2, если есть синтаксическио или системные ошибки.\n"
 
-#: src/grep.c:855
+#: src/grep.c:646
 msgid ""
 "\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+"In REGEXPs, most characters stand for themselves, save for all the\n"
+"following cases:\n"
+"\n"
+"  ^             empty string at beginning of line\n"
+"  $             empty string at end of line\n"
+"  \\<            empty string at beginning of word\n"
+"  \\>            empty string at end of word\n"
+"  \\b            empty string at edge of word\n"
+"  \\B            empty string not at edge of word\n"
+"  .             match any character\n"
+"  \\w            same as [[:alnum:]]\n"
+"  \\W            same as [^[:alnum:]]\n"
+"  [RANGE...]    accept character in any of RANGEs\n"
+"  [^RANGE...]   accept character in none of RANGEs\n"
+"  \\NUM          match text matched by NUM'th parenthesized\n"
+"                previous expression (counting from 1)\n"
+"\n"
+"Each RANGE is one of [:CLASS:], CHAR1-CHAR2 or CHAR.  CLASS is one of\n"
+"the words alnum, alpha, cntrl, digit, graph, lower, print, punct,\n"
+"space, upper or xdigit.  In a list of RANGEs, place ] first, - last\n"
+"and ^ anywhere but first.\n"
 msgstr ""
 "\n"
-"Об ошибках сообщайте <bug-gnu-utils@gnu.org>.\n"
+"В регулярных выражениях большинство символов означают самих себя, за\n"
+"исключением следующих случаев:\n"
+"\n"
+"  ^             пустая строка в начале строки\n"
+"  $             пустая строка в конце строки\n"
+"  \\<            пустая строка в начале словаe\n"
+"  \\>            пустая строка в конце слова\n"
+"  \\b            пустая строка по краям слова\n"
+"  \\B            пустая строка не по краям слова\n"
+"  .             совпадение с любым из символов:\n"
+"  \\w            таким же, как [[:alnum:]]\n"
+"  \\W            таким же, как [^[:alnum:]]\n"
+"  [RANGE...]    допускается любой символ из промежутков\n"
+"  [^RANGE...]   допускается любой символ не из промежутков\n"
+"  \\NUM          текст, совпадает с NUM скобок\n"
+"                предыдущее выражение (начиная с 1)\n"
+"\n"
+"Каждый RANGE(промежуток) принадлежит к одному из [:CLASS:], CHAR1-CHAR2\n"
+"или CHAR.  CLASS одино из слов alnum, alpha, cntrl, digit, graph, lower,\n"
+"print, punct, space, upper или xdigit.  В списке промежутков помещайте\n"
+"] первым, - последним и ^ везде, кроме первого.\n"
 
-#: src/grep.c:998 src/grep.c:1005
-msgid "invalid context length argument"
-msgstr ""
+#: src/grep.c:669
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nОб ошибках сообщайте <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1014
-msgid "infalid context length argument"
-msgstr ""
-
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
+#: src/grep.c:818 src/grep.c:823 src/grep.c:828
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "вы должны указать только одну из -E, -F или -G"
 
-#: src/grep.c:1050
+#: src/grep.c:847
 msgid "matcher already specified"
 msgstr "образец уже задан"
 
-#: src/grep.c:1071
-msgid "unknown directories method"
-msgstr ""
-
-#: src/grep.c:1157
+#: src/grep.c:933
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr ""
 
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:935
+msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/grep.c:1161
+#: src/grep.c:937
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -357,57 +366,15 @@ msgstr ""
 "тексты для условий копирования. НЕ дается никакой гарантии, даже о\n"
 "ПОДХОДИМОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ.\n"
 
+#: src/grep.c:1002 src/grep.c:1025
+msgid "(standard input)"
+msgstr "(стандартный ввод)"
+
+#: src/grep.c:1037 src/grep.c:1040
+msgid "(standard input)\n"
+msgstr "(стандартный ввод)\n"
+
 #
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "память исчерпана\n"
-
-#~ msgid "(standard input)\n"
-#~ msgstr "(стандартный ввод)\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "In REGEXPs, most characters stand for themselves, save for all the\n"
-#~ "following cases:\n"
-#~ "\n"
-#~ "  ^             empty string at beginning of line\n"
-#~ "  $             empty string at end of line\n"
-#~ "  \\<            empty string at beginning of word\n"
-#~ "  \\>            empty string at end of word\n"
-#~ "  \\b            empty string at edge of word\n"
-#~ "  \\B            empty string not at edge of word\n"
-#~ "  .             match any character\n"
-#~ "  \\w            same as [[:alnum:]]\n"
-#~ "  \\W            same as [^[:alnum:]]\n"
-#~ "  [RANGE...]    accept character in any of RANGEs\n"
-#~ "  [^RANGE...]   accept character in none of RANGEs\n"
-#~ "  \\NUM          match text matched by NUM'th parenthesized\n"
-#~ "                previous expression (counting from 1)\n"
-#~ "\n"
-#~ "Each RANGE is one of [:CLASS:], CHAR1-CHAR2 or CHAR.  CLASS is one of\n"
-#~ "the words alnum, alpha, cntrl, digit, graph, lower, print, punct,\n"
-#~ "space, upper or xdigit.  In a list of RANGEs, place ] first, - last\n"
-#~ "and ^ anywhere but first.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "В регулярных выражениях большинство символов означают самих себя, за\n"
-#~ "исключением следующих случаев:\n"
-#~ "\n"
-#~ "  ^             пустая строка в начале строки\n"
-#~ "  $             пустая строка в конце строки\n"
-#~ "  \\<            пустая строка в начале словаe\n"
-#~ "  \\>            пустая строка в конце слова\n"
-#~ "  \\b            пустая строка по краям слова\n"
-#~ "  \\B            пустая строка не по краям слова\n"
-#~ "  .             совпадение с любым из символов:\n"
-#~ "  \\w            таким же, как [[:alnum:]]\n"
-#~ "  \\W            таким же, как [^[:alnum:]]\n"
-#~ "  [RANGE...]    допускается любой символ из промежутков\n"
-#~ "  [^RANGE...]   допускается любой символ не из промежутков\n"
-#~ "  \\NUM          текст, совпадает с NUM скобок\n"
-#~ "                предыдущее выражение (начиная с 1)\n"
-#~ "\n"
-#~ "Каждый RANGE(промежуток) принадлежит к одному из [:CLASS:], CHAR1-CHAR2\n"
-#~ "или CHAR.  CLASS одино из слов alnum, alpha, cntrl, digit, graph, lower,\n"
-#~ "print, punct, space, upper или xdigit.  В списке промежутков помещайте\n"
-#~ "] первым, - последним и ^ везде, кроме первого.\n"

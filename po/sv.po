@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
+"POT-Creation-Date: 1998-04-26 19:31-0400\n"
 "PO-Revision-Date: 1998-08-31 16:02-0200\n"
 "Last-Translator: Daniel Bergstrom <daniel@bergstrom.net>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -14,11 +14,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+#: src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
 msgid "Memory exhausted"
 msgstr "Minnet slut"
 
-#: src/dfa.c:452
+#: src/dfa.c:444
 msgid "Unfinished \\ escape"
 msgstr "Oavslutad \\-sekvens"
 
@@ -27,32 +27,32 @@ msgstr "Oavslutad \\-sekvens"
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+#: src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
 msgid "unfinished repeat count"
 msgstr "oavslutad repetitionsräknare"
 
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+#: src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
 msgid "malformed repeat count"
 msgstr "felformaterad repetionsräknare"
 
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+#: src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
+#: src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
 msgid "Unbalanced ["
 msgstr "Obalanserad ["
 
-#: src/dfa.c:849
+#: src/dfa.c:841
 msgid "Unbalanced ("
 msgstr "Obalanserad ("
 
-#: src/dfa.c:970
+#: src/dfa.c:962
 msgid "No syntax specified"
 msgstr "Ingen specifierad syntax"
 
-#: src/dfa.c:978
+#: src/dfa.c:970
 msgid "Unbalanced )"
 msgstr "Obalanserad )"
 
-#: src/dfa.c:1998
+#: src/dfa.c:1990
 msgid "out of memory"
 msgstr "minnet slut"
 
@@ -161,45 +161,36 @@ msgstr "?? getopt returnerade teckenkod 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "ARGV-element är inte flaggor: "
 
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
+#: src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "minnet slut"
 
-#: src/grep.c:324
+#: src/grep.c:293
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: varning: %s: %s\n"
 
-#: src/grep.c:429 src/grep.c:1222
+#: src/grep.c:392 src/grep.c:1034
 msgid "writing output"
 msgstr "skriver utdata"
 
-#: src/grep.c:655
-#, c-format
-msgid "Binary file %s matches\n"
-msgstr ""
-
-#: src/grep.c:670
-msgid "(standard input)"
-msgstr "(standard in)"
-
-#: src/grep.c:800
+#: src/grep.c:597
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
 
-#: src/grep.c:801
+#: src/grep.c:598
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Försök med \"%s --help\" för mer information\n"
 
-#: src/grep.c:805
+#: src/grep.c:602
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
 
-#: src/grep.c:806
+#: src/grep.c:603
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -217,8 +208,7 @@ msgstr ""
 "\n"
 "Val och tolkning av reguljära uttryck:\n"
 " -E, --extended-regexp      MÖNSTER är ett utökat reguljärt uttryck\n"
-" -F, --fixed-regexp         MÖNSTER är en fixerad sträng separerad med "
-"nyrad\n"
+" -F, --fixed-regexp         MÖNSTER är en fixerad sträng separerad med nyrad\n"
 " -G, --basic-regexp         MÖNSTER är ett enkelt reguljärt uttryck\n"
 " -e, --regexp=MÖNSTER       använd MÖNSTER som ett reguljärt uttryck\n"
 " -f, --file=FIL             hämta MÖNSTER från FIL\n"
@@ -226,7 +216,7 @@ msgstr ""
 " -w, --word-regexp          tvinga MÖNSTER att endast matcha hela ord\n"
 " -x, --line-regexp          tvinga MÖNSTER att endast matcha hela rader\n"
 
-#: src/grep.c:818
+#: src/grep.c:615
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -242,8 +232,7 @@ msgstr ""
 "  -V, --version             visa versionsinformation och avsluta\n"
 "      --help                visa detta hjälpmeddelande och avsluta\n"
 
-#: src/grep.c:825
-#, fuzzy
+#: src/grep.c:622
 msgid ""
 "\n"
 "Output control:\n"
@@ -252,10 +241,6 @@ msgid ""
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"  -a, --text                do not suppress binary output\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'.\n"
-"  -r, --recursive           equivalent to --directories=recurse.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -269,19 +254,16 @@ msgstr ""
 "  -q, --quiet, --silent     undvik all normal utskrift\n"
 "  -L, --files-without-match skriv bara ut FILnamn utan träffar\n"
 "  -l, --files-with-matches  skriv bara ut FILnamn med träffar\n"
-"  -c, --count               skriv för varje FIL bara ut antal träffade "
-"rader\n"
+"  -c, --count               skriv för varje FIL bara ut antal träffade rader\n"
 
-#: src/grep.c:840
-#, fuzzy
+#: src/grep.c:633
 msgid ""
 "\n"
 "Context control:\n"
 "  -B, --before-context=NUM  print NUM lines of leading context\n"
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
-"  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
-"                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -NUM                      same as both -B NUM and -A NUM\n"
+"  -C, --context             same as -2\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -305,48 +287,30 @@ msgstr ""
 "två FILer är angivna, sätts flaggan -h. Programmet returnerar 0 om något\n"
 "matchar, 1 om inget matchade och 2 vid syntaxfel eller systemrelaterade fel\n"
 
-#: src/grep.c:855
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+#: src/grep.c:647
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Rapportera buggar till <bug-gnu-utils@gnu.org>.\n"
 "Skicka anmärkningar på översättningar till <sv@li.org>\n"
 
-#: src/grep.c:998 src/grep.c:1005
+#: src/grep.c:785 src/grep.c:792
 msgid "invalid context length argument"
 msgstr "ogiltigt argument till -A, -B eller -C"
 
-#: src/grep.c:1014
-#, fuzzy
-msgid "infalid context length argument"
-msgstr "ogiltigt argument till -A, -B eller -C"
-
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
-msgid "you may specify only one of -E, -F, or -G"
-msgstr ""
-
-#: src/grep.c:1050
 msgid "matcher already specified"
 msgstr "söksträng redan specificerad"
 
-#: src/grep.c:1071
-msgid "unknown directories method"
-msgstr ""
-
-#: src/grep.c:1157
+#: src/grep.c:915
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:917
+msgid "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1161
+#: src/grep.c:919
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -355,9 +319,14 @@ msgstr ""
 "finns INGEN garanti, inte ens för SÄLJBARHET eller LÄMPLIGHET FÖR NÅGOT\n"
 "SPECIELLT ÄNDAMÅL.\n"
 
+#: src/grep.c:964 src/grep.c:1015
+msgid "(standard input)"
+msgstr "(standard in)"
+
+#: src/grep.c:1027 src/grep.c:1030
+msgid "(standard input)\n"
+msgstr "(standard in)\n"
+
 #: src/obstack.c:467
 msgid "memory exhausted\n"
 msgstr "minnet slut\n"
-
-#~ msgid "(standard input)\n"
-#~ msgstr "(standard in)\n"

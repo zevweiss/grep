@@ -1,244 +1,345 @@
-# Greek messages for GNU grep-2.2.
+# Greek messages for GNU grep-2.2e.
 # Copyright (C) 1998 Free Software Foundation, Inc.
-# Simos KSenitellis <simos@teiath.gr>, 1998.
+# Simos KSenitellis <S.Xenitellis@rhbnc.ac.uk>, 1998.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
-"PO-Revision-Date: 1998-05-02 16:38+0200\n"
-"Last-Translator: Simos KSenitellis <simos@teiath.gr>\n"
-"Language-Team: Greek <simos@teiath.gr>\n"
+"Project-Id-Version: GNU grep 2.2e\n"
+"POT-Creation-Date: 1998-12-02 00:30-0500\n"
+"PO-Revision-Date: 1998-12-25 21:11+0000\n"
+"Last-Translator: Simos KSenitellis <S.Xenitellis@rhbnc.ac.uk>\n"
+"Language-Team: Greek <S.Xenitellis@rhbnc.ac.uk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-7\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
+#
 # src/dfa.c:147 src/dfa.c:159 src/dfa.c:172
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+# src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:827
+# File: src/dfa.c, line: 155
+# File: src/dfa.c, line: 167
+# File: src/dfa.c, line: 180
+# File: src/grep.c, line: 827
 msgid "Memory exhausted"
 msgstr "Η μνήμη εξαντλήθηκε"
 
+#
 # src/dfa.c:444
-#: src/dfa.c:452
+# src/dfa.c:452
+# File: src/dfa.c, line: 452
 msgid "Unfinished \\ escape"
 msgstr "Μη τερματισμένος χαρακτήρας διαφυγής \\"
 
+#
 # src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
+# src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
+# File: src/dfa.c, line: 564
+# File: src/dfa.c, line: 570
+# File: src/dfa.c, line: 581
+# File: src/dfa.c, line: 592
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {,M} - 0 through M
 #. {M,N} - M through N
-#: src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
 msgid "unfinished repeat count"
 msgstr "μη τερματισμένος μετρητής επανάληψης"
 
+#
 # src/dfa.c:569 src/dfa.c:583 src/dfa.c:587
-#: src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+# src/dfa.c:577 src/dfa.c:591 src/dfa.c:595
+# File: src/dfa.c, line: 577
+# File: src/dfa.c, line: 591
+# File: src/dfa.c, line: 595
 msgid "malformed repeat count"
 msgstr "κακοσχηματισμένος μετρητής επανάληψης"
 
+#
 # src/dfa.c:652 src/dfa.c:655 src/dfa.c:682 src/dfa.c:686 src/dfa.c:687
 # src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
-#: src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
-#: src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+# src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
+# src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
+# File: src/dfa.c, line: 660
+# File: src/dfa.c, line: 663
+# File: src/dfa.c, line: 690
+# File: src/dfa.c, line: 694
+# File: src/dfa.c, line: 695
+# File: src/dfa.c, line: 698
+# File: src/dfa.c, line: 711
+# File: src/dfa.c, line: 712
 msgid "Unbalanced ["
 msgstr "Μη ισσοροπημένο ["
 
+#
 # src/dfa.c:841
-#: src/dfa.c:849
+# src/dfa.c:849
+# File: src/dfa.c, line: 849
 msgid "Unbalanced ("
 msgstr "Μη ισορροπημένο ("
 
+#
 # src/dfa.c:962
-#: src/dfa.c:970
+# src/dfa.c:970
+# File: src/dfa.c, line: 970
 msgid "No syntax specified"
 msgstr "Δεν ορίστηκε συντακτικό"
 
+#
 # src/dfa.c:970
-#: src/dfa.c:978
+# src/dfa.c:978
+# File: src/dfa.c, line: 978
 msgid "Unbalanced )"
 msgstr "Μη ισορροπημένο )"
 
+#
 # src/dfa.c:1990
-#: src/dfa.c:1998
+# src/dfa.c:1998
+# File: src/dfa.c, line: 1998
 msgid "out of memory"
 msgstr "εξαντλήθηκε η μνήμη"
 
+#
 # src/getopt.c:628
-#: src/getopt.c:628
+# src/getopt.c:628
+# File: src/getopt.c, line: 628
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr "%s: η επιλογή `%s' είναι διφορούμενη\n"
 
+#
 # src/getopt.c:652
-#: src/getopt.c:652
+# src/getopt.c:652
+# File: src/getopt.c, line: 652
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr "%s: η επιλογή `--%s' δεν επιτρέπει ορίσματα\n"
 
+#
 # src/getopt.c:657
-#: src/getopt.c:657
+# src/getopt.c:657
+# File: src/getopt.c, line: 657
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr "%s: η επιλογή `%c%s' δεν επιτρέπει ορίσματα\n"
 
+#
 # src/getopt.c:674 src/getopt.c:847
-#: src/getopt.c:674 src/getopt.c:847
+# src/getopt.c:674 src/getopt.c:847
+# File: src/getopt.c, line: 674
+# File: src/getopt.c, line: 847
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr "%s: η επιλογή `%s' απαιτεί όρισμα\n"
 
+#
 # src/getopt.c:703
+# src/getopt.c:703
+# File: src/getopt.c, line: 703
 #. --option
-#: src/getopt.c:703
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s: μη αναγνωρίσιμη επιλογή `--%s'\n"
 
+#
 # src/getopt.c:707
+# src/getopt.c:707
+# File: src/getopt.c, line: 707
 #. +option or -option
-#: src/getopt.c:707
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s: μη αναγνωρίσιμη επιλογή `%c%s'\n"
 
+#
 # src/getopt.c:733
+# src/getopt.c:733
+# File: src/getopt.c, line: 733
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:733
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr "%s: μη αποδεκτή επιλογή -- %c\n"
 
+#
 # src/getopt.c:736
-#: src/getopt.c:736
+# src/getopt.c:736
+# File: src/getopt.c, line: 736
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "%s: μη έγκυρη επιλογή -- %c\n"
 
+#
 # src/getopt.c:766 src/getopt.c:896
+# src/getopt.c:766 src/getopt.c:896
+# File: src/getopt.c, line: 766
+# File: src/getopt.c, line: 896
 #. 1003.2 specifies the format of this message.
-#: src/getopt.c:766 src/getopt.c:896
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr "%s: η επιλογή απαιτεί ένα όρισμα -- %c\n"
 
+#
 # src/getopt.c:813
-#: src/getopt.c:813
+# src/getopt.c:813
+# File: src/getopt.c, line: 813
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr "%s: η επιλογή `-W %s' είναι διφορούμενη\n"
 
+#
 # src/getopt.c:831
-#: src/getopt.c:831
+# src/getopt.c:831
+# File: src/getopt.c, line: 831
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: η επιλογή `-W %s' δεν δέχεται ορίσματα\n"
 
+#
 # src/getopt1.c:132
-#: src/getopt1.c:132
+# src/getopt1.c:132
+# File: src/getopt1.c, line: 132
 #, c-format
 msgid "option %s"
 msgstr "επιλογή %s"
 
+#
 # src/getopt1.c:134
-#: src/getopt1.c:134
+# src/getopt1.c:134
+# File: src/getopt1.c, line: 134
 #, c-format
 msgid " with arg %s"
 msgstr " με όρισμα %s"
 
+#
 # src/getopt1.c:149
-#: src/getopt1.c:149
+# src/getopt1.c:149
+# File: src/getopt1.c, line: 149
 msgid "digits occur in two different argv-elements.\n"
 msgstr "υπάρχουν ψηφία σε δύο διαφορετικά argv-στοιχεία.\n"
 
+#
 # src/getopt1.c:151
-#: src/getopt1.c:151
+# src/getopt1.c:151
+# File: src/getopt1.c, line: 151
 #, c-format
 msgid "option %c\n"
 msgstr "επιλογή %c\n"
 
+#
 # src/getopt1.c:155
-#: src/getopt1.c:155
+# src/getopt1.c:155
+# File: src/getopt1.c, line: 155
 msgid "option a\n"
 msgstr "επιλογή α\n"
 
+#
 # src/getopt1.c:159
-#: src/getopt1.c:159
+# src/getopt1.c:159
+# File: src/getopt1.c, line: 159
 msgid "option b\n"
 msgstr "επιλογή β\n"
 
+#
 # src/getopt1.c:163
-#: src/getopt1.c:163
+# src/getopt1.c:163
+# File: src/getopt1.c, line: 163
 #, c-format
 msgid "option c with value `%s'\n"
 msgstr "επιλογή γ με τιμή `%s'\n"
 
+#
 # src/getopt1.c:167
-#: src/getopt1.c:167
+# src/getopt1.c:167
+# File: src/getopt1.c, line: 167
 #, c-format
 msgid "option d with value `%s'\n"
 msgstr "επιλογή δ με τιμή `%s'\n"
 
+#
 # src/getopt1.c:174
-#: src/getopt1.c:174
+# src/getopt1.c:174
+# File: src/getopt1.c, line: 174
 #, c-format
 msgid "?? getopt returned character code 0%o ??\n"
 msgstr "?? η getopt επέστρεψε αλφαβητικό κωδικό 0%o ??\n"
 
+#
 # src/getopt1.c:180
-#: src/getopt1.c:180
+# src/getopt1.c:180
+# File: src/getopt1.c, line: 180
 msgid "non-option ARGV-elements: "
 msgstr "ARGV-στοιχεία που δεν είναι επιλογές: "
 
+#
 # src/grep.c:144 src/grep.c:161 src/grep.c:222 src/grep.c:263 src/kwset.c:184
 # src/kwset.c:190
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
-#: src/kwset.c:190
+# src/grep.c:164 src/grep.c:181 src/grep.c:283 src/grep.c:338 src/kwset.c:184
+# src/kwset.c:190
+# File: src/grep.c, line: 164
+# File: src/grep.c, line: 181
+# File: src/grep.c, line: 283
+# File: src/grep.c, line: 338
+# File: src/kwset.c, line: 184
+# File: src/kwset.c, line: 190
 msgid "memory exhausted"
 msgstr "η μνήμη εξαντλήθηκε"
 
+#
 # src/grep.c:293
-#: src/grep.c:324
+# src/grep.c:366
+# File: src/grep.c, line: 366
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: προειδοποίηση: %s: %s\n"
 
+#
 # src/grep.c:392 src/grep.c:1034
-#: src/grep.c:429 src/grep.c:1222
+# src/grep.c:487 src/grep.c:1284
+# File: src/grep.c, line: 487
+# File: src/grep.c, line: 1284
 msgid "writing output"
 msgstr "εγγραφή αποτελέσματος"
 
-#: src/grep.c:655
+#
+# src/grep.c:715
+# File: src/grep.c, line: 715
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr ""
+msgstr "Δυαδικό αρχείο %s ταιριάσματα\n"
 
+#
 # src/grep.c:964 src/grep.c:1015
-#: src/grep.c:670
+# src/grep.c:730
+# File: src/grep.c, line: 730
 msgid "(standard input)"
 msgstr "(στάνταρτ είσοδος)"
 
+#
 # src/grep.c:597
-#: src/grep.c:800
+# src/grep.c:862
+# File: src/grep.c, line: 862
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ]...\n"
 
+#
 # src/grep.c:598
-#: src/grep.c:801
+# src/grep.c:863
+# File: src/grep.c, line: 863
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Δοκιμάστε `%s --help' για περισσότερες πληροφορίες.\n"
 
+#
 # src/grep.c:602
-#: src/grep.c:805
+# src/grep.c:867
+# File: src/grep.c, line: 867
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΧΗΜΑΤΙΣΜΟΣ [ΑΡΧΕΙΟ] ...\n"
 
+#
 # src/grep.c:603
-#: src/grep.c:806
+# src/grep.c:868
+# File: src/grep.c, line: 868
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -255,22 +356,19 @@ msgstr ""
 "Αναζήτηση για ΣΧΗΜΑΤΙΣΜΟ σε κάθε ΑΡΧΕΙΟ ή στη στάνταρτ είσοδο.\n"
 "\n"
 "Επιλογές ή regexp και εξήγηση:\n"
-"  -E, --extended-regexp     ΣΧΗΜΑΤΙΣΜΟΣ είναι μια εκτεταμένη κανονική "
-"έκφραση\n"
-"  -F, --fixed-regexp        ΣΧΗΜΑΤΙΣΜΟΣ είναι στατικό αλφαριθμητικό "
-"διαχωριζόμενο με χαρακτήρες αλλαγής γραμμής\n"
+"  -E, --extended-regexp     ΣΧΗΜΑΤΙΣΜΟΣ είναι μια εκτεταμένη κανονική έκφραση\n"
+"  -F, --fixed-regexp        ΣΧΗΜΑΤΙΣΜΟΣ είναι στατικό αλφαριθμητικό διαχωριζόμενο με χαρακτήρες αλλαγής γραμμής\n"
 "  -G, --basic-regexp        ΣΧΗΜΑΤΙΣΜΟΣ είναι απλή κανονική έκφραση\n"
 "  -e, --regexp=ΣΧΗΜΑΤΙΣΜΟΣ  χρήση ΣΧΗΜΑΤΙΣΜΟΥ για κανονική έκφραση\n"
 "  -f, --file=ΑΡΧΕΙΟ         λήψη ΣΧΗΜΑΤΙΣΜΟΥ από το αρχείο ΑΡΧΕΙΟ\n"
-"  -i, --ignore-case         αγνόησε διαφορές πεζών/κεφαλαίων ignore case "
-"distinctions\n"
-"  -w, --word-regexp         επιβολή του ΣΧΗΜΑΤΙΣΜΟΥ να ταιριάζει μόνο "
-"ολόκληρες λέξεις\n"
-"  -x, --line-regexp         επιβολή του force PATTERN να ταιριάζει μόνο "
-"ολόκληρες γραμμές\n"
+"  -i, --ignore-case         αγνόησε διαφορές πεζών/κεφαλαίων ignore case distinctions\n"
+"  -w, --word-regexp         επιβολή του ΣΧΗΜΑΤΙΣΜΟΥ να ταιριάζει μόνο ολόκληρες λέξεις\n"
+"  -x, --line-regexp         επιβολή του force PATTERN να ταιριάζει μόνο ολόκληρες γραμμές\n"
 
+#
 # src/grep.c:615
-#: src/grep.c:818
+# src/grep.c:880
+# File: src/grep.c, line: 880
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -286,9 +384,10 @@ msgstr ""
 "  -V, --version             εμφάνισης πληροφοριών έκδοσης και έξοδος\n"
 "      --help                εμφάνισης αυτής της βοήθειας και έξοδος\n"
 
+#
 # src/grep.c:622
-#: src/grep.c:825
-#, fuzzy
+# src/grep.c:887
+# File: src/grep.c, line: 887
 msgid ""
 "\n"
 "Output control:\n"
@@ -307,23 +406,24 @@ msgid ""
 msgstr ""
 "\n"
 "Έλεγχος εξόδου:\n"
-"  -b, --byte-offset         εμφάνιση σχετικής θέσης του byte με τις "
-"αντίστοιχες γραμμές\n"
-"  -n, --line-number         εμφάνιση αριθμών γραμμής των αντίστοιχων "
-"γραμμών\n"
+"  -b, --byte-offset         εμφάνιση σχετικής θέσης του byte με τις γραμμές εξόδου\n"
+"  -n, --line-number         εμφάνιση αριθμών γραμμής με τις γραμμές εξόδου\n"
 "  -H, --with-filename       εμφάνιση ονόματος αρχείου με κάθε ταίριασμα\n"
-"  -h, --no-filename         αποφυγή εμφάνισης του ονόματος του αρχείου στην "
-"αρχή της εξόδου\n"
+"  -h, --no-filename         αποφυγή εμφάνισης του ονόματος του αρχείου στην αρχή της εξόδου\n"
 "  -q, --quiet, --silent     αποφυγή εμφάνισης όλης της κανονικής εξόδου\n"
-"  -L, --files-without-match εμφάνιση μόνο τα ονόματα ΑΡΧΕΙΩΝ που δεν "
-"περιέχουν ταιριάσματα\n"
+"  -a, --text                να μην αποφευχθεί η έξοδος δυαδικών δεδομένων\n"
+"  -d, --directories=ΕΝΕΡΓΕΙΑ  τρόπος χρήσης των καταλόγων\n"
+"                            Η ΕΝΕΡΓΕΙΑ είναι 'read', 'recurse' ή 'skip'.\n"
+"                            (Για ανάγνωση, αναδρομή και παράκαμψη αντίστοιχα).\n"
+"  -r, --recursive           ισοδύναμο με --directories=recurse.\n"
+"  -L, --files-without-match εμφάνιση μόνο τα ονόματα ΑΡΧΕΙΩΝ που δεν περιέχουν ταιριάσματα\n"
 "  -l, --files-with-matches  εμφάνιση μόνο τα ονόματα ΑΡΧΕΙΩΝ με ταιριάσματα\n"
-"  -c, --count               εμφάνιση μόνο το συνολικό αριθμό των γραμμών με "
-"ταιριάσματα για κάθε ΑΡΧΕΙΟ\n"
+"  -c, --count               εμφάνιση μόνο τον αριθμό των γραμμών με ταιριάσματα για κάθε ΑΡΧΕΙΟ\n"
 
+#
 # src/grep.c:633
-#: src/grep.c:840
-#, fuzzy
+# src/grep.c:902
+# File: src/grep.c, line: 902
 msgid ""
 "\n"
 "Context control:\n"
@@ -342,87 +442,98 @@ msgid ""
 msgstr ""
 "\n"
 "Έλεγχος βάση του περιεχομένου:\n"
-"  -B, --before-context=ΑΡΙΘΜΟΣ  εμφάνιση ΑΡΙΘΜΟΣ γραμμών με ακολουθούμενο "
-"περιεχόμενο\n"
-"  -A, --after-context=ΑΡΙΘΜΟΣ  εμφάνιση ΑΡΙΘΜΟΣ γραμμών με προπορευόμενο "
-"περιεχόμενο\n"
-"  -NUM                      το ίδιο με -B ΑΡΙΘΜΟΣ και -A ΑΡΙΘΜΟΣ\n"
-"  -C, --context             το ίδιο με -2\n"
-"  -U, --binary              να μην απαλείφονται χαρακτήρες CR στο EOL "
-"(MSDOS)\n"
-"  -u, --unix-byte-offsets   αναφορά σχετικών θέσεων σαν να μην υπήρχαν "
-"χαρακτήρες CR (MSDOS)\n"
+"  -B, --before-context=ΑΡΙΘΜΟΣ  εμφάνιση ΑΡΙΘΜΟΣ γραμμών με ακολουθούμενο περιεχόμενο\n"
+"  -A, --after-context=ΑΡΙΘΜΟΣ  εμφάνιση ΑΡΙΘΜΟΣ γραμμών με προπορευόμενο περιεχόμενο\n"
+"  -C, --context[=ΑΡΙΘΜΟΣ]   εμφάνιση ΑΡΙΘΜΟΣ (εξ ορισμού 2) γραμμών με περιεχόμενο εξόδου\n"
+"                            εκτός κι αν αναιρεθεί με -A ή -B\n"
+"  -NUM                      το ίδιο με --context=ΑΡΙΘΜΟΣ\n"
+"  -U, --binary              να μην απαλείφονται χαρακτήρες CR στο EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   αναφορά σχετικών θέσεων σαν να μην υπήρχαν χαρακτήρες CR (MSDOS)\n"
 "\n"
 "Αν δεν υπάρχει -[GEF], τότε η `egrep' θεωρεί -E, η `fgrep' -F αλλιώς -G.\n"
 "Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι -, ανάγνωση από στάνταρτ είσοδο.\n"
-"Αν δίνονται λιγότερα από δύο ΑΡΧΕΙΑ, θεώρησε ότι δίνεται -h. Έξοδος με 0 "
-"όταν υπάρχει ταίριασμα,\n"
-"διαφορετικά με 1. Έξοδος με 2 στη περίπτωση συντακτικών σφαλμάτων ή "
-"σφαλμάτων συστήματος.\n"
+"Αν δίνονται λιγότερα από δύο ΑΡΧΕΙΑ, θεώρησε ότι δίνεται -h. Έξοδος με 0 όταν υπάρχει ταίριασμα,\n"
+"διαφορετικά με 1. Έξοδος με 2 στην περίπτωση συντακτικών σφαλμάτων ή σφαλμάτων συστήματος.\n"
 
+#
 # src/grep.c:647
-#: src/grep.c:855
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr ""
-"\n"
-"Στείλτε αναφορές σφαλμάτων στο <bug-gnu-utils@gnu.org>.\n"
+# src/grep.c:917
+# File: src/grep.c, line: 917
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nΣτείλτε αναφορές σφαλμάτων στο <bug-gnu-utils@gnu.org>.\n"
 
+#
 # src/grep.c:785 src/grep.c:792
-#: src/grep.c:998 src/grep.c:1005
+# src/grep.c:1060 src/grep.c:1067 src/grep.c:1076
+# File: src/grep.c, line: 1060
+# File: src/grep.c, line: 1067
+# File: src/grep.c, line: 1076
 msgid "invalid context length argument"
 msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
 
-# src/grep.c:785 src/grep.c:792
-#: src/grep.c:1014
-#, fuzzy
-msgid "infalid context length argument"
-msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
-
+#
 # src/grep.c:800 src/grep.c:805 src/grep.c:810
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
+# src/grep.c:1083 src/grep.c:1088 src/grep.c:1093
+# File: src/grep.c, line: 1083
+# File: src/grep.c, line: 1088
+# File: src/grep.c, line: 1093
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "μπορείτε να ορίσετε μόνο ένα από τα-E, -F ή -G"
 
+#
 # src/grep.c:829
-#: src/grep.c:1050
+# src/grep.c:1112
+# File: src/grep.c, line: 1112
 msgid "matcher already specified"
 msgstr "το στοιχείο που πρόκειται να αναζητηθεί, έχει ήδη οριστεί"
 
-#: src/grep.c:1071
+#
+# src/grep.c:1133
+# File: src/grep.c, line: 1133
 msgid "unknown directories method"
-msgstr ""
+msgstr "άγνωστη μέθοδος καταλόγων"
 
+#
 # src/grep.c:915
-#: src/grep.c:1157
+# src/grep.c:1219
+# File: src/grep.c, line: 1219
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
+#
 # src/grep.c:917
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+# src/grep.c:1221
+# File: src/grep.c, line: 1221
+msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 1992-1997, Free Software Foundation, Inc.\n"
 
+#
 # src/grep.c:919
-#: src/grep.c:1161
+# src/grep.c:1223
+# File: src/grep.c, line: 1223
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Αυτό είναι ελεύθερο λογισμικό· δείτε το πηγαίο κώδικα για τις συνθήκες "
-"αντιγραφής.\n"
+"Αυτό είναι ελεύθερο λογισμικό· δείτε το πηγαίο κώδικα για τις συνθήκες αντιγραφής.\n"
 "ΔΕΝ υπάρχει εγγύηση· ούτε ακόμα για ΧΡΗΣΙΜΟΤΗΤΑ ή ΚΑΤΑΛΛΗΛΟΤΗΤΑ ΓΙΑ ΕΝΑ\n"
 "ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ.\n"
 
+#
 # src/obstack.c:467
-#: src/obstack.c:467
+# src/obstack.c:467
+# File: src/obstack.c, line: 467
 msgid "memory exhausted\n"
 msgstr "η μνήμη εξαντλήθηκε\n"
 
-# src/grep.c:1027 src/grep.c:1030
+#~ #
+#~ # src/grep.c:785 src/grep.c:792
+#~ #, fuzzy
+#~ msgid "infalid context length argument"
+#~ msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
+
+#~ #
+#~ # src/grep.c:1027 src/grep.c:1030
 #~ msgid "(standard input)\n"
 #~ msgstr "(στάνταρτ είσοδος)\n"

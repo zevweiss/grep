@@ -4,16 +4,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 1998-11-09 00:40-0500\n"
-"PO-Revision-Date: 1998-09-04 10:26-0500\n"
+"Project-Id-Version: GNU grep 2.2f\n"
+"POT-Creation-Date: 1999-02-03 13:09-0500\n"
+"PO-Revision-Date: 1999-02-08 14:30-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:766
+#: src/dfa.c:155 src/dfa.c:167 src/dfa.c:180 src/grep.c:858
 msgid "Memory exhausted"
 msgstr "Mémoire épuisée."
 
@@ -160,45 +160,49 @@ msgstr "?? getopt() a retourné le code de caractère 0%o ??\n"
 msgid "non-option ARGV-elements: "
 msgstr "Des élément ARGV qui ne sont pas des options: "
 
-#: src/grep.c:158 src/grep.c:175 src/grep.c:237 src/grep.c:294 src/kwset.c:184
+#: src/grep.c:169 src/grep.c:186 src/grep.c:288 src/grep.c:344 src/kwset.c:184
 #: src/kwset.c:190
 msgid "memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/grep.c:324
+#: src/grep.c:372 src/grep.c:843
 #, c-format
 msgid "%s: warning: %s: %s\n"
 msgstr "%s: AVERTISSEMENT: %s: %s\n"
 
-#: src/grep.c:429 src/grep.c:1222
+#: src/grep.c:497 src/grep.c:1318
 msgid "writing output"
 msgstr "Génération du résultat."
 
-#: src/grep.c:655
+#: src/grep.c:726
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr ""
+msgstr "Fichier binaire %s concorde\n"
 
-#: src/grep.c:670
+#: src/grep.c:742
 msgid "(standard input)"
 msgstr "(entrée standard)"
 
-#: src/grep.c:800
+#: src/grep.c:844
+msgid "recursive directory loop"
+msgstr "boucle récursive sur le répertoire"
+
+#: src/grep.c:895
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER]...\n"
 
-#: src/grep.c:801
+#: src/grep.c:896
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pour en savoir davantage, faites: `%s --help'.\n"
 
-#: src/grep.c:805
+#: src/grep.c:900
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER] ...\n"
 
-#: src/grep.c:806
+#: src/grep.c:901
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "\n"
@@ -216,18 +220,15 @@ msgstr ""
 "\n"
 "Sélection et interprétation de l'expression régulière:\n"
 "  -E, --extended-regexp     PATRON est une expression regulière étendue\n"
-"  -F, --fixed-regexp        PATRON est une chaîne fixe séparée par des "
-"retour de chariot\n"
+"  -F, --fixed-regexp        PATRON est une chaîne fixe séparée par des retour de chariot\n"
 "  -G, --basic-regexp        PATRON est une expression régulière de base\n"
 "  -e, --regexp=PATTERN      utiliser le PATRON comme expression régulière\n"
 "  -f, --file=FILE           obtenir le PATRON du FICHIER\n"
 "  -i, --ignore-case         ignorer la distrinction de la casse\n"
-"  -w, --word-regexp         forcer l'appariement du PATRON que sur des mots "
-"complets\n"
-"  -x, --line-regexp         forcer l'appariement du PATRON que sur des "
-"lignes entières\n"
+"  -w, --word-regexp         forcer l'appariement du PATRON que sur des mots complets\n"
+"  -x, --line-regexp         forcer l'appariement du PATRON que sur des lignes entières\n"
 
-#: src/grep.c:818
+#: src/grep.c:913
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -243,8 +244,7 @@ msgstr ""
 "  -V, --version             afficher le nom et la version du logiciel\n"
 "      --help                afficher l'aide et quitter\n"
 
-#: src/grep.c:825
-#, fuzzy
+#: src/grep.c:920
 msgid ""
 "\n"
 "Output control:\n"
@@ -272,6 +272,11 @@ msgstr ""
 "  -h, --no-filename         supprimer le préfixe du nom de fichier\n"
 "                            sur la sortie\n"
 "  -q, --quiet, --silent     supprimer tout affichage en sortie\n"
+"  -a, --text                ne pas supprimer la sortie binaire\n"
+"  -d, --directories=ACTION  traiter les répertoires selon l'ACTION\n"
+"                            'read' (lecture), 'recurse' (récursivité),\n"
+"                            ou 'skip' (escamotage).\n"
+"  -r, --recursive           équivalent à --directories=recurse.\n"
 "  -L, --files-without-match afficher seulement les noms des fichiers\n"
 "                            ne contenant pas de concordance\n"
 "  -l, --files-with-matches  afficher seulement les noms des fichiers\n"
@@ -279,8 +284,7 @@ msgstr ""
 "  -c, --count               afficher seulement le décompte des lignes\n"
 "                            concordantes par fichier\n"
 
-#: src/grep.c:840
-#, fuzzy
+#: src/grep.c:935
 msgid ""
 "\n"
 "Context control:\n"
@@ -288,7 +292,7 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context[=NUM]       print NUM (default 2) lines of output context\n"
 "                            unless overriden by -A or -B\n"
-"  -NUM                      same as --contex=NUM\n"
+"  -NUM                      same as --context=NUM\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -301,10 +305,11 @@ msgstr ""
 "Contrôle du contexte:\n"
 "  -B, --before-context=N    imprimer N lignes du contexte d'en-tête\n"
 "  -A, --after-context=N     imprimer N lignes du contexte finale\n"
+"  -C, --context             imprimer N lignes (2 par défaut) du contexte\n"
+"                            à moins que -A ou -B ne soit spécifié\n"
 "  -NUM                      identique à -B NUM et -A NUM\n"
-"  -C, --context             identique à -2\n"
-"  -U, --binary              ne pas enlever les caractères CR sur les fins de "
-"lignes (MS-DOS)\n"
+"  -U, --binary              ne pas enlever les caractères CR sur \n"
+"                            les fins de lignes (MS-DOS)\n"
 "  -u, --unix-byte-offsets   afficher les adresses relatives comme si\n"
 "                            aucun CR n'était présent (MS-DOS)\n"
 "\n"
@@ -315,49 +320,38 @@ msgstr ""
 "est implicite. Termine avec 0 s'il y a concordance avec 1 si aucune.\n"
 "Termine avec 2 s'il y a des erreurs de syntaxe ou du système.\n"
 
-#: src/grep.c:855
-msgid ""
-"\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr ""
-"\n"
-"Rapporter toutes anomalies à <bug-gnu-utils@gnu.org>.\n"
+#: src/grep.c:950
+msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr "\nRapporter toutes anomalies à <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:998 src/grep.c:1005
+#: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
 msgid "invalid context length argument"
 msgstr "paramètre de contexte de longueur invalide"
 
-#: src/grep.c:1014
-#, fuzzy
-msgid "infalid context length argument"
-msgstr "paramètre de contexte de longueur invalide"
-
-#: src/grep.c:1021 src/grep.c:1026 src/grep.c:1031
+#: src/grep.c:1116 src/grep.c:1121 src/grep.c:1126
 msgid "you may specify only one of -E, -F, or -G"
 msgstr "Un seul des paramètres suivants peut être spécifié -E, -F ou -G"
 
-#: src/grep.c:1050
+#: src/grep.c:1145
 msgid "matcher already specified"
 msgstr "L'opérateur de concordance a déjà été spécifié."
 
-#: src/grep.c:1071
+#: src/grep.c:1166
 msgid "unknown directories method"
-msgstr ""
+msgstr "méthode inconnue des répertoires"
 
 # msgid "GNU grep version %s"
 # msgstr "«grep» de GNU version %s"
-#: src/grep.c:1157
+#: src/grep.c:1252
 #, c-format
 msgid "grep (GNU grep) %s\n"
 msgstr "grep de GNU %s\n"
 
-#: src/grep.c:1159
-msgid ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+#: src/grep.c:1254
+msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1161
+#: src/grep.c:1256
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -376,20 +370,16 @@ msgstr "Mémoire épuisée.\n"
 #~ msgid "Regexp selection and interpretation:\n"
 #~ msgstr "Sélection de l'EXP_RÉGULIÈRE et interprétation:\n"
 
-#~ msgid ""
-#~ "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-#~ msgstr ""
-#~ "  -E, --extended-regexp     PATRON est une expression régulière étendue\n"
+#~ msgid "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
+#~ msgstr "  -E, --extended-regexp     PATRON est une expression régulière étendue\n"
 
-#~ msgid ""
-#~ "  -F, --fixed-strings       PATTERN is a fixed string separated by newlines\n"
+#~ msgid "  -F, --fixed-strings       PATTERN is a fixed string separated by newlines\n"
 #~ msgstr ""
 #~ "  -F, --fixed-strings       PATRON est une chaîne de longueur fixe\n"
 #~ "                            séparée par des sauts de ligne\n"
 
 #~ msgid "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
-#~ msgstr ""
-#~ "  -G, --basic-regexp        PATRON est une expression régulière de base\n"
+#~ msgstr "  -G, --basic-regexp        PATRON est une expression régulière de base\n"
 
 #~ msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 #~ msgstr ""
@@ -402,14 +392,12 @@ msgstr "Mémoire épuisée.\n"
 #~ msgid "  -i, --ignore-case         ignore case distinctions\n"
 #~ msgstr "  -i, --ignore-case         ignorer la distinction de la casse\n"
 
-#~ msgid ""
-#~ "  -w, --word-regexp         force PATTERN to match only whole words\n"
+#~ msgid "  -w, --word-regexp         force PATTERN to match only whole words\n"
 #~ msgstr ""
 #~ "  -w, --word-regexp         forcer le PATRON à établir des\n"
 #~ "                            concordances que pour des mots complets\n"
 
-#~ msgid ""
-#~ "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+#~ msgid "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 #~ msgstr ""
 #~ "  -x, --line-regexp         forcer le PATRON à établir des\n"
 #~ "                            concordances que pour des lignes entières\n"
@@ -421,12 +409,10 @@ msgstr "Mémoire épuisée.\n"
 #~ msgstr "  -s, --no-messages         supprimer les messages d'erreur\n"
 
 #~ msgid "  -v, --revert-match        select non-matching lines\n"
-#~ msgstr ""
-#~ "  -v, --revert-match        sélectionner les lignes sans concordance\n"
+#~ msgstr "  -v, --revert-match        sélectionner les lignes sans concordance\n"
 
 #~ msgid "  -V, --version             print version information and exit\n"
-#~ msgstr ""
-#~ "  -V, --version             afficher le nom et la version du logiciel\n"
+#~ msgstr "  -V, --version             afficher le nom et la version du logiciel\n"
 
 #~ msgid "      --help                display this help and exit\n"
 #~ msgstr "      --help                afficher l'aide et quitter\n"
@@ -434,8 +420,7 @@ msgstr "Mémoire épuisée.\n"
 #~ msgid "Output control:\n"
 #~ msgstr "Contrôle de sortie:\n"
 
-#~ msgid ""
-#~ "  -b, --byte-offset         print the byte offset with output lines\n"
+#~ msgid "  -b, --byte-offset         print the byte offset with output lines\n"
 #~ msgstr ""
 #~ "  -b, --byte-offset         afficher les adresses relatives avec\n"
 #~ "                            les lignes traitées\n"
@@ -450,8 +435,7 @@ msgstr "Mémoire épuisée.\n"
 #~ "  -H, --with-filename       afficher le nom de fichier pour\n"
 #~ "                            chaque concordance\n"
 
-#~ msgid ""
-#~ "  -h, --no-filename         suppress the prefixing filename on ouput\n"
+#~ msgid "  -h, --no-filename         suppress the prefixing filename on ouput\n"
 #~ msgstr ""
 #~ "  -h, --no-filename         supprimer le préfixe du nom de fichier\n"
 #~ "                            sur la sortie\n"
@@ -459,20 +443,17 @@ msgstr "Mémoire épuisée.\n"
 #~ msgid "  -q, --quiet, --silent     suppress all normal output\n"
 #~ msgstr "  -q, --quiet, --silent     supprimer tout affichage en sortie\n"
 
-#~ msgid ""
-#~ "  -L, --files-without-match only print FILE names containing no match\n"
+#~ msgid "  -L, --files-without-match only print FILE names containing no match\n"
 #~ msgstr ""
 #~ "  -L, --files-without-match afficher seulement les noms des fichiers\n"
 #~ "                            ne contenant pas de concordance\n"
 
-#~ msgid ""
-#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
+#~ msgid "  -l, --files-with-matches  only print FILE names containing matches\n"
 #~ msgstr ""
 #~ "  -l, --files-with-matches  afficher seulement les noms des fichiers\n"
 #~ "                            contenant des concordances\n"
 
-#~ msgid ""
-#~ "  -c, --count               only print a count of matching lines per FILE\n"
+#~ msgid "  -c, --count               only print a count of matching lines per FILE\n"
 #~ msgstr ""
 #~ "  -c, --count               afficher seulement le décompte des lignes\n"
 #~ "                            concordantes par fichier\n"
@@ -481,8 +462,7 @@ msgstr "Mémoire épuisée.\n"
 #~ msgstr "Contrôle du contexte:\n"
 
 #~ msgid "  -B, --before-context=NUM  print NUM lines of leading context\n"
-#~ msgstr ""
-#~ "  -B, --before-context=N    imprimer N lignes du contexte d'en-tête\n"
+#~ msgstr "  -B, --before-context=N    imprimer N lignes du contexte d'en-tête\n"
 
 #~ msgid "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 #~ msgstr "  -A, --after-context=N     imprimer N lignes du contexte finale\n"
@@ -494,23 +474,18 @@ msgstr "Mémoire épuisée.\n"
 #~ msgstr "  -C, --context             identique à -2\n"
 
 #~ msgid "  -U, --binary              do not strip CR characters at EOL\n"
-#~ msgstr ""
-#~ "  -U, --binary              ne pas enlever les caractères CR sur les fins de "
-#~ "lignes\n"
+#~ msgstr "  -U, --binary              ne pas enlever les caractères CR sur les fins de lignes\n"
 
-#~ msgid ""
-#~ "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+#~ msgid "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
 #~ msgstr ""
 #~ "  -u, --unix-byte-offsets   afficher les adresses relatives comme si\n"
 #~ "                            aucun CR n'était présent\n"
 
-#~ msgid ""
-#~ "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
+#~ msgid "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
 #~ msgstr "Il ne devrait y avoir qu'un seul PATRON, -e PATRON ou -f FICHIER.\n"
 
 #~ msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
-#~ msgstr ""
-#~ "Si appelé via egrep, les options -E et `fgrep' pour -F sont implicites.\n"
+#~ msgstr "Si appelé via egrep, les options -E et `fgrep' pour -F sont implicites.\n"
 
 #~ msgid "If no -[GEF], then -G is assumed.\n"
 #~ msgstr ""
