@@ -16,6 +16,7 @@ EXTRA_DIST = decl.m4 \
              largefile.m4 \
              lcmessage.m4 \
              malloc.m4 \
+             mbstate_t.m4 \
              missing.m4 \
              progtest.m4 \
              realloc.m4 \
