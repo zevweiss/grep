@@ -365,7 +365,6 @@ setbit_case_fold (unsigned b, charclass c)
    reader is referred to the GNU Regex documentation for the
    meaning of the @#%!@#%^!@ syntax bits. */
 
-static char const *lexstart;	/* Pointer to beginning of input string. */
 static char const *lexptr;	/* Pointer to next input character. */
 static int lexleft;		/* Number of characters remaining. */
 static token lasttok;		/* Previous token returned; initially END. */
@@ -383,7 +382,7 @@ static int cur_mb_len;		/* Byte length of the current scanning
 static int cur_mb_index;        /* Byte index of the current scanning multibyte
                                    character.
 
-				   singlebyte character : cur_mb_index = 0
+				   single byte character : cur_mb_index = 0
 				   multibyte character
 				       1st byte : cur_mb_index = 1
 				       2nd byte : cur_mb_index = 2
@@ -394,7 +393,7 @@ static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec().
 				   byte of corresponding multibyte character
 				   in the input string.  A element's value
 				   is 0 if corresponding character is a
-				   singlebyte chracter.
+				   single byte chracter.
 				   e.g. input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
 				    mblen_buf :   0,       3,       2,       1
 				*/
@@ -432,10 +431,10 @@ update_mb_len_index (unsigned char const *p, int len)
 	   cur_mb_len was already set by mbrlen().  */
 	cur_mb_index = 1;
       else if (cur_mb_len < 1)
-	/* Invalid sequence.  We treat it as a singlebyte character.
+	/* Invalid sequence.  We treat it as a single byte character.
 	   cur_mb_index is aleady 0.  */
 	cur_mb_len = 1;
-      /* Otherwise, cur_mb_len == 1, it is a singlebyte character.
+      /* Otherwise, cur_mb_len == 1, it is a single byte character.
 	 cur_mb_index is aleady 0.  */
     }
 }
@@ -528,7 +527,8 @@ parse_bracket_exp_mb ()
 
   work_mbc->nchars = work_mbc->nranges = work_mbc->nch_classes = 0;
   work_mbc->nequivs = work_mbc->ncoll_elems = 0;
-  work_mbc->chars = work_mbc->ch_classes = NULL;
+  work_mbc->chars = NULL;
+  work_mbc->ch_classes = NULL;
   work_mbc->range_sts = work_mbc->range_ends = NULL;
   work_mbc->equivs = work_mbc->coll_elems = NULL;
 
@@ -1098,15 +1098,17 @@ lex (void)
 			  setbit_case_fold (c, ccl);
 		      } else {
 			/* POSIX locales are painful - leave the decision to libc */
-			char expr[6] = { '[', 0 /* c */, '-', 0 /* c2 */, ']', '\0' };
 			regex_t re;
-			expr[1] = c;
-			expr[3] = c2;
+			char expr[6]; /* = { '[', c, '-', c2, ']', '\0' }; */
+
+			expr[0] = '['; expr[1] = c; expr[2] = '-';
+			expr[3] = c2; expr[4] = ']'; expr[5] = '\0';
 			if (regcomp (&re, expr, case_fold ? REG_ICASE : 0) == REG_NOERROR) {
 			  for (c = 0; c < NOTCHAR; ++c) {
-			    char buf[2] = { 0 /* c */, '\0' };
 			    regmatch_t mat;
-			    buf[0] = c;
+			    char buf[2]; /* = { c, '\0' }; */
+
+			    buf[0] = c; buf[1] = '\0';
 			    if (regexec (&re, buf, 1, &mat, 0) == REG_NOERROR
                                && mat.rm_so == 0 && mat.rm_eo == 1)
                               setbit_case_fold (c, ccl);
@@ -1179,8 +1181,8 @@ addtok (token t)
 	  : (((cur_mb_index == 1)? 1 : 0) /* 1st-byte of multibyte char */
 	     + ((cur_mb_index == cur_mb_len)? 2 : 0)); /* last-byte */
       else
-	/* It may be unnecesssary, but it is safer to treat other
-	   symbols as singlebyte characters.  */
+	/* It may be unnecessary, but it is safer to treat other
+	   symbols as single byte characters.  */
 	dfa->multibyte_prop[dfa->tindex] = 3;
     }
 #endif
@@ -1406,7 +1408,7 @@ void
 dfaparse (char const *s, size_t len, struct dfa *d)
 {
   dfa = d;
-  lexstart = lexptr = s;
+  lexptr = s;
   lexleft = len;
   lasttok = END;
   laststart = 1;
@@ -2000,7 +2002,7 @@ dfastate (int s, struct dfa *d, int trans[])
   int state_letter;		/* New state on a letter transition. */
   static int initialized;	/* Flag for static initialization. */
 #ifdef MBS_SUPPORT
-  int next_isnt_1st_byte = 0;	/* Flag If we can't add state0.  */
+  int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
 #endif
   int i, j, k;
 
@@ -2183,11 +2185,11 @@ dfastate (int s, struct dfa *d, int trans[])
 	     character, or the states of follows must accept the bytes
 	     which are not 1st byte of the multibyte character.
 	     Then, if a state of follows encounter a byte, it must not be
-	     a 1st byte of a multibyte character nor singlebyte character.
+	     a 1st byte of a multibyte character nor single byte character.
 	     We cansel to add state[0].follows to next state, because
 	     state[0] must accept 1st-byte
 
-	     For example, we assume <sb a> is a certain singlebyte
+	     For example, we assume <sb a> is a certain single byte
 	     character, <mb A> is a certain multibyte character, and the
 	     codepoint of <sb a> equals the 2nd byte of the codepoint of
 	     <mb A>.
@@ -2363,12 +2365,12 @@ build_state_zero (struct dfa *d)
 #ifdef MBS_SUPPORT
 /* Multibyte character handling sub-routines for dfaexec.  */
 
-/* Initial state may encounter the byte which is not a singlebyte character
+/* Initial state may encounter the byte which is not a single byte character
    nor 1st byte of a multibyte character.  But it is incorrect for initial
    state to accept such a byte.
    For example, in sjis encoding the regular expression like "\\" accepts
    the codepoint 0x5c, but should not accept the 2nd byte of the codepoint
-   0x815c. Then Initial state must skip the bytes which are not a singlebyte
+   0x815c. Then Initial state must skip the bytes which are not a single byte
    character nor 1st byte of a multibyte character.  */
 #define SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p)		\
   if (s == 0)						\
@@ -2733,7 +2735,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 
   if (nelem == 0 || maxlen == 0)
     /* This state has no multibyte operator which can match.
-       We need to check only one singlebyte character.  */
+       We need to check only one single byte character.  */
     {
       status_transit_state rs;
       rs = transit_state_singlebyte(d, s, *pp, &s1);

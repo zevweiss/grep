@@ -1750,7 +1750,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
 	  if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
 	    {
 	      /* An invalid sequence, or a truncated multibyte character.
-		 We treat it as a singlebyte character.  */
+		 We treat it as a single byte character.  */
 	      mbclen = 1;
 	    }
 	  else

@@ -146,7 +146,7 @@ kwsmusts (void)
 #ifdef MBS_SUPPORT
 /* This function allocate the array which correspond to "buf".
    Then this check multibyte string and mark on the positions which
-   are not singlebyte character nor the first byte of a multibyte
+   are not single byte character nor the first byte of a multibyte
    character.  Caller must free the array.  */
 static char*
 check_multibyte_string(char const *buf, size_t size)
@@ -167,7 +167,7 @@ check_multibyte_string(char const *buf, size_t size)
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
 	{
 	  /* An invalid sequence, or a truncated multibyte character.
-	     We treat it as a singlebyte character.  */
+	     We treat it as a single byte character.  */
 	  mbclen = 1;
 	}
       else if (match_icase)

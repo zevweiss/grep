@@ -150,7 +150,7 @@ typedef enum
 
 #ifdef MBS_SUPPORT
   ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
-                                  any multibyte(or singlebyte) characters.
+                                  any multibyte (or single byte) characters.
 			          It is used only if MB_CUR_MAX > 1.  */
 
   MBCSET,			/* MBCSET is similar to CSET, but for
@@ -305,9 +305,9 @@ struct dfa
   int *multibyte_prop;
   /* The value of multibyte_prop[i] is defined by following rule.
        if tokens[i] < NOTCHAR
-         bit 1 : tokens[i] is a singlebyte character, or the last-byte of
+         bit 1 : tokens[i] is a single byte character, or the last-byte of
 	         a multibyte character.
-	 bit 0 : tokens[i] is a singlebyte character, or the 1st-byte of
+	 bit 0 : tokens[i] is a single byte character, or the 1st-byte of
 	         a multibyte character.
        if tokens[i] = MBCSET
          ("the index of mbcsets correspnd to this operator" << 2) + 3

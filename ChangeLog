@@ -1,3 +1,15 @@
+2004-12-16  Stepan Kasal  <kasal@ucw.cz>
+
+	Cosmetic changes, mostly imported from gawk:
+
+	* src/dfa.c (lexstart): Removed unused variable.
+	(parse_bracket_exp_mb): Don't initialize different pointers in one
+	  assignment
+	(lex): Don't initialize automatic arrays, it's invalid in pre-C89
+	  compilers.
+	Various other typos.
+	* src/dfa.h, src/grep.c, src/search.c: Typos.
+
 2004-12-16  Isamu Hasegawa  <isamuh@jp.ibm.com>
 
 	From http://oss.software.ibm.com/linux/patches/?patch_id=25
