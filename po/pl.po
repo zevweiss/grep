@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2f\n"
-"POT-Creation-Date: 2001-03-07 00:02-0500\n"
+"POT-Creation-Date: 2001-03-18 20:59-0500\n"
 "PO-Revision-Date: 1999-02-27 22:15+0200\n"
 "Last-Translator: Rafa³ Maszkowski <rzm@icm.edu.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:706
 msgid "Memory exhausted"
 msgstr "Pamiêæ wyczerpana"
 
@@ -56,8 +56,8 @@ msgstr ") nie do pary"
 msgid "out of memory"
 msgstr "brak pamiêci"
 
-#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:103 src/search.c:223 src/search.c:307
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "pamiêæ wyczerpana"
 
@@ -65,48 +65,48 @@ msgstr "pamiêæ wyczerpana"
 msgid "invalid context length argument"
 msgstr "b³êdny argument d³ugo¶ci kontekstowej"
 
-#: src/grep.c:466
+#: src/grep.c:458
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:539
+#: src/grep.c:531
 msgid "writing output"
 msgstr "zapisujê wyniki"
 
-#: src/grep.c:812
+#: src/grep.c:804
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Plik binarny %s pasuje do wzorca\n"
 
-#: src/grep.c:826
+#: src/grep.c:818
 msgid "(standard input)"
 msgstr "(standardowe wej¶cie)"
 
-#: src/grep.c:931
+#: src/grep.c:923
 #, fuzzy, c-format
 msgid "warning: %s: %s\n"
 msgstr "%s: uwaga: %s: %s\n"
 
-#: src/grep.c:932
+#: src/grep.c:924
 msgid "recursive directory loop"
 msgstr "nieskoñczona pêtla przegl±dania katalogów"
 
-#: src/grep.c:980
+#: src/grep.c:972
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
-#: src/grep.c:982
+#: src/grep.c:974
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Spróbuj `%s --help' dla uzyskania informacji.\n"
 
-#: src/grep.c:987
+#: src/grep.c:979
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "U¿ycie: %s [OPCJA]... WZORZEC [PLIK] ...\n"
 
-#: src/grep.c:988
+#: src/grep.c:980
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -115,7 +115,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 
-#: src/grep.c:993
+#: src/grep.c:985
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -123,7 +123,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 
-#: src/grep.c:998
+#: src/grep.c:990
 #, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
@@ -145,7 +145,7 @@ msgstr ""
 "  -w, --word-regexp         dopasuj WZORZEC tylko do pe³nych s³ów\n"
 "  -x, --line-regexp         dopasuj WZORZEC tylko do ca³ych linii\n"
 
-#: src/grep.c:1005
+#: src/grep.c:997
 #, fuzzy
 msgid ""
 "\n"
@@ -163,7 +163,7 @@ msgstr ""
 "  -V, --version             wypisz informacjê o wersji i zakoñcz\n"
 "      --help                wy¶wietl tê informacjê i zakoñcz\n"
 
-#: src/grep.c:1013
+#: src/grep.c:1005
 #, fuzzy
 msgid ""
 "\n"
@@ -207,7 +207,7 @@ msgstr ""
 "  -c, --count               wypisz tylko ilo¶æ pasuj±cych linii w ka¿dym "
 "PLIKu\n"
 
-#: src/grep.c:1037
+#: src/grep.c:1029
 #, fuzzy
 msgid ""
 "\n"
@@ -241,7 +241,7 @@ msgstr ""
 "pasuje, z 1, je¿eli nie, z 2, je¿eli napotkano b³êdy syntaktyczne lub\n"
 "systemowe.\n"
 
-#: src/grep.c:1052
+#: src/grep.c:1044
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -257,35 +257,35 @@ msgstr ""
 #  grep --help ->
 #  usage: grep [-[[AB] ]<num>] [-[CEFGVchilnqsvwx]] [-[ef]] <expr> [<files...>]
 #  La opción -X es a la que corresponde esta línea.
-#: src/grep.c:1062
+#: src/grep.c:1054
 #, fuzzy
 msgid "conflicting matchers specified"
 msgstr "wzorzec ju¿ podany"
 
-#: src/grep.c:1355
+#: src/grep.c:1347
 msgid "unknown directories method"
 msgstr "nieznany sposób przegl±dania katalogów"
 
-#: src/grep.c:1422
+#: src/grep.c:1414
 #, fuzzy
 msgid "invalid max count"
 msgstr "niedokoñczona liczba powtórzeñ"
 
-#: src/grep.c:1472
+#: src/grep.c:1464
 msgid "unknown binary-files type"
 msgstr ""
 
-#: src/grep.c:1543
+#: src/grep.c:1535
 #, fuzzy, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1545
+#: src/grep.c:1537
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1997, Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1547
+#: src/grep.c:1539
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

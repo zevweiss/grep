@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 2001-03-07 00:02-0500\n"
+"POT-Creation-Date: 2001-03-18 20:59-0500\n"
 "PO-Revision-Date: 1998-08-01 13:45+0200\n"
 "Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:706
 msgid "Memory exhausted"
 msgstr "Minnet oppbrukt"
 
@@ -58,8 +58,8 @@ msgstr "Ubalansert )"
 msgid "out of memory"
 msgstr "tomt for minne"
 
-#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:103 src/search.c:223 src/search.c:307
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "minnet oppbrukt"
 
@@ -67,48 +67,48 @@ msgstr "minnet oppbrukt"
 msgid "invalid context length argument"
 msgstr "ugyldig kontekstlengde"
 
-#: src/grep.c:466
+#: src/grep.c:458
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:539
+#: src/grep.c:531
 msgid "writing output"
 msgstr "skriver utdata"
 
-#: src/grep.c:812
+#: src/grep.c:804
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr ""
 
-#: src/grep.c:826
+#: src/grep.c:818
 msgid "(standard input)"
 msgstr "(standard inn)"
 
-#: src/grep.c:931
+#: src/grep.c:923
 #, fuzzy, c-format
 msgid "warning: %s: %s\n"
 msgstr "%s: advarsel: %s: %s\n"
 
-#: src/grep.c:932
+#: src/grep.c:924
 msgid "recursive directory loop"
 msgstr ""
 
-#: src/grep.c:980
+#: src/grep.c:972
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL]...\n"
 
-#: src/grep.c:982
+#: src/grep.c:974
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Prøv «%s --help» for mer informasjon.\n"
 
-#: src/grep.c:987
+#: src/grep.c:979
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL] ...\n"
 
-#: src/grep.c:988
+#: src/grep.c:980
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -117,7 +117,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 
-#: src/grep.c:993
+#: src/grep.c:985
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -125,7 +125,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 
-#: src/grep.c:998
+#: src/grep.c:990
 #, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
@@ -149,7 +149,7 @@ msgstr ""
 "  -w, --word-regexp         MØNSTER må stemme overens med hele ord\n"
 "  -x, --line-regexp         MØNSTER må stemme overens med hele linjer\n"
 
-#: src/grep.c:1005
+#: src/grep.c:997
 #, fuzzy
 msgid ""
 "\n"
@@ -167,7 +167,7 @@ msgstr ""
 "  -V, --version             vis versioninformasjon og avslutt\n"
 "      --help                vis denne helpeteksten og avslutt\n"
 
-#: src/grep.c:1013
+#: src/grep.c:1005
 #, fuzzy
 msgid ""
 "\n"
@@ -209,7 +209,7 @@ msgstr ""
 "treff\n"
 "                            per FIL\n"
 
-#: src/grep.c:1037
+#: src/grep.c:1029
 #, fuzzy
 msgid ""
 "\n"
@@ -237,7 +237,7 @@ msgstr ""
 "  -u, --unix-byte-offsets   rapporter posisjoner som om CRene ikke var der\n"
 "                            (MSDOS)\n"
 
-#: src/grep.c:1052
+#: src/grep.c:1044
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -245,36 +245,36 @@ msgstr ""
 "\n"
 "Rapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
 
-#: src/grep.c:1062
+#: src/grep.c:1054
 #, fuzzy
 msgid "conflicting matchers specified"
 msgstr "søkeuttrykk er allerede spesifisert"
 
-#: src/grep.c:1355
+#: src/grep.c:1347
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1422
+#: src/grep.c:1414
 #, fuzzy
 msgid "invalid max count"
 msgstr "uferdig gjentagelsesantall"
 
-#: src/grep.c:1472
+#: src/grep.c:1464
 msgid "unknown binary-files type"
 msgstr ""
 
-#: src/grep.c:1543
+#: src/grep.c:1535
 #, fuzzy, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1545
+#: src/grep.c:1537
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr ""
 "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1547
+#: src/grep.c:1539
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

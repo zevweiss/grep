@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.4f\n"
-"POT-Creation-Date: 2001-03-07 00:02-0500\n"
+"POT-Creation-Date: 2001-03-18 20:59-0500\n"
 "PO-Revision-Date: 2000-02-16 21:05+09:00\n"
 "Last-Translator: IIDA Yosiaki <iida@secom.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:706
 msgid "Memory exhausted"
 msgstr "メモリーが足りません"
 
@@ -61,8 +61,8 @@ msgstr "「)」が釣り合いません"
 msgid "out of memory"
 msgstr "メモリーが足りません"
 
-#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:103 src/search.c:223 src/search.c:307
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:223 src/search.c:307
 msgid "memory exhausted"
 msgstr "メモリーが足りません"
 
@@ -70,48 +70,48 @@ msgstr "メモリーが足りません"
 msgid "invalid context length argument"
 msgstr "行数の指定が間違っています"
 
-#: src/grep.c:466
+#: src/grep.c:458
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:539
+#: src/grep.c:531
 msgid "writing output"
 msgstr "出力の書込み"
 
-#: src/grep.c:812
+#: src/grep.c:804
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "バイナリー・ファイル%sと一致します\n"
 
-#: src/grep.c:826
+#: src/grep.c:818
 msgid "(standard input)"
 msgstr "(標準入力)"
 
-#: src/grep.c:931
+#: src/grep.c:923
 #, fuzzy, c-format
 msgid "warning: %s: %s\n"
 msgstr "%s: 警告: %s: %s\n"
 
-#: src/grep.c:932
+#: src/grep.c:924
 msgid "recursive directory loop"
 msgstr "ディレクトリーが再帰的ループをしています"
 
-#: src/grep.c:980
+#: src/grep.c:972
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "使用法: %s [オプション]‥‥ 文字列パターン [ファイル]‥‥\n"
 
-#: src/grep.c:982
+#: src/grep.c:974
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "詳しくは`%s --help'を実行してください。\n"
 
-#: src/grep.c:987
+#: src/grep.c:979
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "使用法: %s [オプション]‥‥ 文字列パターン [ファイル] ‥‥\n"
 
-#: src/grep.c:988
+#: src/grep.c:980
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -124,7 +124,7 @@ msgstr ""
 "\n"
 "正規表現の選択と解釈方法:\n"
 
-#: src/grep.c:993
+#: src/grep.c:985
 #, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
@@ -137,7 +137,7 @@ msgstr ""
 "「パターン」を改行で区切られた固定の文字列とする\n"
 "  -G, --basic-regexp        「パターン」を基本的な正規表現とする\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -153,7 +153,7 @@ msgstr ""
 "  -x, --line-regexp         パターン一致を行全体(行単位)で行なう\n"
 "  -z, --null-data           出力を改行でなく、ヌル値のバイトで区切る\n"
 
-#: src/grep.c:1005
+#: src/grep.c:997
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -171,7 +171,7 @@ msgstr ""
 "      --help                使い方を標準出力に表示する\n"
 "      --mmap                もし可能なら、入力をメモリー・マップする\n"
 
-#: src/grep.c:1013
+#: src/grep.c:1005
 #, fuzzy
 msgid ""
 "\n"
@@ -217,7 +217,7 @@ msgstr ""
 "  -c, --count               一致した行数のみを表示する\n"
 "  -Z, --null                ファイル名の後に、ヌル値のバイトを表示\n"
 
-#: src/grep.c:1037
+#: src/grep.c:1029
 #, fuzzy
 msgid ""
 "\n"
@@ -253,7 +253,7 @@ msgstr ""
 "標準入力から読み込みます。ファイルが二つ未満の場合、-hと仮定します。\n"
 "もし一致があると0で、ないと1で、障害があると2で、終了します。\n"
 
-#: src/grep.c:1052
+#: src/grep.c:1044
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
@@ -261,34 +261,34 @@ msgstr ""
 "\n"
 "バグは <bug-gnu-utils@gnu.org> へ報告してください。\n"
 
-#: src/grep.c:1062
+#: src/grep.c:1054
 msgid "conflicting matchers specified"
 msgstr "衝突したmatcherが指定されています"
 
-#: src/grep.c:1355
+#: src/grep.c:1347
 msgid "unknown directories method"
 msgstr "ディレクトリー操作の指定が不明です"
 
-#: src/grep.c:1422
+#: src/grep.c:1414
 #, fuzzy
 msgid "invalid max count"
 msgstr "繰返しカウントが終了しません"
 
-#: src/grep.c:1472
+#: src/grep.c:1464
 msgid "unknown binary-files type"
 msgstr "バイナリー・ファイルの指定が不明です"
 
-#: src/grep.c:1543
+#: src/grep.c:1535
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) バージョン %s\n"
 
-#: src/grep.c:1545
+#: src/grep.c:1537
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1547
+#: src/grep.c:1539
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

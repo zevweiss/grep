@@ -1,3 +1,14 @@
+2001-04-19  Isamu Hasegawa
+
+	* search.c (check_multibyte_string) : Check the case when mbclen == 0.
+
+2001-04-11  Isamu Hasegawa
+
+	* search.c (check_multibyte_string) : Check the head of multibyte
+	characters, and optimize a bit.
+	(EGexecute) : Optimize a bit.
+	(Fexecute) : Fix the index.
+
 2001-04-02  Alain Magloire
 
 	* lib/regex.c: Update from GNU lib C, with the changes

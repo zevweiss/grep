@@ -150,39 +150,25 @@ static char*
 check_multibyte_string(char const *buf, size_t size)
 {
   char *mb_properties = malloc(size);
-  mbstate_t last_state, cur_state;
-  int i, front_of_char;
-  memset(&last_state, 0, sizeof(mbstate_t));
-  for (front_of_char = i = 0; i < size; i++)
+  mbstate_t cur_state;
+  int i;
+  memset(&cur_state, 0, sizeof(mbstate_t));
+  memset(mb_properties, 0, sizeof(char)*size);
+  for (i = 0; i < size ;)
     {
       size_t mbclen;
-      cur_state = last_state;
-      mbclen = mbrlen(buf + front_of_char, i - front_of_char + 1, &cur_state);
+      mbclen = mbrlen(buf + i, size - i, &cur_state);
 
-      if (mbclen == (size_t) -1 || mbclen == 1)
+      if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
 	{
-	  /* singlebyte character.  */
+	  /* An invalid sequence, or a truncated multibyte character.
+	     We treat it as a singlebyte character.  */
 	  mbclen = 1;
-	  front_of_char = i + 1;
-	}
-      else if (mbclen == (size_t) -2)
-	{
-	  /* a part of a multibyte character.  */
-	  mbclen = 0;
-	}
-      else if (mbclen > 1)
-	{
-	  /* the end of a multibyte character.  */
-	  mbclen = 0;
-	  front_of_char = i + 1;
-	  last_state = cur_state;
-	}
-      else
-	{
-	  /* Can't reach.  */
 	}
       mb_properties[i] = mbclen;
+      i += mbclen;
     }
+
   return mb_properties;
 }
 #endif
@@ -386,17 +372,14 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 		 run it through DFA. */
 	      end = memchr(beg, eol, buflim - beg);
 	      end++;
+#ifdef MBS_SUPPORT
+	      if (MB_CUR_MAX > 1 && mb_properties[beg - buf] == 0)
+		continue;
+#endif
 	      while (beg > buf && beg[-1] != eol)
 		--beg;
 	      if (kwsm.index < kwset_exact_matches)
-		{
-#ifdef MBS_SUPPORT
-		  if (MB_CUR_MAX == 1 || mb_properties[beg - buf] != 0)
-		    goto success;
-#else
-		  goto success;
-#endif
-		}
+		goto success;
 	      if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
 		continue;
 	    }
@@ -541,7 +524,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	  return offset;
 	}
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1 && mb_properties[offset] == 0)
+      if (MB_CUR_MAX > 1 && mb_properties[offset+beg-buf] == 0)
 	continue; /* It is a part of multibyte character.  */
 #endif /* MBS_SUPPORT */
       beg += offset;
