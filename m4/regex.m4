@@ -1,6 +1,5 @@
 dnl Even packages that don't use regex.c can use this macro.
 dnl Of course, for them it doesn't do anything.
-dnl Derived from code in GNU grep.
 dnl Derived from code in GNU fileutils ;-).
 
 AC_DEFUN(AM_INCLUDED_REGEX,
@@ -20,6 +19,7 @@ fi
 		    ac_cv_included_regex=$withval,
 		    ac_cv_included_regex=$default)
 if test x"$ac_cv_included_regex" = xyes; then
-  LIBOBJS="$LIBOBJS regex.${ac_objext}"
+	LIBOBJS="$LIBOBJS regex.${ac_objext}"
 fi
+AC_SUBST(LIBOBJS)dnl
 ])])

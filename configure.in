@@ -40,18 +40,18 @@ AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
 AC_CHECK_FUNCS(strerror isascii setmode)
 AC_REPLACE_FUNCS(memchr stpcpy)
-dnl Solaris 2.5 don't define btowc() in the wchar.h
+dnl Solaris 2.5 doesn't have btowc()
 if test "$USE_WCHAR" = "yes"; then
 	AC_REPLACE_FUNCS(btowc)
+dnl Solaris puts wctype/wXXX() in /usr/lib/libw.a
+	AC_CHECK_LIB(w, wctype, [LIBS="$LIBS -lw"])
 fi
+
 dnl for VC++
 if test x$ac_cv_prog_CC = xcl ; then
 	AC_DEFINE(alloca, _alloca)
 fi
 
-dnl check for libs
-dnl Solaris puts wctype/wXXX() in /usr/lib/libw.a
-AC_CHECK_LIB(w, wctype, [LIBS="$LIBS -lw"])
 
 dnl I18N feature
 ALL_LINGUAS="de es el fr ko nl no pl ru sl sv"
