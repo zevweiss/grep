@@ -1,3 +1,11 @@
+2000-01-20  Alain Magloire
+
+	* tests/Makefile.am (dist-hook): Added new rule to make sure
+	that the shell scripts have the right permissions.
+	* src/posix/Makefile.am (EXTRA_DIST): added regex.h in the
+	distribution.
+	* THANKS: updated.
+
 2000-01-18  Alain Magloire
 
 	* Rectification the initial patch to add --binary-file option

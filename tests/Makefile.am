@@ -10,3 +10,8 @@ EXTRA_DIST = $(TESTS) \
              bre.awk ere.awk bre.tests ere.tests 
 CLEANFILES = spencer1.script bre.script ere.script khadafy.out
 TESTS_ENVIRONMENT = GREP=$(top_builddir)/src/grep AWK=$(AWK)
+
+# the *.sh when checkout does not have the right permission
+# make sure everyting is ok.
+dist-hook:
+	cd $(distdir); for i in $(TESTS); do chmod +x $$i; done
