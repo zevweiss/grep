@@ -3,7 +3,7 @@
  */
 
 /* 
- * Copyright (C) 2004 the Free Software Foundation, Inc.
+ * Copyright (C) 2004, 2005 Free Software Foundation, Inc.
  * 
  * This file is part of GAWK, the GNU implementation of the
  * AWK Programming Language.
@@ -45,7 +45,6 @@
     && defined(HAVE_WCSCOLL) \
     && defined(HAVE_WCTYPE) \
     && defined(HAVE_WCTYPE_H) \
-    && defined(HAVE_WCTYPE_T) \
     && (defined(HAVE_STDLIB_H) && defined(MB_CUR_MAX)) \
 /* We can handle multibyte strings.  */
 # define MBS_SUPPORT 1

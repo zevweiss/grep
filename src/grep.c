@@ -1,5 +1,6 @@
 /* grep.c - main driver file for grep.
-   Copyright (C) 1992, 1997-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1997, 1998, 1999, 2000, 2001, 2002, 2004,
+   2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,9 +31,8 @@
 # include <sys/time.h>
 # include <sys/resource.h>
 #endif
-#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
-/* We can handle multibyte string.  */
-# define MBS_SUPPORT
+#include "mbsupport.h"
+#ifdef MBS_SUPPORT
 # include <wchar.h>
 # include <wctype.h>
 #endif

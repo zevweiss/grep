@@ -1,3 +1,12 @@
+2005-01-16  Bruno Haible  <bruno@clisp.org>
+	    Stepan Kasal  <kasal@ucw.cz>
+
+	* configure.in: Add tests for iswctype, mbrlen, wcrtomb, wcscoll;
+	  use AC_FUNC_MBRTOWC to check for mbrtowc and mbstate_t; move
+	  AC_MBSTATE_T below it.
+	* src/grep.c: Include mbsupport.h to define MBS_SUPPORT uniformly.
+	* src/mbsupport.h: Don't test for HAVE_WCTYPE_T.
+
 2005-01-13  Arnold D. Robbins  <arnold@skeeve.com>
 
 	* src/dfa.c (dfaparse): Use LC_COLLATE whenever it is defined;
