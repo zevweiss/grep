@@ -16,46 +16,46 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 # USA.
 
-PACKAGE = @PACKAGE@
-VERSION = @VERSION@
+PACKAGE = grep
+VERSION = 2.5g
 
 SHELL = /bin/sh
 
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
+srcdir = .
+top_srcdir = ..
 top_builddir = ..
-VPATH = @srcdir@
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-transform = @program_transform_name@
-libdir = @libdir@
-includedir = @includedir@
-datadir = @datadir@
+
+prefix = /usr
+exec_prefix = ${prefix}
+transform = s,x,x,
+libdir = ${exec_prefix}/lib
+includedir = ${prefix}/include
+datadir = ${prefix}/share
 localedir = $(datadir)/locale
 gettextsrcdir = $(datadir)/gettext/intl
 aliaspath = $(localedir)
 subdir = intl
 
-INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
-MKINSTALLDIRS = @MKINSTALLDIRS@
+INSTALL = /usr/bin/install -c
+INSTALL_DATA = ${INSTALL} -m 644
+MKINSTALLDIRS = ./mkinstalldirs
 mkinstalldirs = $(SHELL) `case "$(MKINSTALLDIRS)" in /*) echo "$(MKINSTALLDIRS)" ;; *) echo "$(top_builddir)/$(MKINSTALLDIRS)" ;; esac`
 
-l = @INTL_LIBTOOL_SUFFIX_PREFIX@
+l = 
 
 AR = ar
-CC = @CC@
+CC = gcc
 LIBTOOL = @LIBTOOL@
-RANLIB = @RANLIB@
-YACC = @INTLBISON@ -y -d
+RANLIB = ranlib
+YACC = bison -y -d
 YFLAGS = --name-prefix=__gettext
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" -DLOCALE_ALIAS_PATH=\"$(aliaspath)\" \
--DLIBDIR=\"$(libdir)\" -DIN_LIBINTL @DEFS@
-CPPFLAGS = @CPPFLAGS@
-CFLAGS = @CFLAGS@
-LDFLAGS = @LDFLAGS@
+-DLIBDIR=\"$(libdir)\" -DIN_LIBINTL -DHAVE_CONFIG_H
+CPPFLAGS = 
+CFLAGS = -g -O2 -I/usr/include/pcre
+LDFLAGS = 
 
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
@@ -66,7 +66,7 @@ COMSRCS = bindtextdom.c dcgettext.c dgettext.c gettext.c \
 finddomain.c loadmsgcat.c localealias.c textdomain.c l10nflist.c \
 explodename.c dcigettext.c dcngettext.c dngettext.c ngettext.c plural.y \
 plural-exp.c localcharset.c localename.c osdep.c os2compat.c
-OBJECTS = @INTLOBJS@ bindtextdom.$lo dcgettext.$lo dgettext.$lo gettext.$lo \
+OBJECTS =  bindtextdom.$lo dcgettext.$lo dgettext.$lo gettext.$lo \
 finddomain.$lo loadmsgcat.$lo localealias.$lo textdomain.$lo l10nflist.$lo \
 explodename.$lo dcigettext.$lo dcngettext.$lo dngettext.$lo ngettext.$lo \
 plural.$lo plural-exp.$lo localcharset.$lo localename.$lo osdep.$lo
@@ -100,14 +100,14 @@ LTV_AGE=0
 	rm -f $*.h
 
 .sin.sed:
-	sed -e '/^#/d' -e 's/@''PACKAGE''@/@PACKAGE@/g' $< > t-$@
+	sed -e '/^#/d' -e 's/@''PACKAGE''@/grep/g' $< > t-$@
 	mv t-$@ $@
 
 INCLUDES = -I.. -I. -I$(top_srcdir)/intl
 
-all: all-@USE_INCLUDED_LIBINTL@
+all: all-no
 all-yes: libintl.$la libintl.h charset.alias ref-add.sed ref-del.sed
-all-no: all-no-@BUILD_INCLUDED_LIBINTL@
+all-no: all-no-no
 all-no-yes: libgnuintl.$la
 all-no-no:
 
@@ -128,7 +128,7 @@ libintl.h: libgnuintl.h
 	cp $(srcdir)/libgnuintl.h libintl.h
 
 charset.alias: config.charset
-	$(SHELL) $(srcdir)/config.charset '@host@' > t-$@
+	$(SHELL) $(srcdir)/config.charset 'i686-pc-linux-gnu' > t-$@
 	mv t-$@ $@
 
 check: all
@@ -144,7 +144,7 @@ check: all
 install: install-exec install-data
 install-exec: all
 	if test "$(PACKAGE)" = "gettext" \
-	   && test '@INTLOBJS@' = '$(GETTOBJS)'; then \
+	   && test '' = '$(GETTOBJS)'; then \
 	  $(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir); \
 	  $(INSTALL_DATA) libintl.h $(DESTDIR)$(includedir)/libintl.h; \
 	  $(LIBTOOL) --mode=install \
@@ -152,8 +152,8 @@ install-exec: all
 	else \
 	  : ; \
 	fi
-	if test '@USE_INCLUDED_LIBINTL@' = yes; then \
-	  test @GLIBC21@ != no || $(mkinstalldirs) $(DESTDIR)$(libdir); \
+	if test 'no' = yes; then \
+	  test yes != no || $(mkinstalldirs) $(DESTDIR)$(libdir); \
 	  temp=$(DESTDIR)$(libdir)/t-charset.alias; \
 	  dest=$(DESTDIR)$(libdir)/charset.alias; \
 	  if test -f $(DESTDIR)$(libdir)/charset.alias; then \
@@ -162,7 +162,7 @@ install-exec: all
 	    $(INSTALL_DATA) $$temp $$dest; \
 	    rm -f $$temp; \
 	  else \
-	    if test @GLIBC21@ = no; then \
+	    if test yes = no; then \
 	      orig=charset.alias; \
 	      sed -f ref-add.sed $$orig > $$temp; \
 	      $(INSTALL_DATA) $$temp $$dest; \
@@ -210,13 +210,13 @@ install-strip: install
 
 installdirs:
 	if test "$(PACKAGE)" = "gettext" \
-	   && test '@INTLOBJS@' = '$(GETTOBJS)'; then \
+	   && test '' = '$(GETTOBJS)'; then \
 	  $(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir); \
 	else \
 	  : ; \
 	fi
-	if test '@USE_INCLUDED_LIBINTL@' = yes; then \
-	  test @GLIBC21@ != no || $(mkinstalldirs) $(DESTDIR)$(libdir); \
+	if test 'no' = yes; then \
+	  test yes != no || $(mkinstalldirs) $(DESTDIR)$(libdir); \
 	  $(mkinstalldirs) $(DESTDIR)$(localedir); \
 	else \
 	  : ; \
@@ -232,14 +232,14 @@ installcheck:
 
 uninstall:
 	if test "$(PACKAGE)" = "gettext" \
-	   && test '@INTLOBJS@' = '$(GETTOBJS)'; then \
+	   && test '' = '$(GETTOBJS)'; then \
 	  rm -f $(DESTDIR)$(includedir)/libintl.h; \
 	  $(LIBTOOL) --mode=uninstall \
 	    rm -f $(DESTDIR)$(libdir)/libintl.$la; \
 	else \
 	  : ; \
 	fi
-	if test '@USE_INCLUDED_LIBINTL@' = yes; then \
+	if test 'no' = yes; then \
 	  if test -f $(DESTDIR)$(libdir)/charset.alias; then \
 	    temp=$(DESTDIR)$(libdir)/t-charset.alias; \
 	    dest=$(DESTDIR)$(libdir)/charset.alias; \
