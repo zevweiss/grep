@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-19 14:33+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,52 +62,52 @@ msgstr ""
 msgid "memory exhausted"
 msgstr ""
 
-#: src/grep.c:203
+#: src/grep.c:205
 msgid "invalid context length argument"
 msgstr ""
 
-#: src/grep.c:472
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:594
+#: src/grep.c:597
 msgid "writing output"
 msgstr ""
 
-#: src/grep.c:867
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr ""
 
-#: src/grep.c:881
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr ""
 
-#: src/grep.c:986
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr ""
 
-#: src/grep.c:987
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr ""
 
-#: src/grep.c:1035
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr ""
 
-#: src/grep.c:1037
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/grep.c:1042
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr ""
 
-#: src/grep.c:1043
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -116,7 +116,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 
-#: src/grep.c:1048
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -124,7 +124,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 
-#: src/grep.c:1053
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -134,7 +134,7 @@ msgid ""
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
 
-#: src/grep.c:1060
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -145,7 +145,7 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 
-#: src/grep.c:1068
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -155,6 +155,7 @@ msgid ""
 "      --line-buffered       flush output on every line\n"
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
+"      --label=LABEL         print LABEL as filename for standard input\n"
 "  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE\n"
@@ -176,7 +177,7 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 
-#: src/grep.c:1095
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -184,45 +185,54 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
-"      --color[=WHEN],"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to distinguish the matching string\n"
+"                            WHEN may be `always', `never' or `auto'.\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
+"\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"With no FILE, or when FILE is -, read standard input.  If less than\n"
+"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
+"and 2 if trouble.\n"
 msgstr ""
 
-#: src/grep.c:1112
+#: src/grep.c:1116
 msgid ""
 "\n"
 "Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 
-#: src/grep.c:1122
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr ""
 
-#: src/grep.c:1359
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr ""
 
-#: src/grep.c:1426
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1493
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr ""
 
-#: src/grep.c:1547
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr ""
 
-#: src/grep.c:1638
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr ""
 
-#: src/grep.c:1640
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/grep.c:1642
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
