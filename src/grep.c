@@ -1472,8 +1472,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   if (keys)
     {
       if (keycc == 0)
-	/* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
-        out_invert ^= 1;
+	{
+	  /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
+	  out_invert ^= 1;
+	  match_lines = match_words = 0;
+	}
       else
 	/* Strip trailing newline. */
         --keycc;

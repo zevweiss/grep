@@ -1,4 +1,13 @@
-2000-04-24  Paul Eggert  <eggert@twinsun.com>
+2000-05-16  Paul Eggert
+
+	Problem reported by Bob Proulx <rwp@hprwp.fc.hp.com>, this patch
+	is base on his finding, with appropiate corrections.
+
+	* src/grep.c (main): Fix bug: -x and -w matched even when no
+	patterns were specified.
+	* tests/empty.sh: Test for -x and -w bug in grep 2.4.2.
+
+2000-04-24  Paul Eggert
 
 	POSIX.2 conformance fixes: grep -q now exits with status zero
 	if an input line is selected, even if an error also occurs.
