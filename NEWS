@@ -19,7 +19,7 @@ Version 2.3:
     `grep: DIRECTORY: Binary file matches' (or nothing) otherwise.
 
     The new -d ACTION or --directories=ACTION option affects directory handling.
-    `-d skip' causes `grep' to silently skip directories, as in grep 2.2;
+    `-d skip' causes `grep' to silently skip directories, as in grep 2.1;
     `-d read' (the default) causes `grep' to read directories if possible,
     as in earlier versions of grep.
 

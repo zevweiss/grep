@@ -1,3 +1,8 @@
+1999-02-19  Paul Eggert
+
+	* NEWS: Fix typo when talking about the old behavior of
+	silently skipping directories; it was grep 2.1, not grep 2.2.
+
 1999-02-15 Alain Magloire
 
 	* bootstrap/Makefile.try : add DJGPP DEFS.
