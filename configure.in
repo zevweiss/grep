@@ -78,7 +78,7 @@ if test "$USE_WCHAR" = "yes"; then
 fi
 
 dnl I18N
-ALL_LINGUAS="de es fr ko nl no pl ru sl sv"
+ALL_LINGUAS="de es el fr ko nl no pl ru sl sv"
 AM_GNU_GETTEXT
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
