@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.0f\n"
-"POT-Creation-Date: 2001-07-30 10:50-0400\n"
+"POT-Creation-Date: 2001-07-31 16:17-0400\n"
 "PO-Revision-Date: 1997-09-03 11:19+0900\n"
 "Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
 "Language-Team: Korean <ko@li.org>\n"

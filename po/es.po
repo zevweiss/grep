@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.5e\n"
-"POT-Creation-Date: 2001-03-07 00:02-0500\n"
+"POT-Creation-Date: 2001-07-31 16:17-0400\n"
 "PO-Revision-Date: 2001-06-09 15:44+0200\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -14,18 +14,18 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
 msgstr "Memoria agotada"
 
-#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
-#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
-#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
-#: src/dfa.c:1045 src/dfa.c:1046
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "[ desemparejado"
 
-#: src/dfa.c:738
+#: src/dfa.c:741
 msgid "Unfinished \\ escape"
 msgstr "Secuencia de escape \\ sin terminar"
 
@@ -33,33 +33,33 @@ msgstr "Secuencia de escape \\ sin terminar"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
+#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
 msgstr "contador de repetición sin terminar"
 
-#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
+#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
 msgstr "contador de repetición erróneo"
 
-#: src/dfa.c:1232
+#: src/dfa.c:1239
 msgid "Unbalanced ("
 msgstr "( desemparejado"
 
-#: src/dfa.c:1357
+#: src/dfa.c:1364
 msgid "No syntax specified"
 msgstr "No se ha especificado ninguna sintaxis"
 
-#: src/dfa.c:1365
+#: src/dfa.c:1372
 msgid "Unbalanced )"
 msgstr ") desemparejado"
 
 # FIXME. Comunicar al autor que esto es repetición...
-#: src/dfa.c:2933
+#: src/dfa.c:2942
 msgid "out of memory"
 msgstr "memoria agotada"
 
-#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:103 src/search.c:223 src/search.c:307
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "memoria agotada"
 
@@ -67,49 +67,49 @@ msgstr "memoria agotada"
 msgid "invalid context length argument"
 msgstr "longitud de contexto inválida"
 
-#: src/grep.c:466
+#: src/grep.c:458
 msgid "input is too large to count"
 msgstr "la entrada es demasiado grande para contar"
 
-#: src/grep.c:539
+#: src/grep.c:531
 msgid "writing output"
 msgstr "escribiendo el resultado"
 
-#: src/grep.c:812
+#: src/grep.c:804
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Coincidencia en el fichero binario %s\n"
 
-#: src/grep.c:826
+#: src/grep.c:818
 msgid "(standard input)"
 msgstr "(entrada estándar)"
 
-#: src/grep.c:931
+#: src/grep.c:923
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "atención: %s: %s\n"
 
-#: src/grep.c:932
+#: src/grep.c:924
 msgid "recursive directory loop"
 msgstr "bucle de directorio recursivo"
 
-#: src/grep.c:980
+#: src/grep.c:972
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Modo de empleo: %s [OPCIÓN]... PATRÓN [FICHERO]...\n"
 
-#: src/grep.c:982
+#: src/grep.c:974
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pruebe `%s --help' para más información.\n"
 
 # FIXME: Dice [FILE] ... en vez de [FILE]... ¿Será un error?
-#: src/grep.c:987
+#: src/grep.c:979
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Modo de empleo: %s [OPCIÓN]... PATRÓN [FICHERO] ...\n"
 
-#: src/grep.c:988
+#: src/grep.c:980
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -122,7 +122,7 @@ msgstr ""
 "\n"
 "Selección e interpretación de Expreg:\n"
 
-#: src/grep.c:993
+#: src/grep.c:985
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -135,7 +135,7 @@ msgstr ""
 "  -G, --basic-regexp        PATRÓN es una expresión regular básica\n"
 "  -P, --perl-regexp         PATRÓN es una expresión regular en Perl\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -154,7 +154,7 @@ msgstr ""
 "  -z, --null-data           una línea de datos termina en un byte 0, no\n"
 "                            en un carácter de nueva línea\n"
 
-#: src/grep.c:1005
+#: src/grep.c:997
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -170,9 +170,11 @@ msgstr ""
 "  -v, --invert-match        selecciona las líneas que no coinciden\n"
 "  -V, --version             muestra la versión y finaliza\n"
 "      --help                muestra esta ayuda y finaliza\n"
-"      --mmap                utiliza entrada asignada en memoria si es posible\n"
+"      --mmap                utiliza entrada asignada en memoria si es "
+"posible\n"
 
-#: src/grep.c:1013
+#: src/grep.c:1005
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -190,9 +192,10 @@ msgid ""
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examine\n"
-"      --exclude=PATTERN     files that match PATTERN will be skip.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n"
+"      --include=PATTERN     files that match PATTERN will be examined\n"
+"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be "
+"skipped.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -220,17 +223,20 @@ msgstr ""
 "  -R, -r, --recursive       equivalente a --directories=recurse\n"
 "      --include=PATRÓN      examina los ficheros que encajan con PATRÓN\n"
 "      --exclude=PATRÓN      se salta los ficheros que encajan con PATRÓN\n"
-"      --exclude-from=FICHERO se salta los ficheros que encajan con los patrones\n"
+"      --exclude-from=FICHERO se salta los ficheros que encajan con los "
+"patrones\n"
 "                             de FICHERO\n"
 "  -L, --files-without-match muestra solamente los nombres de FICHEROs\n"
 "                            que no contienen ninguna coincidencia\n"
 "  -l, --files-with-matches  muestra solamente los nombres de FICHEROs\n"
 "                            que contienen alguna coincidencia\n"
-"  -c, --count               muestra solamente el total de líneas que coinciden\n"
+"  -c, --count               muestra solamente el total de líneas que "
+"coinciden\n"
 "                            por cada FICHERO\n"
-"  -Z, --null                imprime un byte 0 después del nombre del FICHERO\n"
+"  -Z, --null                imprime un byte 0 después del nombre del "
+"FICHERO\n"
 
-#: src/grep.c:1037
+#: src/grep.c:1029
 msgid ""
 "\n"
 "Context control:\n"
@@ -264,9 +270,13 @@ msgstr ""
 "Si se dan menos de dos FICHEROs, se supone -h. La salida es 0 si hay\n"
 "coincidencias, 1 si no las hay, y 2 en caso de problema\n"
 
-#: src/grep.c:1052
-msgid "\nReport bugs to <bug-gnu-utils@gnu.org>.\n"
-msgstr "\nComunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
+#: src/grep.c:1044
+msgid ""
+"\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Comunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
 
 #  viendo los fuentes , hay varias opciones
 #  que hay sin documentar. O quizá es que getopt() lo he entendido mal
@@ -279,34 +289,34 @@ msgstr "\nComunicar `bugs' a <bug-gnu-utils@gnu.org>.\n"
 #
 # No me gusta nada lo de opción "a buscar".
 # Se admiten sugerencias. sv
-#: src/grep.c:1062
+#: src/grep.c:1054
 msgid "conflicting matchers specified"
 msgstr "se han especificado expresiones conflictivas"
 
 # Nota: Se refiere a la opción --directories=ACCIÓN cuando ACCIÓN
 # no es `read', `recurse' o `skip'.
-#: src/grep.c:1355
+#: src/grep.c:1347
 msgid "unknown directories method"
 msgstr "método de directorios desconocido"
 
-#: src/grep.c:1422
+#: src/grep.c:1414
 msgid "invalid max count"
 msgstr "contador máximo inválido"
 
-#: src/grep.c:1472
+#: src/grep.c:1464
 msgid "unknown binary-files type"
 msgstr "tipo binary-files desconocido"
 
-#: src/grep.c:1543
+#: src/grep.c:1535
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1545
+#: src/grep.c:1537
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1547
+#: src/grep.c:1539
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -315,11 +325,11 @@ msgstr ""
 "No hay NINGUNA garantía; ni siquiera de COMERCIABILIDAD o IDONEIDAD PARA UN\n"
 "FIN DETERMINADO.\n"
 
-#: src/search.c:623
+#: src/search.c:606
 msgid "The -P option is not supported"
 msgstr "La opción -P no está admitida"
 
-#: src/search.c:636
+#: src/search.c:619
 msgid "The -P and -z options cannot be combined"
 msgstr "Las opciones -P y -z no se pueden combinar"
 
@@ -400,11 +410,11 @@ msgstr "%s: la opción `-W %s' no admite ningún argumento\n"
 #. MARK).  A British English Unicode locale should instead
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
-#: lib/quotearg.c:265
+#: lib/quotearg.c:259
 msgid "`"
 msgstr "`"
 
-#: lib/quotearg.c:266
+#: lib/quotearg.c:260
 msgid "'"
 msgstr "'"
 
@@ -441,10 +451,11 @@ msgstr "'"
 #~ msgid "you may specify only one of -E, -F, or -G"
 #~ msgstr "sólo se puede especificar una de las opciones -E, -F, o -G"
 
-#~ # Prefiero dejarlo en solamente un patrón
-#~ # Pero entonces no queda claro que *debe haber uno*, y parece que
-#~ # es uno como máximo (siendo el mínimo 0). sv
-#~ msgid "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
+# Prefiero dejarlo en solamente un patrón
+# Pero entonces no queda claro que *debe haber uno*, y parece que
+# es uno como máximo (siendo el mínimo 0). sv
+#~ msgid ""
+#~ "There should be one and only one PATTERN, `-e PATTERN' or `-f FILE'.\n"
 #~ msgstr "Debe haber un y solamente un PATRÓN, `-e PATRÓN', o `-f FICHERO'.\n"
 
 #~ msgid "If no -[GEF], then -G is assumed.\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5e\n"
 "POT-Creation-Date: 2001-03-07 00:02-0500\n"
-"PO-Revision-Date: 2001-05-13 12:25+02:00\n"
+"PO-Revision-Date: 2001-08-10 13:46+0200\n"
 "Last-Translator: Marco d'Itri <md@linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
 msgid "Memory exhausted"
-msgstr "Memoria esurita"
+msgstr "Memoria esaurita"
 
 #: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
 #: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
@@ -26,7 +26,7 @@ msgstr "[ non bilanciata"
 
 #: src/dfa.c:738
 msgid "Unfinished \\ escape"
-msgstr "escape \\ incompleto"
+msgstr "Escape \\ incompleto"
 
 #. Cases:
 #. {M} - exact count

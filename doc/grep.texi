@@ -323,10 +323,10 @@ If an input file is a directory, use @var{action} to process it.
 By default, @var{action} is @samp{read}, which means that directories are
 read just as if they were ordinary files (some operating systems
 and filesystems disallow this, and will cause @command{grep} to print error
-messages for every directory).  If @var{action} is @samp{skip},
-directories are silently skipped.  If @var{action} is @samp{recurse},
-@command{grep} reads all files under each directory, recursively; this is
-equivalent to the @samp{-r} option.
+messages for every directory or silently skip them). If @var{action} is
+@samp{skip}, directories are silently skipped.  If @var{action} is
+@samp{recurse}, @command{grep} reads all files under each directory,
+recursively; this is equivalent to the @samp{-r} option.
 
 @item -H
 @itemx --with-filename

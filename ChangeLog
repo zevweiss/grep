@@ -1,3 +1,8 @@
+2001-08-25  Heikki Korpela
+
+	* doc/grep.texi: Point out that some Platforms do not support
+	reading of directories and silently ignore them.
+
 2001-08-21  Alain Magloire
 
 	* lib/malloc.c: New file:
