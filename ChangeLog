@@ -1,3 +1,8 @@
+1999-02-15 Alain Magloire
+
+	* bootstrap/Makefile.try : add DJGPP DEFS.
+	Done by Elie Zaretsckii.
+
 1999-02-14 Alain Magloire
 
 	* m4/gettext.m4 : Guard [] with changequote.
