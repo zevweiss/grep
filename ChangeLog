@@ -4,6 +4,8 @@
 	* src/grep.c: Add --color={always,never,tty} argument (like in ls)
 	* src/grep.c: Turn off blinking in the default colorization
 	* src/grep.c: Add --devices (-D) switch (analogous to --directories)
+	* src/dfa.c: Fix an i18n bug: echo "A" | grep '[A-Z0-9]' wouldn't work
+	  in non-C-Locales on systems using current versions of glibc.
 	* AUTHORS: Change maintainer, credit Alain for his work until now
 	* configure.in, m4/decl.m4, m4/dosfile.m4, m4/gettext.m4,
 	  m4/init.m4, m4/install.m4, m4/largefile.m4, m4/lcmessage.m4,
