@@ -1,3 +1,7 @@
+1999-11-11  Alain Magloire
+
+	Beta version 2.3h freeze for 2.4 release.
+
 1999-11-07  Paul Eggert
 
 	Don't assume that the C library has re_set_syntax and friends.
@@ -27,7 +31,7 @@
 	users have different version of glibc.  And glibc maintainers
 	decided to drop k&r support. 
 	
-1999-11-1 Arnold D. Robbins
+1999-11-01 Arnold D. Robbins
 
 	* regex.c (init_syntax_once): move below definition of
 	ISALNUM etc., then use ISALNUM to init the table, so that
