@@ -1,3 +1,11 @@
+1998-11-11  Alain Magloire
+
+	* src/regex.c : On Apple, grep is overriding the regex library
+	(recomp, etc.). Adding __private_extern__ in the declaration
+	localizes the scope of that symbol for the linker, so it knows
+	to use grep's regex routines rather than those in lib system.
+	Done by Wilfredo Sanchez.
+
 1998-11-10  Alain Magloire
 
 	* src/vms_fab.{c,h}: New file for VMS wildcard expansion
