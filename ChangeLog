@@ -5,6 +5,10 @@
 	* src/grep.c: make not_text global to not display text when
 	the context switches -A/-B/-C are use on binary files.
 	* make grep-2.3g available for testing.
+	* configure.in: drop support for --without-included-regex.
+	This was generating bogus bug reports, since many GNU/Linux
+	users have different version of glibc.  And glibc maintainers
+	decided to drop k&r support. 
 	
 1999-11-1 Arnold D. Robbins
 

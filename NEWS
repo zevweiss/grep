@@ -45,6 +45,9 @@ Version 2.4:
   - New option -r or --recursive or --directories=recurse.
     (This option was also in grep 2.3, but wasn't announced here.)
 
+  - --without-included-regex disable, was causing bogus reports .i.e
+    doing more harm then good.
+
 Version 2.3:
 
   - When searching a binary file FOO, grep now just reports
