@@ -1,4 +1,8 @@
 2003-06-05  Stepan Kasal  <kasal@ucw.cz>
+	* tests/formatbre.awk, tests/formatbre.awk: probably unused, so
+	  I've removed them.
+
+2003-06-05  Stepan Kasal  <kasal@ucw.cz>
 	* intl/Makefile: remove generated file.
 
 2003-06-04  Stepan Kasal  <kasal@ucw.cz>
