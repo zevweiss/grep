@@ -1,3 +1,9 @@
+1999-02-23 Alain Magloire
+
+	* configure.in : Change the configure VC test from
+	'test x$ac_cv_prog_CC = xcl;' to 'test x"$ac_cv_prog_CC" = xcl;'
+	Email from Joshua R. Poulson.
+
 1999-02-23 Paul Eggert
 
 	Fix porting bug reported by Amakawa Shuhei for SunOS 4.1.4-JL.
