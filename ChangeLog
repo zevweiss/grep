@@ -1,3 +1,31 @@
+2001-07-29  Alain Magloire
+
+	* grep/src/grep.c (usage): Typos corrected.
+	Patches from Santiago Vila.
+
+2001-07-29  Alain Magloire
+
+	David Clissold, wrote:
+	a small bug in the GNU grep 2.4.2, which may have gone unnoticed
+	because it only causes a failure if building on a system with large
+	files enabled (e.g. an "off_t" is a "long long" rather than a "long").
+	savedir() takes on off_t argument, but in grepdir() the parameter
+	is cast to an (unsigned).  Well, if an off_t is larger than an int,
+	the value gets truncated.  This would not normally have an effect on a
+	little-endian platform (unless the file is >2GB), but on a big-endian
+	system it will always fail.  The external effect is that
+	"grep -r foo dir_name" fails with ENOMEM (from malloc() within
+	savedir()).
+
+	* grep/src/grep.c (grepdir): Remove the (unsigned) cast when calling
+	savedir().
+
+2001-07-29  Alain Magloire
+
+	* grep/doc/grep.texi: In Bugs report use {n,m} for consistency.
+	* grep/doc/grep.1: Likewised.
+	Noted by Steven Lucy.
+
 2001-04-27  Isamu Hasegawa
 
 	* dfa.c (mblen_buf) : New variable contains the amount of remain

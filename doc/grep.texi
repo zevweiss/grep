@@ -1211,7 +1211,7 @@ g/re/p
 Email bug reports to @email{bug-gnu-utils@@gnu.org}.
 Be sure to include the word ``grep'' somewhere in the ``Subject:'' field.
 
-Large repetition counts in the @samp{@{m,n@}} construct may cause
+Large repetition counts in the @samp{@{n,m@}} construct may cause
 @command{grep} to use lots of memory.  In addition, certain other
 obscure regular expressions require exponential time and
 space, and may cause grep to run out of memory.

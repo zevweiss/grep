@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.18 2001/02/18 04:13:21 alainm Exp $
+.Id $Id: grep.1,v 1.19 2001/07/29 19:32:15 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -736,7 +736,7 @@ Be sure to include the word \*(lqgrep\*(rq somewhere in the
 \*(lqSubject:\*(rq field.
 .PP
 Large repetition counts in the
-.BI { m , n }
+.BI { n , m }
 construct may cause grep to use lots of memory.
 In addition,
 certain other obscure regular expressions require exponential time
