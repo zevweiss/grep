@@ -400,7 +400,8 @@ fillbuf (save, stats)
          not occur if there is arithmetic overflow.  If there's no
 	 progress, or if the new buffer size is larger than the old
 	 and buffer reallocation fails, report memory exhaustion.  */
-      if (bufsalloc < save || newalloc <= save
+      if (bufsalloc < save || newalloc < save
+	  || (newalloc == save && newalloc != maxalloc)
 	  || (bufalloc < newalloc
 	      && ! (buffer
 		    = page_alloc ((bufalloc = newalloc) + 1, &ubuffer))))
@@ -962,11 +963,12 @@ int status;
       printf (_("Usage: %s [OPTION]... PATTERN [FILE] ...\n"), prog);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n\
+Example: %s -i 'hello.*world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n"));
+Regexp selection and interpretation:\n"), prog);
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression\n\
-  -F, --fixed-regexp        PATTERN is a fixed string separated by newlines\n\
+  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression\n"));
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
@@ -1011,9 +1013,9 @@ Context control:\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n\
 `egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
-With no FILE, or when FILE is -, read standard input. If less than\n\
-two FILEs given, assume -h. Exit with 0 if matches, with 1 if none.\n\
-Exit with 2 if syntax errors or system errors.\n"));
+With no FILE, or when FILE is -, read standard input.  If less than\n\
+two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n\
+and 2 if trouble.\n"));
       printf (_("\nReport bugs to <bug-gnu-utils@gnu.org>.\n"));
     }
   exit (status);
