@@ -1,5 +1,10 @@
 2004-11-23  Stepan Kasal  <kasal@ucw.cz>
 
+	* src/Makefile.am: The egrep and fgrep script now use their own
+	path to construct the full pathname of grep.
+
+2004-11-23  Stepan Kasal  <kasal@ucw.cz>
+
 	* src/Makefile.am: Merged the rules for creating the egrep and
 	fgrep script.
 

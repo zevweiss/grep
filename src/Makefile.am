@@ -23,6 +23,10 @@ OPTION_for_egrep = -E
 OPTION_for_fgrep = -F
 
 egrep fgrep: Makefile
-	echo '#!/bin/sh' >$@
-	echo 'exec grep $(OPTION_for_$@) $${1+"$$@"}' >>$@
+	(echo '#!/bin/sh'; \
+	echo 'case $$0 in' ; \
+	echo '  */*) dir=$${0%/*}/ ;;' ; \
+	echo '  *) dir="" ;;' ; \
+	echo 'esac' ; \
+	echo 'exec $${dir}grep $(OPTION_for_$@) $${1+"$$@"}' ) >$@
 	chmod a+x $@
