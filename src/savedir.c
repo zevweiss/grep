@@ -70,7 +70,7 @@ char *stpcpy ();
 #include "savedir.h"
 
 char *path;
-size_t len pathlen;
+size_t pathlen;
 
 static int
 isdir1 (const char *dir, const char *file)
@@ -81,7 +81,7 @@ isdir1 (const char *dir, const char *file)
   size_t filelen = strlen (file);
   if ((dirlen + filelen + 2) > pathlen)
     {
-      path = calloc (dirlen + 1 + filelen + 1, sizef (*path));
+      path = calloc (dirlen + 1 + filelen + 1, sizeof (*path));
       pathlen = dirlen + filelen + 2;
     }
   strcpy (path, dir);

@@ -1671,7 +1671,7 @@ dfastate (int s, struct dfa *d, int trans[])
   static int initialized;	/* Flag for static initialization. */
 #ifdef MBS_SUPPORT
   int next_isnt_1st_byte = 0;	/* Flag If we can't add state0.  */
-#endif 
+#endif
   int i, j, k;
 
   /* Initialize the set of letters, if necessary. */
@@ -2026,7 +2026,7 @@ build_state_zero (struct dfa *d)
       while (inputwcs[p - buf_begin] < 0 && p < buf_end)\
         ++p;						\
       if (p >= end)					\
-        free(inputwcs)					\
+        free(inputwcs);					\
 	return (size_t) -1;				\
     }
 #endif

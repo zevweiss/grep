@@ -1,3 +1,9 @@
+2001-02-25  Alain Magloire
+
+	* src/dfa.c : Typo corrected.
+	Noted by Isamu Hasegawa.
+	* src/savedir.c : Typos corrected.
+
 2001-02-22  Alain Magloire
 
 	* src/savedir.c (isdir1) : New function, calling isdir with
