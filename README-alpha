@@ -7,3 +7,5 @@ Password: [just hit enter]
 $ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs checkout grep
 
 Please send comments and problem reports to <bug-grep@gnu.org>.
+
+This is a RELEASE CANDIDATE for grep 2.5.
