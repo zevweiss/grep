@@ -13,11 +13,15 @@ OBJS = alloca.$(OBJEXT) \
       getopt1.$(OBJEXT) \
       grep.$(OBJEXT) \
       kwset.$(OBJEXT) \
+      hard-local.$(OBJEXT) \
+      isdir.$(OBJEXT) \
       memchr.$(OBJEXT) \
       obstack.$(OBJEXT) \
       regex.$(OBJEXT) \
       savedir.$(OBJEXT) \
       search.$(OBJEXT) \
+      xstrtol.$(OBJEXT) \
+      xstrtoumax.$(OBJEXT) \
       stpcpy.$(OBJEXT)
 
 # Where is DIR and opendir/readdir defined.

@@ -1,11 +1,86 @@
+2001-02-17  Alain Malgoire
+
+	* doc/grep.texi : Document the new options and the new behaviour
+	back-references are local.  Use excerpt from Karl Berry regex
+	texinfo.
+
+	* bootstrap/Makefile.try : Added xstrtoumax.o xstrtoul.o hard-local.o
+
+2001-02-17  Alain Magloire
+
+	From Guglielmo 'bond' Bondioni :
+	The bug was that using a multi line file that contained REs (one per
+	line), backreferences in the REs were considered global (to the file)
+	and not local (to the line).
+	That is, \1 in line n refers to the first \(.\) in the whole file,
+	rather than in the line itself.
+
+	From Tapani Tarvainen :
+	# Re: grep -e '\(a\)\1' -e '\(b\)\1'
+	That's not the way it should work: multiple -e arguments
+	should be treated as independent patterns and back references
+	should not refer to previous ones.
+
+	From Paul Eggert :
+	GNU grep currently does not issue
+	diagnostics for the following two cases, both of which are erroneous:
+	grep -e '[' -e ']'
+	grep '[
+	]'
+	POSIX requires a diagnostic in both cases because '[' is not a valid
+	regular expression.
+
+	To overcome those problems, grep no longer pass the concatenate
+	patterns to GNU regex but rather compile each patterns separately
+	and keep the result in an array.
+
+	* src/search.c (patterns) : New global variable; a structure array
+	holding the compiled patterns.
+	Declare function prototypes to minimize error.
+	(dfa, kswset, regexbuf, regs) : Removed, no longer static globals, but
+	rather fields in patterns[] structure per motif.
+	(Fcompile) : Alloc an entry in patterns[] to hold the regex.
+	(Ecompile) : Alloc an entry per motif in the patterns[] array.
+	(Gcompile) : Likewise.
+	(EGexecute) : Loop through of array of patterns[] for a match.
+
+2001-02-17  Alain Magloire
+
+	From Bernd Strieder :
+	# tail -f logfile | grep important | do_something_urgent
+	# tail -f logfile | grep important | do_something_taking_very_long
+	If grep does full buffering in these cases then the urgent operation
+	does not happen as it should in the first case, and in the second case
+	time is lost due to waiting for the buffer to be filled.
+	This is clearly spoken not grep's fault in the first place, but libc's.
+	There is a heuristic in libc that make a stream line-buffered only if a
+	terminal is on the other end. This doesn't take care of the cases where
+	this connection is somehow indirect.
+
+	* src/grep.c (line_buffered) : new option variable.
+	(prline) : if line_buffered is set fflush() is call.
+	(usage) : line_buffered new option.
+	Input from Paul Eggert, doing setvbuf() may not be portable
+	and breaks grep -z.
+
 2001-02-16  Alain Magloire
 
 	Patch from Isamu Hasegawa, for multibyte support.
+	This patch prevent kwset_matcher from following problems.
+	For example, in SJIS encoding, one character has the codepoint 0x895c.
+	So the second byte of the character can match with '\' incorrectly.
+	And in eucJP encoding, there are the characters whose codepoints are
+	0xa5b9, 0xa5c8.  On the other hand, there is one character whose
+	codepoint is 0xb9a5.  So 0xb9a5 can match with 2nd byte of 0xa5b9
+	and 1st byte of 0xa5c8.
 
 	* configure.in : Add check for mbrtowc.
 	* src/search.c (check_multibyte_string) : new function.
 	Support for multibyte string.
+	(EGexecute) : call check_multibyte_string when kwset is set.
+	(Fexecute) : call to check_multibyte_string.
 	(MBS_SUPPORT) : new macro.
+	(MB_CUR_MAX) : new macro.
 
 2001-02-16  Alain Magloire
 

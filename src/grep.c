@@ -80,6 +80,7 @@ enum
   COLOR_OPTION,
   INCLUDE_OPTION,
   EXCLUDE_OPTION,
+  LINE_BUFFERED_OPTION
 };
 
 /* Long options equivalences. */
@@ -105,6 +106,7 @@ static struct option const long_options[] =
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
+  {"line-buffered", no_argument, NULL, LINE_BUFFERED_OPTION},
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
   {"max-count", required_argument, NULL, 'm'},
@@ -455,11 +457,12 @@ fillbuf (size_t save, struct stats const *stats)
 
 /* Flags controlling the style of output. */
 static enum
-  {
-    BINARY_BINARY_FILES,
-    TEXT_BINARY_FILES,
-    WITHOUT_MATCH_BINARY_FILES
-  } binary_files;		/* How to handle binary files.  */
+{
+  BINARY_BINARY_FILES,
+  TEXT_BINARY_FILES,
+  WITHOUT_MATCH_BINARY_FILES
+} binary_files;		/* How to handle binary files.  */
+
 static int filename_mask;	/* If zero, output nulls after filenames.  */
 static int out_quiet;		/* Suppress all normal output. */
 static int out_invert;		/* Print nonmatching stuff. */
@@ -473,6 +476,9 @@ static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
 static off_t max_count;		/* Stop after outputting this many
 				   lines from an input file.  */
+static int line_buffered;       /* If nonzero, use line buffering, i.e.
+				   fflush everyline out.  */
+
 
 /* Internal variables to keep track of byte count, context, etc. */
 static uintmax_t totalcc;	/* Total character count before bufbeg. */
@@ -573,6 +579,8 @@ prline (char const *beg, char const *lim, int sep)
   if (ferror (stdout))
     error (_("writing output"), errno);
   lastout = lim;
+  if (line_buffered)
+    fflush (stdout);
 }
 
 /* Print pending lines of trailing context prior to LIM. Trailing context ends
@@ -1047,6 +1055,7 @@ Output control:\n\
   -m, --max-count=NUM       stop after NUM matches\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
+      --line-buffered       flush output on every line\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
@@ -1060,7 +1069,7 @@ Output control:\n\
       --include=PATTERN     equivalent to --directories=recurse but only\n\
                             files that match PATTERN will be examine\n\
       --exclude=PATTERN     equivalent to --directories=recurse, files that\n\
-                            match PATTERN will be skip.
+                            match PATTERN will be skip.\n\
   -L, --files-without-match only print FILE names containing no match\n\
   -l, --files-with-matches  only print FILE names containing matches\n\
   -c, --count               only print a count of matching lines per FILE\n\
@@ -1476,6 +1485,9 @@ main (int argc, char **argv)
       case INCLUDE_OPTION:
 	include_pattern = optarg;
 	directories = RECURSE_DIRECTORIES;
+	break;
+      case LINE_BUFFERED_OPTION:
+	line_buffered = 1;
 	break;
       case 0:
 	/* long options */

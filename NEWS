@@ -1,5 +1,17 @@
+Version 2.5
+
+  - The new option --line-buffered fflush on everyline.  There is a noticeable
+    slow down when forcing line buffering.
+
+  - Back references  are now local to the regex.
+    grep -e '\(a\)\1' -e '\(b\)\1'
+    The last backref \1 in the second expression refer to \(b\)
+
   - The new option --include=PATTERN will only search matching files
-    when recursing in directories and --exclude=PATTERN, will skip them.
+    when recursing in directories
+
+  - The new option --exclude=PATTERN will skip matching files when
+    recursing in directories.
 
   - The new option --color will use the environment variable GREP_COLOR
     (default is red) to highlight the matching string.

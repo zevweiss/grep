@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.17 2001/02/16 05:50:23 alainm Exp $
+.Id $Id: grep.1,v 1.18 2001/02/18 04:13:21 alainm Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -268,6 +268,9 @@ is operating, or if an I/O error occurs.
 .BR \-n ", " \-\^\-line-number
 Prefix each line of output with the line number
 within its input file.
+.TP
+.BR \-\^\-line-buffering
+Use line buffering, it can be a performance penality.
 .TP
 .BR \-q ", " \-\^\-quiet ", " \-\^\-silent
 Quiet; do not write anything to standard output.

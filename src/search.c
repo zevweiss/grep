@@ -43,21 +43,44 @@
 # include <wctype.h>
 #endif
 
-/* DFA compiled regexp. */
-static struct dfa dfa;
+/* The compile patterns.  */
+static struct patterns
+{
+  /* DFA compiled regexp. */
+  struct re_pattern_buffer regexbuf;
 
-/* Regex compiled regexp. */
-static struct re_pattern_buffer regexbuf;
+  /* Regex compiled regexp. */
+  struct dfa dfa;
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
+  /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
+     a list of strings, at least one of which is known to occur in
+     any string matching the regexp. */
+  kwset_t kwset;
 
-/* Number of compiled fixed strings known to exactly match the regexp.
-   If kwsexec returns < kwset_exact_matches, then we don't need to
-   call the regexp matcher at all. */
-static int kwset_exact_matches;
+  /* Number of compiled fixed strings known to exactly match the regexp.
+     If kwsexec returns < kwset_exact_matches, then we don't need to
+     call the regexp matcher at all. */
+  int kwset_exact_matches;
+
+  struct re_registers regs; /* This is here on account of a BRAIN-DEAD
+			       Q@#%!# library interface in regex.c.  */
+} patterns0;
+
+struct patterns *patterns;
+size_t pcount;
+
+#if defined(MBS_SUPPORT)
+static char* check_multibyte_string PARAMS ((char const *buf, size_t size));
+#endif
+static void kwsinit PARAMS ((kwset_t *));
+static void kwsmusts PARAMS ((struct patterns *));
+static void Gcompile PARAMS ((char const *, size_t));
+static void Ecompile PARAMS ((char const *, size_t));
+static size_t EGexecute PARAMS ((char const *, size_t, size_t *, int ));
+static void Fcompile PARAMS ((char const *, size_t));
+static size_t Fexecute PARAMS ((char const *, size_t, size_t *, int));
+static void Pcompile PARAMS ((char const *, size_t ));
+static size_t Pexecute PARAMS ((char const *, size_t, size_t *, int));
 
 void
 dfaerror (char const *mesg)
@@ -66,7 +89,7 @@ dfaerror (char const *mesg)
 }
 
 static void
-kwsinit (void)
+kwsinit (kwset_t *pkwset)
 {
   static char trans[NCHAR];
   int i;
@@ -75,8 +98,8 @@ kwsinit (void)
     for (i = 0; i < NCHAR; ++i)
       trans[i] = TOLOWER(i);
 
-  if (!(kwset = kwsalloc(match_icase ? trans : (char *) 0)))
-    fatal("memory exhausted", 0);
+  if (!((*pkwset) = kwsalloc (match_icase ? trans : (char *) 0)))
+    fatal(_("memory exhausted"), 0);
 }
 
 /* If the DFA turns out to have some set of fixed strings one of
@@ -84,35 +107,35 @@ kwsinit (void)
    to find those strings, and thus quickly filter out impossible
    matches. */
 static void
-kwsmusts (void)
+kwsmusts (struct patterns *pats)
 {
   struct dfamust const *dm;
   char const *err;
 
-  if (dfa.musts)
+  if (pats->dfa.musts)
     {
-      kwsinit();
+      kwsinit (&(pats->kwset));
       /* First, we compile in the substrings known to be exact
 	 matches.  The kwset matcher will return the index
 	 of the matching string that it chooses. */
-      for (dm = dfa.musts; dm; dm = dm->next)
+      for (dm = pats->dfa.musts; dm; dm = dm->next)
 	{
 	  if (!dm->exact)
 	    continue;
-	  ++kwset_exact_matches;
-	  if ((err = kwsincr(kwset, dm->must, strlen(dm->must))) != 0)
+	  ++(pats->kwset_exact_matches);
+	  if ((err = kwsincr(pats->kwset, dm->must, strlen(dm->must))) != 0)
 	    fatal(err, 0);
 	}
       /* Now, we compile the substrings that will require
 	 the use of the regexp matcher.  */
-      for (dm = dfa.musts; dm; dm = dm->next)
+      for (dm = pats->dfa.musts; dm; dm = dm->next)
 	{
 	  if (dm->exact)
 	    continue;
-	  if ((err = kwsincr(kwset, dm->must, strlen(dm->must))) != 0)
+	  if ((err = kwsincr(pats->kwset, dm->must, strlen(dm->must))) != 0)
 	    fatal(err, 0);
 	}
-      if ((err = kwsprep(kwset)) != 0)
+      if ((err = kwsprep(pats->kwset)) != 0)
 	fatal(err, 0);
     }
 }
@@ -164,51 +187,81 @@ check_multibyte_string(char const *buf, size_t size)
 #endif
 
 static void
-Gcompile (char const *pattern, size_t size)
+Gcompile (char const *motif, size_t total)
 {
   const char *err;
+  size_t size;
+  const char *sep;
 
   re_set_syntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
   dfasyntax(RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase, eolbyte);
 
-  if ((err = re_compile_pattern(pattern, size, &regexbuf)) != 0)
-    fatal(err, 0);
-
-  /* In the match_words and match_lines cases, we use a different pattern
-     for the DFA matcher that will quickly throw out cases that won't work.
-     Then if DFA succeeds we do some hairy stuff using the regex matcher
-     to decide whether the match should really count. */
-  if (match_words || match_lines)
+  do
     {
-      /* In the whole-word case, we use the pattern:
-	 \(^\|[^[:alnum:]_]\)\(userpattern\)\([^[:alnum:]_]|$\).
-	 In the whole-line case, we use the pattern:
-	 ^\(userpattern\)$.  */
+      sep = memchr (motif, '\n', total + 1);
+      if (sep)
+	{
+	  size = sep - motif;
+	  total -= size;
+	  sep++;
+	}
+      else
+	size = total;
 
-      static char const line_beg[] = "^\\(";
-      static char const line_end[] = "\\)$";
-      static char const word_beg[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
-      static char const word_end[] = "\\)\\([^[:alnum:]_]\\|$\\)";
-      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
-      size_t i;
-      strcpy (n, match_lines ? line_beg : word_beg);
-      i = strlen(n);
-      memcpy(n + i, pattern, size);
-      i += size;
-      strcpy (n + i, match_lines ? line_end : word_end);
-      i += strlen(n + i);
-      pattern = n;
-      size = i;
-    }
+      patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
+      if (patterns == NULL)
+	{
+	  fatal (_("memory exhausted"), 0);
+	}
 
-  dfacomp (pattern, size, &dfa, 1);
-  kwsmusts();
+      patterns[pcount] = patterns0;
+
+      if ((err = re_compile_pattern(motif, size,
+				    &(patterns[pcount].regexbuf))) != 0)
+	fatal(err, 0);
+
+      /* In the match_words and match_lines cases, we use a different pattern
+	 for the DFA matcher that will quickly throw out cases that won't work.
+	 Then if DFA succeeds we do some hairy stuff using the regex matcher
+	 to decide whether the match should really count. */
+      if (match_words || match_lines)
+	{
+	  /* In the whole-word case, we use the pattern:
+	     \(^\|[^[:alnum:]_]\)\(userpattern\)\([^[:alnum:]_]|$\).
+	     In the whole-line case, we use the pattern:
+	     ^\(userpattern\)$.  */
+
+	  static char const line_beg[] = "^\\(";
+	  static char const line_end[] = "\\)$";
+	  static char const word_beg[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
+	  static char const word_end[] = "\\)\\([^[:alnum:]_]\\|$\\)";
+	  char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+	  size_t i;
+	  strcpy (n, match_lines ? line_beg : word_beg);
+	  i = strlen(n);
+	  memcpy(n + i, motif, size);
+	  i += size;
+	  strcpy (n + i, match_lines ? line_end : word_end);
+
+	  i += strlen(n + i);
+	  motif = n;
+	  size = i;
+	}
+
+      dfacomp (motif, size, &(patterns[pcount].dfa), 1);
+      kwsmusts(&(patterns[pcount]));
+      pcount++;
+
+      motif = sep;
+    } while (sep && total != 0);
 }
 
 static void
-Ecompile (char const *pattern, size_t size)
+Ecompile (char const *motif, size_t total)
 {
   const char *err;
+  const char *sep;
+  size_t size;
 
   if (strcmp(matcher, "awk") == 0)
     {
@@ -221,38 +274,60 @@ Ecompile (char const *pattern, size_t size)
       dfasyntax (RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
     }
 
-  if ((err = re_compile_pattern(pattern, size, &regexbuf)) != 0)
-    fatal(err, 0);
-
-  /* In the match_words and match_lines cases, we use a different pattern
-     for the DFA matcher that will quickly throw out cases that won't work.
-     Then if DFA succeeds we do some hairy stuff using the regex matcher
-     to decide whether the match should really count. */
-  if (match_words || match_lines)
+  do
     {
-      /* In the whole-word case, we use the pattern:
-	 (^|[^[:alnum:]_])(userpattern)([^[:alnum:]_]|$).
-	 In the whole-line case, we use the pattern:
-	 ^(userpattern)$.  */
+      sep = memchr (motif, '\n', total);
+      if (sep)
+	{
+	  size = sep - motif;
+	  sep++;
+	  total -= (size + 1);
+	}
+      else
+	size = total;
 
-      static char const line_beg[] = "^(";
-      static char const line_end[] = ")$";
-      static char const word_beg[] = "(^|[^[:alnum:]_])(";
-      static char const word_end[] = ")([^[:alnum:]_]|$)";
-      char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
-      size_t i;
-      strcpy (n, match_lines ? line_beg : word_beg);
-      i = strlen(n);
-      memcpy(n + i, pattern, size);
-      i += size;
-      strcpy (n + i, match_lines ? line_end : word_end);
-      i += strlen(n + i);
-      pattern = n;
-      size = i;
-    }
+      patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
+      if (patterns == NULL)
+	fatal (_("memory exhausted"), 0);
+      patterns[pcount] = patterns0;
 
-  dfacomp (pattern, size, &dfa, 1);
-  kwsmusts();
+      if ((err = re_compile_pattern(motif, size,
+				    &(patterns[pcount].regexbuf))) != 0)
+	fatal(err, 0);
+
+      /* In the match_words and match_lines cases, we use a different pattern
+	 for the DFA matcher that will quickly throw out cases that won't work.
+	 Then if DFA succeeds we do some hairy stuff using the regex matcher
+	 to decide whether the match should really count. */
+      if (match_words || match_lines)
+	{
+	  /* In the whole-word case, we use the pattern:
+	     (^|[^[:alnum:]_])(userpattern)([^[:alnum:]_]|$).
+	     In the whole-line case, we use the pattern:
+	     ^(userpattern)$.  */
+
+	  static char const line_beg[] = "^(";
+	  static char const line_end[] = ")$";
+	  static char const word_beg[] = "(^|[^[:alnum:]_])(";
+	  static char const word_end[] = ")([^[:alnum:]_]|$)";
+	  char *n = malloc (sizeof word_beg - 1 + size + sizeof word_end);
+	  size_t i;
+	  strcpy (n, match_lines ? line_beg : word_beg);
+	  i = strlen(n);
+	  memcpy(n + i, motif, size);
+	  i += size;
+	  strcpy (n + i, match_lines ? line_end : word_end);
+	  i += strlen(n + i);
+	  motif = n;
+	  size = i;
+	}
+
+      dfacomp (motif, size, &(patterns[pcount].dfa), 1);
+      kwsmusts (&(patterns[pcount]));
+      pcount++;
+
+      motif = sep;
+    } while (sep && total == 0);
 }
 
 static size_t
@@ -262,131 +337,141 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
   char eol = eolbyte;
   int backref, start, len;
   struct kwsmatch kwsm;
-  static struct re_registers regs; /* This is static on account of a BRAIN-DEAD
-				    Q@#%!# library interface in regex.c.  */
+  size_t i;
 #ifdef MBS_SUPPORT
-  char *mb_properties;
-  if (MB_CUR_MAX > 1 && kwset)
-    mb_properties = check_multibyte_string(buf, size);
+  char *mb_properties = NULL;
 #endif /* MBS_SUPPORT */
 
-  buflim = buf + size;
-
-  for (beg = end = buf; end < buflim; beg = end)
+  for (i = 0; i < pcount; i++)
     {
-      if (!exact)
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1 && patterns[i].kwset)
+	mb_properties = check_multibyte_string(buf, size);
+#endif /* MBS_SUPPORT */
+
+      buflim = buf + size;
+
+      for (beg = end = buf; end < buflim; beg = end)
 	{
-	  if (kwset)
+	  if (!exact)
 	    {
-	      /* Find a possible match using the KWset matcher. */
-	      size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
-	      if (offset == (size_t) -1)
+	      if (patterns[i].kwset)
 		{
+		  /* Find a possible match using the KWset matcher. */
+		  size_t offset = kwsexec (patterns[i].kwset, beg,
+					   buflim - beg, &kwsm);
+		  if (offset == (size_t) -1)
+		    {
 #ifdef MBS_SUPPORT
-		  if (MB_CUR_MAX > 1)
-		    free(mb_properties);
+		      if (MB_CUR_MAX > 1)
+			free(mb_properties);
 #endif
-		  return (size_t) -1;
-		}
-	      beg += offset;
-	      /* Narrow down to the line containing the candidate, and
-		 run it through DFA. */
-	      end = memchr(beg, eol, buflim - beg);
-	      end++;
-	      while (beg > buf && beg[-1] != eol)
-		--beg;
-	      if (kwsm.index < kwset_exact_matches)
-		{
+		      break;
+		    }
+		  beg += offset;
+		  /* Narrow down to the line containing the candidate, and
+		     run it through DFA. */
+		  end = memchr(beg, eol, buflim - beg);
+		  end++;
+		  while (beg > buf && beg[-1] != eol)
+		    --beg;
+		  if (kwsm.index < patterns[i].kwset_exact_matches)
+		    {
 #ifdef MBS_SUPPORT
-		  if (MB_CUR_MAX == 1 || mb_properties[beg - buf] != 0)
-		    goto success;
+		      if (MB_CUR_MAX == 1 || mb_properties[beg - buf] != 0)
+			goto success;
 #else
-	        goto success;
+		      goto success;
 #endif
+		    }
+		  if (dfaexec (&(patterns[i].dfa), beg, end - beg, &backref) == (size_t) -1)
+		    continue;
 		}
-	      if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
-		continue;
+	      else
+		{
+		  /* No good fixed strings; start with DFA. */
+		  size_t offset = dfaexec (&(patterns[i].dfa), beg, buflim - beg, &backref);
+		  if (offset == (size_t) -1)
+		    break;
+		  /* Narrow down to the line we've found. */
+		  beg += offset;
+		  end = memchr(beg, eol, buflim - beg);
+		  end++;
+		  while (beg > buf && beg[-1] != eol)
+		    --beg;
+		}
+	      /* Successful, no backreferences encountered! */
+	      if (!backref)
+		goto success;
 	    }
 	  else
-	    {
-	      /* No good fixed strings; start with DFA. */
-	      size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
-	      if (offset == (size_t) -1)
-		  return (size_t) -1;
-	      /* Narrow down to the line we've found. */
-	      beg += offset;
-	      end = memchr(beg, eol, buflim - beg);
-	      end++;
-	      while (beg > buf && beg[-1] != eol)
-		--beg;
-	    }
-	  /* Successful, no backreferences encountered! */
-	  if (!backref)
-	    goto success;
-	}
-      else
-	end = beg + size;
+	    end = beg + size;
 
-      /* If we've made it to this point, this means DFA has seen
-	 a probable match, and we need to run it through Regex. */
-      regexbuf.not_eol = 0;
-      if (0 <= (start = re_search (&regexbuf, beg,
-				   end - beg - 1, 0,
-				   end - beg - 1, &regs)))
-	{
-	  len = regs.end[0] - start;
-	  if (exact)
+	  /* If we've made it to this point, this means DFA has seen
+	     a probable match, and we need to run it through Regex. */
+	  patterns[i].regexbuf.not_eol = 0;
+	  if (0 <= (start = re_search (&(patterns[i].regexbuf), beg,
+				       end - beg - 1, 0,
+				       end - beg - 1, &(patterns[i].regs))))
 	    {
-	      *match_size = len;
-	      return start;
+	      len = patterns[i].regs.end[0] - start;
+	      if (exact)
+		{
+		  *match_size = len;
+		  return start;
+		}
+	      if ((!match_lines && !match_words)
+		  || (match_lines && len == end - beg - 1))
+		goto success;
+	      /* If -w, check if the match aligns with word boundaries.
+		 We do this iteratively because:
+		 (a) the line may contain more than one occurence of the
+		 pattern, and
+		 (b) Several alternatives in the pattern might be valid at a
+		 given point, and we may need to consider a shorter one to
+		 find a word boundary.  */
+	      if (match_words)
+		while (start >= 0)
+		  {
+		    if ((start == 0 || !WCHAR ((unsigned char) beg[start - 1]))
+			&& (len == end - beg - 1
+			    || !WCHAR ((unsigned char) beg[start + len])))
+		      goto success;
+		    if (len > 0)
+		      {
+			/* Try a shorter length anchored at the same place. */
+			--len;
+			patterns[i].regexbuf.not_eol = 1;
+			len = re_match(&(patterns[i].regexbuf), beg,
+				       start + len, start,
+				       &(patterns[i].regs));
+		      }
+		    if (len <= 0)
+		      {
+			/* Try looking further on. */
+			if (start == end - beg - 1)
+			  break;
+			++start;
+			patterns[i].regexbuf.not_eol = 0;
+			start = re_search (&(patterns[i].regexbuf), beg,
+					   end - beg - 1,
+					   start, end - beg - 1 - start,
+					   &(patterns[i].regs));
+			len = patterns[i].regs.end[0] - start;
+		      }
+		  }
 	    }
-	  if ((!match_lines && !match_words)
-	      || (match_lines && len == end - beg - 1))
-	    goto success;
-	  /* If -w, check if the match aligns with word boundaries.
-	     We do this iteratively because:
-	     (a) the line may contain more than one occurence of the pattern, and
-	     (b) Several alternatives in the pattern might be valid at a given
-	     point, and we may need to consider a shorter one to find a word
-	     boundary. */
-	  if (match_words)
-	    while (start >= 0)
-	      {
-		if ((start == 0 || !WCHAR ((unsigned char) beg[start - 1]))
-		    && (len == end - beg - 1
-			|| !WCHAR ((unsigned char) beg[start + len])))
-		  goto success;
-		if (len > 0)
-		  {
-		    /* Try a shorter length anchored at the same place. */
-		    --len;
-		    regexbuf.not_eol = 1;
-		    len = re_match(&regexbuf, beg, start + len, start, &regs);
-		  }
-		if (len <= 0)
-		  {
-		    /* Try looking further on. */
-		    if (start == end - beg - 1)
-		      break;
-		    ++start;
-		    regexbuf.not_eol = 0;
-		    start = re_search (&regexbuf, beg, end - beg - 1,
-				       start, end - beg - 1 - start, &regs);
-		    len = regs.end[0] - start;
-		  }
-	      }
-	}
-    }
-
+	} /* for (beg = end ..) */
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && kwset)
-    free(mb_properties);
+      if (MB_CUR_MAX > 1 && mb_properties)
+	free(mb_properties);
 #endif /* MBS_SUPPORT */
+    } /* for patterns  */
   return (size_t) -1;
 
  success:
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && kwset)
+  if (MB_CUR_MAX > 1 && mb_properties)
     free(mb_properties);
 #endif /* MBS_SUPPORT */
   *match_size = end - beg;
@@ -394,26 +479,32 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
 }
 
 static void
-Fcompile (char const *pattern, size_t size)
+Fcompile (char const *motif, size_t size)
 {
   char const *beg, *lim, *err;
 
-  kwsinit();
-  beg = pattern;
+  patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
+  if (patterns == NULL)
+    fatal (_("memory exhausted"), 0);
+  patterns[pcount] = patterns0;
+
+  kwsinit(&(patterns[pcount].kwset));
+  beg = motif;
   do
     {
-      for (lim = beg; lim < pattern + size && *lim != '\n'; ++lim)
+      for (lim = beg; lim < motif + size && *lim != '\n'; ++lim)
 	;
-      if ((err = kwsincr(kwset, beg, lim - beg)) != 0)
+      if ((err = kwsincr(patterns[pcount].kwset, beg, lim - beg)) != 0)
 	fatal(err, 0);
-      if (lim < pattern + size)
+      if (lim < motif + size)
 	++lim;
       beg = lim;
     }
-  while (beg < pattern + size);
+  while (beg < motif + size);
 
-  if ((err = kwsprep(kwset)) != 0)
+  if ((err = kwsprep(patterns[pcount].kwset)) != 0)
     fatal(err, 0);
+  pcount++;
 }
 
 static size_t
@@ -423,70 +514,76 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
   register size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
+  size_t i;
 #ifdef MBS_SUPPORT
   char *mb_properties;
   if (MB_CUR_MAX > 1)
     mb_properties = check_multibyte_string(buf, size);
 #endif /* MBS_SUPPORT */
 
-  for (beg = buf; beg <= buf + size; ++beg)
+  for (i = 0; i < pcount; i++)
     {
-      size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
-      if (offset == (size_t) -1)
+      for (beg = buf; beg <= buf + size; ++beg)
 	{
+	  size_t offset = kwsexec (patterns[i].kwset, beg,
+				   buf + size - beg, &kwsmatch);
+	  if (offset == (size_t) -1)
+	    {
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
-	    free(mb_properties);
+	      if (MB_CUR_MAX > 1)
+		free(mb_properties);
 #endif /* MBS_SUPPORT */
-	  return offset;
-	}
+	      return offset;
+	    }
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1 && mb_properties[offset] == 0)
-	continue; /* It is a part of multibyte character.  */
+	  if (MB_CUR_MAX > 1 && mb_properties[offset] == 0)
+	    continue; /* It is a part of multibyte character.  */
 #endif /* MBS_SUPPORT */
-      beg += offset;
-      len = kwsmatch.size[0];
-      if (exact)
-	{
-	  *match_size = len;
+	  beg += offset;
+	  len = kwsmatch.size[0];
+	  if (exact)
+	    {
+	      *match_size = len;
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
-	    free(mb_properties);
+	      if (MB_CUR_MAX > 1)
+		free(mb_properties);
 #endif /* MBS_SUPPORT */
-	  return beg - buf;
-	}
-      if (match_lines)
-	{
-	  if (beg > buf && beg[-1] != eol)
-	    continue;
-	  if (beg + len < buf + size && beg[len] != eol)
-	    continue;
-	  goto success;
-	}
-      else if (match_words)
-	for (try = beg; len; )
-	  {
-	    if (try > buf && WCHAR((unsigned char) try[-1]))
-	      break;
-	    if (try + len < buf + size && WCHAR((unsigned char) try[len]))
-	      {
-		size_t offset = kwsexec (kwset, beg, --len, &kwsmatch);
-		if (offset == (size_t) -1)
-		  {
-#ifdef MBS_SUPPORT
-		    if (MB_CUR_MAX > 1)
-		      free(mb_properties);
-#endif /* MBS_SUPPORT */
-		    return offset;
-		  }
-		try = beg + offset;
-		len = kwsmatch.size[0];
-	      }
-	    else
+	      return beg - buf;
+	    }
+	  if (match_lines)
+	    {
+	      if (beg > buf && beg[-1] != eol)
+		continue;
+	      if (beg + len < buf + size && beg[len] != eol)
+		continue;
 	      goto success;
-	  }
-      else
-	goto success;
+	    }
+	  else if (match_words)
+	    for (try = beg; len; )
+	      {
+		if (try > buf && WCHAR((unsigned char) try[-1]))
+		  break;
+		if (try + len < buf + size && WCHAR((unsigned char) try[len]))
+		  {
+		    size_t offset = kwsexec (patterns[i].kwset, beg,
+					     --len, &kwsmatch);
+		    if (offset == (size_t) -1)
+		      {
+#ifdef MBS_SUPPORT
+			if (MB_CUR_MAX > 1)
+			  free(mb_properties);
+#endif /* MBS_SUPPORT */
+			return offset;
+		      }
+		    try = beg + offset;
+		    len = kwsmatch.size[0];
+		  }
+		else
+		  goto success;
+	      }
+	  else
+	    goto success;
+	}
     }
 
 #ifdef MBS_SUPPORT
