@@ -1,5 +1,10 @@
 2004-11-22  Stepan Kasal  <kasal@ucw.cz>
 
+	* src/search.c: Use mbsupport.h .
+	* src/dfa.c: Move the inclusion of mbsupport.h lower.
+
+2004-11-22  Stepan Kasal  <kasal@ucw.cz>
+
 	* src/grep.c (main): Use PACKAGE_STRING for --version.
 
 2004-11-20  Benno Schulenberg  <benno@nietvergeten.nl>  (tiny change)

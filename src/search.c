@@ -21,10 +21,12 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
 #include <sys/types.h>
-#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
-/* We can handle multibyte string.  */
-# define MBS_SUPPORT
+
+#include "mbsupport.h"
+#ifdef MBS_SUPPORT
+/* We can handle multibyte strings. */
 # include <wchar.h>
 # include <wctype.h>
 #endif

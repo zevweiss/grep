@@ -48,13 +48,6 @@ extern void free();
 # include <locale.h>
 #endif
 
-#include "mbsupport.h"  /* defined MBS_SUPPORT if appropriate */
-
-#ifdef MBS_SUPPORT
-# include <wchar.h>
-# include <wctype.h>
-#endif
-
 
 #ifndef DEBUG	/* use the same approach as regex.c */
 #undef assert
@@ -116,6 +109,13 @@ extern void free();
 #endif
 #ifndef _
 # define _(Str) (Str)
+#endif
+
+#include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
+#ifdef MBS_SUPPORT
+/* We can handle multibyte strings. */
+# include <wchar.h>
+# include <wctype.h>
 #endif
 
 #include "regex.h"
