@@ -1,3 +1,10 @@
+1999-11-13  Eli Zaretskii  <eliz@is.elta.co.il>
+
+	* doc/grep.texi: Minor markup and spelling corrections.  Use
+	@noindent where appropriate.
+
+	* PATCHES-{AM,AC}: rename to PATCHES.{AM,AC}
+
 1999-11-12  Eli Zaretskii
 
 	doc/grep.texi: Minor fixes and typos corrected.
