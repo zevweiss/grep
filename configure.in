@@ -8,7 +8,7 @@ AC_DEFINE(GREP, 1, [We are building grep])
 AC_PREREQ(2.13)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE(grep, 2.5f)
+AM_INIT_AUTOMAKE(grep, 2.5g)
 AM_CONFIG_HEADER(config.h:config.hin)
 
 dnl Check for arguments
