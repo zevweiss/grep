@@ -60,7 +60,7 @@ static int mmap_option;
 
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C::EFGHUVX:abcd:e:f:hiLlnqrsuvwxyZz";
+"0123456789A:B:C::EFGHIUVX:abcd:e:f:hiLlnqrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -972,9 +972,10 @@ Output control:\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
   -q, --quiet, --silent     suppress all normal output\n\
-  -a, --text                equivalent to --binary-files=text\n\
       --binary-files=TYPE   assume that binary files are TYPE\n\
                             TYPE is 'binary', 'text', or 'without-match'.\n\
+  -a, --text                equivalent to --binary-files=text\n\
+  -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories\n\
                             ACTION is 'read', 'recurse', or 'skip'.\n\
   -r, --recursive           equivalent to --directories=recurse.\n\
@@ -1230,6 +1231,9 @@ main (int argc, char **argv)
 	break;
       case 'H':
 	with_filenames = 1;
+	break;
+      case 'I':
+	binary_files = WITHOUT_MATCH_BINARY_FILES;
 	break;
       case 'U':
 #if O_BINARY

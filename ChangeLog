@@ -1,3 +1,20 @@
+2000-01-25  Paul Eggert
+
+	* NEWS, doc/grep.1, doc/grep.texi: Add -I option.
+	* src/grep.c (short_options, usage, main): Likewise.
+
+	* doc/grep.texi: Fix some incorrect references to ASCII.
+
+2000-01-25  Paul Eggert
+
+	* doc/grep.1: Simplify synopsis; sort options; mention
+	environment variables; clean up some minor gaffes.
+
+2000-01-25  Paul Eggert
+
+	* doc/grep.texi:
+	Fix some errors in description of [:print:] and the like.
+
 2000-01-23  Paul Eggert
 
 	* src/dfa.c (FETCH, lex): Put brackets around if-body to avoid
