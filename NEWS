@@ -1,3 +1,8 @@
+
+  - The --revert-match option has been renamed to --invert-match.
+
+  - New option -H or --with-filename.
+
   - The new option -z or --null-data causes `grep' to treat a zero byte
     (the ASCII NUL character) as a line terminator in input data, and
     to treat newlines as ordinary data.
