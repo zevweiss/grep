@@ -4,6 +4,6 @@ The code is available through
 anonymous CVS.
 $ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs login
 Password: [just hit enter]
-$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs checkout gre
+$ cvs -d :pserver:anoncvs@subversions.gnu.org:/cvs checkout grep
 
 Please send comments and problem reports to <bug-grep@gnu.org>.
