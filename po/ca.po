@@ -273,10 +273,10 @@ msgstr ""
 #: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Podeu notificar els errors del programa a <bug-grep@gnu.org>.\n"
+"Podeu notificar els errors del programa a <%s>.\n"
 
 #: src/grep.c:1126
 msgid "conflicting matchers specified"

@@ -263,10 +263,10 @@ msgstr ""
 #: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Informe dos erros no programa a <bug-grep@gnu.org>.\n"
+"Informe dos erros no programa a <%s>.\n"
 "Informe dos erros na traducción a <proxecto@trasno.net>.\n"
 
 #: src/grep.c:1126

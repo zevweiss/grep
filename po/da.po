@@ -286,8 +286,8 @@ msgstr ""
 "og 2 ved problemer.\n"
 
 #: src/grep.c:1002
-msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
-msgstr "\nRapportér fejl til <bug-grep@gnu.org>.\n"
+msgid "\nReport bugs to <%s>.\n"
+msgstr "\nRapportér fejl til <%s>.\n"
 
 #: src/grep.c:1012
 msgid "conflicting matchers specified"

@@ -1,5 +1,12 @@
 2004-11-20  Stepan Kasal  <kasal@ucw.cz>
 
+	This change is based on a suggestion by Elliott Hughes.
+
+	* src/grep.c (usage): Use PACKAGE_BUGREPORT.
+	* po/*.po: Hacked the current translation again.
+
+2004-11-20  Stepan Kasal  <kasal@ucw.cz>
+
 	* configure.in: Added a copyright notice (using gawk as a template).
 	(AC_INIT, AM_INIT_AUTOMAKE): Changed to the ``new'' form so that
 	  the PACKAGE_* symbols get defined correctly in config.h.

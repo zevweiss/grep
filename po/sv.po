@@ -2,7 +2,7 @@
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Thomas Olsson <cid95tho@student1.lu.se>, 1996.
 # Daniel Resare <daniel@resare.com>, 1998, 1999, 2000, 2001
-# $Id: sv.po,v 1.23 2004/11/19 13:51:29 kasal Exp $
+# $Id: sv.po,v 1.24 2004/11/20 16:15:57 kasal Exp $
 #
 msgid ""
 msgstr ""
@@ -252,10 +252,10 @@ msgstr ""
 "matchar, 1 om inget matchade och 2 om något fel uppstått.\n"
 
 #: src/grep.c:1052
-msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
+msgid "\nReport bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Rapportera buggar till <bug-grep@gnu.org>.\n"
+"Rapportera buggar till <%s>.\n"
 "Skicka anmärkningar på översättningar till <sv@li.org>\n"
 
 #: src/grep.c:1062

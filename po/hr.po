@@ -310,8 +310,8 @@ msgstr ""
 "sustavu.\n"
 
 #: src/grep.c:950
-msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
-msgstr "\nBugove prijavljujte na <bug-grep@gnu.org>.\n"
+msgid "\nReport bugs to <%s>.\n"
+msgstr "\nBugove prijavljujte na <%s>.\n"
 
 #: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
 msgid "invalid context length argument"

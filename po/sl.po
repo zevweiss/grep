@@ -2,7 +2,7 @@
 # Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 # Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000.
 #
-# $Id: sl.po,v 1.29 2004/11/19 13:51:29 kasal Exp $
+# $Id: sl.po,v 1.30 2004/11/20 16:15:57 kasal Exp $
 #
 msgid ""
 msgstr ""
@@ -260,10 +260,10 @@ msgstr ""
 #: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Morebitne napake v programu sporoèite na <bug-grep@gnu.org>.\n"
+"Morebitne napake v programu sporoèite na <%s>.\n"
 
 #  Sporoèilo se pojavi pri nedokumentirani izbiri -X
 #  grep.c:622 ->

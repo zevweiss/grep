@@ -327,10 +327,10 @@ msgstr ""
 #: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Στείλτε αναφορές σφαλμάτων στο <bug-grep@gnu.org>.\n"
+"Στείλτε αναφορές σφαλμάτων στο <%s>.\n"
 
 # src/grep.c:829
 # src/grep.c:1112

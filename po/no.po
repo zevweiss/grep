@@ -241,10 +241,10 @@ msgstr ""
 #: src/grep.c:1044
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Rapportér feil til <bug-grep@gnu.org>.\n"
+"Rapportér feil til <%s>.\n"
 
 #: src/grep.c:1054
 #, fuzzy

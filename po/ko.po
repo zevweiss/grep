@@ -265,7 +265,7 @@ msgstr ""
 
 #: src/grep.c:950
 #, fuzzy
-msgid "\nReport bugs to <bug-grep@gnu.org>.\n"
+msgid "\nReport bugs to <%s>.\n"
 msgstr "문제점은 <bug0gnu-utils@prep.ai.mit.edu>로 보고해 주십시오.\n"
 
 #: src/grep.c:1093 src/grep.c:1100 src/grep.c:1109
