@@ -1,3 +1,7 @@
+2001-02-18  Jim Meyering
+
+	* m4/dosfile.m4 (AC_DOSFILE): Move AC_DEFINEs out of AC_CACHE_CHECK.
+
 2001-02-17  Alain Malgoire
 
 	* doc/grep.texi : Document the new options and the new behaviour
