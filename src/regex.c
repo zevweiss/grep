@@ -1735,7 +1735,7 @@ typedef struct
 #  define IS_CHAR_CLASS(string) wctype (string)
 # endif
 #else
-# define CHAR_CLASS_MAX_LENGTH  6 /* Namely, `xdigit'.  */
+# define CHAR_CLASS_MAX_LENGTH  256 /* Namely, `xdigit'.  */
 
 # define IS_CHAR_CLASS(string)						\
    (STREQ (string, "alpha") || STREQ (string, "upper")			\
@@ -5594,6 +5594,10 @@ re_exec (s)
    It returns 0 if it succeeds, nonzero if it doesn't.  (See regex.h for
    the return codes and their meanings.)  */
 
+#ifdef __APPLE__
+__private_extern__
+#endif
+
 int
 regcomp (preg, pattern, cflags)
     regex_t *preg;
@@ -5685,6 +5689,10 @@ weak_alias (__regcomp, regcomp)
 
    We return 0 if we find a match and REG_NOMATCH if not.  */
 
+#ifdef __APPLE__
+__private_extern__
+#endif
+
 int
 regexec (preg, string, nmatch, pmatch, eflags)
     const regex_t *preg;
@@ -5752,6 +5760,9 @@ weak_alias (__regexec, regexec)
 /* Returns a message corresponding to an error code, ERRCODE, returned
    from either regcomp or regexec.   We don't use PREG here.  */
 
+#ifdef __APPLE__
+__private_extern__
+#endif
 size_t
 regerror (errcode, preg, errbuf, errbuf_size)
     int errcode;
@@ -5798,7 +5809,9 @@ weak_alias (__regerror, regerror)
 
 
 /* Free dynamically allocated space used by PREG.  */
-
+#ifdef __APPLE__
+__private_extern__
+#endif
 void
 regfree (preg)
     regex_t *preg;
