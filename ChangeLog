@@ -1,4 +1,11 @@
-1998-08-18  Paul Eggert  <eggert@twinsun.com>
+1998-11-01  Paul Eggert
+
+	* src/system.h (IN_CTYPE_DOMAIN): New macro.
+	(ISALPHA, ISUPPER, ISLOWER, ISDIGIT, ISXDIGIT, ISSPACE,
+	ISPUNCT, ISALNUM, ISPRINT, ISGRAPH, ISCNTRL): Use
+	IN_CTYPE_DOMAIN instead of isascii.
+
+1998-08-18  Paul Eggert
 
 	Add support for new -r or --recursive (or -d recurse or
 	--directories=recurse) option.

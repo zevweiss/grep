@@ -127,31 +127,23 @@ extern char *sys_errlist[];
 # define isgraph(C) (isprint(C) && !isspace(C))
 #endif
 
-#ifdef isascii
-# define ISALPHA(C) (isascii(C) && isalpha(C))
-# define ISUPPER(C) (isascii(C) && isupper(C))
-# define ISLOWER(C) (isascii(C) && islower(C))
-# define ISDIGIT(C) (isascii(C) && isdigit(C))
-# define ISXDIGIT(C) (isascii(C) && isxdigit(C))
-# define ISSPACE(C) (isascii(C) && isspace(C))
-# define ISPUNCT(C) (isascii(C) && ispunct(C))
-# define ISALNUM(C) (isascii(C) && isalnum(C))
-# define ISPRINT(C) (isascii(C) && isprint(C))
-# define ISGRAPH(C) (isascii(C) && isgraph(C))
-# define ISCNTRL(C) (isascii(C) && iscntrl(C))
+#if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
+# define IN_CTYPE_DOMAIN(c) 1
 #else
-# define ISALPHA(C) isalpha(C)
-# define ISUPPER(C) isupper(C)
-# define ISLOWER(C) islower(C)
-# define ISDIGIT(C) isdigit(C)
-# define ISXDIGIT(C) isxdigit(C)
-# define ISSPACE(C) isspace(C)
-# define ISPUNCT(C) ispunct(C)
-# define ISALNUM(C) isalnum(C)
-# define ISPRINT(C) isprint(C)
-# define ISGRAPH(C) isgraph(C)
-# define ISCNTRL(C) iscntrl(C)
+# define IN_CTYPE_DOMAIN(c) isascii(c)
 #endif
+
+#define ISALPHA(C)	(IN_CTYPE_DOMAIN (C) && isalpha (C))
+#define ISUPPER(C)	(IN_CTYPE_DOMAIN (C) && isupper (C))
+#define ISLOWER(C)	(IN_CTYPE_DOMAIN (C) && islower (C))
+#define ISDIGIT(C)	(IN_CTYPE_DOMAIN (C) && isdigit (C))
+#define ISXDIGIT(C)	(IN_CTYPE_DOMAIN (C) && isxdigit (C))
+#define ISSPACE(C)	(IN_CTYPE_DOMAIN (C) && isspace (C))
+#define ISPUNCT(C)	(IN_CTYPE_DOMAIN (C) && ispunct (C))
+#define ISALNUM(C)	(IN_CTYPE_DOMAIN (C) && isalnum (C))
+#define ISPRINT(C)	(IN_CTYPE_DOMAIN (C) && isprint (C))
+#define ISGRAPH(C)	(IN_CTYPE_DOMAIN (C) && isgraph (C))
+#define ISCNTRL(C)	(IN_CTYPE_DOMAIN (C) && iscntrl (C))
 
 #define TOLOWER(C) (ISUPPER(C) ? tolower(C) : (C))
 
