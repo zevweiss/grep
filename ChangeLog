@@ -1,6 +1,7 @@
-1999-11-11  Alain Magloire
+1999-11-12  Eli Zaretskii
 
-	Beta version 2.3h freeze for 2.4 release.
+	doc/grep.texi: Minor fixes and typos corrected.
+	djgpp/README: Updated version.
 
 1999-11-07  Paul Eggert
 
@@ -17,7 +18,6 @@
 	spelling and usage errors.  Use @enumerate rather than @table
 	@samp, since it's better for Q&A format.  Add cross
 	references.
-
 
 1999-11-01 Alain Magloire
 
