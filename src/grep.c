@@ -916,9 +916,8 @@ main(argc, argv)
   FILE *fp;
   extern char *optarg;
   extern int optind;
-  char **argp;
-  char *arg;
 
+  initialize_main (&argc, &argv);
   prog = argv[0];
   if (prog && strrchr(prog, '/'))
     prog = strrchr(prog, '/') + 1;
@@ -1177,16 +1176,16 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-  argp = EXPAND_WILDCARDS (argv + optind);
 
-  if (*argp)
+  if (optind < argc)
     {
 	status = 1;
-	while ((arg = *argp++) != NULL)
+	do
 	{
-	  char *file = arg;
+	  char *file = argv[optind];
 	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file);
 	}
+	while ( ++optind < argc);
     }
   else
     status = grepfile ((char *)NULL);

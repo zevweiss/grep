@@ -159,27 +159,6 @@ extern char *sys_errlist[];
 # include <locale.h>
 #endif
 
-/* Expand the filename wildcards in the argument vector ARGV,
-   returning an argument vector that contains the expanded file names.
-   ARGV and the result vector are terminated by null pointers.
-
-   On systems where filename wildcards are expanded by the shell, this
-   macro should just return its argument.  On systems like VMS where
-   filename wildcards must be expanded by the application, this
-   function may return newly allocated storage.  If the latter occurs,
-   all the allocated storage (including argument vector and any newly
-   allocated strings) can be freed by freeing the return value.
-
-   An application can test whether storage was allocated, and can
-   free the storage, with code that looks like this:
-
-	char **expanded_argv = EXPAND_WILDCARDS (argv);
-	process (expanded_argv);
-	if (expanded_argv != argv)
-	  free (expanded_argv);
-
-   */
-
-#ifndef EXPAND_WILDCARDS
-#define EXPAND_WILDCARDS(argv) (argv)
+#ifndef initialize_main
+#define initialize_main(argcp, argvp)
 #endif

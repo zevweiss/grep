@@ -45,11 +45,10 @@
 	* src/savedir.c, src/savedir.h, src/stpcpy.c: New files;
 	taken from fileutils 3.16u.
 
-1998-08-10  Paul Eggert
+1998-08-11  Paul Eggert
 
-	* src/system.h (EXPAND_WILDCARDS): New macro.
-	* src/grep.c (main): Expand wildcards, on systems where the
-	shell doesn't do this for you already.
+	* src/system.h (initialize_main): New macro.
+	* src/grep.c (main): Invoke initialize_main first thing.
 
 1998-04-29  Paul Eggert
 
