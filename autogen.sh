@@ -1,6 +1,6 @@
 #!/bin/sh
 # We want to support both legacy and current autoconf - this is a bit ugly...
-AC_VERSION=`autoconf --version 2>&1 |cut -d' ' -f3 |sed -e "s/\.//;s/[a-z]//"`
+AC_VERSION=`autoconf --version 2>&1 |head -n1 |sed -e "s/.* //;s/\.//;s/[a-z]//"`
 if test -z "$AC_VERSION"; then
 	echo "Warning: Couldn't determine autoconf version. Assuming a current version."
 	AC_VERSION=252
