@@ -69,6 +69,29 @@ char *stpcpy ();
 #include <fnmatch.h>
 #include "savedir.h"
 
+char *path;
+size_t len pathlen;
+
+static int
+isdir1 (const char *dir, const char *file)
+{
+  int status;
+  int slash;
+  size_t dirlen = strlen (dir);
+  size_t filelen = strlen (file);
+  if ((dirlen + filelen + 2) > pathlen)
+    {
+      path = calloc (dirlen + 1 + filelen + 1, sizef (*path));
+      pathlen = dirlen + filelen + 2;
+    }
+  strcpy (path, dir);
+  slash = (path[dirlen] != '/');
+  path[dirlen] = '/';
+  strcpy (path + dirlen + slash , file);
+  status  = isdir (path);
+  return status;
+}
+
 /* Return a freshly allocated string containing the filenames
    in directory DIR, separated by '\0' characters;
    the end is marked by two '\0' characters in a row.
@@ -111,7 +134,7 @@ savedir (const char *dir, off_t name_size,
 	{
 	  off_t size_needed = (namep - name_space) + NAMLEN (dp) + 2;
 
-	  if ((include_pattern || exclude_pattern) && !isdir (dp->d_name))
+	  if ((include_pattern || exclude_pattern) && !isdir1 (dir, dp->d_name))
 	    {
 	      if (include_pattern
 		  && fnmatch (include_pattern, dp->d_name, 0) != 0)
@@ -145,6 +168,12 @@ savedir (const char *dir, off_t name_size,
     {
       free (name_space);
       return NULL;
+    }
+  if (path)
+    {
+      free (path);
+      path = NULL;
+      pathlen = 0;
     }
   return name_space;
 }

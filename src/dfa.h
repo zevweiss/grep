@@ -264,6 +264,25 @@ struct dfa
   int nleaves;			/* Number of leaves on the parse tree. */
   int nregexps;			/* Count of parallel regexps being built
 				   with dfaparse(). */
+#ifdef MBS_SUPPORT
+  /* These stuff are used only if MB_CUR_MAX > 1 or multibyte environments.  */
+  int nmultibyte_prop;
+  int *multibyte_prop;
+  /* The value of multibyte_prop[i] is defined by following rule.
+       if tokens[i] < NOTCHAR
+         bit 1 : tokens[i] is a singlebyte character, or the last-byte of
+	         a multibyte character.
+	 bit 0 : tokens[i] is a singlebyte character, or the 1st-byte of
+	         a multibyte character.
+
+     e.g.
+     tokens
+        = 'single_byte_a', 'multi_byte_A', single_byte_b'
+        = 'sb_a', 'mb_A(1st byte)', 'mb_A(2nd byte)', 'mb_A(3rd byte)', 'sb_b'
+     multibyte_prop
+        = 3     , 1               ,  0              ,  2              , 3
+  */
+#endif
 
   /* Stuff owned by the state builder. */
   dfa_state *states;		/* States of the dfa. */

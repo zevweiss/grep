@@ -1,3 +1,22 @@
+2001-02-22  Alain Magloire
+
+	* src/savedir.c (isdir1) : New function, calling isdir with
+	the correct pathname.
+
+2001-02-19  Isamu Hasegawa
+
+	Avoid incorrect state transition in multibyte environments.
+
+	* dfa.h (nmultibyte_prop) : new variable.
+	(multibyte_prop) : new variable.
+	* dfa.c (addtok) : set inputwcs.
+	(dfastate) : avoid incorrect state transition in multibyte
+	environments.
+	(dfaexec) : likewise.
+	(dfainit) : init multibyte_prop.
+	(dfafree) : free multibyte_prop.
+	(inputwcs): new variable.
+
 2001-02-19  Isamu Hasegawa
 
 	Handle a multibyte character followed by '*', '+', and '{n,m}'

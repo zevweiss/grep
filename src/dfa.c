@@ -326,6 +326,7 @@ static int minrep, maxrep;	/* Repeat counts for {m,n}. */
 static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
 #ifdef MBS_SUPPORT
+/* These variables are used only if (MB_CUR_MAX > 1).  */
 static mbstate_t mbs;		/* Mbstate for mbrlen().  */
 static int cur_mb_len;		/* Byte length of the current scanning
 				   multibyte character.  */
@@ -338,6 +339,21 @@ static int cur_mb_index;        /* Byte index of the current scanning multibyte
 				       2nd byte : cur_mb_index = 2
 				         ...
 				       nth byte : cur_mb_index = n  */
+static wchar_t *inputwcs;	/* Wide character representation of input
+				   string in dfaexec().
+				   The length of this array is same as
+				   the length of input string(char array).
+				   "inputwcs[i] >= 0"
+				     => inputstring[i] is a single-byte char,
+				        or 1st byte of a multibyte char.
+					And inputwcs[i] is the codepoint.
+				   "inputwcs[i] < 0"
+				     => inputstring[i] is a part of a multi-
+				        byte char, and "-inputwcs[i]" bytes
+					are the amount of remain of that
+					multibyte char.  */
+static unsigned char const *buf_begin;/* refference to begin in dfaexec().  */
+static unsigned char const *buf_end;	/* refference to end in dfaexec().  */
 #endif /* MBS_SUPPORT  */
 
 #ifdef MBS_SUPPORT
@@ -840,6 +856,22 @@ static int depth;		/* Current depth of a hypothetical stack
 static void
 addtok (token t)
 {
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      REALLOC_IF_NECESSARY(dfa->multibyte_prop, int, dfa->nmultibyte_prop,
+			   dfa->tindex);
+      /* Set dfa->multibyte_prop.  See struct dfa in dfa.h.  */
+      if (t < NOTCHAR)
+	dfa->multibyte_prop[dfa->tindex]
+	  = (cur_mb_len == 1)? 3 /* single-byte char */
+	  : (((cur_mb_index == 1)? 1 : 0) /* 1st-byte of multibyte char */
+	     + ((cur_mb_index == cur_mb_len)? 2 : 0)); /* last-byte */
+      else
+	dfa->multibyte_prop[dfa->tindex] = 0;
+    }
+#endif
+
   REALLOC_IF_NECESSARY(dfa->tokens, token, dfa->talloc, dfa->tindex);
   dfa->tokens[dfa->tindex++] = t;
 
@@ -1637,6 +1669,9 @@ dfastate (int s, struct dfa *d, int trans[])
   int wants_letter;		/* New state wants to know letter context. */
   int state_letter;		/* New state on a letter transition. */
   static int initialized;	/* Flag for static initialization. */
+#ifdef MBS_SUPPORT
+  int next_isnt_1st_byte = 0;	/* Flag If we can't add state0.  */
+#endif 
   int i, j, k;
 
   /* Initialize the set of letters, if necessary. */
@@ -1794,9 +1829,45 @@ dfastate (int s, struct dfa *d, int trans[])
 	for (k = 0; k < d->follows[grps[i].elems[j].index].nelem; ++k)
 	  insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
 
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1)
+	{
+	  /* If a token in follows.elems is not 1st byte of a multibyte
+	     character, or the states of follows must accept the bytes
+	     which are not 1st byte of the multibyte character.
+	     Then, if a state of follows encounter a byte, it must not be
+	     a 1st byte of a multibyte character nor singlebyte character.
+	     We cansel to add state[0].follows to next state, because
+	     state[0] must accept 1st-byte
+
+	     For example, we assume <sb a> is a certain singlebyte
+	     character, <mb A> is a certain multibyte character, and the
+	     codepoint of <sb a> equals the 2nd byte of the codepoint of
+	     <mb A>.
+	     When state[0] accepts <sb a>, state[i] transit to state[i+1]
+	     by accepting accepts 1st byte of <mb A>, and state[i+1]
+	     accepts 2nd byte of <mb A>, if state[i+1] encounter the
+	     codepoint of <sb a>, it must not be <sb a> but 2nd byte of
+	     <mb A>, so we can not add state[0].  */
+
+	    for (j = 0; j < follows.nelem; ++j)
+	    {
+	      if (!(d->multibyte_prop[follows.elems[j].index] & 1))
+		{
+		  next_isnt_1st_byte = 1;
+		  break;
+		}
+	    }
+	}
+#endif
+
       /* If we are building a searching matcher, throw in the positions
 	 of state 0 as well. */
+#ifdef MBS_SUPPORT
+      if (d->searchflag && (MB_CUR_MAX == 1 || !next_isnt_1st_byte))
+#else
       if (d->searchflag)
+#endif
 	for (j = 0; j < d->states[0].elems.nelem; ++j)
 	  insert(d->states[0].elems.elems[j], &follows);
 
@@ -1941,6 +2012,25 @@ build_state_zero (struct dfa *d)
   build_state(0, d);
 }
 
+#ifdef MBS_SUPPORT
+/* Initial state may encounter the byte which is not a singlebyte character
+   nor 1st byte of a multibyte character.  But it is incorrect for initial
+   state to accept such a byte.
+   For example, in sjis encoding the regular expression like "\\" accepts
+   the codepoint 0x5c, but should not accept the 2nd byte of the codepoint
+   0x815c. Then Initial state must skip the bytes which are not a singlebyte
+   character nor 1st byte of a multibyte character.  */
+#define SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p)		\
+  if (s == 0)						\
+    {							\
+      while (inputwcs[p - buf_begin] < 0 && p < buf_end)\
+        ++p;						\
+      if (p >= end)					\
+        free(inputwcs)					\
+	return (size_t) -1;				\
+    }
+#endif
+
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the buffer,
    and the shortest possible version thereof.  Return the offset of the first
@@ -1980,15 +2070,66 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
   end = p + size;
   trans = d->trans;
 
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      int remain_bytes, i;
+      buf_begin = begin;
+      buf_end = end;
+
+      /* initialize inputwcs.  */
+      MALLOC(inputwcs, wchar_t, end - (unsigned char const *)begin + 2);
+      memset(&mbs, 0, sizeof(mbstate_t));
+      remain_bytes = 0;
+      for (i = 0; i < end - (unsigned char const *)begin + 1; i++)
+	{
+	  if (remain_bytes == 0)
+	    {
+	      remain_bytes
+		= mbrtowc(inputwcs + i, begin + i,
+			  end - (unsigned char const *)begin - i + 1, &mbs);
+	      if (remain_bytes <= 0)
+		{
+		  remain_bytes = 0;
+		  inputwcs[i] = (wchar_t)begin[i];
+		}
+	      else
+		remain_bytes--;
+	    }
+	  else
+	    {
+	      inputwcs[i] = -remain_bytes;
+	      remain_bytes--;
+	    }
+	}
+      inputwcs[i] = 0; /* sentinel */
+    }
+#endif /* MBS_SUPPORT */
+
   for (;;)
     {
-      while ((t = trans[s]))
-	s = t[*p++];
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1)
+	while ((t = trans[s]))
+	  {
+	    SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
+	    s = t[*p++];
+	  }
+      else
+#endif /* MBS_SUPPORT */
+        while ((t = trans[s]))
+	  s = t[*p++];
 
       if (s < 0)
 	{
 	  if (p == end)
-	    return (size_t) -1;
+	    {
+#ifdef MBS_SUPPORT
+	      if (MB_CUR_MAX > 1)
+		free(inputwcs);
+#endif /* MBS_SUPPORT */
+	      return (size_t) -1;
+	    }
 	  s = 0;
 	}
       else if ((t = d->fails[s]))
@@ -1997,9 +2138,17 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 	    {
 	      if (backref)
 		*backref = (d->states[s].backref != 0);
+#ifdef MBS_SUPPORT
+	      if (MB_CUR_MAX > 1)
+		free(inputwcs);
+#endif /* MBS_SUPPORT */
 	      return (char const *) p - begin;
 	    }
 
+#ifdef MBS_SUPPORT
+	  if (MB_CUR_MAX > 1)
+	    SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
+#endif /* MBS_SUPPORT */
 	  s = t[*p++];
 	}
       else
@@ -2022,6 +2171,13 @@ dfainit (struct dfa *d)
   d->talloc = 1;
   MALLOC(d->tokens, token, d->talloc);
   d->tindex = d->depth = d->nleaves = d->nregexps = 0;
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      d->nmultibyte_prop = 1;
+      MALLOC(d->multibyte_prop, int, d->nmultibyte_prop);
+    }
+#endif
 
   d->searchflag = 0;
   d->tralloc = 0;
@@ -2077,6 +2233,14 @@ dfafree (struct dfa *d)
 
   free((ptr_t) d->charclasses);
   free((ptr_t) d->tokens);
+
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      free((ptr_t) d->multibyte_prop);
+    }
+#endif /* MBS_SUPPORT */
+
   for (i = 0; i < d->sindex; ++i)
     free((ptr_t) d->states[i].elems.elems);
   free((ptr_t) d->states);

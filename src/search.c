@@ -22,6 +22,13 @@
 # include <config.h>
 #endif
 #include <sys/types.h>
+#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
+/* We can handle multibyte string.  */
+# define MBS_SUPPORT
+# include <wchar.h>
+# include <wctype.h>
+#endif
+
 #include "system.h"
 #include "grep.h"
 #include "regex.h"
@@ -35,13 +42,6 @@
 
 /* For -w, we also consider _ to be word constituent.  */
 #define WCHAR(C) (ISALNUM(C) || (C) == '_')
-
-#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
-/* We can handle multibyte string.  */
-# define MBS_SUPPORT
-# include <wchar.h>
-# include <wctype.h>
-#endif
 
 /* The compile patterns.  */
 static struct patterns

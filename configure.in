@@ -48,7 +48,7 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 dnl getpagesize is checked for by AC_FUNC_MMAP.
 AC_CHECK_FUNCS(btowc isascii memmove setmode strerror wctype mbrtowc)
-AC_REPLACE_FUNCS(memchr stpcpy strtoul)
+AC_REPLACE_FUNCS(memchr stpcpy strtoul fnmatch)
 jm_AC_PREREQ_XSTRTOUMAX
 
 dnl Replace this with jm_CHECK_DECLS once autoconf 2.15 is out.
