@@ -1,6 +1,7 @@
 # Configuration for grep
 #
 # Alain Magloire <alainm@gnu.org>
+# Bernhard Rosenkraenzer <bero@redhat.com>
 #
 dnl Process this file with autoconf to produce a configure script
 AC_INIT(src/grep.c)
@@ -149,4 +150,4 @@ if test x"$testpcre" = x"yes"; then
 	AC_CHECK_LIB(pcre, pcre_exec)
 fi
 
-AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile djgpp/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
+AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])

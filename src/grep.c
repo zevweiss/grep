@@ -262,7 +262,11 @@ reset (int fd, char const *file, struct stats *stats)
     }
   if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
     return 0;
+#ifndef DJGPP
   if (devices == SKIP_DEVICES && (S_ISCHR(stats->stat.st_mode) || S_ISBLK(stats->stat.st_mode) || S_ISSOCK(stats->stat.st_mode)))
+#else
+  if (devices == SKIP_DEVICES && (S_ISCHR(stats->stat.st_mode) || S_ISBLK(stats->stat.st_mode)))
+#endif
     return 0;
   if (S_ISREG (stats->stat.st_mode))
     {
