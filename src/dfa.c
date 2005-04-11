@@ -1143,7 +1143,7 @@ lex (void)
 	      setbit_case_fold (c, ccl);
 	      return lasttok = CSET + charclass_index(ccl);
 	    }
-	  return c;
+	  return lasttok = c;
 	}
     }
 

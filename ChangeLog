@@ -1,3 +1,8 @@
+2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
+
+	* src/dfa.c (lex): Fix bug #9519: "echo do^re | grep do^re" was
+	  failing to find a match.
+
 2005-03-09  Stepan Kasal  <kasal@ucw.cz>
 
 	* src/search.c (EGexecute, Fexecute): Use xmalloc, not malloc.
