@@ -1,5 +1,7 @@
 2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
 
+ 	* doc/grep.texi, doc/grep.1: Document USG grep -s too.
+	  Based on a patch by Paul Eggert; suggested by Keith Marshall.
 	* src/dfa.c (lex): Fix bug #9519: "echo do^re | grep do^re" was
 	  failing to find a match.
 

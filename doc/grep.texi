@@ -209,13 +209,14 @@ see the @samp{-s} or @samp{--no-messages} option.
 @opindex --no-messages
 @cindex suppress error messages
 Suppress error messages about nonexistent or unreadable files.
-Portability note: unlike @sc{gnu} @command{grep}, traditional
-@command{grep} did not conform to @sc{posix.2}, because traditional
-@command{grep} lacked a @samp{-q} option and its @samp{-s} option behaved
-like @sc{gnu} @command{grep}'s @samp{-q} option.  Shell scripts intended
-to be portable to traditional @command{grep} should avoid both
+Portability note: unlike @sc{gnu} @command{grep}, 7th Edition Unix
+@command{grep} did not conform to @sc{posix}, because it
+lacked @samp{-q} and its @samp{-s} option behaved like @sc{gnu}
+@command{grep}'s @samp{-q} option.  @sc{usg}-style @command{grep}
+also lacked @samp{-q} but its @samp{-s} option behaved like
+@sc{gnu} @command{grep}.  Portable shell scripts should avoid both
 @samp{-q} and @samp{-s} and should redirect
-output to @file{/dev/null} instead.
+standard and error output to @file{/dev/null} instead.
 
 @item -v
 @itemx --invert-match

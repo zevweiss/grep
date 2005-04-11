@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.28 2004/12/15 14:33:38 kasal Exp $
+.Id $Id: grep.1,v 1.29 2005/04/11 23:56:01 julianfoad Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -335,25 +335,32 @@ option.
 Suppress error messages about nonexistent or unreadable files.
 Portability note: unlike \s-1GNU\s0
 .BR grep ,
-traditional
+7th Edition Unix
 .B grep
-did not conform to \s-1POSIX.2\s0, because traditional
-.B grep
-lacked a
+did not conform to \s-1POSIX\s0, because it lacked
 .B \-q
-option and its
+and its
 .B \-s
 option behaved like \s-1GNU\s0
 .BR grep 's
 .B \-q
 option.
-Shell scripts intended to be portable to traditional
+\s-1USG\s0-style
 .B grep
+also lacked
+.B \-q
+but its
+.B \-s
+option behaved like \s-1GNU\s0
+.BR grep .
+Portable shell scripts
 should avoid both
 .B \-q
 and
 .B \-s
-and should redirect output to /dev/null instead.
+and should redirect standard and error output to
+.B /dev/null
+instead.
 .TP
 .BR \-U ", " \-\^\-binary
 Treat the file(s) as binary.  By default, under MS-DOS and MS-Windows,
