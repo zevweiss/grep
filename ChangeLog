@@ -2,8 +2,10 @@
 
  	* tests/bre.tests: Enable a regression test for bug #9519.
  	* src/grep.c: Fix a seg-fault in "-o -i": patch #1939.
- 	* tests/grep-o.sh: New tests for "-o", initially all failing.
-	* tests/Makefile.am: Include the new tests file 'grep-o.sh'.
+ 	* tests/foad1.sh: New tests for "-o", initially all failing.
+	* tests/Makefile.am: Include the new tests file "foad1.sh".
+ 	* tests/spencer2.sh: Be consistent with "spencer1.sh" in the
+	  naming of associated files.
 
 2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
 
