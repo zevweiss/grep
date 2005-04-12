@@ -1,3 +1,7 @@
+2005-04-12  Julian Foad  <julianfoad@btopenworld.com>
+
+ 	* tests/bre.tests: Enable a regression test for bug #9519.
+
 2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
 
  	* doc/grep.texi, doc/grep.1: Document USG grep -s too.
