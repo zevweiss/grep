@@ -6,6 +6,10 @@
 	* tests/Makefile.am: Include the new tests file "foad1.sh".
  	* tests/spencer2.sh: Be consistent with "spencer1.sh" in the
 	  naming of associated files.
+	* src/grep.c: Fix off-by-one error in prpending().
+	  Patch #3840 by Claudio Fontana.
+	* tests/foad1.sh: Add tests by Pavol Gono for patch #3840.
+	  Some of them still fail, but no longer seg-fault due to that bug.
 
 2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
 

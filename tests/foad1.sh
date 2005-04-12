@@ -48,4 +48,17 @@ grep_test "word_word/" "word_/" "^word_*" -o
 grep_test "wordword/" "word/" "\<word" -o
 
 
+# Test combination of "-m" with "-A" and anchors.
+# Based on a report from Pavol Gono.
+grep_test "4/40/"  "4/40/"  "^4$" -m1 -A99
+grep_test "4/04/"  "4/04/"  "^4$" -m1 -A99
+grep_test "4/444/" "4/444/" "^4$" -m1 -A99
+grep_test "4/40/"  "4/40/"  "^4"  -m1 -A99
+grep_test "4/04/"  "4/04/"  "^4"  -m1 -A99
+grep_test "4/444/" "4/444/" "^4"  -m1 -A99
+grep_test "4/40/"  "4/40/"  "4$"  -m1 -A99
+grep_test "4/04/"  "4/04/"  "4$"  -m1 -A99
+grep_test "4/444/" "4/444/" "4$"  -m1 -A99
+
+
 exit $failures

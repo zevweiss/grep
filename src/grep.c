@@ -649,7 +649,7 @@ prpending (char const *lim)
       size_t match_size;
       --pending;
       if (outleft
-	  || (((*execute) (lastout, nl - lastout, &match_size, 0) == (size_t) -1)
+	  || (((*execute) (lastout, nl + 1 - lastout, &match_size, 0) == (size_t) -1)
 	      == !out_invert))
 	prline (lastout, nl + 1, '-');
       else
