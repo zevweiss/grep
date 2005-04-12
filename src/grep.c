@@ -535,7 +535,7 @@ prline (char const *beg, char const *lim, int sep)
 	  for (i = 0; i < lim - beg; i++)
 	    ibeg[i] = tolower (beg[i]);
 
-	  while ((match_offset = (*execute) (ibeg, lim - beg, &match_size, 1))
+	  while ((match_offset = (*execute) (ibeg, ilim - ibeg, &match_size, 1))
 		 != (size_t) -1)
 	    {
 	      char const *b = ibeg + match_offset;

@@ -1,6 +1,7 @@
 2005-04-12  Julian Foad  <julianfoad@btopenworld.com>
 
  	* tests/bre.tests: Enable a regression test for bug #9519.
+ 	* src/grep.c: Fix a seg-fault in "-o -i": patch #1939.
 
 2005-04-11  Julian Foad  <julianfoad@btopenworld.com>
 
