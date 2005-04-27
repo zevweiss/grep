@@ -9,6 +9,14 @@
 	  argument is optional.  Add a regression test and a test for
 	  a similar case that other proposed patches have got wrong.
 
+	Add more tests, some initially failing.
+
+ 	* tests/foad1.sh: Add tests for "--color", most initially failing.
+	* tests/fmbtest.sh: New file of tests for "grep -i" with multi-byte
+	  chars, by Jakub Jelinek, from patch #3808: Red Hat's "tests" patch.
+	  Initially, test #4 fails (in all three modes).
+	* tests/Makefile.am: Include the new tests file "fmbtest.sh".
+
 2005-04-12  Julian Foad  <julianfoad@btopenworld.com>
 
  	* tests/bre.tests: Enable a regression test for bug #9519.

@@ -47,6 +47,21 @@ grep_test "word_word/" "word_/" "^word_*" -o
 grep_test "wordword/" "word/" "\<word" -o
 
 
+# Test "--color" option
+
+CB="[01;31m"
+CE="[00m"
+
+# "--color" with "-i" should output an exact copy of the matching input text.
+grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "Word" --color=always -i
+grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "word" --color=always -i
+grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "WORD" --color=always -i
+
+# End of a previous match should not match a "start of ..." expression.
+grep_test "word_word/" "${CB}word_${CE}word/" "^word_*" --color=always
+grep_test "wordword/" "${CB}word${CE}word/" "\<word" --color=always
+
+
 # Test combination of "-m" with "-A" and anchors.
 # Based on a report from Pavol Gono.
 grep_test "4/40/"  "4/40/"  "^4$" -m1 -A99

@@ -3,7 +3,8 @@
 AWK=@AWK@
 
 TESTS = warning.sh khadafy.sh spencer1.sh bre.sh ere.sh \
-        status.sh empty.sh options.sh backref.sh file.sh foad1.sh
+        status.sh empty.sh options.sh backref.sh file.sh foad1.sh \
+        fmbtest.sh
 EXTRA_DIST = $(TESTS) \
              khadafy.lines khadafy.regexp \
              spencer1.awk spencer1.tests \
