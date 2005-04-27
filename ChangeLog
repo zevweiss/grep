@@ -1,3 +1,14 @@
+2005-04-27  Julian Foad  <julianfoad@btopenworld.com>
+
+	Fix a bug reported by Elliott Hughes in patch #1834 whereby "grep -Fw"
+	would miss matches after a non-word occurrence of the pattern.  Fix by
+	Gordon Lack; tests based on reproduction recipes by Gordon Lack.
+
+	* src/search.c (Fexecute): Fix the "match_words" case.
+ 	* tests/foad1.sh: Modify the test framework so that the "PATTERN"
+	  argument is optional.  Add a regression test and a test for
+	  a similar case that other proposed patches have got wrong.
+
 2005-04-12  Julian Foad  <julianfoad@btopenworld.com>
 
  	* tests/bre.tests: Enable a regression test for bug #9519.

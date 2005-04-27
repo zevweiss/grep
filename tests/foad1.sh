@@ -7,19 +7,18 @@
 VERBOSE=  # empty or "1"
 failures=0
 
-# grep_test INPUT EXPECTED_OUTPUT PATTERN [OPTION...]
-# Run "grep" with the given INPUT, PATTERN and OPTIONs, and check that
+# grep_test INPUT EXPECTED_OUTPUT PATTERN_AND_OPTIONS...
+# Run "grep" with the given INPUT, pattern and options, and check that
 # the output is EXPECTED_OUTPUT.  If not, print a message and set 'failures'.
 # "/" represents a newline within INPUT and EXPECTED_OUTPUT.
 grep_test ()
 {
   INPUT="$1"
   EXPECT="$2"
-  PATTERN="$3"
-  shift 3
-  OUTPUT=`echo -n "$INPUT" | tr "/" "\n" | "$GREP" "$@" "$PATTERN" | tr "\n" "/"`
+  shift 2
+  OUTPUT=`echo -n "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
   if test "$OUTPUT" != "$EXPECT" || test "$VERBOSE" == "1"; then
-    echo "Testing:  $GREP $@ \"$PATTERN\""
+    echo "Testing:  $GREP $@"
     echo "  input:  \"$INPUT\""
     echo "  output: \"$OUTPUT\""
   fi
@@ -59,6 +58,11 @@ grep_test "4/444/" "4/444/" "^4"  -m1 -A99
 grep_test "4/40/"  "4/40/"  "4$"  -m1 -A99
 grep_test "4/04/"  "4/04/"  "4$"  -m1 -A99
 grep_test "4/444/" "4/444/" "4$"  -m1 -A99
+
+
+# Test for "-F -w" bugs.  Thanks to Gordon Lack for these two.
+grep_test "A/CX/B/C/" "A/B/C/" -wF -e A -e B -e C
+grep_test "LIN7C 55327/" "" -wF -e 5327 -e 5532
 
 
 exit $failures

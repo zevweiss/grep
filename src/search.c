@@ -599,17 +599,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 	      {
 		offset = kwsexec (kwset, beg, --len, &kwsmatch);
 		if (offset == (size_t) -1)
-		  {
-#ifdef MBS_SUPPORT
-                    if (MB_CUR_MAX > 1)
-                      {
-                        if (match_icase)
-                          free ((char*)buf);
-                        free(mb_properties);
-                      }
-#endif /* MBS_SUPPORT */
-		    return offset;
-		  }
+		  break;
 		try = beg + offset;
 		len = kwsmatch.size[0];
 	      }
