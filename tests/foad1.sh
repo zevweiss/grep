@@ -80,4 +80,13 @@ grep_test "A/CX/B/C/" "A/B/C/" -wF -e A -e B -e C
 grep_test "LIN7C 55327/" "" -wF -e 5327 -e 5532
 
 
+# Test character class erroneously matching a '[' character.
+# If the UTF-8 locale doesn't work, skip this test silently.
+if LC_ALL=cs_CZ.UTF-8 locale -k LC_CTYPE 2>/dev/null |
+  "${GREP}" -q "charmap.*UTF-8"
+then
+  LC_ALL=cs_CZ.UTF-8 grep_test "[/" "" "[[:alpha:]]" -E
+fi
+
+
 exit $failures

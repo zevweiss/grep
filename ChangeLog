@@ -2,6 +2,10 @@
 
  	* tests/foad1.sh: Remove Bash-specific syntax.
 
+	* src/dfa.c: Fix a DFA bug whereby a bracket "[" was matched by the
+	  pattern "[[:alpha:]]" in UTF-8 locales.  Patch #3800, by Tim Waugh.
+ 	* tests/foad1.sh: Add a regression test for that.
+
 2005-04-27  Julian Foad  <julianfoad@btopenworld.com>
 
 	Fix a bug reported by Elliott Hughes in patch #1834 whereby "grep -Fw"
