@@ -1,3 +1,7 @@
+2005-04-28  Julian Foad  <julianfoad@btopenworld.com>
+
+ 	* tests/foad1.sh: Remove Bash-specific syntax.
+
 2005-04-27  Julian Foad  <julianfoad@btopenworld.com>
 
 	Fix a bug reported by Elliott Hughes in patch #1834 whereby "grep -Fw"
