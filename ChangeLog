@@ -3,6 +3,11 @@
 	* tests/foad1.sh: Add -b and tricky UTF-8 tests.
 	  Display LC_ALL when its value is special.  Patch #3962.
 
+	* ABOUT-NLS: Sync with CVS revision 1.9
+	  of 2005-04-13T11:21:55Z from GNU gettext
+	  on ":pserver:anoncvs@sources.redhat.com:/cvs/gettext",
+	  file "gettext/gettext-runtime/ABOUT-NLS".
+
 2005-04-29  Julian Foad  <julianfoad@btopenworld.com>
 
 	* Makefile.am: Remove reference to long-gone files PATCHES.AC and
