@@ -1,4 +1,9 @@
-2005-04-28  Julian Foad  <julianfoad@btopenworld.com>
+2005-04-29  Charles Levert  <charles_levert@gna.org>
+
+	* tests/foad1.sh: Add -b and tricky UTF-8 tests.
+	  Display LC_ALL when its value is special.  Patch #3962.
+
+2005-04-29  Julian Foad  <julianfoad@btopenworld.com>
 
 	* Makefile.am: Remove reference to long-gone files PATCHES.AC and
 	  PATCHES.AM.  Thanks to Tony Abou-Assaleh for this.  Patch #3961.
