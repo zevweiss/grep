@@ -538,7 +538,7 @@ prline (char const *beg, char const *lim, int sep)
 	  while ((match_offset = (*execute) (ibeg, ilim - ibeg, &match_size, 1))
 		 != (size_t) -1)
 	    {
-	      char const *b = ibeg + match_offset;
+	      char const *b = beg + match_offset;
 	      if (b == lim)
 		break;
 	      if (match_size == 0)
@@ -549,7 +549,8 @@ prline (char const *beg, char const *lim, int sep)
 	      if(color_option)
 		fputs("\33[00m", stdout);
 	      fputs("\n", stdout);
-	      ibeg = b + match_size;
+	      beg = b + match_size;
+	      ibeg += match_offset + match_size;
 	    }
 	  free (buf);
 	  lastout = lim;

@@ -1,3 +1,10 @@
+2005-04-29  Charles Levert  <charles_levert@gna.org>
+
+	* src/grep.c: Fix typo in prline()'s --only-matching --ignore-case
+	  code path; this fixes bug #9768 and passes one more test
+	  in tests/foad1.sh.  This whole code path should be removed in
+	  the future, when other --ignore-case issues are dealt with.
+
 2005-04-28  Julian Foad  <julianfoad@btopenworld.com>
 
  	* tests/foad1.sh: Remove Bash-specific syntax.
