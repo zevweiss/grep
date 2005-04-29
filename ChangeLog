@@ -1,3 +1,8 @@
+2005-04-28  Julian Foad  <julianfoad@btopenworld.com>
+
+	* Makefile.am: Remove reference to long-gone files PATCHES.AC and
+	  PATCHES.AM.  Thanks to Tony Abou-Assaleh for this.  Patch #3961.
+
 2005-04-29  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Fix typo in prline()'s --only-matching --ignore-case

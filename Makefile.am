@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = no-dependencies
 
 SUBDIRS = intl po lib doc src tests m4 vms bootstrap
 
-EXTRA_DIST = TODO README README-alpha PATCHES.AC PATCHES.AM
+EXTRA_DIST = TODO README README-alpha
 
 # We should be able to just define `ACLOCAL_AMFLAGS = --acdir=m4',
 # but this runs afoul of a bug in automake 1.
