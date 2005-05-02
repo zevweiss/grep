@@ -1,3 +1,8 @@
+2005-05-02  Charles Levert  <charles_levert@gna.org>
+
+	* 78 files: Update FSF's civic address, zip code,
+	  and citizen relocation code.
+
 2005-04-29  Charles Levert  <charles_levert@gna.org>
 
 	* tests/foad1.sh: Add -b and tricky UTF-8 tests.
