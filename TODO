@@ -51,8 +51,13 @@ Take a look at:
    -- nr-grep (Nondeterministic reverse grep);
    -- ggrep (Grouse grep);
    -- grep.py (Python grep);
+   -- lgrep (from lv, a Powerful Multilingual File Viewer / Grep);
+   -- freegrep <http://www.vocito.com/downloads/software/grep/>;
+   -- ja-grep's mlb2 patch (Japanese grep);
    -- pcregrep (from Perl-Compatible Regular Expressions library).
 Can we merge ?
+
+Check FreeBSD's integration of zgrep (-Z) and bzgrep (-J) in one binary.
 
 POSIX Compliance see p10003.x
 
