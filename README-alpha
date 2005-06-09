@@ -16,3 +16,6 @@ modified file) from CVS are automatically sent.  To subscribe, send an
 email message to <grep-commit-request@gnu.org> with "subscribe" (without
 the quotation marks) in the subject header field (or in the body) of
 the email, or visit <http://lists.gnu.org/mailman/listinfo/grep-commit>.
+
+A web page containing information for GNU grep developers is also
+available at <http://www.gnu.org/software/grep/devel.html>.
