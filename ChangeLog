@@ -1,3 +1,18 @@
+2005-06-14  Charles Levert  <charles_levert@gna.org>
+
+	Fix bug #11022 (Line wrapping causes GREP_COLOR background
+	color to "smear") by outputting a "clear to end of line"
+	control sequence after each SGR (Select Graphic Rendition)
+	control sequence (START and END).  This also avoid similar
+	problems with HT (tab) characters.
+
+	* src/grep.c (SGR_START, SGR_END, PR_SGR_FMT, PR_SGR_FMT_IF,
+	  PR_SGR_START, PR_SGR_END, PR_SGR_START_IF, PR_SGR_END_IF):
+	  New macros.
+	* src/grep.c (prline): Use the new macros.
+	* tests/fmbtest.sh, tests/foad1.sh: Adjust the regression tests
+	  to expect the new control sequences.
+
 2005-05-06  Charles Levert  <charles_levert@gna.org>
 
 	* TODO: Add a few more projects and derived versions to check out.

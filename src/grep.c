@@ -82,6 +82,20 @@ static int only_matching;
    variable GREP_COLOR.  The default is to print red.  */
 static const char *grep_color = "01;31";
 
+/* Select Graphic Rendition (SGR) strings.  */
+/* Also Erase in Line (EL) to Right by default.  */
+#define SGR_START "\33[%sm\33[K"
+#define SGR_END   "\33[m\33[K"
+
+/* SGR utility macros.  */
+#define PR_SGR_FMT(fmt, s) do { if (*(s)) printf((fmt), (s)); } while (0)
+#define PR_SGR_FMT_IF(fmt, s) \
+  do { if (color_option && *(s)) printf((fmt), (s)); } while (0)
+#define PR_SGR_START(s)    PR_SGR_FMT(   SGR_START, (s))
+#define PR_SGR_END(s)      PR_SGR_FMT(   SGR_END,   (s))
+#define PR_SGR_START_IF(s) PR_SGR_FMT_IF(SGR_START, (s))
+#define PR_SGR_END_IF(s)   PR_SGR_FMT_IF(SGR_END,   (s))
+
 static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
 /* Short options.  */
@@ -543,11 +557,9 @@ prline (char const *beg, char const *lim, int sep)
 		break;
 	      if (match_size == 0)
 		break;
-	      if(color_option)
-		printf("\33[%sm", grep_color);
+	      PR_SGR_START_IF(grep_color);
 	      fwrite(b, sizeof (char), match_size, stdout);
-	      if(color_option)
-		fputs("\33[00m", stdout);
+	      PR_SGR_END_IF(grep_color);
 	      fputs("\n", stdout);
 	      beg = b + match_size;
 	      ibeg += match_offset + match_size;
@@ -566,11 +578,9 @@ prline (char const *beg, char const *lim, int sep)
 	    break;
 	  if (match_size == 0)
 	    break;
-	  if(color_option)
-	    printf("\33[%sm", grep_color);
+	  PR_SGR_START_IF(grep_color);
 	  fwrite(b, sizeof (char), match_size, stdout);
-	  if(color_option)
-	    fputs("\33[00m", stdout);
+	  PR_SGR_END_IF(grep_color);
 	  fputs("\n", stdout);
 	  beg = b + match_size;
         }
@@ -601,9 +611,9 @@ prline (char const *beg, char const *lim, int sep)
 	      if (match_size == 0)
 	        break;
 	      fwrite (beg, sizeof (char), match_offset, stdout);
-	      printf ("\33[%sm", grep_color);
+	      PR_SGR_START(grep_color);
 	      fwrite (b, sizeof (char), match_size, stdout);
-	      fputs ("\33[00m", stdout);
+	      PR_SGR_END(grep_color);
 	      beg = b + match_size;
 	      ibeg = ibeg + match_offset + match_size;
 	    }
@@ -623,9 +633,9 @@ prline (char const *beg, char const *lim, int sep)
 	  if (match_size == 0)
 	    break;
 	  fwrite (beg, sizeof (char), match_offset, stdout);
-	  printf ("\33[%sm", grep_color);
+	  PR_SGR_START(grep_color);
 	  fwrite (b, sizeof (char), match_size, stdout);
-	  fputs ("\33[00m", stdout);
+	  PR_SGR_END(grep_color);
 	  beg = b + match_size;
 	}
     }

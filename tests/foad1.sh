@@ -51,8 +51,8 @@ grep_test "wordword/" "word/" "\<word" -o
 
 # Test "--color" option
 
-CB="[01;31m"
-CE="[00m"
+CB="[01;31m[K"
+CE="[m[K"
 
 # "--color" with "-i" should output an exact copy of the matching input text.
 grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "Word" --color=always -i

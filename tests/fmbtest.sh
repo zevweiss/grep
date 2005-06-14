@@ -70,7 +70,7 @@ done
 # Test that -F --color=always prefers longer matches.
 test5="`echo 'Cosi tu ČišÍ...' \
 	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -Fi -e 'čiš' -e 'čiší'`"
-if echo "$test5" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*mČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
+if echo "$test5" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
   :
 else
   echo "Test #5 F failed: $test5"
@@ -82,7 +82,7 @@ for mode in G E; do
 # Test that -{G,E} --color=always prefers earlier pattern matches.
 test6="`echo 'Cosi tu ČišÍ...' \
 	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -${mode}i -e 'čiš' -e 'čiší'`"
-if echo "$test6" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*mČiš.*\[.*m\(.\[K\)\?Í\.\.\.'; then
+if echo "$test6" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?Čiš.*\[.*m\(.\[K\)\?Í\.\.\.'; then
   :
 else
   echo "Test #6 ${mode} failed: $test6"
@@ -92,7 +92,7 @@ fi
 # Test that -{G,E} --color=always prefers earlier pattern matches.
 test7="`echo 'Cosi tu ČišÍ...' \
 	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -${mode}i -e 'čiší' -e 'čiš'`"
-if echo "$test7" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*mČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
+if echo "$test7" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
   :
 else
   echo "Test #7 ${mode} failed: $test7"
