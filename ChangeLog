@@ -1,3 +1,10 @@
+2005-06-15  Charles Levert  <charles_levert@gna.org>
+
+	* tests/foad1.sh: Since this script is run by /bin/sh, it
+	  must work under posix mode.  That means not using assignment
+	  statements right before a function call (LC_ALL=... grep_test,
+	  in this case), because it won't do the expected thing.
+
 2005-06-14  Charles Levert  <charles_levert@gna.org>
 
 	Fix bug #11022 (Line wrapping causes GREP_COLOR background
