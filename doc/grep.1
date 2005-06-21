@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.29 2005/04/11 23:56:01 julianfoad Exp $
+.Id $Id: grep.1,v 1.30 2005/06/21 14:58:50 charles_levert Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -126,11 +126,35 @@ might output binary garbage,
 which can have nasty side effects if the output is a terminal and if the
 terminal driver interprets some of it as commands.
 .TP
-.BI \-\^\-colour[=\fIWHEN\fR] ", " \-\^\-color[=\fIWHEN\fR]
-Surround the matching strings with escape sequences to display them in color
-on the terminal.  The color is defined by the environment variable
+.BI \-\^\-color[=\fIWHEN\fR] ", " \-\^\-colour[=\fIWHEN\fR]
+Surround the matching strings, matchings lines, context lines, file
+names, line numbers, octet offsets, and separators (for fields and
+groups of context lines) with escape sequences to display them in color
+on the terminal.
+The colors are defined by the environment variable
+.B GREP_COLORS
+and default to `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' for bold red
+matched text, default matching lines, default context lines,
+magenta file names, green line numbers, green octet offsets,
+and cyan separators.
+Note that the `ml' setting, if any, remains in effect just before the
+`mt' setting kicks in.
+See the Select Graphic Rendition (SGR, for character attributes)
+section in the documentation of the text terminal that is used
+for permissible values (semicolon-separated lists of integers)
+and their meaning.
+.B GREP_COLORS
+also supports a boolean `ne' capability (with no `=...' part) to not
+clear to the end of line using Erase in Line (EL) to Right (`\\33[K')
+each time a colorized item ends (needed on terminals on which EL is not
+supported; otherwise useful on terminals where the `back_color_erase'
+(`bce') boolean terminfo capability is not specified, when the chosen
+highlight colors do not affect the background, or when EL is too slow
+to bother doing or causes too much flicker).
+The deprecated environment variable
 .B GREP_COLOR
-and defaults to `01;31' which means the text is red.
+is still supported, but its setting does not have priority; it defaults to
+`01;31' (bold red) which only covers the color for matched text.
 .I WHEN
 is `never', `always', or `auto'.
 .TP
@@ -700,7 +724,14 @@ A backslash escapes the next character,
 so it can be used to specify an option containing whitespace or a backslash.
 .TP
 .B GREP_COLOR
+Deprecated in favor of
+.BR GREP_COLORS ,
+which has priority.
 Specifies the marker for highlighting.
+.TP
+.B GREP_COLORS
+Specifies the markers for highlighting matched text, file names,
+line numbers, octet offsets, and separators.
 .TP
 \fBLC_ALL\fP, \fBLC_COLLATE\fP, \fBLANG\fP
 These variables specify the

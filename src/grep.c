@@ -79,6 +79,9 @@ static int mmap_option;
 /* If nonzero, use grep_color marker.  */
 static int color_option;
 
+/* If nonzero, do pseudo-markup instead of actual colors.  */
+static int pseudo_markup;
+
 /* If nonzero, show only the part of a line matching the expression. */
 static int only_matching;
 
@@ -125,8 +128,17 @@ static int only_matching;
 	 This only leaves red, magenta, green, and cyan (and their bold
 	 counterparts) and possibly bold blue.  */
 /* The color string used for matched text.
-   The user can overwrite it using the environment variable GREP_COLOR.  */
+   The user can overwrite it using the deprecated
+   environment variable GREP_COLOR or the new GREP_COLORS.  */
 static const char *grep_color = "01;31";	/* bold red */
+
+/* Other colors.  Defaults look damn good.  */
+static const char *filename_color = "35";	/* magenta */
+static const char *line_num_color = "32";	/* green */
+static const char *byte_num_color = "32";	/* green */
+static const char *sep_color      = "36";	/* cyan */
+static const char *mlines_color   = "";		/* default color pair */
+static const char *context_color  = "";		/* default color pair */
 
 /* Select Graphic Rendition (SGR, "\33[...m") strings.  */
 /* Also Erase in Line (EL) to Right ("\33[K") by default.  */
@@ -185,8 +197,10 @@ static const char *grep_color = "01;31";	/* bold red */
       It would be impractical for GNU grep to become a full-fledged
       terminal program linked against ncurses or the like, so it will
       not detect terminfo(5) capabilities.  */
-#define SGR_START "\33[%sm\33[K"
-#define SGR_END   "\33[m\33[K"
+static const char *sgr_start = "\33[%sm\33[K";
+#define SGR_START  sgr_start
+static const char *sgr_end   = "\33[m\33[K";
+#define SGR_END    sgr_end
 
 /* SGR utility macros.  */
 #define PR_SGR_FMT(fmt, s) do { if (*(s)) printf((fmt), (s)); } while (0)
@@ -196,6 +210,61 @@ static const char *grep_color = "01;31";	/* bold red */
 #define PR_SGR_END(s)      PR_SGR_FMT(   SGR_END,   (s))
 #define PR_SGR_START_IF(s) PR_SGR_FMT_IF(SGR_START, (s))
 #define PR_SGR_END_IF(s)   PR_SGR_FMT_IF(SGR_END,   (s))
+
+struct color_cap
+  {
+    const char *name;
+    const char **var;
+    const char *(*fct)(void);
+  };
+
+const char *
+color_cap_ne_fct(void)
+{
+  if (pseudo_markup)
+    return "makes no sense after the \"xm\" capability; ignored";
+
+  sgr_start = "\33[%sm";
+  sgr_end   = "\33[m";
+
+  return NULL;
+}
+
+const char *
+color_cap_xm_fct(void)
+{
+  /* This experimental feature should stay undocumented for now.  */
+  pseudo_markup = 1;
+
+  sgr_start = "<grep:%s>";
+  sgr_end   = "</grep:%s>";
+
+  /* The user can just redefine them to the empty string afterwards.  */
+  grep_color     = "matched-text";
+  filename_color = "filename";
+  line_num_color = "line-number";
+  byte_num_color = "byte-offset";
+  sep_color      = "separator";
+  mlines_color   = "matching-line";
+  context_color  = "context-line";
+
+  return NULL;
+}
+
+/* For GREP_COLORS.  */
+static struct color_cap color_dict[] =
+  {
+    { "mt", &grep_color,	NULL },			/* matched text */
+    { "fn", &filename_color,	NULL },			/* filename */
+    { "ln", &line_num_color,	NULL },			/* line number */
+    { "bn", &byte_num_color,	NULL },			/* byte (sic) offset */
+    { "se", &sep_color,		NULL },			/* separator */
+    { "ml", &mlines_color,	NULL },			/* matching lines */
+    { "cx", &context_color,	NULL },			/* context lines */
+    { "ne", NULL,		color_cap_ne_fct },	/* no EL on SGR_* */
+    { "xm", NULL,		color_cap_xm_fct },	/* pseudo-markup */
+    { NULL, NULL,		NULL }
+  };
 
 static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
@@ -604,6 +673,24 @@ nlscan (char const *lim)
   lastnl = lim;
 }
 
+/* Print the current filename.  */
+static void
+print_filename (void)
+{
+  PR_SGR_START_IF(filename_color);
+  fputs(filename, stdout);
+  PR_SGR_END_IF(filename_color);
+}
+
+/* Print a character separator.  */
+static void
+print_sep (char sep)
+{
+  PR_SGR_START_IF(sep_color);
+  fputc(sep, stdout);
+  PR_SGR_END_IF(sep_color);
+}
+
 /* Print a byte offset, followed by a character separator.  */
 static void
 print_offset_sep (uintmax_t pos, char sep)
@@ -816,7 +903,12 @@ prtext (char const *beg, char const *lim, int *nlinesp)
       /* We print the SEP_STR_CHUNK separator only if our output is
 	 discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout)
-	puts (SEP_STR_CHUNK);
+	{
+	  PR_SGR_START_IF(sep_color);
+	  fputs (SEP_STR_CHUNK, stdout);
+	  PR_SGR_END_IF(sep_color);
+	  fputc('\n', stdout);
+	}
 
       while (p < beg)
 	{
@@ -1122,13 +1214,22 @@ grepfile (char const *file, struct stats *stats)
       if (count_matches)
 	{
 	  if (out_file)
-	    printf ("%s%c", filename, SEP_CHAR_MATCH & filename_mask);
+	    {
+	      print_filename();
+	      if (filename_mask)
+		print_sep(SEP_CHAR_MATCH);
+	      else
+		fputc(0, stdout);
+	    }
 	  printf ("%d\n", count);
 	}
 
       status = !count;
       if (list_files == 1 - 2 * status)
-	printf ("%s%c", filename, '\n' & filename_mask);
+	{
+	  print_filename();
+	  fputc('\n' & filename_mask, stdout);
+	}
 
       if (! file)
 	{
@@ -1445,6 +1546,91 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
     }
 
   return opt;
+}
+
+/* Parse GREP_COLORS.  The  default would look like:
+     GREP_COLORS='mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36'
+   No character escaping is needed or supported.  */
+static void
+parse_grep_colors (void)
+{
+  const char *p;
+  char *q;
+  char *name;
+  char *val;
+
+  p = getenv("GREP_COLORS"); /* Plural! */
+  if (p == NULL || *p == '\0')
+    return;
+
+  /* Work off a writable copy.  */
+  q = xmalloc(strlen(p) + 1);
+  if (q == NULL)
+    return;
+  strcpy(q, p);
+
+  name = q;
+  val = NULL;
+  /* From now on, be well-formed or you're gone.  */
+  for (;;)
+    if (*q == ':' || *q == '\0')
+      {
+	char c = *q;
+	struct color_cap *cap;
+
+	*q++ = '\0'; /* Terminate name or val.  */
+	/* Empty name without val (empty cap)
+	 * won't match and will be ignored.  */
+	for (cap = color_dict; cap->name; cap++)
+	  if (strcmp(cap->name, name) == 0)
+	    break;
+	/* If name unknown, go on for forward compatibility.  */
+	if (cap->name)
+	  if (cap->var)
+	    {
+	      if (val)
+		*(cap->var) = val;
+	      else
+		fprintf(stderr,
+			_("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped.\n"),
+			program_name, p, name);
+	    }
+	  else if (val)
+	    fprintf(stderr,
+		    _("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped.\n"),
+		    program_name, p, name, val);
+	if (cap->fct)
+	  {
+	    const char *err_str = cap->fct();
+
+	    if (err_str)
+	      fprintf(stderr,
+		      _("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity %s.\n"),
+		      program_name, p, name, err_str);
+	  }
+	if (c == '\0')
+	  return;
+	name = q;
+	val = NULL;
+      }
+    else if (*q == '=')
+      {
+	if (q == name || val)
+	  goto ill_formed;
+	*q++ = '\0'; /* Terminate name.  */
+	val = q; /* Can be the empty string.  */
+      }
+    else if (val == NULL)
+      q++; /* Accumulate name.  */
+    else if (*q == ';' || (*q >= '0' && *q <= '9'))
+      q++; /* Accumulate val.  Protect the terminal from being sent crap.  */
+    else
+      goto ill_formed;
+
+ ill_formed:
+  fprintf(stderr,
+	  _("%s: Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\".\n"),
+	  program_name, p, q);
 }
 
 int
@@ -1827,9 +2013,13 @@ main (int argc, char **argv)
 
   if (color_option)
     {
+      /* Legacy.  */
       char *userval = getenv ("GREP_COLOR");
       if (userval != NULL && *userval != '\0')
 	grep_color = userval;
+
+      /* New GREP_COLORS has priority.  */
+      parse_grep_colors();
     }
 
   if (! matcher)

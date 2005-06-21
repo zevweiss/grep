@@ -32,6 +32,15 @@
 	  New macros for ':', '-', and "--".  Used throughout the file.
 	  Will be used even more in upcoming updates, so good to have now.
 
+	* src/grep.c: The new GREP_COLORS (plural) framework, only
+	  partially used at this point to make for a simpler initial
+	  patch in CVS.  A subset of patch #3644 on Savannah.
+	* src/grep.c (color_cap_ne_fct, color_cap_xm_fct, print_filename,
+	  print_sep, parse_grep_colors): New functions.
+	* src/grep.c (prtext, grepfile, main): Existing functions modified
+	  to use the new framework.
+	* doc/grep.texi, doc/grep.1: Document GREP_COLORS.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.

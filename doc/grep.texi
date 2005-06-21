@@ -262,13 +262,22 @@ Print @var{num} lines of leading context before matching lines.
 @cindex context
 Print @var{num} lines of output context.
 
-@item --colour[=@var{WHEN}]
-@itemx --color[=@var{WHEN}]
+@item --color[=@var{WHEN}]
+@itemx --colour[=@var{WHEN}]
+@opindex --color
 @opindex --colour
 @cindex highlight, color, colour
-Surround the matching strings with escape sequences to display them in color
-on the terminal.  The color is defined by the environment variable
-@var{GREP_COLOR} and defaults to `01;31' which means the text is red.
+Surround the matching strings, matching lines, context lines, file names,
+line numbers, octet offsets, and separators (for fields and groups
+of context lines) with escape sequences to display them in color on
+the terminal.
+The colors are defined by the environment variable @var{GREP_COLORS}
+and default to `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' for bold red
+matched text, magenta file names, green line numbers, green octet offsets,
+cyan separators, and default terminal colors otherwise.
+The deprecated environment variable @var{GREP_COLOR} is still supported,
+but its setting does not have priority; it defaults to `01;31' (bold red)
+which only covers the color for matched text.
 @var{WHEN} is `never', `always', or `auto'.
 
 @item -@var{num}
@@ -576,8 +585,36 @@ specify an option containing whitespace or a backslash.
 @item GREP_COLOR
 @vindex GREP_COLOR
 @cindex highlight markers
-This variable specifies the color used to highlight the matching text.
-The default is `01;31' which means red text on the default background.
+This variable is deprecated but still supported; its setting does not
+have priority over that of @code{GREP_COLORS}.
+It specifies the color used to highlight the matching text.
+The default is `01;31' which means bold red text on the default
+background.
+
+@item GREP_COLORS
+@vindex GREP_COLORS
+@cindex highlight markers
+This variable specifies the colors used to highlight
+the matching text (mt), matching lines (ml), context lines (cx),
+file names (fn), line numbers (ln), octet offsets (bn),
+and separators (se, for fields and groups of context lines).
+It is a colon-separated list of color specification assignments.
+The default is `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' which means
+bold red, default, default, magenta, green, and cyan, all text foregrounds
+on the default background.
+Note that the `ml' setting, if any, remains in effect just before the
+`mt' setting kicks in.
+See the Select Graphic Rendition (SGR, for character attributes)
+section in the documentation of the text terminal that is used
+for permissible values (semicolon-separated lists of integers)
+and their meaning.
+@code{GREP_COLORS} also supports a boolean `ne' capability (with no
+`=...' part) to not clear to the end of line using Erase in Line (EL)
+to Right (`\33[K') each time a colorized item ends (needed on terminals
+on which EL is not supported; otherwise useful on terminals where the
+@code{back_color_erase} (@code{bce}) boolean terminfo capability is not
+specified, when the chosen highlight colors do not affect the background,
+or when EL is too slow to bother doing or causes too much flicker).
 
 @item LC_ALL
 @itemx LC_COLLATE
