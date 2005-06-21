@@ -2,6 +2,9 @@
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
 
+	* src/grep.c: Explain the context and logic for choosing default
+	  --color screen attributes (SGR parameters).
+
 2005-06-15  Charles Levert  <charles_levert@gna.org>
 
 	* tests/foad1.sh: Since this script is run by /bin/sh, it

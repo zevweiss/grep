@@ -78,9 +78,51 @@ static int color_option;
 /* If nonzero, show only the part of a line matching the expression. */
 static int only_matching;
 
-/* The color string used.  The user can overwrite it using the environment
-   variable GREP_COLOR.  The default is to print red.  */
-static const char *grep_color = "01;31";
+/* The context and logic for choosing default --color screen attributes
+   (foreground and background colors, etc.) are the following.
+      -- There are eight basic colors available, each with its own
+	 nominal luminosity to the human eye and foreground/background
+	 codes (black [0 %, 30/40], blue [11 %, 34/44], red [30 %, 31/41],
+	 magenta [41 %, 35/45], green [59 %, 32/42], cyan [70 %, 36/46],
+	 yellow [89 %, 33/43], and white [100 %, 37/47]).
+      -- Sometimes, white as a background is actually implemented using
+	 a shade of light gray, so that a foreground white can be visible
+	 on top of it (but most often not).
+      -- Sometimes, black as a foreground is actually implemented using
+	 a shade of dark gray, so that it can be visible on top of a
+	 background black (but most often not).
+      -- Sometimes, more colors are available, as extensions.
+      -- Other attributes can be selected/deselected (bold [1/22],
+	 underline [4/24], standout/inverse [7/27], blink [5/25], and
+	 invisible/hidden [8/28]).  They are sometimes implemented by
+	 using colors instead of what their names imply; e.g., bold is
+	 often achieved by using brighter colors.  In practice, only bold
+	 is really available to us, underline sometimes being mapped by
+	 the terminal to some strange color choice, and standout best
+	 being left for use by downstream programs such as less(1).
+      -- We cannot assume that any of the extensions or special features
+	 are available for the purpose of choosing defaults for everyone.
+      -- The most prevalent default terminal backgrounds are pure black
+	 and pure white, and are not necessarily the same shades of
+	 those as if they were selected explicitly with SGR sequences.
+	 Some terminals use dark or light pictures as default background,
+	 but those are covered over by an explicit selection of background
+	 color with an SGR sequence; their users will appreciate their
+	 background pictures not be covered like this, if possible.
+      -- Some uses of colors attributes is to make some output items
+	 more understated (e.g., context lines); this cannot be achieved
+	 by changing the background color.
+      -- For these reasons, the grep color defaults should strive not
+	 to change the background color from its default, unless it's
+	 for a short item that should be highlighted, not understated.
+      -- The grep foreground color defaults (without an explicitly set
+	 background) should provide enough contrast to be readable on any
+	 terminal with either a black (dark) or white (light) background.
+	 This only leaves red, magenta, green, and cyan (and their bold
+	 counterparts) and possibly bold blue.  */
+/* The color string used for matched text.
+   The user can overwrite it using the environment variable GREP_COLOR.  */
+static const char *grep_color = "01;31";	/* bold red */
 
 /* Select Graphic Rendition (SGR, "\33[...m") strings.  */
 /* Also Erase in Line (EL) to Right ("\33[K") by default.  */
