@@ -1,3 +1,10 @@
+2005-06-21  Charles Levert  <charles_levert@gna.org>
+
+	* src/grep.c (nlscan): Make this function more robust by removing
+	  the undocumented assumption that its "lim" argument points
+	  right after a line boundary.  This will be used later to fix
+	  --byte-offset's broken behavior.  Patch #3769.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
