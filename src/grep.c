@@ -872,117 +872,37 @@ print_line_tail (const char *beg, const char *lim, const char *color)
 static void
 prline (char const *beg, char const *lim, int sep)
 {
+  const char *line_color;
+
   if (!only_matching)
     print_line_head(beg, lim, sep);
-  else
-    {
-      size_t match_size;
-      size_t match_offset;
-      if(match_icase)
-        {
-          char *buf = (char*) xmalloc (lim - beg);
-	  char *ibeg = buf;
-	  char *ilim = ibeg + (lim - beg);
-	  int i;
-	  for (i = 0; i < lim - beg; i++)
-	    ibeg[i] = tolower (beg[i]);
 
-	  while ((match_offset = (*execute) (ibeg, ilim - ibeg, &match_size, 1))
-		 != (size_t) -1)
-	    {
-	      char const *b = beg + match_offset;
-	      if (b == lim)
-		break;
-	      if (match_size == 0)
-		break;
-	      print_line_head(b, lim, sep);
-	      PR_SGR_START_IF(grep_color);
-	      fwrite(b, sizeof (char), match_size, stdout);
-	      PR_SGR_END_IF(grep_color);
-	      fputs("\n", stdout);
-	      beg = b + match_size;
-	      ibeg += match_offset + match_size;
-	    }
-	  free (buf);
-	  lastout = lim;
-	  if(line_buffered)
-	    fflush(stdout);
-	  return;
-	}
-      while ((match_offset = (*execute) (beg, lim - beg, &match_size, 1))
-	  != (size_t) -1)
-        {
-	  char const *b = beg + match_offset;
-	  if (b == lim)
-	    break;
-	  if (match_size == 0)
-	    break;
-	  print_line_head(b, lim, sep);
-	  PR_SGR_START_IF(grep_color);
-	  fwrite(b, sizeof (char), match_size, stdout);
-	  PR_SGR_END_IF(grep_color);
-	  fputs("\n", stdout);
-	  beg = b + match_size;
-        }
-      lastout = lim;
-      if(line_buffered)
-	fflush(stdout);
-      return;
-    }
   if (color_option)
+    line_color = ((sep == SEP_CHAR_MATCH) ? mlines_color : context_color);
+
+  if (only_matching || (color_option && (*grep_color || *line_color)))
     {
-      size_t match_size;
-      size_t match_offset;
-      if(match_icase)
-        {
-	  /* Yuck, this is tricky */
-          char *buf = (char*) xmalloc (lim - beg);
-	  char *ibeg = buf;
-	  char *ilim = ibeg + (lim - beg);
-	  int i;
-	  for (i = 0; i < lim - beg; i++)
-	    ibeg[i] = tolower (beg[i]);
-	  while ((match_offset = (*execute) (ibeg, ilim-ibeg, &match_size, 1))
-		 != (size_t) -1)
-	    {
-	      char const *b = beg + match_offset;
-	      if (b == lim)
-		break;
-	      if (match_size == 0)
-	        break;
-	      fwrite (beg, sizeof (char), match_offset, stdout);
-	      PR_SGR_START(grep_color);
-	      fwrite (b, sizeof (char), match_size, stdout);
-	      PR_SGR_END(grep_color);
-	      beg = b + match_size;
-	      ibeg = ibeg + match_offset + match_size;
-	    }
-	  fwrite (beg, 1, lim - beg, stdout);
-	  free (buf);
-	  lastout = lim;
-	  return;
-	}
-      while (lim-beg && (match_offset = (*execute) (beg, lim - beg, &match_size, 1))
-	     != (size_t) -1)
-	{
-	  char const *b = beg + match_offset;
-	  /* Avoid matching the empty line at the end of the buffer. */
-	  if (b == lim)
-	    break;
-	  /* Avoid hanging on grep --color "" foo */
-	  if (match_size == 0)
-	    break;
-	  fwrite (beg, sizeof (char), match_offset, stdout);
-	  PR_SGR_START(grep_color);
-	  fwrite (b, sizeof (char), match_size, stdout);
-	  PR_SGR_END(grep_color);
-	  beg = b + match_size;
-	}
+      /* We already know that context lines have no match (to colorize).  */
+      if (only_matching || (*grep_color && sep == SEP_CHAR_MATCH))
+	beg = print_line_middle(beg, lim);
+
+      if (!only_matching && *line_color);
+	beg = print_line_tail(beg, lim, line_color);
+
+      /* This global is modified by print_line_middle()
+	 and checked by print_line_tail().  Now reset it.  */
+      if (pseudo_markup < 0)
+	pseudo_markup = 1;
     }
-  fwrite (beg, 1, lim - beg, stdout);
+
+  if (!only_matching && lim > beg)
+    fwrite (beg, 1, lim - beg, stdout);
+
   if (ferror (stdout))
     error (0, errno, _("writing output"));
+
   lastout = lim;
+
   if (line_buffered)
     fflush (stdout);
 }

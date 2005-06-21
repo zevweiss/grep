@@ -56,6 +56,20 @@
 	  unused for now, intended to allow a simplifying rewrite of
 	  prline().  Adding them first will make for cleaner CVS patches.
 
+	* src/grep.c (prline): Simplifying rewrite using
+	  print_line_middle() and print_line_tail().  No longer attempts
+	  to find matches to colorize in context lines, thus avoiding
+	  costly calls to (*execute)(), since we know by then that they
+	  can't contain any by definition.  There are no longer four
+	  different code paths whether -o and -i are each specified
+	  or not; they have been unified into one, which should help
+	  avoid bugs similar to previous ones due to not updating all
+	  code paths in a synchronized fashion.  The -i code has been
+	  explicitly marked since it doesn't belong there and should
+	  be removed as soon as other -i code elsewhere is fixed.
+	  The remaining GREP_COLORS functionality is implemented.
+	  Savannah patch #3771 and patch #3644, heavily reworked.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
