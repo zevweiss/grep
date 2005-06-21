@@ -776,6 +776,99 @@ print_line_head (char const *beg, char const *lim, int sep)
     }
 }
 
+const char *
+print_line_middle (const char *beg, const char *lim)
+{
+  size_t match_size;
+  size_t match_offset;
+  char *buf;		/* XXX */
+  const char *ibeg;	/* XXX */
+
+  if (match_icase)	/* XXX - None of the -i stuff should be here.  */
+    {
+      int i = lim - beg;
+
+      ibeg = buf = (char *) xmalloc(i);
+      /* This can't possibly be correct with UTF-8,
+	 but it's equivalent to what was there so far.  */
+      while (--i >= 0)
+	buf[i] = tolower(beg[i]);
+    }
+  else
+    {
+      buf = NULL;
+      ibeg = beg;
+    }
+
+  while (   lim > beg
+	 && (   (match_offset = (*execute) (ibeg, lim - beg, &match_size, 1))
+	     != (size_t) -1))
+    {
+      char const *b = beg + match_offset;
+
+      /* Avoid matching the empty line at the end of the buffer. */
+      if (b == lim)
+	break;
+
+      /* Avoid hanging on grep --color "" foo */
+      if (match_size == 0)
+	break;
+
+      if (only_matching)
+	print_line_head(b, lim, SEP_CHAR_MATCH);
+      else
+	{
+	  if (pseudo_markup >= 0)
+	    {
+	      PR_SGR_START(mlines_color);
+	      if (pseudo_markup)
+		pseudo_markup = -1;
+	    }
+	  fwrite (beg, sizeof (char), match_offset, stdout);
+	}
+
+      PR_SGR_START_IF(grep_color);
+      fwrite (b, sizeof (char), match_size, stdout);
+      PR_SGR_END_IF(grep_color);
+      if (only_matching)
+	fputs("\n", stdout);
+      beg = b + match_size;
+      ibeg += match_offset + match_size;	/* XXX */
+    }
+
+  if (buf)
+    free(buf);	/* XXX */
+
+  if (only_matching)
+    beg = lim;
+
+  return beg;
+}
+
+const char *
+print_line_tail (const char *beg, const char *lim, const char *color)
+{
+  size_t  eol_size;
+  size_t tail_size;
+
+  eol_size   = (lim > beg && lim[-1] == eolbyte);
+  eol_size  += (lim - eol_size > beg && lim[-(1 + eol_size)] == '\r');
+  tail_size  =  lim - eol_size - beg;
+
+  if (tail_size > 0)
+    {
+      if (pseudo_markup >= 0)
+	PR_SGR_START(color);
+      fwrite(beg, 1, tail_size, stdout);
+      beg += tail_size;
+    }
+
+  if (tail_size > 0 || pseudo_markup < 0)
+    PR_SGR_END(color);
+
+  return beg;
+}
+
 static void
 prline (char const *beg, char const *lim, int sep)
 {

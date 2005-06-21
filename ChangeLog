@@ -48,9 +48,13 @@
 	* doc/grep.texi, doc/grep.1: Document -T/--initial-tab.
 
 	* src/grep.c (print_offset): Renamed print_offset_sep() to better
-	  represents its new functionality; new calling convention.
+	  represent its new functionality; new calling convention.
 	* src/grep.c (print_offset, print_line_head): Use and implement
 	  missing parts of the GREP_COLORS and -T/--initial-tab frameworks.
+
+	* src/grep.c (print_line_middle, print_line_tail): New functions,
+	  unused for now, intended to allow a simplifying rewrite of
+	  prline().  Adding them first will make for cleaner CVS patches.
 
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
