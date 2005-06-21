@@ -695,30 +695,48 @@ print_sep (char sep)
   PR_SGR_END_IF(sep_color);
 }
 
-/* Print a byte offset, followed by a character separator.  */
+/* Print a line number or a byte offset.  */
 static void
-print_offset_sep (uintmax_t pos, char sep)
+print_offset (uintmax_t pos, int min_width, const char *color)
 {
   /* Do not rely on printf to print pos, since uintmax_t may be longer
      than long, and long long is not portable.  */
 
   char buf[sizeof pos * CHAR_BIT];
-  char *p = buf + sizeof buf - 1;
-  *p = sep;
+  char *p = buf + sizeof buf;
 
   do
-    *--p = '0' + pos % 10;
+    {
+      *--p = '0' + pos % 10;
+      --min_width;
+    }
   while ((pos /= 10) != 0);
 
+  /* Do this to maximize the probability of alignment across lines.  */
+  if (align_tabs)
+    while (--min_width >= 0)
+      *--p = ' ';
+
+  PR_SGR_START_IF(color);
   fwrite (p, 1, buf + sizeof buf - p, stdout);
+  PR_SGR_END_IF(color);
 }
 
 /* Print a whole line head (filename, line, byte).  */
 static void
 print_line_head (char const *beg, char const *lim, int sep)
 {
+  int pending_sep = 0;
+
   if (out_file)
-    printf ("%s%c", filename, sep & filename_mask);
+    {
+      print_filename();
+      if (filename_mask)
+	pending_sep = 1;
+      else
+	fputc(0, stdout);
+    }
+
   if (out_line)
     {
       if (lastnl < lim)
@@ -727,15 +745,34 @@ print_line_head (char const *beg, char const *lim, int sep)
 	  totalnl = add_count (totalnl, 1);
 	  lastnl = lim;
 	}
-      print_offset_sep (totalnl, sep);
+      if (pending_sep)
+	print_sep(sep);
+      print_offset (totalnl, 4, line_num_color);
+      pending_sep = 1;
     }
+
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
 #if defined(HAVE_DOS_FILE_CONTENTS)
       pos = dossified_pos (pos);
 #endif
-      print_offset_sep (pos, sep);
+      if (pending_sep)
+	print_sep(sep);
+      print_offset (pos, 6, byte_num_color);
+      pending_sep = 1;
+    }
+
+  if (pending_sep)
+    {
+      /* This assumes sep is one column wide.
+	 Try doing this any other way with Unicode
+	 (and its combining and wide characters)
+	 filenames and you're wasting your efforts.  */
+      if (align_tabs)
+	fputs("\t\b", stdout);
+
+      print_sep(sep);
     }
 }
 

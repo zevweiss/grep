@@ -47,6 +47,11 @@
 	  The option name/calling convention is the same as for GNU diff.
 	* doc/grep.texi, doc/grep.1: Document -T/--initial-tab.
 
+	* src/grep.c (print_offset): Renamed print_offset_sep() to better
+	  represents its new functionality; new calling convention.
+	* src/grep.c (print_offset, print_line_head): Use and implement
+	  missing parts of the GREP_COLORS and -T/--initial-tab frameworks.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
