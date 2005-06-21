@@ -5,6 +5,14 @@
 	  right after a line boundary.  This will be used later to fix
 	  --byte-offset's broken behavior.  Patch #3769.
 
+	* src/grep.c (main): Add a test to check if -o/--only-matching
+	  and context lines are both specified and if so, set both context
+	  specifications (before and after) to zero then print an explicit
+	  warning to stderr explaining what was done and why (as opposed
+	  to drastically aborting the process in error).  Patch #3768.
+	  Other code needs this zero setting to work correctly without
+	  having to repeatedly test for this conflictual condition.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
