@@ -85,6 +85,9 @@ static int pseudo_markup;
 /* If nonzero, show only the part of a line matching the expression. */
 static int only_matching;
 
+/* If nonzero, make sure first content char in a line is on a tab stop. */
+static int align_tabs;
+
 /* The context and logic for choosing default --color screen attributes
    (foreground and background colors, etc.) are the following.
       -- There are eight basic colors available, each with its own
@@ -270,7 +273,7 @@ static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:D:EFGHIPUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
+"0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -309,6 +312,7 @@ static struct option const long_options[] =
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
+  {"initial-tab", no_argument, NULL, 'T'},
   {"label", required_argument, NULL, LABEL_OPTION},
   {"line-buffered", no_argument, NULL, LINE_BUFFERED_OPTION},
   {"line-number", no_argument, NULL, 'n'},
@@ -1376,6 +1380,7 @@ Output control:\n\
   -L, --files-without-match print only names of FILEs containing no match\n\
   -l, --files-with-matches  print only names of FILEs containing matches\n\
   -c, --count               print only a count of matching lines per FILE\n\
+  -T, --initial-tab         make tabs line up (if needed)\n\
   -Z, --null                print 0 byte after FILE name\n"));
       printf (_("\
 \n\
@@ -1756,6 +1761,10 @@ main (int argc, char **argv)
 
       case 'I':
 	binary_files = WITHOUT_MATCH_BINARY_FILES;
+	break;
+
+      case 'T':
+	align_tabs = 1;
 	break;
 
       case 'U':

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.30 2005/06/21 14:58:50 charles_levert Exp $
+.Id $Id: grep.1,v 1.31 2005/06/21 15:22:58 charles_levert Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -385,6 +385,22 @@ and
 and should redirect standard and error output to
 .B /dev/null
 instead.
+.TP
+.BR \-T ", " \-\^\-initial\-tab
+Makes sure that the first character of actual line content lies on a
+tab stop, so that the alignment of tabs looks normal.
+This is useful when combined with
+.B \-H
+(which is implicit when there is more than one file to search),
+.BR \-n ,
+and
+.BR \-b ;
+these options prepend their output at the beginning of the displayed
+line, before the actual content.
+In order to improve the probability that all matched or context lines
+from a single file will all start at the same column, this also causes
+the line number and octet offset (if present) to be printed in a minimum
+size field width.
 .TP
 .BR \-U ", " \-\^\-binary
 Treat the file(s) as binary.  By default, under MS-DOS and MS-Windows,

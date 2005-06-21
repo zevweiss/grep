@@ -41,6 +41,12 @@
 	  to use the new framework.
 	* doc/grep.texi, doc/grep.1: Document GREP_COLORS.
 
+	* src/grep.c: The new -T/--initial-tab framework, only
+	  partially used at this point to make for a simpler initial
+	  patch in CVS.  A subset of patch #3644 on Savannah.
+	  The option name/calling convention is the same as for GNU diff.
+	* doc/grep.texi, doc/grep.1: Document -T/--initial-tab.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.

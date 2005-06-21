@@ -523,6 +523,22 @@ yields better performance.  However, @samp{--mmap} can cause undefined
 behavior (including core dumps) if an input file shrinks while
 @command{grep} is operating, or if an I/O error occurs.
 
+@item -T
+@itemx --initial-tab
+@opindex -T
+@opindex --initial-tab
+@cindex tab-aligned content lines
+Makes sure that the first character of actual line content lies on a
+tab stop, so that the alignment of tabs looks normal.
+This is useful when combined with @samp{-H} (which is implicit when
+there is more than one file to search), @samp{-n}, and @samp{-b};
+these options prepend their output at the beginning of the displayed
+line, before the actual content.
+In order to improve the probability that all matched or context lines
+from a single file will all start at the same column, this also causes
+the line number and octet offset (if present) to be printed in a minimum
+size field width.
+
 @item -Z
 @itemx --null
 @opindex -Z
