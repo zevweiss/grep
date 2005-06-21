@@ -618,17 +618,21 @@ print_offset_sep (uintmax_t pos, char sep)
   fwrite (p, 1, buf + sizeof buf - p, stdout);
 }
 
+/* Print a whole line head (filename, line, byte).  */
 static void
-prline (char const *beg, char const *lim, int sep)
+print_line_head (char const *beg, char const *lim, int sep)
 {
   if (out_file)
     printf ("%s%c", filename, sep & filename_mask);
   if (out_line)
     {
-      nlscan (beg);
-      totalnl = add_count (totalnl, 1);
+      if (lastnl < lim)
+	{
+	  nlscan (beg);
+	  totalnl = add_count (totalnl, 1);
+	  lastnl = lim;
+	}
       print_offset_sep (totalnl, sep);
-      lastnl = lim;
     }
   if (out_byte)
     {
@@ -638,7 +642,14 @@ prline (char const *beg, char const *lim, int sep)
 #endif
       print_offset_sep (pos, sep);
     }
-  if (only_matching)
+}
+
+static void
+prline (char const *beg, char const *lim, int sep)
+{
+  if (!only_matching)
+    print_line_head(beg, lim, sep);
+  else
     {
       size_t match_size;
       size_t match_offset;
@@ -659,6 +670,7 @@ prline (char const *beg, char const *lim, int sep)
 		break;
 	      if (match_size == 0)
 		break;
+	      print_line_head(b, lim, sep);
 	      PR_SGR_START_IF(grep_color);
 	      fwrite(b, sizeof (char), match_size, stdout);
 	      PR_SGR_END_IF(grep_color);
@@ -680,6 +692,7 @@ prline (char const *beg, char const *lim, int sep)
 	    break;
 	  if (match_size == 0)
 	    break;
+	  print_line_head(b, lim, sep);
 	  PR_SGR_START_IF(grep_color);
 	  fwrite(b, sizeof (char), match_size, stdout);
 	  PR_SGR_END_IF(grep_color);

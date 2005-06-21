@@ -40,9 +40,17 @@ grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "WORD" -o -i
 
 # Should display the line number (-n), octet offset (-b), or file name
 # (-H) of every match, not just of the first match on each input line.
+# Check it both with and without -i because of the separate code paths.
+# Also check what it does when lines of context are specified.
 grep_test "wA wB/wC/" "1:wA/1:wB/2:wC/" "w." -o -n
+grep_test "wA wB/wC/" "1:wA/1:wB/2:wC/" "w." -o -n -i
+grep_test "wA wB/wC/" "1:wA/1:wB/2:wC/" "w." -o -n -3 2>/dev/null
 grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b
+grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b -i
+grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b -3 2>/dev/null
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H
+grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -i
+grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -3 2>/dev/null
 
 # End of a previous match should not match a "start of ..." expression.
 grep_test "word_word/" "word_/" "^word_*" -o

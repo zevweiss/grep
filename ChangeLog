@@ -13,6 +13,21 @@
 	  Other code needs this zero setting to work correctly without
 	  having to repeatedly test for this conflictual condition.
 
+	* tests/foad1.sh: Add tests combining -o, -n/-b/-H, and -i,
+	  since there are separate code paths for -i.  Add tests combining
+	  -o, -n/-b/-H, and -3, since any context line specification
+	  should be ignored when combined with -o.
+	* src/grep.c (print_line_head): New function, culled off the
+	  top content of prline().  Adds a guard against "lastnl" having
+	  already reached "lim", which can happen when if the function
+	  is called more than once per line.
+	* src/grep.c (prline): Now calls print_line_head(), not only at
+	  the beginning to replace the moved code when -o is not
+	  specified, but also for each match when -o is specified (two
+	  code paths with this).  Patch #3770, more or less.  This makes
+	  all tests combining -o and -n/-b/-H pass, which they didn't
+	  before.  Fixes bug #12727.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
