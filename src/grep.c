@@ -51,6 +51,10 @@
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
+#define SEP_CHAR_MATCH   ':'
+#define SEP_CHAR_CONTEXT '-'
+#define SEP_STR_CHUNK    "--"
+
 struct stats
 {
   struct stats const *parent;
@@ -777,7 +781,7 @@ prpending (char const *lim)
       if (outleft
 	  || (((*execute) (lastout, nl + 1 - lastout, &match_size, 0) == (size_t) -1)
 	      == !out_invert))
-	prline (lastout, nl + 1, '-');
+	prline (lastout, nl + 1, SEP_CHAR_CONTEXT);
       else
 	pending = 0;
     }
@@ -788,7 +792,7 @@ prpending (char const *lim)
 static void
 prtext (char const *beg, char const *lim, int *nlinesp)
 {
-  static int used;		/* avoid printing "--" before any output */
+  static int used;	/* avoid printing SEP_STR_CHUNK before any output */
   char const *bp, *p;
   char eol = eolbyte;
   int i, n;
@@ -809,16 +813,16 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	    --p;
 	  while (p[-1] != eol);
 
-      /* We print the "--" separator only if our output is
+      /* We print the SEP_STR_CHUNK separator only if our output is
 	 discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout)
-	puts ("--");
+	puts (SEP_STR_CHUNK);
 
       while (p < beg)
 	{
 	  char const *nl = memchr (p, eol, beg - p);
 	  nl++;
-	  prline (p, nl, '-');
+	  prline (p, nl, SEP_CHAR_CONTEXT);
 	  p = nl;
 	}
     }
@@ -831,7 +835,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	  char const *nl = memchr (p, eol, lim - p);
 	  nl++;
 	  if (!out_quiet)
-	    prline (p, nl, ':');
+	    prline (p, nl, SEP_CHAR_MATCH);
 	  p = nl;
 	}
       *nlinesp = n;
@@ -841,7 +845,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
     }
   else
     if (!out_quiet)
-      prline (beg, lim, ':');
+      prline (beg, lim, SEP_CHAR_MATCH);
 
   pending = out_quiet ? 0 : out_after;
   used = 1;
@@ -1118,7 +1122,7 @@ grepfile (char const *file, struct stats *stats)
       if (count_matches)
 	{
 	  if (out_file)
-	    printf ("%s%c", filename, ':' & filename_mask);
+	    printf ("%s%c", filename, SEP_CHAR_MATCH & filename_mask);
 	  printf ("%d\n", count);
 	}
 

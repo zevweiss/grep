@@ -28,6 +28,10 @@
 	  all tests combining -o and -n/-b/-H pass, which they didn't
 	  before.  Fixes bug #12727.
 
+	* src/grep.c (SEP_CHAR_MATCH, SEP_CHAR_CONTEXT, SEP_STR_CHUNK):
+	  New macros for ':', '-', and "--".  Used throughout the file.
+	  Will be used even more in upcoming updates, so good to have now.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.
