@@ -70,6 +70,10 @@
 	  The remaining GREP_COLORS functionality is implemented.
 	  Savannah patch #3771 and patch #3644, heavily reworked.
 
+	* src/grep.c (color_cap_ne_fct, color_cap_xm_fct,
+	  print_line_middle, print_line_tail): Make these four functions
+	  static.
+
 2005-06-20  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Extensively document the SGR/EL-to-Right issue.

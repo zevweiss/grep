@@ -221,7 +221,7 @@ struct color_cap
     const char *(*fct)(void);
   };
 
-const char *
+static const char *
 color_cap_ne_fct(void)
 {
   if (pseudo_markup)
@@ -233,7 +233,7 @@ color_cap_ne_fct(void)
   return NULL;
 }
 
-const char *
+static const char *
 color_cap_xm_fct(void)
 {
   /* This experimental feature should stay undocumented for now.  */
@@ -776,7 +776,7 @@ print_line_head (char const *beg, char const *lim, int sep)
     }
 }
 
-const char *
+static const char *
 print_line_middle (const char *beg, const char *lim)
 {
   size_t match_size;
@@ -845,7 +845,7 @@ print_line_middle (const char *beg, const char *lim)
   return beg;
 }
 
-const char *
+static const char *
 print_line_tail (const char *beg, const char *lim, const char *color)
 {
   size_t  eol_size;
