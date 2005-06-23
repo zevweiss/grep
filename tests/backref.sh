@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Test for backreferences and other things.
 #
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Test for status code for GNU grep.
 # status code
 #  0 match found

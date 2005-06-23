@@ -23,7 +23,7 @@ OPTION_for_egrep = -E
 OPTION_for_fgrep = -F
 
 egrep fgrep: Makefile
-	(echo '#!/bin/sh'; \
+	(echo '#! /bin/sh'; \
 	echo 'case $$0 in' ; \
 	echo '  */*) dir=$${0%/*}/ ;;' ; \
 	echo '  *) dir="" ;;' ; \

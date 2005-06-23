@@ -1,3 +1,14 @@
+2005-06-22  Charles Levert  <charles_levert@gna.org>
+
+	* grep/autogen.sh, grep/src/Makefile.am, grep/tests/backref.sh,
+	  grep/tests/bre.sh, grep/tests/empty.sh, grep/tests/ere.sh,
+	  grep/tests/file.sh, grep/tests/fmbtest.sh, grep/tests/foad1.sh,
+	  grep/tests/khadafy.sh, grep/tests/options.sh,
+	  grep/tests/spencer1.sh, grep/tests/spencer2.sh,
+	  grep/tests/status.sh, grep/tests/warning.sh: As per autoconf's
+	  "Portable Shell Programming" guidelines, replace all instances
+	  of "#!/bin/sh" by "#! /bin/sh" (notice the space).
+
 2005-06-21  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c (nlscan): Make this function more robust by removing

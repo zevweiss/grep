@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 
 chmod +x tests/*.sh   # fix a bug in CVS
 

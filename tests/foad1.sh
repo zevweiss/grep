@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Test various combinations of command-line options.
 # This set of tests was started by Julian Foad.
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Test for POSIX.2 options for grep
 #
 # grep -E -f pattern_file file
