@@ -405,7 +405,6 @@ kwsprep (kwset_t kws)
       /* Build the Boyer Moore delta.  Boy that's easy compared to CW. */
       for (i = 0; i < kwset->mind; ++i)
 	delta[U(kwset->target[i])] = kwset->mind - (i + 1);
-      kwset->mind2 = kwset->mind;
       /* Find the minimal delta2 shift that we might make after
 	 a backwards match has failed. */
       c = kwset->target[kwset->mind - 1];
