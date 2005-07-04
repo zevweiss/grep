@@ -388,12 +388,7 @@ kwsprep (kwset_t kws)
   /* Initial values for the delta table; will be changed later.  The
      delta entry for a given character is the smallest depth of any
      node at which an outgoing edge is labeled by that character. */
-  if (kwset->mind < 256)
-    for (i = 0; i < NCHAR; ++i)
-      delta[i] = kwset->mind;
-  else
-    for (i = 0; i < NCHAR; ++i)
-      delta[i] = 255;
+  memset(delta, kwset->mind < UCHAR_MAX ? kwset->mind : UCHAR_MAX, NCHAR);
 
   /* Check if we can use the simple boyer-moore algorithm, instead
      of the hairy commentz-walter algorithm. */
@@ -473,8 +468,7 @@ kwsprep (kwset_t kws)
 	for (i = 0; i < NCHAR; ++i)
 	  kwset->next[i] = next[U(trans[i])];
       else
-	for (i = 0; i < NCHAR; ++i)
-	  kwset->next[i] = next[i];
+	memcpy(kwset->next, next, NCHAR * sizeof(struct trie *));
     }
 
   /* Fix things up for any translation table. */
@@ -482,8 +476,7 @@ kwsprep (kwset_t kws)
     for (i = 0; i < NCHAR; ++i)
       kwset->delta[i] = delta[U(trans[i])];
   else
-    for (i = 0; i < NCHAR; ++i)
-      kwset->delta[i] = delta[i];
+    memcpy(kwset->delta, delta, NCHAR);
 
   return NULL;
 }
