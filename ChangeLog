@@ -1,3 +1,9 @@
+2005-07-04  Charles Levert  <charles_levert@gna.org>
+
+	* src/kwset.c: Readability changes.
+	  Replace uses of 0 for pointer values by NULL.
+	  Generalize use of existing U() macro to whole file.
+
 2005-06-22  Charles Levert  <charles_levert@gna.org>
 
 	* grep/autogen.sh, grep/src/Makefile.am, grep/tests/backref.sh,

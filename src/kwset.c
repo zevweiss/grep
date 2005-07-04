@@ -46,6 +46,8 @@ extern char *xmalloc();
 #define obstack_chunk_alloc malloc
 #define obstack_chunk_free free
 
+#define U(c) ((unsigned char) (c))
+
 /* Balanced tree of edges and labels leaving a given trie node. */
 struct tree
 {
@@ -93,7 +95,7 @@ kwsalloc (char const *trans)
 
   kwset = (struct kwset *) malloc(sizeof (struct kwset));
   if (!kwset)
-    return 0;
+    return NULL;
 
   obstack_init(&kwset->obstack);
   kwset->words = 0;
@@ -102,18 +104,18 @@ kwsalloc (char const *trans)
   if (!kwset->trie)
     {
       kwsfree((kwset_t) kwset);
-      return 0;
+      return NULL;
     }
   kwset->trie->accepting = 0;
-  kwset->trie->links = 0;
-  kwset->trie->parent = 0;
-  kwset->trie->next = 0;
-  kwset->trie->fail = 0;
+  kwset->trie->links = NULL;
+  kwset->trie->parent = NULL;
+  kwset->trie->next = NULL;
+  kwset->trie->fail = NULL;
   kwset->trie->depth = 0;
   kwset->trie->shift = 0;
   kwset->mind = INT_MAX;
   kwset->maxd = -1;
-  kwset->target = 0;
+  kwset->target = NULL;
   kwset->trans = trans;
 
   return (kwset_t) kwset;
@@ -141,7 +143,7 @@ kwsincr (kwset_t kws, char const *text, size_t len)
      installing new nodes when necessary. */
   while (len--)
     {
-      label = kwset->trans ? kwset->trans[(unsigned char) *--text] : *--text;
+      label = kwset->trans ? kwset->trans[U(*--text)] : *--text;
 
       /* Descend the tree of outgoing links for this trie node,
 	 looking for the current character and keeping track
@@ -169,17 +171,17 @@ kwsincr (kwset_t kws, char const *text, size_t len)
 					       sizeof (struct tree));
 	  if (!link)
 	    return _("memory exhausted");
-	  link->llink = 0;
-	  link->rlink = 0;
+	  link->llink = NULL;
+	  link->rlink = NULL;
 	  link->trie = (struct trie *) obstack_alloc(&kwset->obstack,
 						     sizeof (struct trie));
 	  if (!link->trie)
 	    return _("memory exhausted");
 	  link->trie->accepting = 0;
-	  link->trie->links = 0;
+	  link->trie->links = NULL;
 	  link->trie->parent = trie;
-	  link->trie->next = 0;
-	  link->trie->fail = 0;
+	  link->trie->next = NULL;
+	  link->trie->fail = NULL;
 	  link->trie->depth = trie->depth + 1;
 	  link->trie->shift = 0;
 	  link->label = label;
@@ -273,7 +275,7 @@ kwsincr (kwset_t kws, char const *text, size_t len)
   if (trie->depth > kwset->maxd)
     kwset->maxd = trie->depth;
 
-  return 0;
+  return NULL;
 }
 
 /* Enqueue the trie nodes referenced from the given tree in the
@@ -395,7 +397,7 @@ kwsprep (kwset_t kws)
 
   /* Check if we can use the simple boyer-moore algorithm, instead
      of the hairy commentz-walter algorithm. */
-  if (kwset->words == 1 && kwset->trans == 0)
+  if (kwset->words == 1 && kwset->trans == NULL)
     {
       /* Looking for just one string.  Extract it from the trie. */
       kwset->target = obstack_alloc(&kwset->obstack, kwset->mind);
@@ -406,7 +408,7 @@ kwsprep (kwset_t kws)
 	}
       /* Build the Boyer Moore delta.  Boy that's easy compared to CW. */
       for (i = 0; i < kwset->mind; ++i)
-	delta[(unsigned char) kwset->target[i]] = kwset->mind - (i + 1);
+	delta[U(kwset->target[i])] = kwset->mind - (i + 1);
       kwset->mind2 = kwset->mind;
       /* Find the minimal delta2 shift that we might make after
 	 a backwards match has failed. */
@@ -464,29 +466,27 @@ kwsprep (kwset_t kws)
       /* Create a vector, indexed by character code, of the outgoing links
 	 from the root node. */
       for (i = 0; i < NCHAR; ++i)
-	next[i] = 0;
+	next[i] = NULL;
       treenext(kwset->trie->links, next);
 
-      if ((trans = kwset->trans) != 0)
+      if ((trans = kwset->trans) != NULL)
 	for (i = 0; i < NCHAR; ++i)
-	  kwset->next[i] = next[(unsigned char) trans[i]];
+	  kwset->next[i] = next[U(trans[i])];
       else
 	for (i = 0; i < NCHAR; ++i)
 	  kwset->next[i] = next[i];
     }
 
   /* Fix things up for any translation table. */
-  if ((trans = kwset->trans) != 0)
+  if ((trans = kwset->trans) != NULL)
     for (i = 0; i < NCHAR; ++i)
-      kwset->delta[i] = delta[(unsigned char) trans[i]];
+      kwset->delta[i] = delta[U(trans[i])];
   else
     for (i = 0; i < NCHAR; ++i)
       kwset->delta[i] = delta[i];
 
-  return 0;
+  return NULL;
 }
-
-#define U(C) ((unsigned char) (C))
 
 /* Fast boyer-moore search. */
 static size_t
@@ -604,7 +604,7 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
   lim = text + len;
   end = text;
   if ((d = kwset->mind) != 0)
-    mch = 0;
+    mch = NULL;
   else
     {
       mch = text, accept = kwset->trie;
@@ -614,7 +614,7 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
   if (len >= 4 * kwset->mind)
     qlim = lim - 4 * kwset->mind;
   else
-    qlim = 0;
+    qlim = NULL;
 
   while (lim - end >= d)
     {
@@ -624,8 +624,8 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
 	  while ((d = delta[c = *end]) && end < qlim)
 	    {
 	      end += d;
-	      end += delta[(unsigned char) *end];
-	      end += delta[(unsigned char) *end];
+	      end += delta[U(*end)];
+	      end += delta[U(*end)];
 	    }
 	  ++end;
 	}
@@ -643,7 +643,7 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
       d = trie->shift;
       while (beg > text)
 	{
-	  c = trans ? trans[(unsigned char) *--beg] : *--beg;
+	  c = trans ? trans[U(*--beg)] : *--beg;
 	  tree = trie->links;
 	  while (tree && c != tree->label)
 	    if (c < tree->label)
@@ -694,7 +694,7 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
       d = trie->shift;
       while (beg > text)
 	{
-	  c = trans ? trans[(unsigned char) *--beg] : *--beg;
+	  c = trans ? trans[U(*--beg)] : *--beg;
 	  tree = trie->links;
 	  while (tree && c != tree->label)
 	    if (c < tree->label)
@@ -744,10 +744,10 @@ kwsexec (kwset_t kws, char const *text, size_t size,
 	 struct kwsmatch *kwsmatch)
 {
   struct kwset const *kwset = (struct kwset *) kws;
-  if (kwset->words == 1 && kwset->trans == 0)
+  if (kwset->words == 1 && kwset->trans == NULL)
     {
       size_t ret = bmexec (kws, text, size);
-      if (kwsmatch != 0 && ret != (size_t) -1)
+      if (kwsmatch != NULL && ret != (size_t) -1)
 	{
 	  kwsmatch->index = 0;
 	  kwsmatch->offset[0] = ret;
@@ -766,6 +766,6 @@ kwsfree (kwset_t kws)
   struct kwset *kwset;
 
   kwset = (struct kwset *) kws;
-  obstack_free(&kwset->obstack, 0);
+  obstack_free(&kwset->obstack, NULL);
   free(kws);
 }
