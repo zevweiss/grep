@@ -393,6 +393,8 @@ kwsprep (kwset_t kws)
      of the hairy commentz-walter algorithm. */
   if (kwset->words == 1 && kwset->trans == NULL)
     {
+      char c;
+
       /* Looking for just one string.  Extract it from the trie. */
       kwset->target = obstack_alloc(&kwset->obstack, kwset->mind);
       for (i = kwset->mind - 1, curr = kwset->trie; i >= 0; --i)
@@ -406,9 +408,11 @@ kwsprep (kwset_t kws)
       kwset->mind2 = kwset->mind;
       /* Find the minimal delta2 shift that we might make after
 	 a backwards match has failed. */
-      for (i = 0; i < kwset->mind - 1; ++i)
-	if (kwset->target[i] == kwset->target[kwset->mind - 1])
-	  kwset->mind2 = kwset->mind - (i + 1);
+      c = kwset->target[kwset->mind - 1];
+      for (i = kwset->mind - 2; i >= 0; --i)
+	if (kwset->target[i] == c)
+	  break;
+      kwset->mind2 = kwset->mind - (i + 1);
     }
   else
     {
