@@ -6,6 +6,9 @@
 
 	* src/kwset.c (kwsprep): Use memset() and memcpy() when appropriate.
 
+	* src/kwset.c (kwsprep): Move three variable declarations to
+	  the single {}-block where they are used.
+
 2005-06-22  Charles Levert  <charles_levert@gna.org>
 
 	* grep/autogen.sh, grep/src/Makefile.am, grep/tests/backref.sh,

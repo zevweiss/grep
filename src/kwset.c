@@ -378,10 +378,9 @@ kwsprep (kwset_t kws)
 {
   register struct kwset *kwset;
   register int i;
-  register struct trie *curr, *fail;
+  register struct trie *curr;
   register char const *trans;
   unsigned char delta[NCHAR];
-  struct trie *last, *next[NCHAR];
 
   kwset = (struct kwset *) kws;
 
@@ -413,6 +412,9 @@ kwsprep (kwset_t kws)
     }
   else
     {
+      register struct trie *fail;
+      struct trie *last, *next[NCHAR];
+
       /* Traverse the nodes of the trie in level order, simultaneously
 	 computing the delta table, failure function, and shift function. */
       for (curr = last = kwset->trie; curr; curr = curr->next)
