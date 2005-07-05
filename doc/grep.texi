@@ -616,8 +616,8 @@ file names (fn), line numbers (ln), octet offsets (bn),
 and separators (se, for fields and groups of context lines).
 It is a colon-separated list of color specification assignments.
 The default is `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' which means
-bold red, default, default, magenta, green, and cyan, all text foregrounds
-on the default background.
+bold red, default, default, magenta, green, green, and cyan, all text
+foregrounds on the default background.
 Note that the `ml' setting, if any, remains in effect just before the
 `mt' setting kicks in.
 See the Select Graphic Rendition (SGR, for character attributes)

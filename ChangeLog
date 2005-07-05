@@ -1,3 +1,8 @@
+2005-07-05  Charles Levert  <charles_levert@gna.org>
+
+	* doc/grep.texi: Add missing green color in GREP_COLORS description.
+	* doc/grep.1: Fix typo and reorganize GREP_COLORS documentation.
+
 2005-07-04  Charles Levert  <charles_levert@gna.org>
 
 	* src/kwset.c: Readability changes.
