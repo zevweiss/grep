@@ -9,6 +9,14 @@
 	  Checked to hold for CHAR_BIT up to 1023 (and maybe more)!
 	* src/kwset.c (kwsincr): Use DEPTH_SIZE in two array declarations.
 
+	* src/kwset.c (kwsincr): When a second obstack_alloc() call fails,
+	  free what the first one successfully allocated by popping it
+	  off the top of the obstack, before returning in error, just
+	  to keep things clean.
+	* src/kwset.c (kwsprep): Verify return value of obstack_alloc()
+	  and return a memory exhausted error if so.  This function had
+	  a prototype to return such errors, but never did.
+
 2005-07-04  Charles Levert  <charles_levert@gna.org>
 
 	* src/kwset.c: Readability changes.

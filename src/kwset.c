@@ -180,7 +180,10 @@ kwsincr (kwset_t kws, char const *text, size_t len)
 	  link->trie = (struct trie *) obstack_alloc(&kwset->obstack,
 						     sizeof (struct trie));
 	  if (!link->trie)
-	    return _("memory exhausted");
+	    {
+	      obstack_free(&kwset->obstack, link);
+	      return _("memory exhausted");
+	    }
 	  link->trie->accepting = 0;
 	  link->trie->links = NULL;
 	  link->trie->parent = trie;
@@ -401,6 +404,8 @@ kwsprep (kwset_t kws)
 
       /* Looking for just one string.  Extract it from the trie. */
       kwset->target = obstack_alloc(&kwset->obstack, kwset->mind);
+      if (!kwset->target)
+	return _("memory exhausted");
       for (i = kwset->mind - 1, curr = kwset->trie; i >= 0; --i)
 	{
 	  kwset->target[i] = curr->links->label;
