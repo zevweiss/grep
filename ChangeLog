@@ -3,6 +3,12 @@
 	* doc/grep.texi: Add missing green color in GREP_COLORS description.
 	* doc/grep.1: Fix typo and reorganize GREP_COLORS documentation.
 
+	* src/kwset.c (DEPTH_SIZE): New macro to anticipate
+	  architectures/compilers where CHAR_BIT is not 8 (we assume it
+	  won't be less than 4, which would be non-standard and unlikely).
+	  Checked to hold for CHAR_BIT up to 1023 (and maybe more)!
+	* src/kwset.c (kwsincr): Use DEPTH_SIZE in two array declarations.
+
 2005-07-04  Charles Levert  <charles_levert@gna.org>
 
 	* src/kwset.c: Readability changes.

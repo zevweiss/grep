@@ -121,6 +121,10 @@ kwsalloc (char const *trans)
   return (kwset_t) kwset;
 }
 
+/* This upper bound is valid for CHAR_BIT >= 4 and
+   exact for CHAR_BIT in { 4..11, 13, 15, 17, 19 }. */
+#define DEPTH_SIZE (CHAR_BIT + CHAR_BIT/2)
+
 /* Add the given string to the contents of the keyword set.  Return NULL
    for success, an error message otherwise. */
 const char *
@@ -131,8 +135,8 @@ kwsincr (kwset_t kws, char const *text, size_t len)
   register unsigned char label;
   register struct tree *link;
   register int depth;
-  struct tree *links[12];
-  enum { L, R } dirs[12];
+  struct tree *links[DEPTH_SIZE];
+  enum { L, R } dirs[DEPTH_SIZE];
   struct tree *t, *r, *l, *rl, *lr;
 
   kwset = (struct kwset *) kws;
