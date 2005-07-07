@@ -79,9 +79,6 @@ static int mmap_option;
 /* If nonzero, use grep_color marker.  */
 static int color_option;
 
-/* If nonzero, do pseudo-markup instead of actual colors.  */
-static int pseudo_markup;
-
 /* If nonzero, show only the part of a line matching the expression. */
 static int only_matching;
 
@@ -224,32 +221,8 @@ struct color_cap
 static const char *
 color_cap_ne_fct(void)
 {
-  if (pseudo_markup)
-    return "makes no sense after the \"xm\" capability; ignored";
-
   sgr_start = "\33[%sm";
   sgr_end   = "\33[m";
-
-  return NULL;
-}
-
-static const char *
-color_cap_xm_fct(void)
-{
-  /* This experimental feature should stay undocumented for now.  */
-  pseudo_markup = 1;
-
-  sgr_start = "<grep:%s>";
-  sgr_end   = "</grep:%s>";
-
-  /* The user can just redefine them to the empty string afterwards.  */
-  grep_color     = "matched-text";
-  filename_color = "filename";
-  line_num_color = "line-number";
-  byte_num_color = "byte-offset";
-  sep_color      = "separator";
-  mlines_color   = "matching-line";
-  context_color  = "context-line";
 
   return NULL;
 }
@@ -265,7 +238,6 @@ static struct color_cap color_dict[] =
     { "ml", &mlines_color,	NULL },			/* matching lines */
     { "cx", &context_color,	NULL },			/* context lines */
     { "ne", NULL,		color_cap_ne_fct },	/* no EL on SGR_* */
-    { "xm", NULL,		color_cap_xm_fct },	/* pseudo-markup */
     { NULL, NULL,		NULL }
   };
 
@@ -818,12 +790,7 @@ print_line_middle (const char *beg, const char *lim)
 	print_line_head(b, lim, SEP_CHAR_MATCH);
       else
 	{
-	  if (pseudo_markup >= 0)
-	    {
-	      PR_SGR_START(mlines_color);
-	      if (pseudo_markup)
-		pseudo_markup = -1;
-	    }
+	  PR_SGR_START(mlines_color);
 	  fwrite (beg, sizeof (char), match_offset, stdout);
 	}
 
@@ -857,14 +824,11 @@ print_line_tail (const char *beg, const char *lim, const char *color)
 
   if (tail_size > 0)
     {
-      if (pseudo_markup >= 0)
-	PR_SGR_START(color);
+      PR_SGR_START(color);
       fwrite(beg, 1, tail_size, stdout);
       beg += tail_size;
+      PR_SGR_END(color);
     }
-
-  if (tail_size > 0 || pseudo_markup < 0)
-    PR_SGR_END(color);
 
   return beg;
 }
@@ -888,11 +852,6 @@ prline (char const *beg, char const *lim, int sep)
 
       if (!only_matching && *line_color);
 	beg = print_line_tail(beg, lim, line_color);
-
-      /* This global is modified by print_line_middle()
-	 and checked by print_line_tail().  Now reset it.  */
-      if (pseudo_markup < 0)
-	pseudo_markup = 1;
     }
 
   if (!only_matching && lim > beg)
