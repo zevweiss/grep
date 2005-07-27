@@ -2,7 +2,7 @@
 
 AWK=@AWK@
 
-TESTS = warning.sh khadafy.sh spencer1.sh bre.sh ere.sh \
+TESTS = warning.sh khadafy.sh spencer1.sh bre.sh ere.sh pcre.sh \
         status.sh empty.sh options.sh backref.sh file.sh foad1.sh \
         fmbtest.sh
 EXTRA_DIST = $(TESTS) \

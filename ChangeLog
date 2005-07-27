@@ -1,3 +1,8 @@
+2005-07-26  Charles Levert  <charles_levert@gna.org>
+
+	* tests/pcre.sh: New file.  Add test 1.
+	* tests/Makefile.am: Add pcre.sh to TESTS.
+
 2005-07-07  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c: Remove all xm capability code.
