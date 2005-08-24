@@ -1,3 +1,14 @@
+2005-08-24  Charles Levert  <charles_levert@gna.org>
+
+	* src/grep.c (print_line_middle): In case of an empty match,
+	  make minimal progress and continue instead of aborting process
+	  of the remainder of the line, in case there's still an upcoming
+	  non-empty match.
+	* tests/foad1.sh: Add two tests for this.
+	* doc/grep.texi, doc/grep.1: Document this behavior, since
+	  --only-matching and --color are GNU extensions which are
+	  otherwise unspecified by POSIX or other standards.
+
 2005-07-26  Charles Levert  <charles_levert@gna.org>
 
 	* tests/pcre.sh: New file.  Add test 1.

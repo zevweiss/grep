@@ -89,6 +89,10 @@ grep_test "4/444/" "4/444/" "4$"  -m1 -A99
 grep_test "A/CX/B/C/" "A/B/C/" -wF -e A -e B -e C
 grep_test "LIN7C 55327/" "" -wF -e 5327 -e 5532
 
+# Test for non-empty matches following empty ones.
+grep_test 'xyz/' 'y/' -o 'y*'
+grep_test 'xyz/' "x${CB}y${CE}z/" --color=always 'y*'
+
 
 # The rest of this file is meant to be executed under this locale.
 LC_ALL=cs_CZ.UTF-8; export LC_ALL

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.32 2005/07/05 01:03:33 charles_levert Exp $
+.Id $Id: grep.1,v 1.33 2005/08/24 07:28:29 charles_levert Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -127,8 +127,8 @@ which can have nasty side effects if the output is a terminal and if the
 terminal driver interprets some of it as commands.
 .TP
 .BI \-\^\-color[=\fIWHEN\fR] ", " \-\^\-colour[=\fIWHEN\fR]
-Surround the matching strings, matching lines, context lines, file
-names, line numbers, octet offsets, and separators (for fields and
+Surround the matching non-empty strings, matching lines, context lines,
+file names, line numbers, octet offsets, and separators (for fields and
 groups of context lines) with escape sequences to display them in color
 on the terminal.
 The colors are defined by the environment variable
@@ -314,7 +314,7 @@ Prefix each line of output with the line number
 within its input file.
 .TP
 .BR \-o ", " \-\^\-only-matching
-Show only the part of a matching line that matches
+Show only the non-empty parts of a matching line that match
 .IR PATTERN .
 .TP
 .BR \-P ", " \-\^\-perl-regexp
@@ -724,13 +724,14 @@ so it can be used to specify an option containing whitespace or a backslash.
 Deprecated in favor of
 .BR GREP_COLORS ,
 which has priority.
-It can only specify the marker for highlighting matched text and
+It can only specify the marker for highlighting matched non-empty text and
 defaults to `01;31' (bold red).
 .TP
 .B GREP_COLORS
-Specifies the markers for highlighting matched text (mt), matching lines
-(ml), context lines (cx), file names (fn), line numbers (ln), octet
-offsets (bn), and separators (se, for fields and groups of context lines).
+Specifies the markers for highlighting matched non-empty text (mt),
+matching lines (ml), context lines (cx), file names (fn), line numbers
+(ln), octet offsets (bn), and separators (se, for fields and groups of
+context lines).
 It is a colon-separated list of color specification assignments.
 The default is `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' which means
 bold red, default, default, magenta, green, green, and cyan, all text

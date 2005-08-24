@@ -190,7 +190,8 @@ Prefix each line of output with the line number within its input file.
 @opindex -o
 @opindex --only-matching
 @cindex only matching
-Print only the part of matching lines that actually matches @var{pattern}.
+Print only the non-empty parts of matching lines
+that actually match @var{pattern}.
 
 @item -q
 @itemx --quiet
@@ -267,10 +268,10 @@ Print @var{num} lines of output context.
 @opindex --color
 @opindex --colour
 @cindex highlight, color, colour
-Surround the matching strings, matching lines, context lines, file names,
-line numbers, octet offsets, and separators (for fields and groups
-of context lines) with escape sequences to display them in color on
-the terminal.
+Surround the matching non-empty strings, matching lines, context lines,
+file names, line numbers, octet offsets, and separators (for fields and
+groups of context lines) with escape sequences to display them in color
+on the terminal.
 The colors are defined by the environment variable @var{GREP_COLORS}
 and default to `mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36' for bold red
 matched text, magenta file names, green line numbers, green octet offsets,
@@ -603,7 +604,7 @@ specify an option containing whitespace or a backslash.
 @cindex highlight markers
 This variable is deprecated but still supported; its setting does not
 have priority over that of @code{GREP_COLORS}.
-It specifies the color used to highlight the matching text.
+It specifies the color used to highlight the matching non-empty text.
 The default is `01;31' which means bold red text on the default
 background.
 
@@ -611,7 +612,7 @@ background.
 @vindex GREP_COLORS
 @cindex highlight markers
 This variable specifies the colors used to highlight
-the matching text (mt), matching lines (ml), context lines (cx),
+the matching non-empty text (mt), matching lines (ml), context lines (cx),
 file names (fn), line numbers (ln), octet offsets (bn),
 and separators (se, for fields and groups of context lines).
 It is a colon-separated list of color specification assignments.

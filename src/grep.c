@@ -753,6 +753,7 @@ print_line_middle (const char *beg, const char *lim)
 {
   size_t match_size;
   size_t match_offset;
+  const char *mid = NULL;
   char *buf;		/* XXX */
   const char *ibeg;	/* XXX */
 
@@ -784,21 +785,35 @@ print_line_middle (const char *beg, const char *lim)
 
       /* Avoid hanging on grep --color "" foo */
       if (match_size == 0)
-	break;
-
-      if (only_matching)
-	print_line_head(b, lim, SEP_CHAR_MATCH);
+	{
+	  /* Make minimal progress; there may be further non-empty matches.  */
+	  /* XXX - Could really advance by one whole multi-octet character.  */
+	  match_size = 1;
+	  if (!mid)
+	    mid = beg;
+	}
       else
 	{
-	  PR_SGR_START(mlines_color);
-	  fwrite (beg, sizeof (char), match_offset, stdout);
-	}
+	  if (only_matching)
+	    print_line_head(b, lim, SEP_CHAR_MATCH);
+	  else
+	    {
+	      PR_SGR_START(mlines_color);
+	      if (mid)
+		{
+		  fwrite (mid, sizeof (char), (beg - mid) + match_offset, stdout);
+		  mid = NULL;
+		}
+	      else
+		fwrite (beg, sizeof (char), match_offset, stdout);
+	    }
 
-      PR_SGR_START_IF(grep_color);
-      fwrite (b, sizeof (char), match_size, stdout);
-      PR_SGR_END_IF(grep_color);
-      if (only_matching)
-	fputs("\n", stdout);
+	  PR_SGR_START_IF(grep_color);
+	  fwrite (b, sizeof (char), match_size, stdout);
+	  PR_SGR_END_IF(grep_color);
+	  if (only_matching)
+	    fputs("\n", stdout);
+	}
       beg = b + match_size;
       ibeg += match_offset + match_size;	/* XXX */
     }
@@ -808,6 +823,8 @@ print_line_middle (const char *beg, const char *lim)
 
   if (only_matching)
     beg = lim;
+  else if (mid)
+    beg = mid;
 
   return beg;
 }
