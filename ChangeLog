@@ -1,3 +1,7 @@
+2005-09-27  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/grep.1: Fix a typo.
+
 2005-08-24  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c (print_line_middle): In case of an empty match,
