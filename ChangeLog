@@ -1,3 +1,11 @@
+2005-11-04  Charles Levert  <charles_levert@gna.org>
+
+	* src/grep.c (mb_icase_keys): New function to properly lowercase
+	  keys if match_icase.  The problem was that some multi-octet
+	  characters can get longer or shorter upon this conversion, so that
+	  it cannot just naively be done in place on the same memory buffer.
+	* src/grep.c (main): Call mb_icase_keys (and remove in-line code).
+
 2005-09-27  Stepan Kasal  <kasal@ucw.cz>
 
 	* doc/grep.1: Fix a typo.
