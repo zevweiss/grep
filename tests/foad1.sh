@@ -48,6 +48,9 @@ grep_test "wA wB/wC/" "1:wA/1:wB/2:wC/" "w." -o -n -3 2>/dev/null
 grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b
 grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b -i
 grep_test "XwA YwB/ZwC/" "1:wA/5:wB/9:wC/" "w." -o -b -3 2>/dev/null
+grep_test "XwA YwB/ZwC/" "1:w/5:w/9:w/" "w" -F -o -b
+grep_test "XwA YwB/ZwC/" "1:w/5:w/9:w/" "w" -F -o -b -i
+grep_test "XwA YwB/ZwC/" "1:w/5:w/9:w/" "w" -F -o -b -3 2>/dev/null
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -i
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -3 2>/dev/null

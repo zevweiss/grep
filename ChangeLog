@@ -6,6 +6,10 @@
 	  it cannot just naively be done in place on the same memory buffer.
 	* src/grep.c (main): Call mb_icase_keys (and remove in-line code).
 
+	* tests/foad1.sh:  Duplicate three "-o -b" tests for the "-F"
+	  mode because it relies on a different code path that deserves
+	  the same kind of testing.
+
 2005-09-27  Stepan Kasal  <kasal@ucw.cz>
 
 	* doc/grep.1: Fix a typo.
