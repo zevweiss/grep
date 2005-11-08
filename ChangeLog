@@ -1,3 +1,8 @@
+2005-11-08  Julian Foad  <julianfoad@btopenworld.com>
+
+	* doc/grep.texi: Rewrite a poorly written usage example about
+	  back-references, and tweak another.  New text by Benno Schulenberg.
+
 2005-11-04  Charles Levert  <charles_levert@gna.org>
 
 	* src/grep.c (mb_icase_keys): New function to properly lowercase

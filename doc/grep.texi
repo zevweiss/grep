@@ -1251,22 +1251,24 @@ Note this is done by using GNU ERE extensions, it might not be portable on
 other greps.
 
 @item
-Why are my expressions whith the vertical bar fail?
+Why is this back-reference failing?
 
 @example
-/bin/echo "ba" | egrep '(a)\1|(b)\1'
+echo 'ba' | egrep '(a)\1|b\1'
 @end example
 
-The first alternate branch fails then the first group was not in the match
-this will make the second alternate branch fails.  For example, "aaba" will
-match, the first group participate in the match and can be reuse in the
-second branch.
+This gives no output, because the first alternate @samp{(a)\1} does not match,
+as there is no @samp{aa} in the input, so the @samp{\1} in the second alternate
+has nothing to refer back to, meaning it will never match anything.  (The
+second alternate in this example can only match if the first alternate has
+matched -- making the second one superfluous.)
 
 @item
-What do @command{grep, fgrep, egrep} stand for ?
+What do @command{grep, fgrep, egrep} stand for?
 
-grep comes from the way line editing was done on Unix.  For example,
-@command{ed} uses this syntax to print a list of matching lines on the screen.
+The name @command{grep} comes from the way line editing was done on Unix.  For
+example, @command{ed} uses the following syntax to print a list of matching
+lines on the screen:
 
 @example
 global/regular expression/print
