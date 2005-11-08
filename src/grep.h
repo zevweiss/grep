@@ -20,7 +20,7 @@
 # define __attribute__(x)
 #endif
 
-/* Grep.c expects the matchers vector to be terminated
+/* grep.c expects the matchers vector to be terminated
    by an entry with a NULL compile, and to contain at least
    an entry named "default". */
 

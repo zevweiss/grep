@@ -1,7 +1,7 @@
 GREP DJGPP README
 =================
 
-To compile the Grep package with DJGPP tools, you will need the
+To compile the GNU grep package with DJGPP tools, you will need the
 following tools (the names of the archives on DJGPP ftp sites where
 these tools are available are in parentheses):
 
@@ -20,7 +20,7 @@ these tools are available are in parentheses):
 	  -  GNU Fileutils (v2gnu/filNNNb.zip), Textutils
              (v2gnu/txtNNNb.zip) and Diffutils (v2gnu/difNNNb.zip).
 
-	  -  A (previous version of) GNU Grep (v2gnu/grepNNb.zip).
+	  -  A (previous version of) GNU grep (v2gnu/grepNNb.zip).
 
 Running the tests ("make check" in the top-level directory)
 additionally requires Gawk (v2gnu/gwkNNNb.zip).  TAGS and ID targets
@@ -29,7 +29,7 @@ ID-utils, v2gnu/iduNNb.zip), respectively.
 
 All of these tools are available from the DJGPP archive sites.
 
-To build Grep:
+To build grep:
 	  sh autogen.sh
       sh configure
 	  make
@@ -39,7 +39,7 @@ Source distributions on DJGPP sites usually come pre-configured, so
 all you need to do in order to build the programs is to say "make".
 However, source distributions on GNU ftp sites, like ftp.gnu.org,
 need to be configured by running sh configure.  You will also need
-to run it if you need to configure Grep differently than for the
+to run it if you need to configure grep differently than for the
 default configuration, for example if you want to install the programs
 in a directory other than the bin subdirectory of your DJGPP
 installation.
@@ -53,7 +53,7 @@ appropriate directories, or say "make install".  To clean up, say
 "make clean" or "make distclean".
 
 Please note the -u and -U options that specifically target MS-DOS and
-MS-Windows environments.  They are described in the Grep man page in
+MS-Windows environments.  They are described in the grep man page in
 this distribution.
 
 National Language Support doesn't work in this port, so don't expect

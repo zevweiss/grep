@@ -1,4 +1,4 @@
-# Danish messages for GNU Grep version 2.4f.
+# Danish messages for GNU grep version 2.4f.
 # Copyright (C) 1996, 1997, 1998 Free Software Foundation, Inc.
 # Kenneth Christiansen <kenneth@gnome.org>, 1999.
 # Keld Simonsen <keld@dkuug.dk>, 2000

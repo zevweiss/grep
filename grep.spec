@@ -18,10 +18,10 @@ Requires: pcre
 Buildrequires: pcre-devel
 
 %description
-The GNU versions of commonly used grep utilities.  Grep searches
-through textual input for lines which contain a match to a specified
-pattern and then prints the matching lines.  GNU's grep utilities
-include grep, egrep and fgrep.
+The GNU versions of commonly used grep utilities.  The grep command
+searches through textual input for lines which contain a match to a
+specified pattern and then prints the matching lines.  The GNU grep
+utilities include grep, egrep, and fgrep.
 
 You should install grep on your system, because it is a very useful
 utility for searching through text.

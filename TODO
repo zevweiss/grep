@@ -34,7 +34,7 @@ Need to filter out some bugs in dfa.[ch]/regex.[ch].
 
 Threads for grep ?
 
-Grep does 32 bits arithmetic, it needs to move to 64.
+GNU grep does 32 bits arithmetic, it needs to move to 64.
 
 Clean up, to many #ifdef's !!
 

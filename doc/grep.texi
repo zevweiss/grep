@@ -87,9 +87,9 @@ entitled ``GNU Free Documentation License''.
 
 @ifnottex
 @node Top
-@top Grep
+@top grep
 
-@command{grep} searches for lines matching a pattern.
+The @command{grep} command searches for lines matching a pattern.
 
 This document was produced for version @value{VERSION} of @sc{gnu}
 @command{grep}.
@@ -99,7 +99,7 @@ This document was produced for version @value{VERSION} of @sc{gnu}
 * Introduction::                Introduction.
 * Invoking::                    Invoking @command{grep}; description of options.
 * Diagnostics::                 Exit status returned by @command{grep}.
-* Grep Programs::               @command{grep} programs.
+* grep Programs::               @command{grep} programs.
 * Regular Expressions::         Regular Expressions.
 * Usage::                       Examples.
 * Reporting Bugs::              Reporting Bugs.
@@ -115,7 +115,7 @@ This document was produced for version @value{VERSION} of @sc{gnu}
 
 @cindex Searching for a pattern.
 
-@command{grep} searches the input files
+The @command{grep} command searches the input files
 for lines containing a match to a given
 pattern list.  When it finds a match in a line, it copies the line to standard
 output (by default), or does whatever other sort of output you have requested
@@ -375,8 +375,8 @@ Set the line buffering policy, this can be a performance penalty.
 @opindex --label
 @cindex changing name of standard input
 Display input actually coming from standard input as input coming from file
-@var{LABEL}. This is especially useful for tools like zgrep, e.g.
-@command{gzip -cd foo.gz |grep --label=foo something}
+@var{LABEL}. This is especially useful for tools like @command{zgrep}, e.g.,
+@command{gzip -cd foo.gz | grep --label=foo something}
 
 @item -L
 @itemx --files-without-match
@@ -567,11 +567,12 @@ or @samp{--null} option, this option can be used with commands like
 @end table
 
 Several additional options control which variant of the @command{grep}
-matching engine is used.  @xref{Grep Programs}.
+matching engine is used.  @xref{grep Programs}.
 
 @section Environment Variables
 
-Grep's behavior is affected by the following environment variables.
+The behavior of @command{grep} is affected
+by the following environment variables.
 
 A locale @code{LC_@var{foo}} is specified by examining the three
 environment variables @env{LC_ALL}, @env{LC_@var{foo}}, and @env{LANG},
@@ -707,13 +708,15 @@ But the exit status is 2 if an error occurred, unless the @option{-q} or
 @option{--quiet} or @option{--silent} option is used and a selected line
 is found.
 
-@node Grep Programs
+@node grep Programs
 @chapter @command{grep} programs
 
-@command{grep} searches the named input files (or standard input if no
-files are named, or the file name @file{-} is given) for lines containing
-a match to the given pattern.  By default, @command{grep} prints the
-matching lines.  There are four major variants of @command{grep},
+The @command{grep} command searches the named input files
+(or standard input if no files are named,
+or the file name @file{-} is given)
+for lines containing a match to the given pattern.
+By default, @command{grep} prints the matching lines.
+There are four major variants of @command{grep},
 controlled by the following options.
 
 @table @samp
@@ -749,9 +752,14 @@ Interpret the pattern as a Perl regular expression.
 
 @end table
 
-In addition, two variant programs @sc{egrep} and @sc{fgrep} are available.
-@sc{egrep} is the same as @samp{grep -E}.  @sc{fgrep} is the
-same as @samp{grep -F}.
+In addition,
+two variant programs @command{egrep} and @command{fgrep} are available.
+@command{egrep} is the same as @samp{grep@ -E}.
+@command{fgrep} is the same as @samp{grep@ -F}.
+Direct invocation as either
+@command{egrep} or @command{fgrep} is deprecated,
+but is provided to allow historical applications
+that rely on them to run unmodified.
 
 @node Regular Expressions
 @chapter Regular Expressions
@@ -1042,13 +1050,13 @@ instead use the backslashed versions @samp{\?}, @samp{\+}, @samp{\@{},
 @cindex interval specifications
 Traditional @command{egrep} did not support the @samp{@{} metacharacter,
 and some @command{egrep} implementations support @samp{\@{} instead, so
-portable scripts should avoid @samp{@{} in @samp{egrep} patterns and
+portable scripts should avoid @samp{@{} in @samp{grep@ -E} patterns and
 should use @samp{[@{]} to match a literal @samp{@{}.
 
-@sc{gnu} @command{egrep} attempts to support traditional usage by
+@sc{gnu} @command{grep@ -E} attempts to support traditional usage by
 assuming that @samp{@{} is not special if it would be the start of an
 invalid interval specification.  For example, the shell command
-@samp{egrep '@{1'} searches for the two-character string @samp{@{1}
+@samp{grep@ -E@ '@{1'} searches for the two-character string @samp{@{1}
 instead of reporting a syntax error in the regular expression.
 @sc{posix.2} allows this behavior as an extension, but portable scripts
 should avoid it.
@@ -1244,7 +1252,7 @@ Guglielmo Bondioni proposed a single RE that finds all the palindromes up to 19
 characters long.
 
 @example
-egrep -e '^(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?).?\9\8\7\6\5\4\3\2\1$' file
+grep -E -e '^(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?).?\9\8\7\6\5\4\3\2\1$' file
 @end example
 
 Note this is done by using GNU ERE extensions, it might not be portable on
@@ -1254,7 +1262,7 @@ other greps.
 Why is this back-reference failing?
 
 @example
-echo 'ba' | egrep '(a)\1|b\1'
+echo 'ba' | grep -E '(a)\1|b\1'
 @end example
 
 This gives no output, because the first alternate @samp{(a)\1} does not match,
@@ -1264,7 +1272,7 @@ second alternate in this example can only match if the first alternate has
 matched -- making the second one superfluous.)
 
 @item
-What do @command{grep, fgrep, egrep} stand for?
+What do @command{grep}, @command{fgrep}, and @command{egrep} stand for?
 
 The name @command{grep} comes from the way line editing was done on Unix.  For
 example, @command{ed} uses the following syntax to print a list of matching
@@ -1275,8 +1283,8 @@ global/regular expression/print
 g/re/p
 @end example
 
-@command{fgrep} stands for Fixed @command{grep}, @command{egrep} Extended
-@command{grep}.
+@command{fgrep} stands for Fixed @command{grep};
+@command{egrep} stands for Extended @command{grep}.
 
 @end enumerate
 

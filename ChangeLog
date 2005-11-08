@@ -1,3 +1,16 @@
+2005-11-08  Charles Levert  <charles_levert@gna.org>
+
+	* README.DOS, TODO, grep.spec, doc/grep.1, doc/grep.texi,
+	  src/grep.h, po/da.po, po/nb.po, po/no.po, po/sv.po:
+	  Replace all capitalized "Grep" by a lowercase "grep", except
+	  in citations.  Reported by Benno Schulenberg <benno@nietvergeten.nl>
+	  from the <http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=190551>
+	  entry in the Debian bug tracker.
+	* doc/grep.1, doc/grep.texi: Explain that the "egrep" and "fgrep"
+	  commands are deprecated and provided for historical applications.
+	  Replace some "egrep" uses by "grep -E" to promote the newer usage.
+	  Typeset "zgrep" as a command.  Fix some spacing and punctuation bugs.
+
 2005-11-08  Julian Foad  <julianfoad@btopenworld.com>
 
 	* doc/grep.texi: Rewrite a poorly written usage example about

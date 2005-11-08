@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.34 2005/09/27 14:50:21 kasal Exp $
+.Id $Id: grep.1,v 1.35 2005/11/08 21:35:33 charles_levert Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -32,8 +32,9 @@ grep, egrep, fgrep \- print lines matching a pattern
 .RI [ FILE .\|.\|.]
 .SH DESCRIPTION
 .PP
-.B Grep
-searches the named input
+The
+.B grep
+command searches the named input
 .IR FILE s
 (or standard input if no files are named, or
 the file name
@@ -50,12 +51,19 @@ In addition, two variant programs
 and
 .B fgrep
 are available.
-.B Egrep
+.B egrep
 is the same as
 .BR "grep\ \-E" .
-.B Fgrep
+.B fgrep
 is the same as
 .BR "grep\ \-F" .
+Direct invocation as either
+.B egrep
+or
+.B fgrep
+is deprecated,
+but is provided to allow historical applications
+that rely on them to run unmodified.
 .SH OPTIONS
 .TP
 .BI \-A " NUM" "\fR,\fP \-\^\-after-context=" NUM
@@ -255,8 +263,10 @@ stop on the first match.
 .BI \-\^\-label= LABEL
 Display input actually coming from standard input as input coming from file
 .I LABEL.
-This is especially useful for tools like zgrep, e.g.
-.B "gzip -cd foo.gz |grep --label=foo something"
+This is especially useful for tools like
+.BR zgrep ,
+e.g.,
+.B "gzip -cd foo.gz | grep --label=foo something"
 .TP
 .BR \-\^\-line-buffered
 Use line buffering, it can be a performance penalty.
@@ -406,7 +416,7 @@ MS-Windows.
 .BR \-u ", " \-\^\-unix-byte-offsets
 Report Unix-style byte offsets.  This switch causes
 .B grep
-to report byte offsets as if the file were Unix-style text file, i.e. with
+to report byte offsets as if the file were Unix-style text file, i.e., with
 CR characters stripped off.  This will produce results identical to running
 .B grep
 on a Unix machine.  This option has no effect unless
@@ -461,8 +471,9 @@ A regular expression is a pattern that describes a set of strings.
 Regular expressions are constructed analogously to arithmetic
 expressions, by using various operators to combine smaller expressions.
 .PP
-.B Grep
-understands two different versions of regular expression syntax:
+The
+.B grep
+command understands two different versions of regular expression syntax:
 \*(lqbasic\*(rq and \*(lqextended.\*(rq  In
 .RB "\s-1GNU\s0\ " grep ,
 there is no difference in available functionality using either syntax.
@@ -661,26 +672,28 @@ implementations support
 instead, so portable scripts should avoid
 .B {
 in
-.B egrep
+.B "grep\ \-E"
 patterns and should use
 .B [{]
 to match a literal
 .BR { .
 .PP
 \s-1GNU\s0
-.B egrep
+.B "grep\ \-E"
 attempts to support traditional usage by assuming that
 .B {
 is not special if it would be the start of an invalid interval
 specification.  For example, the shell command
-.B "egrep '{1'"
+.B "grep\ \-E\ '{1'"
 searches for the two-character string
 .B {1
 instead of reporting a syntax error in the regular expression.
 \s-1POSIX.2\s0 allows this behavior as an extension, but portable scripts
 should avoid it.
 .SH "ENVIRONMENT VARIABLES"
-Grep's behavior is affected by the following environment variables.
+The behavior of
+.B grep
+is affected by the following environment variables.
 .PP
 A locale
 .BI LC_ foo

@@ -1,8 +1,8 @@
-# Swedish messages for GNU Grep version 2.5e
+# Swedish messages for GNU grep version 2.5e
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Thomas Olsson <cid95tho@student1.lu.se>, 1996.
 # Daniel Resare <daniel@resare.com>, 1998, 1999, 2000, 2001
-# $Id: sv.po,v 1.24 2004/11/20 16:15:57 kasal Exp $
+# $Id: sv.po,v 1.25 2005/11/08 21:35:33 charles_levert Exp $
 #
 msgid ""
 msgstr ""

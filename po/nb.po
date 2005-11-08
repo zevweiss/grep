@@ -1,4 +1,4 @@
-# Norwegian messages for GNU Grep version 2.2.  (bokmål dialect)
+# Norwegian messages for GNU grep version 2.2.  (bokmål dialect)
 # Copyright (C) 1996 Free Software Foundation, Inc.
 # Karl Anders Øygard <karl.oygard@fou.telenor.no>, 1996.
 #
