@@ -33,8 +33,10 @@
 
 #include "system.h"
 #include "grep.h"
-#include "regex.h"
-#include "dfa.h"
+#ifndef FGREP_PROGRAM
+# include <regex.h>
+# include "dfa.h"
+#endif
 #include "kwset.h"
 #include "error.h"
 #include "xalloc.h"
@@ -47,6 +49,26 @@
 /* For -w, we also consider _ to be word constituent.  */
 #define WCHAR(C) (ISALNUM(C) || (C) == '_')
 
+/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
+   a list of strings, at least one of which is known to occur in
+   any string matching the regexp. */
+static kwset_t kwset;
+
+static void
+kwsinit (void)
+{
+  static char trans[NCHAR];
+  int i;
+
+  if (match_icase)
+    for (i = 0; i < NCHAR; ++i)
+      trans[i] = TOLOWER (i);
+
+  if (!(kwset = kwsalloc (match_icase ? trans : (char *) 0)))
+    error (2, 0, _("memory exhausted"));
+}
+
+#ifndef FGREP_PROGRAM
 /* DFA compiled regexp. */
 static struct dfa dfa;
 
@@ -62,48 +84,16 @@ static struct patterns
 struct patterns *patterns;
 size_t pcount;
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
-
-/* Number of compiled fixed strings known to exactly match the regexp.
-   If kwsexec returns < kwset_exact_matches, then we don't need to
-   call the regexp matcher at all. */
-static int kwset_exact_matches;
-
-#if defined(MBS_SUPPORT)
-static char* check_multibyte_string PARAMS ((char const *buf, size_t size));
-#endif
-static void kwsinit PARAMS ((void));
-static void kwsmusts PARAMS ((void));
-static void Gcompile PARAMS ((char const *, size_t));
-static void Ecompile PARAMS ((char const *, size_t));
-static size_t EGexecute PARAMS ((char const *, size_t, size_t *, int ));
-static void Fcompile PARAMS ((char const *, size_t));
-static size_t Fexecute PARAMS ((char const *, size_t, size_t *, int));
-static void Pcompile PARAMS ((char const *, size_t ));
-static size_t Pexecute PARAMS ((char const *, size_t, size_t *, int));
-
 void
 dfaerror (char const *mesg)
 {
   error (2, 0, mesg);
 }
 
-static void
-kwsinit (void)
-{
-  static char trans[NCHAR];
-  int i;
-
-  if (match_icase)
-    for (i = 0; i < NCHAR; ++i)
-      trans[i] = TOLOWER (i);
-
-  if (!(kwset = kwsalloc (match_icase ? trans : (char *) 0)))
-    error (2, 0, _("memory exhausted"));
-}
+/* Number of compiled fixed strings known to exactly match the regexp.
+   If kwsexec returns < kwset_exact_matches, then we don't need to
+   call the regexp matcher at all. */
+static int kwset_exact_matches;
 
 /* If the DFA turns out to have some set of fixed strings one of
    which must occur in the match, then we build a kwset matcher
@@ -142,6 +132,7 @@ kwsmusts (void)
 	error (2, 0, err);
     }
 }
+#endif /* !FGREP_PROGRAM */
 
 #ifdef MBS_SUPPORT
 /* This function allocate the array which correspond to "buf".
@@ -184,102 +175,30 @@ check_multibyte_string(char const *buf, size_t size)
 
   return mb_properties;
 }
-#endif
+#endif /* MBS_SUPPORT */
 
-static void
-Gcompile (char const *pattern, size_t size)
+#if defined(GREP_PROGRAM) || defined(EGREP_PROGRAM)
+#ifdef EGREP_PROGRAM
+COMPILE_FCT(Ecompile)
 {
-  const char *err;
-  char const *sep;
-  size_t total = size;
-  char const *motif = pattern;
-
-  re_set_syntax (RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
-  dfasyntax (RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase, eolbyte);
-
-  /* For GNU regex compiler we have to pass the patterns separately to detect
-     errors like "[\nallo\n]\n".  The patterns here are "[", "allo" and "]"
-     GNU regex should have raise a syntax error.  The same for backref, where
-     the backref should have been local to each pattern.  */
-  do
-    {
-      size_t len;
-      sep = memchr (motif, '\n', total);
-      if (sep)
-	{
-	  len = sep - motif;
-	  sep++;
-	  total -= (len + 1);
-	}
-      else
-	{
-	  len = total;
-	  total = 0;
-	}
-
-      patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
-      if (patterns == NULL)
-	error (2, errno, _("memory exhausted"));
-
-      patterns[pcount] = patterns0;
-
-      if ((err = re_compile_pattern (motif, len,
-				    &(patterns[pcount].regexbuf))) != 0)
-	error (2, 0, err);
-      pcount++;
-
-      motif = sep;
-    } while (sep && total != 0);
-
-  /* In the match_words and match_lines cases, we use a different pattern
-     for the DFA matcher that will quickly throw out cases that won't work.
-     Then if DFA succeeds we do some hairy stuff using the regex matcher
-     to decide whether the match should really count. */
-  if (match_words || match_lines)
-    {
-      /* In the whole-word case, we use the pattern:
-	 \(^\|[^[:alnum:]_]\)\(userpattern\)\([^[:alnum:]_]|$\).
-	 In the whole-line case, we use the pattern:
-	 ^\(userpattern\)$.  */
-
-      static char const line_beg[] = "^\\(";
-      static char const line_end[] = "\\)$";
-      static char const word_beg[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
-      static char const word_end[] = "\\)\\([^[:alnum:]_]\\|$\\)";
-      char *n = xmalloc (sizeof word_beg - 1 + size + sizeof word_end);
-      size_t i;
-      strcpy (n, match_lines ? line_beg : word_beg);
-      i = strlen (n);
-      memcpy (n + i, pattern, size);
-      i += size;
-      strcpy (n + i, match_lines ? line_end : word_end);
-      i += strlen (n + i);
-      pattern = n;
-      size = i;
-    }
-
-  dfacomp (pattern, size, &dfa, 1);
-  kwsmusts ();
-}
-
-static void
-Ecompile (char const *pattern, size_t size)
+  reg_syntax_t syntax_bits = RE_SYNTAX_POSIX_EGREP;
+#else
+/* No __VA_ARGS__ in C89.  So we have to do it this way.  */
+static COMPILE_RET
+GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
+#endif /* EGREP_PROGRAM */
   const char *err;
   const char *sep;
   size_t total = size;
   char const *motif = pattern;
 
-  if (strcmp (matcher, "awk") == 0)
-    {
-      re_set_syntax (RE_SYNTAX_AWK);
-      dfasyntax (RE_SYNTAX_AWK, match_icase, eolbyte);
-    }
-  else
-    {
-      re_set_syntax (RE_SYNTAX_POSIX_EGREP);
-      dfasyntax (RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
-    }
+#if 0
+  if (match_icase)
+    syntax_bits |= RE_ICASE;
+#endif
+  re_set_syntax (syntax_bits);
+  dfasyntax (syntax_bits, match_icase, eolbyte);
 
   /* For GNU regex compiler we have to pass the patterns separately to detect
      errors like "[\nallo\n]\n".  The patterns here are "[", "allo" and "]"
@@ -320,33 +239,63 @@ Ecompile (char const *pattern, size_t size)
      to decide whether the match should really count. */
   if (match_words || match_lines)
     {
-      /* In the whole-word case, we use the pattern:
-	 (^|[^[:alnum:]_])(userpattern)([^[:alnum:]_]|$).
-	 In the whole-line case, we use the pattern:
-	 ^(userpattern)$.  */
+      static char const line_beg_no_bk[] = "^(";
+      static char const line_end_no_bk[] = ")$";
+      static char const word_beg_no_bk[] = "(^|[^[:alnum:]_])(";
+      static char const word_end_no_bk[] = ")([^[:alnum:]_]|$)";
+#ifdef EGREP_PROGRAM
+# define IF_BK(x, y) (y)
+      char *n = xmalloc (sizeof word_beg_no_bk - 1 + size + sizeof word_end_no_bk);
+#else
+      static char const line_beg_bk[] = "^\\(";
+      static char const line_end_bk[] = "\\)$";
+      static char const word_beg_bk[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
+      static char const word_end_bk[] = "\\)\\([^[:alnum:]_]\\|$\\)";
+      int bk = !(syntax_bits & RE_NO_BK_PARENS);
+# define IF_BK(x, y) ((bk) ? (x) : (y))
+      char *n = xmalloc (sizeof word_beg_bk - 1 + size + sizeof word_end_bk);
+#endif /* EGREP_PROGRAM */
 
-      static char const line_beg[] = "^(";
-      static char const line_end[] = ")$";
-      static char const word_beg[] = "(^|[^[:alnum:]_])(";
-      static char const word_end[] = ")([^[:alnum:]_]|$)";
-      char *n = xmalloc (sizeof word_beg - 1 + size + sizeof word_end);
-      size_t i;
-      strcpy (n, match_lines ? line_beg : word_beg);
-      i = strlen(n);
-      memcpy (n + i, pattern, size);
-      i += size;
-      strcpy (n + i, match_lines ? line_end : word_end);
-      i += strlen (n + i);
-      pattern = n;
-      size = i;
+      strcpy (n, match_lines ? IF_BK(line_beg_bk, line_beg_no_bk)
+			     : IF_BK(word_beg_bk, word_beg_no_bk));
+      total = strlen(n);
+      memcpy (n + total, pattern, size);
+      total += size;
+      strcpy (n + total, match_lines ? IF_BK(line_end_bk, line_end_no_bk)
+				     : IF_BK(word_end_bk, word_end_no_bk));
+      total += strlen (n + total);
+      pattern = motif = n;
+      size = total;
     }
+  else
+    motif = NULL;
 
   dfacomp (pattern, size, &dfa, 1);
   kwsmusts ();
+
+  if (motif)
+    free((char *) motif);
 }
 
-static size_t
-EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
+#ifndef EGREP_PROGRAM
+COMPILE_FCT(Gcompile)
+{
+  return GEAcompile (pattern, size,
+		     RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
+}
+
+COMPILE_FCT(Acompile)
+{
+  return GEAcompile (pattern, size, RE_SYNTAX_AWK);
+}
+
+COMPILE_FCT(Ecompile)
+{
+  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP);
+}
+#endif /* !EGREP_PROGRAM */
+
+EXECUTE_FCT(EGexecute)
 {
   register char const *buflim, *beg, *end;
   char eol = eolbyte;
@@ -501,9 +450,10 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
   *match_size = end - beg;
   return ret_val;
 }
+#endif /* defined(GREP_PROGRAM) || defined(EGREP_PROGRAM) */
 
-static void
-Fcompile (char const *pattern, size_t size)
+#if defined(GREP_PROGRAM) || defined(FGREP_PROGRAM)
+COMPILE_FCT(Fcompile)
 {
   char const *beg, *lim, *err;
 
@@ -525,8 +475,7 @@ Fcompile (char const *pattern, size_t size)
     error (2, 0, err);
 }
 
-static size_t
-Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
+EXECUTE_FCT(Fexecute)
 {
   register char const *beg, *try, *end;
   register size_t len;
@@ -639,7 +588,9 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
 #endif /* MBS_SUPPORT */
   return ret_val;
 }
+#endif /* defined(GREP_PROGRAM) || defined(FGREP_PROGRAM) */
 
+#ifdef GREP_PROGRAM
 #if HAVE_LIBPCRE
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;
@@ -648,8 +599,7 @@ static pcre *cre;
 static pcre_extra *extra;
 #endif
 
-static void
-Pcompile (char const *pattern, size_t size)
+COMPILE_FCT(Pcompile)
 {
 #if !HAVE_LIBPCRE
   error (2, 0, _("The -P option is not supported"));
@@ -713,8 +663,7 @@ Pcompile (char const *pattern, size_t size)
 #endif
 }
 
-static size_t
-Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
+EXECUTE_FCT(Pexecute)
 {
 #if !HAVE_LIBPCRE
   abort ();
@@ -770,10 +719,11 @@ Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
 
 struct matcher const matchers[] = {
   { "default", Gcompile, EGexecute },
-  { "grep", Gcompile, EGexecute },
-  { "egrep", Ecompile, EGexecute },
-  { "awk", Ecompile, EGexecute },
-  { "fgrep", Fcompile, Fexecute },
-  { "perl", Pcompile, Pexecute },
+  { "grep",    Gcompile, EGexecute },
+  { "egrep",   Ecompile, EGexecute },
+  { "awk",     Acompile, EGexecute },
+  { "fgrep",   Fcompile, Fexecute },
+  { "perl",    Pcompile, Pexecute },
   { "", 0, 0 },
 };
+#endif /* GREP_PROGRAM */

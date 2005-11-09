@@ -245,7 +245,11 @@ static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
+"0123456789A:B:C:D:HITUVabcd:e:f:hiKLlm:noqRrsuvwxyZz"
+#ifdef GREP_PROGRAM
+"EFGPX:"
+#endif
+;
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -262,8 +266,14 @@ enum
 /* Long options equivalences. */
 static struct option const long_options[] =
 {
+#ifdef GREP_PROGRAM
+  {"basic-regexp",    no_argument, NULL, 'G'},
+  {"extended-regexp", no_argument, NULL, 'E'},
+  {"fixed-regexp",    no_argument, NULL, 'F'},
+  {"fixed-strings",   no_argument, NULL, 'F'},
+  {"perl-regexp",     no_argument, NULL, 'P'},
+#endif
   {"after-context", required_argument, NULL, 'A'},
-  {"basic-regexp", no_argument, NULL, 'G'},
   {"before-context", required_argument, NULL, 'B'},
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
   {"byte-offset", no_argument, NULL, 'b'},
@@ -273,14 +283,11 @@ static struct option const long_options[] =
   {"count", no_argument, NULL, 'c'},
   {"devices", required_argument, NULL, 'D'},
   {"directories", required_argument, NULL, 'd'},
-  {"extended-regexp", no_argument, NULL, 'E'},
   {"exclude", required_argument, NULL, EXCLUDE_OPTION},
   {"exclude-from", required_argument, NULL, EXCLUDE_FROM_OPTION},
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
   {"files-without-match", no_argument, NULL, 'L'},
-  {"fixed-regexp", no_argument, NULL, 'F'},
-  {"fixed-strings", no_argument, NULL, 'F'},
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
@@ -296,7 +303,6 @@ static struct option const long_options[] =
   {"null", no_argument, NULL, 'Z'},
   {"null-data", no_argument, NULL, 'z'},
   {"only-matching", no_argument, NULL, 'o'},
-  {"perl-regexp", no_argument, NULL, 'P'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
   {"recursive", no_argument, NULL, 'R'},
@@ -345,8 +351,10 @@ static inline int undossify_input PARAMS ((register char *, size_t));
 #endif
 
 /* Functions we'll use to search. */
-static void (*compile) PARAMS ((char const *, size_t));
-static size_t (*execute) PARAMS ((char const *, size_t, size_t *, int));
+#ifdef GREP_PROGRAM
+static compile_fp_t compile;
+static execute_fp_t execute;
+#endif
 
 /* Like error, but suppress the diagnostic if requested.  */
 static void
@@ -774,7 +782,7 @@ print_line_middle (const char *beg, const char *lim)
     }
 
   while (   lim > beg
-	 && (   (match_offset = (*execute) (ibeg, lim - beg, &match_size, 1))
+	 && (   (match_offset = execute(ibeg, lim - beg, &match_size, 1))
 	     != (size_t) -1))
     {
       char const *b = beg + match_offset;
@@ -896,7 +904,7 @@ prpending (char const *lim)
       size_t match_size;
       --pending;
       if (outleft
-	  || (((*execute) (lastout, nl + 1 - lastout, &match_size, 0) == (size_t) -1)
+	  || ((execute(lastout, nl + 1 - lastout, &match_size, 0) == (size_t) -1)
 	      == !out_invert))
 	prline (lastout, nl + 1, SEP_CHAR_CONTEXT);
       else
@@ -986,7 +994,7 @@ grepbuf (char const *beg, char const *lim)
 
   nlines = 0;
   p = beg;
-  while ((match_offset = (*execute) (p, lim - p, &match_size, 0)) != (size_t) -1)
+  while ((match_offset = execute(p, lim - p, &match_size, 0)) != (size_t) -1)
     {
       char const *b = p + match_offset;
       char const *endp = b + match_size;
@@ -1354,18 +1362,31 @@ usage (int status)
     {
       printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), program_name);
       printf (_("\
-Search for PATTERN in each FILE or standard input.\n\
+Search for PATTERN in each FILE or standard input.\n"));
+#if defined(EGREP_PROGRAM)
+      printf (_("\
+PATTERN is an extended regular expression (ERE).\n"));
+#elif defined(FGREP_PROGRAM)
+      printf (_("\
+PATTERN is a set of newline-separated fixed strings.\n"));
+#else
+      printf (_("\
+PATTERN is, by default, a basic regular expression (BRE).\n"));
+#endif /* ?GREP_PROGRAM */
+      printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
 Regexp selection and interpretation:\n"), program_name);
+#ifdef GREP_PROGRAM
       printf (_("\
-  -E, --extended-regexp     PATTERN is an extended regular expression\n\
-  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression\n\
+  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
+  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n\
+  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n\
   -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
   /* -X is undocumented on purpose. */
+#endif /* GREP_PROGRAM */
       printf (_("\
-  -e, --regexp=PATTERN      use PATTERN as a regular expression\n\
+  -e, --regexp=PATTERN      use PATTERN for matching\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
   -w, --word-regexp         force PATTERN to match only whole words\n\
@@ -1420,8 +1441,19 @@ Context control:\n\
                             WHEN is `always', `never', or `auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
-\n\
+\n"));
+#if defined(EGREP_PROGRAM)
+      printf (_("\
+Invocation as `egrep' is deprecated; use `grep -E' instead.\n"));
+#elif defined(FGREP_PROGRAM)
+      printf (_("\
+Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"));
+#else
+      printf (_("\
 `egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
+Direct invocation as either `egrep' or `fgrep' is deprecated.\n"));
+#endif /* ?GREP_PROGRAM */
+      printf (_("\
 With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
 are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
 if any error occurs and -q was not given, the exit status is 2.\n"));
@@ -1429,6 +1461,9 @@ if any error occurs and -q was not given, the exit status is 2.\n"));
     }
   exit (status);
 }
+
+#ifdef GREP_PROGRAM
+static char const *matcher;
 
 /* Set the matcher to M, reporting any conflicts.  */
 static void
@@ -1445,44 +1480,49 @@ static int
 install_matcher (char const *name)
 {
   int i;
-#if defined(HAVE_SETRLIMIT)
-  struct rlimit rlim;
-#endif
 
   for (i = 0; matchers[i].compile; i++)
     if (strcmp (name, matchers[i].name) == 0)
       {
 	compile = matchers[i].compile;
 	execute = matchers[i].execute;
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
-	/* I think every platform needs to do this, so that regex.c
-	   doesn't oveflow the stack.  The default value of
-	   `re_max_failures' is too large for some platforms: it needs
-	   more than 3MB-large stack.
-
-	   The test for HAVE_SETRLIMIT should go into `configure'.  */
-	if (!getrlimit (RLIMIT_STACK, &rlim))
-	  {
-	    long newlim;
-	    extern long int re_max_failures; /* from regex.c */
-
-	    /* Approximate the amount regex.c needs, plus some more.  */
-	    newlim = re_max_failures * 2 * 20 * sizeof (char *);
-	    if (newlim > rlim.rlim_max)
-	      {
-		newlim = rlim.rlim_max;
-		re_max_failures = newlim / (2 * 20 * sizeof (char *));
-	      }
-	    if (rlim.rlim_cur < newlim)
-	      {
-		rlim.rlim_cur = newlim;
-		setrlimit (RLIMIT_STACK, &rlim);
-	      }
-	  }
-#endif
 	return 1;
       }
   return 0;
+}
+#endif /* GREP_PROGRAM */
+
+static void
+set_limits(void)
+{
+#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
+  struct rlimit rlim;
+
+  /* I think every platform needs to do this, so that regex.c
+     doesn't oveflow the stack.  The default value of
+     `re_max_failures' is too large for some platforms: it needs
+     more than 3MB-large stack.
+
+     The test for HAVE_SETRLIMIT should go into `configure'.  */
+  if (!getrlimit (RLIMIT_STACK, &rlim))
+    {
+      long newlim;
+      extern long int re_max_failures; /* from regex.c */
+
+      /* Approximate the amount regex.c needs, plus some more.  */
+      newlim = re_max_failures * 2 * 20 * sizeof (char *);
+      if (newlim > rlim.rlim_max)
+	{
+	  newlim = rlim.rlim_max;
+	  re_max_failures = newlim / (2 * 20 * sizeof (char *));
+	}
+      if (rlim.rlim_cur < newlim)
+	{
+	  rlim.rlim_cur = newlim;
+	  setrlimit (RLIMIT_STACK, &rlim);
+	}
+    }
+#endif
 }
 
 /* Find the white-space-separated options specified by OPTIONS, and
@@ -1741,38 +1781,6 @@ main (int argc, char **argv)
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
-  if (program_name && strrchr (program_name, '/'))
-    program_name = strrchr (program_name, '/') + 1;
-
-  if (!strcmp(program_name, "egrep"))
-    setmatcher ("egrep");
-  if (!strcmp(program_name, "fgrep"))
-    setmatcher ("fgrep");
-
-#if defined(__MSDOS__) || defined(_WIN32)
-  /* DOS and MS-Windows use backslashes as directory separators, and usually
-     have an .exe suffix.  They also have case-insensitive filesystems.  */
-  if (program_name)
-    {
-      char *p = program_name;
-      char *bslash = strrchr (argv[0], '\\');
-
-      if (bslash && bslash >= program_name) /* for mixed forward/backslash case */
-	program_name = bslash + 1;
-      else if (program_name == argv[0]
-	       && argv[0][0] && argv[0][1] == ':') /* "c:progname" */
-	program_name = argv[0] + 2;
-
-      /* Collapse the letter-case, so `strcmp' could be used hence.  */
-      for ( ; *p; p++)
-	if (*p >= 'A' && *p <= 'Z')
-	  *p += 'a' - 'A';
-
-      /* Remove the .exe extension, if any.  */
-      if ((p = strrchr (program_name, '.')) && strcmp (p, ".exe") == 0)
-	*p = '\0';
-    }
-#endif
 
   keys = NULL;
   keycc = 0;
@@ -1828,6 +1836,7 @@ main (int argc, char **argv)
 	  error (2, 0, _("unknown devices method"));
 	break;
 
+#ifdef GREP_PROGRAM
       case 'E':
 	setmatcher ("egrep");
 	break;
@@ -1843,6 +1852,11 @@ main (int argc, char **argv)
       case 'G':
 	setmatcher ("grep");
 	break;
+
+      case 'X': /* undocumented on purpose */
+	setmatcher (optarg);
+	break;
+#endif /* GREP_PROGRAM */
 
       case 'H':
 	with_filenames = 1;
@@ -1870,10 +1884,6 @@ main (int argc, char **argv)
 
       case 'V':
 	show_version = 1;
-	break;
-
-      case 'X': /* undocumented on purpose */
-	setmatcher (optarg);
 	break;
 
       case 'a':
@@ -2120,16 +2130,13 @@ main (int argc, char **argv)
       parse_grep_colors();
     }
 
-  if (! matcher)
-    matcher = "grep";
-
   if (show_version)
     {
       printf ("%s\n\n", PACKAGE_STRING);
       printf (_("\
-Copyright (C) 1988, 1992-1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.\n"));
+Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"));
       printf (_("\
-This is free software; see the source for copying conditions. There is NO\n\
+This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       printf ("\n");
       exit (0);
@@ -2159,15 +2166,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     else
       usage (2);
 
+#ifdef GREP_PROGRAM
+  if (! matcher)
+    matcher = "grep";
+
   if (!install_matcher (matcher) && !install_matcher ("default"))
     abort ();
+#endif /* GREP_PROGRAM */
+
+  set_limits();
 
 #ifdef MBS_SUPPORT
   if (match_icase)
     mb_icase_keys (&keys, &keycc);
 #endif /* MBS_SUPPORT */
 
-  (*compile)(keys, keycc);
+  compile(keys, keycc);
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;

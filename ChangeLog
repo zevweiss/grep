@@ -1,3 +1,59 @@
+2005-11-09  Charles Levert  <charles_levert@gna.org>
+
+	The following set of changes aims to make "egrep" and "fgrep"
+	minimal executable programs for legacy applications, instead of
+	shell scripts.  This "fgrep" is much smaller than "grep".
+	This set of changes appears more daunting than it really is.
+
+	* src/egrep.c, src/fgrep.c, src/esearch.c, src/fsearch.c: New files
+	  that #define either EGREP_PROGRAM or FGREP_PROGRAM and #include
+	  the corresponding generic (i.e., non e or f specific) *.c file.
+	* src/grepmat.c: Remove whole file.
+	* src/Makefile.am: Remove no-dependencies from AUTOMAKE_OPTIONS.
+	  Add definitions to make "egrep" and "fgrep" specific standalone
+	  executable programs that only use the source files they need.
+	  Remove rules for "egrep" and "fgrep" shell scripts.
+	* src/grep.h: #define GREP_PROGRAM if both EGREP_PROGRAM and
+	  FGREP_PROGRAM are #undef.  Only declare matchers[] in this case
+	  along with the compile_fp_t and execute_fp_t function pointers
+	  typedefs, otherwise declare prototypes for straight compile()
+	  and execute() functions for the specialized "egrep" and "fgrep"
+	  programs.  Remove the extern declaration for matcher.
+	  Define COMPILE_RET, COMPILE_ARGS, EXECUTE_RET, EXECUTE_ARGS,
+	  COMPILE_FCT, and EXECUTE_FCT helper preprocessor macros.
+	* src/grep.c (short_options, long_options, usage, main): Only
+	  support -G, -E, -F, -P, and -X for GREP_PROGRAM, but not for
+	  EGREP_PROGRAM or FGREP_PROGRAM.  Customize usage messages.
+	* src/grep.c (set_limits): New function with unchanged code,
+	  called from main(), because it shouldn't be in install_matcher()
+	  since it was already matcher-independent.
+	* src/grep.c (matcher): Add as static, only for GREP_PROGRAM.
+	* src/grep.c (setmatcher, install_matcher): Only for GREP_PROGRAM.
+	* src/grep.c (main): Remove any tweaking and dependence on argv[0].
+	* src/grep.c (print_line_middle, prpending, grepbuf, main): Call
+	  compile() and execute() directly, not through a function
+	  pointer dereferencing notation, so that it works with both
+	  straight functions (in EGREP_PROGRAM and FGREP_PROGRAM) and
+	  function pointers (in GREP_PROGRAM).
+	* src/search.c (<regex.h>, "dfa.h", dfa, pattern0, patterns,
+	  pcount, dfaerror, kwset_exact_matches, kwsmusts): Only
+	  include/declare/define if not FGREP_PROGRAM.
+	* src/search.c: Remove function prototypes for all functions
+	  that are not used before their definition, since this is just
+	  a hassle now with their varying names and conditional definition.
+	* src/search.c (GEAcompile): Rename from Ecompile().  Add new
+	  syntax_bits argument/variable.  Use as compile() for EGREP_PROGRAM.
+	  Put in the needed RE_ICASE fix, albeit commented-out for now.
+	  Make sure to free() modified word/line pattern after use, if any.
+	* src/search.c (Gcompile): Merge with GEAcompile() then remove.
+	* src/search.c (Gcompile, Acompile, Ecompile): New small functions
+	  that call GEAcompile(), now that matcher is not an extern variable.
+	* src/search.c (GEAcompile, Gcompile, Acompile, Ecompile,
+	  Fcompile, Pcompile, EGexecute, Fexecute, Pexecute, matchers):
+	  Only define when needed according to *GREP_PROGRAM, and rename
+	  to just compile() and execute() when appropriate.
+	* grep/bootstrap/Makefile.try: Similar changes.
+
 2005-11-08  Charles Levert  <charles_levert@gna.org>
 
 	* README.DOS, TODO, grep.spec, doc/grep.1, doc/grep.texi,

@@ -7,11 +7,20 @@ EXEEXT =
 OBJEXT = o
 
 # Source of grep.
-OBJS = \
-      dfa.$(OBJEXT) \
+grep_OBJS = \
       grep.$(OBJEXT) \
+      search.$(OBJEXT) \
       kwset.$(OBJEXT) \
-      search.$(OBJEXT)
+      dfa.$(OBJEXT)
+egrep_OBJS = \
+      egrep.$(OBJEXT) \
+      esearch.$(OBJEXT) \
+      kwset.$(OBJEXT) \
+      dfa.$(OBJEXT)
+fgrep_OBJS = \
+      fgrep.$(OBJEXT) \
+      fsearch.$(OBJEXT) \
+      kwset.$(OBJEXT)
 
 # Supporting routines.
 LIB_OBJS_core =  \
@@ -116,20 +125,21 @@ libgreputils_a = $(libdir)/libgreputils.a
 
 all : $(libgreputils_a) $(PROGS)
 
-grep$(EXEEXT)  : $(OBJS)  grepmat.$(OBJEXT) $(libgreputils_a)
-	$(CC) $(OBJS) grepmat.$(OBJEXT) -o grep $(libgreputils_a)
+grep$(EXEEXT)  :  $(grep_OBJS)          $(libgreputils_a)
+	$(CC)     $(grep_OBJS) -o  grep $(libgreputils_a)
 
-egrep$(EXEEXT) : $(OBJS) egrepmat.$(OBJEXT) $(libgreputils_a)
-	$(CC) $(OBJS) egrepmat.$(OBJEXT) -o egrep $(libgreputils_a)
+egrep$(EXEEXT) : $(egrep_OBJS)          $(libgreputils_a)
+	$(CC)    $(egrep_OBJS) -o egrep $(libgreputils_a)
 
-fgrep$(EXEEXT) : $(OBJS) fgrepmat.$(OBJEXT) $(libgreputils_a)
-	$(CC) $(OBJS) fgrepmat.$(OBJEXT) -o fgrep $(libgreputils_a)
+fgrep$(EXEEXT) : $(fgrep_OBJS)          $(libgreputils_a)
+	$(CC)    $(fgrep_OBJS) -o fgrep $(libgreputils_a)
 
 $(libgreputils_a) : $(LIB_OBJS)
 	$(AR) $(ARFLAGS) $(libgreputils_a) $(LIB_OBJS)
 
 clean :
-	$(RM) grepmat.$(OBJEXT) egrepmat.$(OBJEXT) fgrepmat.$(OBJEXT)
-	$(RM) $(OBJS)
+	$(RM)   grep.$(OBJEXT)   egrep.$(OBJEXT)   fgrep.$(OBJEXT)
+	$(RM) search.$(OBJEXT) esearch.$(OBJEXT) fsearch.$(OBJEXT)
+	$(RM) kwset.$(OBJEXT) dfa.$(OBJEXT)
 	$(RM) $(PROGS)
 	$(RM) $(libgreputils_a) $(LIB_OBJS)
