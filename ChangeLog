@@ -1,5 +1,12 @@
 2005-11-09  Charles Levert  <charles_levert@gna.org>
 
+	* doc/grep.1, doc/grep.texi: Advise users to test for
+	  "exit_status > 1" instead of "exit_status == 2" in order to
+	  detect errors, for portability with other POSIX-compliant
+	  implementations.
+
+2005-11-09  Charles Levert  <charles_levert@gna.org>
+
 	The following set of changes aims to make "egrep" and "fgrep"
 	minimal executable programs for legacy applications, instead of
 	shell scripts.  This "fgrep" is much smaller than "grep".

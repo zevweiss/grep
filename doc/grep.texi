@@ -707,6 +707,12 @@ Normally, exit status is 0 if selected lines are found and 1 otherwise.
 But the exit status is 2 if an error occurred, unless the @option{-q} or
 @option{--quiet} or @option{--silent} option is used and a selected line
 is found.
+Note, however, that @sc{posix} only mandates,
+for programs such as @command{grep}, @command{cmp}, and @command{diff},
+that the exit status in case of error be greater than 1;
+it is therefore advisable, for the sake of portability,
+to use logic that tests for this general condition
+instead of strict equality with 2.
 
 @node grep Programs
 @chapter @command{grep} programs

@@ -12,7 +12,7 @@
 .de Id
 .ds Dt \\$4
 ..
-.Id $Id: grep.1,v 1.35 2005/11/08 21:35:33 charles_levert Exp $
+.Id $Id: grep.1,v 1.36 2005/11/09 20:04:41 charles_levert Exp $
 .TH GREP 1 \*(Dt "GNU Project"
 .SH NAME
 grep, egrep, fgrep \- print lines matching a pattern
@@ -832,6 +832,15 @@ or
 or
 .B \-\^\-silent
 option is used and a selected line is found.
+Note, however, that \s-1POSIX\s0 only mandates, for programs such as
+.BR grep ,
+.BR cmp ,
+and
+.BR diff ,
+that the exit status in case of error be greater than 1;
+it is therefore advisable, for the sake of portability,
+to use logic that tests for this general condition
+instead of strict equality with 2.
 .SH BUGS
 .PP
 Email bug reports to
