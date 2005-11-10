@@ -761,6 +761,7 @@ print_line_middle (const char *beg, const char *lim)
 {
   size_t match_size;
   size_t match_offset;
+  const char *cur = beg;
   const char *mid = NULL;
   char *buf;		/* XXX */
   const char *ibeg;	/* XXX */
@@ -781,9 +782,9 @@ print_line_middle (const char *beg, const char *lim)
       ibeg = beg;
     }
 
-  while (   lim > beg
-	 && (   (match_offset = execute(ibeg, lim - beg, &match_size, 1))
-	     != (size_t) -1))
+  while (   lim > cur
+	 && ((match_offset = execute(ibeg, lim - beg, &match_size,
+				     ibeg + (cur - beg))) != (size_t) -1))
     {
       char const *b = beg + match_offset;
 
@@ -798,7 +799,7 @@ print_line_middle (const char *beg, const char *lim)
 	  /* XXX - Could really advance by one whole multi-octet character.  */
 	  match_size = 1;
 	  if (!mid)
-	    mid = beg;
+	    mid = cur;
 	}
       else
 	{
@@ -809,11 +810,10 @@ print_line_middle (const char *beg, const char *lim)
 	      PR_SGR_START(mlines_color);
 	      if (mid)
 		{
-		  fwrite (mid, sizeof (char), (beg - mid) + match_offset, stdout);
+		  cur = mid;
 		  mid = NULL;
 		}
-	      else
-		fwrite (beg, sizeof (char), match_offset, stdout);
+	      fwrite (cur, sizeof (char), b - cur, stdout);
 	    }
 
 	  PR_SGR_START_IF(grep_color);
@@ -822,19 +822,18 @@ print_line_middle (const char *beg, const char *lim)
 	  if (only_matching)
 	    fputs("\n", stdout);
 	}
-      beg = b + match_size;
-      ibeg += match_offset + match_size;	/* XXX */
+      cur = b + match_size;
     }
 
   if (buf)
     free(buf);	/* XXX */
 
   if (only_matching)
-    beg = lim;
+    cur = lim;
   else if (mid)
-    beg = mid;
+    cur = mid;
 
-  return beg;
+  return cur;
 }
 
 static const char *
@@ -904,7 +903,8 @@ prpending (char const *lim)
       size_t match_size;
       --pending;
       if (outleft
-	  || ((execute(lastout, nl + 1 - lastout, &match_size, 0) == (size_t) -1)
+	  || ((execute(lastout, nl + 1 - lastout,
+		       &match_size, NULL) == (size_t) -1)
 	      == !out_invert))
 	prline (lastout, nl + 1, SEP_CHAR_CONTEXT);
       else
@@ -994,7 +994,8 @@ grepbuf (char const *beg, char const *lim)
 
   nlines = 0;
   p = beg;
-  while ((match_offset = execute(p, lim - p, &match_size, 0)) != (size_t) -1)
+  while ((match_offset = execute(p, lim - p, &match_size,
+				 NULL)) != (size_t) -1)
     {
       char const *b = p + match_offset;
       char const *endp = b + match_size;

@@ -297,9 +297,9 @@ COMPILE_FCT(Ecompile)
 
 EXECUTE_FCT(EGexecute)
 {
-  register char const *buflim, *beg, *end;
+  register char const *buflim, *beg, *end, *match, *best_match;
   char eol = eolbyte;
-  int backref, start, len;
+  int backref, start, len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
 #ifdef MBS_SUPPORT
@@ -310,6 +310,8 @@ EXECUTE_FCT(EGexecute)
         {
           char *case_buf = xmalloc(size);
           memcpy(case_buf, buf, size);
+	  if (start_ptr)
+	    start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;
         }
       if (kwset)
@@ -321,8 +323,9 @@ EXECUTE_FCT(EGexecute)
 
   for (beg = end = buf; end < buflim; beg = end)
     {
-      if (!exact)
+      if (!start_ptr)
 	{
+	  /* We don't care about an exact match.  */
 	  if (kwset)
 	    {
 	      /* Find a possible match using the KWset matcher. */
@@ -363,26 +366,38 @@ EXECUTE_FCT(EGexecute)
 	    goto success;
 	}
       else
-	end = beg + size;
+	{
+	  /* We are looking for the leftmost (then longest) exact match.
+	     We will go through the outer loop only once.  */
+	  beg = start_ptr;
+	  end = buflim;
+	}
 
       /* If we've made it to this point, this means DFA has seen
 	 a probable match, and we need to run it through Regex. */
+      best_match = end;
+      best_len = 0;
       for (i = 0; i < pcount; i++)
 	{
 	  patterns[i].regexbuf.not_eol = 0;
-	  if (0 <= (start = re_search (&(patterns[i].regexbuf), beg,
-				       end - beg - 1, 0,
-				       end - beg - 1, &(patterns[i].regs))))
+	  if (0 <= (start = re_search (&(patterns[i].regexbuf),
+				       buf, end - buf - 1,
+				       beg - buf, end - beg - 1,
+				       &(patterns[i].regs))))
 	    {
 	      len = patterns[i].regs.end[0] - start;
-	      if (exact)
-		{
-		  *match_size = len;
-		  return start;
-		}
+	      match = buf + start;
+	      if (match > best_match)
+		continue;
+	      if (start_ptr && !match_words)
+		goto assess_pattern_match;
 	      if ((!match_lines && !match_words)
 		  || (match_lines && len == end - beg - 1))
-		goto success;
+		{
+		  match = beg;
+		  len = end - beg;
+		  goto assess_pattern_match;
+		}
 	      /* If -w, check if the match aligns with word boundaries.
 		 We do this iteratively because:
 		 (a) the line may contain more than one occurence of the
@@ -391,53 +406,75 @@ EXECUTE_FCT(EGexecute)
 		 given point, and we may need to consider a shorter one to
 		 find a word boundary.  */
 	      if (match_words)
-		while (start >= 0)
+		while (match <= best_match)
 		  {
-		    if ((start == 0 || !WCHAR ((unsigned char) beg[start - 1]))
+		    if ((match == buf || !WCHAR ((unsigned char) match[-1]))
 			&& (len == end - beg - 1
-			    || !WCHAR ((unsigned char) beg[start + len])))
-		      goto success;
+			    || !WCHAR ((unsigned char) match[len])))
+		      goto assess_pattern_match;
 		    if (len > 0)
 		      {
 			/* Try a shorter length anchored at the same place. */
 			--len;
 			patterns[i].regexbuf.not_eol = 1;
-			len = re_match (&(patterns[i].regexbuf), beg,
-					start + len, start,
+			len = re_match (&(patterns[i].regexbuf),
+					buf, match + len - beg, match - buf,
 					&(patterns[i].regs));
 		      }
 		    if (len <= 0)
 		      {
 			/* Try looking further on. */
-			if (start == end - beg - 1)
+			if (match == end - 1)
 			  break;
-			++start;
+			match++;
 			patterns[i].regexbuf.not_eol = 0;
-			start = re_search (&(patterns[i].regexbuf), beg,
-					   end - beg - 1,
-					   start, end - beg - 1 - start,
+			start = re_search (&(patterns[i].regexbuf),
+					   buf, end - buf - 1,
+					   match - buf, end - match - 1,
 					   &(patterns[i].regs));
+			if (start < 0)
+			  break;
 			len = patterns[i].regs.end[0] - start;
+			match = buf + start;
 		      }
-		  }
-	    }
+		  } /* while (match <= best_match) */
+	      continue;
+	    assess_pattern_match:
+	      if (!start_ptr)
+		{
+		  /* Good enough for a non-exact match.
+		     No need to look at further patterns, if any.  */
+		  beg = match;
+		  goto success_in_len;
+		}
+	      if (match < best_match || (match == best_match && len > best_len))
+		{
+		  /* Best exact match:  leftmost, then longest.  */
+		  best_match = match;
+		  best_len = len;
+		}
+	    } /* if re_search >= 0 */
 	} /* for Regex patterns.  */
+	if (best_match < end)
+	  {
+	    /* We have found an exact match.  We were just
+	       waiting for the best one (leftmost then longest).  */
+	    beg = best_match;
+	    len = best_len;
+	    goto success_in_len;
+	  }
     } /* for (beg = end ..) */
 
  failure:
-#ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    {
-      if (match_icase)
-        free((char*)buf);
-      if (mb_properties)
-        free(mb_properties);
-    }
-#endif /* MBS_SUPPORT */
-  return (size_t) -1;
+  ret_val = -1;
+  goto out;
 
  success:
+  len = end - beg;
+ success_in_len:
+  *match_size = len;
   ret_val = beg - buf;
+ out:
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
@@ -447,7 +484,6 @@ EXECUTE_FCT(EGexecute)
         free(mb_properties);
     }
 #endif /* MBS_SUPPORT */
-  *match_size = end - beg;
   return ret_val;
 }
 #endif /* defined(GREP_PROGRAM) || defined(EGREP_PROGRAM) */
@@ -490,47 +526,27 @@ EXECUTE_FCT(Fexecute)
         {
           char *case_buf = xmalloc(size);
           memcpy(case_buf, buf, size);
+	  if (start_ptr)
+	    start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;
         }
       mb_properties = check_multibyte_string(buf, size);
     }
 #endif /* MBS_SUPPORT */
 
-  for (beg = buf; beg <= buf + size; ++beg)
+  for (beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
       size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
       if (offset == (size_t) -1)
-	{
-#ifdef MBS_SUPPORT
-          if (MB_CUR_MAX > 1)
-            {
-              if (match_icase)
-                free ((char*)buf);
-              free(mb_properties);
-            }
-#endif /* MBS_SUPPORT */
-	  return offset;
-	}
+	goto failure;
 #ifdef MBS_SUPPORT
       if (MB_CUR_MAX > 1 && mb_properties[offset+beg-buf] == 0)
 	continue; /* It is a part of multibyte character.  */
 #endif /* MBS_SUPPORT */
       beg += offset;
       len = kwsmatch.size[0];
-      if (exact)
-	{
-	  *match_size = len;
-          ret_val = beg - buf;
-#ifdef MBS_SUPPORT
-          if (MB_CUR_MAX > 1)
-            {
-              if (match_icase)
-                free ((char*)buf);
-              free(mb_properties);
-            }
-#endif /* MBS_SUPPORT */
-	  return ret_val;
-	}
+      if (start_ptr && !match_words)
+	goto success_in_beg_and_len;
       if (match_lines)
 	{
 	  if (beg > buf && beg[-1] != eol)
@@ -552,31 +568,29 @@ EXECUTE_FCT(Fexecute)
 		try = beg + offset;
 		len = kwsmatch.size[0];
 	      }
-	    else
+	    else if (!start_ptr)
 	      goto success;
-	  }
+	    else
+	      goto success_in_beg_and_len;
+	  } /* for (try) */
       else
 	goto success;
-    }
+    } /* for (beg in buf) */
 
-#ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    {
-      if (match_icase)
-        free((char*)buf);
-      if (mb_properties)
-        free(mb_properties);
-    }
-#endif /* MBS_SUPPORT */
-  return -1;
+ failure:
+  ret_val = -1;
+  goto out;
 
  success:
   end = memchr (beg + len, eol, (buf + size) - (beg + len));
   end++;
   while (buf < beg && beg[-1] != eol)
     --beg;
-  *match_size = end - beg;
+  len = end - beg;
+ success_in_beg_and_len:
+  *match_size = len;
   ret_val = beg - buf;
+ out:
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
@@ -673,7 +687,8 @@ EXECUTE_FCT(Pexecute)
      is just for performance improvement in pcre_exec.  */
   int sub[300];
 
-  int e = pcre_exec (cre, extra, buf, size, 0, 0,
+  int e = pcre_exec (cre, extra, buf, size,
+		     start_ptr ? (start_ptr - buf) : 0, 0,
 		     sub, sizeof sub / sizeof *sub);
 
   if (e <= 0)
@@ -697,7 +712,7 @@ EXECUTE_FCT(Pexecute)
       char const *end = buf + sub[1];
       char const *buflim = buf + size;
       char eol = eolbyte;
-      if (!exact)
+      if (!start_ptr)
 	{
 	  /* FIXME: The case when '\n' is not found indicates a bug:
 	     Since grep is line oriented, the match should never contain

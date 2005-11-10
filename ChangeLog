@@ -1,5 +1,41 @@
 2005-11-10  Charles Levert  <charles_levert@gna.org>
 
+	The introduction of the --only-matching and --color GNU extensions
+	to grep added the requirement that each execute() implementation
+	not only be able to identify matching lines as a whole, but also
+	individual "exact" matches within a line known to be matching,
+	from leftmost to rightmost match, when the output from matching
+	lines is actually produced.  The interface and implementations
+	of execute() were not up to it.  This set of changes aims to
+	rectify that situation.  Previously failing tests relative to
+	left anchors (^ and \<) and -w should now pass.  This fixes
+	<http://savannah.gnu.org/bugs/?func=detailitem&item_id=11579>,
+	<http://savannah.gnu.org/patch/?func=detailitem&item_id=1834>,
+	<http://savannah.gnu.org/bugs/?func=detailitem&item_id=8243>,
+	and possibly part of other, bigger, pending patches.  The problem
+	was also compounded by the POSIX requirement to support a pattern
+	list instead of just an individual pattern (for -G and -E as well).
+
+	* tests/foad1.sh: Test for increasing/decreasing-length word
+	  matches, given pattern order, and leftmost/longest match.
+	* tests/fmbtest.sh: Modify test #6 according to new expectations.
+	  Better document what tests #6 and #7 are actually for.  Eliminate
+	  test #5 in favor of bringing tests #6 and #7 within the F G E loop.
+	* src/grep.h (EXECUTE_ARGS): Change last argument from "int exact"
+	  to "char const *start_ptr".  Testing for "start_ptr" being non-NULL
+	  retains the same semantics as testing for "exact" being non-zero.
+	* src/grep.c (print_line_middle): Call execute() with whole
+	  buffer to work on, but using current position as start_ptr.
+	* src/grep.c (prpending, grepbuf): Call execute() with NULL
+	  as start_ptr.
+	* src/search.c (EGexecute, Fexecute, Pexecute): When start_ptr is
+	  non-NULL, return first match from it as an offset relative to buf.
+	* src/search.c (EGexecute): Consider all patterns if many and,
+	  for an exact match, return the best one (leftmost, then longest).
+	  Don't explore worst solutions, of course (branch and bound).
+
+2005-11-10  Charles Levert  <charles_levert@gna.org>
+
 	* src/grep.c (main): Fix a subtle memory allocation bug introduced
 	  with the mb_icase_keys() function, which can call xrealloc() or
 	  free() on keys, by making sure keys is always dynamically allocated.

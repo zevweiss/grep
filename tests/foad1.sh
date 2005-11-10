@@ -96,6 +96,34 @@ grep_test "LIN7C 55327/" "" -wF -e 5327 -e 5532
 grep_test 'xyz/' 'y/' -o 'y*'
 grep_test 'xyz/' "x${CB}y${CE}z/" --color=always 'y*'
 
+# Test for increasing/decreasing-length word matches,
+# for independence from pattern order within the pattern list,
+# and for preferring the longest match at a given position.
+x0='a bb ccc dddd/'
+x1='dddd ccc bb a/'
+x2='bcd abcd abc bc bcd abc/'
+x3='bc abcd bc/'
+y0="a ${CB}bb${CE} ${CB}ccc${CE} dddd/"
+y1="dddd ${CB}ccc${CE} ${CB}bb${CE} a/"
+y2="bcd abcd abc ${CB}bc${CE} bcd abc/"
+y3="${CB}bc${CE} abcd ${CB}bc${CE}/"
+grep_test "$x0" "$y0" -E --color=always -e bb -e cc -e ccc
+grep_test "$x0" "$y0" -F --color=always -e bb -e cc -e ccc
+grep_test "$x0" "$y0" -E --color=always -e bb -e ccc -e cc
+grep_test "$x0" "$y0" -F --color=always -e bb -e ccc -e cc
+grep_test "$x0" "$y0" -E -w --color=always -e bb -e ccc
+grep_test "$x0" "$y0" -F -w --color=always -e bb -e ccc
+grep_test "$x0" "$y0" -E -w --color=always -e ccc -e bb
+grep_test "$x0" "$y0" -F -w --color=always -e ccc -e bb
+grep_test "$x1" "$y1" -E -w --color=always -e bb -e ccc
+grep_test "$x1" "$y1" -F -w --color=always -e bb -e ccc
+grep_test "$x1" "$y1" -E -w --color=always -e ccc -e bb
+grep_test "$x1" "$y1" -F -w --color=always -e ccc -e bb
+grep_test "$x2" "$y2" -E -w --color=always bc
+grep_test "$x2" "$y2" -F -w --color=always bc
+grep_test "$x3" "$y3" -E -w --color=always bc
+grep_test "$x3" "$y3" -F -w --color=always bc
+
 
 # The rest of this file is meant to be executed under this locale.
 LC_ALL=cs_CZ.UTF-8; export LC_ALL

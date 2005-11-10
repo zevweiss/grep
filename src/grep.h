@@ -34,7 +34,8 @@
   (char const *pattern, size_t size)
 #define EXECUTE_RET size_t
 #define EXECUTE_ARGS \
-  (char const *buf, size_t size, size_t *match_size, int exact)
+  (char const *buf, size_t size, size_t *match_size, char const *start_ptr)
+  /* start_ptr == NULL means the caller is not looking for an exact match.  */
 
 #ifdef GREP_PROGRAM
 /* Function definitions.  */

@@ -65,31 +65,19 @@ if test "$test4" != "01 02 08 13 17 19"; then
   failures=1
 fi
 
-done
-
-# Test that -F --color=always prefers longer matches.
-test5="`echo 'Cosi tu ČišÍ...' \
-	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -Fi -e 'čiš' -e 'čiší'`"
-if echo "$test5" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
-  :
-else
-  echo "Test #5 F failed: $test5"
-  failures=1
-fi
-
-for mode in G E; do
-
-# Test that -{G,E} --color=always prefers earlier pattern matches.
+# Test that --color=always does not depend on individual pattern order within the pattern
+# list, and that a longer match is preferred to a shorter one starting at the same point.
 test6="`echo 'Cosi tu ČišÍ...' \
 	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -${mode}i -e 'čiš' -e 'čiší'`"
-if echo "$test6" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?Čiš.*\[.*m\(.\[K\)\?Í\.\.\.'; then
+if echo "$test6" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
   :
 else
   echo "Test #6 ${mode} failed: $test6"
   failures=1
 fi
 
-# Test that -{G,E} --color=always prefers earlier pattern matches.
+# Test that --color=always does not depend on individual pattern order within the pattern
+# list, and that a longer match is preferred to a shorter one starting at the same point.
 test7="`echo 'Cosi tu ČišÍ...' \
 	| LC_ALL=cs_CZ.UTF-8 ${GREP} --color=always -${mode}i -e 'čiší' -e 'čiš'`"
 if echo "$test7" | LC_ALL=C ${GREP} -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
@@ -98,6 +86,10 @@ else
   echo "Test #7 ${mode} failed: $test7"
   failures=1
 fi
+
+done
+
+for mode in G E; do
 
 test8="$(echo `LC_ALL=cs_CZ.UTF-8 ${GREP} -${mode}i -e 'Č.šE' -e 'Č[a-f]s' csinput \
 	       | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'`)"
