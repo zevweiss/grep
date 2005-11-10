@@ -1,3 +1,9 @@
+2005-11-10  Charles Levert  <charles_levert@gna.org>
+
+	* src/grep.c (main): Fix a subtle memory allocation bug introduced
+	  with the mb_icase_keys() function, which can call xrealloc() or
+	  free() on keys, by making sure keys is always dynamically allocated.
+
 2005-11-09  Charles Levert  <charles_levert@gna.org>
 
 	* doc/grep.1, doc/grep.texi: Advise users to test for

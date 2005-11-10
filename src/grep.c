@@ -2160,8 +2160,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   else
     if (optind < argc)
       {
-	keys = argv[optind++];
-	keycc = strlen (keys);
+	/* A copy must be made in case of an xrealloc() or free() later.  */
+	keycc = strlen(argv[optind]);
+	keys = xmalloc(keycc + 1);
+	strcpy(keys, argv[optind++]);
       }
     else
       usage (2);
