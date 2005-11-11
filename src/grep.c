@@ -1663,22 +1663,20 @@ parse_grep_colors (void)
 	      if (val)
 		*(cap->var) = val;
 	      else
-		fprintf(stderr,
-			_("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped.\n"),
-			program_name, p, name);
+		error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
+			      "needs a value (\"=...\"); skipped."), p, name);
 	    }
 	  else if (val)
-	    fprintf(stderr,
-		    _("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped.\n"),
-		    program_name, p, name, val);
+	    error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
+			  "is boolean and cannot take a value (\"=%s\"); "
+			  "skipped."), p, name, val);
 	if (cap->fct)
 	  {
 	    const char *err_str = cap->fct();
 
 	    if (err_str)
-	      fprintf(stderr,
-		      _("%s: In GREP_COLORS=\"%s\", the \"%s\" capacity %s.\n"),
-		      program_name, p, name, err_str);
+	      error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity %s."),
+		    p, name, err_str);
 	  }
 	if (c == '\0')
 	  return;
@@ -1700,9 +1698,8 @@ parse_grep_colors (void)
       goto ill_formed;
 
  ill_formed:
-  fprintf(stderr,
-	  _("%s: Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\".\n"),
-	  program_name, p, q);
+  error(0, 0, _("Stopped processing of ill-formed GREP_COLORS=\"%s\" "
+		"at remaining substring \"%s\"."), p, q);
 }
 
 /* mb_icase_keys() is called by main() to convert its "keys" string with
@@ -2113,10 +2110,8 @@ main (int argc, char **argv)
     out_before = default_context;
   if (only_matching && (out_after > 0 || out_before > 0))
     {
-      fprintf(stderr,
-	     _("%s: Any context line specification "
-	       "is ignored with -o/--only-matching.\n"),
-	     program_name);
+      error(0, 0, _("Any context line specification "
+		    "is ignored with -o/--only-matching."));
       out_after = out_before = 0;
     }
 

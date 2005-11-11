@@ -10,6 +10,11 @@
 	  patterns cannot just be replaced by '|' to create an alternation as
 	  back-references are assumed to be local to each individual pattern.
 
+	* src/grep.c (parse_grep_colors, main): Replace all uses of
+	  fprintf(stderr, _("%s: foo\n"), program_name, ...) with
+	  error(0, 0, _("foo"), ...) for uniformization and simplification
+	  of warning messages that will be up for localization.  (My bad.)
+
 2005-11-10  Charles Levert  <charles_levert@gna.org>
 
 	The introduction of the --only-matching and --color GNU extensions
