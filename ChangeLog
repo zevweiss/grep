@@ -1,3 +1,9 @@
+2005-11-11  Charles Levert  <charles_levert@gna.org>
+
+	* grep/configure.in (ALL_LINGUAS): Add languages that were missing
+	  from this variable (bg, ca, da, nb, tr), but that GNU grep supports
+	  with a po/xx.po file.  Reported by Tony Abou-Assaleh <taa@acm.org>.
+
 2005-11-10  Charles Levert  <charles_levert@gna.org>
 
 	The introduction of the --only-matching and --color GNU extensions

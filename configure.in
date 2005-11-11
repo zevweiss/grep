@@ -96,7 +96,7 @@ case "$ac_cv_prog_CC" in
 esac
 
 dnl I18N feature
-ALL_LINGUAS="cs de el eo es et fr gl hr id it ja ko nl no pl pt_BR ru sl sv"
+ALL_LINGUAS="bg ca cs da de el eo es et fr gl hr id it ja ko nb nl no pl pt_BR ru sl sv tr"
 AM_GNU_GETTEXT
 
 dnl DOS file name convention
