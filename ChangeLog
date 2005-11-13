@@ -1,3 +1,12 @@
+2005-11-13  Charles Levert  <charles_levert@gna.org>
+
+	* tests/yesno.sh: New file.  Test feature interaction
+	  of -C, -v, -o, and -m.  This reveals bugs, including some I
+	  introduced on 2005-06-21, but also others.
+	* tests/Makefile.am (TESTS): Add yesno.sh.
+	* tests/Makefile.am (CLEANFILES): Add cspatfile and csinput, as
+	  created by fmbtest.sh.  Add yesno.txt, as created by yesno.sh.
+
 2005-11-11  Charles Levert  <charles_levert@gna.org>
 
 	* configure.in (ALL_LINGUAS): Add languages that were missing
