@@ -1,3 +1,10 @@
+2005-11-16  Charles Levert  <charles_levert@gna.org>
+
+	* src/search.c (Pcompile): Clarify message for the -P option
+	  not being supported so that users don't assume it's a run-time
+	  problem, but know that it's a compile-time configuration choice.
+	  Based on an idea by:  Benno Schulenberg <benno@nietvergeten.nl>.
+
 2005-11-13  Charles Levert  <charles_levert@gna.org>
 
 	* tests/yesno.sh: New file.  Test feature interaction

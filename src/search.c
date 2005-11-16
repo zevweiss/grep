@@ -616,7 +616,7 @@ static pcre_extra *extra;
 COMPILE_FCT(Pcompile)
 {
 #if !HAVE_LIBPCRE
-  error (2, 0, _("The -P option is not supported"));
+  error (2, 0, "%s", _("Support for the -P option is not compiled into this --disable-perl-regexp binary"));
 #else
   int e;
   char const *ep;
