@@ -1,3 +1,42 @@
+2005-11-17  Charles Levert  <charles_levert@gna.org>
+
+	On 2005-06-21, many changes were made that affected --color,
+	--only-matching, and --invert-match.  Some of them introduced a
+	misunderstanding between the concepts of matched/non-matched and
+	selected/rejected lines.  Furthermore, a few bugs with -v sneaked
+	in stemming from this.  This set of changes aims to rectify most
+	of this situation.  Some GREP_COLORS capabilities are also added
+	as a result of the clarification.  (Further issues with -v/-o/-C
+	feature interaction still remain to be sorted out.)
+
+	* src/grep.c: Rename/add global variables, macros, and capabilities:
+	    SEP_CHAR_MATCH    -->  SEP_CHAR_SELECTED
+	    SEP_CHAR_CONTEXT  -->  SEP_CHAR_REJECTED
+	    SEP_STR_CHUNK     -->  SEP_STR_GROUP
+	    grep_color        -->  selected_match_color + context_match_color
+	    mlines_color      -->  selected_line_color
+	    context_color     -->  context_line_color
+	    "ml"              -->  "sl"
+	    "mt"              -->  "mt" = "ms" + "mc"
+	                      -->  "rv" (reverse "sl"/"cx" when -v)
+	* src/grep.c (color_cap_mt_fct, color_cap_rv_fct): New functions.
+	* src/grep.c (print_line_tail): Renamed color argument to line_color.
+	* src/grep.c (print_line_middle, prline): Revert part of the logic to
+	  a pre-2005-06-21 one so that lines with matches have their matched
+	  parts properly handled again ("m?" colors or --only-matching),
+	  whether or not -v is specified.  Whole line colors ("sl", "cx")
+	  follow a selected / rejected(context) logic, as opposed to a
+	  matched / non-matched one (unless "rv").  Matched text colors ("ms",
+	  "mc") always follow a selected / rejected(context) logic,
+	  regardless of "rv", because only matched lines use them anyway.
+	  pr_line_middle() now takes additional line_color and match_color
+	  arguments computed by prline() prior to calling that function.
+	  The old logic was a buggy hybrid matched / rejected(context) one.
+	* src/grep.c (prpending, prtext, grepfile): Renamed macro invocations.
+	* src/grep.c (parse_grep_colors): Update top comment.
+	* src/grep.c (main): GREP_COLOR (singular) now sets both
+	  selected_match_color and context_match_color.
+
 2005-11-16  Charles Levert  <charles_levert@gna.org>
 
 	* src/search.c (Pcompile): Clarify message for the -P option

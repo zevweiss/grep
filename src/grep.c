@@ -51,9 +51,9 @@
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 
-#define SEP_CHAR_MATCH   ':'
-#define SEP_CHAR_CONTEXT '-'
-#define SEP_STR_CHUNK    "--"
+#define SEP_CHAR_SELECTED ':'
+#define SEP_CHAR_REJECTED '-'
+#define SEP_STR_GROUP    "--"
 
 struct stats
 {
@@ -76,7 +76,7 @@ static int suppress_errors;
 /* If nonzero, use mmap if possible.  */
 static int mmap_option;
 
-/* If nonzero, use grep_color marker.  */
+/* If nonzero, use color markers.  */
 static int color_option;
 
 /* If nonzero, show only the part of a line matching the expression. */
@@ -127,18 +127,19 @@ static int align_tabs;
 	 terminal with either a black (dark) or white (light) background.
 	 This only leaves red, magenta, green, and cyan (and their bold
 	 counterparts) and possibly bold blue.  */
-/* The color string used for matched text.
-   The user can overwrite it using the deprecated
+/* The color strings used for matched text.
+   The user can overwrite them using the deprecated
    environment variable GREP_COLOR or the new GREP_COLORS.  */
-static const char *grep_color = "01;31";	/* bold red */
+static const char *selected_match_color = "01;31";	/* bold red */
+static const char *context_match_color  = "01;31";	/* bold red */
 
 /* Other colors.  Defaults look damn good.  */
 static const char *filename_color = "35";	/* magenta */
 static const char *line_num_color = "32";	/* green */
 static const char *byte_num_color = "32";	/* green */
 static const char *sep_color      = "36";	/* cyan */
-static const char *mlines_color   = "";		/* default color pair */
-static const char *context_color  = "";		/* default color pair */
+static const char *selected_line_color = "";	/* default color pair */
+static const char *context_line_color  = "";	/* default color pair */
 
 /* Select Graphic Rendition (SGR, "\33[...m") strings.  */
 /* Also Erase in Line (EL) to Right ("\33[K") by default.  */
@@ -219,6 +220,24 @@ struct color_cap
   };
 
 static const char *
+color_cap_mt_fct(void)
+{
+  /* Our caller just set selected_match_color.  */
+  context_match_color = selected_match_color;
+
+  return NULL;
+}
+
+static const char *
+color_cap_rv_fct(void)
+{
+  /* By this point, it was 1 (or already -1).  */
+  color_option = -1;  /* That's still != 0.  */
+
+  return NULL;
+}
+
+static const char *
 color_cap_ne_fct(void)
 {
   sgr_start = "\33[%sm";
@@ -230,15 +249,18 @@ color_cap_ne_fct(void)
 /* For GREP_COLORS.  */
 static struct color_cap color_dict[] =
   {
-    { "mt", &grep_color,	NULL },			/* matched text */
-    { "fn", &filename_color,	NULL },			/* filename */
-    { "ln", &line_num_color,	NULL },			/* line number */
-    { "bn", &byte_num_color,	NULL },			/* byte (sic) offset */
-    { "se", &sep_color,		NULL },			/* separator */
-    { "ml", &mlines_color,	NULL },			/* matching lines */
-    { "cx", &context_color,	NULL },			/* context lines */
-    { "ne", NULL,		color_cap_ne_fct },	/* no EL on SGR_* */
-    { NULL, NULL,		NULL }
+    { "mt", &selected_match_color, color_cap_mt_fct }, /* both ms/mc */
+    { "ms", &selected_match_color, NULL }, /* selected matched text */
+    { "mc", &context_match_color,  NULL }, /* context matched text */
+    { "fn", &filename_color,       NULL }, /* filename */
+    { "ln", &line_num_color,       NULL }, /* line number */
+    { "bn", &byte_num_color,       NULL }, /* byte (sic) offset */
+    { "se", &sep_color,            NULL }, /* separator */
+    { "sl", &selected_line_color,  NULL }, /* selected lines */
+    { "cx", &context_line_color,   NULL }, /* context lines */
+    { "rv", NULL,                  color_cap_rv_fct }, /* -v reverses sl/cx */
+    { "ne", NULL,                  color_cap_ne_fct }, /* no EL on SGR_* */
+    { NULL, NULL,                  NULL }
   };
 
 static struct exclude *excluded_patterns;
@@ -757,7 +779,8 @@ print_line_head (char const *beg, char const *lim, int sep)
 }
 
 static const char *
-print_line_middle (const char *beg, const char *lim)
+print_line_middle (const char *beg, const char *lim,
+		   const char *line_color, const char *match_color)
 {
   size_t match_size;
   size_t match_offset;
@@ -803,11 +826,14 @@ print_line_middle (const char *beg, const char *lim)
 	}
       else
 	{
+	  /* This function is called on a matching line only,
+	     but is it selected or rejected/context?  */
 	  if (only_matching)
-	    print_line_head(b, lim, SEP_CHAR_MATCH);
+	    print_line_head(b, lim, out_invert ? SEP_CHAR_REJECTED
+					       : SEP_CHAR_SELECTED);
 	  else
 	    {
-	      PR_SGR_START(mlines_color);
+	      PR_SGR_START(line_color);
 	      if (mid)
 		{
 		  cur = mid;
@@ -816,9 +842,9 @@ print_line_middle (const char *beg, const char *lim)
 	      fwrite (cur, sizeof (char), b - cur, stdout);
 	    }
 
-	  PR_SGR_START_IF(grep_color);
+	  PR_SGR_START_IF(match_color);
 	  fwrite (b, sizeof (char), match_size, stdout);
-	  PR_SGR_END_IF(grep_color);
+	  PR_SGR_END_IF(match_color);
 	  if (only_matching)
 	    fputs("\n", stdout);
 	}
@@ -837,7 +863,7 @@ print_line_middle (const char *beg, const char *lim)
 }
 
 static const char *
-print_line_tail (const char *beg, const char *lim, const char *color)
+print_line_tail (const char *beg, const char *lim, const char *line_color)
 {
   size_t  eol_size;
   size_t tail_size;
@@ -848,10 +874,10 @@ print_line_tail (const char *beg, const char *lim, const char *color)
 
   if (tail_size > 0)
     {
-      PR_SGR_START(color);
+      PR_SGR_START(line_color);
       fwrite(beg, 1, tail_size, stdout);
       beg += tail_size;
-      PR_SGR_END(color);
+      PR_SGR_END(line_color);
     }
 
   return beg;
@@ -860,19 +886,32 @@ print_line_tail (const char *beg, const char *lim, const char *color)
 static void
 prline (char const *beg, char const *lim, int sep)
 {
+  int matching;
   const char *line_color;
+  const char *match_color;
 
   if (!only_matching)
     print_line_head(beg, lim, sep);
 
-  if (color_option)
-    line_color = ((sep == SEP_CHAR_MATCH) ? mlines_color : context_color);
+  matching = (sep == SEP_CHAR_SELECTED) ^ !!out_invert;
 
-  if (only_matching || (color_option && (*grep_color || *line_color)))
+  if (color_option)
     {
-      /* We already know that context lines have no match (to colorize).  */
-      if (only_matching || (*grep_color && sep == SEP_CHAR_MATCH))
-	beg = print_line_middle(beg, lim);
+      line_color  = (  (sep == SEP_CHAR_SELECTED)
+		     ^ (out_invert && (color_option < 0)))
+		  ? selected_line_color  : context_line_color;
+      match_color = (sep == SEP_CHAR_SELECTED)
+		  ? selected_match_color : context_match_color;
+    }
+  else
+    line_color = match_color = NULL; /* Shouldn't be used.  */
+
+  if (   (only_matching && matching)
+      || (color_option  && (*line_color || *match_color)))
+    {
+      /* We already know that non-matching lines have no match (to colorize).  */
+      if (matching && (only_matching || *match_color))
+	beg = print_line_middle(beg, lim, line_color, match_color);
 
       if (!only_matching && *line_color);
 	beg = print_line_tail(beg, lim, line_color);
@@ -906,7 +945,7 @@ prpending (char const *lim)
 	  || ((execute(lastout, nl + 1 - lastout,
 		       &match_size, NULL) == (size_t) -1)
 	      == !out_invert))
-	prline (lastout, nl + 1, SEP_CHAR_CONTEXT);
+	prline (lastout, nl + 1, SEP_CHAR_REJECTED);
       else
 	pending = 0;
     }
@@ -917,7 +956,7 @@ prpending (char const *lim)
 static void
 prtext (char const *beg, char const *lim, int *nlinesp)
 {
-  static int used;	/* avoid printing SEP_STR_CHUNK before any output */
+  static int used;	/* avoid printing SEP_STR_GROUP before any output */
   char const *bp, *p;
   char eol = eolbyte;
   int i, n;
@@ -938,12 +977,12 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	    --p;
 	  while (p[-1] != eol);
 
-      /* We print the SEP_STR_CHUNK separator only if our output is
+      /* We print the SEP_STR_GROUP separator only if our output is
 	 discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout)
 	{
 	  PR_SGR_START_IF(sep_color);
-	  fputs (SEP_STR_CHUNK, stdout);
+	  fputs (SEP_STR_GROUP, stdout);
 	  PR_SGR_END_IF(sep_color);
 	  fputc('\n', stdout);
 	}
@@ -952,7 +991,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	{
 	  char const *nl = memchr (p, eol, beg - p);
 	  nl++;
-	  prline (p, nl, SEP_CHAR_CONTEXT);
+	  prline (p, nl, SEP_CHAR_REJECTED);
 	  p = nl;
 	}
     }
@@ -965,7 +1004,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 	  char const *nl = memchr (p, eol, lim - p);
 	  nl++;
 	  if (!out_quiet)
-	    prline (p, nl, SEP_CHAR_MATCH);
+	    prline (p, nl, SEP_CHAR_SELECTED);
 	  p = nl;
 	}
       *nlinesp = n;
@@ -975,7 +1014,7 @@ prtext (char const *beg, char const *lim, int *nlinesp)
     }
   else
     if (!out_quiet)
-      prline (beg, lim, SEP_CHAR_MATCH);
+      prline (beg, lim, SEP_CHAR_SELECTED);
 
   pending = out_quiet ? 0 : out_after;
   used = 1;
@@ -1256,7 +1295,7 @@ grepfile (char const *file, struct stats *stats)
 	    {
 	      print_filename();
 	      if (filename_mask)
-		print_sep(SEP_CHAR_MATCH);
+		print_sep(SEP_CHAR_SELECTED);
 	      else
 		fputc(0, stdout);
 	    }
@@ -1620,8 +1659,9 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
   return opt;
 }
 
-/* Parse GREP_COLORS.  The  default would look like:
-     GREP_COLORS='mt=01;31:ml=:cx=:fn=35:ln=32:bn=32:se=36'
+/* Parse GREP_COLORS.  The default would look like:
+     GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
+   with boolean capabilities (ne and rv) unset (i.e., omitted).
    No character escaping is needed or supported.  */
 static void
 parse_grep_colors (void)
@@ -2120,7 +2160,7 @@ main (int argc, char **argv)
       /* Legacy.  */
       char *userval = getenv ("GREP_COLOR");
       if (userval != NULL && *userval != '\0')
-	grep_color = userval;
+	selected_match_color = context_match_color = userval;
 
       /* New GREP_COLORS has priority.  */
       parse_grep_colors();
