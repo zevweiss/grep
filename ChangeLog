@@ -1,3 +1,20 @@
+2005-11-18  Charles Levert  <charles_levert@gna.org>
+
+	* tests/foad1.sh: Use ": ${VERBOSE=}" so that the caller can
+	  set it without modifying the script; the usual caller (Makefile)
+	  still leaves it untouched (usually unset, so it's off by default).
+	  Modify "-m1 -A99 '^...$'" tests that failed so that their
+	  expectation now corresponds to the output currently produced
+	  by grep.  Those tests used to expect that two selected (or
+	  selectable) lines be output, even with -m1.  Nothing was
+	  modified with other similar tests that output _context_ lines
+	  after one selected line has been output with -m1; they used to
+	  and still succeed.  Although tests/yesno.sh now provides a more
+	  comprehensive framework for testing -m/-C feature interaction,
+	  it doesn't exercise mixing them with anchors so the whole
+	  relevant tests/foad1.sh test group is kept, notably to check
+	  that grep doesn't crash when it is run.
+
 2005-11-17  Charles Levert  <charles_levert@gna.org>
 
 	On 2005-06-21, many changes were made that affected --color,

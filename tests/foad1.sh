@@ -4,7 +4,7 @@
 
 : ${GREP=../src/grep}
 
-VERBOSE=  # empty or "1"
+: ${VERBOSE=}  # empty or "1"
 failures=0
 
 # grep_test INPUT EXPECTED_OUTPUT PATTERN_AND_OPTIONS...
@@ -80,12 +80,12 @@ grep_test "wordword/" "${CB}word${CE}word/" "\<word" --color=always
 grep_test "4/40/"  "4/40/"  "^4$" -m1 -A99
 grep_test "4/04/"  "4/04/"  "^4$" -m1 -A99
 grep_test "4/444/" "4/444/" "^4$" -m1 -A99
-grep_test "4/40/"  "4/40/"  "^4"  -m1 -A99
+grep_test "4/40/"  "4/"     "^4"  -m1 -A99
 grep_test "4/04/"  "4/04/"  "^4"  -m1 -A99
-grep_test "4/444/" "4/444/" "^4"  -m1 -A99
+grep_test "4/444/" "4/"     "^4"  -m1 -A99
 grep_test "4/40/"  "4/40/"  "4$"  -m1 -A99
-grep_test "4/04/"  "4/04/"  "4$"  -m1 -A99
-grep_test "4/444/" "4/444/" "4$"  -m1 -A99
+grep_test "4/04/"  "4/"     "4$"  -m1 -A99
+grep_test "4/444/" "4/"     "4$"  -m1 -A99
 
 
 # Test for "-F -w" bugs.  Thanks to Gordon Lack for these two.
