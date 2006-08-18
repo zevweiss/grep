@@ -119,7 +119,7 @@ of @sc{gnu} @command{grep}.
 for lines containing a match to a given pattern list.
 When it finds a match in a line,
 it copies the line to standard output (by default),
-or does whatever other sort of output you have requested with options.
+or produces whatever other sort of output you have requested with options.
 
 Though @command{grep} expects to do the matching on text,
 it has no limits on input line length other than available memory,
@@ -132,7 +132,7 @@ there is no way to match newline characters in a text.
 @node Invoking
 @chapter Invoking @command{grep}
 
-The general synopsis of a @command{grep} command line is
+The general synopsis of the @command{grep} command line is
 
 @example
 grep @var{options} @var{pattern} @var{input_file_names}
@@ -145,7 +145,7 @@ There can be zero or more @var{options}.
 if it wasn't already specified within @var{options}
 (by using the @samp{-e@ @var{pattern}}
 or @samp{-f@ @var{file}} options).
-and there can be zero or more @var{input_file_names}.
+There can be zero or more @var{input_file_names}.
 
 @menu
 * Command-line Options::        Short and long names, grouped by category.
@@ -188,7 +188,7 @@ which variant of the @command{grep} matching engine is used.
 @item --help
 @opindex --help
 @cindex Usage summary, printing
-Print a usage message briefly summarizing these command-line options
+Print a usage message briefly summarizing the command-line options
 and the bug-reporting address, then exit.
 
 @item -V
@@ -400,7 +400,7 @@ because it lacked @samp{-q}
 and its @samp{-s} option behaved like
 @sc{gnu} @command{grep}'s @samp{-q} option.
 @sc{usg}-style @command{grep} also lacked @samp{-q}
-but its @samp{-s} option behaved like @sc{gnu} @command{grep}.
+but its @samp{-s} option behaved like @sc{gnu} @command{grep}'s.
 Portable shell scripts should avoid both
 @samp{-q} and @samp{-s} and should redirect
 standard and error output to @file{/dev/null} instead.
@@ -480,7 +480,7 @@ This is useful with options that prefix their output to the actual content:
 In order to improve the probability that lines
 from a single file will all start at the same column,
 this also causes the line number and byte offset (if present)
-to be printed in a minimum size field width.
+to be printed in a minimum-size field width.
 
 @item -u
 @itemx --unix-byte-offsets
@@ -494,7 +494,7 @@ as if the file were a Unix-style text file,
 i.e., the byte offsets ignore the @code{CR} characters that were stripped.
 This will produce results identical
 to running @command{grep} on a Unix machine.
-This option has no effect unless @samp{-b} option is also used;
+This option has no effect unless the @samp{-b} option is also used;
 it has no effect on platforms other than @sc{ms-dos} and @sc{ms}-Windows.
 
 @item -Z
@@ -665,7 +665,7 @@ Search only files whose base name matches @var{glob}
 @opindex --recursive
 @cindex recursive search
 @cindex searching directory trees
-For each directory mentioned in the command line,
+For each directory mentioned on the command line,
 read and process all files in that directory, recursively.
 This is the same as the @samp{--directories=recurse} option.
 
@@ -886,7 +886,7 @@ Note that boolean capabilities have no @samp{=}... part.
 They are omitted (i.e., false) by default and become true when specified.
 
 See the Select Graphic Rendition (SGR) section
-in the documentation of the text terminal that is used
+in the documentation of your text terminal
 for permitted values and their meaning as character attributes.
 These substring values are integers in decimal representation
 and can be concatenated with semicolons.
@@ -1302,10 +1302,10 @@ represents the open equivalence class.
 represents the close equivalence class.
 
 @item [:
-represents the open character class followed by a valid character class name.
+represents the open character class symbol, and should be followed by a valid character class name.
 
 @item :]
-represents the close character class followed by a valid character class name.
+represents the close character class symbol.
 
 @item -
 represents the range if it's not first or last in a list or the ending point
