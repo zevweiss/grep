@@ -2148,12 +2148,6 @@ main (int argc, char **argv)
     out_after = default_context;
   if (out_before < 0)
     out_before = default_context;
-  if (only_matching && (out_after > 0 || out_before > 0))
-    {
-      error(0, 0, _("Any context line specification "
-		    "is ignored with -o/--only-matching."));
-      out_after = out_before = 0;
-    }
 
   if (color_option)
     {
