@@ -2,7 +2,7 @@ dnl
 dnl autoconf input file for ``GNU grep''
 dnl
 dnl Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
-dnl 2005 the Free Software Foundation, Inc.
+dnl 2005, 2006 the Free Software Foundation, Inc.
 dnl
 dnl This file is part of GNU grep.
 dnl
@@ -96,7 +96,7 @@ case "$ac_cv_prog_CC" in
 esac
 
 dnl I18N feature
-ALL_LINGUAS="bg ca cs da de el eo es et fr gl hr id it ja ko nb nl no pl pt_BR ru sl sv tr"
+ALL_LINGUAS="@ALL_LINGUAS@"
 AM_GNU_GETTEXT
 
 dnl DOS file name convention
