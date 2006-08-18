@@ -167,7 +167,7 @@ error (status, errnum, message, va_alist)
     {
 #if defined HAVE_STRERROR_R || _LIBC
       char errbuf[1024];
-# if HAVE_WORKING_STRERROR_R || _LIBC
+# if defined STRERROR_R_CHAR_P  || _LIBC
       fprintf (stderr, ": %s", __strerror_r (errnum, errbuf, sizeof errbuf));
 # else
       /* Don't use __strerror_r's return value because on some systems
