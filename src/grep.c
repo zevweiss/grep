@@ -265,6 +265,7 @@ static struct color_cap color_dict[] =
 
 static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
+static struct exclude *excluded_directory_patterns;
 /* Short options.  */
 static char const short_options[] =
 "0123456789A:B:C:D:HITUVabcd:e:f:hiKLlm:noqRrsuvwxyZz"
@@ -282,7 +283,8 @@ enum
   EXCLUDE_OPTION,
   EXCLUDE_FROM_OPTION,
   LINE_BUFFERED_OPTION,
-  LABEL_OPTION
+  LABEL_OPTION,
+  EXCLUDE_DIRECTORY_OPTION
 };
 
 /* Long options equivalences. */
@@ -307,6 +309,7 @@ static struct option const long_options[] =
   {"directories", required_argument, NULL, 'd'},
   {"exclude", required_argument, NULL, EXCLUDE_OPTION},
   {"exclude-from", required_argument, NULL, EXCLUDE_FROM_OPTION},
+  {"exclude-dir", required_argument, NULL, EXCLUDE_DIRECTORY_OPTION},
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
   {"files-without-match", no_argument, NULL, 'L'},
@@ -1332,9 +1335,14 @@ grepfile (char const *file, struct stats *stats)
 static int
 grepdir (char const *dir, struct stats const *stats)
 {
-  int status = 1;
   struct stats const *ancestor;
   char *name_space;
+  int status = 1;
+  if ( excluded_directory_patterns &&
+       excluded_filename (excluded_directory_patterns, dir, 0)  ) {
+       return 1;
+  }	
+
 
   /* Mingw32 does not support st_ino.  No known working hosts use zero
      for st_ino, so assume that the Mingw32 bug applies if it's zero.  */
@@ -1350,7 +1358,7 @@ grepdir (char const *dir, struct stats const *stats)
 	}
 
   name_space = savedir (dir, stats->stat.st_size, included_patterns,
-			excluded_patterns);
+			excluded_patterns, excluded_directory_patterns);
 
   if (! name_space)
     {
@@ -1464,6 +1472,7 @@ Output control:\n\
       --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
       --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
+      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n\
   -L, --files-without-match print only names of FILEs containing no match\n\
   -l, --files-with-matches  print only names of FILEs containing matches\n\
   -c, --count               print only a count of matching lines per FILE\n\
@@ -2098,7 +2107,6 @@ main (int argc, char **argv)
 	  excluded_patterns = new_exclude ();
 	add_exclude (excluded_patterns, optarg);
 	break;
-
       case EXCLUDE_FROM_OPTION:
 	if (!excluded_patterns)
 	  excluded_patterns = new_exclude ();
@@ -2109,11 +2117,19 @@ main (int argc, char **argv)
           }
         break;
 
+      case EXCLUDE_DIRECTORY_OPTION:
+        if (!excluded_directory_patterns)
+	  excluded_directory_patterns = new_exclude ();
+	add_exclude (excluded_directory_patterns, optarg);
+        break;	
+	
       case INCLUDE_OPTION:
 	if (!included_patterns)
 	  included_patterns = new_exclude ();
 	add_exclude (included_patterns, optarg);
 	break;
+	
+	
 
       case LINE_BUFFERED_OPTION:
 	line_buffered = 1;

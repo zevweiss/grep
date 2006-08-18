@@ -21,7 +21,7 @@
 . \" ISO 8601 date, complete format, extended representation
 . ds Dt \\*(Yr-\\*(Mn-\\*(Dy
 ..
-.Id $Id: grep.1,v 1.37 2006/08/18 21:26:54 bero Exp $
+.Id $Id: grep.1,v 1.38 2006/08/18 22:00:31 bero Exp $
 .TH GREP 1 \*(Dt "GNU grep 2.5.1-cvs" "User Commands"
 .hy 0
 .
@@ -502,12 +502,15 @@ as wildcards, and
 to quote a wildcard or backslash character literally.
 .TP
 .BI \-\^\-exclude-from= FILE
-Skip files
-.I and directories
-whose base name matches any of the file-name globs read from
+Skip files whose base name matches any of the file-name globs read from
 .I FILE
 (using wildcard matching as described under
 .BR \-\^\-exclude ).
+.TP
+.BI \-\^\-exclude-dir= DIR
+Exclude directories matching the pattern
+.I DIR
+from recursive searches.
 .TP
 .BR \-I
 Process a binary file as if it did not contain matching data; this is

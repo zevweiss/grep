@@ -643,9 +643,15 @@ and @code{\} to quote a wildcard or backslash character literally.
 @opindex --exclude-from
 @cindex exclude files
 @cindex searching directory trees
-Skip files @emph{and directories} whose base name matches
-any of the file-name globs read from @var{file}
-(using wildcard matching as described under @samp{--exclude}).
+Skip files whose base name matches any of the file-name globs
+read from @var{file} (using wildcard matching as described
+under @samp{--exclude}).
+
+@item --exclude-dir=@var{dir}
+@opindex --exclude-dir
+@cindex exclude directories
+Exclude directories matching the pattern @var{dir} from recursive
+directory searches.
 
 @item -I
 Process a binary file as if it did not contain matching data;

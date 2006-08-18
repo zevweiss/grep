@@ -100,7 +100,7 @@ isdir1 (const char *dir, const char *file)
    Return NULL if DIR cannot be opened or if out of memory. */
 char *
 savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
-	 struct exclude *excluded_patterns)
+	 struct exclude *excluded_patterns, struct exclude *excluded_directory_patterns )
 {
   DIR *dirp;
   struct dirent *dp;
@@ -141,6 +141,14 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 		continue;
 	      if (excluded_patterns
 		  && excluded_filename (excluded_patterns, dp->d_name, 0))
+		continue;
+	    }
+	     
+	  if ( excluded_directory_patterns
+	      && isdir1 (dir, dp->d_name) )
+	    {
+	      if (excluded_directory_patterns
+		  && excluded_filename (excluded_directory_patterns, dp->d_name, 0))
 		continue;
 	    }
 

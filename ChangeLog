@@ -11,6 +11,9 @@
 
 	* lib/error.c: Remove bogus warning
 
+	* lib/savedir.c, lib/savedir.h, src/grep.c, doc/*:
+	  Add --exclude-dir option (patch #5051)
+
 2005-11-18  Charles Levert  <charles_levert@gna.org>
 
 	* tests/foad1.sh: Use ": ${VERBOSE=}" so that the caller can
