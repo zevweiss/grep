@@ -1,3 +1,16 @@
+2006-08-19  Bernhard Rosenkraenzer <bero@arklinux.org>
+
+	* po/*: Sync with translation project
+
+	* doc/*: Assorted documentation updates, Patch #4610
+
+	* autogen.sh, configure.in, configure.ac.in: Autogenerate
+	  ALL_LINGUAS variable
+
+	* m4/strerror_r.m4, configure.ac.in: Fix detection of strerror_r
+
+	* lib/error.c: Remove bogus warning
+
 2005-11-18  Charles Levert  <charles_levert@gna.org>
 
 	* tests/foad1.sh: Use ": ${VERBOSE=}" so that the caller can
