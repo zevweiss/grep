@@ -1,4 +1,4 @@
-# Norwegian messages for GNU grep version 2.2.  (bokmål dialect)
+# Norwegian messages for GNU Grep version 2.2.  (bokmål dialect)
 # Copyright (C) 1996 Free Software Foundation, Inc.
 # Karl Anders Øygard <karl.oygard@fou.telenor.no>, 1996.
 #
@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.2\n"
-"POT-Creation-Date: 2001-07-31 16:17-0400\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
 "PO-Revision-Date: 1998-08-01 13:45+0200\n"
 "Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -42,73 +42,73 @@ msgstr "uferdig gjentagelsesantall"
 msgid "malformed repeat count"
 msgstr "feilaktig gjentagelsesantall"
 
-#: src/dfa.c:1239
+#: src/dfa.c:1253
 msgid "Unbalanced ("
 msgstr "Ubalansert ("
 
-#: src/dfa.c:1364
+#: src/dfa.c:1378
 msgid "No syntax specified"
 msgstr "Ingen syntaks spesifisert"
 
-#: src/dfa.c:1372
+#: src/dfa.c:1386
 msgid "Unbalanced )"
 msgstr "Ubalansert )"
 
-#: src/dfa.c:2942
+#: src/dfa.c:2956
 msgid "out of memory"
 msgstr "tomt for minne"
 
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
-#: src/search.c:209 src/search.c:293
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "minnet oppbrukt"
 
-#: src/grep.c:191
+#: src/grep.c:205
 msgid "invalid context length argument"
 msgstr "ugyldig kontekstlengde"
 
-#: src/grep.c:458
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr ""
 
-#: src/grep.c:531
+#: src/grep.c:605
 msgid "writing output"
 msgstr "skriver utdata"
 
-#: src/grep.c:804
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr ""
 
-#: src/grep.c:818
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(standard inn)"
 
-#: src/grep.c:923
+#: src/grep.c:997
 #, fuzzy, c-format
 msgid "warning: %s: %s\n"
 msgstr "%s: advarsel: %s: %s\n"
 
-#: src/grep.c:924
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr ""
 
-#: src/grep.c:972
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL]...\n"
 
-#: src/grep.c:974
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Prøv «%s --help» for mer informasjon.\n"
 
-#: src/grep.c:979
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Bruk: %s [FLAGG]... MØNSTER [FIL] ...\n"
 
-#: src/grep.c:980
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -117,7 +117,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr ""
 
-#: src/grep.c:985
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -125,7 +125,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 
-#: src/grep.c:990
+#: src/grep.c:1064
 #, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
@@ -139,17 +139,15 @@ msgstr ""
 "\n"
 "Regexp valg og fortolkning:\n"
 "  -E, --extended-regexp     MØNSTER er et utvidet regulært uttrykk\n"
-"  -F, --fixed-regexp        MØNSTER er en fast streng separert med "
-"linjeskift\n"
+"  -F, --fixed-regexp        MØNSTER er en fast streng separert med linjeskift\n"
 "  -G, --basic-regexp        MØNSTER er et grunnleggende regulært uttrykk\n"
 "  -e, --regexp=MØNSTER      bruk MØNSTER som et regulært uttrykk\n"
 "  -f, --file=FIL            hent MØNSTER fra FIL\n"
-"  -i, --ignore-case         se bort ifra forskjellen på store og små "
-"bokstaver\n"
+"  -i, --ignore-case         se bort ifra forskjellen på store og små bokstaver\n"
 "  -w, --word-regexp         MØNSTER må stemme overens med hele ord\n"
 "  -x, --line-regexp         MØNSTER må stemme overens med hele linjer\n"
 
-#: src/grep.c:997
+#: src/grep.c:1071
 #, fuzzy
 msgid ""
 "\n"
@@ -167,7 +165,7 @@ msgstr ""
 "  -V, --version             vis versioninformasjon og avslutt\n"
 "      --help                vis denne helpeteksten og avslutt\n"
 
-#: src/grep.c:1005
+#: src/grep.c:1079
 #, fuzzy
 msgid ""
 "\n"
@@ -178,6 +176,8 @@ msgid ""
 "      --line-buffered       flush output on every line\n"
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
+"      --label=LABEL         print LABEL as filename for standard input\n"
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE\n"
 "                            TYPE is 'binary', 'text', or 'without-match'\n"
@@ -185,11 +185,12 @@ msgid ""
 "  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
+"                            ACTION is 'read' or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
 "      --include=PATTERN     files that match PATTERN will be examined\n"
 "      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be "
-"skipped.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -206,11 +207,10 @@ msgstr ""
 "                            inneholder treff\n"
 "  -l, --files-with-matches  skriv bare ut navnene på FILene som inneholder\n"
 "                            treff\n"
-"  -c, --count               skriv bare ut antall linjer som inneholder "
-"treff\n"
+"  -c, --count               skriv bare ut antall linjer som inneholder treff\n"
 "                            per FIL\n"
 
-#: src/grep.c:1029
+#: src/grep.c:1107
 #, fuzzy
 msgid ""
 "\n"
@@ -219,7 +219,9 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
-"      --color, --colour     use markers to distinguish the matching string\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to distinguish the matching string\n"
+"                            WHEN may be `always', `never' or `auto'.\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -238,44 +240,48 @@ msgstr ""
 "  -u, --unix-byte-offsets   rapporter posisjoner som om CRene ikke var der\n"
 "                            (MSDOS)\n"
 
-#: src/grep.c:1044
+#: src/grep.c:1124
+#, fuzzy
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Rapportér feil til <%s>.\n"
+"Rapportér feil til <bug-gnu-utils@prep.ai.mit.edu>.\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1134
 #, fuzzy
 msgid "conflicting matchers specified"
 msgstr "søkeuttrykk er allerede spesifisert"
 
-#: src/grep.c:1347
+#: src/grep.c:1376
+msgid "unknown devices method"
+msgstr ""
+
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr ""
 
-#: src/grep.c:1414
+#: src/grep.c:1510
 #, fuzzy
 msgid "invalid max count"
 msgstr "uferdig gjentagelsesantall"
 
-#: src/grep.c:1464
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr ""
 
-#: src/grep.c:1535
+#: src/grep.c:1660
 #, fuzzy, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "grep (GNU grep) %s\n"
 
-#: src/grep.c:1537
+#: src/grep.c:1662
 #, fuzzy
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr ""
-"Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1539
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

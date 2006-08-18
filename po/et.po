@@ -1,13 +1,13 @@
 # Estonian translations for grep
 # Copyright (C) 2000 Free Software Foundation, Inc.
-# Toomas Soome <tsoome@ut.ee>, 2002.
+# Toomas Soome <Toomas.Soome@microlink.ee>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5g\n"
-"POT-Creation-Date: 2002-01-22 14:39+0100\n"
-"PO-Revision-Date: 2002-03-07 13:09+0200\n"
-"Last-Translator: Toomas Soome <tsoome@ut.ee>\n"
+"Project-Id-Version: grep 2.5.1a\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"PO-Revision-Date: 2005-03-04 09:08+0200\n"
+"Last-Translator: Toomas Soome <Toomas.Soome@microlink.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-15\n"
@@ -17,7 +17,10 @@ msgstr ""
 msgid "Memory exhausted"
 msgstr "Mälu on otsas"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "Balanseerimata ["
 
@@ -53,7 +56,8 @@ msgstr "Balanseerimata )"
 msgid "out of memory"
 msgstr "mälu on otsas"
 
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "mälu on otsas"
 
@@ -61,48 +65,48 @@ msgstr "mälu on otsas"
 msgid "invalid context length argument"
 msgstr "vigane konteksti pikkuse argument"
 
-#: src/grep.c:475
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr "sisend on loendamiseks liiga suur"
 
-#: src/grep.c:597
+#: src/grep.c:605
 msgid "writing output"
 msgstr "kirjutan väljundit"
 
-#: src/grep.c:870
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Kahendfail %s sobib\n"
 
-#: src/grep.c:884
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(standardsisend)"
 
-#: src/grep.c:989
+#: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "hoiatus: %s: %s\n"
 
-#: src/grep.c:990
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr "rekursiivne kataloogipuu tsükkel"
 
-#: src/grep.c:1038
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Kasuta: %s [VÕTI]... MUSTER [FAIL] ...\n"
 
-#: src/grep.c:1040
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Lisainfo saamiseks proovige võtit `%s --help'.\n"
 
-#: src/grep.c:1045
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Kasuta: %s [VÕTI]... MUSTER [FAIL] ...\n"
 
-#: src/grep.c:1046
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -115,7 +119,7 @@ msgstr ""
 "\n"
 "Regulaaravaldise valik ja interpreteerimine:\n"
 
-#: src/grep.c:1051
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -127,7 +131,7 @@ msgstr ""
 "  -G, --basic-regexp        MUSTER on lihtne regulaaravaldis\n"
 "  -P, --perl-regexp         MUSTER on Perl regulaaravaldis\n"
 
-#: src/grep.c:1056
+#: src/grep.c:1064
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -143,7 +147,7 @@ msgstr ""
 "  -x, --line-regexp         kasuta MUSTRIT ridade leidmiseks\n"
 "  -z, --null-data           andmerida lõppeb baidil 0, mitte reavahetusel\n"
 
-#: src/grep.c:1063
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -161,7 +165,7 @@ msgstr ""
 "      --help                esita see abiinfo ja lõpeta töö\n"
 "      --mmap                kasuta kui võimalik sisendi mällu laadimist\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1079
 msgid ""
 "\n"
 "Output control:\n"
@@ -218,7 +222,7 @@ msgstr ""
 "  -c, --count               trüki ainult leitud ridade arv faili kaupa\n"
 "  -Z, --null                trüki peale filinime bait 0\n"
 
-#: src/grep.c:1099
+#: src/grep.c:1107
 msgid ""
 "\n"
 "Context control:\n"
@@ -255,44 +259,44 @@ msgstr ""
 "lõpetab programm töö koodiga 0, kui ei leita, siis koodiga 1 ja\n"
 "kui oli mingi muu probleem, siis koodiga 2.\n"
 
-#: src/grep.c:1116
+#: src/grep.c:1124
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Teatage palun vigadest aadressil <%s>.\n"
+"Teatage palun vigadest aadressil <bug-grep@gnu.org>.\n"
 
-#: src/grep.c:1126
+#: src/grep.c:1134
 msgid "conflicting matchers specified"
 msgstr "määrati konfliktsed otsijad"
 
-#: src/grep.c:1363
+#: src/grep.c:1376
 msgid "unknown devices method"
 msgstr "tundmatu seadmete meetod"
 
-#: src/grep.c:1430
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr "tundmatu kataloogide meetod"
 
-#: src/grep.c:1497
+#: src/grep.c:1510
 msgid "invalid max count"
 msgstr "vigane maksimum"
 
-#: src/grep.c:1551
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr "tundmatu kahendfailide tüüp"
 
-#: src/grep.c:1646
+#: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1648
+#: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Autoriõigus 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1650
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

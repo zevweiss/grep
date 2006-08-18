@@ -1,39 +1,33 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# Irish translations for grep.
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# Kevin Patrick Scannell <scannell@SLU.EDU>, 2003.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep 2.5.1a\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2005-03-02 15:48-0500\n"
+"Last-Translator: Kevin Patrick Scannell <scannell@SLU.EDU>\n"
+"Language-Team: Irish <ga@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "Cuimhne ídithe"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "[ corr"
 
+# FARF - KPS
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Seicheamh éalúcháin \\ gan chríochnú"
 
 #. Cases:
 #. {M} - exact count
@@ -41,77 +35,79 @@ msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Þ¤»¤ó"
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬½ªÎ»¤·¤Þ¤»¤ó"
+msgstr "Tá líon na hathráite neamhiomlán"
 
+# more precisely, "the string indicating the repeat count" is malformed -- KPS
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬°Û¾ï¤Ç¤¹"
+msgstr "Tá líon na hathráite míchumtha"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "( corr"
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "¹½Ê¸¤¬ÆÃÄê¤µ¤ì¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Níor sonraíodh aon chomhréir"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr ") corr"
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "¥á¥â¥ê¡¼¤¬¤Ê¤¯¤Ê¤ê¤Þ¤·¤¿"
+msgstr "cuimhne ídithe"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "cuimhne ídithe"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "¹Ô¿ô¤Î»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "Tá an argóint a shonraíonn an méid chomhthéacs neamhbhailí"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "ÆþÎÏ¤¬Âç¤­¤¹¤®¤Æ¿ô¤¨¤é¤ì¤Þ¤»¤ó"
+msgstr "Tá an t-ionchur rómhór le háireamh"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "½ÐÎÏ¤Î½ñ¹þ¤ß"
+msgstr "ag scríobh an aschuir"
 
+# using lit. "matching string" throughout for "match" - KPS
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë%s¤Ï°ìÃ×¤·¤Þ¤·¤¿\n"
+msgstr "Teaghrán comhoiriúnach sa chomhad dhénártha %s\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(É¸½àÆþÎÏ)"
+msgstr "(ionchur caighdeánach)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "·Ù¹ð: %s: %s\n"
+msgstr "rabhadh: %s: %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "¥Ç¥£¥ì¥¯¥È¥ê¡¼¤¬ºÆµ¢Åª¥ë¡¼¥×¤ò¤·¤Æ¤¤¤Þ¤¹"
+msgstr "lúb athchúrsach i gcomhadlann"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å Ê¸»úÎó¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë]¡Å¡Å\n"
+msgstr "Úsáid: %s [ROGHA]... PATRÚN [COMHAD]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "¾Ü¤·¤¯¤Ï`%s --help'¤ò¼Â¹Ô¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+msgstr "Bain triail as `%s --help' chun tuilleadh eolais a fháil.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å ¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë] ¡Å¡Å\n"
+msgstr "Úsáid: %s [ROGHA]... PATRÚN [COMHAD] ...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +117,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤â¤·¤¯¤ÏÉ¸½àÆþÎÏ¤«¤é¡Ö¥Ñ¥¿¡¼¥ó¡×¤Î¸¡º÷¤ò¹Ô¤Ê¤¦¡£\n"
-"Îã: %s -i 'hello world' menu.h main.c\n"
+"Déan cuardach ar PATRÚN i ngach COMHAD nó ón ionchur caighdeánach.\n"
+"Mar shampla: %s -i 'Dia duit' rogha.h príomh.c\n"
 "\n"
-"Àµµ¬É½¸½¤ÎÁªÂò¤È²ò¼áÊýË¡:\n"
+"Roghnú agus léirmhíniú sloinn ionadaíochta:\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +129,10 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò³ÈÄ¥¤µ¤ì¤¿Àµµ¬É½¸½¤È¤¹¤ë\n"
-"  -F, --fixed-strings       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò²þ¹Ô¤Ç¶èÀÚ¤é¤ì¤¿¸ÇÄê¤ÎÊ¸»úÎó¤È¤¹¤ë\n"
-"  -G, --basic-regexp        ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò´ðËÜÅª¤ÊÀµµ¬É½¸½¤È¤¹¤ë\n"
-"  -P, --perl-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×¤òPerl¤ÎÀµµ¬É½¸½¤È¤¹¤ë\n"
+"  -E, --extended-regexp     is slonn ionadaíochta feabhsaithe PATRÚN\n"
+"  -F, --fixed-strings       is teaghráin scartha le línte nua atá i bPATRÚN\n"
+"  -G, --basic-regexp        is slonn ionadaíochta bunúsach PATRÚN\n"
+"  -P, --perl-regexp         is slonn ionadaíochta Perl PATRÚN\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,13 +143,14 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=¥Ñ¥¿¡¼¥ó     Àµµ¬É½¸½¤Ë»ØÄê¥Ñ¥¿¡¼¥ó¤ò»È¤¦\n"
-"  -f, --file=¥Õ¥¡¥¤¥ë       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò»ØÄê¥Õ¥¡¥¤¥ë¤«¤éÆÉ¤à\n"
-"  -i, --ignore-case         ÂçÊ¸»ú/¾®Ê¸»ú¤òÌµ»ë¤¹¤ë\n"
-"  -w, --word-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤òÃ±¸ìÁ´ÂÎ(Ã±¸ìÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -x, --line-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤ò¹ÔÁ´ÂÎ(¹ÔÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -z, --null-data           ½ÐÎÏ¤ò²þ¹Ô¤Ç¤Ê¤¯¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤Ç¶èÀÚ¤ë\n"
+"  -e, --regexp=PATRÚN       úsáid PATRÚN mar shlonn ionadaíochta\n"
+"  -f, --file=COMHAD         faigh PATRÚN as COMHAD\n"
+"  -i, --ignore-case         déan neamhaird den chás litreacha\n"
+"  -w, --word-regexp         ná glac mar chomhoiriúnach ach focail iomlána\n"
+"  -x, --line-regexp         ná glac mar chomhoiriúnach ach línte iomlána\n"
+"  -z, --null-data           léiríonn bearta '0' na foircinn línte (vs. \\n)\n"
 
+# cuimhnemhapáilte is in FARF ! - KPS
 #: src/grep.c:1071
 msgid ""
 "\n"
@@ -165,13 +162,14 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"¤½¤ÎÂ¾:\n"
-"  -s, --no-messages         ¥¨¥é¡¼¡¦¥á¥Ã¥»¡¼¥¸¤òÍÞ»ß¤¹¤ë\n"
-"  -v, --invert-match        °ìÃ×¤·¤Ê¤¤¹Ô¤òÂÐ¾Ý¤Ë¤¹¤ë\n"
-"  -V  --version             ¥Ð¡¼¥¸¥ç¥ó¾ðÊó¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤·¤Æ½ªÎ»¤¹¤ë\n"
-"      --help                »È¤¤Êý¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"      --mmap                ¤â¤·²ÄÇ½¤Ê¤é¡¢ÆþÎÏ¤ò¥á¥â¥ê¡¼¡¦¥Þ¥Ã¥×¤¹¤ë\n"
+"Meascra:\n"
+"  -s, --no-messages         ná taispeáin teachtaireachtaí earráidí\n"
+"  -v, --invert-match        taispeáin na línte GAN teaghrán comhoiriúnach\n"
+"  -V, --version             taispeáin eolas faoin leagan agus scoir\n"
+"      --help                taispeáin an chabhair seo agus scoir\n"
+"      --mmap                úsáid ionchur cuimhnemhapáilte más féidir\n"
 
+# fritháireamh, líne-uimhir in FARF - KPS
 #: src/grep.c:1079
 msgid ""
 "\n"
@@ -203,34 +201,36 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"½ÐÎÏÀ©¸æ:\n"
-"  -m, --max-count=²ó¿ô      »ØÄê¤·¤¿°ìÃ×²ó¿ô¤Î¸å¡¢½ªÎ»¤¹¤ë\n"
-"  -b, --byte-offset         ½ÐÎÏ¹Ô¤Ë¥Ð¥¤¥È¡¦¥ª¥Õ¥»¥Ã¥È¤âÉ½¼¨¤¹¤ë\n"
-"  -n, --line-number         ½ÐÎÏ¹Ô¤Ë¹Ô¿ô¤âÉ½¼¨¤¹¤ë\n"
-"      --line-buffered       ¹Ô¤´¤È¤Ë½ÐÎÏ¤òÁÝ¤­½Ð¤¹\n"
-"  -H, --with-filename       ³Æ°ìÃ×¤Ë¤¿¤¤¤·¤Æ¤½¤Î¥Õ¥¡¥¤¥ëÌ¾¤âÉ½¼¨¤¹¤ë\n"
-"  -h, --no-filename         Á°¤Î¥Õ¥¡¥¤¥ëÌ¾¤ò½ÐÎÏ¤«¤éÍÞ»ß¤¹¤ë\n"
-"      --label=¥é¥Ù¥ë        ¥é¥Ù¥ë¤ò¥Õ¥¡¥¤¥ëÌ¾¤È¤·¤ÆÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"  -o, --only-matching       ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¹Ô¤ÎÉôÊ¬¤À¤±¤ò¼¨¤¹\n"
-"  -q, --quiet, --silent     ÄÌ¾ï¤Î½ÐÎÏ¤ò¤¹¤Ù¤ÆÍÞ»ß¤¹¤ë\n"
-"      --binary-files=·¿     ¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¡£¡Öbinary¡×\n"
-"                            ¡Ötext¡×¡Öwithout-match¡×¤ò»ØÄê\n"
-"  -a, --text                --binary-files=text¤ÈÆ±¤¸\n"
-"  -I                        --binary-files=without-match¤ÈÆ±¤¸\n"
-"  -d, --directories=Áàºî    ¥Ç¥£¥ì¥¯¥È¥ê¡¼¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×(ÆÉ¹þ¤ß)¡¢¡Örecurse¡×(ºÆµ¢)¡¢\n"
-"                            ¡Öskip¡×(¾ÊÎ¬) ¤Î¤¤¤º¤ì¤«¤ò»ØÄê\n"
-"  -D, --devices=Áàºî        ¥Ç¥Ð¥¤¥¹¡¢FIFO¡¢¥½¥±¥Ã¥È¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×¤«¡Öskip¡×¤ò»ØÄê\n"
-"  -R, -r, --recursive       --directories=recurse¤ÈÆ±¤¸\n"
-"      --include=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¸¡ºº¤¹¤ë\n"
-"      --exclude=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"      --exclude-from=¥Õ¥¡¥¤¥ë »ØÄê¤·¤¿¥Õ¥¡¥¤¥ëÆâ¤Î¥Ñ¥¿¡¼¥ó¤È\n"
-"                            °ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"  -L, --files-without-match °ìÃ×¤Î¤Ê¤«¤Ã¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -l, --files-with-matches  °ìÃ×¤·¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -c, --count               ¥Õ¥¡¥¤¥ë¤´¤È¤Ë°ìÃ×¤·¤¿¹Ô¿ô¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -Z, --null                ¥Õ¥¡¥¤¥ëÌ¾¤Î¸å¤Ë¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤òÉ½¼¨\n"
+"Rialú aschuir:\n"
+"  -m, --max-count=UIMHIR    stop i ndiaidh UIMHIR líne comhoiriúnach\n"
+"  -b, --byte-offset         taispeáin an fritháireamh birt san aschur\n"
+"  -n, --line-number         taispeáin líne-uimhreacha san aschur\n"
+"      --line-buffered       déan sruthlú an aschuir i ndiaidh gach líne\n"
+"  -H, --with-filename       taispeáin ainm comhaid le línte comhoiriúnacha\n"
+"  -h, --no-filename         ná taispeáin ainmneacha comhad\n"
+"      --label=LIPÉAD        tá LIPÉAD ainm comhaid don ionchur caighdeánach\n"
+"  -o, --only-matching       ná taispeáin ach an teaghrán comhoiriúnach\n"
+"  -q, --quiet, --silent     múch an t-aschur gnách\n"
+"      --binary-files=CINEÁL glac le comhaid dhénártha mar CINEÁL\n"
+"                            CINEÁL = 'binary', 'text', nó 'without-match'\n"
+"  -a, --text                ar comhbhrí le '--binary-files=text'\n"
+"  -I                        ar comhbhrí le '--binary-files=without-match\n"
+"  -d, --directories=MODH    modh oibre chun comhadlanna\n"
+"                            MODH = 'read', 'recurse', nó 'skip'\n"
+"  -D, --devices=MODH        modh oibre chun gléasanna, FIFOnna, agus soicéid\n"
+"                            MODH = 'read' nó 'skip'\n"
+"  -R, -r, --recursive       ar comhbhrí le '--directories=recurse'\n"
+"      --include=PATRÚN      déan scrúdú ar chomhaid chomhoiriúnacha\n"
+"      --exclude=PATRÚN      ná déan scrúdú ar chomhaid chomhoiriúnacha\n"
+"      --exclude-from=COMHAD ná déan scrúdú ar chomhaid atá comhoiriúnach leis\n"
+"                            an phatrún i gCOMHAD\n"
+"  -L, --files-without-match ná taispeáin ach ainmneacha comhaid GAN\n"
+"                            teaghrán comhoiriúnach\n"
+"  -l, --files-with-matches  ná taispeáin ach ainmneacha comhaid LE\n"
+"                            teaghrán comhoiriúnach\n"
+"  -c, --count               ná taispeáin ach líon na teaghráin chomhoiriúnacha\n"
+"                            atá i ngach comhad\n"
+"  -Z, --null                priontáil beart '0' i ndiaidh an ainm comhaid\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,51 +252,49 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Á°¸å´Ø·¸¤ÎÀ©¸æ:\n"
-"  -B, --before-context=¿ô   °ìÃ×Á°¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -A, --after-context=¿ô    °ìÃ×¸å¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -C, --context=¹Ô¿ô        °ìÃ×Á°¸å¤Î»ØÄê¹Ô¿ô¤ÎÆâÍÆ¤â½ÐÎÏ¤¹¤ë\n"
-"  -¹Ô¿ô                     --context=¹Ô¿ô ¤ÈÆ±¤¸\n"
-"      --color[=¾ì¹ç]\n"
-"      --colour[=¾ì¹ç]       °ìÃ×¤¹¤ëÊ¸»úÎó¤òÌÜÎ©¤¿¤»¤ë¥Þ¡¼¥«¡¼¤ò»È¤¦\n"
-"                            ¡Ö¾ì¹ç¡×¤Ë¤Ï¡¢¡Öalways¡×¡Önever¡×¡Öauto¡×¤ò»ØÄê¡£\n"
-"  -U, --binary              EOL¤Ç¤ÎCRÊ¸»ú¤ò¼è¤ê¾Ê¤«¤Ê¤¤(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CRÊ¸»ú¤¬¤Ê¤¤¤â¤Î¤È¤·¤Æ¥ª¥Õ¥»¥Ã¥È¤ò\n"
-"                            ½ÐÎÏ¤¹¤ë(MS-DOS)\n"
+"Rialú comhthéacs:\n"
+"  -B, --before-context=UIMH taispeáin UIMH líne de chomhthéacs tosaigh\n"
+"  -A, --after-context=UIMH  taispeáin UIMH líne de chomhthéacs dheiridh\n"
+"  -C, --context=UIMHIR      taispeáin UIMHIR líne de chomhthéacs\n"
+"  -UIMHIR                   ar comhbhrí le '--context=UIMHIR\n"
+"      --color[=CATHAIN],\n"
+"      --colour[=CATHAIN]    aibhsigh na teaghráin chomhoiriúnacha\n"
+"                            CATHAIN = `always', `never' nó `auto'.\n"
+"  -U, --binary              ná scrios carachtair CR ag EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   déan neamhaird de CR le haghaidh fritháireamh\n"
 "\n"
-"¡Öegrep¡×¤Ï¡Ögrep -E¡×¤Î¤³¤È¤Ç¤¹¡£¡Öfgrep¡×¤Ï¡Ögrep -F¡×¤Î¤³¤È¤Ç¤¹¡£\n"
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤Î»ØÄê¤¬¤Ê¤«¤Ã¤¿¤ê¡¢¡Ö¥Õ¥¡¥¤¥ë¡×¤Ë¡Ö-¡×¤ò»ØÄê¤·¤¿¤ê¤¹¤ë¤È¡¢\n"
-"É¸½àÆþÎÏ¤«¤éÆÉ¤ß¹þ¤ß¤Þ¤¹¡£¡Ö¥Õ¥¡¥¤¥ë¡×¤Î¸Ä¿ô¤¬1°Ê²¼¤Î¾ì¹ç¡¢-h¤È²¾Äê¤·¤Þ¤¹¡£\n"
-"¤â¤·°ìÃ×¤¬¤¢¤ë¤È0¤Ç¡¢¤Ê¤¤¤È1¤Ç¡¢¾ã³²¤¬¤¢¤ë¤È2¤Ç¡¢½ªÎ»¤·¤Þ¤¹¡£\n"
+"`egrep' = `grep -E', agus `fgrep' = `grep -F'.\n"
+"Mura bhfuil COMHAD ann, nó más '-' é, léigh ón ionchur caighdeánach.\n"
+"Má tá níos lú ná dhá chomhad ann, d'úsáidfí '-h'.\n"
+"Stádas scortha 0 (fuair PATRÚN áit éigin), 1 (ní bhfuair é), nó 2 (trioblóid).\n"
 
 #: src/grep.c:1124
-#, fuzzy
 msgid ""
 "\n"
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"¥Ð¥°¤Ï <bug-gnu-utils@gnu.org> ¤ØÊó¹ð¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+"Seol tuairiscí fabhtanna chuig <bug-grep@gnu.org>.\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "»ØÄê¤·¤¿¾È¹ç»Ò¤¬¾×ÆÍ¤·¤Æ¤¤¤Þ¤¹"
+msgstr "sonraíodh patrúin chontrártha"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥Ð¥¤¥¹Áàºî¤Ç¤¹"
+msgstr "modh anaithnid don ghléasanna"
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥£¥ì¥¯¥È¥ê¡¼Áàºî¤Ç¤¹"
+msgstr "modh anaithnid do na comhadlanna"
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "°ìÃ×²ó¿ô¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "uasmhéid neamhbhailí"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "Ì¤ÃÎ¤Î¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¤Ç¤¹"
+msgstr "cineál anaithnid de chomhad dénártha"
 
 #: src/grep.c:1660
 #, c-format
@@ -312,79 +310,80 @@ msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"¤³¤ì¤Ï¥Õ¥ê¡¼¡¦¥½¥Õ¥È¥¦¥§¥¢¤Ç¤¹¡£Ê£À½¤Ë´Ø¤¹¤ë¾ò·ï¤Ï¥½¡¼¥¹¤ò¤´Í÷¤¯¤À¤µ¤¤¡£\n"
-"¤³¤ì¤ÏÌµÊÝ¾Ú¤Ç¤¹¡£±ÄÍøÌÜÅª¤ä¤¢¤ëÆÃÄê¤ÎÌÜÅª¤Ë¤à¤±¤¿Å¬Àµ¤Î¤â¤Î¤Ç¤â¤¢¤ê¤Þ¤»¤ó¡£\n"
+"Is saorbhogearra an ríomhchlár seo; féach ar an bhunchód le haghaidh\n"
+"coinníollacha cóipeála.  Níl baránta ar bith ann; go fiú níl baránta ann\n"
+"d'INDÍOLTACHT nó FEILIÚNACHT DO FHEIDHM AR LEITH.\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P¥ª¥×¥·¥ç¥ó¤Ï¥µ¥Ý¡¼¥È¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Níl an rogha '-P' ar fáil"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P¤È-z¤Î¥ª¥×¥·¥ç¥ó¤ÎÁÈ¹ç¤»¤Ï¤Ç¤­¤Þ¤»¤ó"
+msgstr "Tá na roghanna -P agus -z neamh-chomhoiriúnach le chéile"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Ì¤ÃÎ¤Î¥·¥¹¥Æ¥à¡¦¥¨¥é¡¼¤Ç¤¹"
+msgstr "Earráid chórais anaithnid"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`%s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: Tá an rogha `%s' débhríoch\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: ní cheadaítear argóint i ndiaidh na rogha `--%s'\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: ní cheadaítear argóint i ndiaidh na rogha `%c%s'\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%s'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: ní foláir argóint don rogha `%s'\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: rogha anaithnid `--%s'\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: rogha anaithnid `%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹ -- %c\n"
+msgstr "%s: rogha neamhcheadaithe -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬ÉÔÀµ¤Ç¤¹ -- %c\n"
+msgstr "%s: rogha neamhbhailí -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%c'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: ní foláir argóint don rogha -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`-W %s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: Tá an rogha `-W %s' débhríoch\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: ní cheadaítear argóint i ndiaidh na rogha `-W %s'\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -402,8 +401,8 @@ msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "¡È"
+msgstr "`"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "¡É"
+msgstr "'"

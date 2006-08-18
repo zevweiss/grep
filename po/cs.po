@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5e\n"
-"POT-Creation-Date: 2001-03-07 00:02-0500\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
 "PO-Revision-Date: 2001-08-04 12:01+02:00\n"
 "Last-Translator: Vladimir Michl <Vladimir.Michl@seznam.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -16,18 +16,18 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/grep.c:944 src/search.c:706
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
 msgstr "Pame» vyèerpána"
 
-#: src/dfa.c:486 src/dfa.c:489 src/dfa.c:507 src/dfa.c:518 src/dfa.c:542
-#: src/dfa.c:601 src/dfa.c:606 src/dfa.c:619 src/dfa.c:620 src/dfa.c:998
-#: src/dfa.c:1001 src/dfa.c:1025 src/dfa.c:1029 src/dfa.c:1030 src/dfa.c:1033
-#: src/dfa.c:1045 src/dfa.c:1046
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "Lichý poèet ["
 
-#: src/dfa.c:738
+#: src/dfa.c:741
 msgid "Unfinished \\ escape"
 msgstr "Za \\ chybí znak"
 
@@ -35,82 +35,82 @@ msgstr "Za \\ chybí znak"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:871 src/dfa.c:877 src/dfa.c:887 src/dfa.c:895 src/dfa.c:910
+#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
 msgstr "neukonèený zápis poètu opakování"
 
-#: src/dfa.c:884 src/dfa.c:901 src/dfa.c:909 src/dfa.c:913
+#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
 msgstr "deformovaný zápis poètu opakování"
 
-#: src/dfa.c:1232
+#: src/dfa.c:1253
 msgid "Unbalanced ("
 msgstr "Lichý poèet ("
 
 # ? Není zadaná syntaxe
-#: src/dfa.c:1357
+#: src/dfa.c:1378
 msgid "No syntax specified"
 msgstr "Syntaxe není urèena"
 
-#: src/dfa.c:1365
+#: src/dfa.c:1386
 msgid "Unbalanced )"
 msgstr "Lichý poèet )"
 
-#: src/dfa.c:2933
+#: src/dfa.c:2956
 msgid "out of memory"
 msgstr "nedostatek volné pamìti"
 
-#: lib/obstack.c:471 src/grep.c:343 src/kwset.c:171 src/kwset.c:177
-#: src/search.c:103 src/search.c:223 src/search.c:307
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "pamì» vyèerpána"
 
-#: src/grep.c:191
+#: src/grep.c:205
 msgid "invalid context length argument"
 msgstr "neplatný argument délky kontextu"
 
-#: src/grep.c:466
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr "poèet vstupních øádkù nelze spoèítat (je jich hodnì)"
 
-#: src/grep.c:539
+#: src/grep.c:605
 msgid "writing output"
 msgstr "zapisuje se výstup"
 
-#: src/grep.c:812
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Binární soubor %s odpovídá\n"
 
-#: src/grep.c:826
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(standardní vstup)"
 
-#: src/grep.c:931
+#: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "varování: %s: %s\n"
 
-#: src/grep.c:932
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr "smyèka pro rekurzivní prùchod"
 
-#: src/grep.c:980
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Pou¾ití: %s [PØEPÍNAÈ]... VZOREK [SOUBOR]...\n"
 
-#: src/grep.c:982
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Více informací získáte pøíkazem `%s --help'.\n"
 
-#: src/grep.c:987
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Pou¾ití: %s [PØEPÍNAÈ]... VZOREK [SOUBOR]...\n"
 
-#: src/grep.c:988
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -124,7 +124,7 @@ msgstr ""
 "\n"
 "Výbìr a interpretace regulárního výrazu:\n"
 
-#: src/grep.c:993
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -136,7 +136,7 @@ msgstr ""
 "  -G, --basic-regexp        VZOREK je základní regulární výraz\n"
 "  -P, --perl-regexp         VZOREK je regulární výraz Perlu\n"
 
-#: src/grep.c:998
+#: src/grep.c:1064
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -152,7 +152,7 @@ msgstr ""
 "  -x, --line-regexp         VZOREK bude aplikován pouze na celé øádky\n"
 "  -z, --null-data           øádek konèí nulovým bajtem místo znaku nového øádku\n"
 
-#: src/grep.c:1005
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -170,7 +170,8 @@ msgstr ""
 "      --help                vypí¹e tuto nápovìdu a skonèí\n"
 "      --mmap                kdy¾ to jde, namapuje vstup do pamìti\n"
 
-#: src/grep.c:1013
+#: src/grep.c:1079
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -180,6 +181,8 @@ msgid ""
 "      --line-buffered       flush output on every line\n"
 "  -H, --with-filename       print the filename for each match\n"
 "  -h, --no-filename         suppress the prefixing filename on output\n"
+"      --label=LABEL         print LABEL as filename for standard input\n"
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE\n"
 "                            TYPE is 'binary', 'text', or 'without-match'\n"
@@ -187,10 +190,12 @@ msgid ""
 "  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories\n"
 "                            ACTION is 'read', 'recurse', or 'skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
+"                            ACTION is 'read' or 'skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examine\n"
-"      --exclude=PATTERN     files that match PATTERN will be skip.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be skip.\n"
+"      --include=PATTERN     files that match PATTERN will be examined\n"
+"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
 "  -L, --files-without-match only print FILE names containing no match\n"
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
@@ -224,7 +229,8 @@ msgstr ""
 "  -c, --count               vypí¹e pouze poèet vyhovujících øádkù na SOUBOR\n"
 "  -Z, --null                vypí¹e nulový bajt za jménem SOUBORu\n"
 
-#: src/grep.c:1037
+#: src/grep.c:1107
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
@@ -232,7 +238,9 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
-"      --color, --colour     use markers to distinguish the matching string\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to distinguish the matching string\n"
+"                            WHEN may be `always', `never' or `auto'.\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
@@ -259,39 +267,47 @@ msgstr ""
 "  Návratový kód je 0 pøi nalezení, 1 nevyhovoval-li ¾ádný øádek a 2 pøi\n"
 "syntaktické nebo systémové chybì.\n"
 
-#: src/grep.c:1052
-msgid "\nReport bugs to <%s>.\n"
+#: src/grep.c:1124
+#, fuzzy
+msgid ""
+"\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"  Chyby v programu oznamujte na adrese <%s> (pouze\n"
+"  Chyby v programu oznamujte na adrese <bug-gnu-utils@gnu.org> (pouze\n"
 "anglicky), pøipomínky k pøekladu zasílejte na adresu <cs@li.org> (èesky).\n"
 
-#: src/grep.c:1062
+#: src/grep.c:1134
 msgid "conflicting matchers specified"
 msgstr "zadány kolidující vzorky"
 
-#: src/grep.c:1355
+#: src/grep.c:1376
+#, fuzzy
+msgid "unknown devices method"
+msgstr "neznámá obsluha adresáøù"
+
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr "neznámá obsluha adresáøù"
 
-#: src/grep.c:1422
+#: src/grep.c:1510
 msgid "invalid max count"
 msgstr "neplatný maximální poèet"
 
-#: src/grep.c:1472
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr "neznámý typ binárního souboru"
 
-#: src/grep.c:1543
+#: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1545
+#: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1547
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
@@ -300,11 +316,11 @@ msgstr ""
 "naleznete ve zdrojových textech. Toto programové vybavení je zcela BEZ ZÁRUKY,\n"
 "a to i bez záruky PRODEJNOSTI nebo VHODNOSTI PRO NÌJAKÝ KONKRÉTNÍ ÚÈEL.\n"
 
-#: src/search.c:623
+#: src/search.c:606
 msgid "The -P option is not supported"
 msgstr "Pøepínaè -P není podporován"
 
-#: src/search.c:636
+#: src/search.c:619
 msgid "The -P and -z options cannot be combined"
 msgstr "Pøepínaèe -P a -z nemohou být kombinovány"
 
@@ -385,10 +401,10 @@ msgstr "%s: pøepínaè `-W %s' musí být zadán bez argumentu\n"
 #. MARK).  A British English Unicode locale should instead
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
-#: lib/quotearg.c:265
+#: lib/quotearg.c:259
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:266
+#: lib/quotearg.c:260
 msgid "'"
 msgstr ""

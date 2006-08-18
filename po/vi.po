@@ -1,39 +1,33 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
-#
+# Vietnamese Translation for grep-2.5.1a.
+# Copyright (C) 2005 Free Software Foundation, Inc.
+# Clytie Siddall <clytie@riverland.net.au>, 2005.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep 2.5.1a\n"
+"Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2005-03-04 14:07+1000\n"
+"Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
+"Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net> \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Ş¤»¤ó"
+msgstr "Háº¿t bá»™ nhÃ³"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ ¤¬Äà¤ê¹ç¤¤¤Ş¤»¤ó"
+msgstr "ChÆ°a cÃ¢n báº±ng ["
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Ş¤»¤ó"
+msgstr "\\ escape chÆ°a xong"
 
 #. Cases:
 #. {M} - exact count
@@ -41,77 +35,77 @@ msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Ş¤»¤ó"
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬½ªÎ»¤·¤Ş¤»¤ó"
+msgstr "viá»‡c Ä‘áº¿m láº§n ná»¯a chÆ°a xong"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬°Û¾ï¤Ç¤¹"
+msgstr "viá»‡c Ä‘áº¿m láº§n ná»¯a khuyáº¿t táº­t"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( ¤¬Äà¤ê¹ç¤¤¤Ş¤»¤ó"
+msgstr "ChÆ°a cÃ¢n báº±ng ("
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "¹½Ê¸¤¬ÆÃÄê¤µ¤ì¤Æ¤¤¤Ş¤»¤ó"
+msgstr "ChÆ°a ghi rÃµ cÃº phÃ¡p nÃ o"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") ¤¬Äà¤ê¹ç¤¤¤Ş¤»¤ó"
+msgstr "ChÆ°a cÃ¢n báº±ng )"
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "¥á¥â¥ê¡¼¤¬¤Ê¤¯¤Ê¤ê¤Ş¤·¤¿"
+msgstr "háº¿t bá»™ nhá»›"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Ş¤»¤ó"
+msgstr "háº¿t bá»™ nhá»› rá»“i"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "¹Ô¿ô¤Î»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹"
+msgstr "Ä‘á»‘i sá»‘ Ä‘á»™ dÃ i ngá»¯ cáº£nh khÃ´ng há»£p lá»‡"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "ÆşÎÏ¤¬Âç¤­¤¹¤®¤Æ¿ô¤¨¤é¤ì¤Ş¤»¤ó"
+msgstr "dá»¯ liá»‡u nháº­p quÃ¡ lá»›n Ä‘á»ƒ Ä‘áº¿m Ä‘Æ°á»£c"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "½ĞÎÏ¤Î½ñ¹ş¤ß"
+msgstr "Ä‘ang ghi dá»¯ liá»‡u xuáº¥t"
 
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "¥Ğ¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë%s¤Ï°ìÃ×¤·¤Ş¤·¤¿\n"
+msgstr "Táº­p tin nhá»‹ phÃ¢n %s khá»›p vá»›i\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(É¸½àÆşÎÏ)"
+msgstr "(dá»¯ liá»‡u nháº­p chuáº©n)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "·Ù¹ğ: %s: %s\n"
+msgstr "cáº£nh bÃ¡o: %s %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "¥Ç¥£¥ì¥¯¥È¥ê¡¼¤¬ºÆµ¢Åª¥ë¡¼¥×¤ò¤·¤Æ¤¤¤Ş¤¹"
+msgstr "vÃ²ng láº·p thÆ° má»¥c Ä‘á»‡ qui"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å Ê¸»úÎó¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë]¡Å¡Å\n"
+msgstr "CÃ¡ch sá»­ dá»¥ng: %s [TÃ™YCHá»ŒN]... MáºªU [Táº¬PTIN]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "¾Ü¤·¤¯¤Ï`%s --help'¤ò¼Â¹Ô¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+msgstr "HÃ£y thá»­ lá»‡nh `%s --help' Ä‘á»ƒ xem thÃ´ng tin thÃªm.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å ¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë] ¡Å¡Å\n"
+msgstr "CÃ¡ch sá»­ dá»¥ng: %s [TÃ™YCHá»ŒN]... MáºªU [Táº¬PTIN]...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +115,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤â¤·¤¯¤ÏÉ¸½àÆşÎÏ¤«¤é¡Ö¥Ñ¥¿¡¼¥ó¡×¤Î¸¡º÷¤ò¹Ô¤Ê¤¦¡£\n"
-"Îã: %s -i 'hello world' menu.h main.c\n"
+"TÃ¬m kiáº¿m MáºªU trong má»—i Táº¬P TIN hay dá»¯ liá»‡u nháº­p chuáº©n.\n"
+"ThÃ­ dá»¥: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Àµµ¬É½¸½¤ÎÁªÂò¤È²ò¼áÊıË¡:\n"
+"CÃ¡ch chá»n vÃ  giáº£i thÃ­ch biá»ƒu thá»©c chÃ­nh quy (regex/regexp):\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +127,10 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò³ÈÄ¥¤µ¤ì¤¿Àµµ¬É½¸½¤È¤¹¤ë\n"
-"  -F, --fixed-strings       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò²ş¹Ô¤Ç¶èÀÚ¤é¤ì¤¿¸ÇÄê¤ÎÊ¸»úÎó¤È¤¹¤ë\n"
-"  -G, --basic-regexp        ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò´ğËÜÅª¤ÊÀµµ¬É½¸½¤È¤¹¤ë\n"
-"  -P, --perl-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×¤òPerl¤ÎÀµµ¬É½¸½¤È¤¹¤ë\n"
+"  -E, --extended-regexp     MáºªU lÃ  má»™t _biá»ƒu thá»©c chÃ­nh quy má»Ÿ rá»™ng_\n"
+"  -F, --fixed-strings       MáºªU lÃ  má»™t bá»™ _chuá»—i_ ngÄƒn cÃ¡ch báº±ng dÃ²ng má»›i (_cá»‘ Ä‘á»‹nh_)\n"
+"  -G, --basic-regexp        MáºªU lÃ  má»™t _biá»ƒu thá»©c chÃ­nh quy cÆ¡ báº£n_\n"
+"  -P, --perl-regexp         MáºªU lÃ  má»™t _biá»ƒu thá»©c chÃ­nh quy Perl_\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,12 +141,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=¥Ñ¥¿¡¼¥ó     Àµµ¬É½¸½¤Ë»ØÄê¥Ñ¥¿¡¼¥ó¤ò»È¤¦\n"
-"  -f, --file=¥Õ¥¡¥¤¥ë       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò»ØÄê¥Õ¥¡¥¤¥ë¤«¤éÆÉ¤à\n"
-"  -i, --ignore-case         ÂçÊ¸»ú/¾®Ê¸»ú¤òÌµ»ë¤¹¤ë\n"
-"  -w, --word-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤òÃ±¸ìÁ´ÂÎ(Ã±¸ìÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -x, --line-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤ò¹ÔÁ´ÂÎ(¹ÔÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -z, --null-data           ½ĞÎÏ¤ò²ş¹Ô¤Ç¤Ê¤¯¡¢¥Ì¥ëÃÍ¤Î¥Ğ¥¤¥È¤Ç¶èÀÚ¤ë\n"
+"  -e, --regexp=MáºªU     sá»­ dá»¥ng MáºªU áº¥y nhÆ° lÃ  _biá»ƒu thá»©c chÃ­nh quy_\n"
+"  -f, --file=Táº¬P_TIN           gá»i MáºªU tá»« _Táº¬P TIN_\n"
+"  -i, --ignore-case         _bá» qua chá»¯ hoa/thÆ°á»ng_\n"
+"  -w, --word-regexp         buá»™c MáºªU khá»›p vá»›i chá»‰ _tá»«_ toÃ n bá»™\n"
+"  -x, --line-regexp         buá»™c MáºªU khá»›p vá»›i chá»‰ _dÃ²ng_ toÃ n bá»™\n"
+"  -z, --null-data           dÃ²ng _dá»¯ liá»‡u_ káº¿t thÃºc báº±ng _0_ byte, khÃ´ng báº±ng dÃ²ng má»›i\n"
 
 #: src/grep.c:1071
 msgid ""
@@ -165,12 +159,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"¤½¤ÎÂ¾:\n"
-"  -s, --no-messages         ¥¨¥é¡¼¡¦¥á¥Ã¥»¡¼¥¸¤òÍŞ»ß¤¹¤ë\n"
-"  -v, --invert-match        °ìÃ×¤·¤Ê¤¤¹Ô¤òÂĞ¾İ¤Ë¤¹¤ë\n"
-"  -V  --version             ¥Ğ¡¼¥¸¥ç¥ó¾ğÊó¤òÉ¸½à½ĞÎÏ¤ËÉ½¼¨¤·¤Æ½ªÎ»¤¹¤ë\n"
-"      --help                »È¤¤Êı¤òÉ¸½à½ĞÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"      --mmap                ¤â¤·²ÄÇ½¤Ê¤é¡¢ÆşÎÏ¤ò¥á¥â¥ê¡¼¡¦¥Ş¥Ã¥×¤¹¤ë\n"
+"Láº·t váº·t:\n"
+"  -s, --no-messages         _khÃ´ng thÃ´ng bÃ¡o_ lá»—i\n"
+"  -v, --invert-match        chá»n dÃ²ng khÃ´ng _khá»›p_ vá»›i nhau (_Ä‘áº£o_)\n"
+"  -V, --version            in ra thÃ´ng tin _phiÃªn báº£n_ rá»“i thoÃ¡t\n"
+"      --help                hiá»ƒn thá»‹ _trá»£ giÃºp_ nÃ y rá»“i thoÃ¡t\n"
+"      --mmap                sá»­ dá»¥ng dá»¯ liá»‡u nháº­p cÃ³ _báº£ng bá»™ nhá»›_ náº¿u cÃ³ thá»ƒ\n"
 
 #: src/grep.c:1079
 msgid ""
@@ -203,34 +197,34 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"½ĞÎÏÀ©¸æ:\n"
-"  -m, --max-count=²ó¿ô      »ØÄê¤·¤¿°ìÃ×²ó¿ô¤Î¸å¡¢½ªÎ»¤¹¤ë\n"
-"  -b, --byte-offset         ½ĞÎÏ¹Ô¤Ë¥Ğ¥¤¥È¡¦¥ª¥Õ¥»¥Ã¥È¤âÉ½¼¨¤¹¤ë\n"
-"  -n, --line-number         ½ĞÎÏ¹Ô¤Ë¹Ô¿ô¤âÉ½¼¨¤¹¤ë\n"
-"      --line-buffered       ¹Ô¤´¤È¤Ë½ĞÎÏ¤òÁİ¤­½Ğ¤¹\n"
-"  -H, --with-filename       ³Æ°ìÃ×¤Ë¤¿¤¤¤·¤Æ¤½¤Î¥Õ¥¡¥¤¥ëÌ¾¤âÉ½¼¨¤¹¤ë\n"
-"  -h, --no-filename         Á°¤Î¥Õ¥¡¥¤¥ëÌ¾¤ò½ĞÎÏ¤«¤éÍŞ»ß¤¹¤ë\n"
-"      --label=¥é¥Ù¥ë        ¥é¥Ù¥ë¤ò¥Õ¥¡¥¤¥ëÌ¾¤È¤·¤ÆÉ¸½à½ĞÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"  -o, --only-matching       ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¹Ô¤ÎÉôÊ¬¤À¤±¤ò¼¨¤¹\n"
-"  -q, --quiet, --silent     ÄÌ¾ï¤Î½ĞÎÏ¤ò¤¹¤Ù¤ÆÍŞ»ß¤¹¤ë\n"
-"      --binary-files=·¿     ¥Ğ¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¡£¡Öbinary¡×\n"
-"                            ¡Ötext¡×¡Öwithout-match¡×¤ò»ØÄê\n"
-"  -a, --text                --binary-files=text¤ÈÆ±¤¸\n"
-"  -I                        --binary-files=without-match¤ÈÆ±¤¸\n"
-"  -d, --directories=Áàºî    ¥Ç¥£¥ì¥¯¥È¥ê¡¼¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×(ÆÉ¹ş¤ß)¡¢¡Örecurse¡×(ºÆµ¢)¡¢\n"
-"                            ¡Öskip¡×(¾ÊÎ¬) ¤Î¤¤¤º¤ì¤«¤ò»ØÄê\n"
-"  -D, --devices=Áàºî        ¥Ç¥Ğ¥¤¥¹¡¢FIFO¡¢¥½¥±¥Ã¥È¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×¤«¡Öskip¡×¤ò»ØÄê\n"
-"  -R, -r, --recursive       --directories=recurse¤ÈÆ±¤¸\n"
-"      --include=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¸¡ºº¤¹¤ë\n"
-"      --exclude=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"      --exclude-from=¥Õ¥¡¥¤¥ë »ØÄê¤·¤¿¥Õ¥¡¥¤¥ëÆâ¤Î¥Ñ¥¿¡¼¥ó¤È\n"
-"                            °ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"  -L, --files-without-match °ìÃ×¤Î¤Ê¤«¤Ã¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -l, --files-with-matches  °ìÃ×¤·¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -c, --count               ¥Õ¥¡¥¤¥ë¤´¤È¤Ë°ìÃ×¤·¤¿¹Ô¿ô¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -Z, --null                ¥Õ¥¡¥¤¥ëÌ¾¤Î¸å¤Ë¡¢¥Ì¥ëÃÍ¤Î¥Ğ¥¤¥È¤òÉ½¼¨\n"
+"Äiá»u khiá»ƒn dá»¯ liá»‡u xuáº¥t:\n"
+"  -m, --max-count=Sá»       ngá»«ng sau Ä‘Ã£ khá»›p Sá» láº§n (_tá»‘i Ä‘a tá»•ng sá»‘_)\n"
+"  -b, --byte-offset         in ra _khoáº£ng chá»«a trá»‘ng byte_ vá»›i má»i dÃ²ng xuáº¥t\n"
+"  -n, --line-number         in ra _sá»‘ dÃ²ng_ vá»›i má»i dÃ²ng xuáº¥t\n"
+"      --line-buffered       xÃ³a sáº¡ch dá»¯ liá»‡u xuáº¥t trÃªn má»i _dÃ²ng_ (_Ä‘á»‡m_)\n"
+"  -H, --with-filename       in ra _tÃªn_ cá»§a má»i _táº­p tin_ khá»›p (_cÃ³_)\n"
+"  -h, --no-filename         thu há»“i _tÃªn táº­p tin_ tiá»n tá»‘ vá»›i dá»¯ liá»‡u xuáº¥t (_khÃ´ng_)\n"
+"      --label=NHÃƒN         in ra NHÃƒN lÃ  tÃªn táº­p tin cho dá»¯ liá»‡u nháº­p chuáº©n\n"
+"  -o, --only-matching       hiá»ƒn thá»‹ _chá»‰_ pháº§n dÃ²ng _khá»›p_ vá»›i MáºªU\n"
+"  -q, --quiet, --silent     thu há»“i táº¥t cáº£ dá»¯ liá»‡u xuáº¥t bÃ¬nh thÆ°á»ng (_im_)\n"
+"      --binary-files=LOáº I   giáº£ Ä‘á»‹nh cÃ¡c _táº­p tin nhá»‹ phÃ¢n_ cÃ³ LOáº I áº¥y\n"
+"         \t\t\t\t\t\tLOáº I lÃ  'binary' (nhá»‹ phÃ¢n), 'text' (vÄƒn báº£n), \t\t\t\t\t\t\thay 'without-match' (khÃ´ng khá»›p vá»›i gÃ¬)\n"
+"  -a, --text                \t\tbáº±ng tÃ¹y chá»n --binary-files=text\n"
+"  -I                        \t\t\tbáº±ng tÃ¹y chá»n --binary-files=without-match\n"
+"  -d, --directories=HÃ€NH_Äá»˜NG  \tcÃ¡ch xá»­ lÃ½ thÆ° má»¥c\n"
+"                            \t\t\t\t\tHÃ€NH Äá»˜NG lÃ  'read' (Ä‘á»c), 'recurse' (Ä‘á»‡ qui), \t\t\t\t\t\t\t\thay 'skip' (bá» qua)\n"
+"  -D, --devices=HÃ€NH_Äá»˜NG      cÃ¡ch xá»­ lÃ½ thiáº¿t bá»‹, FIFO (Ä‘Æ°á»ng á»‘ng loáº¡i \n"
+"\t\t\t\t\t\t\tvÃ o trÆ°á»›c nÃªn ra trÆ°á»›c) vÃ  á»• cáº¯m\n"
+"                            \t\t\t\tHÃ€NH Äá»˜NG lÃ  'read' (Ä‘á»c) hay 'skip' (bá» qua)\n"
+"  -R, -r, --recursive       \tbáº±ng tÃ¹y chá»n --directories=recurse\n"
+"      --include=MáºªU     \t\tsáº½ khÃ¡m xÃ©t má»i táº­p tin khá»›p vá»›i MáºªU (_bao gá»“m_)\n"
+"      --exclude=MáºªU     \t\tsáº½ bá» qua má»i táº­p tin khá»›p vá»›i MáºªU (_loáº¡i trá»«_)\n"
+"      --exclude-from=Táº¬PTIN   sáº½ bá» qua má»i táº­p tin khá»›p vá»›i MáºªU trong Táº¬P TIN\n"
+"\t\t\t\t\t\t\t(_loáº¡i trá»« ... ra_)\n"
+"  -L, --files-without-match     chá»‰ in ra tÃªn _Táº¬P TIN khÃ´ng khá»›p vá»›i gÃ¬_\n"
+"  -l, --files-with-matches      chá»‰ in ra tÃªn _Táº¬P TIN khá»›p vá»›i gÃ¬_\n"
+"  -c, --count               \t\tchá»‰ in ra má»™t _tá»•ng sá»‘_ dÃ²ng khá»›p cá»§a má»—i Táº¬P TIN\n"
+"  -Z, --null                \t\tin ra _0_ byte sau tÃªn Táº¬P TIN\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,139 +246,140 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Á°¸å´Ø·¸¤ÎÀ©¸æ:\n"
-"  -B, --before-context=¿ô   °ìÃ×Á°¤Î¡Ö¿ô¡×¹Ô¤â½ĞÎÏ¤¹¤ë\n"
-"  -A, --after-context=¿ô    °ìÃ×¸å¤Î¡Ö¿ô¡×¹Ô¤â½ĞÎÏ¤¹¤ë\n"
-"  -C, --context=¹Ô¿ô        °ìÃ×Á°¸å¤Î»ØÄê¹Ô¿ô¤ÎÆâÍÆ¤â½ĞÎÏ¤¹¤ë\n"
-"  -¹Ô¿ô                     --context=¹Ô¿ô ¤ÈÆ±¤¸\n"
-"      --color[=¾ì¹ç]\n"
-"      --colour[=¾ì¹ç]       °ìÃ×¤¹¤ëÊ¸»úÎó¤òÌÜÎ©¤¿¤»¤ë¥Ş¡¼¥«¡¼¤ò»È¤¦\n"
-"                            ¡Ö¾ì¹ç¡×¤Ë¤Ï¡¢¡Öalways¡×¡Önever¡×¡Öauto¡×¤ò»ØÄê¡£\n"
-"  -U, --binary              EOL¤Ç¤ÎCRÊ¸»ú¤ò¼è¤ê¾Ê¤«¤Ê¤¤(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CRÊ¸»ú¤¬¤Ê¤¤¤â¤Î¤È¤·¤Æ¥ª¥Õ¥»¥Ã¥È¤ò\n"
-"                            ½ĞÎÏ¤¹¤ë(MS-DOS)\n"
+"Äiá»u khiá»ƒn ngá»¯ cáº£nh:\n"
+"  -B, --before-context=Sá»  \t\tin ra Sá» dÃ²ng cá»§a _ngá»¯ cáº£nh_ Ä‘i _trÆ°á»›c_\n"
+"  -A, --after-context=Sá»   \t\tin ra Sá» dÃ²ng cá»§a _ngá»¯ cáº£nh_ theo _sau_\n"
+"  -C, --context=Sá»         \t\tin ra Sá» dÃ²ng cá»§a _ngá»¯ cáº£nh_ xuáº¥t\n"
+"  -Sá»                      \t\t\tbáº±ng --context=Sá»\n"
+"      --color[=KHI_NÃ€O],\t\t(chÃ­nh táº£ Má»¹)      --colour[=KHI_NÃ€O]      \t(chÃ­nh táº£ Anh, Ãšc)\t\t\t\t\t\t\tsá»­ dá»¥ng dáº¥u khÃ¡c Ä‘á»ƒ phÃ¢n biá»‡t chuá»—i khá»›p\n"
+"               \t\t\t\t\tKHI NÃ€O cÃ³ thá»ƒ lÃ  `always' (luÃ´n luÃ´n),\n"
+"\t\t\t\t\t\t\t`never' (khÃ´ng bao giá») hay `auto' (tá»± Ä‘á»™ng).\n"
+"  -U, --binary              \t\t\tkhÃ´ng tÆ°á»›c kÃ½ tá»± vá» Ä‘áº§u dÃ²ng (CR) á»Ÿ Ä‘áº§u cuá»‘i \n"
+"\t\t\t\t\t\t\t\tdÃ²ng (EOL) (MSDOS)\n"
+"  -u, --unix-byte-offsets   \tthÃ´ng bÃ¡o khoáº£ng chá»«a trá»‘ng nhÆ° tháº¿ kÃ½ tá»± vá» \n"
+"\t\t\t\t\t\t\tÄ‘áº§u dÃ²ng (CR) khÃ´ng á»Ÿ Ä‘Ã³ (MSDOS)\n"
 "\n"
-"¡Öegrep¡×¤Ï¡Ögrep -E¡×¤Î¤³¤È¤Ç¤¹¡£¡Öfgrep¡×¤Ï¡Ögrep -F¡×¤Î¤³¤È¤Ç¤¹¡£\n"
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤Î»ØÄê¤¬¤Ê¤«¤Ã¤¿¤ê¡¢¡Ö¥Õ¥¡¥¤¥ë¡×¤Ë¡Ö-¡×¤ò»ØÄê¤·¤¿¤ê¤¹¤ë¤È¡¢\n"
-"É¸½àÆşÎÏ¤«¤éÆÉ¤ß¹ş¤ß¤Ş¤¹¡£¡Ö¥Õ¥¡¥¤¥ë¡×¤Î¸Ä¿ô¤¬1°Ê²¼¤Î¾ì¹ç¡¢-h¤È²¾Äê¤·¤Ş¤¹¡£\n"
-"¤â¤·°ìÃ×¤¬¤¢¤ë¤È0¤Ç¡¢¤Ê¤¤¤È1¤Ç¡¢¾ã³²¤¬¤¢¤ë¤È2¤Ç¡¢½ªÎ»¤·¤Ş¤¹¡£\n"
+"`egrep' cÃ³ nghÄ©a `grep -E'.\n"
+"`fgrep' cÃ³ nghÄ©a `grep -F'.\n"
+"Khi khÃ´ng cÃ³ Táº¬P TIN nÃ o, hoáº·c khi Táº¬P TIN lÃ  -, thÃ¬ hÃ£y Ä‘á»c dá»¯ liá»‡u nháº­p chuáº©n. \n"
+"Náº¿u Ã­t hÆ¡n hai Táº¬P TIN Ä‘Æ°a ra, hÃ£y giáº£ Ä‘á»‹nh -h.\n"
+" Tráº¡ng thÃ¡i thoÃ¡t lÃ  0 náº¿u cÃ³ khá»›p gÃ¬, 1 náº¿u khÃ´ng khá»›p gÃ¬, vÃ  2 náº¿u gáº·p khÃ³ nÃ o.\n"
 
 #: src/grep.c:1124
-#, fuzzy
 msgid ""
 "\n"
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"¥Ğ¥°¤Ï <bug-gnu-utils@gnu.org> ¤ØÊó¹ğ¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+"BÃ¡o cÃ¡o lá»—i nÃ o cho <bug-grep@gnu.org>.\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "»ØÄê¤·¤¿¾È¹ç»Ò¤¬¾×ÆÍ¤·¤Æ¤¤¤Ş¤¹"
+msgstr "Ä‘Ã£ ghi rÃµ dá»¯ liá»‡u khá»›p mÃ  xung Ä‘á»™t"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥Ğ¥¤¥¹Áàºî¤Ç¤¹"
+msgstr "khÃ´ng biáº¿t cÃ¡ch thá»©c thiáº¿t bá»‹"
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥£¥ì¥¯¥È¥ê¡¼Áàºî¤Ç¤¹"
+msgstr "khÃ´ng biáº¿t cÃ¡ch thá»©c thÆ° má»¥c"
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "°ìÃ×²ó¿ô¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹"
+msgstr "tá»‘i Ä‘a tá»•ng sá»‘ khÃ´ng há»£p lá»‡"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "Ì¤ÃÎ¤Î¥Ğ¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¤Ç¤¹"
+msgstr "khÃ´ng biáº¿t loáº¡i táº­p tin nhá»‹ phÃ¢n"
 
 #: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
+msgstr "%s (trÃ¬nh grep cá»§a GNU) %s\n"
 
 #: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+msgstr "Báº£n quyá»n nÄƒm 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc. (Tá»• chá»©c Pháº§n má»m Tá»± do)\n"
 
 #: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"¤³¤ì¤Ï¥Õ¥ê¡¼¡¦¥½¥Õ¥È¥¦¥§¥¢¤Ç¤¹¡£Ê£À½¤Ë´Ø¤¹¤ë¾ò·ï¤Ï¥½¡¼¥¹¤ò¤´Í÷¤¯¤À¤µ¤¤¡£\n"
-"¤³¤ì¤ÏÌµÊİ¾Ú¤Ç¤¹¡£±ÄÍøÌÜÅª¤ä¤¢¤ëÆÃÄê¤ÎÌÜÅª¤Ë¤à¤±¤¿Å¬Àµ¤Î¤â¤Î¤Ç¤â¤¢¤ê¤Ş¤»¤ó¡£\n"
+"Pháº§n má»m nÃ y tá»± do; hÃ£y xem mÃ£ nguá»“n Ä‘á»ƒ tÃ¬m tháº¥y Ä‘iá»u kiá»‡n sao chÃ©p.\n"
+"KhÃ´ng báº£o Ä‘áº£m gÃ¬ cáº£, dÃ¹ kháº£ nÄƒng bÃ¡n hay kháº£ nÄƒng lÃ m viá»‡c dá»©t khoÃ¡t.\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P¥ª¥×¥·¥ç¥ó¤Ï¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó"
+msgstr "ChÆ°a há»— trá»£ tÃ¹y chá»n -P"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P¤È-z¤Î¥ª¥×¥·¥ç¥ó¤ÎÁÈ¹ç¤»¤Ï¤Ç¤­¤Ş¤»¤ó"
+msgstr "KhÃ´ng káº¿t há»£p Ä‘Æ°á»£c hai tÃ¹y chá»n -P vÃ  -z"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Ì¤ÃÎ¤Î¥·¥¹¥Æ¥à¡¦¥¨¥é¡¼¤Ç¤¹"
+msgstr "Gáº·p lá»—i há»‡ thá»‘ng khÃ´ng biáº¿t"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`%s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: tÃ¹y chá»n `%s' lÃ  mÆ¡ há»“\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤Ï°ú¿ô¤ò¤È¤ê¤Ş¤»¤ó\n"
+msgstr "%s: tÃ¹y chá»n `--%s' khÃ´ng cho phÃ©p Ä‘á»‘i sá»‘\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤Ï°ú¿ô¤ò¤È¤ê¤Ş¤»¤ó\n"
+msgstr "%s: tÃ¹y chá»n `%c%s' khÃ´ng cho phÃ©p Ä‘á»‘i sÃ´\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%s'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: tÃ¹y chá»n `%s' cáº§n Ä‘áº¿n Ä‘á»‘i sá»‘\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤òÇ§¼±¤Ç¤­¤Ş¤»¤ó\n"
+msgstr "%s: chÆ°a cháº¥p nháº­n tÃ¹y chá»n `--%s'\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤òÇ§¼±¤Ç¤­¤Ş¤»¤ó\n"
+msgstr "%s: chÆ°a cháº¥p nháº­n tÃ¹y chá»n `%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹ -- %c\n"
+msgstr "%s: khÃ´ng cho phÃ©p tÃ¹y chá»n -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬ÉÔÀµ¤Ç¤¹ -- %c\n"
+msgstr "%s: tÃ¹y chá»n khÃ´ng há»£p lá»‡ -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%c'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: tÃ¹y chá»n cáº§n Ä‘áº¿n Ä‘á»‘i sá»‘ -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`-W %s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: tÃ¹y chá»n `-W %s' lÃ  mÆ¡ há»“\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Ş¤»¤ó\n"
+msgstr "%s: tÃ¹y chá»n `-W %s' khÃ´ng cho phÃ©p Ä‘á»‘i sá»‘\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -402,8 +397,8 @@ msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Ş¤»¤ó\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "¡È"
+msgstr "Â«"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "¡É"
+msgstr "Â»"

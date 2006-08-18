@@ -1,39 +1,32 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# Finnish translations for GNU grep.
+# Copyright © 2002 Free Software Foundation, Inc.
+# Sami J. Laine <sami.laine@iki.fi>, 2002
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep-2.5g\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2002-07-19 13:02+0200\n"
+"Last-Translator: Sami J. Laine <sami.laine@iki.fi>\n"
+"Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "Muisti loppu"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Pariton \"[\""
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Päättymätön \\-ohjausmerkki"
 
 #. Cases:
 #. {M} - exact count
@@ -41,77 +34,77 @@ msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Þ¤»¤ó"
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬½ªÎ»¤·¤Þ¤»¤ó"
+msgstr "päättymätön toistomäärä"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬°Û¾ï¤Ç¤¹"
+msgstr "virheellinen toistomäärä"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Pariton \"(\""
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "¹½Ê¸¤¬ÆÃÄê¤µ¤ì¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Syntaksia ei määritelty"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Pariton \")\""
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "¥á¥â¥ê¡¼¤¬¤Ê¤¯¤Ê¤ê¤Þ¤·¤¿"
+msgstr "muisti loppu"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "muisti loppu"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "¹Ô¿ô¤Î»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "virheellinen kontekstin pituusargumentti"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "ÆþÎÏ¤¬Âç¤­¤¹¤®¤Æ¿ô¤¨¤é¤ì¤Þ¤»¤ó"
+msgstr "syöttö on liian suuri laskentaan"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "½ÐÎÏ¤Î½ñ¹þ¤ß"
+msgstr "kirjoitetaan tulostetta"
 
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë%s¤Ï°ìÃ×¤·¤Þ¤·¤¿\n"
+msgstr "Binäärinen tiedosto %s täsmää hakuun\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(É¸½àÆþÎÏ)"
+msgstr "(vakiosyöttö)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "·Ù¹ð: %s: %s\n"
+msgstr "varoitus: %s: %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "¥Ç¥£¥ì¥¯¥È¥ê¡¼¤¬ºÆµ¢Åª¥ë¡¼¥×¤ò¤·¤Æ¤¤¤Þ¤¹"
+msgstr "rekursiivinen hakemistosilmukka"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å Ê¸»úÎó¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë]¡Å¡Å\n"
+msgstr "Käyttö: %s [VALITSIN]... HAKUKAAVA [TIEDOSTO]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "¾Ü¤·¤¯¤Ï`%s --help'¤ò¼Â¹Ô¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+msgstr "Yritä \"%s --help\" saadaksesi lisäohjeita.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å ¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë] ¡Å¡Å\n"
+msgstr "Käyttö: %s [VALITSIN]... HAKUKAAVA [TIEDOSTO] ...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +114,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤â¤·¤¯¤ÏÉ¸½àÆþÎÏ¤«¤é¡Ö¥Ñ¥¿¡¼¥ó¡×¤Î¸¡º÷¤ò¹Ô¤Ê¤¦¡£\n"
-"Îã: %s -i 'hello world' menu.h main.c\n"
+"Etsii HAKUKAAVAa jokaisesta TIEDOSTOsta tai vakiosyötteestä.\n"
+"Esimerkki: %s -i 'hei maailma' menu.h main.c\n"
 "\n"
-"Àµµ¬É½¸½¤ÎÁªÂò¤È²ò¼áÊýË¡:\n"
+"Säännöllisten lausekkeiden valinta ja tulkinta:\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +126,14 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò³ÈÄ¥¤µ¤ì¤¿Àµµ¬É½¸½¤È¤¹¤ë\n"
-"  -F, --fixed-strings       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò²þ¹Ô¤Ç¶èÀÚ¤é¤ì¤¿¸ÇÄê¤ÎÊ¸»úÎó¤È¤¹¤ë\n"
-"  -G, --basic-regexp        ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò´ðËÜÅª¤ÊÀµµ¬É½¸½¤È¤¹¤ë\n"
-"  -P, --perl-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×¤òPerl¤ÎÀµµ¬É½¸½¤È¤¹¤ë\n"
+"  -E, --extended-regexp     HAKUKAAVA on laajennettu säännöllinen lauseke\n"
+"                            (engl. extended regular expression)\n"
+"  -F, --fixed-strings       HAKUKAAVA on joukko rivinvaihdolla erotettuja\n"
+"                            merkkijonoja\n"
+"  -G, --basic-regexp        HAKUKAAVA on säännöllinen lauseke\n"
+"                            (engl. basic regular expression)\n"
+"  -P, --perl-regexp         HAKUKAAVA on Perlin säännöllinen lauseke\n"
+"                            (engl. Perl regular expression)\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,12 +144,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=¥Ñ¥¿¡¼¥ó     Àµµ¬É½¸½¤Ë»ØÄê¥Ñ¥¿¡¼¥ó¤ò»È¤¦\n"
-"  -f, --file=¥Õ¥¡¥¤¥ë       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò»ØÄê¥Õ¥¡¥¤¥ë¤«¤éÆÉ¤à\n"
-"  -i, --ignore-case         ÂçÊ¸»ú/¾®Ê¸»ú¤òÌµ»ë¤¹¤ë\n"
-"  -w, --word-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤òÃ±¸ìÁ´ÂÎ(Ã±¸ìÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -x, --line-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤ò¹ÔÁ´ÂÎ(¹ÔÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -z, --null-data           ½ÐÎÏ¤ò²þ¹Ô¤Ç¤Ê¤¯¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤Ç¶èÀÚ¤ë\n"
+"  -e, --regexp=HAKUKAAVA    käytä HAKUKAAVAa säännöllisenä lausekkeena\n"
+"  -f, --file=TIEDOSTO       nouda HAKUKAAVA TIEDOSTOsta\n"
+"  -i, --ignore-case         älä erottele pieniä ja suuria merkkejä\n"
+"  -w, --word-regexp         pakota HAKUKAAVAn täsmäys vain kokonaisiin sanoihin\n"
+"  -x, --line-regexp         pakota HAKUKAAVAn täsmäys vain kokonaisiin riveihin\n"
+"  -z, --null-data           datarivi päättyy 0-tavuun, ei rivinvaihtoon\n"
 
 #: src/grep.c:1071
 msgid ""
@@ -165,12 +162,13 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"¤½¤ÎÂ¾:\n"
-"  -s, --no-messages         ¥¨¥é¡¼¡¦¥á¥Ã¥»¡¼¥¸¤òÍÞ»ß¤¹¤ë\n"
-"  -v, --invert-match        °ìÃ×¤·¤Ê¤¤¹Ô¤òÂÐ¾Ý¤Ë¤¹¤ë\n"
-"  -V  --version             ¥Ð¡¼¥¸¥ç¥ó¾ðÊó¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤·¤Æ½ªÎ»¤¹¤ë\n"
-"      --help                »È¤¤Êý¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"      --mmap                ¤â¤·²ÄÇ½¤Ê¤é¡¢ÆþÎÏ¤ò¥á¥â¥ê¡¼¡¦¥Þ¥Ã¥×¤¹¤ë\n"
+"Sekalaista:\n"
+"  -s, --no-messages         estä virheilmoitusten tulostaminen\n"
+"  -v, --invert-match        valitse ei-täsmäävät rivit\n"
+"  -V, --version             tulosta versiotiedot ja lopeta suoritus\n"
+"      --help                tulosta tämä ohje ja lopeta suoritus\n"
+"      --mmap                käytä muistiinkartoitettua syötettä, jos\n"
+"                            mahdollista\n"
 
 #: src/grep.c:1079
 msgid ""
@@ -203,34 +201,33 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"½ÐÎÏÀ©¸æ:\n"
-"  -m, --max-count=²ó¿ô      »ØÄê¤·¤¿°ìÃ×²ó¿ô¤Î¸å¡¢½ªÎ»¤¹¤ë\n"
-"  -b, --byte-offset         ½ÐÎÏ¹Ô¤Ë¥Ð¥¤¥È¡¦¥ª¥Õ¥»¥Ã¥È¤âÉ½¼¨¤¹¤ë\n"
-"  -n, --line-number         ½ÐÎÏ¹Ô¤Ë¹Ô¿ô¤âÉ½¼¨¤¹¤ë\n"
-"      --line-buffered       ¹Ô¤´¤È¤Ë½ÐÎÏ¤òÁÝ¤­½Ð¤¹\n"
-"  -H, --with-filename       ³Æ°ìÃ×¤Ë¤¿¤¤¤·¤Æ¤½¤Î¥Õ¥¡¥¤¥ëÌ¾¤âÉ½¼¨¤¹¤ë\n"
-"  -h, --no-filename         Á°¤Î¥Õ¥¡¥¤¥ëÌ¾¤ò½ÐÎÏ¤«¤éÍÞ»ß¤¹¤ë\n"
-"      --label=¥é¥Ù¥ë        ¥é¥Ù¥ë¤ò¥Õ¥¡¥¤¥ëÌ¾¤È¤·¤ÆÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"  -o, --only-matching       ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¹Ô¤ÎÉôÊ¬¤À¤±¤ò¼¨¤¹\n"
-"  -q, --quiet, --silent     ÄÌ¾ï¤Î½ÐÎÏ¤ò¤¹¤Ù¤ÆÍÞ»ß¤¹¤ë\n"
-"      --binary-files=·¿     ¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¡£¡Öbinary¡×\n"
-"                            ¡Ötext¡×¡Öwithout-match¡×¤ò»ØÄê\n"
-"  -a, --text                --binary-files=text¤ÈÆ±¤¸\n"
-"  -I                        --binary-files=without-match¤ÈÆ±¤¸\n"
-"  -d, --directories=Áàºî    ¥Ç¥£¥ì¥¯¥È¥ê¡¼¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×(ÆÉ¹þ¤ß)¡¢¡Örecurse¡×(ºÆµ¢)¡¢\n"
-"                            ¡Öskip¡×(¾ÊÎ¬) ¤Î¤¤¤º¤ì¤«¤ò»ØÄê\n"
-"  -D, --devices=Áàºî        ¥Ç¥Ð¥¤¥¹¡¢FIFO¡¢¥½¥±¥Ã¥È¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×¤«¡Öskip¡×¤ò»ØÄê\n"
-"  -R, -r, --recursive       --directories=recurse¤ÈÆ±¤¸\n"
-"      --include=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¸¡ºº¤¹¤ë\n"
-"      --exclude=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"      --exclude-from=¥Õ¥¡¥¤¥ë »ØÄê¤·¤¿¥Õ¥¡¥¤¥ëÆâ¤Î¥Ñ¥¿¡¼¥ó¤È\n"
-"                            °ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"  -L, --files-without-match °ìÃ×¤Î¤Ê¤«¤Ã¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -l, --files-with-matches  °ìÃ×¤·¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -c, --count               ¥Õ¥¡¥¤¥ë¤´¤È¤Ë°ìÃ×¤·¤¿¹Ô¿ô¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -Z, --null                ¥Õ¥¡¥¤¥ëÌ¾¤Î¸å¤Ë¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤òÉ½¼¨\n"
+"Tulosteen hallinta:\n"
+"  -m, --max-count=N         lopeta kun N täsmäystä on löytynyt\n"
+"  -b, --byte-offset         tulosta tavuosoite tulosteriveille\n"
+"  -n, --line-number         tulosta rivinumero tulosteriveille\n"
+"      --line-buffered       tyhjennä puskuri jokaisella tulosterivillä\n"
+"  -H, --with-filename       tulosta tiedostonimi jokaiselle täsmäykselle\n"
+"  -h, --no-filename         estä tiedostonimen tulostaminen\n"
+"      --label=LEIMA         tulosta LEIMA tiedostonimen sijaan luettaessa\n"
+"                            vakiosyöttettä\n"
+"  -o, --only-matching       näytä vain HAKUKAAVAan täsmäävä osa rivistä\n"
+"  -q, --quiet, --silent     estä kaikki normaalit tulosteet\n"
+"      --binary-files=TYYPPI oleta binääristen tiedostojen olevan TYYPPIä\n"
+"                            TYYPPI on 'binary', 'text', tai 'without-match'\n"
+"  -a, --text                sama kuin --binary-files=text\n"
+"  -I                        sama kuin --binary-files=without-match\n"
+"  -d, --directories=TOIMI   hakemistojen käsittelytapa\n"
+"                            TOIMI on 'read', 'recurse', tai 'skip'\n"
+"  -D, --devices=TOIMI       laitetiedostojen, FIFOjen ja sokettien käsittely\n"
+"                            TOIMI on 'read' tai 'skip'\n"
+"  -R, -r, --recursive       sama kuin --directories=recurse\n"
+"      --include=HAKUKAAVA   HAKUKAAVAan täsmäävät tiedostot tutkitaan\n"
+"      --exclude=HAKUKAAVA   HAKUKAAVAan täsmäävät tiedostot jätetään tutkimatta\n"
+"      --exclude-from=TIED.  HAKUKAAVAan täsmäävät tiedostot, joiden nimet\n"
+"                            luetaan TIED.ostosta, jätetään tutkimatta\n"
+"  -L, --files-without-match tulosta vain TIEDOSTOt, joista ei löyty täsmäystä\n"
+"  -l, --files-with-matches  tulosta vain TIEDOSTOt, joista löytyy täsmäys\n"
+"  -c, --count               tulosta vain täsmäysten määrä TIEDOSTOlle\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,22 +249,19 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Á°¸å´Ø·¸¤ÎÀ©¸æ:\n"
-"  -B, --before-context=¿ô   °ìÃ×Á°¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -A, --after-context=¿ô    °ìÃ×¸å¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -C, --context=¹Ô¿ô        °ìÃ×Á°¸å¤Î»ØÄê¹Ô¿ô¤ÎÆâÍÆ¤â½ÐÎÏ¤¹¤ë\n"
-"  -¹Ô¿ô                     --context=¹Ô¿ô ¤ÈÆ±¤¸\n"
-"      --color[=¾ì¹ç]\n"
-"      --colour[=¾ì¹ç]       °ìÃ×¤¹¤ëÊ¸»úÎó¤òÌÜÎ©¤¿¤»¤ë¥Þ¡¼¥«¡¼¤ò»È¤¦\n"
-"                            ¡Ö¾ì¹ç¡×¤Ë¤Ï¡¢¡Öalways¡×¡Önever¡×¡Öauto¡×¤ò»ØÄê¡£\n"
-"  -U, --binary              EOL¤Ç¤ÎCRÊ¸»ú¤ò¼è¤ê¾Ê¤«¤Ê¤¤(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CRÊ¸»ú¤¬¤Ê¤¤¤â¤Î¤È¤·¤Æ¥ª¥Õ¥»¥Ã¥È¤ò\n"
-"                            ½ÐÎÏ¤¹¤ë(MS-DOS)\n"
+"Sisällön hallinta:\n"
+"  -B, --before-context=N    tulosta N riviä ennen sisältöä\n"
+"  -A, --after-context=N     tulosta N riviä sisällön jälkeen\n"
+"  -C, --context=N           tulosta N riviä tulostesisältöä\n"
+"  -NUM                      sama kuin --context=N\n"
+"      --color[=KOSKA],\n"
+"      --colour[=KOSKA]      käytä markkereita täsmäävän merkkijonon\n"
+"                            erottamiseen\n"
+"                            KOSKA voi olla `always', `never' tai `auto'.\n"
+"  -U, --binary              älä poista CR-merkkiä rivin lopusta (MSDOS)\n"
+"  -u, --unix-byte-offsets   ilmoita siirtymät kuten CR-merkkejä ei olisi\n"
+"                            lainkaan (MSDOS)\n"
 "\n"
-"¡Öegrep¡×¤Ï¡Ögrep -E¡×¤Î¤³¤È¤Ç¤¹¡£¡Öfgrep¡×¤Ï¡Ögrep -F¡×¤Î¤³¤È¤Ç¤¹¡£\n"
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤Î»ØÄê¤¬¤Ê¤«¤Ã¤¿¤ê¡¢¡Ö¥Õ¥¡¥¤¥ë¡×¤Ë¡Ö-¡×¤ò»ØÄê¤·¤¿¤ê¤¹¤ë¤È¡¢\n"
-"É¸½àÆþÎÏ¤«¤éÆÉ¤ß¹þ¤ß¤Þ¤¹¡£¡Ö¥Õ¥¡¥¤¥ë¡×¤Î¸Ä¿ô¤¬1°Ê²¼¤Î¾ì¹ç¡¢-h¤È²¾Äê¤·¤Þ¤¹¡£\n"
-"¤â¤·°ìÃ×¤¬¤¢¤ë¤È0¤Ç¡¢¤Ê¤¤¤È1¤Ç¡¢¾ã³²¤¬¤¢¤ë¤È2¤Ç¡¢½ªÎ»¤·¤Þ¤¹¡£\n"
 
 #: src/grep.c:1124
 #, fuzzy
@@ -276,27 +270,27 @@ msgid ""
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"¥Ð¥°¤Ï <bug-gnu-utils@gnu.org> ¤ØÊó¹ð¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+"Ilmoita virheistä osoitteeseen <bug-gnu-utils@gnu.org>.\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "»ØÄê¤·¤¿¾È¹ç»Ò¤¬¾×ÆÍ¤·¤Æ¤¤¤Þ¤¹"
+msgstr "määritelty ristiriitaiset haut"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥Ð¥¤¥¹Áàºî¤Ç¤¹"
+msgstr "tuntematon laitemetodi"
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥£¥ì¥¯¥È¥ê¡¼Áàºî¤Ç¤¹"
+msgstr "tuntematon hakemistometodi"
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "°ìÃ×²ó¿ô¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "virheellinen maksimimäärä"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "Ì¤ÃÎ¤Î¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¤Ç¤¹"
+msgstr "tuntematon binääritiedoston tyyppi"
 
 #: src/grep.c:1660
 #, c-format
@@ -312,79 +306,81 @@ msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"¤³¤ì¤Ï¥Õ¥ê¡¼¡¦¥½¥Õ¥È¥¦¥§¥¢¤Ç¤¹¡£Ê£À½¤Ë´Ø¤¹¤ë¾ò·ï¤Ï¥½¡¼¥¹¤ò¤´Í÷¤¯¤À¤µ¤¤¡£\n"
-"¤³¤ì¤ÏÌµÊÝ¾Ú¤Ç¤¹¡£±ÄÍøÌÜÅª¤ä¤¢¤ëÆÃÄê¤ÎÌÜÅª¤Ë¤à¤±¤¿Å¬Àµ¤Î¤â¤Î¤Ç¤â¤¢¤ê¤Þ¤»¤ó¡£\n"
+"Tämä ohjelma on vapaa ohjelmisto; tarkista jakeluehdot lähdekoodista.\n"
+"Tälle ohjelmalle ei anneta minkäänlaista takuuta; ei edes takuuta\n"
+"kaupallisesti hyväksyttävästä laadusta tai soveltuvuudesta tiettyyn\n"
+"tarkoitukseen.\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P¥ª¥×¥·¥ç¥ó¤Ï¥µ¥Ý¡¼¥È¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Valitsin -P ei ole tuettu"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P¤È-z¤Î¥ª¥×¥·¥ç¥ó¤ÎÁÈ¹ç¤»¤Ï¤Ç¤­¤Þ¤»¤ó"
+msgstr "Valitsimia -P ja -z ei voi käyttää samanaikaisesti"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Ì¤ÃÎ¤Î¥·¥¹¥Æ¥à¡¦¥¨¥é¡¼¤Ç¤¹"
+msgstr "Tuntematon järjestelmävirhe"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`%s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: valitsin \"%s\" on moniselitteinen\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: valitsin \"--%s\" ei salli argumenttia\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: valitsin \"%c%s\" ei salli argumenttia\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%s'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: valitsin \"%s\" tarvitsee argumentin\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: tuntematon valitsin \"--%s\"\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: tuntematon valitsin \"%c%s\"\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹ -- %c\n"
+msgstr "%s: epäkelpo valitsin -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬ÉÔÀµ¤Ç¤¹ -- %c\n"
+msgstr "%s: virheellinen valitsin -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%c'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: valitsin tarvitsee argumentin -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`-W %s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: valitsin \"-W %s\" on moniselitteinen\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: valitsin \"-W -%s\" ei salli argumenttia\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -402,8 +398,8 @@ msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "¡È"
+msgstr "\""
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "¡É"
+msgstr "\""

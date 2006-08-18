@@ -1,39 +1,32 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# Triditional Chinese Translatino of grep
+# Copyright (C) 2004 Free Software Foundation, Inc.
+# Yuan-Chen Cheng <ycheng@sinica.edu.tw>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version:  grep 2.5g\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2004-12-01 01:01+0800\n"
+"Last-Translator: Yuan-Chen Cheng <ycheng@sinica.edu.tw>\n"
+"Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=big5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "丟乒伉□互簫曰引六氏"
+msgstr "記憶體用盡"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ 互懾曰寧中引六氏"
+msgstr "未成對的 ["
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ 巨旦弗□皿互蔽弇仄化中引六氏"
+msgstr "未正確結束的 \\ 逸出"
 
 #. Cases:
 #. {M} - exact count
@@ -41,77 +34,77 @@ msgstr "\\ 巨旦弗□皿互蔽弇仄化中引六氏"
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "楞忒仄市它件玄互蔽弇仄引六氏"
+msgstr "未完成的重複計次"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "楞忒仄市它件玄互唱橘匹允"
+msgstr "格式錯誤的重複次數"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( 互懾曰寧中引六氏"
+msgstr "未配對的 ("
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "厭妐互た爛今木化中引六氏"
+msgstr "並未指定語法"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") 互懾曰寧中引六氏"
+msgstr "未配對的 )"
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "丟乒伉□互卅仁卅曰引仄凶"
+msgstr "記憶體用盡"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "丟乒伉□互簫曰引六氏"
+msgstr "記憶體用盡"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "墊醒及隙爛互棉啜勻化中引允"
+msgstr "無效的長度引數"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "ェ恘互釐五允亢化醒尹日木引六氏"
+msgstr "輸入過長無法計數"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "請恘及踏慇心"
+msgstr "正在輸出"
 
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "田奶瓜伉□’白央奶伙%s反域譙仄引仄凶\n"
+msgstr "二進位格式檔案 %s 符合\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(伓賞ェ恘)"
+msgstr "(標準輸入)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "煞屢: %s: %s\n"
+msgstr "警告: %s: %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "犯奴伊弁玄伉□互瘋窖讀伙□皿毛仄化中引允"
+msgstr "遞迴的目錄結構"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "銀迕芊: %s [左皿扑亦件]ˍˍ 妐儂昫由正□件 [白央奶伙]ˍˍ\n"
+msgstr "用法: %s [選項]... 樣板 [檔案]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "擇仄仁反`%s --help'毛撢墊仄化仁分今中﹝\n"
+msgstr "請使用 `%s --help' 以閱讀更多的資訊.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "銀迕芊: %s [左皿扑亦件]ˍˍ 由正□件 [白央奶伙] ˍˍ\n"
+msgstr "用法: %s [選項]... 樣板 [檔案]...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +114,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"＞白央奶伙＝手仄仁反伓賞ェ恘井日＞由正□件＝及腹綢毛墊卅丹﹝\n"
-"拺: %s -i 'hello world' menu.h main.c\n"
+"在各個檔案或是標準輸入中找尋樣板.\n"
+"例如: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"懇筋刓蜇及薊鎗午荸澄杅芊:\n"
+"正規選項以及解譯:\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +126,10 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ＞由正□件＝毛傀艦今木凶懇筋刓蜇午允月\n"
-"  -F, --fixed-strings       ＞由正□件＝毛荼墊匹嗉濠日木凶裔爛及妐儂昫午允月\n"
-"  -G, --basic-regexp        ＞由正□件＝毛湘呿讀卅懇筋刓蜇午允月\n"
-"  -P, --perl-regexp         ＞由正□件＝毛Perl及懇筋刓蜇午允月\n"
+"  -E, --extended-regexp     PATTERN 是一個延伸的正規表示式\n"
+"  -F, --fixed-strings       PATTERN 是一組以換行分隔的字串\n"
+"  -G, --basic-regexp        PATTERN 是一個基本的正規表示式\n"
+"  -P, --perl-regexp         PATTERN 是一個 Perl 的正規表示式\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,12 +140,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=由正□件     懇筋刓蜇卞隙爛由正□件毛銀丹\n"
-"  -f, --file=白央奶伙       ＞由正□件＝毛隙爛白央奶伙井日づ戈\n"
-"  -i, --ignore-case         釐妐儂/凝妐儂毛拑骰允月\n"
-"  -w, --word-regexp         ＞由正□件＝域譙毛簽賄蟈蟲(簽賄簽匏)匹墊卅丹\n"
-"  -x, --line-regexp         ＞由正□件＝域譙毛墊蟈蟲(墊簽匏)匹墊卅丹\n"
-"  -z, --null-data           請恘毛荼墊匹卅仁﹜甘伙襖及田奶玄匹嗉濠月\n"
+"  -e, --regexp=PATTERN      以 PATTERN 為正規表示式\n"
+"  -f, --file=FILE           以 FILE 內容取得樣板 (PATTERN)\n"
+"  -i, --ignore-case         忽略大小寫差異\n"
+"  -w, --word-regexp         以樣板(PATTERN)找尋時, 只配對單字而非單字中片段\n"
+"  -x, --line-regexp         以樣板(PATTERN)找尋時, 指配對一整行而非片段\n"
+"  -z, --null-data           每行資料以 0 這個位元結束, 而非換行符號\n"
 
 #: src/grep.c:1071
 msgid ""
@@ -165,12 +158,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"公及職:\n"
-"  -s, --no-messages         巨仿□’丟永本□斥毛俅鞅允月\n"
-"  -v, --invert-match        域譙仄卅中墊毛覆擂卞允月\n"
-"  -V  --version             田□斥亦件樹扷毛伓賞請恘卞刓憎仄化蔽弇允月\n"
-"      --help                銀中杅毛伓賞請恘卞刓憎允月\n"
-"      --mmap                手仄第Х卅日﹜ェ恘毛丟乒伉□’穴永皿允月\n"
+"其他參數:\n"
+"  -s, --no-messages         不顯示錯誤訊息\n"
+"  -v, --invert-match        列出不相符資料行\n"
+"  -V, --version             印出版本資訊後結束\n"
+"      --help                顯示此使用方法後結束\n"
+"      --mmap                如果允許, 輸入檔案使用記憶體對應法\n"
 
 #: src/grep.c:1079
 msgid ""
@@ -203,34 +196,32 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"請恘孺豢:\n"
-"  -m, --max-count=莢醒      隙爛仄凶域譙莢醒及詨﹜蔽弇允月\n"
-"  -b, --byte-offset         請恘墊卞田奶玄’左白本永玄手刓憎允月\n"
-"  -n, --line-number         請恘墊卞墊醒手刓憎允月\n"
-"      --line-buffered       墊仍午卞請恘毛鄹五請允\n"
-"  -H, --with-filename       備域譙卞凶中仄化公及白央奶伙抩手刓憎允月\n"
-"  -h, --no-filename         蟆及白央奶伙抩毛請恘井日俅鞅允月\n"
-"      --label=仿矛伙        仿矛伙毛白央奶伙抩午仄化伓賞請恘卞刓憎允月\n"
-"  -o, --only-matching       由正□件午域譙允月墊及朿坌分仃毛憎允\n"
-"  -q, --quiet, --silent     騷橘及請恘毛允屯化俅鞅允月\n"
-"      --binary-files=滇     田奶瓜伉□’白央奶伙及滇﹝＞binary＝\n"
-"                            ＞text＝＞without-match＝毛隙爛\n"
-"  -a, --text                --binary-files=text午き元\n"
-"  -I                        --binary-files=without-match午き元\n"
-"  -d, --directories=醜綜    犯奴伊弁玄伉□尺及醜綜\n"
-"                            ＞read＝(づ慇心)﹜＞recurse＝(瘋窖)﹜\n"
-"                            ＞skip＝(彊峎) 及中內木井毛隙爛\n"
-"  -D, --devices=醜綜        犯田奶旦﹜FIFO﹜末弗永玄尺及醜綜\n"
-"                            ＞read＝井＞skip＝毛隙爛\n"
-"  -R, -r, --recursive       --directories=recurse午き元\n"
-"      --include=由正□件    由正□件午域譙允月白央奶伙毛腹犖允月\n"
-"      --exclude=由正□件    由正□件午域譙允月白央奶伙毛彊峎允月﹝\n"
-"      --exclude-from=白央奶伙 隙爛仄凶白央奶伙ま及由正□件午\n"
-"                            域譙允月白央奶伙毛彊峎允月﹝\n"
-"  -L, --files-without-match 域譙及卅井勻凶白央奶伙抩及心毛刓憎允月\n"
-"  -l, --files-with-matches  域譙仄凶白央奶伙抩及心毛刓憎允月\n"
-"  -c, --count               白央奶伙仍午卞域譙仄凶墊醒及心毛刓憎允月\n"
-"  -Z, --null                白央奶伙抩及詨卞﹜甘伙襖及田奶玄毛刓憎\n"
+"輸出控制:\n"
+"  -m, --max-count=NUM       在顯示 NUM 個結果後停止\n"
+"  -b, --byte-offset         只顯示合乎條件資料以 byte 為記數單位的位置\n"
+"  -n, --line-number         只顯示合乎條件的行列編號\n"
+"      --line-buffered       每一行輸出後都立即顯示\n"
+"  -H, --with-filename       每行結果都印出檔案名稱\n"
+"  -h, --no-filename         輸出時不顯示前置的檔案名稱\n"
+"      --label=LABEL         對於標準輸入, 在顯示檔名處顯示 LABEL\n"
+"  -o, --only-matching       只顯示一行資料中與樣板條件相符的部分\n"
+"  -q, --quiet, --silent     關閉所有一般輸出的\n"
+"      --binary-files=TYPE   設定二進位檔案型別為 TYPE\n"
+"                            TYPE 是 'binary', 'text', 或 'without-match' 之一\n"
+"  -a, --text                等同於 --binary-files=text\n"
+"  -I                        等同於 --binary-files=without-match\n"
+"  -d, --directories=ACTION  處理目錄的方式\n"
+"                            ACTION 是 'read', 'recurse', 或 'skip' 之一\n"
+"  -D, --devices=ACTION      處理裝置檔案, FIFO 以及 socket 的方式\n"
+"                            ACTION 是 'read' 或 'skip'之一\n"
+"  -R, -r, --recursive       等同於 --directories=recurse\n"
+"      --include=PATTERN     檔名與 PATTERN 相符的將會被檢驗\n"
+"      --exclude=PATTERN     檔名與 PATTERN 相符的將會被略過\n"
+"      --exclude-from=FILE   檔名與 FILE 檔案中的 PATTERN 相符的將會被略過\n"
+"  -L, --files-without-match 只列出找不到相符的檔案名稱\n"
+"  -l, --files-with-matches  只列出有發現與樣板相符的檔案\n"
+"  -c, --count               只針對每的檔案列出該檔案相符個數\n"
+"  -Z, --null                在檔名之後輸出一個值為 0 的位元\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,22 +243,21 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"蟆詨楮溢及孺豢:\n"
-"  -B, --before-context=醒   域譙蟆及＞醒＝墊手請恘允月\n"
-"  -A, --after-context=醒    域譙詨及＞醒＝墊手請恘允月\n"
-"  -C, --context=墊醒        域譙蟆詨及隙爛墊醒及ま芢手請恘允月\n"
-"  -墊醒                     --context=墊醒 午き元\n"
-"      --color[=樺寧]\n"
-"      --colour[=樺寧]       域譙允月妐儂昫毛杴峏凶六月穴□市□毛銀丹\n"
-"                            ＞樺寧＝卞反﹜＞always＝＞never＝＞auto＝毛隙爛﹝\n"
-"  -U, --binary              EOL匹及CR妐儂毛潸曰彊井卅中(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CR妐儂互卅中手及午仄化左白本永玄毛\n"
-"                            請恘允月(MS-DOS)\n"
+"上下文狀態控制:\n"
+"  -B, --before-context=NUM  印出相符文字行前面的 NUM 行文字\n"
+"  -A, --after-context=NUM   印出相符文字行後面的 NUM 行文字\n"
+"  -C, --context=NUM         印出相符文字行前後的 NUM 行文字\n"
+"  -NUM                      與 --context=NUM 相同\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       使用標記來突顯找到的字串\n"
+"                            WHEN 可以是 `always', `never' 或 `auto'.\n"
+"  -U, --binary              不要刪去在 EOL 之後的 CR 字元 (MSDOS)\n"
+"  -u, --unix-byte-offsets   在回報位移值時, 忽略 CR 字元的位移數目 (MSDOS)\n"
 "\n"
-"＞egrep＝反＞grep -E＝及仇午匹允﹝＞fgrep＝反＞grep -F＝及仇午匹允﹝\n"
-"＞白央奶伙＝及隙爛互卅井勻凶曰﹜＞白央奶伙＝卞＞-＝毛隙爛仄凶曰允月午﹜\n"
-"伓賞ェ恘井日づ心慇心引允﹝＞白央奶伙＝及蜊醒互1動票及樺寧﹜-h午移爛仄引允﹝\n"
-"手仄域譙互丐月午0匹﹜卅中午1匹﹜整陴互丐月午2匹﹜蔽弇仄引允﹝\n"
+"`egrep' 代表 `grep -E'.  `fgrep' 代表 `grep -F'.\n"
+"當沒有提供 FILE, 或是 FILE 是 -, 則從表準輸入讀取資料.  如果所提供的檔案\n"
+"少於兩格, 則設定為 -h 參數有輸入. 假設有找到資料, 程式回傳狀態為 0, 否則\n"
+"傳回 1, 如果程式執行中出現錯誤, 則傳回 2.\n"
 
 #: src/grep.c:1124
 #, fuzzy
@@ -276,27 +266,27 @@ msgid ""
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"田弘反 <bug-gnu-utils@gnu.org> 尺扷屢仄化仁分今中﹝\n"
+"請將發現的錯誤，以電子郵件寄到 <bug-gnu-utils@gnu.org>\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "隙爛仄凶寰寧閡互擋ど仄化中引允"
+msgstr "指定了互相衝突的樣板"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "怳襞及犯田奶旦醜綜匹允"
+msgstr "未知的裝置方法"
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "怳襞及犯奴伊弁玄伉□醜綜匹允"
+msgstr "未知的目錄方法"
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "域譙莢醒互棉啜勻化中引允"
+msgstr "無效的最大計次"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "怳襞及田奶瓜伉□’白央奶伙及滇匹允"
+msgstr "未知的二進位檔案型態"
 
 #: src/grep.c:1660
 #, c-format
@@ -305,86 +295,86 @@ msgstr "%s (GNU grep) %s\n"
 
 #: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+msgstr "版權所有 1988, 1992-1999, 2000, 2001 自由軟體基金會.\n"
 
 #: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"仇木反白伉□’末白玄它尼失匹允﹝呁擠卞楮允月橢瘀反末□旦毛仍厖仁分今中﹝\n"
-"仇木反拑忡據匹允﹝採厙杴讀支丐月た爛及杴讀卞戈仃凶贗懇及手及匹手丐曰引六氏﹝\n"
+"這個程式是自由軟體; 請參閱其版權條款. 此軟體沒有\n"
+"沒有任何保証; 也沒有任何保証它使用於某一特定目的.\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P左皿扑亦件反扔禾□玄仄化中引六氏"
+msgstr "並不支援參數 -P"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P午-z及左皿扑亦件及賺寧六反匹五引六氏"
+msgstr "參數 -P 以及 參數 -z 並不能結合使用"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "怳襞及扑旦氾丞’巨仿□匹允"
+msgstr "未知的系統錯誤"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: 左皿扑亦件及隙爛`%s'互菇呴匹允\n"
+msgstr "%s: 選項 `%s' 是模糊的\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: 左皿扑亦件`--%s'反婁醒毛午曰引六氏\n"
+msgstr "%s: 選項 `--%s' 之後不允許附加任何參數\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: 左皿扑亦件`%c%s'反婁醒毛午曰引六氏\n"
+msgstr "%s: 選項 `%c%s' 之後不允許附加任何參數\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: 左皿扑亦件`-%s'卞反婁醒互优邰匹允\n"
+msgstr "%s: 選項 `%s' 之後需要一個參數\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: 左皿扑亦件`--%s'毛ロ摹匹五引六氏\n"
+msgstr "%s: 無法辨識的選項 `--%s'\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: 左皿扑亦件`%c%s'毛ロ摹匹五引六氏\n"
+msgstr "%s: 無法辨識的選項 `%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: 左皿扑亦件互棉啜勻化中引允 -- %c\n"
+msgstr "%s; 不適用的選項 -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: 左皿扑亦件互尕懇匹允 -- %c\n"
+msgstr "%s: 無效的選項 -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: 左皿扑亦件`-%c'卞反婁醒互优邰匹允\n"
+msgstr "%s: 選項需要一個參數 -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: 左皿扑亦件及隙爛`-W %s'互菇呴匹允\n"
+msgstr "%s: 選項 `-W %s' 是模糊的\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: 左皿扑亦件`-W %s'反婁醒毛午曰引六氏\n"
+msgstr "%s: xxxx `-W %s' 並不需要參數\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -402,8 +392,8 @@ msgstr "%s: 左皿扑亦件`-W %s'反婁醒毛午曰引六氏\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "﹍"
+msgstr "`"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "﹎"
+msgstr "'"

@@ -1,23 +1,27 @@
 # Messages français pour GNU concernant grep.
-# Copyright (C) 1996 Free Software Foundation, Inc.
-# Michel Robitaille <robitail@IRO.UMontreal.CA>, 1996.
+# Copyright © 2004 Free Software Foundation, Inc.
+# Michel Robitaille <robitail@IRO.UMontreal.CA>, traducteur depuis/since 1996.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
-"POT-Creation-Date: 2002-01-22 14:39+0100\n"
-"PO-Revision-Date: 2002-03-17 20:00-0500\n"
+"Project-Id-Version: GNU grep 2.5.1a\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"PO-Revision-Date: 2005-03-06 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
 msgstr "Mémoire épuisée."
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "[ non pairé"
 
@@ -53,7 +57,8 @@ msgstr ") non pairé"
 msgid "out of memory"
 msgstr "Mémoire épuisée."
 
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "Mémoire épuisée."
 
@@ -61,48 +66,48 @@ msgstr "Mémoire épuisée."
 msgid "invalid context length argument"
 msgstr "paramètre de contexte de longueur invalide"
 
-#: src/grep.c:475
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr "ce qui est en entrée est trop grand pour être compté"
 
-#: src/grep.c:597
+#: src/grep.c:605
 msgid "writing output"
 msgstr "Génération du résultat."
 
-#: src/grep.c:870
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Fichier binaire %s concorde\n"
 
-#: src/grep.c:884
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(entrée standard)"
 
-#: src/grep.c:989
+#: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "AVERTISSEMENT: %s: %s\n"
 
-#: src/grep.c:990
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr "boucle récursive sur le répertoire"
 
-#: src/grep.c:1038
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER]...\n"
 
-#: src/grep.c:1040
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Pour en savoir davantage, faites: « %s --help ».\n"
 
-#: src/grep.c:1045
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Usage: %s [OPTION]... PATRON [FICHIER] ...\n"
 
-#: src/grep.c:1046
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -115,7 +120,7 @@ msgstr ""
 "\n"
 "Sélection et interprétation de l'expression régulière:\n"
 
-#: src/grep.c:1051
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -127,7 +132,7 @@ msgstr ""
 "  -G, --basic-regexp        PATRON est une expression régulière de base\n"
 "  -P, --perl-regexp         PATRON est une expression régulière en Perl\n"
 
-#: src/grep.c:1056
+#: src/grep.c:1064
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -144,7 +149,7 @@ msgstr ""
 "  -z, --null-data           terminer la ligne de données par ZÉRO et\n"
 "                            non pas par un retour de chariot\n"
 
-#: src/grep.c:1063
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -162,7 +167,7 @@ msgstr ""
 "      --help                afficher l'aide et quitter\n"
 "      --mmap                utiliser la table de mémoire à l'entrée si possible\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1079
 msgid ""
 "\n"
 "Output control:\n"
@@ -227,7 +232,7 @@ msgstr ""
 "                            concordantes par fichier\n"
 "  -Z, --null                afficher l'octet ZÉRO après le nom du fichier\n"
 
-#: src/grep.c:1099
+#: src/grep.c:1107
 msgid ""
 "\n"
 "Context control:\n"
@@ -267,46 +272,46 @@ msgstr ""
 "est implicite. Termine avec 0 s'il y a concordance avec 1 si aucune.\n"
 "Termine avec 2 s'il y a des erreurs de syntaxe ou de système.\n"
 
-#: src/grep.c:1116
+#: src/grep.c:1124
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Rapporter toutes anomalies à <%s>.\n"
+"Rapporter toutes anomalies à <bug-grep@gnu.org>.\n"
 
-#: src/grep.c:1126
+#: src/grep.c:1134
 msgid "conflicting matchers specified"
 msgstr "opérateurs de concordance spécifiés en conflit"
 
-#: src/grep.c:1363
+#: src/grep.c:1376
 msgid "unknown devices method"
 msgstr "méthode inconnue pour les périphérique"
 
-#: src/grep.c:1430
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr "méthode inconnue des répertoires"
 
-#: src/grep.c:1497
+#: src/grep.c:1510
 msgid "invalid max count"
 msgstr "décompte maximal invalide."
 
-#: src/grep.c:1551
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr "type de fichier binaire inconnu"
 
 # msgid "GNU grep version %s"
 # msgstr "«grep» de GNU version %s"
-#: src/grep.c:1646
+#: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (grep de GNU) %s\n"
 
-#: src/grep.c:1648
+#: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1650
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

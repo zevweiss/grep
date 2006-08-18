@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.5g\n"
-"POT-Creation-Date: 2002-01-22 14:39+0100\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
 "PO-Revision-Date: 2002-03-11 12:00+0000\n"
 "Last-Translator: Simos Xenitellis <simos@hellug.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -23,7 +23,10 @@ msgstr "Η μνήμη εξαντλήθηκε"
 # src/dfa.c:690 src/dfa.c:703 src/dfa.c:704
 # src/dfa.c:660 src/dfa.c:663 src/dfa.c:690 src/dfa.c:694 src/dfa.c:695
 # src/dfa.c:698 src/dfa.c:711 src/dfa.c:712
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "Μη ισορροπημένο ["
 
@@ -77,7 +80,8 @@ msgstr "η μνήμη εξαντλήθηκε"
 # src/kwset.c:190
 # src/grep.c:164 src/grep.c:181 src/grep.c:283 src/grep.c:338 src/kwset.c:184
 # src/kwset.c:190
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "η μνήμη εξαντλήθηκε"
 
@@ -87,62 +91,62 @@ msgstr "η μνήμη εξαντλήθηκε"
 msgid "invalid context length argument"
 msgstr "μη έγκυρο όρισμα μήκους περιεχομένου"
 
-#: src/grep.c:475
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr "η είσοδος είναι πολύ μεγάλη για να μετρηθεί"
 
 # src/grep.c:392 src/grep.c:1034
 # src/grep.c:487 src/grep.c:1284
-#: src/grep.c:597
+#: src/grep.c:605
 msgid "writing output"
 msgstr "εγγραφή αποτελέσματος"
 
 # src/grep.c:715
-#: src/grep.c:870
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Το δυαδικό αρχείο %s ταιριάζει\n"
 
 # src/grep.c:964 src/grep.c:1015
 # src/grep.c:730
-#: src/grep.c:884
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(κανονική είσοδος)"
 
 # src/grep.c:293
 # src/grep.c:366
-#: src/grep.c:989
+#: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "προειδοποίηση: %s: %s\n"
 
 # src/grep.c:844
-#: src/grep.c:990
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr "αναδρομική αλληλοδιαδοχή καταλόγων"
 
 # src/grep.c:597
 # src/grep.c:862
-#: src/grep.c:1038
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΥΠΟΔΕΙΓΜΑ [ΑΡΧΕΙΟ]...\n"
 
 # src/grep.c:598
 # src/grep.c:863
-#: src/grep.c:1040
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Δοκιμάστε `%s --help' για περισσότερες πληροφορίες.\n"
 
 # src/grep.c:602
 # src/grep.c:867
-#: src/grep.c:1045
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΥΠΟΔΕΙΓΜΑ [ΑΡΧΕΙΟ] ...\n"
 
-#: src/grep.c:1046
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -155,7 +159,7 @@ msgstr ""
 "\n"
 "Επιλογή κανονικής έκφρασης και ερμηνεία:\n"
 
-#: src/grep.c:1051
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -170,7 +174,7 @@ msgstr ""
 
 # src/grep.c:603
 # src/grep.c:868
-#: src/grep.c:1056
+#: src/grep.c:1064
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -191,7 +195,7 @@ msgstr ""
 
 # src/grep.c:615
 # src/grep.c:880
-#: src/grep.c:1063
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -212,7 +216,7 @@ msgstr ""
 
 # src/grep.c:622
 # src/grep.c:887
-#: src/grep.c:1071
+#: src/grep.c:1079
 msgid ""
 "\n"
 "Output control:\n"
@@ -278,7 +282,7 @@ msgstr ""
 
 # src/grep.c:633
 # src/grep.c:902
-#: src/grep.c:1099
+#: src/grep.c:1107
 msgid ""
 "\n"
 "Context control:\n"
@@ -324,56 +328,57 @@ msgstr ""
 
 # src/grep.c:647
 # src/grep.c:917
-#: src/grep.c:1116
+#: src/grep.c:1124
+#, fuzzy
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Στείλτε αναφορές σφαλμάτων στο <%s>.\n"
+"Στείλτε αναφορές σφαλμάτων στο <bug-gnu-utils@gnu.org>.\n"
 
 # src/grep.c:829
 # src/grep.c:1112
-#: src/grep.c:1126
+#: src/grep.c:1134
 msgid "conflicting matchers specified"
 msgstr "ορίστηκαν αντικρουόμενα στοιχεία αναζήτησης"
 
 # src/grep.c:1133
-#: src/grep.c:1363
+#: src/grep.c:1376
 msgid "unknown devices method"
 msgstr "άγνωστη μέθοδος συσκευών"
 
 # src/grep.c:1133
-#: src/grep.c:1430
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr "άγνωστη μέθοδος καταλόγων"
 
 # src/dfa.c:556 src/dfa.c:562 src/dfa.c:573 src/dfa.c:584
 # src/dfa.c:564 src/dfa.c:570 src/dfa.c:581 src/dfa.c:592
-#: src/grep.c:1497
+#: src/grep.c:1510
 msgid "invalid max count"
 msgstr "μη έγκυρος μέγιστος μετρητής"
 
-#: src/grep.c:1551
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr "άγνωστο είδος δυαδικών αρχείων"
 
 # src/grep.c:915
 # src/grep.c:1219
-#: src/grep.c:1646
+#: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
 # src/grep.c:917
 # src/grep.c:1221
-#: src/grep.c:1648
+#: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Δικαίωμα αντιγραφής 1988, 1992-1999, 2000, 2001 Ίδρυμα Ελεύθερου Λογισμικού\n"
 
 # src/grep.c:919
 # src/grep.c:1223
-#: src/grep.c:1650
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

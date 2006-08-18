@@ -1,144 +1,149 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# Kinyarwanda translations for grep package.
+# Copyright (C) 2005 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
+# Steve Murphy <murf@e-tools.com>, 2005.
+# Steve performed initial rough translation from compendium built from translations provided by the following translators:
+# Philibert Ndandali  <ndandali@yahoo.fr>, 2005.
+# Viateur MUGENZI <muvia1@yahoo.fr>, 2005.
+# No谷lla Mupole <s24211045@tuks.co.za>, 2005.
+# Carole Karema <karemacarole@hotmail.com>, 2005.
+# JEAN BAPTISTE NGENDAHAYO <ngenda_denis@yahoo.co.uk>, 2005.
+# Augustin KIBERWA  <akiberwa@yahoo.co.uk>, 2005.
+# Donatien NSENGIYUMVA <ndonatienuk@yahoo.co.uk>, 2005.
+# Antoine Bigirimana <antoine@e-tools.com>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep 2.5.1a\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2005-04-04 10:55-0700\n"
+"Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
+"Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "メモリーが足りません"
+msgstr ""
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ が釣り合いません"
+msgstr ""
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ エスケープが終了していません"
+msgstr ""
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+#, fuzzy
 msgid "unfinished repeat count"
-msgstr "繰返しカウントが終了しません"
+msgstr "Gusubiramo IBARA"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+#, fuzzy
 msgid "malformed repeat count"
-msgstr "繰返しカウントが異常です"
+msgstr "Gusubiramo IBARA"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( が釣り合いません"
+msgstr ""
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "構文が特定されていません"
+msgstr ""
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") が釣り合いません"
+msgstr ""
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "メモリーがなくなりました"
+msgstr "Ububiko bwarenzwe"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
+#, fuzzy
 msgid "memory exhausted"
-msgstr "メモリーが足りません"
+msgstr "Ububiko"
 
 #: src/grep.c:205
+#, fuzzy
 msgid "invalid context length argument"
-msgstr "行数の指定が間違っています"
+msgstr "Sibyo Imvugiro Uburebure"
 
 #: src/grep.c:479
+#, fuzzy
 msgid "input is too large to count"
-msgstr "入力が大きすぎて数えられません"
+msgstr "Iyinjiza ni Binini Kuri IBARA"
 
 #: src/grep.c:605
+#, fuzzy
 msgid "writing output"
-msgstr "出力の書込み"
+msgstr "Ibisohoka"
 
 #: src/grep.c:878
-#, c-format
+#, fuzzy, c-format
 msgid "Binary file %s matches\n"
-msgstr "バイナリー・ファイル%sは一致しました\n"
+msgstr "IDOSIYE"
 
 #: src/grep.c:892
+#, fuzzy
 msgid "(standard input)"
-msgstr "(標準入力)"
+msgstr "(Bisanzwe Iyinjiza"
 
 #: src/grep.c:997
-#, c-format
+#, fuzzy, c-format
 msgid "warning: %s: %s\n"
-msgstr "警告: %s: %s\n"
+msgstr "Iburira"
 
 #: src/grep.c:998
+#, fuzzy
 msgid "recursive directory loop"
-msgstr "ディレクトリーが再帰的ループをしています"
+msgstr "bushyinguro"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "使用法: %s [オプション]‥‥ 文字列パターン [ファイル]‥‥\n"
+msgstr ""
 
 #: src/grep.c:1048
-#, c-format
+#, fuzzy, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "詳しくは`%s --help'を実行してください。\n"
+msgstr "kugirango Birenzeho Ibisobanuro"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "使用法: %s [オプション]‥‥ パターン [ファイル] ‥‥\n"
+msgstr ""
 
 #: src/grep.c:1054
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
 "Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
-msgstr ""
-"「ファイル」もしくは標準入力から「パターン」の検索を行なう。\n"
-"例: %s -i 'hello world' menu.h main.c\n"
-"\n"
-"正規表現の選択と解釈方法:\n"
+msgstr "kugirango in Cyangwa Bisanzwe Iyinjiza Urugero i Muraho Ibikubiyemo h Ihitamo Na"
 
 #: src/grep.c:1059
+#, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
-msgstr ""
-"  -E, --extended-regexp     「パターン」を拡張された正規表現とする\n"
-"  -F, --fixed-strings       「パターン」を改行で区切られた固定の文字列とする\n"
-"  -G, --basic-regexp        「パターン」を基本的な正規表現とする\n"
-"  -P, --perl-regexp         「パターン」をPerlの正規表現とする\n"
+msgstr "-E Byongerewe... ni Byongerewe... Ibisanzwe BIHAMYE Ikurikiranyanyuguti ni a Gushyiraho Bya BASIC ni a BASIC Ibisanzwe Perl ni a Ibisanzwe"
 
 #: src/grep.c:1064
+#, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -146,15 +151,10 @@ msgid ""
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
-msgstr ""
-"  -e, --regexp=パターン     正規表現に指定パターンを使う\n"
-"  -f, --file=ファイル       「パターン」を指定ファイルから読む\n"
-"  -i, --ignore-case         大文字/小文字を無視する\n"
-"  -w, --word-regexp         「パターン」一致を単語全体(単語単位)で行なう\n"
-"  -x, --line-regexp         「パターン」一致を行全体(行単位)で行なう\n"
-"  -z, --null-data           出力を改行でなく、ヌル値のバイトで区切る\n"
+msgstr "-E Gukoresha Nka a Ibisanzwe F IDOSIYE Bivuye i Kwirengagiza Kwirengagiza W ijambo Kuri BIHUYE X Umurongo Kuri BIHUYE Z NTAGIHARI Ibyatanzwe a Ibyatanzwe Umurongo in 0 Bayite OYA"
 
 #: src/grep.c:1071
+#, fuzzy
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -163,16 +163,10 @@ msgid ""
 "  -V, --version             print version information and exit\n"
 "      --help                display this help and exit\n"
 "      --mmap                use memory-mapped input if possible\n"
-msgstr ""
-"\n"
-"その他:\n"
-"  -s, --no-messages         エラー・メッセージを抑止する\n"
-"  -v, --invert-match        一致しない行を対象にする\n"
-"  -V  --version             バージョン情報を標準出力に表示して終了する\n"
-"      --help                使い方を標準出力に表示する\n"
-"      --mmap                もし可能なら、入力をメモリー・マップする\n"
+msgstr "S Oya Ubutumwa Ikosa v Gucurika BIHUYE Guhitamo V Verisiyo Gucapa Verisiyo Ibisobanuro Na Ifashayobora Kugaragaza iyi Ifashayobora Na Gukoresha Ububiko Iyinjiza NIBA"
 
 #: src/grep.c:1079
+#, fuzzy
 msgid ""
 "\n"
 "Output control:\n"
@@ -201,38 +195,10 @@ msgid ""
 "  -l, --files-with-matches  only print FILE names containing matches\n"
 "  -c, --count               only print a count of matching lines per FILE\n"
 "  -Z, --null                print 0 byte after FILE name\n"
-msgstr ""
-"\n"
-"出力制御:\n"
-"  -m, --max-count=回数      指定した一致回数の後、終了する\n"
-"  -b, --byte-offset         出力行にバイト・オフセットも表示する\n"
-"  -n, --line-number         出力行に行数も表示する\n"
-"      --line-buffered       行ごとに出力を掃き出す\n"
-"  -H, --with-filename       各一致にたいしてそのファイル名も表示する\n"
-"  -h, --no-filename         前のファイル名を出力から抑止する\n"
-"      --label=ラベル        ラベルをファイル名として標準出力に表示する\n"
-"  -o, --only-matching       パターンと一致する行の部分だけを示す\n"
-"  -q, --quiet, --silent     通常の出力をすべて抑止する\n"
-"      --binary-files=型     バイナリー・ファイルの型。「binary」\n"
-"                            「text」「without-match」を指定\n"
-"  -a, --text                --binary-files=textと同じ\n"
-"  -I                        --binary-files=without-matchと同じ\n"
-"  -d, --directories=操作    ディレクトリーへの操作\n"
-"                            「read」(読込み)、「recurse」(再帰)、\n"
-"                            「skip」(省略) のいずれかを指定\n"
-"  -D, --devices=操作        デバイス、FIFO、ソケットへの操作\n"
-"                            「read」か「skip」を指定\n"
-"  -R, -r, --recursive       --directories=recurseと同じ\n"
-"      --include=パターン    パターンと一致するファイルを検査する\n"
-"      --exclude=パターン    パターンと一致するファイルを省略する。\n"
-"      --exclude-from=ファイル 指定したファイル内のパターンと\n"
-"                            一致するファイルを省略する。\n"
-"  -L, --files-without-match 一致のなかったファイル名のみを表示する\n"
-"  -l, --files-with-matches  一致したファイル名のみを表示する\n"
-"  -c, --count               ファイルごとに一致した行数のみを表示する\n"
-"  -Z, --null                ファイル名の後に、ヌル値のバイトを表示\n"
+msgstr "Igenzura M KININI IBARA Guhagarara Nyuma B Bayite Nta- boneza Gucapa i Bayite Nta- boneza Na: Ibisohoka N Umurongo Umubare Gucapa Umurongo Umubare Na: Ibisohoka Umurongo Ibisohoka ku buri H Na: Izina ry'idosiye: Gucapa i Izina ry'idosiye: kugirango h Oya Izina ry'idosiye: i Izina ry'idosiye: ku Akarango Gucapa Nka Izina ry'idosiye: kugirango Bisanzwe o Garagaza i Bya a Umurongo Q Byose Bisanzwe Nyabibiri Idosiye Nyabibiri Idosiye ni Cyangwa a Umwandiko Kuri Nyabibiri Idosiye Kuri Nyabibiri Idosiye D ububiko bw'amaderese Kuri ni Cyangwa Kuri Na ni Cyangwa R Kuri ububiko bw'amaderese Gushyiramo Idosiye BIHUYE Idosiye BIHUYE Bivuye Idosiye BIHUYE in Idosiye BIHUYE Gucapa Amazina Oya L Idosiye Na: Gucapa Amazina C IBARA Gucapa a IBARA Bya Imirongo NTAGIHARI Gucapa 0 Bayite Nyuma"
 
 #: src/grep.c:1107
+#, fuzzy
 msgid ""
 "\n"
 "Context control:\n"
@@ -250,142 +216,130 @@ msgid ""
 "With no FILE, or when FILE is -, read standard input.  If less than\n"
 "two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
 "and 2 if trouble.\n"
-msgstr ""
-"\n"
-"前後関係の制御:\n"
-"  -B, --before-context=数   一致前の「数」行も出力する\n"
-"  -A, --after-context=数    一致後の「数」行も出力する\n"
-"  -C, --context=行数        一致前後の指定行数の内容も出力する\n"
-"  -行数                     --context=行数 と同じ\n"
-"      --color[=場合]\n"
-"      --colour[=場合]       一致する文字列を目立たせるマーカーを使う\n"
-"                            「場合」には、「always」「never」「auto」を指定。\n"
-"  -U, --binary              EOLでのCR文字を取り省かない(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CR文字がないものとしてオフセットを\n"
-"                            出力する(MS-DOS)\n"
-"\n"
-"「egrep」は「grep -E」のことです。「fgrep」は「grep -F」のことです。\n"
-"「ファイル」の指定がなかったり、「ファイル」に「-」を指定したりすると、\n"
-"標準入力から読み込みます。「ファイル」の個数が1以下の場合、-hと仮定します。\n"
-"もし一致があると0で、ないと1で、障害があると2で、終了します。\n"
+msgstr "Igenzura Mbere Imvugiro Gucapa Imirongo Bya Nyobora A Nyuma Imvugiro Gucapa Imirongo Bya C Imvugiro Gucapa Imirongo Bya Ibisohoka Nka Imvugiro Ibara Gukoresha Kuri i Gicurasi Cyangwa U Nyabibiri OYA Inyuguti ku u Bayite Icyegeranyo Nka NIBA OYA Oya Cyangwa Ryari: ni Gusoma Bisanzwe Iyinjiza Birutwa h Imimerere ni 0 NIBA BIHUYE 1. NIBA Oya BIHUYE Na 2. NIBA"
 
 #: src/grep.c:1124
 #, fuzzy
 msgid ""
 "\n"
 "Report bugs to <bug-grep@gnu.org>.\n"
-msgstr ""
-"\n"
-"バグは <bug-gnu-utils@gnu.org> へ報告してください。\n"
+msgstr "org."
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "指定した照合子が衝突しています"
+msgstr ""
 
 #: src/grep.c:1376
+#, fuzzy
 msgid "unknown devices method"
-msgstr "未知のデバイス操作です"
+msgstr "Kitazwi Uburyo"
 
 #: src/grep.c:1443
+#, fuzzy
 msgid "unknown directories method"
-msgstr "未知のディレクトリー操作です"
+msgstr "Kitazwi ububiko bw'amaderese Uburyo"
 
 #: src/grep.c:1510
+#, fuzzy
 msgid "invalid max count"
-msgstr "一致回数が間違っています"
+msgstr "Sibyo KININI IBARA"
 
 #: src/grep.c:1565
+#, fuzzy
 msgid "unknown binary-files type"
-msgstr "未知のバイナリー・ファイルの型です"
+msgstr "Kitazwi Nyabibiri Idosiye Ubwoko"
 
 #: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
+msgstr ""
 
 #: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+msgstr ""
 
 #: src/grep.c:1664
+#, fuzzy
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-msgstr ""
-"これはフリー・ソフトウェアです。複製に関する条件はソースをご覧ください。\n"
-"これは無保証です。営利目的やある特定の目的にむけた適正のものでもありません。\n"
+msgstr "ni Kigenga i Inkomoko kugirango ni OYA ATARIIGIHARWE kugirango Cyangwa A"
 
 #: src/search.c:606
+#, fuzzy
 msgid "The -P option is not supported"
-msgstr "-Pオプションはサポートしていません"
+msgstr "Ihitamo ni OYA"
 
 #: src/search.c:619
+#, fuzzy
 msgid "The -P and -z options cannot be combined"
-msgstr "-Pと-zのオプションの組合せはできません"
+msgstr "Na Z Amahitamo"
 
 #: lib/error.c:117
+#, fuzzy
 msgid "Unknown system error"
-msgstr "未知のシステム・エラーです"
+msgstr "Sisitemu Ikosa"
 
 #: lib/getopt.c:675
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: オプションの指定`%s'が曖昧です\n"
+msgstr "%s:Ihitamo ni"
 
 #: lib/getopt.c:700
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: オプション`--%s'は引数をとりません\n"
+msgstr "%s:Ihitamo Kwemerera"
 
 #: lib/getopt.c:705
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: オプション`%c%s'は引数をとりません\n"
+msgstr "%s:Ihitamo Kwemerera"
 
 #: lib/getopt.c:723 lib/getopt.c:896
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: オプション`-%s'には引数が必要です\n"
+msgstr "%s:Ihitamo"
 
 #. --option
 #: lib/getopt.c:752
-#, c-format
+#, fuzzy, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: オプション`--%s'を認識できません\n"
+msgstr "%s:Ihitamo"
 
 #. +option or -option
 #: lib/getopt.c:756
-#, c-format
+#, fuzzy, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: オプション`%c%s'を認識できません\n"
+msgstr "%s:Ihitamo"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
-#, c-format
+#, fuzzy, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: オプションが間違っています -- %c\n"
+msgstr "%s:Ihitamo"
 
 #: lib/getopt.c:785
-#, c-format
+#, fuzzy, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: オプションが不正です -- %c\n"
+msgstr "%s:Sibyo Ihitamo"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: オプション`-%c'には引数が必要です\n"
+msgstr "%s:Ihitamo"
 
 #: lib/getopt.c:862
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: オプションの指定`-W %s'が曖昧です\n"
+msgstr "%s:Ihitamo ni"
 
 #: lib/getopt.c:880
-#, c-format
+#, fuzzy, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: オプション`-W %s'は引数をとりません\n"
+msgstr "%s:Ihitamo Kwemerera"
 
+# basctl/source\basicide\basidesh.src:RID_IMGBTN_REMOVEWATCH.text
 #. Get translations for open and closing quotation marks.
 #.
 #. The message catalog should translate "`" to a left
@@ -401,9 +355,10 @@ msgstr "%s: オプション`-W %s'は引数をとりません\n"
 #. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
+#, fuzzy
 msgid "`"
-msgstr "“"
+msgstr "`"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "”"
+msgstr "'"

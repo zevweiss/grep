@@ -1,117 +1,114 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# grep
+# Copyright (C) 2004 Free Software Foundation, Inc.
+# Petri Jooste <rkwjpj@puk.ac.za>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep 2.5g\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2004-03-03 13:33+0200\n"
+"Last-Translator: Petri Jooste <rkwjpj@puk.ac.za>\n"
+"Language-Team: Afrikaans <i18n@af.org.za>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "Geheue uitgeput"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Ongebalanseerde ["
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ ¥¨¥¹¥±¡¼¥×¤¬½ªÎ»¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Onbeëindigde \\-ontsnapstring"
 
+#  Cases:
+#  {M} - exact count
+#  {M,} - minimum count, maximum is infinity
+#  {M,N} - M through N
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬½ªÎ»¤·¤Þ¤»¤ó"
+msgstr "onbeëindigde herhaaltelling"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "·«ÊÖ¤·¥«¥¦¥ó¥È¤¬°Û¾ï¤Ç¤¹"
+msgstr "wangevormde herhaaltelling"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Ongebalanseerde ("
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "¹½Ê¸¤¬ÆÃÄê¤µ¤ì¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Geen sintaks gespesifiseer"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") ¤¬Äà¤ê¹ç¤¤¤Þ¤»¤ó"
+msgstr "Ongebalanseerde )"
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "¥á¥â¥ê¡¼¤¬¤Ê¤¯¤Ê¤ê¤Þ¤·¤¿"
+msgstr "te min geheue"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "¥á¥â¥ê¡¼¤¬Â­¤ê¤Þ¤»¤ó"
+msgstr "geheue uitgeput"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "¹Ô¿ô¤Î»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "ongeldige konteks-lengte-parameter"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "ÆþÎÏ¤¬Âç¤­¤¹¤®¤Æ¿ô¤¨¤é¤ì¤Þ¤»¤ó"
+msgstr "toevoer is te veel om te tel"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "½ÐÎÏ¤Î½ñ¹þ¤ß"
+msgstr "afvoer word geskryf"
 
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë%s¤Ï°ìÃ×¤·¤Þ¤·¤¿\n"
+msgstr "Binêre lêer %s pas\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(É¸½àÆþÎÏ)"
+msgstr "(standaardtoevoer)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "·Ù¹ð: %s: %s\n"
+msgstr "waarskuwing: %s: %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "¥Ç¥£¥ì¥¯¥È¥ê¡¼¤¬ºÆµ¢Åª¥ë¡¼¥×¤ò¤·¤Æ¤¤¤Þ¤¹"
+msgstr "rekursiewe lus van gidsinskrywings"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å Ê¸»úÎó¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë]¡Å¡Å\n"
+msgstr "Gebruik so: %s [OPSIE]... PATROON [LÊER]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "¾Ü¤·¤¯¤Ï`%s --help'¤ò¼Â¹Ô¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+msgstr "Probeer `%s --help' vir meer inligting.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "»ÈÍÑË¡: %s [¥ª¥×¥·¥ç¥ó]¡Å¡Å ¥Ñ¥¿¡¼¥ó [¥Õ¥¡¥¤¥ë] ¡Å¡Å\n"
+msgstr "Gebruik so: %s [OPSIE]... PATROON [LÊER] ...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +118,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤â¤·¤¯¤ÏÉ¸½àÆþÎÏ¤«¤é¡Ö¥Ñ¥¿¡¼¥ó¡×¤Î¸¡º÷¤ò¹Ô¤Ê¤¦¡£\n"
-"Îã: %s -i 'hello world' menu.h main.c\n"
+"Soek vir PATROON in elke LÊER of in standaardtoevoer.\n"
+"Voorbeeld: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Àµµ¬É½¸½¤ÎÁªÂò¤È²ò¼áÊýË¡:\n"
+"Reëlmatige uitdrukking-seleksie en -interpretasie:\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +130,10 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò³ÈÄ¥¤µ¤ì¤¿Àµµ¬É½¸½¤È¤¹¤ë\n"
-"  -F, --fixed-strings       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò²þ¹Ô¤Ç¶èÀÚ¤é¤ì¤¿¸ÇÄê¤ÎÊ¸»úÎó¤È¤¹¤ë\n"
-"  -G, --basic-regexp        ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò´ðËÜÅª¤ÊÀµµ¬É½¸½¤È¤¹¤ë\n"
-"  -P, --perl-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×¤òPerl¤ÎÀµµ¬É½¸½¤È¤¹¤ë\n"
+"  -E, --extended-regexp     PATROON is 'n uitgebreide reëlmatige uitdrukking\n"
+"  -F, --fixed-strings       PATROON is 'n reeks stringe geskei met nuwereëlkarakters\n"
+"  -G, --basic-regexp        PATROON is 'n basic regular expression\n"
+"  -P, --perl-regexp         PATROON is 'n  Perl regular expression\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,12 +144,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=¥Ñ¥¿¡¼¥ó     Àµµ¬É½¸½¤Ë»ØÄê¥Ñ¥¿¡¼¥ó¤ò»È¤¦\n"
-"  -f, --file=¥Õ¥¡¥¤¥ë       ¡Ö¥Ñ¥¿¡¼¥ó¡×¤ò»ØÄê¥Õ¥¡¥¤¥ë¤«¤éÆÉ¤à\n"
-"  -i, --ignore-case         ÂçÊ¸»ú/¾®Ê¸»ú¤òÌµ»ë¤¹¤ë\n"
-"  -w, --word-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤òÃ±¸ìÁ´ÂÎ(Ã±¸ìÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -x, --line-regexp         ¡Ö¥Ñ¥¿¡¼¥ó¡×°ìÃ×¤ò¹ÔÁ´ÂÎ(¹ÔÃ±°Ì)¤Ç¹Ô¤Ê¤¦\n"
-"  -z, --null-data           ½ÐÎÏ¤ò²þ¹Ô¤Ç¤Ê¤¯¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤Ç¶èÀÚ¤ë\n"
+"  -e, --regexp=PATROON      gebruik PATROON as 'n reëlmatige uitdrukking\n"
+"  -f, --file=FILE           verkry PATROON vanaf LÊER\n"
+"  -i, --ignore-case         ignoreer kasverskille\n"
+"  -w, --word-regexp         dwing PATROON om slegs op hele woorde te pas\n"
+"  -x, --line-regexp         dwing PATROON om slegs op hele reëls te pas\n"
+"  -z, --null-data           elke datareël eindig met 'n 0-greep, nie 'n nuwereëlkarakter nie\n"
 
 #: src/grep.c:1071
 msgid ""
@@ -165,12 +162,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"¤½¤ÎÂ¾:\n"
-"  -s, --no-messages         ¥¨¥é¡¼¡¦¥á¥Ã¥»¡¼¥¸¤òÍÞ»ß¤¹¤ë\n"
-"  -v, --invert-match        °ìÃ×¤·¤Ê¤¤¹Ô¤òÂÐ¾Ý¤Ë¤¹¤ë\n"
-"  -V  --version             ¥Ð¡¼¥¸¥ç¥ó¾ðÊó¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤·¤Æ½ªÎ»¤¹¤ë\n"
-"      --help                »È¤¤Êý¤òÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"      --mmap                ¤â¤·²ÄÇ½¤Ê¤é¡¢ÆþÎÏ¤ò¥á¥â¥ê¡¼¡¦¥Þ¥Ã¥×¤¹¤ë\n"
+"Verskeie:\n"
+"  -s, --no-messages         onderdruk foutboodskappe\n"
+"  -v, --invert-match        soek nie-passende reëls\n"
+"  -V, --version             wys weergaweinligting en stop\n"
+"      --help                wys hierdie hulpboodskap en stop\n"
+"      --mmap                gebruik geheue-gebonde toevoer indien moontlik\n"
 
 #: src/grep.c:1079
 msgid ""
@@ -203,34 +200,32 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"½ÐÎÏÀ©¸æ:\n"
-"  -m, --max-count=²ó¿ô      »ØÄê¤·¤¿°ìÃ×²ó¿ô¤Î¸å¡¢½ªÎ»¤¹¤ë\n"
-"  -b, --byte-offset         ½ÐÎÏ¹Ô¤Ë¥Ð¥¤¥È¡¦¥ª¥Õ¥»¥Ã¥È¤âÉ½¼¨¤¹¤ë\n"
-"  -n, --line-number         ½ÐÎÏ¹Ô¤Ë¹Ô¿ô¤âÉ½¼¨¤¹¤ë\n"
-"      --line-buffered       ¹Ô¤´¤È¤Ë½ÐÎÏ¤òÁÝ¤­½Ð¤¹\n"
-"  -H, --with-filename       ³Æ°ìÃ×¤Ë¤¿¤¤¤·¤Æ¤½¤Î¥Õ¥¡¥¤¥ëÌ¾¤âÉ½¼¨¤¹¤ë\n"
-"  -h, --no-filename         Á°¤Î¥Õ¥¡¥¤¥ëÌ¾¤ò½ÐÎÏ¤«¤éÍÞ»ß¤¹¤ë\n"
-"      --label=¥é¥Ù¥ë        ¥é¥Ù¥ë¤ò¥Õ¥¡¥¤¥ëÌ¾¤È¤·¤ÆÉ¸½à½ÐÎÏ¤ËÉ½¼¨¤¹¤ë\n"
-"  -o, --only-matching       ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¹Ô¤ÎÉôÊ¬¤À¤±¤ò¼¨¤¹\n"
-"  -q, --quiet, --silent     ÄÌ¾ï¤Î½ÐÎÏ¤ò¤¹¤Ù¤ÆÍÞ»ß¤¹¤ë\n"
-"      --binary-files=·¿     ¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¡£¡Öbinary¡×\n"
-"                            ¡Ötext¡×¡Öwithout-match¡×¤ò»ØÄê\n"
-"  -a, --text                --binary-files=text¤ÈÆ±¤¸\n"
-"  -I                        --binary-files=without-match¤ÈÆ±¤¸\n"
-"  -d, --directories=Áàºî    ¥Ç¥£¥ì¥¯¥È¥ê¡¼¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×(ÆÉ¹þ¤ß)¡¢¡Örecurse¡×(ºÆµ¢)¡¢\n"
-"                            ¡Öskip¡×(¾ÊÎ¬) ¤Î¤¤¤º¤ì¤«¤ò»ØÄê\n"
-"  -D, --devices=Áàºî        ¥Ç¥Ð¥¤¥¹¡¢FIFO¡¢¥½¥±¥Ã¥È¤Ø¤ÎÁàºî\n"
-"                            ¡Öread¡×¤«¡Öskip¡×¤ò»ØÄê\n"
-"  -R, -r, --recursive       --directories=recurse¤ÈÆ±¤¸\n"
-"      --include=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¸¡ºº¤¹¤ë\n"
-"      --exclude=¥Ñ¥¿¡¼¥ó    ¥Ñ¥¿¡¼¥ó¤È°ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"      --exclude-from=¥Õ¥¡¥¤¥ë »ØÄê¤·¤¿¥Õ¥¡¥¤¥ëÆâ¤Î¥Ñ¥¿¡¼¥ó¤È\n"
-"                            °ìÃ×¤¹¤ë¥Õ¥¡¥¤¥ë¤ò¾ÊÎ¬¤¹¤ë¡£\n"
-"  -L, --files-without-match °ìÃ×¤Î¤Ê¤«¤Ã¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -l, --files-with-matches  °ìÃ×¤·¤¿¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -c, --count               ¥Õ¥¡¥¤¥ë¤´¤È¤Ë°ìÃ×¤·¤¿¹Ô¿ô¤Î¤ß¤òÉ½¼¨¤¹¤ë\n"
-"  -Z, --null                ¥Õ¥¡¥¤¥ëÌ¾¤Î¸å¤Ë¡¢¥Ì¥ëÃÍ¤Î¥Ð¥¤¥È¤òÉ½¼¨\n"
+"Afvoerbeheer:\n"
+"  -m, --max-count=AANTAL    stop na AANTAL passings\n"
+"  -b, --byte-offset         wys die greep-uitwyking saam met elke afvoerreël\n"
+"  -n, --line-number         wys die reëlnommer saam met elke afvoerreël\n"
+"      --line-buffered       maak elke keer die lynbuffer leeg\n"
+"  -H, --with-filename       wys die lêernaam vir elke passing\n"
+"  -h, --no-filename         onderdruk die vooraf-lêernaam in die afvoer\n"
+"      --label=ETIKET        wys ETIKET as lêernaam vir standaardtoevoer\n"
+"  -o, --only-matching       wys slegs die deel van 'n reël wat pas op die PATROON\n"
+"  -q, --quiet, --silent     onderdruk alle normale afvoer\n"
+"      --binary-files=TIPE   aanvaar dat binêre lêers van hierdie TIPE is.\n"
+"                            TIPE kan wees: 'binary', 'text', of 'without-match'\n"
+"  -a, --text                dieselfde as --binary-files=text\n"
+"  -I                        dieselfde as --binary-files=without-match\n"
+"  -d, --directories=AKSIE   hoe om gidse te hanteer\n"
+"                            AKSIE kan wees: 'read', 'recurse', of 'skip'\n"
+"  -D, --devices=AKSIE       hoe om toestelle te hanteer, FIFOs en sokke\n"
+"                            AKSIE kan wees: 'read' of 'skip'\n"
+"  -R, -r, --recursive       dieselfde as --directories=recurse\n"
+"      --include=PATROON     lêers waarop PATROON pas sal ondersoek word.\n"
+"      --exclude=PATROON     lêers waarop PATROON pas sal sal oorgeslaan word.\n"
+"      --exclude-from=FILE   lêers waarop PATROON in LÊER pas sal oorgeslaan word.\n"
+"  -L, --files-without-match wys slegs lêername wat geen passing bevat nie\n"
+"  -l, --files-with-matches  wys slegs lêername wat wel passing(s) bevat\n"
+"  -c, --count               wys slegs die aantal reëls in elke LÊER wat passings bevat\n"
+"  -Z, --null                wys die 0-greep na die LÊERnaam\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,22 +247,21 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Á°¸å´Ø·¸¤ÎÀ©¸æ:\n"
-"  -B, --before-context=¿ô   °ìÃ×Á°¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -A, --after-context=¿ô    °ìÃ×¸å¤Î¡Ö¿ô¡×¹Ô¤â½ÐÎÏ¤¹¤ë\n"
-"  -C, --context=¹Ô¿ô        °ìÃ×Á°¸å¤Î»ØÄê¹Ô¿ô¤ÎÆâÍÆ¤â½ÐÎÏ¤¹¤ë\n"
-"  -¹Ô¿ô                     --context=¹Ô¿ô ¤ÈÆ±¤¸\n"
-"      --color[=¾ì¹ç]\n"
-"      --colour[=¾ì¹ç]       °ìÃ×¤¹¤ëÊ¸»úÎó¤òÌÜÎ©¤¿¤»¤ë¥Þ¡¼¥«¡¼¤ò»È¤¦\n"
-"                            ¡Ö¾ì¹ç¡×¤Ë¤Ï¡¢¡Öalways¡×¡Önever¡×¡Öauto¡×¤ò»ØÄê¡£\n"
-"  -U, --binary              EOL¤Ç¤ÎCRÊ¸»ú¤ò¼è¤ê¾Ê¤«¤Ê¤¤(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CRÊ¸»ú¤¬¤Ê¤¤¤â¤Î¤È¤·¤Æ¥ª¥Õ¥»¥Ã¥È¤ò\n"
-"                            ½ÐÎÏ¤¹¤ë(MS-DOS)\n"
+"Konteksbeheer:\n"
+"  -B, --before-context=AANTAL wys AANTAL reëls voorafgaande konteks\n"
+"  -A, --after-context=AANTAL  wys AANTAL reëls daaropvolgende konteks\n"
+"  -C, --context=AANTAL        wys AANTAL reëls afvoerkonteks\n"
+"  -AANTAL                     dieselfde as --context=AANTAL\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       gebruik merkers om die passende string uit te wys\n"
+"                            WHEN kan wees: `always', `never' of `auto'.\n"
+"  -U, --binary              moenie CR-karakters by reëleindes wegvat nie (MSDOS)\n"
+"  -u, --unix-byte-offsets   wys uitwyking asof die CR nie daar is nie (MSDOS)\n"
 "\n"
-"¡Öegrep¡×¤Ï¡Ögrep -E¡×¤Î¤³¤È¤Ç¤¹¡£¡Öfgrep¡×¤Ï¡Ögrep -F¡×¤Î¤³¤È¤Ç¤¹¡£\n"
-"¡Ö¥Õ¥¡¥¤¥ë¡×¤Î»ØÄê¤¬¤Ê¤«¤Ã¤¿¤ê¡¢¡Ö¥Õ¥¡¥¤¥ë¡×¤Ë¡Ö-¡×¤ò»ØÄê¤·¤¿¤ê¤¹¤ë¤È¡¢\n"
-"É¸½àÆþÎÏ¤«¤éÆÉ¤ß¹þ¤ß¤Þ¤¹¡£¡Ö¥Õ¥¡¥¤¥ë¡×¤Î¸Ä¿ô¤¬1°Ê²¼¤Î¾ì¹ç¡¢-h¤È²¾Äê¤·¤Þ¤¹¡£\n"
-"¤â¤·°ìÃ×¤¬¤¢¤ë¤È0¤Ç¡¢¤Ê¤¤¤È1¤Ç¡¢¾ã³²¤¬¤¢¤ë¤È2¤Ç¡¢½ªÎ»¤·¤Þ¤¹¡£\n"
+"`egrep' beteken `grep -E'.  `fgrep' beteken `grep -F'.\n"
+"Met geen LÊER, of wanneer LÊER 'n - is, lees standaardtoevoer.  \n"
+"Indien minder as twee LÊERs gegee is, aanvaar -h. Uittreestatus is\n"
+" 0 vir passing, 1 vir geen passing, en 2 vir probleemgevalle.\n"
 
 #: src/grep.c:1124
 #, fuzzy
@@ -276,27 +270,27 @@ msgid ""
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"¥Ð¥°¤Ï <bug-gnu-utils@gnu.org> ¤ØÊó¹ð¤·¤Æ¤¯¤À¤µ¤¤¡£\n"
+"Rapporteer foute aan <bug-gnu-utils@gnu.org>.\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "»ØÄê¤·¤¿¾È¹ç»Ò¤¬¾×ÆÍ¤·¤Æ¤¤¤Þ¤¹"
+msgstr "teenstrydige passers is gespesifiseer"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥Ð¥¤¥¹Áàºî¤Ç¤¹"
+msgstr "onbekende metode vir toestelle"
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "Ì¤ÃÎ¤Î¥Ç¥£¥ì¥¯¥È¥ê¡¼Áàºî¤Ç¤¹"
+msgstr "onbekende metode vir gidse"
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "°ìÃ×²ó¿ô¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹"
+msgstr "ongeldige maks-telling"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "Ì¤ÃÎ¤Î¥Ð¥¤¥Ê¥ê¡¼¡¦¥Õ¥¡¥¤¥ë¤Î·¿¤Ç¤¹"
+msgstr "onbekende binêre-lêertipe"
 
 #: src/grep.c:1660
 #, c-format
@@ -312,80 +306,96 @@ msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"¤³¤ì¤Ï¥Õ¥ê¡¼¡¦¥½¥Õ¥È¥¦¥§¥¢¤Ç¤¹¡£Ê£À½¤Ë´Ø¤¹¤ë¾ò·ï¤Ï¥½¡¼¥¹¤ò¤´Í÷¤¯¤À¤µ¤¤¡£\n"
-"¤³¤ì¤ÏÌµÊÝ¾Ú¤Ç¤¹¡£±ÄÍøÌÜÅª¤ä¤¢¤ëÆÃÄê¤ÎÌÜÅª¤Ë¤à¤±¤¿Å¬Àµ¤Î¤â¤Î¤Ç¤â¤¢¤ê¤Þ¤»¤ó¡£\n"
+"Hierdie is vry programmatuur; kyk in die bronkode vir kopieërvoorwaardes.  Daar is GEEN\n"
+"waarborg nie; selfs nie vir VERKOOPBAARHEID of GESKIKTHEID VIR 'N SPESIFIEKE DOEL nie.\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P¥ª¥×¥·¥ç¥ó¤Ï¥µ¥Ý¡¼¥È¤·¤Æ¤¤¤Þ¤»¤ó"
+msgstr "Die -P opsie word nie ondersteun nie"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P¤È-z¤Î¥ª¥×¥·¥ç¥ó¤ÎÁÈ¹ç¤»¤Ï¤Ç¤­¤Þ¤»¤ó"
+msgstr "Die -P en -z opsies kan nie gekombineer word nie"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Ì¤ÃÎ¤Î¥·¥¹¥Æ¥à¡¦¥¨¥é¡¼¤Ç¤¹"
+msgstr "Onbekende stelselfout"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`%s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: opsie `%s' is dubbelsinnig\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: opsie `--%s' laat nie 'n parameter toe nie\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: opsie `%c%s' laat nie 'n parameter toe nie\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%s'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: opsie `%s' benodig 'n parameter\n"
 
+#  --option
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`--%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: onbekende opsie `--%s'\n"
 
+#  +option or -option
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`%c%s'¤òÇ§¼±¤Ç¤­¤Þ¤»¤ó\n"
+msgstr "%s: onbekende opsie `%c%s'\n"
 
+#  1003.2 specifies the format of this message.
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹ -- %c\n"
+msgstr "%s: ongeldige opsie -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤¬ÉÔÀµ¤Ç¤¹ -- %c\n"
+msgstr "%s: ongeldige opsie -- %c\n"
 
+#  1003.2 specifies the format of this message.
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-%c'¤Ë¤Ï°ú¿ô¤¬É¬Í×¤Ç¤¹\n"
+msgstr "%s: opsie benodig 'n parameter -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó¤Î»ØÄê`-W %s'¤¬Û£Ëæ¤Ç¤¹\n"
+msgstr "%s: opsie `-W %s' is dubbelsinnig\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
+msgstr "%s: opsie `-W %s' laat nie 'n parameter toe nie\n"
 
+#  Get translations for open and closing quotation marks.
+#  The message catalog should translate "`" to a left
+#  quotation mark suitable for the locale, and similarly for
+#  "'".  If the catalog has no translation,
+#  locale_quoting_style quotes `like this', and
+#  clocale_quoting_style quotes "like this".
+#  For example, an American English Unicode locale should
+#  translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
+#  should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
+#  MARK).  A British English Unicode locale should instead
+#  translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
+#  U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #. Get translations for open and closing quotation marks.
 #.
 #. The message catalog should translate "`" to a left
@@ -402,8 +412,8 @@ msgstr "%s: ¥ª¥×¥·¥ç¥ó`-W %s'¤Ï°ú¿ô¤ò¤È¤ê¤Þ¤»¤ó\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "¡È"
+msgstr "'"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "¡É"
+msgstr "'"

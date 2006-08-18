@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2001, 2002, 2003 Free Software Foundation, Inc.
+# Ales Nyakhaychyk <nab@mail.by>, 2001-2003.
+msgid ""
+msgstr ""
+"Project-Id-Version: grep 2.5g\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"PO-Revision-Date: 2003-07-22 17:18+0300\n"
+"Last-Translator: Ales Nyakhaychyk <nab@mail.by>\n"
+"Language-Team: Belarusian <i18n@mova.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.6\n"
+
+#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+msgid "Memory exhausted"
+msgstr "Памяць вычарпана"
+
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
+msgid "Unbalanced ["
+msgstr "Неўраўнаважаная ["
+
+#: src/dfa.c:741
+msgid "Unfinished \\ escape"
+msgstr "Незавершаная \\ кіруючая пасьлядоўнасьць"
+
+#. Cases:
+#. {M} - exact count
+#. {M,} - minimum count, maximum is infinity
+#. {M,N} - M through N
+#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+msgid "unfinished repeat count"
+msgstr "незавершаная колькасьць паўтарэньняў"
+
+#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+msgid "malformed repeat count"
+msgstr "дрэнная колькасьць паўтарэньняў"
+
+#: src/dfa.c:1253
+msgid "Unbalanced ("
+msgstr "Неўраважаная ("
+
+#: src/dfa.c:1378
+msgid "No syntax specified"
+msgstr "Сынтаксіс нявызначаны"
+
+#: src/dfa.c:1386
+msgid "Unbalanced )"
+msgstr "Неўраўнаважаная )"
+
+#: src/dfa.c:2956
+msgid "out of memory"
+msgstr "нехапае памяці"
+
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
+msgid "memory exhausted"
+msgstr "памяць вычарпана"
+
+#: src/grep.c:205
+msgid "invalid context length argument"
+msgstr "недапушчальны довад даўжыні кантэксту"
+
+#: src/grep.c:479
+msgid "input is too large to count"
+msgstr "увод занадта вялікі для падліку"
+
+#: src/grep.c:605
+msgid "writing output"
+msgstr "запісваецца вывад"
+
+#: src/grep.c:878
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr "Супадзеньні двайковага файла %s\n"
+
+#: src/grep.c:892
+msgid "(standard input)"
+msgstr "(стандартны ўвод)"
+
+#: src/grep.c:997
+#, c-format
+msgid "warning: %s: %s\n"
+msgstr "Увага! %s: %s\n"
+
+#: src/grep.c:998
+msgid "recursive directory loop"
+msgstr "тэчкі зацыклены"
+
+#: src/grep.c:1046
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+msgstr "Выкарыстаньне: %s [ВЫБАР]... УЗОР [ФАЙЛ]...\n"
+
+#: src/grep.c:1048
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Паспрабуйце \"%s --help\" для больш падрабязных зьвестак.\n"
+
+#: src/grep.c:1053
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+msgstr "Выкарыстаньне: %s [ВЫБАР]... УЗОР [ФАЙЛ] ...\n"
+
+#: src/grep.c:1054
+#, c-format
+msgid ""
+"Search for PATTERN in each FILE or standard input.\n"
+"Example: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Regexp selection and interpretation:\n"
+msgstr ""
+"    Шукае ўзор у файле ці ў стандартным уводзе.\n"
+"Напрыклад: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Выбар і тлумачэньне выразаў:\n"
+
+#: src/grep.c:1059
+msgid ""
+"  -E, --extended-regexp     PATTERN is an extended regular expression\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+"  -E, --extended-regexp     УЗОР - гэта пашыраны сталы выраз.\n"
+"  -F, --fixed-strings       УЗОР - гэта набор радкоў, падзеленых між сабой\n"
+"                            пераходамі на новы радок.\n"
+"  -G, --basic-regexp        УЗОР - гэта асноўны сталы выраз.\n"
+"  -P, --perl-regexp         УЗОР - гэта сталы выраз на Perl.\n"
+
+#: src/grep.c:1064
+msgid ""
+"  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
+msgstr ""
+"  -e, --regexp=УЗОР         Выкарыстоваць УЗОР як сталы выраз.\n"
+"  -f, --file=ФАЙЛ           Атрымліваць узор з файла.\n"
+"  -i, --ignore-case         Не зьвяртаць увагу на розьніцу між вялікімі й\n"
+"                            маленькімі літарамі.\n"
+"  -w, --word-regexp         Прымушае каб узор цалкам адпавядаў слову.\n"
+"  -x, --line-regexp         Прымушае каб узор цалкам адпавядаў радку.\n"
+"  -z, --null-data           Радок даньняў павінен мець канчатак ў выглядзе\n"
+"                            нулявога байта, замест знака новага радка.\n"
+
+#: src/grep.c:1071
+msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --invert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+"      --mmap                use memory-mapped input if possible\n"
+msgstr ""
+"\n"
+"Разнастайныя:\n"
+"  -s, --no-messages         Падаўляць паведамленьні пра памылкі.\n"
+"  -v, --invert-match        Выбіраць нясупаўшыя радкі.\n"
+"  -V, --version             Надрукаваць зьвесткі пра вэрсыю й выйсьці.\n"
+"      --help                Адлюстраваць гэтую даведку й выйсьці.\n"
+"      --mmap                Выкарыстоўваць memory-mapped, калі гэта магчыма.\n"
+
+#: src/grep.c:1079
+msgid ""
+"\n"
+"Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
+"  -H, --with-filename       print the filename for each match\n"
+"  -h, --no-filename         suppress the prefixing filename on output\n"
+"      --label=LABEL         print LABEL as filename for standard input\n"
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE\n"
+"                            TYPE is 'binary', 'text', or 'without-match'\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+"  -I                        equivalent to --binary-files=without-match\n"
+"  -d, --directories=ACTION  how to handle directories\n"
+"                            ACTION is 'read', 'recurse', or 'skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
+"                            ACTION is 'read' or 'skip'\n"
+"  -R, -r, --recursive       equivalent to --directories=recurse\n"
+"      --include=PATTERN     files that match PATTERN will be examined\n"
+"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
+"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
+"  -L, --files-without-match only print FILE names containing no match\n"
+"  -l, --files-with-matches  only print FILE names containing matches\n"
+"  -c, --count               only print a count of matching lines per FILE\n"
+"  -Z, --null                print 0 byte after FILE name\n"
+msgstr ""
+"\n"
+"Кіраваньне вывадам:\n"
+"  -m, --max-count=N         Спыніцца пасьля N супадзеньняў.\n"
+"  -b, --byte-offset         Друкаваць адлегласьць байта разам з вывадам радкоў.\n"
+"  -n, --line-number         Друкаваць нумары радкоў побач з радкамі.\n"
+"      --line-buffered       Скідаць вывад на кожным радку.\n"
+"  -H, --with-filename       Друкаваць назву файла на кожнае супадзеньне.\n"
+"  -h, --no-filename         Падаўляць назвы файлаў у вывадзе.\n"
+"      --label=МЕТКА         Друкаваць метку ў якасьці назвы файла для\n"
+"                            стандартнага ўвода.\n"
+"  -o, --only-matching       Паказываць толькі тую частку радка, якая\n"
+"                            супадае з узорам.\n"
+"  -q, --quiet, --silent     Падаўляць увесь звычайны вывад.\n"
+"      --binary-files=ВІД    Задаць від двайковага файла. Наяўныя віды:\n"
+"                            \"binary\" (двайковы), \"text\" (тэкставы) ці\n"
+"                            \"without-match\" (неістотны).\n"
+"  -a, --text                Раўназначна --binary-files=text.\n"
+"  -I                        Раўназначна --binary-files=without-match.\n"
+"  -d, --directories=ДЗЕЯНЬНЕ\n"
+"                            Як апрацоўваць тэчкі; ДЗЕЯНЬНЕ можа быць \"read\"\n"
+"                            (чытаць), \"recurse\" (рэкурсыўна абходзіць) ці\n"
+"                            \"skip\" (абмінаць).\n"
+"  -D, --devices=ДЗЕЯНЬНЕ    Як апрацоўваць прылады, FIFO й гнёзды;\n"
+"                            ДЗЕЯНЬНЕ можа быць \"read\" (чытаць) ці\n"
+"                            \"skip\" (абмінаць).\n"
+"  -R, -r, --recursive       Раўназначна --directories=recurse.\n"
+"      --include=УЗОР        Апрацоўваць файлы, які адпавядаюць узору.\n"
+"      --exclude=УЗОР        Не апрацоўваць файлы, які адпавядаюць узору.\n"
+"      --exclude-from=ФАЙЛ   Абмінаць файлы, якія адпавядаюць узору з файла.\n"
+"  -L, --files-without-match Друкаваць толькі назвы тых файлаў, што ня\n"
+"                            ўтрымліваюць супадзеньні.\n"
+"  -l, --files-with-matches  Друкаваць толькі назвы тых файлаў, што ўтрымліваюць\n"
+"                            супадзеньні.\n"
+"  -c, --count               Друкаваць толькі колькасьць супаўшых радкоў на файл.\n"
+"  -Z, --null                Друкаваць 0-ы байт пасьля назвы файла.\n"
+
+#: src/grep.c:1107
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+"  -NUM                      same as --context=NUM\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to distinguish the matching string\n"
+"                            WHEN may be `always', `never' or `auto'.\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
+"\n"
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"With no FILE, or when FILE is -, read standard input.  If less than\n"
+"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
+"and 2 if trouble.\n"
+msgstr ""
+"\n"
+"Кіраваньне падтэкстам:\n"
+"  -B, --before-context=N    Друкаваць N радкоў папярэдняга падтэксту.\n"
+"  -A, --after-context=N     Друкаваць N радкоў наступнага падтэксту.\n"
+"  -C, --context=N           Друкаваць N радкоў падтэксту.\n"
+"  -N                        Раўназначна --context=N\n"
+"      --color[=КАЛІ],\n"
+"      --colour[=КАЛІ]       Выкарыстоўваць пазначальнікі, каб адрозьніваць\n"
+"                            супаўшыя радкі. КАЛІ можа быць: \"always\"\n"
+"                            (заўсёды), \"never\" (ніколі)  ці \"auto\".\n"
+"  -U, --binary              Не абразаць знакі CR на прыканцы радка (MSDOS).\n"
+"  -u, --unix-byte-offsets   Паведамляць пра адлегласьці такім чынам, нібыта\n"
+"                            знакі CR адсутнічаюць наагул (MSDOS).\n"
+"\n"
+"\"egrep\" азначае \"grep -E\".  \"fgrep\" азначае \"grep -F\".\n"
+"Бяз ФАЙЛа, ці калі замест назвы ФАЙЛа працяжнік -, чытае стандартны ўвод.\n"
+"Калі заданы менш чым два файла, працуе як у выпадку выбара -h.  Стан выхаду\n"
+"роўны 0, калі ё супадзеньні, 1, калі супадзеньняў няма й 2 у выпадку памылкі.\n"
+
+#: src/grep.c:1124
+#, fuzzy
+msgid ""
+"\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
+msgstr ""
+"\n"
+"Паведамляйце пра памылкі на <bug-gnu-utils@gnu.org>.\n"
+
+#: src/grep.c:1134
+msgid "conflicting matchers specified"
+msgstr "заданы супярэчлівыя супадальнікі"
+
+#: src/grep.c:1376
+msgid "unknown devices method"
+msgstr "невядомы мэтад пралад"
+
+#: src/grep.c:1443
+msgid "unknown directories method"
+msgstr "невядомы мэтад тэчак"
+
+#: src/grep.c:1510
+msgid "invalid max count"
+msgstr "недапушчальны найбольшы лічыльнік"
+
+#: src/grep.c:1565
+msgid "unknown binary-files type"
+msgstr "невядомы від дваічнага файла"
+
+#: src/grep.c:1660
+#, c-format
+msgid "%s (GNU grep) %s\n"
+msgstr "%s (GNU grep) %s\n"
+
+#: src/grep.c:1662
+msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+msgstr "    Аўтарскія правы © 1988, 1992-2001 Free Software Foundation, Inc.\n"
+
+#: src/grep.c:1664
+msgid ""
+"This is free software; see the source for copying conditions. There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+"    Гэта вольнае праграмнае забесьпячэньне.  Глядзіце зыходны тэкст для\n"
+"пагадненьня аб распаўсюджваньні.  Не йснуе НІЯКАЕ гарантыі, нават аб\n"
+"магчымасьці выкарыстаньня зь якой-небудзь мэтай.\n"
+
+#: src/search.c:606
+msgid "The -P option is not supported"
+msgstr "Выбар -P непадтрымліваецца"
+
+#: src/search.c:619
+msgid "The -P and -z options cannot be combined"
+msgstr "Выбары -P і -z ня могуць ісьці разам"
+
+#: lib/error.c:117
+msgid "Unknown system error"
+msgstr "Невядомая сыстэмная памылка"
+
+#: lib/getopt.c:675
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: выбар \"%s\" неадназначны\n"
+
+#: lib/getopt.c:700
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: выбар \"--%s\" не дазваляе довад\n"
+
+#: lib/getopt.c:705
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: выбар \"%c%s\" не дазваляе довад\n"
+
+#: lib/getopt.c:723 lib/getopt.c:896
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: выбар \"%s\" патрабуе довад\n"
+
+#. --option
+#: lib/getopt.c:752
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: нераспазнаны выбар \"--%s\"\n"
+
+#. +option or -option
+#: lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: нераспазнаны выбар \"%c%s\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:782
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: недапушчальны выбар -- %c\n"
+
+#: lib/getopt.c:785
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: нерэчаісны выбар -- %c\n"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:815 lib/getopt.c:945
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: выбар патрабуе довад -- %c\n"
+
+#: lib/getopt.c:862
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: выбар \"-W %s\" неадназначны\n"
+
+#: lib/getopt.c:880
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: выбар \"-W %s\" не дазваляе довады\n"
+
+#. Get translations for open and closing quotation marks.
+#.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  If the catalog has no translation,
+#. locale_quoting_style quotes `like this', and
+#. clocale_quoting_style quotes "like this".
+#.
+#. For example, an American English Unicode locale should
+#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
+#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
+#. MARK).  A British English Unicode locale should instead
+#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#: lib/quotearg.c:259
+msgid "`"
+msgstr "\""
+
+#: lib/quotearg.c:260
+msgid "'"
+msgstr "\""

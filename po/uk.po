@@ -1,39 +1,34 @@
-# Japanese messages for GNU grep
-# Copyright (C) 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
-# IIDA Yosiaki <iida@gnu.org>, 1999, 2000, 2001, 2002.
-# This file is distributed under the same license as the GNU grep package.
-# Contributed by
-# Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp>, 1997
-# and taken over on 1999-09-24 by IIDA.
-# Special thanks to
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999.
+# grep -- Ukrainian translation.
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# Volodymyr M. Lisivka <lvm@mystery.lviv.net>, 2001-2002.
+# Dmytro O. Redchuk <dor@kiev-online.net>, 2002.
+# $Id: uk.po,v 1.1 2006/08/18 21:04:18 bero Exp $
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep 2.5g\n"
 "POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-04-06 11:34+09:00\n"
-"Last-Translator: IIDA Yosiaki <iida@gnu.org>\n"
-"Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2003-01-25 13:27+0200\n"
+"Last-Translator: Volodymyr M. Lisivka <lvm@mystery.lviv.net>\n"
+"Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=KOI8-U\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Comments: This file is part of GNU grep.\n"
 
 #: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
 msgid "Memory exhausted"
-msgstr "╔А╔Б╔Й║╪╓╛б╜╓Й╓ч╓╩╓С"
+msgstr "Пам'ять вичерпано"
 
 #: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
 #: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
 #: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
 #: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
-msgstr "[ ╓╛дЮ╓Й╧Г╓╓╓ч╓╩╓С"
+msgstr "Не збалансовано ["
 
 #: src/dfa.c:741
 msgid "Unfinished \\ escape"
-msgstr "\\ ╔╗╔╧╔╠║╪╔в╓╛╫╙н╩╓╥╓ф╓╓╓ч╓╩╓С"
+msgstr "Не завершено \\-посл╕довн╕сть"
 
 #. Cases:
 #. {M} - exact count
@@ -41,77 +36,77 @@ msgstr "\\ ╔╗╔╧╔╠║╪╔в╓╛╫╙н╩╓╥╓ф╓╓╓ч╓╩╓С"
 #. {M,N} - M through N
 #: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
 msgid "unfinished repeat count"
-msgstr "╥╚йж╓╥╔╚╔╕╔С╔х╓╛╫╙н╩╓╥╓ч╓╩╓С"
+msgstr "не завершено л╕чильника повтор╕в"
 
 #: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
 msgid "malformed repeat count"
-msgstr "╥╚йж╓╥╔╚╔╕╔С╔х╓╛╟ш╬О╓г╓╧"
+msgstr "хибний л╕чильник повтор╕в"
 
 #: src/dfa.c:1253
 msgid "Unbalanced ("
-msgstr "( ╓╛дЮ╓Й╧Г╓╓╓ч╓╩╓С"
+msgstr "Не збалансовано ("
 
 #: src/dfa.c:1378
 msgid "No syntax specified"
-msgstr "╧╫й╦╓╛фцдЙ╓╣╓Л╓ф╓╓╓ч╓╩╓С"
+msgstr "Синтаксис не вказано"
 
 #: src/dfa.c:1386
 msgid "Unbalanced )"
-msgstr ") ╓╛дЮ╓Й╧Г╓╓╓ч╓╩╓С"
+msgstr "Не збалансовано )"
 
 #: src/dfa.c:2956
 msgid "out of memory"
-msgstr "╔А╔Б╔Й║╪╓╛╓й╓╞╓й╓Й╓ч╓╥╓©"
+msgstr "недостатньо пам'ят╕"
 
 #: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
 #: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "╔А╔Б╔Й║╪╓╛б╜╓Й╓ч╓╩╓С"
+msgstr "пам'ять вичерпано"
 
 #: src/grep.c:205
 msgid "invalid context length argument"
-msgstr "╧т©Т╓н╩ьдЙ╓╛╢ж╟Ц╓ц╓ф╓╓╓ч╓╧"
+msgstr "неправильний аргумент довжини контексту"
 
 #: src/grep.c:479
 msgid "input is too large to count"
-msgstr "фЧно╓╛бГ╓╜╓╧╓╝╓ф©Т╓╗╓И╓Л╓ч╓╩╓С"
+msgstr "вв╕д задовгий для обчислення"
 
 #: src/grep.c:605
 msgid "writing output"
-msgstr "╫пно╓н╫Я╧Ч╓ъ"
+msgstr "записування у вив╕д"
 
 #: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "╔п╔╓╔й╔Й║╪║╕╔у╔║╔╓╔К%s╓о╟Лцв╓╥╓ч╓╥╓©\n"
+msgstr "Дв╕йковий файл %s м╕стить зб╕жн╕сть\n"
 
 #: src/grep.c:892
 msgid "(standard input)"
-msgstr "(и╦╫ЮфЧно)"
+msgstr "(стандартний вв╕д)"
 
 #: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "╥ы╧П: %s: %s\n"
+msgstr "увага: %s: %s\n"
 
 #: src/grep.c:998
 msgid "recursive directory loop"
-msgstr "╔г╔ё╔Л╔╞╔х╔Й║╪╓╛╨ф╣╒е╙╔К║╪╔в╓Р╓╥╓ф╓╓╓ч╓╧"
+msgstr "зациклення рекурсивного проходу каталог╕в"
 
 #: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "╩хмяк║: %s [╔╙╔в╔╥╔Г╔С]║е║е й╦╩ЗнС╔я╔©║╪╔С [╔у╔║╔╓╔К]║е║е\n"
+msgstr "Використання: %s [КЛЮЧ]... ШАБЛОН [ФАЙЛ]...\n"
 
 #: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "╬э╓╥╓╞╓о`%s --help'╓Р╪б╧т╓╥╓ф╓╞╓ю╓╣╓╓║ё\n"
+msgstr "Спробуйте \"%s --help\" для отримання додатково╖ ╕нформац╕╖.\n"
 
 #: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "╩хмяк║: %s [╔╙╔в╔╥╔Г╔С]║е║е ╔я╔©║╪╔С [╔у╔║╔╓╔К] ║е║е\n"
+msgstr "Використання: %s [КЛЮЧ]... ШАБЛОН [ФАЙЛ] ...\n"
 
 #: src/grep.c:1054
 #, c-format
@@ -121,10 +116,10 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"║ж╔у╔║╔╓╔К║в╓Б╓╥╓╞╓ои╦╫ЮфЧно╓╚╓И║ж╔я╔©║╪╔С║в╓н╦║╨В╓Р╧т╓й╓╕║ё\n"
-"нЦ: %s -i 'hello world' menu.h main.c\n"
+"Пошук ШАБЛОНу у кожному ФАЙЛ╕ чи у стандартному ввод╕.\n"
+"Приклад: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"ю╣╣╛и╫╦╫╓на╙бР╓х╡Р╪АйЩк║:\n"
+"Виб╕р та ╕нтерпретац╕я регулярних вираз╕в:\n"
 
 #: src/grep.c:1059
 msgid ""
@@ -133,10 +128,10 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ║ж╔я╔©║╪╔С║в╓РЁхд╔╓╣╓Л╓©ю╣╣╛и╫╦╫╓х╓╧╓К\n"
-"  -F, --fixed-strings       ║ж╔я╔©║╪╔С║в╓Р╡Ч╧т╓г╤Хюз╓И╓Л╓©╦гдЙ╓нй╦╩ЗнС╓х╓╧╓К\n"
-"  -G, --basic-regexp        ║ж╔я╔©║╪╔С║в╓Р╢Пкэе╙╓йю╣╣╛и╫╦╫╓х╓╧╓К\n"
-"  -P, --perl-regexp         ║ж╔я╔©║╪╔С║в╓РPerl╓ню╣╣╛и╫╦╫╓х╓╧╓К\n"
+"  -E, --extended-regexp     ШАБЛОН ╓ розширеним регулярним виразом\n"
+"  -F, --fixed-strings       ШАБЛОН ╓ набором рядк╕в, розд╕лених \\n\n"
+"  -G, --basic-regexp        ШАБЛОН ╓ звичайним регулярним виразом\n"
+"  -P, --perl-regexp         ШАБЛОН ╓ регулярним виразом Perl\n"
 
 #: src/grep.c:1064
 msgid ""
@@ -147,12 +142,13 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=╔я╔©║╪╔С     ю╣╣╛и╫╦╫╓к╩ьдЙ╔я╔©║╪╔С╓Р╩х╓╕\n"
-"  -f, --file=╔у╔║╔╓╔К       ║ж╔я╔©║╪╔С║в╓Р╩ьдЙ╔у╔║╔╓╔К╓╚╓Ифи╓Ю\n"
-"  -i, --ignore-case         бГй╦╩З/╬╝й╦╩З╓Рл╣╩К╓╧╓К\n"
-"  -w, --word-regexp         ║ж╔я╔©║╪╔С║в╟Лцв╓Рц╠╦Ла╢бн(ц╠╦Лц╠╟л)╓г╧т╓й╓╕\n"
-"  -x, --line-regexp         ║ж╔я╔©║╪╔С║в╟Лцв╓Р╧та╢бн(╧тц╠╟л)╓г╧т╓й╓╕\n"
-"  -z, --null-data           ╫пно╓Р╡Ч╧т╓г╓й╓╞║╒╔л╔Кцм╓н╔п╔╓╔х╓г╤Хюз╓К\n"
+"  -e, --regexp=ШАБЛОН       використовувати ШАБЛОН як регулярний вираз\n"
+"  -f, --file=ФАЙЛ           взяти ШАБЛОН ╕з ФАЙЛа\n"
+"  -i, --ignore-case         ╕гнорувати рег╕стр л╕тер\n"
+"  -w, --word-regexp         ШАБЛОН зб╕гатиметься лише ╕з ц╕лим словом\n"
+"  -x, --line-regexp         ШАБЛОН зб╕гатиметься лише ╕з ц╕лим рядком\n"
+"  -z, --null-data           рядки даних зак╕нчуються байтом \"0\", а не к╕нцем\n"
+"                            рядка\n"
 
 #: src/grep.c:1071
 msgid ""
@@ -165,12 +161,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"╓╫╓нб╬:\n"
-"  -s, --no-messages         ╔╗╔И║╪║╕╔А╔ц╔╩║╪╔╦╓Рмч╩ъ╓╧╓К\n"
-"  -v, --invert-match        ╟Лцв╓╥╓й╓╓╧т╓Рбп╬щ╓к╓╧╓К\n"
-"  -V  --version             ╔п║╪╔╦╔Г╔С╬ПйС╓Ри╦╫Ю╫пно╓ки╫╪╗╓╥╓ф╫╙н╩╓╧╓К\n"
-"      --help                ╩х╓╓йЩ╓Ри╦╫Ю╫пно╓ки╫╪╗╓╧╓К\n"
-"      --mmap                ╓Б╓╥╡дг╫╓й╓И║╒фЧно╓Р╔А╔Б╔Й║╪║╕╔ч╔ц╔в╓╧╓К\n"
+"Р╕зне:\n"
+"  -s, --no-messages         замовчувати помилки\n"
+"  -v, --invert-match        вибирати рядки без зб╕жностей\n"
+"  -V, --version             видати ╕нформац╕ю про верс╕ю та вийти\n"
+"      --help                видати цю п╕дказку та вийти\n"
+"      --mmap                використовувати mmap(2) для читання, якщо можливо\n"
 
 #: src/grep.c:1079
 msgid ""
@@ -203,34 +199,35 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"╫пною╘╦Ф:\n"
-"  -m, --max-count=╡С©Т      ╩ьдЙ╓╥╓©╟Лцв╡С©Т╓н╦Е║╒╫╙н╩╓╧╓К\n"
-"  -b, --byte-offset         ╫пно╧т╓к╔п╔╓╔х║╕╔╙╔у╔╩╔ц╔х╓Би╫╪╗╓╧╓К\n"
-"  -n, --line-number         ╫пно╧т╓к╧т©Т╓Би╫╪╗╓╧╓К\n"
-"      --line-buffered       ╧т╓╢╓х╓к╫пно╓Ращ╓╜╫п╓╧\n"
-"  -H, --with-filename       Ёф╟Лцв╓к╓©╓╓╓╥╓ф╓╫╓н╔у╔║╔╓╔Кл╬╓Би╫╪╗╓╧╓К\n"
-"  -h, --no-filename         а╟╓н╔у╔║╔╓╔Кл╬╓Р╫пно╓╚╓Имч╩ъ╓╧╓К\n"
-"      --label=╔И╔ы╔К        ╔И╔ы╔К╓Р╔у╔║╔╓╔Кл╬╓х╓╥╓фи╦╫Ю╫пно╓ки╫╪╗╓╧╓К\n"
-"  -o, --only-matching       ╔я╔©║╪╔С╓х╟Лцв╓╧╓К╧т╓ниТй╛╓ю╓╠╓Р╪╗╓╧\n"
-"  -q, --quiet, --silent     дл╬О╓н╫пно╓Р╓╧╓ы╓фмч╩ъ╓╧╓К\n"
-"      --binary-files=╥©     ╔п╔╓╔й╔Й║╪║╕╔у╔║╔╓╔К╓н╥©║ё║жbinary║в\n"
-"                            ║жtext║в║жwithout-match║в╓Р╩ьдЙ\n"
-"  -a, --text                --binary-files=text╓хф╠╓╦\n"
-"  -I                        --binary-files=without-match╓хф╠╓╦\n"
-"  -d, --directories=аЮ╨Н    ╔г╔ё╔Л╔╞╔х╔Й║╪╓ь╓наЮ╨Н\n"
-"                            ║жread║в(фи╧Ч╓ъ)║╒║жrecurse║в(╨ф╣╒)║╒\n"
-"                            ║жskip║в(╬йн╛) ╓н╓╓╓╨╓Л╓╚╓Р╩ьдЙ\n"
-"  -D, --devices=аЮ╨Н        ╔г╔п╔╓╔╧║╒FIFO║╒╔╫╔╠╔ц╔х╓ь╓наЮ╨Н\n"
-"                            ║жread║в╓╚║жskip║в╓Р╩ьдЙ\n"
-"  -R, -r, --recursive       --directories=recurse╓хф╠╓╦\n"
-"      --include=╔я╔©║╪╔С    ╔я╔©║╪╔С╓х╟Лцв╓╧╓К╔у╔║╔╓╔К╓Р╦║╨╨╓╧╓К\n"
-"      --exclude=╔я╔©║╪╔С    ╔я╔©║╪╔С╓х╟Лцв╓╧╓К╔у╔║╔╓╔К╓Р╬йн╛╓╧╓К║ё\n"
-"      --exclude-from=╔у╔║╔╓╔К ╩ьдЙ╓╥╓©╔у╔║╔╓╔КфБ╓н╔я╔©║╪╔С╓х\n"
-"                            ╟Лцв╓╧╓К╔у╔║╔╓╔К╓Р╬йн╛╓╧╓К║ё\n"
-"  -L, --files-without-match ╟Лцв╓н╓й╓╚╓ц╓©╔у╔║╔╓╔Кл╬╓н╓ъ╓Ри╫╪╗╓╧╓К\n"
-"  -l, --files-with-matches  ╟Лцв╓╥╓©╔у╔║╔╓╔Кл╬╓н╓ъ╓Ри╫╪╗╓╧╓К\n"
-"  -c, --count               ╔у╔║╔╓╔К╓╢╓х╓к╟Лцв╓╥╓©╧т©Т╓н╓ъ╓Ри╫╪╗╓╧╓К\n"
-"  -Z, --null                ╔у╔║╔╓╔Кл╬╓н╦Е╓к║╒╔л╔Кцм╓н╔п╔╓╔х╓Ри╫╪╗\n"
+"Керування виводом:\n"
+"  -m, --max-count=ЧИСЛО     зупинитися п╕сля ЧИСЛа зб╕жностей\n"
+"  -b, --byte-offset         друкувати зм╕щеня у байтах ╕з рядками виводу\n"
+"  -n, --line-number         друкувати номери рядк╕в разом ╕з рядками виводу\n"
+"      --line-buffered       спорожнювати буфер виводу на кожному рядку\n"
+"  -H, --with-filename       друкувати ╕м'я файла для кожно╖ зб╕жност╕\n"
+"  -h, --no-filename         замовчувати ╕м'я файла для кожно╖ зб╕жност╕\n"
+"      --label=М╤ТКА         друкувати М╤ТКу як ╕м'я файлу для\n"
+"                            стандартного вводу\n"
+"  -o, --only-matching       показувати лише частину рядка, що м╕стить ШАБЛОН\n"
+"  -q, --quiet, --silent     заборонити вс╕ нормальн╕ пов╕домлення\n"
+"      --binary-files=ТИП    вважати, що дв╕йков╕ файли ╓ вказаного ТИПу\n"
+"                            ТИП може бути \"binary\", \"text\",\n"
+"                            чи \"without-match\"\n"
+"  -a, --text                те ж саме, що й --binary-files=text\n"
+"  -I                        те ж саме, що й --binary-files=without-match\n"
+"  -d, --directories=Д╤Я     як опрацьовувати каталоги\n"
+"                            Д╤Я може бути \"read\", \"recurse\", чи \"skip\"\n"
+"  -D, --devices=Д╤Я         як опрацьовувати пристро╖, канали та гн╕зда\n"
+"                            Д╤Я може бути \"read\" чи \"skip\"\n"
+"  -R, -r, --recursive       те ж саме, що й --directories=recurse\n"
+"      --include=ШАБЛОН      перев╕ряти файли, що в╕дпов╕дають ШАБЛОНу\n"
+"      --exclude=ШАБЛОН      пропускати файли, що в╕дпов╕дають ШАБЛОНу\n"
+"      --exclude-from=ФАЙЛ   пропускати файли, що в╕дпов╕дають ШАБЛОНу з ФАЙЛу\n"
+"  -L, --files-without-match друкувати лише ╕мена ФАЙЛ╕в, що не мають зб╕жностей\n"
+"  -l, --files-with-matches  друкувати лише ╕мена ФАЙЛ╕в, що мають зб╕жност╕\n"
+"  -c, --count               друкувати лише к╕льк╕сть рядк╕в\n"
+"                            з╕ зб╕жностями у ФАЙЛ╕\n"
+"  -Z, --null                друкувати байт \"0\" п╕сля ╕мен╕ ФАЙЛа\n"
 
 #: src/grep.c:1107
 msgid ""
@@ -252,22 +249,23 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr ""
 "\n"
-"а╟╦Е╢ь╥╦╓ню╘╦Ф:\n"
-"  -B, --before-context=©Т   ╟Лцва╟╓н║ж©Т║в╧т╓Б╫пно╓╧╓К\n"
-"  -A, --after-context=©Т    ╟Лцв╦Е╓н║ж©Т║в╧т╓Б╫пно╓╧╓К\n"
-"  -C, --context=╧т©Т        ╟Лцва╟╦Е╓н╩ьдЙ╧т©Т╓нфБмф╓Б╫пно╓╧╓К\n"
-"  -╧т©Т                     --context=╧т©Т ╓хф╠╓╦\n"
-"      --color[=╬Л╧Г]\n"
-"      --colour[=╬Л╧Г]       ╟Лцв╓╧╓Кй╦╩ЗнС╓Рлэн╘╓©╓╩╓К╔ч║╪╔╚║╪╓Р╩х╓╕\n"
-"                            ║ж╬Л╧Г║в╓к╓о║╒║жalways║в║жnever║в║жauto║в╓Р╩ьдЙ║ё\n"
-"  -U, --binary              EOL╓г╓нCRй╦╩З╓Р╪Х╓Й╬й╓╚╓й╓╓(MS-DOS)\n"
-"  -u, --unix-byte-offsets   CRй╦╩З╓╛╓й╓╓╓Б╓н╓х╓╥╓ф╔╙╔у╔╩╔ц╔х╓Р\n"
-"                            ╫пно╓╧╓К(MS-DOS)\n"
+"Контроль вм╕сту:\n"
+"  -B, --before-context=ЧИСЛО друкувати ЧИСЛО рядк╕в перед зб╕жн╕стю\n"
+"  -A, --after-context=ЧИСЛО  друкувати ЧИСЛО рядк╕в п╕сля зб╕жност╕\n"
+"  -C, --context=ЧИСЛО        друкувати ЧИСЛО сус╕дн╕х рядк╕в\n"
+"  -ЧИСЛО                     те ж саме, що й --context=ЧИСЛО\n"
+"      --color[=ДЕ],\n"
+"      --colour[=ДЕ]          використовувати маркери для в╕др╕знення\n"
+"                             рядк╕в з╕ зб╕жностями\n"
+"                             ДЕ може бути \"always\", \"never\" чи \"auto\".\n"
+"  -U, --binary               не видаляти символи CR на к╕нц╕ рядка (MSDOS)\n"
+"  -u, --unix-byte-offsets    вказувати зм╕щення, наче за в╕дсутност╕\n"
+"                             символ╕в CR (MSDOS)\n"
 "\n"
-"║жegrep║в╓о║жgrep -E║в╓н╓Ё╓х╓г╓╧║ё║жfgrep║в╓о║жgrep -F║в╓н╓Ё╓х╓г╓╧║ё\n"
-"║ж╔у╔║╔╓╔К║в╓н╩ьдЙ╓╛╓й╓╚╓ц╓©╓Й║╒║ж╔у╔║╔╓╔К║в╓к║ж-║в╓Р╩ьдЙ╓╥╓©╓Й╓╧╓К╓х║╒\n"
-"и╦╫ЮфЧно╓╚╓Ифи╓ъ╧Ч╓ъ╓ч╓╧║ё║ж╔у╔║╔╓╔К║в╓н╦д©Т╓╛1╟й╡╪╓н╬Л╧Г║╒-h╓х╡╬дЙ╓╥╓ч╓╧║ё\n"
-"╓Б╓╥╟Лцв╓╛╓╒╓К╓х0╓г║╒╓й╓╓╓х1╓г║╒╬ЦЁ╡╓╛╓╒╓К╓х2╓г║╒╫╙н╩╓╥╓ч╓╧║ё\n"
+"\"egrep\" означа╓ \"grep -E\".  \"fgrep\" означа╓ \"grep -F\".\n"
+"Якщо не вказано ФАЙЛ, чи ФАЙЛом ╓ -, читати стандартний вв╕д.\n"
+"Якщо менше, н╕ж два ФАЙЛи вказано, вважати -h.  Код завершення 0 -\n"
+"коли ╓ зб╕жност╕, 1 - коли ╖х нема, та 2 - в раз╕ збою.\n"
 
 #: src/grep.c:1124
 #, fuzzy
@@ -276,115 +274,113 @@ msgid ""
 "Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"╔п╔╟╓о <bug-gnu-utils@gnu.org> ╓ьйС╧П╓╥╓ф╓╞╓ю╓╣╓╓║ё\n"
+"Пов╕домляйте про помилки на <bug-gnu-utils@gnu.org>.\n"
 
 #: src/grep.c:1134
 msgid "conflicting matchers specified"
-msgstr "╩ьдЙ╓╥╓©╬х╧Г╩р╓╛╬вфм╓╥╓ф╓╓╓ч╓╧"
+msgstr "задан╕ умови зб╕жност╕ конфл╕ктують"
 
 #: src/grep.c:1376
 msgid "unknown devices method"
-msgstr "л╓цн╓н╔г╔п╔╓╔╧аЮ╨Н╓г╓╧"
+msgstr ""
 
 #: src/grep.c:1443
 msgid "unknown directories method"
-msgstr "л╓цн╓н╔г╔ё╔Л╔╞╔х╔Й║╪аЮ╨Н╓г╓╧"
+msgstr ""
 
 #: src/grep.c:1510
 msgid "invalid max count"
-msgstr "╟Лцв╡С©Т╓╛╢ж╟Ц╓ц╓ф╓╓╓ч╓╧"
+msgstr "неправильна максимальна к╕льк╕сть"
 
 #: src/grep.c:1565
 msgid "unknown binary-files type"
-msgstr "л╓цн╓н╔п╔╓╔й╔Й║╪║╕╔у╔║╔╓╔К╓н╥©╓г╓╧"
+msgstr "нев╕домий тип дв╕йкових файл╕в"
 
 #: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
+msgstr ""
 
 #: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+msgstr ""
 
 #: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"╓Ё╓Л╓о╔у╔Й║╪║╕╔╫╔у╔х╔╕╔╖╔╒╓г╓╧║ёйёю╫╓к╢ь╓╧╓К╬Р╥О╓о╔╫║╪╔╧╓Р╓╢мВ╓╞╓ю╓╣╓╓║ё\n"
-"╓Ё╓Л╓ол╣йщ╬з╓г╓╧║ё╠дмЬлэе╙╓Д╓╒╓КфцдЙ╓нлэе╙╓к╓Ю╓╠╓©е╛ю╣╓н╓Б╓н╓г╓Б╓╒╓Й╓ч╓╩╓С║ё\n"
 
 #: src/search.c:606
 msgid "The -P option is not supported"
-msgstr "-P╔╙╔в╔╥╔Г╔С╓о╔╣╔щ║╪╔х╓╥╓ф╓╓╓ч╓╩╓С"
+msgstr "Ключ -P не п╕дтриму╓ться"
 
 #: src/search.c:619
 msgid "The -P and -z options cannot be combined"
-msgstr "-P╓х-z╓н╔╙╔в╔╥╔Г╔С╓нах╧Г╓╩╓о╓г╓╜╓ч╓╩╓С"
+msgstr "Ключ╕ -P та -z не можна по╓днувати"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "л╓цн╓н╔╥╔╧╔ф╔Ю║╕╔╗╔И║╪╓г╓╧"
+msgstr "Нев╕дома системна помилка"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С╓н╩ьдЙ`%s'╓╛шёкФ╓г╓╧\n"
+msgstr "%s: ключ \"%s\" неоднозначний\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`--%s'╓о╟З©Т╓Р╓х╓Й╓ч╓╩╓С\n"
+msgstr "%s: ключ \"--%s\" не прийма╓ аргумент╕в\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`%c%s'╓о╟З©Т╓Р╓х╓Й╓ч╓╩╓С\n"
+msgstr "%s: ключ \"%c%s\" не прийма╓ аргумент╕в\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`-%s'╓к╓о╟З©Т╓╛и╛мв╓г╓╧\n"
+msgstr "%s: ключ \"%s\" потребу╓ аргумент\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`--%s'╓Рг╖╪╠╓г╓╜╓ч╓╩╓С\n"
+msgstr "%s: нев╕домий ключ \"--%s\"\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`%c%s'╓Рг╖╪╠╓г╓╜╓ч╓╩╓С\n"
+msgstr "%s: нев╕домий ключ \"%c%s\"\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С╓╛╢ж╟Ц╓ц╓ф╓╓╓ч╓╧ -- %c\n"
+msgstr "%s: неправильний ключ -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С╓╛итю╣╓г╓╧ -- %c\n"
+msgstr "%s: неправильний ключ -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`-%c'╓к╓о╟З©Т╓╛и╛мв╓г╓╧\n"
+msgstr "%s: ключ потребу╓ аргумент -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С╓н╩ьдЙ`-W %s'╓╛шёкФ╓г╓╧\n"
+msgstr "%s: ключ \"-W %s\" неоднозначний\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: ╔╙╔в╔╥╔Г╔С`-W %s'╓о╟З©Т╓Р╓х╓Й╓ч╓╩╓С\n"
+msgstr "%s: ключ \"-W %s\" не прийма╓ аргумент╕в\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -402,8 +398,8 @@ msgstr "%s: ╔╙╔в╔╥╔Г╔С`-W %s'╓о╟З©Т╓Р╓х╓Й╓ч╓╩╓С\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "║х"
+msgstr "\""
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "║и"
+msgstr "\""

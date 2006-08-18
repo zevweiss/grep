@@ -2,12 +2,12 @@
 # Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 # Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000.
 #
-# $Id: sl.po,v 1.30 2004/11/20 16:15:57 kasal Exp $
+# $Id: sl.po,v 1.31 2006/08/18 21:04:18 bero Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU grep 2.5g\n"
-"POT-Creation-Date: 2002-01-22 14:39+0100\n"
+"POT-Creation-Date: 2002-03-26 16:38+0100\n"
 "PO-Revision-Date: 2002-03-11 09:25+0100\n"
 "Last-Translator: Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -19,7 +19,10 @@ msgstr ""
 msgid "Memory exhausted"
 msgstr "Pomnilnik porabljen"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
+#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
+#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
+#: src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "Oklepaj [ brez zaklepaja"
 
@@ -55,7 +58,8 @@ msgstr "Zaklepaj ) brez oklepaja"
 msgid "out of memory"
 msgstr "zmanjkalo pomnilnika"
 
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
+#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
+#: src/search.c:293 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "pomnilnik porabljen"
 
@@ -63,48 +67,48 @@ msgstr "pomnilnik porabljen"
 msgid "invalid context length argument"
 msgstr "velikost konteksta ni veljavna"
 
-#: src/grep.c:475
+#: src/grep.c:479
 msgid "input is too large to count"
 msgstr "vhod je prevelik, da bi ga mogli pre¹teti"
 
-#: src/grep.c:597
+#: src/grep.c:605
 msgid "writing output"
 msgstr "pisanje rezultatov"
 
-#: src/grep.c:870
+#: src/grep.c:878
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Binarna datoteka %s ustreza\n"
 
-#: src/grep.c:884
+#: src/grep.c:892
 msgid "(standard input)"
 msgstr "(standardni vhod)"
 
-#: src/grep.c:989
+#: src/grep.c:997
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "pozor: %s: %s\n"
 
-#: src/grep.c:990
+#: src/grep.c:998
 msgid "recursive directory loop"
 msgstr "rekurzivna zanka imenikov"
 
-#: src/grep.c:1038
+#: src/grep.c:1046
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Uporaba: %s [IZBIRA]... VZOREC [DATOTEKA]...\n"
 
-#: src/grep.c:1040
+#: src/grep.c:1048
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Poskusite ,%s --help` za dodatna pojasnila.\n"
 
-#: src/grep.c:1045
+#: src/grep.c:1053
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Uporaba: %s [IZBIRA]... VZOREC [DATOTEKA] ...\n"
 
-#: src/grep.c:1046
+#: src/grep.c:1054
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -117,7 +121,7 @@ msgstr ""
 "\n"
 "Izbira in tolmaèenje regularnih izrazov:\n"
 
-#: src/grep.c:1051
+#: src/grep.c:1059
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -129,7 +133,7 @@ msgstr ""
 "  -G, --basic-regexp        VZOREC je osnovni regularni izraz\n"
 "  -P, --perl-regexp         VZOREC je regularni izraz z raz¹iritvami perla\n"
 
-#: src/grep.c:1056
+#: src/grep.c:1064
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -146,7 +150,7 @@ msgstr ""
 "  -z, --null-data           vrstica podatkov je konèana z znakom NUL, ne z\n"
 "                            znakom za skok v novo vrstico\n"
 
-#: src/grep.c:1063
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -164,7 +168,7 @@ msgstr ""
 "      --help                ta pomoè\n"
 "      --mmap                èe je mo¾no, uporabi pomnilni¹ko preslikan vhod\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1079
 msgid ""
 "\n"
 "Output control:\n"
@@ -223,7 +227,7 @@ msgstr ""
 "                            pojavi VZOREC\n"
 "  -Z, --null                izpi¹i znak NUL za imenom DATOTEKE\n"
 
-#: src/grep.c:1099
+#: src/grep.c:1107
 msgid ""
 "\n"
 "Context control:\n"
@@ -257,49 +261,50 @@ msgstr ""
 "manj kot dve DATOTEKI, privzamemo izbiro -h. Izhodna koda je niè, èe smo VZOREC\n"
 "na¹li, ena, èe ga nismo, 2 pa pomeni skladenjsko ali sistemsko napako.\n"
 
-#: src/grep.c:1116
+#: src/grep.c:1124
+#, fuzzy
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to <bug-grep@gnu.org>.\n"
 msgstr ""
 "\n"
-"Morebitne napake v programu sporoèite na <%s>.\n"
+"Morebitne napake v programu sporoèite na <bug-gnu-utils@gnu.org>.\n"
 
 #  Sporoèilo se pojavi pri nedokumentirani izbiri -X
 #  grep.c:622 ->
 #  opt = getopt(argc, argv, "0123456789A:B:CEFGVX:bce:f:hiLlnqsvwxy"
 #  grep --help ->
 #  usage: grep [-[[AB] ]<num>] [-[CEFGVchilnqsvwx]] [-[ef]] <expr> [<files...>]
-#: src/grep.c:1126
+#: src/grep.c:1134
 msgid "conflicting matchers specified"
 msgstr "podana navodila si nasprotujejo"
 
-#: src/grep.c:1363
+#: src/grep.c:1376
 msgid "unknown devices method"
 msgstr "neznana metoda datotek naprav"
 
-#: src/grep.c:1430
+#: src/grep.c:1443
 msgid "unknown directories method"
 msgstr "neznana metoda imenikov"
 
-#: src/grep.c:1497
+#: src/grep.c:1510
 msgid "invalid max count"
 msgstr "neveljavno najveèje ¹tevilo"
 
-#: src/grep.c:1551
+#: src/grep.c:1565
 msgid "unknown binary-files type"
 msgstr "neznan tip binarne datoteke"
 
-#: src/grep.c:1646
+#: src/grep.c:1660
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1648
+#: src/grep.c:1662
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright (C) 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1650
+#: src/grep.c:1664
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
