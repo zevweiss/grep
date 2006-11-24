@@ -2,6 +2,8 @@
 
 	* configure.ac.in, grep.spec: Update version number
 
+	* Makefile.cvs: Update to work with current autoconf scripts
+
 2006-08-19  Bernhard Rosenkraenzer <bero@arklinux.org>
 
 	* po/*: Sync with translation project

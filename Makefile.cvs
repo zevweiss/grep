@@ -1,12 +1,15 @@
-VERSION = $(shell cat configure.in |grep INIT_AUTOMAKE |sed -e 's/.*,//;s/^ //;s/.$$//' )
+VERSION = $(shell cat configure.ac.in |grep AC_INIT |sed -e 's/[^,]*, *//;s/,.*//' )
 SRCDIR = $(shell pwd)
 
-all: autogen.sh configure.in
+all: autogen.sh configure.ac.in
 	./autogen.sh
 
 grep-$(VERSION).tar:
 	[ -e configure.in ] || ( echo Must be run from grep source dir ; exit 1 )
 	rm -rf /tmp/grep-$(VERSION) && cp -aR $(SRCDIR) /tmp/grep-$(VERSION) && cd /tmp/grep-$(VERSION) && make -f Makefile.cvs cvs-clean && make -f Makefile.cvs && rm -rf autom4te.cache && (find . -type d -name CVS |xargs rm -rf) && cd .. && tar chf $(SRCDIR)/grep-$(VERSION).tar grep-$(VERSION)
+
+grep-$(VERSION).tar.lz: grep-$(VERSION).tar
+	lzip -9e grep-$(VERSION).tar
 
 grep-$(VERSION).tar.bz2: grep-$(VERSION).tar
 	bzip2 -9f grep-$(VERSION).tar
