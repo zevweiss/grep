@@ -1,6 +1,7 @@
 Version 2.5.2
   - The new option --exclude-dir allows to specify a directory pattern that
     will be exclided from recursive grep.
+  - Numerous bug fixes
 
 Version 2.5.1
   - This is a bugfix release. No new features.
