@@ -9,7 +9,7 @@ grep-$(VERSION).tar:
 	rm -rf /tmp/grep-$(VERSION) && cp -aR $(SRCDIR) /tmp/grep-$(VERSION) && cd /tmp/grep-$(VERSION) && make -f Makefile.cvs cvs-clean && make -f Makefile.cvs && rm -rf autom4te.cache && (find . -type d -name CVS |xargs rm -rf) && cd .. && tar chf $(SRCDIR)/grep-$(VERSION).tar grep-$(VERSION)
 
 grep-$(VERSION).tar.lz: grep-$(VERSION).tar
-	lzip -9e grep-$(VERSION).tar
+	lzip -9ef grep-$(VERSION).tar
 
 grep-$(VERSION).tar.bz2: grep-$(VERSION).tar
 	bzip2 -9f grep-$(VERSION).tar

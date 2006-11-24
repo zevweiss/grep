@@ -4,6 +4,8 @@
 
 	* Makefile.cvs: Update to work with current autoconf scripts
 
+	* po/Makefile.in.in: Adjust to work with automake 1.1x
+
 2006-08-19  Bernhard Rosenkraenzer <bero@arklinux.org>
 
 	* po/*: Sync with translation project
