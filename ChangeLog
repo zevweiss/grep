@@ -1,3 +1,7 @@
+2006-11-25  Bernhard Rosenkraenzer <bero@arklinux.org>
+
+	* configure.ac.in, grep.spec: Update version number
+
 2006-08-19  Bernhard Rosenkraenzer <bero@arklinux.org>
 
 	* po/*: Sync with translation project
