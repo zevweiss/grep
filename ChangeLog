@@ -1,5 +1,9 @@
 2006-11-25  Bernhard Rosenkraenzer <bero@arklinux.org>
 
+	* configure.ac.in: Update version number for post-2.5.2 development
+
+2006-11-25  Bernhard Rosenkraenzer <bero@arklinux.org>
+
 	* configure.ac.in, grep.spec: Update version number
 
 	* Makefile.cvs: Update to work with current autoconf scripts
