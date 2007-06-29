@@ -1,3 +1,8 @@
+2007-06-29  Bernhard Rosenkraenzer <bero@arklinux.org>
+
+	* all files: GPLv3
+	* configure.ac.in: Change version number
+
 2006-11-25  Bernhard Rosenkraenzer <bero@arklinux.org>
 
 	* configure.ac.in: Update version number for post-2.5.2 development
