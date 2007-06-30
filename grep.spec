@@ -2,13 +2,13 @@
 %define rel 1
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.5.2
+Version: 2.5.3
 %if "%{beta}" != ""
 Release: 0.%{beta}.%{rel}ark
 %else
 Release: %{rel}ark
 %endif
-License: GPL
+License: GPL v3 or later
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/pub/gnu/grep/grep-%{version}%{beta}.tar.lz
 Prereq: /sbin/install-info
@@ -69,6 +69,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Sat Jun 30 2007 Bernhard Rosenkraenzer <bero@arklinux.org> 2.5.3-1ark
+- 2.5.3
+
 * Sat Nov 25 2006 Bernhard Rosenkraenzer <bero@arklinux.org> 2.5.2-1ark
 - 2.5.2
 
