@@ -1,3 +1,11 @@
+2007-10-07  Tony Abou-Assaleh <taa@acm.org>
+	* src/grep.c: When -h and -H are combined, use the last specified,
+	  Bug #15620, Patch #4866
+	* tests/foad1.sh: add tests for -h and -H
+	* ChangeLog: Add a copyright notice (years taken from commit logs),
+	  add a license notice (taken from gnulib ChangeLog)
+	* TODO: update the link to a list of other grep implementations
+
 2007-06-29  Bernhard Rosenkraenzer <bero@arklinux.org>
 
 	* all files: GPLv3
@@ -3217,3 +3225,8 @@ axes.)
 1993-05-22  Mike Haertel  <mike@cs.uoregon.edu>
 
 	* Version 2.0 released.
+
+Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
+  Free Software Foundation, Inc.
+Copying and distribution of this file, with or without modification,
+  are permitted provided the copyright notice and this notice are preserved.
