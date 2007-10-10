@@ -55,13 +55,6 @@ grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -i
 grep_test "wA wB/" "(standard input):wA/(standard input):wB/" "w." -o -H -3 2>/dev/null
 
-# Combination of -h and -H
-grep_test "wA wB/" "wA wB/" "w."
-grep_test "wA wB/" "wA wB/" "w." -h
-grep_test "wA wB/" "wA wB/" "w." -H -h
-grep_test "wA wB/" "(standard input):wA wB/" "w." -H
-grep_test "wA wB/" "(standard input):wA wB/" "w." -h -H
-
 # End of a previous match should not match a "start of ..." expression.
 grep_test "word_word/" "word_/" "^word_*" -o
 grep_test "wordword/" "word/" "\<word" -o

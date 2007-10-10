@@ -43,7 +43,7 @@ Sunday's "Quick Search" Algorithm (CACM 33, 8 August 1990 pp. 132-142)
 claim that his algo. is faster then Boyer-More ????
 Worth Checking.
 
-Check <http://tony.abou-assaleh.net/greps.html>.
+Check <http://flame.cs.dal.ca/~taa/greps.html>.
 Take a look at:
    -- cgrep (Context grep) seems like nice work;
    -- sgrep (Struct grep);

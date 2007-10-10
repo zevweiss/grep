@@ -1907,7 +1907,6 @@ main (int argc, char **argv)
 
       case 'H':
 	with_filenames = 1;
-	no_filenames = 0;
 	break;
 
       case 'I':
@@ -1988,7 +1987,6 @@ main (int argc, char **argv)
 	break;
 
       case 'h':
-	with_filenames = 0;
 	no_filenames = 1;
 	break;
 
