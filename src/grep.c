@@ -1907,6 +1907,7 @@ main (int argc, char **argv)
 
       case 'H':
 	with_filenames = 1;
+	no_filenames = 0;
 	break;
 
       case 'I':
@@ -1987,6 +1988,7 @@ main (int argc, char **argv)
 	break;
 
       case 'h':
+	with_filenames = 0;
 	no_filenames = 1;
 	break;
 
@@ -2180,10 +2182,11 @@ main (int argc, char **argv)
     {
       printf ("%s\n\n", PACKAGE_STRING);
       printf (_("\
-Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"));
+Copyright (C) 2007 Free Software Foundation, Inc.\n"));
       printf (_("\
-This is free software; see the source for copying conditions.  There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n"));
       printf ("\n");
       exit (0);
     }
