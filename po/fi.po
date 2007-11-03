@@ -1,157 +1,170 @@
+# translation of grep.pot to Finnish
 # Finnish translations for GNU grep.
-# Copyright © 2002 Free Software Foundation, Inc.
-# Sami J. Laine <sami.laine@iki.fi>, 2002
+# Copyright ¬© 2002, 2007 Free Software Foundation, Inc.
 #
+# Sami J. Laine <sami.laine@iki.fi>, 2002.
+# Jorma Karvonen <karvjorm@users.sf.net>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: grep-2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-07-19 13:02+0200\n"
-"Last-Translator: Sami J. Laine <sami.laine@iki.fi>\n"
+"Project-Id-Version: grep 2.5.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-08-03 22:01+0200\n"
+"PO-Revision-Date: 2007-10-23 19:11+0300\n"
+"Last-Translator: Jorma Karvonen <karvjorm@users.sf.net>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"\n"
+"X-Generator: KBabel 1.11.2\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
 msgid "Memory exhausted"
-msgstr "Muisti loppu"
+msgstr "Muisti loppui"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
-#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
-#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
-#: src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
+#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
+#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
+#: src/dfa.c:1095 src/dfa.c:1096
 msgid "Unbalanced ["
-msgstr "Pariton \"[\""
+msgstr "Pariton ["
 
-#: src/dfa.c:741
+#: src/dfa.c:788
 msgid "Unfinished \\ escape"
-msgstr "P‰‰ttym‰tˆn \\-ohjausmerkki"
+msgstr "P√§√§ttym√§t√∂n \\-ohjausmerkki"
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
 msgid "unfinished repeat count"
-msgstr "p‰‰ttym‰tˆn toistom‰‰r‰"
+msgstr "p√§√§ttym√§t√∂n toistom√§√§r√§"
 
-#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
 msgid "malformed repeat count"
-msgstr "virheellinen toistom‰‰r‰"
+msgstr "virheellinen toistom√§√§r√§"
 
-#: src/dfa.c:1253
+#: src/dfa.c:1305
 msgid "Unbalanced ("
-msgstr "Pariton \"(\""
+msgstr "Pariton ("
 
-#: src/dfa.c:1378
+#: src/dfa.c:1430
 msgid "No syntax specified"
-msgstr "Syntaksia ei m‰‰ritelty"
+msgstr "Syntaksia ei ole m√§√§ritelty"
 
-#: src/dfa.c:1386
+#: src/dfa.c:1438
 msgid "Unbalanced )"
-msgstr "Pariton \")\""
+msgstr "Pariton )"
 
-#: src/dfa.c:2956
-msgid "out of memory"
-msgstr "muisti loppu"
-
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "muisti loppu"
+msgstr "muisti loppui"
 
-#: src/grep.c:205
+#: src/grep.c:404
 msgid "invalid context length argument"
 msgstr "virheellinen kontekstin pituusargumentti"
 
-#: src/grep.c:479
+#: src/grep.c:665
 msgid "input is too large to count"
-msgstr "syˆttˆ on liian suuri laskentaan"
+msgstr "sy√∂te on liian suuri laskettavaksi"
 
-#: src/grep.c:605
+#: src/grep.c:927
 msgid "writing output"
-msgstr "kirjoitetaan tulostetta"
+msgstr "kirjoitettaessa tulostetta"
 
-#: src/grep.c:878
+#: src/grep.c:1209
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "Bin‰‰rinen tiedosto %s t‰sm‰‰ hakuun\n"
+msgstr "Bin√§√§ritiedosto %s t√§sm√§√§ hakuun\n"
 
-#: src/grep.c:892
+#: src/grep.c:1223
 msgid "(standard input)"
-msgstr "(vakiosyˆttˆ)"
+msgstr "(vakiosy√∂te)"
 
-#: src/grep.c:997
+#: src/grep.c:1355
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "varoitus: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:1356
 msgid "recursive directory loop"
 msgstr "rekursiivinen hakemistosilmukka"
 
-#: src/grep.c:1046
+#: src/grep.c:1404 src/grep.c:1411
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "K‰yttˆ: %s [VALITSIN]... HAKUKAAVA [TIEDOSTO]...\n"
+msgstr "K√§ytt√∂: %s [VALITSIN]... HAKULAUSEKE [TIEDOSTO]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1406
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "Yrit‰ \"%s --help\" saadaksesi lis‰ohjeita.\n"
+msgstr "Katso lis√§ohjeet valitsimella ‚Äù%s --help‚Äù.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1412
 #, c-format
-msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "K‰yttˆ: %s [VALITSIN]... HAKUKAAVA [TIEDOSTO] ...\n"
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr "Haetaan HAKULAUSEKEtta jokaisessa TIEDOSTOssa tai vakiosy√∂tteess√§.\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1415
+#, c-format
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "HAKULAUSEKE on laajennettu s√§√§nn√∂llinen lauseke (ERE).\n"
+
+#: src/grep.c:1418
+#, c-format
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr "HAKULAUSEKE on rivinvaihdolla eroteltu kiinte√§ merkkijonojoukko.\n"
+
+#: src/grep.c:1421
+#, c-format
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "HAKULAUSEKE on oletuksena perus-s√§√§nn√∂llinen lauseke (BRE).\n"
+
+#: src/grep.c:1424
 #, c-format
 msgid ""
-"Search for PATTERN in each FILE or standard input.\n"
 "Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"Etsii HAKUKAAVAa jokaisesta TIEDOSTOsta tai vakiosyˆtteest‰.\n"
 "Esimerkki: %s -i 'hei maailma' menu.h main.c\n"
 "\n"
-"S‰‰nnˆllisten lausekkeiden valinta ja tulkinta:\n"
+"S√§√§nn√∂llisten lausekkeiden valinta ja tulkinta:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1429
+#, c-format
 msgid ""
-"  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
-"  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     HAKUKAAVA on laajennettu s‰‰nnˆllinen lauseke\n"
-"                            (engl. extended regular expression)\n"
-"  -F, --fixed-strings       HAKUKAAVA on joukko rivinvaihdolla erotettuja\n"
-"                            merkkijonoja\n"
-"  -G, --basic-regexp        HAKUKAAVA on s‰‰nnˆllinen lauseke\n"
-"                            (engl. basic regular expression)\n"
-"  -P, --perl-regexp         HAKUKAAVA on Perlin s‰‰nnˆllinen lauseke\n"
-"                            (engl. Perl regular expression)\n"
+"  -E, --extended-regexp     HAKULAUSEKE on laajennettu s√§√§nn√∂llinen lauseke (ERE)\n"
+"  -F, --fixed-strings       HAKULAUSEKE on joukko rivinvaihdolla eroteltuja  merkkijonoja\n"
+"  -G, --basic-regexp        HAKULAUSEKE on perus-s√§√§nn√∂llinen lauseke (BRE)\n"
+"  -P, --perl-regexp         HAKULAUSEKE on Perl-tyyppinen s√§√§nn√∂llinen lauseke\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1436
+#, c-format
 msgid ""
-"  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=HAKUKAAVA    k‰yt‰ HAKUKAAVAa s‰‰nnˆllisen‰ lausekkeena\n"
-"  -f, --file=TIEDOSTO       nouda HAKUKAAVA TIEDOSTOsta\n"
-"  -i, --ignore-case         ‰l‰ erottele pieni‰ ja suuria merkkej‰\n"
-"  -w, --word-regexp         pakota HAKUKAAVAn t‰sm‰ys vain kokonaisiin sanoihin\n"
-"  -x, --line-regexp         pakota HAKUKAAVAn t‰sm‰ys vain kokonaisiin riveihin\n"
-"  -z, --null-data           datarivi p‰‰ttyy 0-tavuun, ei rivinvaihtoon\n"
+"  -e, --regexp=HAKULAUSEKE  k√§yt√§ HAKULAUSEKEtta s√§√§nn√∂llisen√§ lausekkeena\n"
+"  -f, --file=TIEDOSTO       nouda HAKULAUSEKE TIEDOSTOsta\n"
+"  -i, --ignore-case         √§l√§ erottele pieni√§ ja suuria kirjaimia\n"
+"  -w, --word-regexp         pakota HAKULAUSEKE t√§sm√§√§m√§√§n vain kokonaisiin sanoihin\n"
+"  -x, --line-regexp         pakota HAKULAUSEKE t√§sm√§√§m√§√§n vain kokonaisiin riveihin\n"
+"  -z, --null-data           datarivi p√§√§ttyy nollatavuun, ei rivinvaihtoon\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1443
+#, c-format
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -163,14 +176,15 @@ msgid ""
 msgstr ""
 "\n"
 "Sekalaista:\n"
-"  -s, --no-messages         est‰ virheilmoitusten tulostaminen\n"
-"  -v, --invert-match        valitse ei-t‰sm‰‰v‰t rivit\n"
+"  -s, --no-messages         vaienna virheilmoitukset\n"
+"  -v, --invert-match        valitse hakuun t√§sm√§√§m√§tt√∂m√§t rivit\n"
 "  -V, --version             tulosta versiotiedot ja lopeta suoritus\n"
-"      --help                tulosta t‰m‰ ohje ja lopeta suoritus\n"
-"      --mmap                k‰yt‰ muistiinkartoitettua syˆtett‰, jos\n"
+"      --help                tulosta t√§m√§ ohje ja lopeta suoritus\n"
+"      --mmap                k√§yt√§ muistiinkartoitettua sy√∂tett√§, jos\n"
 "                            mahdollista\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1451
+#, c-format
 msgid ""
 "\n"
 "Output control:\n"
@@ -183,53 +197,60 @@ msgid ""
 "      --label=LABEL         print LABEL as filename for standard input\n"
 "  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"      --binary-files=TYPE   assume that binary files are TYPE\n"
-"                            TYPE is 'binary', 'text', or 'without-match'\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
 "  -a, --text                equivalent to --binary-files=text\n"
 "  -I                        equivalent to --binary-files=without-match\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'\n"
-"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
-"                            ACTION is 'read' or 'skip'\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examined\n"
-"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
-"  -L, --files-without-match only print FILE names containing no match\n"
-"  -l, --files-with-matches  only print FILE names containing matches\n"
-"  -c, --count               only print a count of matching lines per FILE\n"
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n"
+"  -L, --files-without-match print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
 "Tulosteen hallinta:\n"
-"  -m, --max-count=N         lopeta kun N t‰sm‰yst‰ on lˆytynyt\n"
+"  -m, --max-count=N         lopeta kun N t√§sm√§yst√§ on l√∂ytynyt\n"
 "  -b, --byte-offset         tulosta tavuosoite tulosteriveille\n"
 "  -n, --line-number         tulosta rivinumero tulosteriveille\n"
-"      --line-buffered       tyhjenn‰ puskuri jokaisella tulosterivill‰\n"
-"  -H, --with-filename       tulosta tiedostonimi jokaiselle t‰sm‰ykselle\n"
-"  -h, --no-filename         est‰ tiedostonimen tulostaminen\n"
-"      --label=LEIMA         tulosta LEIMA tiedostonimen sijaan luettaessa\n"
-"                            vakiosyˆttett‰\n"
-"  -o, --only-matching       n‰yt‰ vain HAKUKAAVAan t‰sm‰‰v‰ osa rivist‰\n"
-"  -q, --quiet, --silent     est‰ kaikki normaalit tulosteet\n"
-"      --binary-files=TYYPPI oleta bin‰‰risten tiedostojen olevan TYYPPI‰\n"
-"                            TYYPPI on 'binary', 'text', tai 'without-match'\n"
-"  -a, --text                sama kuin --binary-files=text\n"
+"      --line-buffered       tyhjenn√§ puskuri jokaisella tulosterivill√§\n"
+"  -H, --with-filename       tulosta tiedostonimi jokaiselle t√§sm√§ykselle\n"
+"  -h, --no-filename         vaienna tiedostonimen tulostaminen\n"
+"      --label=OTSIKKO       tulosta OTSIKKO tiedostonimen√§ luettaessa\n"
+"                            vakiosy√∂ttett√§\n"
+"  -o, --only-matching       n√§yt√§ vain HAKULAUSEKE-t√§sm√§√§v√§ osa rivist√§\n"
+"  -q, --quiet, --silent     vaienna kaikki normaalit tulosteet\n"
+"      --binary-files=TYYPPI oleta bin√§√§risten tiedostojen olevan TYYPPI√§\n"
+"                            TYYPPI on ‚Äùbinary‚Äù (bin√§√§ri), ‚Äùtext‚Äù (teksti), tai\n"
+"                            ‚Äùwithout-match‚Äù (t√§sm√§√§m√§t√∂n)\n"
+"  -a, --text                sama kuin --binary-files=‚Äùtext‚Äù (teksti)\n"
 "  -I                        sama kuin --binary-files=without-match\n"
-"  -d, --directories=TOIMI   hakemistojen k‰sittelytapa\n"
-"                            TOIMI on 'read', 'recurse', tai 'skip'\n"
-"  -D, --devices=TOIMI       laitetiedostojen, FIFOjen ja sokettien k‰sittely\n"
-"                            TOIMI on 'read' tai 'skip'\n"
-"  -R, -r, --recursive       sama kuin --directories=recurse\n"
-"      --include=HAKUKAAVA   HAKUKAAVAan t‰sm‰‰v‰t tiedostot tutkitaan\n"
-"      --exclude=HAKUKAAVA   HAKUKAAVAan t‰sm‰‰v‰t tiedostot j‰tet‰‰n tutkimatta\n"
-"      --exclude-from=TIED.  HAKUKAAVAan t‰sm‰‰v‰t tiedostot, joiden nimet\n"
-"                            luetaan TIED.ostosta, j‰tet‰‰n tutkimatta\n"
-"  -L, --files-without-match tulosta vain TIEDOSTOt, joista ei lˆyty t‰sm‰yst‰\n"
-"  -l, --files-with-matches  tulosta vain TIEDOSTOt, joista lˆytyy t‰sm‰ys\n"
-"  -c, --count               tulosta vain t‰sm‰ysten m‰‰r‰ TIEDOSTOlle\n"
+"  -d, --directories=TOIMI   hakemistojen k√§sittelytapa\n"
+"                            TOIMI on ‚Äùread‚Äù (lue), ‚Äùrecurse‚Äù (itseens√§ palautuva),\n"
+"                            tai ‚Äùskip‚Äù (j√§t√§ v√§liin)\n"
+"  -D, --devices=TOIMI       laitetiedostojen, FIFOjen ja pistokkeiden k√§sittely\n"
+"                            TOIMI on ‚Äùread‚Äù (lue) tai ‚Äùskip‚Äù (j√§t√§ v√§liin)\n"
+"  -R, -r, --recursive         sama kuin --directories=recurse\n"
+"      --include=TIEDOSTOKAAVA TIEDOSTOKAAVA-t√§sm√§√§v√§t tiedostot tutkitaan\n"
+"      --exclude=TIEDOSTOKAAVA TIEDOSTOKAAVA-t√§sm√§√§v√§t tiedostot j√§tet√§√§n tutkimatta\n"
+"      --exclude-from=TIEDOSTO TIEDOSTOKAAVA-t√§sm√§√§v√§t tiedostot, joiden nimet\n"
+"                              luetaan TIEDOSTOsta, j√§tet√§√§n tutkimatta\n"
+"  -L, --files-without-match tulosta vain TIEDOSTOt, joista ei l√∂ydy t√§sm√§yst√§\n"
+"  -l, --files-with-matches  tulosta vain TIEDOSTOt, joista l√∂ytyy t√§sm√§ys\n"
+"  -c, --count               tulosta vain t√§sm√§ysten m√§√§r√§ TIEDOSTOlle\n"
+"  -T, --initial-tab         tee sarkaimet riveitt√§in (jos tarvitaan)\n"
+"  -Z, --null                tulosta nollatavu TIEDOSTO-nimen j√§lkeen\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1481
+#, c-format
 msgid ""
 "\n"
 "Context control:\n"
@@ -238,128 +259,178 @@ msgid ""
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
 "      --color[=WHEN],\n"
-"      --colour[=WHEN]       use markers to distinguish the matching string\n"
-"                            WHEN may be `always', `never' or `auto'.\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
-"With no FILE, or when FILE is -, read standard input.  If less than\n"
-"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
-"and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Sis‰llˆn hallinta:\n"
-"  -B, --before-context=N    tulosta N rivi‰ ennen sis‰ltˆ‰\n"
-"  -A, --after-context=N     tulosta N rivi‰ sis‰llˆn j‰lkeen\n"
-"  -C, --context=N           tulosta N rivi‰ tulostesis‰ltˆ‰\n"
+"Konteksin hallinta:\n"
+"  -B, --before-context=N    tulosta N rivi√§ ennen konteksia\n"
+"  -A, --after-context=N     tulosta N rivi√§ konteksin j√§lkeen\n"
+"  -C, --context=N           tulosta N rivi√§ tulostekonteksia\n"
 "  -NUM                      sama kuin --context=N\n"
 "      --color[=KOSKA],\n"
-"      --colour[=KOSKA]      k‰yt‰ markkereita t‰sm‰‰v‰n merkkijonon\n"
-"                            erottamiseen\n"
-"                            KOSKA voi olla `always', `never' tai `auto'.\n"
-"  -U, --binary              ‰l‰ poista CR-merkki‰ rivin lopusta (MSDOS)\n"
-"  -u, --unix-byte-offsets   ilmoita siirtym‰t kuten CR-merkkej‰ ei olisi\n"
-"                            lainkaan (MSDOS)\n"
+"      --colour[=KOSKA]      k√§yt√§ merkkej√§ t√§sm√§√§v√§n merkkijonon\n"
+"                            korostamiseen\n"
+"                            KOSKA voi olla ‚Äùalways‚Äù (aina), ‚Äùnever‚Äù\n"
+"                            (ei koskaan) tai ‚Äùauto‚Äù (automaattisesti).\n"
+"  -U, --binary              √§l√§ poista ‚Äùtelan palatus‚Äù-merkki√§ CR rivin\n"
+"                            lopusta (MSDOS)\n"
+"  -u, --unix-byte-offsets   ilmoita siirrokset aivan kuin ‚Äùtelan palatus‚Äù\n"
+"                            -merkki√§ CR ei olisi lainkaan (MSDOS)\n"
 "\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1495
+#, c-format
+msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
+msgstr "Kutsuminen ‚Äùegrep‚Äù k√§skyll√§ ei ole en√§√§ suositeltavaa, k√§yt√§ sen sijaan k√§sky√§ ‚Äùgrep -E‚Äù.\n"
+
+#: src/grep.c:1498
+#, c-format
+msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
+msgstr "Kutsuminen ‚Äùfgrep‚Äù k√§skyll√§ ei ole en√§√§ suositeltavaa, k√§yt√§ sen sijaan k√§sky√§ ‚Äùgrep -F‚Äù.\n"
+
+#: src/grep.c:1501
+#, c-format
+msgid ""
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
+msgstr ""
+"K√§sky ‚Äùegrep‚Äù tarkoittaa ‚Äùgrep -E‚Äù.  K√§sky ‚Äùfgrep‚Äù tarkoittaa ‚Äùgrep -F‚Äù.\n"
+"Suora kutsuminen ‚Äùegrep‚Äù- ja ‚Äùfgrep‚Äù-k√§skyill√§ ei ole en√§√§ suositeltavaa.\n"
+
+#: src/grep.c:1505
+#, c-format
+msgid ""
+"With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n"
+"are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
+"if any error occurs and -q was not given, the exit status is 2.\n"
+msgstr ""
+"Jos TIEDOSTOa ei ole annettu tai kun TIEDOSTO on -, lue vakiosy√∂tett√§. Jos on annettu\n"
+"v√§hemm√§n kuin kaksi TIEDOSTOa, otaksu ‚Äù-h‚Äù-valitsin. Paluuarvo on nolla, jos yksikin\n"
+"rivi on valittu, muutoin yksi; jos tapahtuu virheit√§ ja ‚Äù-q‚Äù-valitsinta ei ollut\n"
+"annettu, niin paluuarvo on kaksi.\n"
+
+#: src/grep.c:1509
+#, c-format
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Ilmoita virheist‰ osoitteeseen <bug-gnu-utils@gnu.org>.\n"
+"Ilmoita ohjelmistovioista osoitteeseen <%s>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1522
 msgid "conflicting matchers specified"
-msgstr "m‰‰ritelty ristiriitaiset haut"
+msgstr "m√§√§ritelty ristiriitaiset haut"
 
-#: src/grep.c:1376
+#: src/grep.c:1715
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
+msgstr "Kohteessa GREP_COLORS=‚Äù%s‚Äù, ‚Äù%s‚Äù-kapasiteetti tarvitsee arvon (‚Äù=...‚Äù); j√§tettiin v√§liin."
+
+#: src/grep.c:1719
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
+msgstr "Kohteessa GREP_COLORS=‚Äù%s‚Äù, ‚Äù%s‚Äù-kapasiteetti on boolean-tyyppinen ja se ei voi saada arvoa (‚Äù=%s‚Äù); j√§tettiin v√§liin."
+
+#: src/grep.c:1727
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
+msgstr "Kohteessa GREP_COLORS=‚Äù%s‚Äù, ‚Äù%s‚Äù-kapasiteetti %s."
+
+#: src/grep.c:1750
+#, c-format
+msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
+msgstr "Pys√§ytettiin v√§√§r√§nmuotoisen kohteen GREP_COLORS=‚Äù%s‚Äùprosessointi j√§ljelle j√§√§v√§ss√§ osamerkkijonossa ‚Äù%s‚Äù."
+
+#: src/grep.c:1883
 msgid "unknown devices method"
 msgstr "tuntematon laitemetodi"
 
-#: src/grep.c:1443
+#: src/grep.c:1956
 msgid "unknown directories method"
 msgstr "tuntematon hakemistometodi"
 
-#: src/grep.c:1510
+#: src/grep.c:2023
 msgid "invalid max count"
-msgstr "virheellinen maksimim‰‰r‰"
+msgstr "virheellinen maksimim√§√§r√§"
 
-#: src/grep.c:1565
+#: src/grep.c:2078
 msgid "unknown binary-files type"
-msgstr "tuntematon bin‰‰ritiedoston tyyppi"
+msgstr "tuntematon bin√§√§ritiedostojen tyyppi"
 
-#: src/grep.c:1660
+#: src/grep.c:2182
 #, c-format
-msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
+msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
+msgstr "Tekij√§noikeudet ¬© 1988, 1992-2002, 2004, 2005 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1662
-msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-
-#: src/grep.c:1664
+#: src/grep.c:2184
+#, c-format
 msgid ""
-"This is free software; see the source for copying conditions. There is NO\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"T‰m‰ ohjelma on vapaa ohjelmisto; tarkista jakeluehdot l‰hdekoodista.\n"
-"T‰lle ohjelmalle ei anneta mink‰‰nlaista takuuta; ei edes takuuta\n"
-"kaupallisesti hyv‰ksytt‰v‰st‰ laadusta tai soveltuvuudesta tiettyyn\n"
+"T√§m√§ ohjelma on vapaa ohjelmisto; tarkista jakeluehdot l√§hdekoodista.\n"
+"T√§lle ohjelmalle ei anneta mink√§√§nlaista takuuta; ei edes takuuta\n"
+"kaupallisesti hyv√§ksytt√§v√§st√§ laadusta tai soveltuvuudesta tiettyyn\n"
 "tarkoitukseen.\n"
 
-#: src/search.c:606
-msgid "The -P option is not supported"
-msgstr "Valitsin -P ei ole tuettu"
-
 #: src/search.c:619
+msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
+msgstr "Tuki valitsimelle ‚Äù-P‚Äù ei ole k√§√§nnetty t√§h√§n ‚Äù--disable-perl-regexp‚Äù-bin√§√§riin"
+
+#: src/search.c:632
 msgid "The -P and -z options cannot be combined"
-msgstr "Valitsimia -P ja -z ei voi k‰ytt‰‰ samanaikaisesti"
+msgstr "Valitsimia ‚Äù-P‚Äù ja ‚Äù-z‚Äù ei voida k√§ytt√§√§ samanaikaisesti"
+
+#: src/search.c:634
+msgid "The -P option only supports a single pattern"
+msgstr "Valitsin ‚Äù-P‚Äù tukee vain yht√§ HAKULAUSEKEtta"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Tuntematon j‰rjestelm‰virhe"
+msgstr "Tuntematon j√§rjestelm√§virhe"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: valitsin \"%s\" on moniselitteinen\n"
+msgstr "%s: valitsin ‚Äù%s‚Äù on moniselitteinen\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: valitsin \"--%s\" ei salli argumenttia\n"
+msgstr "%s: valitsin ‚Äù--%s‚Äù ei salli argumenttia\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: valitsin \"%c%s\" ei salli argumenttia\n"
+msgstr "%s: valitsin ‚Äù%c%s‚Äù ei salli argumenttia\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: valitsin \"%s\" tarvitsee argumentin\n"
+msgstr "%s: valitsin ‚Äù%s‚Äù tarvitsee argumentin\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: tuntematon valitsin \"--%s\"\n"
+msgstr "%s: tuntematon valitsin ‚Äù--%s‚Äù\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: tuntematon valitsin \"%c%s\"\n"
+msgstr "%s: tuntematon valitsin ‚Äù%c%s‚Äù\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: ep‰kelpo valitsin -- %c\n"
+msgstr "%s: ep√§kelpo valitsin -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
@@ -375,12 +446,12 @@ msgstr "%s: valitsin tarvitsee argumentin -- %c\n"
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: valitsin \"-W %s\" on moniselitteinen\n"
+msgstr "%s: valitsin ‚Äù-W %s‚Äù on moniselitteinen\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: valitsin \"-W -%s\" ei salli argumenttia\n"
+msgstr "%s: valitsin ‚Äù-W %s‚Äù ei salli argumenttia\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -398,8 +469,8 @@ msgstr "%s: valitsin \"-W -%s\" ei salli argumenttia\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "\""
+msgstr "‚Äù"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "\""
+msgstr "‚Äù"

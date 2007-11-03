@@ -1,141 +1,154 @@
-# -*- mode: po; coding: iso-latin-2 -*- Slovenian message catalogue for grep
-# Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
-# Primoæ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000.
+# -*- mode: po; coding: utf-8; -*- Slovenian message catalogue for grep
+# Copyright (C) 1996, 1999, 2000, 2007 Free Software Foundation, Inc.
+# Primo≈æ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000, 2007.
 #
-# $Id: sl.po,v 1.31 2006/08/18 21:04:18 bero Exp $
+# $Id: sl.po,v 1.32 2007/11/03 04:02:56 taa Exp $
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
-"PO-Revision-Date: 2002-03-11 09:25+0100\n"
-"Last-Translator: Primoæ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
-"Language-Team: Slovenian <sl@li.org>\n"
+"Project-Id-Version: GNU grep 2.5.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-08-03 22:01+0200\n"
+"PO-Revision-Date: 2007-10-16 14:16+0200\n"
+"Last-Translator: Primo≈æ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
+"Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
 msgid "Memory exhausted"
 msgstr "Pomnilnik porabljen"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
-#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
-#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
-#: src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
+#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
+#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
+#: src/dfa.c:1095 src/dfa.c:1096
 msgid "Unbalanced ["
 msgstr "Oklepaj [ brez zaklepaja"
 
-#: src/dfa.c:741
+#: src/dfa.c:788
 msgid "Unfinished \\ escape"
-msgstr "NedokonËano ubeæno zaporedje \\"
+msgstr "Nedokonƒçano ube≈æno zaporedje \\"
 
 #. Cases:
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
 msgid "unfinished repeat count"
-msgstr "nedokonËano πtevilo ponovitev"
+msgstr "nedokonƒçano ≈°tevilo ponovitev"
 
-#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
 msgid "malformed repeat count"
-msgstr "slabo doloËeno πtevilo ponovitev"
+msgstr "slabo doloƒçeno ≈°tevilo ponovitev"
 
-#: src/dfa.c:1253
+#: src/dfa.c:1305
 msgid "Unbalanced ("
-msgstr "Oklepaj ( brez zaklepaja"
+msgstr "Uklepaj ( brez zaklepaja"
 
-#: src/dfa.c:1378
+#: src/dfa.c:1430
 msgid "No syntax specified"
 msgstr "Skladnja ni podana"
 
-#: src/dfa.c:1386
+#: src/dfa.c:1438
 msgid "Unbalanced )"
-msgstr "Zaklepaj ) brez oklepaja"
+msgstr "Zaklepaj ) brez uklepaja"
 
-#: src/dfa.c:2956
-msgid "out of memory"
-msgstr "zmanjkalo pomnilnika"
-
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471
 msgid "memory exhausted"
 msgstr "pomnilnik porabljen"
 
-#: src/grep.c:205
+#: src/grep.c:404
 msgid "invalid context length argument"
 msgstr "velikost konteksta ni veljavna"
 
-#: src/grep.c:479
+#: src/grep.c:665
 msgid "input is too large to count"
-msgstr "vhod je prevelik, da bi ga mogli preπteti"
+msgstr "vhod je prevelik, da bi ga mogli pre≈°teti"
 
-#: src/grep.c:605
+#: src/grep.c:927
 msgid "writing output"
 msgstr "pisanje rezultatov"
 
-#: src/grep.c:878
+#: src/grep.c:1209
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Binarna datoteka %s ustreza\n"
 
-#: src/grep.c:892
+#: src/grep.c:1223
 msgid "(standard input)"
 msgstr "(standardni vhod)"
 
-#: src/grep.c:997
+#: src/grep.c:1355
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "pozor: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:1356
 msgid "recursive directory loop"
 msgstr "rekurzivna zanka imenikov"
 
-#: src/grep.c:1046
+#: src/grep.c:1404 src/grep.c:1411
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Uporaba: %s [IZBIRA]... VZOREC [DATOTEKA]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1406
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Poskusite ,%s --help` za dodatna pojasnila.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1412
 #, c-format
-msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "Uporaba: %s [IZBIRA]... VZOREC [DATOTEKA] ...\n"
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr "V DATOTEKI ali na standardnem vhodu i≈°ƒçemo VZOREC.\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1415
+#, c-format
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "VZOREC je raz≈°irjeni regularni izraz (RRI).\n"
+
+#: src/grep.c:1418
+#, c-format
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr "VZOREC je mno≈æica nespremenljivih nizov, po eden v vrstici.\n"
+
+#: src/grep.c:1421
+#, c-format
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "VZOREC je privzeto osnovni regularni izraz (ORI).\n"
+
+#: src/grep.c:1424
 #, c-format
 msgid ""
-"Search for PATTERN in each FILE or standard input.\n"
 "Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"V DATOTEKI ali na standardnem vhodu iπËemo VZOREC.\n"
-"Primer: %s -i 'hello.*world' menu.h main.c\n"
+"Zgled: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Izbira in tolmaËenje regularnih izrazov:\n"
+"Izbira in tolmaƒçenje regularnih izrazov:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1429
+#, c-format
 msgid ""
-"  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
-"  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     VZOREC je razπirjeni regularni izraz\n"
-"  -F, --fixed-strings       VZOREC je mnoæica nizov, vsak v svoji vrstici\n"
-"  -G, --basic-regexp        VZOREC je osnovni regularni izraz\n"
-"  -P, --perl-regexp         VZOREC je regularni izraz z razπiritvami perla\n"
+"  -E, --extended-regexp     VZOREC je raz≈°irjeni regularni izraz (RRI)\n"
+"  -F, --fixed-strings       VZOREC je mno≈æica nizov, vsak v svoji vrstici\n"
+"  -G, --basic-regexp        VZOREC je osnovni regularni izraz (ORI)\n"
+"  -P, --perl-regexp         VZOREC je regularni izraz z raz≈°iritvami perla\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1436
+#, c-format
 msgid ""
-"  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
@@ -144,13 +157,14 @@ msgid ""
 msgstr ""
 "  -e, --regexp=VZOREC       uporabimo VZOREC kot regularni izraz\n"
 "  -f, --file=DATOTEKA       VZOREC preberemo s podane DATOTEKE\n"
-"  -i, --ignore-case         ne razlikujemo med velikimi in malimi Ërkami\n"
-"  -w, --word-regexp         iskanje uspeπno le, Ëe je VZOREC cela beseda\n"
-"  -x, --line-regexp         iskanje uspeπno le, Ëe je VZOREC cela vrstica\n"
-"  -z, --null-data           vrstica podatkov je konËana z znakom NUL, ne z\n"
+"  -i, --ignore-case         ne razlikujemo med velikimi in malimi ƒçrkami\n"
+"  -w, --word-regexp         iskanje uspe≈°no le, ƒçe je VZOREC cela beseda\n"
+"  -x, --line-regexp         iskanje uspe≈°no le, ƒçe je VZOREC cela vrstica\n"
+"  -z, --null-data           vrstica podatkov je konƒçana z znakom NUL, ne z\n"
 "                            znakom za skok v novo vrstico\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1443
+#, c-format
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -162,13 +176,14 @@ msgid ""
 msgstr ""
 "\n"
 "Razno:\n"
-"  -s, --no-messages         brez sporoËil o napakah\n"
+"  -s, --no-messages         brez sporoƒçil o napakah\n"
 "  -v, --invert-match        komplement: vrstice, kjer ni VZORCA\n"
 "  -V, --version             verzija programa\n"
-"      --help                ta pomoË\n"
-"      --mmap                Ëe je moæno, uporabi pomnilniπko preslikan vhod\n"
+"      --help                ta pomoƒç\n"
+"      --mmap                ƒçe je mo≈æno, uporabi pomnilni≈°ko preslikan vhod\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1451
+#, c-format
 msgid ""
 "\n"
 "Output control:\n"
@@ -181,34 +196,36 @@ msgid ""
 "      --label=LABEL         print LABEL as filename for standard input\n"
 "  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"      --binary-files=TYPE   assume that binary files are TYPE\n"
-"                            TYPE is 'binary', 'text', or 'without-match'\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
 "  -a, --text                equivalent to --binary-files=text\n"
 "  -I                        equivalent to --binary-files=without-match\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'\n"
-"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
-"                            ACTION is 'read' or 'skip'\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examined\n"
-"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
-"  -L, --files-without-match only print FILE names containing no match\n"
-"  -l, --files-with-matches  only print FILE names containing matches\n"
-"  -c, --count               only print a count of matching lines per FILE\n"
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n"
+"  -L, --files-without-match print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
 "Nadzor izhoda:\n"
-"  -m, --max-count=©TEVILO   odnehamo, ko je doseæeno ©TEVILO ujemanj\n"
+"  -m, --max-count=≈†TEVILO   odnehamo, ko je dose≈æeno ≈†TEVILO ujemanj\n"
 "  -b, --byte-offset         z izpisom odmika (v zlogih)\n"
-"  -n, --line-number         z izpisom zaporedne πtevilke vrstice\n"
+"  -n, --line-number         z izpisom zaporedne ≈°tevilke vrstice\n"
 "      --line-buffered       izhodni medpomnilnik izpraznimo vsako vrstico\n"
 "  -H, --with-filename       z izpisom imena datoteke\n"
 "  -h, --no-filename         brez izpisa imena datoteke\n"
 "      --label=OZNAKA        z navedeno OZNAKO, kadar beremo s standardnega vhoda\n"
 "  -o, --only-matching       izpis samo dela vrstice z VZORCEM\n"
-"  -q, --quiet, --silent     brez vsega obiËajnega izpisa\n"
+"  -q, --quiet, --silent     brez vsega obiƒçajnega izpisa\n"
 "      --binary-type=TIP     privzemi izbrani TIP binarne datoteke\n"
 "                            TIP je lahko ,binary`, ,text` ali ,without-match`\n"
 "  -a, --text                isto kot --binary-type=text\n"
@@ -218,16 +235,19 @@ msgstr ""
 "  -D, --devices=DEJANJE     kako obravnavamo datoteke naprav\n"
 "                            DEJANJE je lahko ,read` ali ,skip`\n"
 "  -R, -r, --recursive       isto kot --directories=recurse\n"
-"      --include=VZOREC      preiπËemo le datoteke, ki ustrezajo VZORCU\n"
+"      --include=VZOREC      prei≈°ƒçemo le datoteke, ki ustrezajo VZORCU\n"
 "      --exclude=VZOREC      izpustimo datoteke, ki ustrezajo VZORCU\n"
 "      --exclude-from=DATOTEKA  izpustimo datoteke, ki ustrezajo vzorcu v DATOTEKI\n"
-"  -L, --files-without-match le imena tistih DATOTEK, kjer VZORCA nismo naπli\n"
-"  -l, --files-with-matches  le imena tistih DATOTEK, kjer smo VZOREC naπli\n"
-"  -c, --count               le skupno πtevilo vrstic v DATOTEKI, v katerih se\n"
+"      --exclude-dir=VZOREC  izpustimo imenike, ki ustrezajo VZORCU\n"
+"  -L, --files-without-match le imena tistih DATOTEK, kjer VZORCA nismo na≈°li\n"
+"  -l, --files-with-matches  le imena tistih DATOTEK, kjer smo VZOREC na≈°li\n"
+"  -c, --count               le skupno ≈°tevilo vrstic v DATOTEKI, v katerih se\n"
 "                            pojavi VZOREC\n"
-"  -Z, --null                izpiπi znak NUL za imenom DATOTEKE\n"
+"  -T, --initial-tab         dodaj zaƒçetni tabulator (ƒçe je potrebno)\n"
+"  -Z, --null                izpi≈°i znak NUL za imenom DATOTEKE\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1481
+#, c-format
 msgid ""
 "\n"
 "Context control:\n"
@@ -236,90 +256,136 @@ msgid ""
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
 "      --color[=WHEN],\n"
-"      --colour[=WHEN]       use markers to distinguish the matching string\n"
-"                            WHEN may be `always', `never' or `auto'.\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
-"With no FILE, or when FILE is -, read standard input.  If less than\n"
-"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
-"and 2 if trouble.\n"
 msgstr ""
 "\n"
 "Nadzor nad kontekstom:\n"
-"  -B, --before-context=©T   ©T vrstic konteksta pred vrstico z VZORCEM\n"
-"  -A, --after-context=©T    ©T vrstic konteksta za vrstico z VZORCEM\n"
-"  -C, --context[=©T]        ©T vrstic konteksta pred in za vrstico z VZORCEM\n"
-"  -©T                       isto kot --context=©T\n"
-"      --color, --colour     ujemajoËe nize barvno oznaËimo\n"
-"  -U, --binary              ne poreæemo znakov CR na koncu vrstic (MS-DOS)\n"
-"  -u, --unix-byte-offsets   v odmikih ne πtejemo znakov CR (MS-DOS)\n"
+"  -B, --before-context=≈†T   ≈†T vrstic konteksta pred vrstico z VZORCEM\n"
+"  -A, --after-context=≈†T    ≈†T vrstic konteksta za vrstico z VZORCEM\n"
+"  -C, --context[=≈†T]        ≈†T vrstic konteksta pred in za vrstico z VZORCEM\n"
+"  -≈†T                       isto kot --context=≈†T\n"
+"      --color[=KDAJ],\n"
+"      --colour[=KDAJ]       ujemajoƒçe nize barvno oznaƒçimo; KDAJ je lahko\n"
+"                            ¬ªalways¬´, ¬ªnever¬´ ali ¬ªauto¬´\n"
+"  -U, --binary              ne pore≈æemo znakov CR na koncu vrstic (MS-DOS)\n"
+"  -u, --unix-byte-offsets   v odmikih ne ≈°tejemo znakov CR (MS-DOS)\n"
 "\n"
-"Ukaz ,egrep` pomeni isto kot ,grep -E`, ,fgrep` pa isto kot ,grep -F`.\n"
-"»e DATOTEKA ni podana ali pa je -, beremo s standardnega vhoda. »e sta podani\n"
-"manj kot dve DATOTEKI, privzamemo izbiro -h. Izhodna koda je niË, Ëe smo VZOREC\n"
-"naπli, ena, Ëe ga nismo, 2 pa pomeni skladenjsko ali sistemsko napako.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1495
+#, c-format
+msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
+msgstr "Raba ukaza ¬ªegrep¬´ je odsvetovana; namesto njega uporabite ¬ªgrep -E¬´.\n"
+
+#: src/grep.c:1498
+#, c-format
+msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
+msgstr "Raba ukaza ¬ªfgrep¬´ je odsvetovana; namesto njega uporabite ¬ªgrep -F¬´.\n"
+
+#: src/grep.c:1501
+#, c-format
+msgid ""
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
+msgstr ""
+"Ukaz ¬ªegrep¬´ pomeni isto kot ¬ªgrep -E¬´, ¬ªfgrep¬´ pa isto kot  ¬ªgrep -F¬´.\n"
+"Neposredna raba ukazov ¬ªegrep¬´ ali ¬ªfgrep¬´ je odsvetovana.\n"
+
+#: src/grep.c:1505
+#, c-format
+msgid ""
+"With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n"
+"are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
+"if any error occurs and -q was not given, the exit status is 2.\n"
+msgstr ""
+"ƒåe DATOTEKA ni podana ali pa je ¬ª-¬´, beremo s standardnega vhoda. ƒåe sta podani\n"
+"manj kot dve DATOTEKI, privzamemo izbiro -h. Izhodna koda je 0 ob vsaj eni\n"
+"vrstici zadetka, sicer pa 1; ƒçe ni bila podana izbira -q, program ob napaki\n"
+"vrne kodo 2.\n"
+
+#: src/grep.c:1509
+#, c-format
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Morebitne napake v programu sporoËite na <bug-gnu-utils@gnu.org>.\n"
+"Napake v programu javite na <%s>.\n"
 
-#  SporoËilo se pojavi pri nedokumentirani izbiri -X
+#  Sporoƒçilo se pojavi pri nedokumentirani izbiri -X
 #  grep.c:622 ->
 #  opt = getopt(argc, argv, "0123456789A:B:CEFGVX:bce:f:hiLlnqsvwxy"
 #  grep --help ->
 #  usage: grep [-[[AB] ]<num>] [-[CEFGVchilnqsvwx]] [-[ef]] <expr> [<files...>]
-#: src/grep.c:1134
+#: src/grep.c:1522
 msgid "conflicting matchers specified"
 msgstr "podana navodila si nasprotujejo"
 
-#: src/grep.c:1376
+#: src/grep.c:1715
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
+msgstr "Ignorirano: v GREP_COLORS=\"%s\" mora \"%s\" vsebovati vrednost (\"=...\")."
+
+#: src/grep.c:1719
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
+msgstr "Ignorirano: v GREP_COLORS=\"%s\" je \"%s\" Boolova spremenljivka in ji ne moremo doloƒçiti vrednosti (\"=%s\")."
+
+#: src/grep.c:1727
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
+msgstr "V GREP_COLORS=\"%s\", \"%s\" vsebuje %s."
+
+#: src/grep.c:1750
+#, c-format
+msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
+msgstr "Prekinjena obdelava slabo formuliranega doloƒçila GREP_COLORS=\"%s\" pri preostalem podnizu \"%s\"."
+
+#: src/grep.c:1883
 msgid "unknown devices method"
 msgstr "neznana metoda datotek naprav"
 
-#: src/grep.c:1443
+#: src/grep.c:1956
 msgid "unknown directories method"
 msgstr "neznana metoda imenikov"
 
-#: src/grep.c:1510
+#: src/grep.c:2023
 msgid "invalid max count"
-msgstr "neveljavno najveËje πtevilo"
+msgstr "neveljavno najveƒçje ≈°tevilo"
 
-#: src/grep.c:1565
+#: src/grep.c:2078
 msgid "unknown binary-files type"
 msgstr "neznan tip binarne datoteke"
 
-#: src/grep.c:1660
+#: src/grep.c:2182
 #, c-format
-msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
+msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 1992-2002, 2004, 2005 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1662
-msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-
-#: src/grep.c:1664
+#: src/grep.c:2184
+#, c-format
 msgid ""
-"This is free software; see the source for copying conditions. There is NO\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"To je prost program; pogoji, pod katerimi ga lahko uporabljate, razmnoæujete\n"
-"in razπirjate so navedeni v izvorni kodi. Za program ni NOBENEGA jamstva,\n"
+"To je prost program; pogoji, pod katerimi ga lahko uporabljate, razmno≈æujete\n"
+"in raz≈°irjate so navedeni v izvorni kodi. Za program ni NOBENEGA jamstva,\n"
 "niti jamstev USTREZNOSTI ZA PRODAJO ali PRIMERNOSTI ZA UPORABO.\n"
 
-#: src/search.c:606
-msgid "The -P option is not supported"
-msgstr "Izbira -P ni podprta"
-
 #: src/search.c:619
+msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
+msgstr "Podpora za izbiro -P ni bila vkljuƒçena v ta prevedeni program (--disable-perl-regexp)"
+
+#: src/search.c:632
 msgid "The -P and -z options cannot be combined"
-msgstr "Izbiri -P in -z se med seboj izkljuËujeta"
+msgstr "Izbiri -P in -z se med seboj izkljuƒçujeta"
+
+#: src/search.c:634
+msgid "The -P option only supports a single pattern"
+msgstr "Izbira -P podpira le en vzorec"
 
 #: lib/error.c:117
 msgid "Unknown system error"
@@ -406,6 +472,15 @@ msgstr ","
 msgid "'"
 msgstr "`"
 
+#~ msgid "out of memory"
+#~ msgstr "zmanjkalo pomnilnika"
+
+#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+#~ msgstr "Uporaba: %s [IZBIRA]... VZOREC [DATOTEKA] ...\n"
+
+#~ msgid "%s (GNU grep) %s\n"
+#~ msgstr "%s (GNU grep) %s\n"
+
 #~ msgid "option %s"
 #~ msgstr "izbira %s"
 
@@ -413,7 +488,7 @@ msgstr "`"
 #~ msgstr " z argumentom %s"
 
 #~ msgid "digits occur in two different argv-elements.\n"
-#~ msgstr "πtevke nastopajo pri dveh elementih ARGV.\n"
+#~ msgstr "≈°tevke nastopajo pri dveh elementih ARGV.\n"
 
 #~ msgid "option %c\n"
 #~ msgstr "izbira %c\n"

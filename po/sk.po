@@ -1,35 +1,34 @@
-# Swedish messages for GNU Grep version 2.5.3
-# Copyright (C) 2006, 2007 Free Software Foundation, Inc.
-# Thomas Olsson <cid95tho@student1.lu.se>, 1996.
-# Daniel Resare <daniel@resare.com>, 1998, 1999, 2000, 2001
-# Daniel Nylander <po@danielnylander.se>, 2006, 2007.
+# Translation of grep to Slovak 
+#
+# Copyright (C) 1997-99, 2000, 2001, 2002 Free Software Foundation, Inc.
+# Ivan Masár <helix84@centrum.sk>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-08-03 22:01+0200\n"
-"PO-Revision-Date: 2007-08-07 09:57+0100\n"
-"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
-"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"PO-Revision-Date: 2007-08-08 18:37+0100\n"
+"Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
 msgid "Memory exhausted"
-msgstr "Minnet är slut"
+msgstr "Pamäť bola vyčerpaná"
 
 #: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
 #: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
 #: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
 #: src/dfa.c:1095 src/dfa.c:1096
 msgid "Unbalanced ["
-msgstr "Obalanserad ["
+msgstr "[ bez náprotivku"
 
 #: src/dfa.c:788
 msgid "Unfinished \\ escape"
-msgstr "Oavslutad \\-sekvens"
+msgstr "Nedokončená \\ escape sekvencia"
 
 #. Cases:
 #. {M} - exact count
@@ -37,88 +36,88 @@ msgstr "Oavslutad \\-sekvens"
 #. {M,N} - M through N
 #: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
 msgid "unfinished repeat count"
-msgstr "oavslutad repetitionsräknare"
+msgstr "Nedokončený počet opakovaní"
 
 #: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
 msgid "malformed repeat count"
-msgstr "felformaterad repetionsräknare"
+msgstr "Zle formulovaný počet opakovaní"
 
 #: src/dfa.c:1305
 msgid "Unbalanced ("
-msgstr "Obalanserad ("
+msgstr "( bez náprotivku"
 
 #: src/dfa.c:1430
 msgid "No syntax specified"
-msgstr "Ingen specificerad syntax"
+msgstr "Neuvedená syntax"
 
 #: src/dfa.c:1438
 msgid "Unbalanced )"
-msgstr "Obalanserad )"
+msgstr ") bez náprotivku"
 
 #: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
 #: src/search.c:68 src/search.c:225 lib/obstack.c:471
 msgid "memory exhausted"
-msgstr "minnet är slut"
+msgstr "pamäť bola vyčerpaná"
 
 #: src/grep.c:404
 msgid "invalid context length argument"
-msgstr "ogiltigt argument till -A, -B eller -C"
+msgstr "neplatný argument dĺžky kontextu"
 
 #: src/grep.c:665
 msgid "input is too large to count"
-msgstr "det är för mycket indata för att räkna"
+msgstr "vstup je príliš veľký, aby sa dal spočítať"
 
 #: src/grep.c:927
 msgid "writing output"
-msgstr "skriver utdata"
+msgstr "zapisuje sa výstup"
 
 #: src/grep.c:1209
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "Binär fil %s matchar\n"
+msgstr "Binárny súbor %s sa zhoduje\n"
 
 #: src/grep.c:1223
 msgid "(standard input)"
-msgstr "(standard in)"
+msgstr "(štandardný vstup)"
 
 #: src/grep.c:1355
 #, c-format
 msgid "warning: %s: %s\n"
-msgstr "varning: %s: %s\n"
+msgstr "varovanie: %s: %s\n"
 
 #: src/grep.c:1356
 msgid "recursive directory loop"
-msgstr "rekursiv katalogloop"
+msgstr "rekurzívna slučka v adresári"
 
 #: src/grep.c:1404 src/grep.c:1411
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
+msgstr "Použitie: %s [VOĽBA]... VZORKA [SÚBOR]...\n"
 
 #: src/grep.c:1406
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "Försök med \"%s --help\" för mer information\n"
+msgstr "Viac informácií pomocou „%s --help“.\n"
 
 #: src/grep.c:1412
 #, c-format
 msgid "Search for PATTERN in each FILE or standard input.\n"
-msgstr "Sök efter MÖNSTER i varje FIL eller standard in.\n"
+msgstr "Hľadať VZORKU v každom SÚBORE alebo na štandardnom vstupe.\n"
 
 #: src/grep.c:1415
 #, c-format
 msgid "PATTERN is an extended regular expression (ERE).\n"
-msgstr "MÖNSTER är ett utökat reguljärt uttryck (ERE).\n"
+msgstr "VZORKA je rozšírený regulárny výraz (ERE).\n"
 
 #: src/grep.c:1418
 #, c-format
 msgid "PATTERN is a set of newline-separated fixed strings.\n"
-msgstr "MÖNSTER är en uppsättning nyradsseparerade fasta strängar.\n"
+msgstr "VZORKA je množina pevných reťazcov oddelených znakom nového riadka.\n"
 
 #: src/grep.c:1421
 #, c-format
 msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
-msgstr "MÖNSTER är, som standard, ett enkelt reguljärt uttryck (BRE).\n"
+msgstr "VZORKA je štandardne základný regulárny výraz (BRE).\n"
 
 #: src/grep.c:1424
 #, c-format
@@ -127,9 +126,9 @@ msgid ""
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"Exempel: %s -i \"hello world\" menu.h main.c\n"
+"Príklad: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Val och tolkning av reguljära uttryck:\n"
+"Výber a interpretácia regulárneho výrazu:\n"
 
 #: src/grep.c:1429
 #, c-format
@@ -139,10 +138,11 @@ msgid ""
 "  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-" -E, --extended-regexp      MÖNSTER är ett utökat reguljärt uttryck (ERE)\n"
-" -F, --fixed-strings        MÖNSTER är ett antal strängar separerade med nyrad\n"
-" -G, --basic-regexp         MÖNSTER är ett enkelt reguljärt uttryck (BRE)\n"
-" -P, --perl-regexp          MÖNSTER är ett reguljärt uttryck som i Perl\n"
+"  -E, --extended-regexp     VZORKA je rozšírený regular expression (ERE)\n"
+"  -F, --fixed-strings       VZORKA je množina pevných reťazcov\n"
+"                            oddelených znakom nového riadka\n"
+"  -G, --basic-regexp        VZORKA je základný regulárny výraz (BRE)\n"
+"  -P, --perl-regexp         VZORKA je perlovský regulárny výraz\n"
 
 #: src/grep.c:1436
 #, c-format
@@ -154,12 +154,12 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-" -e, --regexp=MÖNSTER       använd MÖNSTER som ett reguljärt uttryck\n"
-" -f, --file=FIL             hämta MÖNSTER från FIL\n"
-" -i, --ignore-case          skilj ej på gemener och versaler\n"
-" -w, --word-regexp          tvinga MÖNSTER att endast matcha hela ord\n"
-" -x, --line-regexp          tvinga MÖNSTER att endast matcha hela rader\n"
-" -z, --null-data            en datarad slutar i 0 byte, inte nyradstecken\n"
+"  -e, --regexp=VZORKA       použiť na hľadanie VZORKU\n"
+"  -f, --file=SÚBOR          získať VZORKU zo SÚBORU\n"
+"  -i, --ignore-case         ignorovať rozdiely vo veľkosti písmen\n"
+"  -w, --word-regexp         vynútiť, aby VZORKA zodpovedala len celým slovám\n"
+"  -x, --line-regexp         vynútiť, aby VZORKA zodpovedala len celým riadkom\n"
+"  -z, --null-data           údaje končia bajtom 0, nie novým riadkom\n"
 
 #: src/grep.c:1443
 #, c-format
@@ -173,13 +173,12 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr ""
 "\n"
-"Diverse:\n"
-"  -s, --no-messages         visa inga felmeddelanden\n"
-"  -v, --invert-match        välj rader utan träffar\n"
-"  -V, --version             visa versionsinformation och avsluta\n"
-"      --help                visa detta hjälpmeddelande och avsluta\n"
-"      --mmap                använd om möjligt minesmappning vid\n"
-"                            läsning av indata.\n"
+"Rozličné:\n"
+"  -s, --no-messages         potlačiť chybové správy\n"
+"  -v, --invert-match        vybrať riadky, ktoré nemajú zhodu\n"
+"  -V, --version             vypísať informácie o verzii a skončiť\n"
+"      --help                zobraziť tieto informácie a skončiť\n"
+"      --mmap                ak je to možné, použiť pamäťovo mapovaný vstup\n"
 
 #: src/grep.c:1451
 #, c-format
@@ -215,34 +214,34 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"Styrning av utskrift:\n"
-"  -m, --max-count=NUM       skriv bara ut NUM träffar\n"
-"  -b, --byte-offset         skriv position med visade rader\n"
-"  -n, --line-number         skriv radnummer med visade rader\n"
-"      --line-buffered       töm utskriftsbuffer efter varje rad\n"
-"  -H, --with-filename       skriv filnamn vid varje träff\n"
-"  -h, --no-filename         skriv inte filnamn vid varje visad rad\n"
-"      --label=ETIKETT       skriv ut ETIKETT som filnamn för standard in\n"
-"  -o, --only-matching       visa endast delen av en rad som matchar MÖNSTER\n"
-"  -q, --quiet, --silent     undvik all normal utskrift\n"
-"      --binary-files=TYP    antag att binära filer är av TYP\n"
-"                            TYP är \"binary\", \"text\" eller \"without-match\"\n"
-"  -a, --text                motsvarar --binary-files=text\n"
-"  -I                        motsvarar --binary-files=without-match\n"
-"  -d, --directories=ÅTGÄRD  hur kataloger skall hanteras\n"
-"                            ÅTGÄRD är \"read\", \"recurse\" eller \"skip\".\n"
-"  -D, --devices=ÅTGÄRD      hur enheter hanteras, FIFO:er och uttag\n"
-"                            ÅTGÄRD är \"read\" eller \"skip\"\n"
-"  -R, -r, --recursive       motsvarar --directories=recurse\n"
-"      --include=MÖNSTER     filer som matchar MÖNSTER undersöks\n"
-"      --exclude=MÖNSTER     filer som matchar MÖNSTER hoppas över\n"
-"      --exclude-from=FIL    filer som matchar mönster i FIL hoppas över\n"
-"      --exclude-dir=MÖNSTER kataloger som matchar MÖNSTER hoppas över.\n"
-"  -L, --files-without-match skriv bara ut FILnamn utan träffar\n"
-"  -l, --files-with-matches  skriv bara ut FILnamn med träffar\n"
-"  -c, --count               skriv för varje FIL bara ut antal träffade rader\n"
-"  -T, --initial-tab         gör så tabulatorer radar upp (om det behövs)\n"
-"  -Z, --null                skriv 0-byte efter FILnamn\n"
+"Riadenie výstupu:\n"
+"  -m, --max-count=POČET     zastaviť po POČET zhodách\n"
+"  -b, --byte-offset         vypísať ofset v bajtoch pri riadkoch výstupu\n"
+"  -n, --line-number         vypísať číslo riadka pri riadkoch výstupu\n"
+"      --line-buffered       flush výstupu po každom riadku\n"
+"  -H, --with-filename       vypísať názov súboru pri každej zhode\n"
+"  -h, --no-filename         potlačiť prefix názvu súboru na výstupe\n"
+"      --label=ŠTÍTOK        vypísať ŠTÍTOK ako názov súboru pre štandard. vstup\n"
+"  -o, --only-matching       zobraziť iba časť riadka zodpovedajúcu VZORKE\n"
+"  -q, --quiet, --silent     potlačiť všetok normálny výstup\n"
+"      --binary-files=TYP    predpokladať, že binárne súbory sú zadaného TYPu;\n"
+"                            TYP je „binary“, „text“ alebo „without-match“\n"
+"  -a, --text                ekvivalentné s --binary-files=text\n"
+"  -I                        ekvivalentné s --binary-files=without-match\n"
+"  -d, --directories=AKCIA   ako zaobchádzať s adresármi;\n"
+"                            AKCIA je „read“, „recurse“ alebo „skip“\n"
+"  -D, --devices=AKCIA       ako zaobchádzať so zariadeniami, FIFO a socketmi;\n"
+"                            AKCIA je „read“ alebo „skip“\n"
+"  -R, -r, --recursive       ekvivalentné s --directories=recurse\n"
+"      --include=SÚBOR_VZORKA  hľadať iba v súboroch zodpoved. SÚBOR_VZORKA\n"
+"      --exclude=SÚBOR_VZORKA  preskočiť súbory a adresáre zodp. SÚBOR_VZORKA\n"
+"      --exclude-from=SÚBOR preskočiť súbory zodp. akejkoľvek vzorke zo SÚBORU\n"
+"      --exclude-dir=VZORKA  preskočiť adresáre zodpovedajúce VZORKE.\n"
+"  -L, --files-without-match vypísať iba názvy SÚBOROV, ktoré neobsahujú zhodu\n"
+"  -l, --files-with-matches  vypísať iba názvy SÚBOROV, ktoré obsahujú zhodu\n"
+"  -c, --count               vypísať iba počet zodpovedajúcich riadkov na SÚBOR\n"
+"  -T, --initial-tab         zarovnať tabulátory (ak je potrebné)\n"
+"  -Z, --null                vytlačiť bajt 0 po SÚBORE\n"
 
 #: src/grep.c:1481
 #, c-format
@@ -261,27 +260,27 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Kontroll av sammanhang:\n"
-"  -B, --before-context=ANTAL  skriv ANTAL rader före träffad rad\n"
-"  -A, --after-context=ANTAL   skriv ANTAL rader efter träffad rad\n"
-"  -C, --context=ANTAL         skriv ANTAL rader runt träffad rad\n"
-"  -ANTAL                      motsvarar --context=ANTAL\n"
-"      --color[=NÄR],\n"
-"      --colour[=NÄR]        använd  markörer för att särskilja träff\n"
-"                            NÄR kan vara \"always\", \"never\" eller \"auto\".\n"
-"  -U, --binary                ta inte bort CR-tecken vid radslut (MSDOS)\n"
-"  -u, --unix-byte-offsets     skriv offset som om CR-tecken inte förekommit\n"
+"Riadenie kontextu:\n"
+"  -B, --before-context=POČ vytlačiť POČ riadkov kontextu pred\n"
+"  -A, --after-context=POČ   vytlačiť POČ riadkov kontextu za\n"
+"  -C, --context=POČ         vytlačiť POČ riadkov kontextu výstupu\n"
+"  -POČ                      rovnaké ako --context=ČÍS\n"
+"      --color[=KEDY],\n"
+"      --colour[=KEDY]       použiť značky na vysvietenie zodpoved. reťazcov;\n"
+"                            KEDY je „always“, „never“ alebo „auto“\n"
+"  -U, --binary              neodstraňovať znak CR na konci riadka (MSDOS)\n"
+"  -u, --unix-byte-offsets   oznamovať ofsety ako keby neboli CR (MSDOS)\n"
 "\n"
 
 #: src/grep.c:1495
 #, c-format
 msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
-msgstr "Körning som \"egrep\" är föråldrat; använd \"grep -E\" istället.\n"
+msgstr "Vyvolanie príkazu ako „egrep“ sa neodporúča; použite „grep -E“.\n"
 
 #: src/grep.c:1498
 #, c-format
 msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
-msgstr "Körning som \"fgrep\" är föråldrat; använd \"grep -F\" istället.\n"
+msgstr "Vyvolanie príkazu ako „fgrep“ sa neodporúča; použite „grep -F“.\n"
 
 #: src/grep.c:1501
 #, c-format
@@ -289,8 +288,8 @@ msgid ""
 "`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
 "Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
 msgstr ""
-"\"egrep\" betyder \"grep -E\".  \"fgrep\" betyder \"grep -F\".\n"
-"Direktanrop som antingen \"egrep\" eller \"fgrep\" är föråldrat.\n"
+"„egrep“ znamená „grep -E“. „fgrep“ znamená „grep -F“.\n"
+"Priame vyvolanie príkazu ako „egrep“ či „fgrep“ sa neodporúča.\n"
 
 #: src/grep.c:1505
 #, c-format
@@ -299,9 +298,10 @@ msgid ""
 "are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
 "if any error occurs and -q was not given, the exit status is 2.\n"
 msgstr ""
-"Utan någon FIL eller när FIL är -, läs från standard in.  Om mindre än två FILer\n"
-"anges, anta -h.  Avslutningsstatus är 0 om någon rad valdes, annars 1;\n"
-"om något fel inträffar och -q inte angavs, är avslutningsstatusen 2.\n"
+"Bez SÚBORU alebo ak SÚBOR je -, čítať zo štandardného vstupu. Ak sú zadané\n"
+"menej ako dva SÚBORY predpokladať -h. Chybová úroveň je 0 ak bol vybraný\n"
+"nejaký riadok a 1 inak;\n"
+"ak sa vyskytne nejaká chyba a nebolo zadané -q, chybová úroveň je 2.\n"
 
 #: src/grep.c:1509
 #, c-format
@@ -310,53 +310,52 @@ msgid ""
 "Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Rapportera fel till <%s>.\n"
-"Skicka synpunkter på översättningen till <tp-sv@listor.tp-sv.se>\n"
+"Oznamovať chyby <%s>.\n"
 
 #: src/grep.c:1522
 msgid "conflicting matchers specified"
-msgstr "motstridiga söksträngar specificerade"
+msgstr "boli zadané konfliktné špecifikátory"
 
 #: src/grep.c:1715
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
-msgstr "I GREP_COLORS=\"%s\", \"%s\"-kapaciteten behöver ett värde (\"=...\"); hoppades över."
+msgstr "V GREP_COLORS=\"%s\", potrebuje \"%s\" hodnotu (\"=...\"); preskakujem."
 
 #: src/grep.c:1719
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
-msgstr "I GREP_COLORS=\"%s\", \"%s\"-kapaciteten är boolesk och kan inte ta ett värde (\"=%s\"); hoppades över."
+msgstr "V GREP_COLORS=\"%s\", je \"%s\" booleovského typu a nemôže nadobúdať hodnotu (\"=%s\"); preskakujem."
 
 #: src/grep.c:1727
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
-msgstr "I GREP_COLORS=\"%s\", \"%s\"-kapaciteten %s."
+msgstr "V GREP_COLORS=\"%s\", \"%s\" %s."
 
 #: src/grep.c:1750
 #, c-format
 msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
-msgstr "Stoppade behandling av felformulerad GREP_COLORS=\"%s\" på återstående understrängen \"%s\"."
+msgstr "Prerušené spracovanie zle utvoreného GREP_COLORS=\"%s\" na zvyšnom podreťazci \"%s\"."
 
 #: src/grep.c:1883
 msgid "unknown devices method"
-msgstr "metod för okända enheter"
+msgstr "neznáme metódy zariadení"
 
 #: src/grep.c:1956
 msgid "unknown directories method"
-msgstr "okänd metod gällande kataloger"
+msgstr "neznáme metódy adresárov"
 
 #: src/grep.c:2023
 msgid "invalid max count"
-msgstr "ogiltigt värde för antal träffar"
+msgstr "neplatný maximálny počet"
 
 #: src/grep.c:2078
 msgid "unknown binary-files type"
-msgstr "okänd binärfiltyp"
+msgstr "neznámy typ binárneho súboru"
 
 #: src/grep.c:2182
 #, c-format
 msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
-msgstr "Copyright © 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
+msgstr "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
 
 #: src/grep.c:2184
 #, c-format
@@ -364,89 +363,85 @@ msgid ""
 "This is free software; see the source for copying conditions.  There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
-"Det här är fri programvara, se källkoden för kopieringsvillkor. Det\n"
-"finns INGEN garanti, inte ens för SÄLJBARHET eller LÄMPLIGHET FÖR NÅGOT\n"
-"SPECIELLT ÄNDAMÅL.\n"
+"Tento program je slobodný softvér; podmienky šírenia si pozrite v zdrojových\n"
+"súboroch. Nie je poskytovaná ŽIADNA záruka; ani záruka PREDAJNOSTI či\n"
+"VHODNOSTI NA DANÝ ÚČEL.\n"
 
 #: src/search.c:619
 msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
-msgstr "Stöd för flaggan -P är inte inbyggd i den här binären med --disable-perl-regexp"
+msgstr "Podpora voľby -P nie je vkompilovaná do tejto binárky --disable-perl-regexp"
 
 #: src/search.c:632
 msgid "The -P and -z options cannot be combined"
-msgstr "Flaggorna -P och -z kan inte kombineras"
+msgstr "Voľby -P a -z nie je možné kombinovať"
 
 #: src/search.c:634
 msgid "The -P option only supports a single pattern"
-msgstr "Flaggan -P har endast stöd för ett mönster"
+msgstr "Voľba -P podporuje iba jedinú vzorku"
 
 #: lib/error.c:117
 msgid "Unknown system error"
-msgstr "Okänt systemfel"
+msgstr "Neznáma systémová chyba"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: flaggan \"%s\" är tvetydig\n"
+msgstr "%s: voľba „%s“ je nejednoznačná\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: flaggan \"%s\" tar inget argument\n"
+msgstr "%s: voľba „--%s“ nepripúšťa argument\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: flaggan \"%c%s\" tar inget argument\n"
+msgstr "%s: voľba „%c%s“ nepripúšťa argument\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: flaggan \"%s\" behöver ett argument\n"
+msgstr "%s: voľba „%s“ vyžaduje argument\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: okänd flagga \"--%s\"\n"
+msgstr "%s: nerozpoznaná voľba „--%s“\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: okänd flagga \"%c%s\"\n"
+msgstr "%s: nerozpoznaná voľba „%c%s“\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: otillåten flagga -- %c\n"
+msgstr "%s: neprípustná voľba -- %c\n"
 
 #: lib/getopt.c:785
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: otillåten flagga -- %c\n"
+msgstr "%s: neplatná voľba -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:815 lib/getopt.c:945
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: flagga behöver ett argument -- %c\n"
+msgstr "%s: voľba voľba vyžaduje argument -- %c\n"
 
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: flaggan \"-W %s\" är tvetydig\n"
+msgstr "%s: voľba „-W %s“ je nejednoznačná\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: flaggan \"-W %s\" tillåter inget argument\n"
+msgstr "%s: voľba „-W %s“ nepripúšťa argument\n"
 
-# Då det skulle krävas att spara hela filen i UTF-8 för att kunna göra
-# detta rätt, känns det inte värt det. Speciellt eftersom funktionen
-# inte används i grep
-#
 #. Get translations for open and closing quotation marks.
 #.
 #. The message catalog should translate "`" to a left
@@ -463,17 +458,8 @@ msgstr "%s: flaggan \"-W %s\" tillåter inget argument\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr "\""
+msgstr "„"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr "\""
-
-#~ msgid "out of memory"
-#~ msgstr "minnet slut"
-
-#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-#~ msgstr "Användning: %s [FLAGGA]... MÖNSTER [FIL]...\n"
-
-#~ msgid "%s (GNU grep) %s\n"
-#~ msgstr "%s (GNU grep) %s\n"
+msgstr "“"

@@ -1,5 +1,15 @@
 # Kinyarwanda translations for grep package.
 # Copyright (C) 2005 Free Software Foundation, Inc.
+# Steve Murphy <murf@e-tools.com>, 2005.
+# Steve performed initial rough translation from compendium built from translations provided by the following translators:
+# Philibert Ndandali  <ndandali@yahoo.fr>, 2005.
+# Viateur MUGENZI <muvia1@yahoo.fr>, 2005.
+# Noëlla Mupole <s24211045@tuks.co.za>, 2005.
+# Carole Karema <karemacarole@hotmail.com>, 2005.
+# JEAN BAPTISTE NGENDAHAYO <ngenda_denis@yahoo.co.uk>, 2005.
+# Augustin KIBERWA  <akiberwa@yahoo.co.uk>, 2005.
+# Donatien NSENGIYUMVA <ndonatienuk@yahoo.co.uk>, 2005.
+# Antoine Bigirimana <antoine@e-tools.com>, 2005.
 # This file is distributed under the same license as the grep package.
 # Steve Murphy <murf@e-tools.com>, 2005.
 # Steve performed initial rough translation from compendium built from translations provided by the following translators:
@@ -14,8 +24,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5.1a\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"Project-Id-Version: grep 2.5\n"
+"POT-Creation-Date: 2002-03-13 15:14+0100\n"
 "PO-Revision-Date: 2005-04-04 10:55-0700\n"
 "Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
 "Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
@@ -84,47 +94,47 @@ msgstr "Sibyo Imvugiro Uburebure"
 msgid "input is too large to count"
 msgstr "Iyinjiza ni Binini Kuri IBARA"
 
-#: src/grep.c:605
+#: src/grep.c:601
 #, fuzzy
 msgid "writing output"
 msgstr "Ibisohoka"
 
-#: src/grep.c:878
+#: src/grep.c:874
 #, fuzzy, c-format
 msgid "Binary file %s matches\n"
 msgstr "IDOSIYE"
 
-#: src/grep.c:892
+#: src/grep.c:888
 #, fuzzy
 msgid "(standard input)"
 msgstr "(Bisanzwe Iyinjiza"
 
-#: src/grep.c:997
+#: src/grep.c:993
 #, fuzzy, c-format
 msgid "warning: %s: %s\n"
 msgstr "Iburira"
 
-#: src/grep.c:998
+#: src/grep.c:994
 #, fuzzy
 msgid "recursive directory loop"
 msgstr "bushyinguro"
 
-#: src/grep.c:1046
+#: src/grep.c:1042
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr ""
 
-#: src/grep.c:1048
+#: src/grep.c:1044
 #, fuzzy, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "kugirango Birenzeho Ibisobanuro"
 
-#: src/grep.c:1053
+#: src/grep.c:1049
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr ""
 
-#: src/grep.c:1054
+#: src/grep.c:1050
 #, fuzzy, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -133,7 +143,7 @@ msgid ""
 "Regexp selection and interpretation:\n"
 msgstr "kugirango in Cyangwa Bisanzwe Iyinjiza Urugero i Muraho Ibikubiyemo h Ihitamo Na"
 
-#: src/grep.c:1059
+#: src/grep.c:1055
 #, fuzzy
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
@@ -142,7 +152,7 @@ msgid ""
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr "-E Byongerewe... ni Byongerewe... Ibisanzwe BIHAMYE Ikurikiranyanyuguti ni a Gushyiraho Bya BASIC ni a BASIC Ibisanzwe Perl ni a Ibisanzwe"
 
-#: src/grep.c:1064
+#: src/grep.c:1060
 #, fuzzy
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
@@ -153,7 +163,7 @@ msgid ""
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr "-E Gukoresha Nka a Ibisanzwe F IDOSIYE Bivuye i Kwirengagiza Kwirengagiza W ijambo Kuri BIHUYE X Umurongo Kuri BIHUYE Z NTAGIHARI Ibyatanzwe a Ibyatanzwe Umurongo in 0 Bayite OYA"
 
-#: src/grep.c:1071
+#: src/grep.c:1067
 #, fuzzy
 msgid ""
 "\n"
@@ -165,7 +175,7 @@ msgid ""
 "      --mmap                use memory-mapped input if possible\n"
 msgstr "S Oya Ubutumwa Ikosa v Gucurika BIHUYE Guhitamo V Verisiyo Gucapa Verisiyo Ibisobanuro Na Ifashayobora Kugaragaza iyi Ifashayobora Na Gukoresha Ububiko Iyinjiza NIBA"
 
-#: src/grep.c:1079
+#: src/grep.c:1075
 #, fuzzy
 msgid ""
 "\n"
@@ -197,7 +207,7 @@ msgid ""
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr "Igenzura M KININI IBARA Guhagarara Nyuma B Bayite Nta- boneza Gucapa i Bayite Nta- boneza Na: Ibisohoka N Umurongo Umubare Gucapa Umurongo Umubare Na: Ibisohoka Umurongo Ibisohoka ku buri H Na: Izina ry'idosiye: Gucapa i Izina ry'idosiye: kugirango h Oya Izina ry'idosiye: i Izina ry'idosiye: ku Akarango Gucapa Nka Izina ry'idosiye: kugirango Bisanzwe o Garagaza i Bya a Umurongo Q Byose Bisanzwe Nyabibiri Idosiye Nyabibiri Idosiye ni Cyangwa a Umwandiko Kuri Nyabibiri Idosiye Kuri Nyabibiri Idosiye D ububiko bw'amaderese Kuri ni Cyangwa Kuri Na ni Cyangwa R Kuri ububiko bw'amaderese Gushyiramo Idosiye BIHUYE Idosiye BIHUYE Bivuye Idosiye BIHUYE in Idosiye BIHUYE Gucapa Amazina Oya L Idosiye Na: Gucapa Amazina C IBARA Gucapa a IBARA Bya Imirongo NTAGIHARI Gucapa 0 Bayite Nyuma"
 
-#: src/grep.c:1107
+#: src/grep.c:1103
 #, fuzzy
 msgid ""
 "\n"
@@ -218,47 +228,47 @@ msgid ""
 "and 2 if trouble.\n"
 msgstr "Igenzura Mbere Imvugiro Gucapa Imirongo Bya Nyobora A Nyuma Imvugiro Gucapa Imirongo Bya C Imvugiro Gucapa Imirongo Bya Ibisohoka Nka Imvugiro Ibara Gukoresha Kuri i Gicurasi Cyangwa U Nyabibiri OYA Inyuguti ku u Bayite Icyegeranyo Nka NIBA OYA Oya Cyangwa Ryari: ni Gusoma Bisanzwe Iyinjiza Birutwa h Imimerere ni 0 NIBA BIHUYE 1. NIBA Oya BIHUYE Na 2. NIBA"
 
-#: src/grep.c:1124
+#: src/grep.c:1120
 #, fuzzy
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr "org."
 
-#: src/grep.c:1134
+#: src/grep.c:1130
 msgid "conflicting matchers specified"
 msgstr ""
 
-#: src/grep.c:1376
+#: src/grep.c:1367
 #, fuzzy
 msgid "unknown devices method"
 msgstr "Kitazwi Uburyo"
 
-#: src/grep.c:1443
+#: src/grep.c:1434
 #, fuzzy
 msgid "unknown directories method"
 msgstr "Kitazwi ububiko bw'amaderese Uburyo"
 
-#: src/grep.c:1510
+#: src/grep.c:1501
 #, fuzzy
 msgid "invalid max count"
 msgstr "Sibyo KININI IBARA"
 
-#: src/grep.c:1565
+#: src/grep.c:1555
 #, fuzzy
 msgid "unknown binary-files type"
 msgstr "Kitazwi Nyabibiri Idosiye Ubwoko"
 
-#: src/grep.c:1660
+#: src/grep.c:1650
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr ""
 
-#: src/grep.c:1662
+#: src/grep.c:1652
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/grep.c:1664
+#: src/grep.c:1654
 #, fuzzy
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"

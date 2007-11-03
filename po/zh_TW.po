@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version:  grep 2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2004-12-01 01:01+0800\n"
 "Last-Translator: Yuan-Chen Cheng <ycheng@sinica.edu.tw>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -56,8 +56,8 @@ msgstr "未配對的 )"
 msgid "out of memory"
 msgstr "記憶體用盡"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "記憶體用盡"
 
@@ -65,48 +65,48 @@ msgstr "記憶體用盡"
 msgid "invalid context length argument"
 msgstr "無效的長度引數"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "輸入過長無法計數"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "正在輸出"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "二進位格式檔案 %s 符合\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(標準輸入)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "警告: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "遞迴的目錄結構"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "用法: %s [選項]... 樣板 [檔案]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "請使用 `%s --help' 以閱讀更多的資訊.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "用法: %s [選項]... 樣板 [檔案]...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -119,7 +119,7 @@ msgstr ""
 "\n"
 "正規選項以及解譯:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -131,7 +131,7 @@ msgstr ""
 "  -G, --basic-regexp        PATTERN 是一個基本的正規表示式\n"
 "  -P, --perl-regexp         PATTERN 是一個 Perl 的正規表示式\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -147,7 +147,7 @@ msgstr ""
 "  -x, --line-regexp         以樣板(PATTERN)找尋時, 指配對一整行而非片段\n"
 "  -z, --null-data           每行資料以 0 這個位元結束, 而非換行符號\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -165,7 +165,7 @@ msgstr ""
 "      --help                顯示此使用方法後結束\n"
 "      --mmap                如果允許, 輸入檔案使用記憶體對應法\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -223,7 +223,7 @@ msgstr ""
 "  -c, --count               只針對每的檔案列出該檔案相符個數\n"
 "  -Z, --null                在檔名之後輸出一個值為 0 的位元\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -259,45 +259,44 @@ msgstr ""
 "少於兩格, 則設定為 -h 參數有輸入. 假設有找到資料, 程式回傳狀態為 0, 否則\n"
 "傳回 1, 如果程式執行中出現錯誤, 則傳回 2.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "請將發現的錯誤，以電子郵件寄到 <bug-gnu-utils@gnu.org>\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "指定了互相衝突的樣板"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "未知的裝置方法"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "未知的目錄方法"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "無效的最大計次"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "未知的二進位檔案型態"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "版權所有 1988, 1992-1999, 2000, 2001 自由軟體基金會.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

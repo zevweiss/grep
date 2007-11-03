@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5g.id.po\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2002-03-08 16:34GMT+0700\n"
 "Last-Translator: Tedi Heriyanto <tedi_h@gmx.net>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -18,10 +18,7 @@ msgstr ""
 msgid "Memory exhausted"
 msgstr "Memori habis"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545
-#: src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001
-#: src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036
-#: src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
 msgid "Unbalanced ["
 msgstr "[ tidak seimbang"
 
@@ -57,8 +54,7 @@ msgstr ") tidak seimbang"
 msgid "out of memory"
 msgstr "memori habis"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "memori habis"
 
@@ -66,48 +62,48 @@ msgstr "memori habis"
 msgid "invalid context length argument"
 msgstr "argumen panjang konteks tidak valid"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "input terlalu besar untuk dihitung"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "menulis output"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "File biner %s cocok\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(input standar)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "peringatan: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "perulangan direktori rekursif"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Pemakaian: %s [OPSI]... POLA [FILE]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Coba `%s --help' untuk informasi lebih lanjut.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Pemakaian: %s [OPSI]... POLA [FILE] ...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -120,7 +116,7 @@ msgstr ""
 "\n"
 "Seleksi dan interpretasi regexp:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -132,7 +128,7 @@ msgstr ""
 "  -G, --basic-regexp      POLA adalah ekspresi reguler dasar\n"
 "  -P, --perl-regexp         POLA adalah sebuah ekspresi reguler Perl\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -149,7 +145,7 @@ msgstr ""
 "  -z, --null-data      baris data berakhir dalam 0 byte, bukan newline\n"
 "\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -167,7 +163,7 @@ msgstr ""
 "      --help            tampilkan bantuan ini dan keluar\n"
 "      --mmap          gunakan input memory-mapped bila memungkinkan\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -224,7 +220,7 @@ msgstr ""
 "  -c, --count               hanya mencetak jumlah baris yang cocok per FILE\n"
 "  -Z, --null                mencetak byte 0 setelah nama FILE\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -260,45 +256,44 @@ msgstr ""
 "kurang dari dua file, asumsikan -h. Keluar dengan 0 jika cocok, dengan 1 jika\n"
 "tidak. 2 jika terjadi masalah.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Laporkan kesalahan ke <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "dispesifikasikan matcher yang konflik"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "metode device tidak dikenal"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "metode direktori tidak dikenal"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "jumlah max tidak valid"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "tipe file biner tidak dikenal"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Hak Cipta (C) 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

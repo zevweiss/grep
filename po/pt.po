@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2003-04-09 00:07+0100\n"
 "Last-Translator: Rui Malheiro <rmalheiro@6mil.pt>\n"
 "Language-Team: Portuguese <translation-team-pt@lists.sourceforge.net>\n"
@@ -57,8 +57,8 @@ msgstr ") sem correspondência"
 msgid "out of memory"
 msgstr "sem memória"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "memória esgotada"
 
@@ -66,48 +66,48 @@ msgstr "memória esgotada"
 msgid "invalid context length argument"
 msgstr "número de linhas de contexto inválido"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "ficheiro demasiado grande para manter contagem"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "a escrever o resultado"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Padrão encontrado no ficheiro binário %s\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(standard input)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "aviso: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "directoria em ciclo recursivo"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Utilização: %s [OPÇÃO]... PADRÃO [FICHEIRO]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Experimente `%s --help' para mais informação.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Utilização: %s [OPÇÃO]... PADRÃO [FICHEIRO] ...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -120,7 +120,7 @@ msgstr ""
 "\n"
 "Selecção e interpretação de regexp\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -132,7 +132,7 @@ msgstr ""
 "  -G, --basic-regexp        PADRÃO é uma expressão regular básica\n"
 "  -P, --perl-regexp         PADRÃO é uma expressão regular de Perl\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -148,7 +148,7 @@ msgstr ""
 "  -x, --line-regexp         forçar PADRÃO a igualar apenas a linhas completas\n"
 "  -z, --null-data           uma linha é terminada com o byte 0, não com newline\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -166,7 +166,7 @@ msgstr ""
 "      --help                apresenta este texto de auxílio e termina\n"
 "      --mmap                utilizar 'memory-mapped input' se possível\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -226,7 +226,7 @@ msgstr ""
 "                            número de linhas que satisfazem PADRÃO\n"
 "  -Z, --null                imprimir o byte 0 após cada nome de FICHEIRO\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -263,45 +263,44 @@ msgstr ""
 "dois FICHEIROS, assume -h. Devolve 0 se encontrar pelo menos uma occorência\n"
 "de PADRÃO, 1 se não encontrar, 2 se tiver algum problema.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Reporte «bugs» para <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "foram especificados métodos de pesquisa incompatíveis"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "método para acesso a «devices» desconhecido"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "método para acesso a directorias desconhecido"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "número máximo inválido"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "tipo de ficheiro binário desconhecido"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Direitos de autor 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

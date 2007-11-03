@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2003-11-29 01:00+0100\n"
 "Last-Translator: Danilo Segan <dsegan@gmx.net>\n"
 "Language-Team: Serbian <sr@li.org>\n"
@@ -57,8 +57,8 @@ msgstr "Неуравнотежена )"
 msgid "out of memory"
 msgstr "понестало меморије"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "меморија истрошена"
 
@@ -66,49 +66,49 @@ msgstr "меморија истрошена"
 msgid "invalid context length argument"
 msgstr "неисправан аргумент дужине контекста"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "улаз је превелик за пребројавање"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "пишем излаз"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Бинарна датотека %s одговара\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(стандардни улаз)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "упозорење: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "рекурзивно вртење кроз директоријуме"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Употреба: %s [ОПЦИЈА]... ШАБЛОН [ДАТОТЕКА]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Пробајте „%s --help“ за више података.\n"
 
 # bug: is this "..."<>" ..." difference neccessary?
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Употреба: %s [ОПЦИЈА]... ШАБЛОН [ДАТОТЕКА] ...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -121,7 +121,7 @@ msgstr ""
 "\n"
 "Избор и обрада регуларних израза:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -133,7 +133,7 @@ msgstr ""
 "  -G, --basic-regexp        ШАБЛОН је основни регуларни израз\n"
 "  -P, --perl-regexp         ШАБЛОН је Перл регуларни израз\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -149,7 +149,7 @@ msgstr ""
 "  -x, --line-regexp         присили ШАБЛОН да одговара једино целим редовима\n"
 "  -z, --null-data           ред података се завршава 0-бајтом, не новим редом\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -167,7 +167,7 @@ msgstr ""
 "      --help                прикажи ову помоћ и заврши\n"
 "      --mmap                мапирај улаз у меморију ако је могуће\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -226,7 +226,7 @@ msgstr ""
 "  -c, --count               испиши само број поклапања редова по датотеци\n"
 "  -Z, --null                испиши 0-бајт након имена датотеке\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -262,45 +262,44 @@ msgstr ""
 "дато мање од две датотеке, претпостављам -h. Излазно стање је 0 ако се \n"
 "поклапа, 1 ако се не поклапа и 2 ако има проблема.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Пријавите грешке на <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "наведени су сударајући трагачи"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "непознат метод уређаја"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "непознат метод директоријума"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "неисправан максимални број"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "непозната врста бинарних датотека"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (ГНУ греп) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Сва права задржана 1988, 1992-1999, 2000, 2001 Задужбина за слободни софтвер.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

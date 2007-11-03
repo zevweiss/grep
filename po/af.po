@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5g\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2004-03-03 13:33+0200\n"
 "Last-Translator: Petri Jooste <rkwjpj@puk.ac.za>\n"
 "Language-Team: Afrikaans <i18n@af.org.za>\n"
@@ -60,8 +60,8 @@ msgstr "Ongebalanseerde )"
 msgid "out of memory"
 msgstr "te min geheue"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "geheue uitgeput"
 
@@ -69,48 +69,48 @@ msgstr "geheue uitgeput"
 msgid "invalid context length argument"
 msgstr "ongeldige konteks-lengte-parameter"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "toevoer is te veel om te tel"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "afvoer word geskryf"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Binêre lêer %s pas\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(standaardtoevoer)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "waarskuwing: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "rekursiewe lus van gidsinskrywings"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Gebruik so: %s [OPSIE]... PATROON [LÊER]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Probeer `%s --help' vir meer inligting.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Gebruik so: %s [OPSIE]... PATROON [LÊER] ...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -123,7 +123,7 @@ msgstr ""
 "\n"
 "Reëlmatige uitdrukking-seleksie en -interpretasie:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -135,7 +135,7 @@ msgstr ""
 "  -G, --basic-regexp        PATROON is 'n basic regular expression\n"
 "  -P, --perl-regexp         PATROON is 'n  Perl regular expression\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -151,7 +151,7 @@ msgstr ""
 "  -x, --line-regexp         dwing PATROON om slegs op hele reëls te pas\n"
 "  -z, --null-data           elke datareël eindig met 'n 0-greep, nie 'n nuwereëlkarakter nie\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -169,7 +169,7 @@ msgstr ""
 "      --help                wys hierdie hulpboodskap en stop\n"
 "      --mmap                gebruik geheue-gebonde toevoer indien moontlik\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -227,7 +227,7 @@ msgstr ""
 "  -c, --count               wys slegs die aantal reëls in elke LÊER wat passings bevat\n"
 "  -Z, --null                wys die 0-greep na die LÊERnaam\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -263,45 +263,44 @@ msgstr ""
 "Indien minder as twee LÊERs gegee is, aanvaar -h. Uittreestatus is\n"
 " 0 vir passing, 1 vir geen passing, en 2 vir probleemgevalle.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Rapporteer foute aan <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "teenstrydige passers is gespesifiseer"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "onbekende metode vir toestelle"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "onbekende metode vir gidse"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "ongeldige maks-telling"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "onbekende binêre-lêertipe"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"

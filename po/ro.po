@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: grep-2.5g.ro\n"
-"POT-Creation-Date: 2002-03-26 16:38+0100\n"
+"POT-Creation-Date: 2002-01-22 14:39+0100\n"
 "PO-Revision-Date: 2003-04-19 02:47+0000\n"
 "Last-Translator: Eugen Hoanca <eugenh@urban-grafx.ro>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -57,8 +57,8 @@ msgstr ") fãra pereche"
 msgid "out of memory"
 msgstr "memorie plinã"
 
-#: src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209
-#: src/search.c:293 lib/obstack.c:471
+#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103
+#: src/search.c:209 src/search.c:293
 msgid "memory exhausted"
 msgstr "memorie plinã"
 
@@ -66,48 +66,48 @@ msgstr "memorie plinã"
 msgid "invalid context length argument"
 msgstr "parametru lungime context invalid"
 
-#: src/grep.c:479
+#: src/grep.c:475
 msgid "input is too large to count"
 msgstr "intrarea(input) este prea mare pentru numãrare"
 
-#: src/grep.c:605
+#: src/grep.c:597
 msgid "writing output"
 msgstr "scriere output"
 
-#: src/grep.c:878
+#: src/grep.c:870
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Fiºierul binar %s corespunde\n"
 
-#: src/grep.c:892
+#: src/grep.c:884
 msgid "(standard input)"
 msgstr "(intrare standard)"
 
-#: src/grep.c:997
+#: src/grep.c:989
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "avertisment: %s: %s\n"
 
-#: src/grep.c:998
+#: src/grep.c:990
 msgid "recursive directory loop"
 msgstr "buclã recursivã de directoare"
 
-#: src/grep.c:1046
+#: src/grep.c:1038
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
 msgstr "Folosire: %s [OPÞIUNE]... TIPAR [FIªIER]...\n"
 
-#: src/grep.c:1048
+#: src/grep.c:1040
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Încercaþi `%s --help' pentru mai multe informaþii.\n"
 
-#: src/grep.c:1053
+#: src/grep.c:1045
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
 msgstr "Folosire: %s [OPÞIUNE]... TIPAR [FIªIER]...\n"
 
-#: src/grep.c:1054
+#: src/grep.c:1046
 #, c-format
 msgid ""
 "Search for PATTERN in each FILE or standard input.\n"
@@ -120,7 +120,7 @@ msgstr ""
 "\n"
 "Selecþie ºi interpretare regexp:\n"
 
-#: src/grep.c:1059
+#: src/grep.c:1051
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression\n"
 "  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
@@ -132,7 +132,7 @@ msgstr ""
 "  -G, --basic-regexp       TIPAR este o expresie exactã primarã\n"
 "  -P, --perl-regexp        TIPAR este o expresie exactã Perl\n"
 
-#: src/grep.c:1064
+#: src/grep.c:1056
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -148,7 +148,7 @@ msgstr ""
 "  -x, --line-regexp         forþeazã TIPAR sã corespundã doar liniilor întregi\n"
 "  -z, --null-data           linia de date se terminã în octet 0, nu linie_nouã\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1063
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -166,7 +166,7 @@ msgstr ""
 "      --help                afiºeazã acest ajutor ºi terminã\n"
 "      --mmap                foloseºte intrare memory-mapped dacã e posibil\n"
 
-#: src/grep.c:1079
+#: src/grep.c:1071
 msgid ""
 "\n"
 "Output control:\n"
@@ -224,7 +224,7 @@ msgstr ""
 "  -c, --count               afiºeazã doar numãrul de potriviri per FIªIER\n"
 "  -Z, --null                tipãreºte octet 0 dupã nume FIªIER\n"
 
-#: src/grep.c:1107
+#: src/grep.c:1099
 msgid ""
 "\n"
 "Context control:\n"
@@ -260,45 +260,44 @@ msgstr ""
 "mai puþin de 2 FIªIERe, se presupune -h. Starea de ieºire e 0 pentru\n"
 "corespunzãtor, 1 pentru necorespunzãtor, ºi 2 pentru probleme.\n"
 
-#: src/grep.c:1124
-#, fuzzy
+#: src/grep.c:1116
 msgid ""
 "\n"
-"Report bugs to <bug-grep@gnu.org>.\n"
+"Report bugs to <bug-gnu-utils@gnu.org>.\n"
 msgstr ""
 "\n"
 "Raportaþi buguri la <bug-gnu-utils@gnu.org>.\n"
 
-#: src/grep.c:1134
+#: src/grep.c:1126
 msgid "conflicting matchers specified"
 msgstr "conflicte între cãutãtorii (matchers) specificaþi"
 
-#: src/grep.c:1376
+#: src/grep.c:1363
 msgid "unknown devices method"
 msgstr "metodã dispozitive(devices) necunoscutã"
 
-#: src/grep.c:1443
+#: src/grep.c:1430
 msgid "unknown directories method"
 msgstr "metodã directoare necunoscutã"
 
-#: src/grep.c:1510
+#: src/grep.c:1497
 msgid "invalid max count"
 msgstr "numãrare maximã invalidã"
 
-#: src/grep.c:1565
+#: src/grep.c:1551
 msgid "unknown binary-files type"
 msgstr "tip fiºiere-binare necunoscut"
 
-#: src/grep.c:1660
+#: src/grep.c:1646
 #, c-format
 msgid "%s (GNU grep) %s\n"
 msgstr "%s (GNU grep) %s\n"
 
-#: src/grep.c:1662
+#: src/grep.c:1648
 msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 msgstr "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
 
-#: src/grep.c:1664
+#: src/grep.c:1650
 msgid ""
 "This is free software; see the source for copying conditions. There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
