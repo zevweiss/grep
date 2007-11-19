@@ -1,4 +1,4 @@
-2007-11-16  Tony Abou-Assaleh <taa@acm.org>
+2007-11-19  Tony Abou-Assaleh <taa@acm.org>
 
 	* m4/Makefile.am: Remove reference strerror_r.m4
 
