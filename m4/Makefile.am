@@ -21,7 +21,6 @@ EXTRA_DIST = decl.m4 \
              realloc.m4 \
              regex.m4 \
              sanity.m4 \
-             strerror_r.m4 \
 	     uintmax_t.m4 \
              ulonglong.m4 \
              xstrtoumax.m4

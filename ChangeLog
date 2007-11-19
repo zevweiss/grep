@@ -1,5 +1,9 @@
 2007-11-16  Tony Abou-Assaleh <taa@acm.org>
 
+	* m4/Makefile.am: Remove reference strerror_r.m4
+
+2007-11-16  Tony Abou-Assaleh <taa@acm.org>
+
 	* po/sk.po: updated from the translation project
 
 2007-11-03  Tony Abou-Assaleh <taa@acm.org>
