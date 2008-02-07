@@ -21,7 +21,7 @@
 . \" ISO 8601 date, complete format, extended representation
 . ds Dt \\*(Yr-\\*(Mn-\\*(Dy
 ..
-.Id $Id: grep.1,v 1.38 2006/08/18 22:00:31 bero Exp $
+.Id $Id: grep.1,v 1.39 2008/02/07 03:43:27 taa Exp $
 .TH GREP 1 \*(Dt "GNU grep 2.5.1-cvs" "User Commands"
 .hy 0
 .
@@ -125,7 +125,8 @@ may warn of unimplemented features.
 Use
 .I PATTERN
 as the pattern.
-This is useful to protect patterns beginning with hyphen-minus
+This can be used to specify multiple search patterns,
+or to protect a pattern beginning with a hyphen
 .RB ( \- ).
 .RB ( \-e
 is specified by \s-1POSIX\s0.)

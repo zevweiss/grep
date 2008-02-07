@@ -211,8 +211,9 @@ This version number should be included in all bug reports.
 @opindex -e
 @opindex --regexp=@var{pattern}
 @cindex pattern list
-Use @var{pattern} as the pattern;
-useful to protect patterns beginning with a @samp{-}.
+Use @var{pattern} as the pattern.
+This can be used to specify multiple search patterns,
+or to protect a pattern beginning with a @samp{-}.
 (@samp{-e} is specified by @sc{posix}.)
 
 @item -f @var{file}

@@ -1,3 +1,11 @@
+2008-02-06  Tony Abou-Assaleh <taa@acm.org>
+
+	* tests/foad1.h: Comment out cases that are known to fail. These
+      should be uncommented after the 2.5.4 release.
+	* tests/yesno.sh: Likewise.
+	* doc/grep.1: Update description of -e PATTERN; from Benno Schulenberg
+	* doc/grep.texi: Likewise.
+
 2007-11-19  Tony Abou-Assaleh <taa@acm.org>
 
 	* m4/Makefile.am: Remove reference strerror_r.m4
