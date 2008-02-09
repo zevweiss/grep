@@ -1605,9 +1605,7 @@ epsclosure (position_set *s, struct dfa const *d)
   int *visited;
   position p, old;
 
-  MALLOC(visited, int, d->tindex);
-  for (i = 0; i < d->tindex; ++i)
-    visited[i] = 0;
+  CALLOC(visited, int, d->tindex);
 
   for (i = 0; i < s->nelem; ++i)
     if (d->tokens[s->elems[i].index] >= NOTCHAR
