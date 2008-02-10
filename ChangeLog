@@ -3,6 +3,9 @@
 	* src/dfa.c: Replace a MALLOC and for loop with a CALLOC.  Thanks to
 	  Johan Walles for this. Patch #6288
 
+	* README-alpha: more info about CVS code
+	* README: pointer to README-alpha
+
 2008-02-08  Reuben Thomas <rrt@sc3d.org> (tiny change)
 
 	* .cvsignore: add configure.ac
@@ -10,7 +13,7 @@
 
 2008-02-06  Tony Abou-Assaleh <taa@acm.org>
 
-	* tests/foad1.h: Comment out cases that are known to fail. These
+	* tests/foad1.sh: Comment out cases that are known to fail. These
       should be uncommented after the 2.5.4 release.
 	* tests/yesno.sh: Likewise.
 	* doc/grep.1: Update description of -e PATTERN; from Benno Schulenberg
@@ -3268,7 +3271,7 @@ axes.)
 
 	* Version 2.0 released.
 
-Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
+Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008
   Free Software Foundation, Inc.
 Copying and distribution of this file, with or without modification,
   are permitted provided the copyright notice and this notice are preserved.

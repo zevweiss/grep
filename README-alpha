@@ -2,6 +2,14 @@ Newer, ALPHA (i.e., unstable) versions of this code are available in CVS
 on Savannah.  See <http://savannah.gnu.org/cvs/?group=grep> for details.
 The main project page is at <http://savannah.gnu.org/projects/grep/>.
 
+The source code in the CVS uses autotools to generate some files. Before
+following the instructions in the INSTALL file for compiling grep, you
+need to run the autogen.sh script. If you don't have the autotools
+installed on your system, you can download a CVS release file (generated
+with `make dist') from <http://www.dal-acm.ca/~taa/grep/>.
+
+Official test releases are available at <http://alpha.gnu.org/gnu/grep/>.
+
 Please submit bug reports to <bug-grep@gnu.org>.
 
 If you are interested in the development of GNU grep, you may want to
@@ -17,5 +25,5 @@ email message to <grep-commit-request@gnu.org> with "subscribe" (without
 the quotation marks) in the subject header field (or in the body) of
 the email, or visit <http://lists.gnu.org/mailman/listinfo/grep-commit>.
 
-A web page containing information for GNU grep developers is also
-available at <http://www.gnu.org/software/grep/devel.html>.
+A web page containing information for GNU grep developers is at 
+<http://www.gnu.org/software/grep/devel.html>.

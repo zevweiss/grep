@@ -22,4 +22,7 @@ See the file NEWS for a description of major changes in this release.
 
 See the file TODO for ideas on how you could help us improve grep.
 
+See the file README-alpha for information on grep development and the CVS
+  repository.
+
 Send bug reports to bug-grep@gnu.org.
