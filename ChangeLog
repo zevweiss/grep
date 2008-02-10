@@ -6,6 +6,8 @@
 	* README-alpha: more info about CVS code
 	* README: pointer to README-alpha
 
+	* src/grep.c: Update grep copyright year
+
 2008-02-08  Reuben Thomas <rrt@sc3d.org> (tiny change)
 
 	* .cvsignore: add configure.ac

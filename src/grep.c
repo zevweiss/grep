@@ -2182,7 +2182,7 @@ main (int argc, char **argv)
     {
       printf ("%s\n\n", PACKAGE_STRING);
       printf (_("\
-Copyright (C) 2007 Free Software Foundation, Inc.\n"));
+Copyright (C) 2008 Free Software Foundation, Inc.\n"));
       printf (_("\
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
