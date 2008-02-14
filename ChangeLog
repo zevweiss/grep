@@ -1,3 +1,9 @@
+2008-02-14  Tony Abou-Assaleh <taa@acm.org>
+
+	* src/grep.c: Factor out copyright year in --version. Thanks to
+	  Karl Berry for this.
+	* src/grep.c: Update copyright years
+
 2008-02-09  Tony Abou-Assaleh <taa@acm.org>
 
 	* src/dfa.c: Replace a MALLOC and for loop with a CALLOC.  Thanks to
