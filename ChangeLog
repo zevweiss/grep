@@ -5,7 +5,7 @@
 	* src/grep.c: Update copyright years
 
 	* po/POTFILES.in: +src/system.h +lib/closeout.c +lib/regex.c
-	  +lib/xmalloc.c
+	  +lib/xmalloc.c -lib/getopt1.c
 
 2008-02-09  Tony Abou-Assaleh <taa@acm.org>
 
