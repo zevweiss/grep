@@ -1,3 +1,8 @@
+2008-06-15  Tony Abou-Assaleh <taa@acm.org>
+
+	* src/ansi2knr.[1c]: Remove generated files (installed by automake). Thanks
+	  to Emanuele Giaquinta for this.
+
 2008-02-14  Tony Abou-Assaleh <taa@acm.org>
 
 	* src/grep.c: Factor out copyright year in --version. Thanks to
