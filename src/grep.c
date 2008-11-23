@@ -1821,69 +1821,6 @@ parse_grep_colors (void)
 		"at remaining substring \"%s\"."), p, q);
 }
 
-/* mb_icase_keys() is called by main() to convert its "keys" string with
-   strlen() "len" to lowercase if match_icase is true.  Pointers are used
-   to implement in-out call-by-reference parameters.  */
-#ifdef MBS_SUPPORT
-static void
-mb_icase_keys (char **keys, size_t *len)
-{
-  wchar_t wc;
-  mbstate_t sti, stj;		/* i for input/old, j for output/new.  */
-  size_t i, j, li, lj;		/* l for total string length (minus '\0').  */
-  char *ki, *kj;		/* k for keys.  */
-  int mcm;
-
-  if ((mcm = MB_CUR_MAX) == 1)
-    return;
-
-  li = *len;
-  ki = *keys;
-  /* We use a new buffer because some multi-octet characters change
-     length through a lower-case conversion.  For example:
-	len(U+0049)=1 --> len(U+0131)=2   under tr_TR.UTF-8
-	len(U+0130)=2 --> len(U+0069)=1   under en_US.UTF-8
-	len(U+2126)=3 --> len(U+03C9)=2   under en_US.UTF-8
-	len(U+212A)=3 --> len(U+006B)=1   under en_US.UTF-8
-	len(U+212B)=3 --> len(U+00E5)=2   under en_US.UTF-8  */
-  lj = li + mcm;
-  kj = xmalloc(lj + 1);
-
-  memset(&sti, 0, sizeof(mbstate_t));
-  memset(&stj, 0, sizeof(mbstate_t));
-  for (i = j = 0; i < li ;)
-    {
-      size_t mbclen;
-      mbclen = mbrtowc(&wc, ki + i, li - i, &sti);
-      if (lj < j + mcm)
-	{
-	  lj += mcm;
-	  kj = xrealloc(kj, lj + 1);
-	}
-      if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
-	{
-	  /* An invalid sequence, or a truncated multi-octet character.
-	     We treat it as a single-octet character.  */
-	  kj[j++] = ki[i++];
-	}
-      else
-	{
-	  /* Doing towupper() before towlower() helps a few hairy cases and is
-	     not too costly since this is the PATTERN and is done only once.  */
-	  wc = towupper((wint_t)wc);
-	  wc = towlower((wint_t)wc);
-	  j += wcrtomb(kj + j, wc, &stj);
-	  i += mbclen;
-	}
-    }
-  kj[j] = '\0';
-
-  free(ki);
-  *keys = kj;
-  *len = j;
-}
-#endif /* MBS_SUPPORT */
-
 int
 main (int argc, char **argv)
 {
@@ -2300,11 +2237,6 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 #endif /* GREP_PROGRAM */
 
   set_limits();
-
-#ifdef MBS_SUPPORT
-  if (match_icase)
-    mb_icase_keys (&keys, &keycc);
-#endif /* MBS_SUPPORT */
 
   compile(keys, keycc);
   free (keys);

@@ -129,6 +129,9 @@ typedef enum
 
   MBCSET,			/* MBCSET is similar to CSET, but for
 				   multibyte characters.  */
+
+  WCHAR,			/* Only returned by lex.  wctok contains
+				   the wide character representation.  */
 #endif /* MBS_SUPPORT */
 
   CSET				/* CSET and (and any value greater) is a

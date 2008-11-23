@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 #include <locale.h>
 
@@ -267,17 +268,10 @@ static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 #ifdef MBS_SUPPORT
 /* These variables are used only if (MB_CUR_MAX > 1).  */
 static mbstate_t mbs;		/* Mbstate for mbrlen().  */
-static int cur_mb_len;		/* Byte length of the current scanning
+static int cur_mb_len;		/* Length of the multibyte representation of
+				   wctok.  */
+static wchar_t wctok;		/* Wide character representation of the current
 				   multibyte character.  */
-static int cur_mb_index;        /* Byte index of the current scanning multibyte
-                                   character.
-
-				   single byte character : cur_mb_index = 0
-				   multibyte character
-				       1st byte : cur_mb_index = 1
-				       2nd byte : cur_mb_index = 2
-				         ...
-				       nth byte : cur_mb_index = n  */
 static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec().
 				   Each element store the amount of remain
 				   byte of corresponding multibyte character
@@ -299,38 +293,6 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 #endif /* MBS_SUPPORT  */
 
 #ifdef MBS_SUPPORT
-/* This function update cur_mb_len, and cur_mb_index.
-   p points current lexptr, len is the remaining buffer length.  */
-static void
-update_mb_len_index (char const *p, int len)
-{
-  /* If last character is a part of a multibyte character,
-     we update cur_mb_index.  */
-  if (cur_mb_index)
-    cur_mb_index = (cur_mb_index >= cur_mb_len)? 0
-			: cur_mb_index + 1;
-
-  /* If last character is a single byte character, or the
-     last portion of a multibyte character, we check whether
-     next character is a multibyte character or not.  */
-  if (! cur_mb_index)
-    {
-      cur_mb_len = mbrlen(p, len, &mbs);
-      if (cur_mb_len > 1)
-	/* It is a multibyte character.
-	   cur_mb_len was already set by mbrlen().  */
-	cur_mb_index = 1;
-      else if (cur_mb_len < 1)
-	/* Invalid sequence.  We treat it as a single byte character.
-	   cur_mb_index is aleady 0.  */
-	cur_mb_len = 1;
-      /* Otherwise, cur_mb_len == 1, it is a single byte character.
-	 cur_mb_index is aleady 0.  */
-    }
-}
-#endif /* MBS_SUPPORT */
-
-#ifdef MBS_SUPPORT
 /* Note that characters become unsigned here. */
 # define FETCH(c, eoferr)			\
   do {						\
@@ -341,8 +303,6 @@ update_mb_len_index (char const *p, int len)
 	else					\
 	  return lasttok = END;			\
       }						\
-    if (MB_CUR_MAX > 1)				\
-      update_mb_len_index(lexptr, lexleft);	\
     (c) = (unsigned char) *lexptr++;		\
     --lexleft;					\
   } while(0)
@@ -365,7 +325,7 @@ fetch_wc (char const *eoferr)
   if (cur_mb_len <= 0)
    {
       cur_mb_len = 1;
-      wc = *lexptr;
+      wc = (unsigned char) *lexptr;
     }
   lexptr += cur_mb_len;
   lexleft -= cur_mb_len;
@@ -585,6 +545,7 @@ parse_bracket_exp_mb (void)
 	  work_mbc->range_ends[work_mbc->nranges++] =
             case_fold ? towlower(wc2) : (wchar_t)wc2;
 
+#ifndef GREP
 	  if (case_fold)
             {
               REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
@@ -594,21 +555,24 @@ parse_bracket_exp_mb (void)
                                    range_ends_al, work_mbc->nranges + 1);
               work_mbc->range_ends[work_mbc->nranges++] = towupper(wc2);
             }
+#endif
 	}
       else if (wc != WEOF)
 	/* build normal characters.  */
 	{
 	  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
 			       work_mbc->nchars + 1);
-	  work_mbc->chars[work_mbc->nchars++] = (wchar_t)wc;
-	  if (case_fold && (iswlower(wc) || iswupper(wc)))
-	    {
-	      REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
-				   work_mbc->nchars + 1);
-	      work_mbc->chars[work_mbc->nchars++] =
-		(wchar_t) (iswlower(wc) ? towupper(wc) : towlower(wc));
-	    }
-	}
+	  work_mbc->chars[work_mbc->nchars++] =
+		(wchar_t) (case_fold ? towlower(wc) : wc);
+#ifndef GREP
+	  if (case_fold)
+            {
+              REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
+                                   work_mbc->nchars + 1);
+              work_mbc->chars[work_mbc->nchars++] = towupper(wc);
+            }
+#endif
+        }
     }
   while ((wc = wc1) != L']');
   return MBCSET;
@@ -691,15 +655,20 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-      FETCH(c, 0);
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1 && cur_mb_index)
-	/* If this is a part of a multi-byte character, we must treat
-	   this byte data as a normal character.
-	   e.g. In case of SJIS encoding, some character contains '\',
-	        but they must not be backslash.  */
-	goto normal_char;
+      if (MB_CUR_MAX > 1)
+        {
+          wint_t wi = fetch_wc (NULL);
+          if (wi == WEOF)
+            return lasttok = EOF;
+          wctok = wi, c = wctob (wi);
+          if ((int)c == EOF)
+            goto normal_char;
+        }
+      else
 #endif /* MBS_SUPPORT  */
+        FETCH(c, NULL);
+
       switch (c)
 	{
 	case '\\':
@@ -1071,12 +1040,20 @@ lex (void)
 	default:
 	normal_char:
 	  laststart = 0;
+#ifdef MBS_SUPPORT
+	  /* For multibyte character sets, folding is done in atom.  Always
+             return WCHAR.  */
+          if (MB_CUR_MAX > 1)
+            return lasttok = WCHAR;
+#endif
+
 	  if (case_fold && ISALPHA(c))
 	    {
 	      zeroset(ccl);
 	      setbit_case_fold (c, ccl);
 	      return lasttok = CSET + charclass_index(ccl);
 	    }
+
 	  return lasttok = c;
 	}
     }
@@ -1096,29 +1073,18 @@ static int depth;		/* Current depth of a hypothetical stack
 				   required of the real stack later on in
 				   dfaanalyze(). */
 
-/* Add the given token to the parse tree, maintaining the depth count and
-   updating the maximum depth if necessary. */
 static void
-addtok (token t)
+addtok_mb (token t, int mbprop)
 {
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       REALLOC_IF_NECESSARY(dfa->multibyte_prop, int, dfa->nmultibyte_prop,
 			   dfa->tindex);
-      /* Set dfa->multibyte_prop.  See struct dfa in dfa.h.  */
-      if (t == MBCSET)
-	dfa->multibyte_prop[dfa->tindex] = ((dfa->nmbcsets - 1) << 2) + 3;
-      else if (t < NOTCHAR)
-	dfa->multibyte_prop[dfa->tindex]
-	  = (cur_mb_len == 1)? 3 /* single-byte char */
-	  : (((cur_mb_index == 1)? 1 : 0) /* 1st-byte of multibyte char */
-	     + ((cur_mb_index == cur_mb_len)? 2 : 0)); /* last-byte */
-      else
-	/* It may be unnecessary, but it is safer to treat other
-	   symbols as single byte characters.  */
-	dfa->multibyte_prop[dfa->tindex] = 3;
+      dfa->multibyte_prop[dfa->tindex] = mbprop;
     }
+#else
+  (void) mbprop;
 #endif
 
   REALLOC_IF_NECESSARY(dfa->tokens, token, dfa->talloc, dfa->tindex);
@@ -1145,6 +1111,41 @@ addtok (token t)
     }
   if (depth > dfa->depth)
     dfa->depth = depth;
+}
+
+/* Add the given token to the parse tree, maintaining the depth count and
+   updating the maximum depth if necessary. */
+static void
+addtok (token t)
+{
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1 && t == MBCSET)
+    addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+  else
+#endif
+    addtok_mb (t, 3);
+}
+
+/* We treat a multibyte character as a single atom, so that DFA
+   can treat a multibyte character as a single expression.
+
+   e.g. We construct following tree from "<mb1><mb2>".
+   <mb1(1st-byte)><mb1(2nd-byte)><CAT><mb1(3rd-byte)><CAT>
+   <mb2(1st-byte)><mb2(2nd-byte)><CAT><mb2(3rd-byte)><CAT><CAT> */
+static void
+addtok_wc (wint_t wc)
+{
+  unsigned char buf[MB_LEN_MAX];
+  mbstate_t s;
+  int i;
+  memset (&s, 0, sizeof(s));
+  cur_mb_len = wcrtomb ((char *) buf, wc, &s);
+  addtok_mb(buf[0], cur_mb_len == 1 ? 3 : 1);
+  for (i = 1; i < cur_mb_len; i++)
+    {
+      addtok_mb(buf[i], i == cur_mb_len - 1 ? 2 : 0);
+      addtok(CAT);
+    }
 }
 
 /* The grammar understood by the parser is as follows.
@@ -1185,6 +1186,23 @@ addtok (token t)
 static void
 atom (void)
 {
+#ifdef MBS_SUPPORT
+  if (tok == WCHAR)
+    {
+      addtok_wc (case_fold ? towlower(wctok) : wctok);
+#ifndef GREP
+      if (case_fold && iswalpha(wctok))
+        {
+          addtok_wc (towupper(wctok));
+          addtok (OR);
+        }
+#endif
+
+      tok = lex();
+      return;
+    }
+#endif /* MBS_SUPPORT  */
+
   if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
       || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
 #ifdef MBS_SUPPORT
@@ -1194,24 +1212,6 @@ atom (void)
     {
       addtok(tok);
       tok = lex();
-#ifdef MBS_SUPPORT
-      /* We treat a multibyte character as a single atom, so that DFA
-	 can treat a multibyte character as a single expression.
-
-         e.g. We construct following tree from "<mb1><mb2>".
-              <mb1(1st-byte)><mb1(2nd-byte)><CAT><mb1(3rd-byte)><CAT>
-              <mb2(1st-byte)><mb2(2nd-byte)><CAT><mb2(3rd-byte)><CAT><CAT>
-      */
-      if (MB_CUR_MAX > 1)
-	{
-	  while (cur_mb_index > 1 && tok >= 0 && tok < NOTCHAR)
-	    {
-	      addtok(tok);
-	      addtok(CAT);
-	      tok = lex();
-	    }
-	}
-#endif /* MBS_SUPPORT  */
     }
   else if (tok == LPAREN)
     {
@@ -1343,7 +1343,6 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
-      cur_mb_index = 0;
       cur_mb_len = 0;
       memset(&mbs, 0, sizeof(mbstate_t));
     }
@@ -2938,39 +2937,10 @@ dfainit (struct dfa *d)
 void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
-  if (case_fold && len)	/* dummy folding in service of dfamust() */
-    {
-      char *lcopy;
-      int i;
-
-      lcopy = malloc(len);
-      if (!lcopy)
-	dfaerror(_("memory exhausted"));
-
-      /* This is a kludge. */
-      case_fold = 0;
-      for (i = 0; i < len; ++i)
-	if (ISUPPER ((unsigned char) s[i]))
-	  lcopy[i] = tolower ((unsigned char) s[i]);
-	else
-	  lcopy[i] = s[i];
-
-      dfainit(d);
-      dfaparse(lcopy, len, d);
-      free(lcopy);
-      dfamust(d);
-      d->cindex = d->tindex = d->depth = d->nleaves = d->nregexps = 0;
-      case_fold = 1;
-      dfaparse(s, len, d);
-      dfaanalyze(d, searchflag);
-    }
-  else
-    {
-        dfainit(d);
-        dfaparse(s, len, d);
-	dfamust(d);
-        dfaanalyze(d, searchflag);
-    }
+  dfainit(d);
+  dfaparse(s, len, d);
+  dfamust(d);
+  dfaanalyze(d, searchflag);
 }
 
 /* Free the storage held by the components of a dfa. */

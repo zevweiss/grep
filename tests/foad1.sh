@@ -42,9 +42,8 @@ grep_test ()
 
 # "-o" with "-i" should output an exact copy of the matching input text.
 grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "word" -o -i
-# Comment out cases that are known to fail. These should be uncommented after the 2.5.4 release. TAA.
-#grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "Word" -o -i
-#grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "WORD" -o -i
+grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "Word" -o -i
+grep_test "WordA/wordB/WORDC/" "Word/word/WORD/" "WORD" -o -i
 
 # Should display the line number (-n), octet offset (-b), or file name
 # (-H) of every match, not just of the first match on each input line.
@@ -82,9 +81,8 @@ CE="[m[K"
 
 # "--color" with "-i" should output an exact copy of the matching input text.
 grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "word" --color=always -i
-# Comment out cases that are known to fail. These should be uncommented after the 2.5.4 release. TAA.
-#grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "Word" --color=always -i
-#grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "WORD" --color=always -i
+grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "Word" --color=always -i
+grep_test "WordA/wordb/WORDC/" "${CB}Word${CE}A/${CB}word${CE}b/${CB}WORD${CE}C/" "WORD" --color=always -i
 
 # End of a previous match should not match a "start of ..." expression.
 grep_test "word_word/" "${CB}word_${CE}word/" "^word_*" --color=always

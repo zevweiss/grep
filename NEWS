@@ -16,6 +16,9 @@ GNU grep NEWS                                    -*- outline -*-
   - for single characters, echo Y | grep -i '[y]'
   - for character types, echo Y | grep -i '[[:lower:]]'
 
+  grep -i -o would fail to report some matches; grep -i --color, while not
+  missing any line containing a match, would fail to color some matches.
+
   Various bugs in grep -P, caused by expressions such as [^b] or \S matching
   newlines, were fixed.  grep -P also supports the special sequences \Z and
   \z, and can be combined with the command-line option -z to perform searches
