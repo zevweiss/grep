@@ -1,19 +1,8 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
 @setfilename grep.info
-@settitle grep, print lines matching a pattern
-@c %**end of header
-
-@c This file has the new style title page commands.
-@c Run `makeinfo' rather than `texinfo-format-buffer'.
-
-@c smallbook
-
-@c tex
-@c \overfullrule=0pt
-@c end tex
-
 @include version.texi
+@settitle GNU Grep @value{VERSION}
 
 @c Combine indices.
 @syncodeindex ky cp
@@ -23,77 +12,48 @@
 @defcodeindex op
 @syncodeindex op fn
 @syncodeindex vr fn
+@c %**end of header
 
-@ifinfo
-@direntry
-* grep: (grep).                 print lines matching a pattern.
-@end direntry
-This file documents @command{grep}, a pattern matching engine.
+@copying
+This manual is for @command{grep}, a pattern matching engine.
 
+Copyright @copyright{} 1999, 2000, 2001, 2002, 2005, 2008 Free Software
+Foundation, Inc. 
 
-Published by the Free Software Foundation,
-51 Franklin Street -- Fifth Floor
-Boston, MA 02110--1301, USA
-
-@c man begin COPYRIGHT
-Copyright @copyright{} 1999, 2000, 2001, 2002, 2005  Free Software Foundation, Inc.
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-@ignore
-Permission is granted to process this file through TeX and print the
-results, provided the printed document carries a copying permission
-notice identical to this one except for the removal of this paragraph
-(this paragraph not being relevant to the printed manual).
-
-@end ignore
+@quotation
 Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.1 or
-any later version published by the Free Software Foundation; with the
-Invariant Sections being ``GNU General Public License'' and ``GNU Free
-Documentation License'', with no Front-Cover Texts, and with no
-Back-Cover Texts.  A copy of the license is included in the section
-entitled ``GNU Free Documentation License'' (@pxref{Copying}).
-@c man end
-@end ifinfo
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+``GNU Free Documentation License''.
+@end quotation
+@end copying
 
-@setchapternewpage off
+@dircategory Text creation and manipulation
+@direntry
+* grep: (grep).                 Print lines matching a pattern.
+@end direntry
 
 @titlepage
-@title @command{grep}, print lines matching a pattern
+@title GNU Grep: Print lines matching a pattern
 @subtitle version @value{VERSION}, @value{UPDATED}
 @author Alain Magloire et al.
-
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1999, 2000, 2001, 2002, 2005  Free Software Foundation, Inc.
-
-@sp 2
-Published by the Free Software Foundation, @*
-51 Franklin Street -- Fifth Floor, @*
-Boston, MA 02110--1301, USA
-
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.1 or
-any later version published by the Free Software Foundation; with the
-Invariant Sections being ``GNU General Public License'' and ``GNU Free
-Documentation License'', with no Front-Cover Texts, and with no
-Back-Cover Texts.  A copy of the license is included in the section
-entitled ``GNU Free Documentation License''.
+@insertcopying
 @end titlepage
+
+@contents
 
 
 @ifnottex
 @node Top
 @top grep
 
-@command{grep} searches for lines matching a pattern.
+@command{grep} prints lines matching a pattern.
 
-This document was produced
-for version @value{VERSION}
-of @sc{gnu} @command{grep}.
+This manual is for version @value{VERSION} of GNU Grep.
 @end ifnottex
 
 @menu
@@ -2538,5 +2498,4 @@ and regular expression constructs.
 
 @printindex fn
 
-@contents
 @bye
