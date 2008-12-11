@@ -1,5 +1,14 @@
 2008-12-11  Karl Berry  <karl@gnu.org>
 
+	* doc/grep.texi (Copying): update url's.
+	(GNU General Public License): remove node.
+	(GNU Free Documentation License): @include fdl.texi instead.
+	(@copying): update to v1.3 or later.
+	* doc/fdl.texi: new file, copied from
+	http://www.gnu.org/licenses/fdl.texi.
+	* doc/Makefile.am (grep_TEXINFOS): new variable to get fdl.texi.
+	Also add usual GPL license statement.
+
 	* doc/grep.texi (Index): Merge in Concept Index node,
 	to have only one index.  Arrange @syncodeindex's accordingly.
 
