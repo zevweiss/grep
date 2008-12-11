@@ -1,7 +1,17 @@
+2008-12-11  Karl Berry  <karl@gnu.org>
+
+	* doc/grep.texi (Index): Merge in Concept Index node,
+	to have only one index.  Arrange @syncodeindex's accordingly.
+
+2008-12-10  Karl Berry  <karl@gnu.org>
+
+	* doc/grep.texi (@copying): use @copying; move @contents to
+	  beginning; rearrange other frontmatter in the conventional ways.
+
 2008-06-15  Tony Abou-Assaleh <taa@acm.org>
 
-	* src/ansi2knr.[1c]: Remove generated files (installed by automake). Thanks
-	  to Emanuele Giaquinta for this.
+	* src/ansi2knr.[1c]: Remove generated files (installed by
+	  automake). Thanks to Emanuele Giaquinta for this.
 
 2008-02-14  Tony Abou-Assaleh <taa@acm.org>
 

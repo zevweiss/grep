@@ -8,10 +8,9 @@
 @syncodeindex ky cp
 @syncodeindex pg cp
 @syncodeindex tp cp
-
 @defcodeindex op
-@syncodeindex op fn
-@syncodeindex vr fn
+@syncodeindex op cp
+@syncodeindex vr cp
 @c %**end of header
 
 @copying
@@ -65,8 +64,7 @@ This manual is for version @value{VERSION} of GNU Grep.
 * Usage::                       Examples.
 * Reporting Bugs::              Reporting Bugs.
 * Copying::                     License terms.
-* Concept Index::               Topics covered in this manual.
-* Index::                       Options, environment variables, and constructs.
+* Index::                       Combined index.
 @end menu
 
 
@@ -1640,7 +1638,7 @@ space, and may cause @command{grep} to run out of memory.
 
 Back-references are very slow, and may require exponential time.
 
-@node Copying, GNU General Public License, Reporting Bugs, Top
+@node Copying
 @chapter Copying
 @cindex Copying
 GNU grep is licensed under the GNU GPL, which makes it @dfn{free
@@ -2104,7 +2102,7 @@ consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Library General
 Public License instead of this License.
 
-@node GNU Free Documentation License, Concept Index, GNU General Public License, Copying
+@node GNU Free Documentation License
 @section GNU Free Documentation License
 @center Version 1.1, March 2000
 @cindex FDL, GNU Free Documentation License
@@ -2472,30 +2470,9 @@ recommend releasing these examples in parallel under your choice of
 free software license, such as the GNU General Public License,
 to permit their use in free software.
 
-@page
-@node Concept Index, Index, GNU Free Documentation License, Top
-@unnumbered Concept Index
-
-This is a general index of all issues discussed in this manual,
-with the exception of all specific @command{grep}
-command-line options,
-environment variables,
-color capabilities,
-and regular expression constructs,
-which are covered in their own index.
-
-@printindex cp
-
-@page
-@node Index,, Concept Index, Top
+@node Index
 @unnumbered Index
 
-This is an lexicographical list of all @command{grep}
-command-line options,
-environment variables,
-color capabilities,
-and regular expression constructs.
-
-@printindex fn
+@printindex cp
 
 @bye
