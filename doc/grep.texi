@@ -57,9 +57,7 @@ This manual is for version @value{VERSION} of GNU Grep.
 
 @menu
 * Introduction::                Introduction.
-* Invoking::                    Invoking @command{grep}; description of options.
-* Exit Status::                 Exit status returned by @command{grep}.
-* grep Programs::               @command{grep} programs.
+* Invoking::                    Command-line options, environment, exit status.
 * Regular Expressions::         Regular Expressions.
 * Usage::                       Examples.
 * Reporting Bugs::              Reporting Bugs.
@@ -109,6 +107,8 @@ There can be zero or more @var{input_file_names}.
 @menu
 * Command-line Options::        Short and long names, grouped by category.
 * Environment Variables::       POSIX, GNU generic, and GNU grep specific.
+* Exit Status::                 Exit status returned by @command{grep}.
+* grep Programs::               @command{grep} programs.
 @end menu
 
 @node Command-line Options
@@ -944,7 +944,9 @@ and only when @code{POSIXLY_CORRECT} is not set.
 
 
 @node Exit Status
-@chapter Exit Status
+@section Exit Status
+@cindex exit status
+@cindex return status
 
 Normally, the exit status is 0 if selected lines are found and 1 otherwise.
 But the exit status is 2 if an error occurred, unless the @option{-q} or
@@ -959,7 +961,9 @@ instead of strict equality with@ 2.
 
 
 @node grep Programs
-@chapter @command{grep} programs
+@section @command{grep} Programs
+@cindex @command{grep} programs
+@cindex variants of @command{gerp}
 
 @command{grep} searches the named input files
 (or standard input if no files are named,
