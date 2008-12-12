@@ -68,10 +68,10 @@ This manual is for version @value{VERSION} of GNU Grep.
 @end menu
 
 
-@node Introduction, Invoking, Top, Top
+@node Introduction
 @chapter Introduction
 
-@cindex Searching for a pattern.
+@cindex searching for a pattern
 
 @command{grep} searches the input files
 for lines containing a match to a given pattern list.
@@ -86,6 +86,7 @@ If the final byte of an input file is not a newline,
 @command{grep} silently supplies one.
 Since newline is also a separator for the list of patterns,
 there is no way to match newline characters in a text.
+
 
 @node Invoking
 @chapter Invoking @command{grep}
@@ -145,7 +146,7 @@ which variant of the @command{grep} matching engine is used.
 
 @item --help
 @opindex --help
-@cindex Usage summary, printing
+@cindex usage summary, printing
 Print a usage message briefly summarizing the command-line options
 and the bug-reporting address, then exit.
 
@@ -153,7 +154,7 @@ and the bug-reporting address, then exit.
 @itemx --version
 @opindex -V
 @opindex --version
-@cindex Version, printing
+@cindex version, printing
 Print the version number of @command{grep} to the standard output stream.
 This version number should be included in all bug reports.
 
@@ -892,9 +893,6 @@ used to interpret range expressions like @samp{[a-z]}.
 @vindex LC_ALL @r{environment variable}
 @vindex LC_CTYPE @r{environment variable}
 @vindex LANG @r{environment variable}
-@cindex character type
-@cindex national language support
-@cindex NLS
 These variables specify the locale for the @code{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
@@ -908,7 +906,6 @@ e.g., which characters are whitespace.
 @cindex language of messages
 @cindex message language
 @cindex national language support
-@cindex NLS
 @cindex translation of message language
 These variables specify the locale for the @code{LC_MESSAGES} category,
 which determines the language that @command{grep} uses for messages.
@@ -945,6 +942,7 @@ and only when @code{POSIXLY_CORRECT} is not set.
 
 @end table
 
+
 @node Exit Status
 @chapter Exit Status
 
@@ -958,6 +956,7 @@ that the exit status in case of error be greater than 1;
 it is therefore advisable, for the sake of portability,
 to use logic that tests for this general condition
 instead of strict equality with@ 2.
+
 
 @node grep Programs
 @chapter @command{grep} programs
@@ -1016,6 +1015,7 @@ Direct invocation as either
 @command{egrep} or @command{fgrep} is deprecated,
 but is provided to allow historical applications
 that rely on them to run unmodified.
+
 
 @node Regular Expressions
 @chapter Regular Expressions
@@ -1364,10 +1364,11 @@ instead of reporting a syntax error in the regular expression.
 @sc{posix.2} allows this behavior as an extension, but portable scripts
 should avoid it.
 
+
 @node Usage
 @chapter Usage
 
-@cindex Usage, examples
+@cindex usage, examples
 Here is an example command that invokes @sc{gnu} @command{grep}:
 
 @example
@@ -1385,7 +1386,7 @@ it would not otherwise match.
 @xref{Invoking}, for more details about
 how to invoke @command{grep}.
 
-@cindex Using @command{grep}, Q&A
+@cindex using @command{grep}, Q&A
 @cindex FAQ about @command{grep} usage
 Here are some common questions and answers about @command{grep} usage.
 
@@ -1617,10 +1618,11 @@ g/re/p
 
 @end enumerate
 
-@node Reporting Bugs, Copying, Usage, Top
+
+@node Reporting Bugs
 @chapter Reporting bugs
 
-@cindex Bugs, reporting
+@cindex bugs, reporting
 Email bug reports to @email{bug-grep@@gnu.org},
 a mailing list whose web page is
 @url{http://lists.gnu.org/mailman/listinfo/bug-grep}.
@@ -1638,9 +1640,10 @@ space, and may cause @command{grep} to run out of memory.
 
 Back-references are very slow, and may require exponential time.
 
+
 @node Copying
 @chapter Copying
-@cindex Copying
+@cindex copying
 
 GNU grep is licensed under the GNU GPL, which makes it @dfn{free
 software}.
@@ -1671,6 +1674,7 @@ is available with the source code, or at
 @section GNU Free Documentation License
 
 @include fdl.texi
+
 
 @node Index
 @unnumbered Index

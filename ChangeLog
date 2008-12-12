@@ -1,3 +1,8 @@
+2008-12-12  Karl Berry  <karl@gnu.org>
+
+	* doc/grep.texi: remove all remaining node pointers;
+	downcase cindex entries.
+
 2008-12-11  Karl Berry  <karl@gnu.org>
 
 	* doc/grep.texi (Copying): update url's.
