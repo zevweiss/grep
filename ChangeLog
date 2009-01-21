@@ -1,3 +1,8 @@
+2009-01-20  Tony Abou-Assaleh <taa@acm.org>
+
+	* tests/foad1.sh: disable tests that fail under cs_CZ.UTF-8.
+	* tests/fmbtest.sh: likewise
+
 2008-12-12  Karl Berry  <karl@gnu.org>
 
 	* doc/grep.texi (Exit Status, grep Programs): move these

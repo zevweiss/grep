@@ -26,3 +26,10 @@ See the file README-alpha for information on grep development and the CVS
   repository.
 
 Send bug reports to bug-grep@gnu.org.
+
+KNOWN BUGS:
+
+Several tests in fmbtest.sh and foad1.sh fail under the cs_CZ.UTF-8 locale
+and have been disabled.
+
+The combination of -o and -i options is broken.
