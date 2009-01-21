@@ -32,4 +32,14 @@ KNOWN BUGS:
 Several tests in fmbtest.sh and foad1.sh fail under the cs_CZ.UTF-8 locale
 and have been disabled.
 
-The combination of -o and -i options is broken.
+The combination of -o and -i options is broken and the known failing cases
+are disabled in foad1.sh
+
+Additional bug reports can be found at:
+
+	http://savannah.gnu.org/bugs/?group=grep
+
+You can also browse the bug-grep mailing list archive at:
+
+	http://lists.gnu.org/archive/html/bug-grep/
+

@@ -2,6 +2,8 @@
 
 	* tests/foad1.sh: disable tests that fail under cs_CZ.UTF-8.
 	* tests/fmbtest.sh: likewise
+	* README: added "KNOWN BUGS" section
+	* src/grep.c: updated copyright year
 
 2008-12-12  Karl Berry  <karl@gnu.org>
 
