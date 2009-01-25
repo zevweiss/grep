@@ -1,6 +1,7 @@
 /* Definitions for data structures and routines for the regular
    expression library, version 0.12.
-   Copyright (C) 1985,1989-1993,1995-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1985,1989-1993,1995-1998, 2000, 2006, 2007, 2009
+   Free Software Foundation, Inc.
 
    This file is part of the GNU C Library.  Its master source is NOT part of
    the C library, however.  The master source lives in /gd/gnu/lib.
@@ -520,29 +521,41 @@ extern int re_exec _RE_ARGS ((const char *));
 #endif
 
 /* GCC 2.95 and later have "__restrict"; C99 compilers have
-   "restrict", and "configure" may have defined "restrict".  */
-#ifndef __restrict
-# if ! (2 < __GNUC__ || (2 == __GNUC__ && 95 <= __GNUC_MINOR__))
-#  if defined restrict || 199901L <= __STDC_VERSION__
-#   define __restrict restrict
-#  else
-#   define __restrict
-#  endif
+   "restrict", and "configure" may have defined "restrict".
+   Other compilers use __restrict, __restrict__, and _Restrict, and
+   'configure' might #define 'restrict' to those words, so pick a
+   different name.  */
+#ifndef _Restrict_
+# if 199901L <= __STDC_VERSION__
+#  define _Restrict_ restrict
+# elif 2 < __GNUC__ || (2 == __GNUC__ && 95 <= __GNUC_MINOR__)
+#  define _Restrict_ __restrict
+# else
+#  define _Restrict_
 # endif
 #endif
-/* For now unconditionally define __restrict_arr to expand to nothing.
-   Ideally we would have a test for the compiler which allows defining
-   it to restrict.  */
-#define __restrict_arr
+/* gcc 3.1 and up support the [restrict] syntax.  Don't trust
+   sys/cdefs.h's definition of __restrict_arr, though, as it
+   mishandles gcc -ansi -pedantic.  */
+#ifndef _Restrict_arr_
+# if ((199901L <= __STDC_VERSION__					\
+       || ((3 < __GNUC__ || (3 == __GNUC__ && 1 <= __GNUC_MINOR__))	\
+	   && !__STRICT_ANSI__))					\
+      && !defined __GNUG__)
+#  define _Restrict_arr_ _Restrict_
+# else
+#  define _Restrict_arr_
+# endif
+#endif
 
 /* POSIX compatibility.  */
-extern int regcomp _RE_ARGS ((regex_t *__restrict __preg,
-			      const char *__restrict __pattern,
+extern int regcomp _RE_ARGS ((regex_t *_Restrict_ __preg,
+			      const char *_Restrict_ __pattern,
 			      int __cflags));
 
-extern int regexec _RE_ARGS ((const regex_t *__restrict __preg,
-			      const char *__restrict __string, size_t __nmatch,
-			      regmatch_t __pmatch[__restrict_arr],
+extern int regexec _RE_ARGS ((const regex_t *_Restrict_ __preg,
+			      const char *_Restrict_ __string, size_t __nmatch,
+			      regmatch_t __pmatch[_Restrict_arr_],
 			      int __eflags));
 
 extern size_t regerror _RE_ARGS ((int __errcode, const regex_t *__preg,
