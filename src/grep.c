@@ -1707,18 +1707,20 @@ parse_grep_colors (void)
 	    break;
 	/* If name unknown, go on for forward compatibility.  */
 	if (cap->name)
-	  if (cap->var)
-	    {
-	      if (val)
-		*(cap->var) = val;
-	      else
-		error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
-			      "needs a value (\"=...\"); skipped."), p, name);
-	    }
-	  else if (val)
-	    error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
-			  "is boolean and cannot take a value (\"=%s\"); "
-			  "skipped."), p, name, val);
+	  {
+	    if (cap->var)
+	      {
+	        if (val)
+              *(cap->var) = val;
+	        else
+              error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
+			        "needs a value (\"=...\"); skipped."), p, name);
+          }
+        else if (val)
+          error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
+                "is boolean and cannot take a value (\"=%s\"); "
+                "skipped."), p, name, val);
+      }
 	if (cap->fct)
 	  {
 	    const char *err_str = cap->fct();

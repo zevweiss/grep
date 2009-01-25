@@ -1,3 +1,16 @@
+2009-01-24  Bruno Haible  <bruno@clisp.org>
+
+	* lib/savedir.c (isdir): New declaration.
+
+	* src/dfa.c (update_mb_len_index): Change argument type to
+	  'char const *'.
+	  (match_mb_charset): Cast argument to strncpy.
+	  (dfaexec): Add pointer cast.
+
+	* src/grep.c (parse_grep_colors): Add braces for disambiguation.
+
+	* src/kwset.c: Include xalloc.h instead of declaring xmalloc manually.
+
 2009-01-20  Tony Abou-Assaleh <taa@acm.org>
 
 	* tests/foad1.sh: disable tests that fail under cs_CZ.UTF-8.

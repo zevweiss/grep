@@ -1,5 +1,5 @@
 /* dfa.c - deterministic extended regexp routines for GNU
-   Copyright 1988, 1998, 2000, 2002, 2004, 2008
+   Copyright (C) 1988, 1998, 2000, 2002, 2004, 2008, 2009
    Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -414,7 +414,7 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 /* This function update cur_mb_len, and cur_mb_index.
    p points current lexptr, len is the remaining buffer length.  */
 static void
-update_mb_len_index (unsigned char const *p, int len)
+update_mb_len_index (char const *p, int len)
 {
   /* If last character is a part of a multibyte character,
      we update cur_mb_index.  */
@@ -2558,14 +2558,14 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
 	goto charset_matched;
     }
 
-  strncpy(buffer, buf_begin + index, match_len);
+  strncpy(buffer, (char const *) buf_begin + index, match_len);
   buffer[match_len] = '\0';
 
   /* match with an equivalent class?  */
   for (i = 0; i<work_mbc->nequivs; i++)
     {
       op_len = strlen(work_mbc->equivs[i]);
-      strncpy(buffer, buf_begin + index, op_len);
+      strncpy(buffer, (char const *) buf_begin + index, op_len);
       buffer[op_len] = '\0';
       if (strcoll(work_mbc->equivs[i], buffer) == 0)
 	{
@@ -2578,7 +2578,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   for (i = 0; i<work_mbc->ncoll_elems; i++)
     {
       op_len = strlen(work_mbc->coll_elems[i]);
-      strncpy(buffer, buf_begin + index, op_len);
+      strncpy(buffer, (char const *) buf_begin + index, op_len);
       buffer[op_len] = '\0';
 
       if (strcoll(work_mbc->coll_elems[i], buffer) == 0)
@@ -2831,7 +2831,7 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
   if (MB_CUR_MAX > 1)
     {
       int remain_bytes, i;
-      buf_begin = begin;
+      buf_begin = (unsigned char const *) begin;
       buf_end = end;
 
       /* initialize mblen_buf, and inputwcs.  */
