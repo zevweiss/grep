@@ -1,3 +1,7 @@
+2009-01-25  Tony Abou-Assaleh <taa@acm.org>
+
+	* README: updated "KNOWN BUGS" section
+
 2009-01-24  Bruno Haible  <bruno@clisp.org>
 
 	* lib/posix/regex.h (__restrict, __restrict_arr): Remove macros.
@@ -25,24 +29,24 @@
 2008-12-12  Karl Berry  <karl@gnu.org>
 
 	* doc/grep.texi (Exit Status, grep Programs): move these
-	nodes to under Invoking.
+	  nodes to under Invoking.
 
 	* doc/grep.texi: remove all remaining node pointers;
-	downcase cindex entries.
+	  downcase cindex entries.
 
 2008-12-11  Karl Berry  <karl@gnu.org>
 
 	* doc/grep.texi (Copying): update url's.
-	(GNU General Public License): remove node.
-	(GNU Free Documentation License): @include fdl.texi instead.
-	(@copying): update to v1.3 or later.
+	  (GNU General Public License): remove node.
+	  (GNU Free Documentation License): @include fdl.texi instead.
+	  (@copying): update to v1.3 or later.
 	* doc/fdl.texi: new file, copied from
-	http://www.gnu.org/licenses/fdl.texi.
+	  http://www.gnu.org/licenses/fdl.texi.
 	* doc/Makefile.am (grep_TEXINFOS): new variable to get fdl.texi.
-	Also add usual GPL license statement.
+	  Also add usual GPL license statement.
 
 	* doc/grep.texi (Index): Merge in Concept Index node,
-	to have only one index.  Arrange @syncodeindex's accordingly.
+	  to have only one index.  Arrange @syncodeindex's accordingly.
 
 2008-12-10  Karl Berry  <karl@gnu.org>
 

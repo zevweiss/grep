@@ -35,6 +35,10 @@ and have been disabled.
 The combination of -o and -i options is broken and the known failing cases
 are disabled in foad1.sh
 
+The option -i does not work properly in some multibyte locales such as 
+tr_TR.UTF-8 where the upper case and lower case forms of a character are not
+necessarily of the same byte length.
+
 Additional bug reports can be found at:
 
 	http://savannah.gnu.org/bugs/?group=grep
