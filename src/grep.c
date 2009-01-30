@@ -1507,6 +1507,11 @@ With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
 are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
 if any error occurs and -q was not given, the exit status is 2.\n"));
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      printf (_("GNU Grep home page: <%s>\n"),
+              "http://www.gnu.org/software/grep/");
+      fputs (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"),
+             stdout);
+              
     }
   exit (status);
 }

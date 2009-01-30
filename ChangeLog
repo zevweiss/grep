@@ -1,5 +1,7 @@
 2009-01-29  Karl Berry  <karl@gnu.org>
 
+	* src/grep.c (usage): mention gnu.org/s/grep and gnu.org/gethelp.
+
         Update and/or add copyright notices:
         * ABOUT-NLS
         * AUTHORS
