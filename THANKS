@@ -1,3 +1,10 @@
+  Copyright (C) 1992, 1997, 1998, 1999, 2000, 2001, 2002, 2004,
+  2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+  
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
 Aharon Robbins             <arnold@gnu.org>
 Akim Demaille              <akim@epita.fr>
 Alain Magloire             <alainm@gnu.org>
@@ -35,7 +42,7 @@ John Hughes                <john@nitelite.calvacom.fr>
 Jorge Stolfi               <stolfi@dcc.unicamp.br>
 Juan Manuel Guerrero       <ST001906@HRZ1.HRZ.TU-Darmstadt.De>
 Julian Foad                <julianfoad@btopenworld.com>
-Karl Berry                 <karl@cs.umb.edu>
+Karl Berry                 <karl@gnu.org>
 Karl Heuer                 <kwzh@gnu.org>
 Kaveh R. Ghazi             <ghazi@caip.rutgers.edu>
 Kazuro Furukawa            <furukawa@apricot.kek.jp>

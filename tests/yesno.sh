@@ -1,5 +1,12 @@
 #! /bin/sh
 # Test feature interaction of -C, -v, -o, and -m.
+#
+# Copyright (C) 2001, 2006, 2009 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+#
 # This set of tests was started by Charles Levert.
 
 : ${GREP=../src/grep}

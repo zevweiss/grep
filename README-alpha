@@ -1,6 +1,13 @@
-Newer, ALPHA (i.e., unstable) versions of this code are available in CVS
-on Savannah.  See <http://savannah.gnu.org/cvs/?group=grep> for details.
-The main project page is at <http://savannah.gnu.org/projects/grep/>.
+  Copyright (C) 1992, 1997, 1998, 1999, 2000, 2001, 2002, 2004,
+  2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+  
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+The development source code is available via CVS from Savannah: see
+<http://savannah.gnu.org/cvs/?group=grep>.  The main project page is at
+<http://savannah.gnu.org/projects/grep/>.
 
 The source code in the CVS uses autotools to generate some files. Before
 following the instructions in the INSTALL file for compiling grep, you
@@ -8,7 +15,7 @@ need to run the autogen.sh script. If you don't have the autotools
 installed on your system, you can download a CVS release file (generated
 with `make dist') from <http://www.dal-acm.ca/~taa/grep/>.
 
-Official test releases are available at <http://alpha.gnu.org/gnu/grep/>.
+Test releases are available at <http://alpha.gnu.org/gnu/grep/>.
 
 Please submit bug reports to <bug-grep@gnu.org>.
 

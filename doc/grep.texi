@@ -16,8 +16,8 @@
 @copying
 This manual is for @command{grep}, a pattern matching engine.
 
-Copyright @copyright{} 1999, 2000, 2001, 2002, 2005, 2008 Free Software
-Foundation, Inc. 
+Copyright @copyright{} 1999, 2000, 2001, 2002, 2005, 2008, 2009 Free
+Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -53,6 +53,8 @@ Texts.  A copy of the license is included in the section entitled
 @command{grep} prints lines that match a pattern.
 
 This manual is for version @value{VERSION} of GNU Grep.
+
+@insertcopying
 @end ifnottex
 
 @menu

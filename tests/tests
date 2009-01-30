@@ -1,4 +1,11 @@
 # regular expression test set
+# 
+# Copyright (C) 2001, 2006, 2009 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+#
 # Lines are at least three fields, separated by one or more tabs.  "" stands
 # for an empty field.  First field is an RE.  Second field is flags.  If
 # C flag given, regcomp() is expected to fail, and the third field is the

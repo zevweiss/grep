@@ -1,10 +1,14 @@
 #! /bin/sh
-# Test for POSIX.2 options for grep
-#
+# Test for POSIX.2 options for grep:
 # grep -E -f pattern_file file
 # grep -F -f pattern_file file
 # grep -G -f pattern_file file
 #
+# Copyright (C) 2001, 2006, 2009 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
 
 : ${srcdir=.}
 
