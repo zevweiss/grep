@@ -1,3 +1,10 @@
+2009-01-31  Tony Abou-Assaleh <taa@acm.org>
+
+	* m4/*.m4: quote underquoted definitions
+	* m4/codeset.m4: serial AM1 -> serial 1
+	* m4/iconv.m4: serial AM2 -> serial 2
+	* m4/header.m4: m4_regexp -> m4_bregexp, m4_patsubst -> m4_bpatsubst
+
 2009-01-29  Karl Berry  <karl@gnu.org>
 
 	* src/grep.c (usage): mention gnu.org/s/grep and gnu.org/gethelp.

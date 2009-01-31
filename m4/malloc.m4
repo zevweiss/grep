@@ -5,7 +5,7 @@ dnl Determine whether malloc accepts 0 as its argument.
 dnl If it doesn't, arrange to use the replacement function.
 dnl
 
-AC_DEFUN(jm_FUNC_MALLOC,
+AC_DEFUN([jm_FUNC_MALLOC],
 [
  dnl xmalloc.c requires that this symbol be defined so it doesn't
  dnl mistakenly use a broken malloc -- as it might if this test were omitted.

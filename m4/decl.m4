@@ -1,6 +1,6 @@
 #serial 5
 
-AC_DEFUN(jm_CHECK_DECLARATION,
+AC_DEFUN([jm_CHECK_DECLARATION],
 [
   AC_MSG_CHECKING([whether $1 is declared])
   AC_CACHE_VAL(jm_cv_func_decl_$1,
@@ -25,7 +25,7 @@ char *(*pfn) = (char *(*)) $1
 
 dnl jm_CHECK_DECLARATIONS(INCLUDES, FUNCTION... [, ACTION-IF-DECLARED
 dnl                       [, ACTION-IF-NOT-DECLARED]])
-AC_DEFUN(jm_CHECK_DECLARATIONS,
+AC_DEFUN([jm_CHECK_DECLARATIONS],
 [
   for jm_func in $2
   do

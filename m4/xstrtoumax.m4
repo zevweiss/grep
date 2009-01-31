@@ -2,7 +2,7 @@
 
 # autoconf tests required for use of xstrtoumax.c
 
-AC_DEFUN(jm_AC_PREREQ_XSTRTOUMAX,
+AC_DEFUN([jm_AC_PREREQ_XSTRTOUMAX],
 [
   AC_REQUIRE([jm_AC_HEADER_INTTYPES_H])
   AC_REQUIRE([jm_AC_TYPE_UNSIGNED_LONG_LONG])
