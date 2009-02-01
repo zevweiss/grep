@@ -2,6 +2,8 @@
 
 	* po/*.po: update from the Translation Project
 
+	* po/Makefile.in.in: Remove deleted file ChangeLog from DISTFILES
+
 2009-02-01  Karl Berry  <karl@tug.org>
 
 	* configure.ac.in (AM_GNU_GETTEXT): specify [external], since
