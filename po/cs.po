@@ -1,34 +1,34 @@
 # Czech message catalog for grep.
 # Copyright (C) 1998 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
 # Vladimir Michl <Vladimir.Michl@seznam.cz>, 1998.
+# Petr Pisar <petr.pisar@atlas.cz>, 2008, 2009.
 #
 # Thanks to: Stanislav Brabec <utx@k332.feld.cvut.cz>
-# Note: There are 2 untranslated messages (quotes) at the end of the file.
-# It is OK, since it is not used anywhere.
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5.3\n"
+"Project-Id-Version: grep 2.5.4-pre4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-03 22:01+0200\n"
-"PO-Revision-Date: 2007-08-07 10:54+0100\n"
-"Last-Translator: Vladimir Michl <Vladimir.Michl@seznam.cz>\n"
+"POT-Creation-Date: 2009-01-23 01:15-0400\n"
+"PO-Revision-Date: 2009-01-23 08:39+0100\n"
+"Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
+#: src/dfa.c:184 src/dfa.c:195 src/dfa.c:206 src/search.c:704 lib/regex.c:1344
 msgid "Memory exhausted"
-msgstr "Pameť vyčerpána"
+msgstr "Paměť vyčerpána"
 
-#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
-#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
-#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
-#: src/dfa.c:1095 src/dfa.c:1096
+#: src/dfa.c:537 src/dfa.c:540 src/dfa.c:558 src/dfa.c:569 src/dfa.c:593
+#: src/dfa.c:652 src/dfa.c:657 src/dfa.c:670 src/dfa.c:671 src/dfa.c:1049
+#: src/dfa.c:1052 src/dfa.c:1076 src/dfa.c:1080 src/dfa.c:1081 src/dfa.c:1084
+#: src/dfa.c:1096 src/dfa.c:1097
 msgid "Unbalanced ["
 msgstr "Lichý počet ["
 
-#: src/dfa.c:788
+#: src/dfa.c:789
 msgid "Unfinished \\ escape"
 msgstr "Za \\ chybí znak"
 
@@ -36,29 +36,31 @@ msgstr "Za \\ chybí znak"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
+#: src/dfa.c:922 src/dfa.c:928 src/dfa.c:938 src/dfa.c:946 src/dfa.c:961
 msgid "unfinished repeat count"
 msgstr "neukončený zápis počtu opakování"
 
-#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
+#: src/dfa.c:935 src/dfa.c:952 src/dfa.c:960 src/dfa.c:964
 msgid "malformed repeat count"
 msgstr "deformovaný zápis počtu opakování"
 
-#: src/dfa.c:1305
+#: src/dfa.c:1306
 msgid "Unbalanced ("
 msgstr "Lichý počet ("
 
 # ? Není zadaná syntaxe
-#: src/dfa.c:1430
+#: src/dfa.c:1431
 msgid "No syntax specified"
 msgstr "Syntaxe není určena"
 
-#: src/dfa.c:1438
+#: src/dfa.c:1439
 msgid "Unbalanced )"
 msgstr "Lichý počet )"
 
-#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
-#: src/search.c:68 src/search.c:225 lib/obstack.c:471
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: src/dfa.c:3007 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
 msgstr "paměť vyčerpána"
 
@@ -100,13 +102,13 @@ msgstr "Použití: %s [PŘEPÍNAČ]... VZOREK [SOUBOR]...\n"
 #: src/grep.c:1406
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr "Více informací získáte příkazem `%s --help'.\n"
+msgstr "Více informací získáte příkazem „%s --help“.\n"
 
 #: src/grep.c:1412
 #, c-format
 msgid "Search for PATTERN in each FILE or standard input.\n"
 msgstr ""
-"  Hledá řádky, jejichž některé části vyhovují VZORKu. Řádky jsou čteny postupně\n"
+"  Hledá řádky, jejichž některé části vyhovují VZORKU. Řádky jsou čteny postupně\n"
 "ze všech zadaných SOUBORů nebo ze standardního vstupu.\n"
 
 #: src/grep.c:1415
@@ -179,7 +181,7 @@ msgstr ""
 "\n"
 "Různé:\n"
 "  -s, --no-messages         potlačí chybové zprávy\n"
-"  -v, --invert-match        vypíše řádky, které VZORKu nevyhovují\n"
+"  -v, --invert-match        vypíše řádky, které VZORKU nevyhovují\n"
 "  -V, --version             vypíše označení verze a skončí\n"
 "      --help                vypíše tuto nápovědu a skončí\n"
 "      --mmap                když to jde, namapuje vstup do paměti\n"
@@ -228,18 +230,18 @@ msgstr ""
 "  -h, --no-filename         potlačí vypisování jména souboru s výst. řádkem\n"
 "      --label=NÁZEV         zobrazí NÁZEV jako název souboru na standardním\n"
 "                            vstupu\n"
-"  -o, --only-matching       zobrazí pouze tu část řádku odpovídající VZORKu\n"
+"  -o, --only-matching       zobrazí pouze tu část řádku odpovídající VZORKU\n"
 "  -q, --quiet, --silent     potlačí obvyklý výstup\n"
 "      --binary-files=TYP    definuje typ binárních souborů\n"
-"                            TYP může být: 'binary' (binární), 'text' (textový)\n"
-"                            nebo 'without-match' (bez vyhovení vzorku)\n"
+"                            TYP může být: „binary“ (binární), „text“ (textový)\n"
+"                            nebo „without-match“ (bez vyhovění vzorku)\n"
 "  -a, --text                jako --binary-files=text\n"
 "  -I                        jako --binary-files=without-match\n"
 "  -d, --directories=AKCE    jak zpracovávat adresáře. AKCE může být:\n"
-"                            `read' (číst), `recurse' (rekurze),\n"
-"                            `skip' (přeskočit)\n"
+"                            „read“ (číst), „recurse“ (rekurze),\n"
+"                            „skip“ (přeskočit)\n"
 "  -D, --devices=AKCE        jak zpracovávat zařízení, FIFO (roury) a sockety,\n"
-"                            AKCE může být: 'read' (číst) nebo 'skip' (přeskočit)\n"
+"                            AKCE může být: „read“ (číst) nebo „skip“ (přeskočit)\n"
 "  -R, -r, --recursive       jako --directories=recurse\n"
 "      --include=VZOREK      soubory které vyhovují vzorku, budou zpracovány\n"
 "      --exclude=VZOREK      soubory které vyhovují vzorku, budou přeskočeny\n"
@@ -279,8 +281,8 @@ msgstr ""
 "  -POČET                     stejné se zadáním --context=POČET\n"
 "      --color[=KDY],\n"
 "      --colour[=KDY]         použije barev k rozlišení vyhovujících řetězců,\n"
-"                             KDY může být 'always' (vždy), 'never' (nikdy)\n"
-"                             nebo 'auto' (automaticky)\n"
+"                             KDY může být „always“ (vždy), „never“ (nikdy)\n"
+"                             nebo „auto“ (automaticky)\n"
 "  -U, --binary               neodstraňuje znak CR na konci řádku (MSDOS)\n"
 "  -u, --unix-byte-offsets    vypisuje pozici jako by CR nebyly v souboru (MSDOS\n"
 "\n"
@@ -288,12 +290,12 @@ msgstr ""
 #: src/grep.c:1495
 #, c-format
 msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
-msgstr "Spouštění programu jako 'egrep' je zastaralé; použijte 'grep -E'.\n"
+msgstr "Spouštění programu jako „egrep“ je zastaralé; použijte „grep -E“.\n"
 
 #: src/grep.c:1498
 #, c-format
 msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
-msgstr "Spouštení programu jako 'fgrep' je zastaralé; použijte 'grep -F'.\n"
+msgstr "Spouštění programu jako „fgrep“ je zastaralé; použijte „grep -F“.\n"
 
 #: src/grep.c:1501
 #, c-format
@@ -301,8 +303,8 @@ msgid ""
 "`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
 "Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
 msgstr ""
-"'egrep' znamená 'grep -E'. 'fgrep' znamená 'grep -F'.\n"
-"Přímé spustění příkazem 'egrep' nebo 'fgrep' je zastaralé.\n"
+"„egrep“ znamená „grep -E“. „fgrep“ znamená „grep -F“.\n"
+"Přímé spouštění příkazem „egrep“ nebo „fgrep“ je zastaralé.\n"
 
 #: src/grep.c:1505
 #, c-format
@@ -334,53 +336,51 @@ msgstr "zadány kolidující vzorky"
 #: src/grep.c:1715
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
-msgstr ""
+msgstr "Schopnost „%2$s“ v GREP_COLORS=\"%1$s\" potřebuje hodnotu („=…“); přeskočena."
 
 #: src/grep.c:1719
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
-msgstr ""
+msgstr "Schopnost „%2$s“ v GREP_COLORS=\"%1$s\" je pravdivostního typu a nemůže nést hodnotu („=%3$s“); přeskočena."
 
 #: src/grep.c:1727
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
-msgstr ""
+msgstr "V GREP_COLORS=\"%s\" schopnost „%s“ %s."
 
 #: src/grep.c:1750
 #, c-format
 msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
-msgstr ""
+msgstr "Zpracování chybně utvořeného GREP_COLORS=\"%s\" zastaveno na zbývajícím podřetězci „%s“."
 
 #: src/grep.c:1883
 msgid "unknown devices method"
 msgstr "neznámá metoda obsluhy zařízení"
 
-#: src/grep.c:1956
+#: src/grep.c:1957
 msgid "unknown directories method"
 msgstr "neznámá metoda obsluhy adresářů"
 
-#: src/grep.c:2023
+#: src/grep.c:2025
 msgid "invalid max count"
 msgstr "neplatný maximální počet"
 
-#: src/grep.c:2078
+#: src/grep.c:2080
 msgid "unknown binary-files type"
 msgstr "neznámý typ binárního souboru"
-
-#: src/grep.c:2182
-#, c-format
-msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
-msgstr "Copyright (C) 1988, 1992-2002, 2004, 2005 Free Software Foundation, Inc.\n"
 
 #: src/grep.c:2184
 #, c-format
 msgid ""
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
-"Toto je volné programové vybavení; podmínky pro kopírování a rozšiřování\n"
-"naleznete ve zdrojových textech. Toto programové vybavení je zcela BEZ ZÁRUKY,\n"
-"a to i bez záruky PRODEJNOSTI nebo VHODNOSTI PRO NĚJAKÝ KONKRÉTNÍ ÚČEL.\n"
+"Copyright © %s Free Software Foundation, Inc.\n"
+"Licence GPLv3+: GNU GPL verze 3 nebo novější <http://gnu.org/licenses/gpl.html>\n"
+"Toto je volné programové vybavení: máte právo jej měnit a dále šířit.\n"
+"Není zde ŽÁDNÁ ZÁRUKA, jak jen zákon dovoluje.\n"
 
 #: src/search.c:619
 msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
@@ -394,41 +394,45 @@ msgstr "Přepínače -P a -z nemohou být kombinovány"
 msgid "The -P option only supports a single pattern"
 msgstr "Přepínač -P může být použit pouze s jedním vzorkem (na jednom řádku)."
 
-#: lib/error.c:117
+#: src/system.h:52 lib/error.c:117
 msgid "Unknown system error"
 msgstr "Neznámá systémová chyba"
+
+#: lib/closeout.c:108
+msgid "write error"
+msgstr "chyba při zápisu"
 
 #: lib/getopt.c:675
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: přepínač `%s' není jednoznačný\n"
+msgstr "%s: přepínač „%s“ není jednoznačný\n"
 
 #: lib/getopt.c:700
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: přepínač `--%s' musí být zadán bez argumentu\n"
+msgstr "%s: přepínač „--%s“ musí být zadán bez argumentu\n"
 
 #: lib/getopt.c:705
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: přepínač `%c%s' musí být zadán bez argumentu\n"
+msgstr "%s: přepínač „%c%s“ musí být zadán bez argumentu\n"
 
 #: lib/getopt.c:723 lib/getopt.c:896
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: přepínač `%s' vyžaduje argument\n"
+msgstr "%s: přepínač „%s“ vyžaduje argument\n"
 
 #. --option
 #: lib/getopt.c:752
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: neznámý přepínač `--%s'\n"
+msgstr "%s: neznámý přepínač „--%s“\n"
 
 #. +option or -option
 #: lib/getopt.c:756
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: neznámý přepínač `%c%s'\n"
+msgstr "%s: neznámý přepínač „%c%s“\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:782
@@ -450,12 +454,12 @@ msgstr "%s: přepínač vyžaduje argument -- %c\n"
 #: lib/getopt.c:862
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: přepínač `-W %s' není jednoznačný\n"
+msgstr "%s: přepínač „-W %s“ není jednoznačný\n"
 
 #: lib/getopt.c:880
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: přepínač `-W %s' musí být zadán bez argumentu\n"
+msgstr "%s: přepínač „-W %s“ musí být zadán bez argumentu\n"
 
 #. Get translations for open and closing quotation marks.
 #.
@@ -473,8 +477,87 @@ msgstr "%s: přepínač `-W %s' musí být zadán bez argumentu\n"
 #. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
 #: lib/quotearg.c:259
 msgid "`"
-msgstr ""
+msgstr "„"
 
 #: lib/quotearg.c:260
 msgid "'"
-msgstr ""
+msgstr "“"
+
+#: lib/regex.c:1308
+msgid "Success"
+msgstr "Úspěch"
+
+#: lib/regex.c:1311
+msgid "No match"
+msgstr "Žádná shoda"
+
+#: lib/regex.c:1314
+msgid "Invalid regular expression"
+msgstr "Neplatný regulární výraz"
+
+#: lib/regex.c:1317
+msgid "Invalid collation character"
+msgstr "Neplatný řadicí znak"
+
+#: lib/regex.c:1320
+msgid "Invalid character class name"
+msgstr "Neplatný název třídy znaků"
+
+#: lib/regex.c:1323
+msgid "Trailing backslash"
+msgstr "Závěrečné koncové lomítko"
+
+#: lib/regex.c:1326
+msgid "Invalid back reference"
+msgstr "Neplatný zpětný odkaz"
+
+#: lib/regex.c:1329
+msgid "Unmatched [ or [^"
+msgstr "Nepárový [ nebo [^"
+
+#: lib/regex.c:1332
+msgid "Unmatched ( or \\("
+msgstr "Nepárový ( nebo \\("
+
+#: lib/regex.c:1335
+msgid "Unmatched \\{"
+msgstr "Nepárový \\{"
+
+#: lib/regex.c:1338
+msgid "Invalid content of \\{\\}"
+msgstr "Neplatný obsah \\{\\}"
+
+#: lib/regex.c:1341
+msgid "Invalid range end"
+msgstr "Neplatný konec rozsahu"
+
+#: lib/regex.c:1347
+msgid "Invalid preceding regular expression"
+msgstr "Neplatný předchozí regulární výraz"
+
+#: lib/regex.c:1350
+msgid "Premature end of regular expression"
+msgstr "Předčasný konec regulárního výrazu"
+
+#: lib/regex.c:1353
+msgid "Regular expression too big"
+msgstr "Regulární výraz je příliš velký"
+
+#: lib/regex.c:1356
+msgid "Unmatched ) or \\)"
+msgstr "Nepárový ) nebo \\)"
+
+#: lib/regex.c:7583
+msgid "No previous regular expression"
+msgstr "Žádný předchozí regulární výraz"
+
+#~ msgid "Copyright (C) 2008 Free Software Foundation, Inc.\n"
+#~ msgstr "Copyright © 2008 Free Software Foundation, Inc.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions.  There is NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+#~ msgstr ""
+#~ "Toto je volné programové vybavení; podmínky pro kopírování a rozšiřování\n"
+#~ "naleznete ve zdrojových textech. Toto programové vybavení je zcela BEZ ZÁRUKY,\n"
+#~ "a to i bez záruky PRODEJNOSTI nebo VHODNOSTI PRO NĚJAKÝ KONKRÉTNÍ ÚČEL.\n"

@@ -1,31 +1,32 @@
 # Irish translations for grep.
 # Copyright (C) 2003 Free Software Foundation, Inc.
-# Kevin Patrick Scannell <scannell@SLU.EDU>, 2003, 2007.
+# This file is distributed under the same license as the grep package.
+# Kevin Patrick Scannell <scannell@SLU.EDU>, 2003, 2007, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5.3\n"
+"Project-Id-Version: grep 2.5.4-pre4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-03 22:01+0200\n"
-"PO-Revision-Date: 2007-08-04 15:48-0500\n"
+"POT-Creation-Date: 2009-01-23 01:15-0400\n"
+"PO-Revision-Date: 2009-01-24 15:48-0500\n"
 "Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
 "Language-Team: Irish <gaeilge-gnulinux@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
+#: src/dfa.c:184 src/dfa.c:195 src/dfa.c:206 src/search.c:704 lib/regex.c:1344
 msgid "Memory exhausted"
 msgstr "Cuimhne ídithe"
 
-#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
-#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
-#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
-#: src/dfa.c:1095 src/dfa.c:1096
+#: src/dfa.c:537 src/dfa.c:540 src/dfa.c:558 src/dfa.c:569 src/dfa.c:593
+#: src/dfa.c:652 src/dfa.c:657 src/dfa.c:670 src/dfa.c:671 src/dfa.c:1049
+#: src/dfa.c:1052 src/dfa.c:1076 src/dfa.c:1080 src/dfa.c:1081 src/dfa.c:1084
+#: src/dfa.c:1096 src/dfa.c:1097
 msgid "Unbalanced ["
 msgstr "[ corr"
 
 # FARF - KPS
-#: src/dfa.c:788
+#: src/dfa.c:789
 msgid "Unfinished \\ escape"
 msgstr "Seicheamh éalúcháin \\ gan chríochnú"
 
@@ -33,29 +34,31 @@ msgstr "Seicheamh éalúcháin \\ gan chríochnú"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
+#: src/dfa.c:922 src/dfa.c:928 src/dfa.c:938 src/dfa.c:946 src/dfa.c:961
 msgid "unfinished repeat count"
 msgstr "Tá líon na hathráite neamhiomlán"
 
 # more precisely, "the string indicating the repeat count" is malformed -- KPS
-#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
+#: src/dfa.c:935 src/dfa.c:952 src/dfa.c:960 src/dfa.c:964
 msgid "malformed repeat count"
 msgstr "Tá líon na hathráite míchumtha"
 
-#: src/dfa.c:1305
+#: src/dfa.c:1306
 msgid "Unbalanced ("
 msgstr "( corr"
 
-#: src/dfa.c:1430
+#: src/dfa.c:1431
 msgid "No syntax specified"
 msgstr "Níor sonraíodh aon chomhréir"
 
-#: src/dfa.c:1438
+#: src/dfa.c:1439
 msgid "Unbalanced )"
 msgstr ") corr"
 
-#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
-#: src/search.c:68 src/search.c:225 lib/obstack.c:471
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: src/dfa.c:3007 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
 msgstr "cuimhne ídithe"
 
@@ -79,7 +82,7 @@ msgstr "Teaghrán comhoiriúnach sa chomhad dhénártha %s\n"
 
 #: src/grep.c:1223
 msgid "(standard input)"
-msgstr "(ionchur caighdeánach)"
+msgstr "(gnáth-ionchur)"
 
 #: src/grep.c:1355
 #, c-format
@@ -103,7 +106,7 @@ msgstr "Bain triail as `%s --help' chun tuilleadh eolais a fháil.\n"
 #: src/grep.c:1412
 #, c-format
 msgid "Search for PATTERN in each FILE or standard input.\n"
-msgstr "Déan cuardach ar PATRÚN i ngach COMHAD nó san ionchur caighdeánach.\n"
+msgstr "Déan cuardach ar PATRÚN i ngach COMHAD nó sa ghnáth-ionchur.\n"
 
 #: src/grep.c:1415
 #, c-format
@@ -154,7 +157,7 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=PATRÚN       úsáid PATRÚN le haghaidh meaitseála\n"
+"  -e, --regexp=PATRÚN       déan cuardach ar PATRÚN\n"
 "  -f, --file=COMHAD         faigh PATRÚN as COMHAD\n"
 "  -i, --ignore-case         déan neamhaird de chás na litreacha\n"
 "  -w, --word-regexp         meaitseálann PATRÚN focail iomlána amháin\n"
@@ -223,7 +226,7 @@ msgstr ""
 "      --line-buffered       déan sruthlú an aschuir i ndiaidh gach líne\n"
 "  -H, --with-filename       taispeáin ainm comhaid le línte comhoiriúnacha\n"
 "  -h, --no-filename         ná taispeáin ainmneacha comhad\n"
-"      --label=LIPÉAD        tá LIPÉAD ainm comhaid don ionchur caighdeánach\n"
+"      --label=LIPÉAD        úsáid LIPÉAD mar ainm ar an ngnáth-ionchur\n"
 "  -o, --only-matching       ná taispeáin ach an teaghrán comhoiriúnach\n"
 "  -q, --quiet, --silent     múch an gnáth-aschur\n"
 "      --binary-files=CINEÁL glac le comhaid dhénártha mar CINEÁL;\n"
@@ -346,32 +349,30 @@ msgstr "Scoireadh ó phróiseáil teaghrán míchumtha GREP_COLORS=\"%s\" ag an bhfot
 msgid "unknown devices method"
 msgstr "modh anaithnid gléasanna"
 
-#: src/grep.c:1956
+#: src/grep.c:1957
 msgid "unknown directories method"
 msgstr "modh anaithnid comhadlann"
 
-#: src/grep.c:2023
+#: src/grep.c:2025
 msgid "invalid max count"
 msgstr "uasmhéid neamhbhailí"
 
-#: src/grep.c:2078
+#: src/grep.c:2080
 msgid "unknown binary-files type"
 msgstr "cineál anaithnid de chomhad dénártha"
-
-#: src/grep.c:2182
-#, c-format
-msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
-msgstr "Copyright © 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
 
 #: src/grep.c:2184
 #, c-format
 msgid ""
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
-"Is saorbhogearra an ríomhchlár seo; féach ar an mbunchód le haghaidh\n"
-"coinníollacha cóipeála.  Níl baránta ar bith ann; go fiú níl baránta ann\n"
-"d'INDÍOLTACHT nó FEILIÚNACHT D'FHEIDHM AR LEITH.\n"
+"Cóipcheart © %s Free Software Foundation, Inc.\n"
+"Ceadúnas GPLv3+: GNU GPL leagan 3 nó níos nuaí <http://gnu.org/licenses/gpl.html>\n"
+"Is saorbhogearra é seo: ceadaítear duit é a athrú agus a athdháileadh.\n"
+"Níl baránta AR BITH ann, an oiread atá ceadaithe de réir dlí.\n"
 
 #: src/search.c:619
 msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
@@ -385,9 +386,13 @@ msgstr "Tá na roghanna -P agus -z neamh-chomhoiriúnach le chéile"
 msgid "The -P option only supports a single pattern"
 msgstr "Ní thacaíonn rogha -P ach le patrún aonair"
 
-#: lib/error.c:117
+#: src/system.h:52 lib/error.c:117
 msgid "Unknown system error"
 msgstr "Earráid anaithnid chórais"
+
+#: lib/closeout.c:108
+msgid "write error"
+msgstr "earráid sa scríobh"
 
 #: lib/getopt.c:675
 #, c-format
@@ -469,6 +474,85 @@ msgstr "`"
 #: lib/quotearg.c:260
 msgid "'"
 msgstr "'"
+
+#: lib/regex.c:1308
+msgid "Success"
+msgstr "D'éirigh leis"
+
+#: lib/regex.c:1311
+msgid "No match"
+msgstr "Níl a leithéid ann"
+
+#: lib/regex.c:1314
+msgid "Invalid regular expression"
+msgstr "Slonn ionadaíochta neamhbhailí"
+
+#: lib/regex.c:1317
+msgid "Invalid collation character"
+msgstr "Carachtar neamhbhailí cóimheasa"
+
+#: lib/regex.c:1320
+msgid "Invalid character class name"
+msgstr "Ainm neamhbhailí ar aicme charachtar"
+
+#: lib/regex.c:1323
+msgid "Trailing backslash"
+msgstr "Cúlslais chun deiridh"
+
+#: lib/regex.c:1326
+msgid "Invalid back reference"
+msgstr "Cúltagairt neamhbhailí"
+
+#: lib/regex.c:1329
+msgid "Unmatched [ or [^"
+msgstr "[ nó [^ corr"
+
+#: lib/regex.c:1332
+msgid "Unmatched ( or \\("
+msgstr "( nó \\( corr"
+
+#: lib/regex.c:1335
+msgid "Unmatched \\{"
+msgstr "\\{ corr"
+
+#: lib/regex.c:1338
+msgid "Invalid content of \\{\\}"
+msgstr "Ábhar neamhbhailí idir \\{\\}"
+
+#: lib/regex.c:1341
+msgid "Invalid range end"
+msgstr "Deireadh raoin neamhbhailí"
+
+#: lib/regex.c:1347
+msgid "Invalid preceding regular expression"
+msgstr "Is neamhbhailí an slonn ionadaíochta roimhe seo"
+
+#: lib/regex.c:1350
+msgid "Premature end of regular expression"
+msgstr "Deireadh an tsloinn gan choinne"
+
+#: lib/regex.c:1353
+msgid "Regular expression too big"
+msgstr "Slonn ionadaíochta rómhór"
+
+#: lib/regex.c:1356
+msgid "Unmatched ) or \\)"
+msgstr ") nó \\) corr"
+
+#: lib/regex.c:7583
+msgid "No previous regular expression"
+msgstr "Níl aon slonn ionadaíochta roimhe seo"
+
+#~ msgid "Copyright (C) 2008 Free Software Foundation, Inc.\n"
+#~ msgstr "Copyright © 2008 Free Software Foundation, Inc.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions.  There is NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+#~ msgstr ""
+#~ "Is saorbhogearra an ríomhchlár seo; féach ar an mbunchód le haghaidh\n"
+#~ "coinníollacha cóipeála.  Níl baránta ar bith ann; go fiú níl baránta ann\n"
+#~ "d'INDÍOLTACHT nó FEILIÚNACHT D'FHEIDHM AR LEITH.\n"
 
 #~ msgid "out of memory"
 #~ msgstr "cuimhne ídithe"

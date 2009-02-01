@@ -1,28 +1,33 @@
-# grep-2.5g (Indonesian).
+# Pesan bahasa indonesia untuk grep
 # Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-# Tedi Heriyanto <tedi_h@gmx.net>, 1999, 2000, 2001, 2002
+# This file is distributed under the same license as the grep package.
+# Tedi Heriyanto <tedi_h@gmx.net>, 1999, 2000, 2001, 2002.
+# Arif E. Nugroho <arif_endro@yahoo.com>, 2008, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5g.id.po\n"
-"POT-Creation-Date: 2002-01-22 14:39+0100\n"
-"PO-Revision-Date: 2002-03-08 16:34GMT+0700\n"
-"Last-Translator: Tedi Heriyanto <tedi_h@gmx.net>\n"
+"Project-Id-Version: grep 2.5.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-01-26 02:13-0400\n"
+"PO-Revision-Date: 2009-01-31 17:00+0700\n"
+"Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.5\n"
 
-#: src/dfa.c:136 src/dfa.c:147 src/dfa.c:158 src/search.c:689
+#: src/dfa.c:184 src/dfa.c:195 src/dfa.c:206 src/search.c:704 lib/regex.c:1344
 msgid "Memory exhausted"
-msgstr "Memori habis"
+msgstr "Kehabisan memori"
 
-#: src/dfa.c:489 src/dfa.c:492 src/dfa.c:510 src/dfa.c:521 src/dfa.c:545 src/dfa.c:604 src/dfa.c:609 src/dfa.c:622 src/dfa.c:623 src/dfa.c:1001 src/dfa.c:1004 src/dfa.c:1028 src/dfa.c:1032 src/dfa.c:1033 src/dfa.c:1036 src/dfa.c:1048 src/dfa.c:1049
+#: src/dfa.c:537 src/dfa.c:540 src/dfa.c:558 src/dfa.c:569 src/dfa.c:593
+#: src/dfa.c:652 src/dfa.c:657 src/dfa.c:670 src/dfa.c:671 src/dfa.c:1049
+#: src/dfa.c:1052 src/dfa.c:1076 src/dfa.c:1080 src/dfa.c:1081 src/dfa.c:1084
+#: src/dfa.c:1096 src/dfa.c:1097
 msgid "Unbalanced ["
 msgstr "[ tidak seimbang"
 
-#: src/dfa.c:741
+#: src/dfa.c:789
 msgid "Unfinished \\ escape"
 msgstr "escape \\\\ tidak selesai"
 
@@ -30,122 +35,137 @@ msgstr "escape \\\\ tidak selesai"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:874 src/dfa.c:880 src/dfa.c:890 src/dfa.c:898 src/dfa.c:913
+#: src/dfa.c:922 src/dfa.c:928 src/dfa.c:938 src/dfa.c:946 src/dfa.c:961
 msgid "unfinished repeat count"
-msgstr "perulangan count tidak selesai"
+msgstr "jumlah perulangan tidak selesai"
 
-#: src/dfa.c:887 src/dfa.c:904 src/dfa.c:912 src/dfa.c:916
+#: src/dfa.c:935 src/dfa.c:952 src/dfa.c:960 src/dfa.c:964
 msgid "malformed repeat count"
-msgstr "perulangan count salah bentuk"
+msgstr "jumlah perulangan salah bentuk"
 
-#: src/dfa.c:1253
+#: src/dfa.c:1306
 msgid "Unbalanced ("
 msgstr "( tidak seimbang"
 
-#: src/dfa.c:1378
+#: src/dfa.c:1431
 msgid "No syntax specified"
-msgstr "Tidak ada syntax dispesifikasikan"
+msgstr "Tidak ada sintaks yang dispesifikasikan"
 
-#: src/dfa.c:1386
+#: src/dfa.c:1439
 msgid "Unbalanced )"
 msgstr ") tidak seimbang"
 
-#: src/dfa.c:2956
-msgid "out of memory"
-msgstr "memori habis"
-
-#: lib/obstack.c:471 src/kwset.c:171 src/kwset.c:177 src/search.c:103 src/search.c:209 src/search.c:293
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: src/dfa.c:3007 src/kwset.c:178 src/kwset.c:186 src/kwset.c:409
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
-msgstr "memori habis"
+msgstr "kehabisan memori"
 
-#: src/grep.c:205
+#: src/grep.c:404
 msgid "invalid context length argument"
-msgstr "argumen panjang konteks tidak valid"
+msgstr "konteks panjang argumen tidak valid"
 
-#: src/grep.c:475
+#: src/grep.c:665
 msgid "input is too large to count"
-msgstr "input terlalu besar untuk dihitung"
+msgstr "masukan terlalu besar untuk dihitung"
 
-#: src/grep.c:597
+#: src/grep.c:927
 msgid "writing output"
-msgstr "menulis output"
+msgstr "menulis keluaran"
 
-#: src/grep.c:870
+#: src/grep.c:1209
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "File biner %s cocok\n"
+msgstr "Berkas binari %s cocok\n"
 
-#: src/grep.c:884
+#: src/grep.c:1223
 msgid "(standard input)"
-msgstr "(input standar)"
+msgstr "(standar masukan)"
 
-#: src/grep.c:989
+#: src/grep.c:1355
 #, c-format
 msgid "warning: %s: %s\n"
 msgstr "peringatan: %s: %s\n"
 
-#: src/grep.c:990
+#: src/grep.c:1356
 msgid "recursive directory loop"
 msgstr "perulangan direktori rekursif"
 
-#: src/grep.c:1038
+#: src/grep.c:1404 src/grep.c:1411
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "Pemakaian: %s [OPSI]... POLA [FILE]...\n"
+msgstr "Penggunaan: %s [OPSI]... POLA [BERKAS]...\n"
 
-#: src/grep.c:1040
+#: src/grep.c:1406
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Coba `%s --help' untuk informasi lebih lanjut.\n"
 
-#: src/grep.c:1045
+#: src/grep.c:1412
 #, c-format
-msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-msgstr "Pemakaian: %s [OPSI]... POLA [FILE] ...\n"
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr "Cari untuk POLA dalam setiap berkas atau standar masukan.\n"
 
-#: src/grep.c:1046
+#: src/grep.c:1415
+#, c-format
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "POLA adalah sebuah ekstensi ekspresi regular (ERE).\n"
+
+#: src/grep.c:1418
+#, c-format
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr "POLA adalah sebuah seet dari baris-baru dipisahkan string tetap.\n"
+
+#: src/grep.c:1421
+#, c-format
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "POLA adalah, secara baku, sebuah ekspresi regular dasar (BRE).\n"
+
+#: src/grep.c:1424
 #, c-format
 msgid ""
-"Search for PATTERN in each FILE or standard input.\n"
 "Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"Mencari POLA dalam setiap FILE atau input standar.\n"
 "Contoh: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Seleksi dan interpretasi regexp:\n"
 
-#: src/grep.c:1051
+#: src/grep.c:1429
+#, c-format
 msgid ""
-"  -E, --extended-regexp     PATTERN is an extended regular expression\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
-"  -G, --basic-regexp        PATTERN is a basic regular expression\n"
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp   POLA adalah ekspresi reguler ekstended\n"
-"  -F, --fixed-regexp      POLA adalah string tetap yang dipisah oleh newline\n"
-"  -G, --basic-regexp      POLA adalah ekspresi reguler dasar\n"
+"  -E, --extended-regexp     POLA adalah ekstensi ekspresi reguler\n"
+"  -F, --fixed-stromg        POLA adalah string tetap yang dipisahkan oleh sebuah set baris-baru\n"
+"  -G, --basic-regexp        POLA adalah ekspresi reguler dasar\n"
 "  -P, --perl-regexp         POLA adalah sebuah ekspresi reguler Perl\n"
 
-#: src/grep.c:1056
+#: src/grep.c:1436
+#, c-format
 msgid ""
-"  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
 "  -w, --word-regexp         force PATTERN to match only whole words\n"
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=POLA    gunakan POLA sebagai ekspresi reguler\n"
-"  -f, --file=FILE      dapatkan pola dari FILE\n"
-"  -i, --ignore-case    abaikan perbedaan case\n"
-"  -w, --word-regexp    paksa POLA hanya cocok dengan keseluruhan kata\n"
-"  -x, --line-regexp    paksa POLA hanya cocok dengan keseluruhan baris\n"
-"  -z, --null-data      baris data berakhir dalam 0 byte, bukan newline\n"
+"  -e, --regexp=POLA         gunakan POLA untuk pencocokan\n"
+"  -f, --file=BERKAS         dapatkan pola dari BERKAS\n"
+"  -i, --ignore-case         abaikan perbedaan besar huruf\n"
+"  -w, --word-regexp         paksa POLA hanya untuk pencocokan dengan keseluruhan kata\n"
+"  -x, --line-regexp         paksa POLA hanya untuk pencocokan dengan keseluruhan baris\n"
+"  -z, --null-data          baris data berakhir dalam 0 byte, bukan baris-baru\n"
 "\n"
 
-#: src/grep.c:1063
+#: src/grep.c:1443
+#, c-format
 msgid ""
 "\n"
 "Miscellaneous:\n"
@@ -157,13 +177,14 @@ msgid ""
 msgstr ""
 "\n"
 "Lain-lain:\n"
-"  -s, --no-messages     tiadakan pesan kesalahan\n"
-"  -v, --invert-match    pilih baris-baris yang tidak sesuai\n"
-"  -V, --version         tampilkan informasi versi dan keluar\n"
-"      --help            tampilkan bantuan ini dan keluar\n"
-"      --mmap          gunakan input memory-mapped bila memungkinkan\n"
+"  -s, --no-messages         tekan pesan kesalahan\n"
+"  -v, --invert-match        pilih baris-baris yang tidak sesuai\n"
+"  -V, --version             tampilkan informasi versi dan keluar\n"
+"      --help                tampilkan bantuan ini dan keluar\n"
+"      --mmap                gunakan masukan memory-mapped bila memungkinkan\n"
 
-#: src/grep.c:1071
+#: src/grep.c:1451
+#, c-format
 msgid ""
 "\n"
 "Output control:\n"
@@ -176,51 +197,56 @@ msgid ""
 "      --label=LABEL         print LABEL as filename for standard input\n"
 "  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
-"      --binary-files=TYPE   assume that binary files are TYPE\n"
-"                            TYPE is 'binary', 'text', or 'without-match'\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
 "  -a, --text                equivalent to --binary-files=text\n"
 "  -I                        equivalent to --binary-files=without-match\n"
-"  -d, --directories=ACTION  how to handle directories\n"
-"                            ACTION is 'read', 'recurse', or 'skip'\n"
-"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
-"                            ACTION is 'read' or 'skip'\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-"      --include=PATTERN     files that match PATTERN will be examined\n"
-"      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
-"      --exclude-from=FILE   files that match PATTERN in FILE will be skipped.\n"
-"  -L, --files-without-match only print FILE names containing no match\n"
-"  -l, --files-with-matches  only print FILE names containing matches\n"
-"  -c, --count               only print a count of matching lines per FILE\n"
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n"
+"  -L, --files-without-match print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
 "\n"
-"Kendali output:\n"
-"  -m, --max-count=NUM      berhenti setelah cocok sejumlah NUM\n"
-"  -b, --byte-offset         cetak offset byte dengan baris output\n"
-"  -n, --line-number         cetak nomor baris dengan baris output\n"
-"       --line-buffered         flush output setiap baris\n"
-"  -H, --with-filename       cetak namafile untuk setiap kecocokan\n"
-"  -h, --no-filename         tiadakan namafile di output\n"
-"       --label=LABEL       cetak LABEL sebagai nama file input standar\n"
-"  -q, --quiet, --silent     tiadakan seluruh output normal\n"
-"       --binary-files=TYPE    asumsikan bahwa file biner bertipe TYPE\n"
-"                           TYPE adalah 'binary', 'text', atau 'without match'\n"
-"  -a, --text                ekivalen dengan --binary-files=text\n"
-"  -l                           ekivalen dengan --binary-files=without-match\n"
-"  -d, --directories=AKSI    bagaimana menangani direktori\n"
+"Kontrol keluaran:\n"
+"  -m, --max-count=NUM       berhenti setelah cocok sejumlah NUM\n"
+"  -b, --byte-offset         tampilkan ofset byte dengan baris keluaran\n"
+"  -n, --line-number         tampilkan nomor baris dengan baris keluaran\n"
+"      --line-buffered       flush keluaran di setiap baris\n"
+"  -H, --with-filename       tampilkan nama berkas untuk setiap kecocokan\n"
+"  -h, --no-filename         tekan mengawali nama berkas di output\n"
+"      --label=LABEL         tampilkan LABEL sebagai nama berkas standar masukan\n"
+"  -o, --only-matching       hanya tampilkan bagian dari baris yang cocok dengan POLA\n"
+"  -q, --quiet, --silent     tekan seluruh keluaran normal\n"
+"       --binary-files=TIPE  asumsikan bahwa berkas binari adalah TIPE\n"
+"                            TIPE adalah 'binary', 'text', atau 'without match'\n"
+"  -a, --text                sama dengan --binary-files=text\n"
+"  -l                        sama dengan --binary-files=without-match\n"
+"  -d, --directories=AKSI    bagaimana menangani direktori;\n"
 "                            AKSI adalah 'read', 'recurse', atau 'skip'.\n"
 "  -D, --devices=AKSI        bagaimana menangani device, FIFO dan soket\n"
 "                                      AKSI adalah 'read' atau 'skip'\n"
-"  -R, -r, --recursive           ekivalen dengan --directories=recurse.\n"
-"        --include=POLA        file yang cocok dengan POLA akan diperiksa\n"
-"        --exclude=POLA       file yang cocok dengan POLA akan dilewati\n"
-"        --exclude-from=FILE  file yang cocok dengan POLA dalam FILE akan dilewati\n"
-"  -L, --files-without-match hanya mencetak nama FILE yang tidak ada kecocokan\n"
-"  -l, --files-with-match    hanya mencetak nama FILE yang ada kecocokan\n"
-"  -c, --count               hanya mencetak jumlah baris yang cocok per FILE\n"
-"  -Z, --null                mencetak byte 0 setelah nama FILE\n"
+"  -R, -r, --recursive       sama dengan --directories=recurse.\n"
+"      --include=POLA_BERKAS cari hanya berkas yang cocok dengan POLA_BERKAS\n"
+"      --exclude=POLA_BERKAS lewatkan berkas dan direktori yang cocok dengan POLA_BERKAS\n"
+"      --exclude-from=FILE   lewatkan berkas yang cocok dengan pola berkas dari FILE\n"
+"  -L, --files-without-match hanya menampilkan nama dari BERKAS yang tidak ada kecocokan\n"
+"  -l, --files-with-match    hanya menampilkan nama dari BERKAS yang ada kecocokan\n"
+"  -c, --count               hanya menampilkan jumlah baris yang cocok setiap BERKAS\n"
+"  -T, --inital-tab          buat baris tabs line up (jika diperlukan)\n"
+"  -Z, --null                menampilkan 0 byte setelah nama BERKAS\n"
 
-#: src/grep.c:1099
+#: src/grep.c:1481
+#, c-format
 msgid ""
 "\n"
 "Context control:\n"
@@ -229,89 +255,136 @@ msgid ""
 "  -C, --context=NUM         print NUM lines of output context\n"
 "  -NUM                      same as --context=NUM\n"
 "      --color[=WHEN],\n"
-"      --colour[=WHEN]       use markers to distinguish the matching string\n"
-"                            WHEN may be `always', `never' or `auto'.\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
 "  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
 "\n"
-"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
-"With no FILE, or when FILE is -, read standard input.  If less than\n"
-"two FILEs given, assume -h.  Exit status is 0 if match, 1 if no match,\n"
-"and 2 if trouble.\n"
 msgstr ""
 "\n"
-"Kendali Konteks:\n"
-"  -B, --before-context=NUM  mencetak NUM baris leading context\n"
-"  -A, --after-context=NUM   mencetak NUM baris trailing context\n"
-"  -C, --context=NUM       mencetak NUM baris konteks output \n"
+"Kontrol Konteks:\n"
+"  -B, --before-context=NUM  menampilkan NUM baris dari konteks yang mengawali\n"
+"  -A, --after-context=NUM   menampilkan NUM baris dari konteks yang mengakhiri\n"
+"  -C, --context=NUM         menampilkan NUM baris dari konteks keluaran\n"
 "  -NUM                      sama seperti --context=NUM\n"
-"          --color[=WHEN],\n"
-"          --colour[=WHEN]       gunakan penanda untuk membedakan string yang cocok\n"
-"                                         WHEN dapat berupa 'always', 'never', atau 'auto'\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       gunakan penanda untuk membedakan string yang cocok\n"
+"                            WHEN dapat berupa 'always', 'never', atau 'auto'\n"
 "  -U, --binary              jangan hapus karakter CR di EOL (MSDOS)\n"
-"  -u, --unix-byte-offsets   laporkan offset seperti bila CR tidak ada (MSDOS)\n"
+"  -u, --unix-byte-offsets   laporkan ofset seperti bila CR tidak ada (MSDOS)\n"
 "\n"
-"`egrep' berarti `grep -E'. `fgrep' berarti `grep -F'.\n"
-"Dengan tanpa FILE, atau ketika FILE adalah -, baca input standar. Jika diberi \n"
-"kurang dari dua file, asumsikan -h. Keluar dengan 0 jika cocok, dengan 1 jika\n"
-"tidak. 2 jika terjadi masalah.\n"
 
-#: src/grep.c:1116
+#: src/grep.c:1495
+#, c-format
+msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
+msgstr "Pemanggilan sebagai `egrep' sudah ditinggalkan; lebih baik gunakan `grep -E'.\n"
+
+#: src/grep.c:1498
+#, c-format
+msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
+msgstr "pemanggilan sebagai `fgrep' sudah ditinggalkan; lebih baik gunakan `grep -F'.\n"
+
+#: src/grep.c:1501
+#, c-format
+msgid ""
+"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
+"Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
+msgstr ""
+"`egrep' berarti `grep -E'. `fgrep' berarti `grep -F'.\n"
+"Pemanggilan langsung baik sebagai `egrep' atau `fgrep' sudah ditinggalkan.\n"
+
+#: src/grep.c:1505
+#, c-format
+msgid ""
+"With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n"
+"are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
+"if any error occurs and -q was not given, the exit status is 2.\n"
+msgstr ""
+"Jika tidak ada BERKAS, atau ketika BERKAS adalah -, baca standar masukan. Jika lebih kecil dari dua BERKAS\n"
+"yang diberikan, asumsikan -h. Status keluar adalah 0 jika baris apapun telah dipilih, 1 jika tidak;\n"
+"jika ada error apapun yang terjadi dan opsi -q tidak diberikan, status keluar adalah 2.\n"
+
+#: src/grep.c:1509
+#, c-format
 msgid ""
 "\n"
-"Report bugs to <bug-gnu-utils@gnu.org>.\n"
+"Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Laporkan kesalahan ke <bug-gnu-utils@gnu.org>.\n"
+"Laporkan bugs ke <%s>.\n"
 
-#: src/grep.c:1126
+#: src/grep.c:1522
 msgid "conflicting matchers specified"
-msgstr "dispesifikasikan matcher yang konflik"
+msgstr "konflik pencocokan dispesifikasikan"
 
-#: src/grep.c:1363
+#: src/grep.c:1716
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
+msgstr "Dalam GREP_COLORS=\"%s\", kapasitas \"%s\" membutuhkan sebuah nilai (\"=...\"); dilewatkan."
+
+#: src/grep.c:1720
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
+msgstr "Dalam GREP_COLORS=\"%s\", kapasitas \"%s\" adalah boolean dan tidak dapat mengambil sebuah nilai (\"=%s\"); dilewatkan"
+
+#: src/grep.c:1729
+#, c-format
+msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
+msgstr "Dalam GREP_COLORS=\"%s\", kapasitas \"%s\" adalah %s."
+
+#: src/grep.c:1752
+#, c-format
+msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
+msgstr "Berhenti pemrosesan dari berbentuk-buruk GREP_COLORS=\"%s\" di substring yang tersisa \"%s\"."
+
+#: src/grep.c:1885
 msgid "unknown devices method"
 msgstr "metode device tidak dikenal"
 
-#: src/grep.c:1430
+#: src/grep.c:1959
 msgid "unknown directories method"
 msgstr "metode direktori tidak dikenal"
 
-#: src/grep.c:1497
+#: src/grep.c:2027
 msgid "invalid max count"
-msgstr "jumlah max tidak valid"
+msgstr "jumlah maksimal tidak valid"
 
-#: src/grep.c:1551
+#: src/grep.c:2082
 msgid "unknown binary-files type"
-msgstr "tipe file biner tidak dikenal"
+msgstr "tipe berkas binari tidak dikenal"
 
-#: src/grep.c:1646
+#: src/grep.c:2186
 #, c-format
-msgid "%s (GNU grep) %s\n"
-msgstr "%s (GNU grep) %s\n"
-
-#: src/grep.c:1648
-msgid "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-msgstr "Hak Cipta (C) 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-
-#: src/grep.c:1650
 msgid ""
-"This is free software; see the source for copying conditions. There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
-"Ini adalah free software; lihat sumber untuk syarat penyalinan. Tidak ada\n"
-"jaminan; sekalipun untuk PENJUALAN atau KESESUAIAN UNTUK TUJUAN TERTENTU.\n"
-
-#: src/search.c:606
-msgid "The -P option is not supported"
-msgstr "Option -P tidak didukung"
+"Hak Cipta (C) %s Free Software Foundation, Inc.\n"
+"Lisensi GPLv3+; GNU GPL versi 3 atau lebih lanjut <http://gnu.org/licenses/gpl.html>\n"
+"Ini adalah aplikasi bebas; anda bebas untuk mengubah dan meredistribusikannya.\n"
+"TIDAK ADA GARANSI disini, sampai batas yang diijinkan oleh hukum yang berlaku.\n"
 
 #: src/search.c:619
-msgid "The -P and -z options cannot be combined"
-msgstr "Option -P dan -z tidak dapat digabungkan"
+msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
+msgstr "Dukungan untuk opsi -P tidak dikompile kedalam ini --disable-perl-regexp binari"
 
-#: lib/error.c:117
+#: src/search.c:632
+msgid "The -P and -z options cannot be combined"
+msgstr "Opsi -P dan -z tidak dapat digabungkan"
+
+#: src/search.c:634
+msgid "The -P option only supports a single pattern"
+msgstr "Opsi -P hanya mendukung sebuah pola tunggal"
+
+#: src/system.h:52 lib/error.c:117
 msgid "Unknown system error"
 msgstr "Kesalahan sistem tidak dikenal"
+
+#: lib/closeout.c:108
+msgid "write error"
+msgstr "penulisan error"
 
 #: lib/getopt.c:675
 #, c-format
@@ -393,3 +466,90 @@ msgstr "`"
 #: lib/quotearg.c:260
 msgid "'"
 msgstr "'"
+
+#: lib/regex.c:1308
+msgid "Success"
+msgstr "Sukses"
+
+#: lib/regex.c:1311
+msgid "No match"
+msgstr "Tidak cocok"
+
+#: lib/regex.c:1314
+msgid "Invalid regular expression"
+msgstr "Ekspresi umum tidak valid"
+
+#: lib/regex.c:1317
+msgid "Invalid collation character"
+msgstr "Karakter kolasi tidak valid"
+
+#: lib/regex.c:1320
+msgid "Invalid character class name"
+msgstr "Nama kelas karakter tidak valid"
+
+#: lib/regex.c:1323
+msgid "Trailing backslash"
+msgstr "Kelebihan backslash"
+
+#: lib/regex.c:1326
+msgid "Invalid back reference"
+msgstr "Referensi balik tidak valid"
+
+#: lib/regex.c:1329
+msgid "Unmatched [ or [^"
+msgstr "Tidak cocok [ atau [^"
+
+#: lib/regex.c:1332
+msgid "Unmatched ( or \\("
+msgstr "Tidak cocok ( atau \\("
+
+#: lib/regex.c:1335
+msgid "Unmatched \\{"
+msgstr "Tidak cocok \\{"
+
+#: lib/regex.c:1338
+msgid "Invalid content of \\{\\}"
+msgstr "Isi dari \\{\\} tidak valid"
+
+#: lib/regex.c:1341
+msgid "Invalid range end"
+msgstr "Akhir jangkauan tidak valid"
+
+#: lib/regex.c:1347
+msgid "Invalid preceding regular expression"
+msgstr "Ekspresi umum yang mengawali tidak valid"
+
+#: lib/regex.c:1350
+msgid "Premature end of regular expression"
+msgstr "Akhir dari ekspresi umum tidak sempurna"
+
+#: lib/regex.c:1353
+msgid "Regular expression too big"
+msgstr "Ekspresi umum terlalu besar"
+
+#: lib/regex.c:1356
+msgid "Unmatched ) or \\)"
+msgstr "Tidak cocok ) atau \\)"
+
+#: lib/regex.c:7583
+msgid "No previous regular expression"
+msgstr "Tidak ada ekspresi umum sebelumnya"
+
+#~ msgid "Copyright (C) 2008 Free Software Foundation, Inc.\n"
+#~ msgstr "Hak Cipta (C) 2008 Free Software Foundation, Inc.\n"
+
+#~ msgid "out of memory"
+#~ msgstr "memori habis"
+
+#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+#~ msgstr "Pemakaian: %s [OPSI]... POLA [FILE] ...\n"
+
+#~ msgid "%s (GNU grep) %s\n"
+#~ msgstr "%s (GNU grep) %s\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions. There is NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+#~ msgstr ""
+#~ "Ini adalah free software; lihat sumber untuk syarat penyalinan. Tidak ada\n"
+#~ "jaminan; sekalipun untuk PENJUALAN atau KESESUAIAN UNTUK TUJUAN TERTENTU.\n"

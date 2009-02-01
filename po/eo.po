@@ -1,32 +1,33 @@
 # La teksto por la mesaĝoj de la "grep" programo.
 # Copyright (C) 1998, 1999 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
 # D. Dale Gulledge <dsplat@rochester.rr.com>, 1999.
-# Edmund GRIMLEY EVANS <edmundo@rano.org>, 2000-2007.
+# Edmund GRIMLEY EVANS <edmundo@rano.org>, 2000-2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5.3\n"
+"Project-Id-Version: GNU grep 2.5.4-pre4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-03 22:01+0200\n"
-"PO-Revision-Date: 2007-08-14 15:11+0100\n"
+"POT-Creation-Date: 2009-01-23 01:15-0400\n"
+"PO-Revision-Date: 2009-01-26 21:18+0000\n"
 "Last-Translator: Edmund GRIMLEY EVANS <edmundo@rano.org>\n"
 "Language-Team: Esperanto <translation-team-eo@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
+#: src/dfa.c:184 src/dfa.c:195 src/dfa.c:206 src/search.c:704 lib/regex.c:1344
 msgid "Memory exhausted"
 msgstr "Memoro elĉerpita"
 
-#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
-#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
-#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
-#: src/dfa.c:1095 src/dfa.c:1096
+#: src/dfa.c:537 src/dfa.c:540 src/dfa.c:558 src/dfa.c:569 src/dfa.c:593
+#: src/dfa.c:652 src/dfa.c:657 src/dfa.c:670 src/dfa.c:671 src/dfa.c:1049
+#: src/dfa.c:1052 src/dfa.c:1076 src/dfa.c:1080 src/dfa.c:1081 src/dfa.c:1084
+#: src/dfa.c:1096 src/dfa.c:1097
 msgid "Unbalanced ["
 msgstr "Senpara ["
 
-#: src/dfa.c:788
+#: src/dfa.c:789
 msgid "Unfinished \\ escape"
 msgstr "Nefinita \\-eskapo"
 
@@ -34,28 +35,30 @@ msgstr "Nefinita \\-eskapo"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
+#: src/dfa.c:922 src/dfa.c:928 src/dfa.c:938 src/dfa.c:946 src/dfa.c:961
 msgid "unfinished repeat count"
 msgstr "nefinita ripetonombro"
 
-#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
+#: src/dfa.c:935 src/dfa.c:952 src/dfa.c:960 src/dfa.c:964
 msgid "malformed repeat count"
 msgstr "misformita ripetonombro"
 
-#: src/dfa.c:1305
+#: src/dfa.c:1306
 msgid "Unbalanced ("
 msgstr "Senpara ("
 
-#: src/dfa.c:1430
+#: src/dfa.c:1431
 msgid "No syntax specified"
 msgstr "Mankas sintakso"
 
-#: src/dfa.c:1438
+#: src/dfa.c:1439
 msgid "Unbalanced )"
 msgstr "Senpara )"
 
-#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
-#: src/search.c:68 src/search.c:225 lib/obstack.c:471
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: src/dfa.c:3007 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
 msgstr "memoro elĉerpita"
 
@@ -340,31 +343,30 @@ msgstr "Ĉesis pritrakti malbone formitan GREP_COLORS=\"%s\" ĉe restanta subĉe
 msgid "unknown devices method"
 msgstr "nekonata metodo por specialaj dosieroj"
 
-#: src/grep.c:1956
+#: src/grep.c:1957
 msgid "unknown directories method"
 msgstr "nekonata dosieruja metodo"
 
-#: src/grep.c:2023
+#: src/grep.c:2025
 msgid "invalid max count"
 msgstr "nevalida maksimuma nombro"
 
-#: src/grep.c:2078
+#: src/grep.c:2080
 msgid "unknown binary-files type"
 msgstr "nekonata speco de binara dosiero"
-
-#: src/grep.c:2182
-#, c-format
-msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
-msgstr "Kopirajto (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
 
 #: src/grep.c:2184
 #, c-format
 msgid ""
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
-"Ĉi tiu estas libera programo; vidu la fonton por kopikondiĉoj. Estas\n"
-"NENIA GARANTIO, eĉ ne pri KOMERCA KVALITO aŭ ADEKVATECO POR DIFINITA CELO.\n"
+"Kopirajto (C) %s Free Software Foundation, Inc.\n"
+"Rajtigilo GPLv3+: GNU GPL versio 3 aŭ posta <http://gnu.org/licenses/gpl.html>\n"
+"Ĉi tio estas libera programo: vi estas libera ŝanĝi kaj redistribui ĝin.\n"
+"Estas NENIA GARANTIO, ĝis la grado leĝe permesata.\n"
 
 #: src/search.c:619
 msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
@@ -378,9 +380,13 @@ msgstr "Ne eblas kombini la opciojn -P kaj -z"
 msgid "The -P option only supports a single pattern"
 msgstr "La opcio -P akceptas nur unuopan ŝablonon"
 
-#: lib/error.c:117
+#: src/system.h:52 lib/error.c:117
 msgid "Unknown system error"
 msgstr "Nekonata sistemeraro"
+
+#: lib/closeout.c:108
+msgid "write error"
+msgstr "skriberaro"
 
 #: lib/getopt.c:675
 #, c-format
@@ -462,3 +468,81 @@ msgstr "'"
 #: lib/quotearg.c:260
 msgid "'"
 msgstr "'"
+
+#: lib/regex.c:1308
+msgid "Success"
+msgstr "Sukceso"
+
+#: lib/regex.c:1311
+msgid "No match"
+msgstr "Nenia trafo"
+
+#: lib/regex.c:1314
+msgid "Invalid regular expression"
+msgstr "Nevalida regula esprimo"
+
+#: lib/regex.c:1317
+msgid "Invalid collation character"
+msgstr "Nevalida ordiga signo"
+
+#: lib/regex.c:1320
+msgid "Invalid character class name"
+msgstr "Nevalida nomo de signoklaso"
+
+#: lib/regex.c:1323
+msgid "Trailing backslash"
+msgstr "Fina subenstreko"
+
+#: lib/regex.c:1326
+msgid "Invalid back reference"
+msgstr "Nevalida retroreferenco"
+
+#: lib/regex.c:1329
+msgid "Unmatched [ or [^"
+msgstr "Nepara [ aŭ [^"
+
+#: lib/regex.c:1332
+msgid "Unmatched ( or \\("
+msgstr "Nepara ( aŭ \\("
+
+#: lib/regex.c:1335
+msgid "Unmatched \\{"
+msgstr "Nepara \\{"
+
+#: lib/regex.c:1338
+msgid "Invalid content of \\{\\}"
+msgstr "Nevalida enhavo de \\{\\}"
+
+#: lib/regex.c:1341
+msgid "Invalid range end"
+msgstr "Nevalida fino de gamo"
+
+#: lib/regex.c:1347
+msgid "Invalid preceding regular expression"
+msgstr "Nevalida antaŭa regula esprimo"
+
+#: lib/regex.c:1350
+msgid "Premature end of regular expression"
+msgstr "Neatendata fino de regula esprimo"
+
+#: lib/regex.c:1353
+msgid "Regular expression too big"
+msgstr "Regula esprimo tro granda"
+
+#: lib/regex.c:1356
+msgid "Unmatched ) or \\)"
+msgstr "Nepara ) aŭ \\)"
+
+#: lib/regex.c:7583
+msgid "No previous regular expression"
+msgstr "Mankas antaŭa regula esprimo"
+
+#~ msgid "Copyright (C) 2008 Free Software Foundation, Inc.\n"
+#~ msgstr "Kopirajto (C) 2008  Free Software Foundation, Inc.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions.  There is NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+#~ msgstr ""
+#~ "Ĉi tiu estas libera programo; vidu la fonton por kopikondiĉoj. Estas\n"
+#~ "NENIA GARANTIO, eĉ ne pri KOMERCA KVALITO aŭ ADEKVATECO POR DIFINITA CELO.\n"

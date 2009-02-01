@@ -1,33 +1,34 @@
 # Vietnamese Translation for Grep.
-# Copyright © 2007 Free Software Foundation, Inc.
-# Clytie Siddall <clytie@riverland.net.au>, 2005-2007.
-# 
+# Copyright © 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
+# Clytie Siddall <clytie@riverland.net.au>, 2005-2009.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5.3\n"
+"Project-Id-Version: grep 2.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-03 22:01+0200\n"
-"PO-Revision-Date: 2007-08-05 16:19+0930\n"
+"POT-Creation-Date: 2009-01-26 02:13-0400\n"
+"PO-Revision-Date: 2009-01-30 23:27+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
-"Language-Team: Vietnamese <vi-VN@googlegroups.com> \n"
+"Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: LocFactoryEditor 1.7b1\n"
+"X-Generator: LocFactoryEditor 1.8\n"
 
-#: src/dfa.c:183 src/dfa.c:194 src/dfa.c:205 src/search.c:704
+#: src/dfa.c:184 src/dfa.c:195 src/dfa.c:206 src/search.c:704 lib/regex.c:1344
 msgid "Memory exhausted"
-msgstr "Hết bộ nhó hoàn toàn"
+msgstr "Cạn bộ nhó"
 
-#: src/dfa.c:536 src/dfa.c:539 src/dfa.c:557 src/dfa.c:568 src/dfa.c:592
-#: src/dfa.c:651 src/dfa.c:656 src/dfa.c:669 src/dfa.c:670 src/dfa.c:1048
-#: src/dfa.c:1051 src/dfa.c:1075 src/dfa.c:1079 src/dfa.c:1080 src/dfa.c:1083
-#: src/dfa.c:1095 src/dfa.c:1096
+#: src/dfa.c:537 src/dfa.c:540 src/dfa.c:558 src/dfa.c:569 src/dfa.c:593
+#: src/dfa.c:652 src/dfa.c:657 src/dfa.c:670 src/dfa.c:671 src/dfa.c:1049
+#: src/dfa.c:1052 src/dfa.c:1076 src/dfa.c:1080 src/dfa.c:1081 src/dfa.c:1084
+#: src/dfa.c:1096 src/dfa.c:1097
 msgid "Unbalanced ["
 msgstr "Dấu ngoặc vuông mở [ riêng"
 
-#: src/dfa.c:788
+#: src/dfa.c:789
 msgid "Unfinished \\ escape"
 msgstr "Chưa kết thúc dãy thoát \\"
 
@@ -35,34 +36,36 @@ msgstr "Chưa kết thúc dãy thoát \\"
 #. {M} - exact count
 #. {M,} - minimum count, maximum is infinity
 #. {M,N} - M through N
-#: src/dfa.c:921 src/dfa.c:927 src/dfa.c:937 src/dfa.c:945 src/dfa.c:960
+#: src/dfa.c:922 src/dfa.c:928 src/dfa.c:938 src/dfa.c:946 src/dfa.c:961
 msgid "unfinished repeat count"
 msgstr "chưa kết thúc sự đếm lặp lại"
 
-#: src/dfa.c:934 src/dfa.c:951 src/dfa.c:959 src/dfa.c:963
+#: src/dfa.c:935 src/dfa.c:952 src/dfa.c:960 src/dfa.c:964
 msgid "malformed repeat count"
 msgstr "sự đếm lặp lại dạng sai"
 
-#: src/dfa.c:1305
+#: src/dfa.c:1306
 msgid "Unbalanced ("
 msgstr "Dấu ngoặc mở ( riêng"
 
-#: src/dfa.c:1430
+#: src/dfa.c:1431
 msgid "No syntax specified"
 msgstr "Chưa ghi rõ cú pháp"
 
-#: src/dfa.c:1438
+#: src/dfa.c:1439
 msgid "Unbalanced )"
 msgstr "Dấu ngoặc đóng ) riêng"
 
-#: src/dfa.c:3008 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
-#: src/search.c:68 src/search.c:225 lib/obstack.c:471
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: src/dfa.c:3007 src/kwset.c:178 src/kwset.c:186 src/kwset.c:409
+#: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
-msgstr "hết bộ nhớ hoàn toàn"
+msgstr "cạn bộ nhớ"
 
 #: src/grep.c:404
 msgid "invalid context length argument"
-msgstr "đối số độ dài ngữ cảnh không hợp lệ"
+msgstr "đối số chiều dài ngữ cảnh không hợp lệ"
 
 #: src/grep.c:665
 msgid "input is too large to count"
@@ -75,11 +78,11 @@ msgstr "đang ghi kết xuất"
 #: src/grep.c:1209
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "Tập tin nhị phân %s khớp với\n"
+msgstr "Tập tin nhị phân %s tương ứng với\n"
 
 #: src/grep.c:1223
 msgid "(standard input)"
-msgstr "(thiết bị nhập chuẩn)"
+msgstr "(đầu vào tiêu chuẩn)"
 
 #: src/grep.c:1355
 #, c-format
@@ -88,12 +91,12 @@ msgstr "cảnh báo : %s %s\n"
 
 #: src/grep.c:1356
 msgid "recursive directory loop"
-msgstr "vòng lặp thư mục đệ qui"
+msgstr "vòng lặp thư mục đệ quy"
 
 #: src/grep.c:1404 src/grep.c:1411
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "Cách sử dụng: %s [TÙY_CHỌN]... MẪU [TẬP_TIN]...\n"
+msgstr "Sử dụng: %s [TÙY_CHỌN]... MẪU [TẬP_TIN]...\n"
 
 #: src/grep.c:1406
 #, c-format
@@ -103,7 +106,7 @@ msgstr "Hãy thử lệnh trợ giúp « %s --help » để xem thêm thông tin
 #: src/grep.c:1412
 #, c-format
 msgid "Search for PATTERN in each FILE or standard input.\n"
-msgstr "Tìm kiếm MẪU trong mỗi TẬP_TIN hay thiết bị nhập chuẩn.\n"
+msgstr "Tìm kiếm MẪU trong mỗi TẬP_TIN hay đầu vào tiêu chuẩn.\n"
 
 #: src/grep.c:1415
 #, c-format
@@ -223,7 +226,7 @@ msgstr ""
 "      --line-buffered       xoá sách kết xuất trên mỗi dòng\n"
 "  -H, --with-filename       in ra tên tập tin cho mỗi lần khớp\n"
 "  -h, --no-filename         thu hồi tên tập tin tiền tố trong kết xuất\n"
-"      --label=NHÃN         in ra NHÃN như tên tập tin cho thiết bị nhập chuẩn\n"
+"      --label=NHÃN         in ra NHÃN như tên tập tin cho đầu vào tiêu chuẩn\n"
 "  -o, --only-matching       hiện chỉ phần dòng khớp MẪU\n"
 "  -q, --quiet, --silent     thu hồi tất cả kết xuất bình thường\n"
 "      --binary-files=KIỂU   giả sử các tập tin nhị phân là KIỂU, mà KIỂU là:\n"
@@ -289,12 +292,12 @@ msgstr ""
 #: src/grep.c:1495
 #, c-format
 msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
-msgstr "Gọi « egrep » bị phản đối nên thay thế bằng « grep -E ».\n"
+msgstr "Gọi như « egrep » bị phản đối nên thay thế bằng « grep -E ».\n"
 
 #: src/grep.c:1498
 #, c-format
 msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
-msgstr "Gọi « fgrep » bị phản đối nên thay thế bằng « grep -F ».\n"
+msgstr "Gọi như « fgrep » bị phản đối nên thay thế bằng « grep -F ».\n"
 
 #: src/grep.c:1501
 #, c-format
@@ -312,7 +315,7 @@ msgid ""
 "are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
 "if any error occurs and -q was not given, the exit status is 2.\n"
 msgstr ""
-"Không có TẬP_TIN, hoặc khi TẬP_TIN là « - » thì đọc thiết bị nhập chuẩn.\n"
+"Không có TẬP_TIN, hoặc khi TẬP_TIN là « - » thì đọc đầu vào tiêu chuẩn.\n"
 "Đưa ra ít nhất hai tập tin thì giả sử « -h ».\n"
 "Trạng thái thoạt là 0 nếu dòng nào được chọn, không thì 1.\n"
 "Gặp lỗi khi « -q » không được đặt thì trạng thái thoát là 2.\n"
@@ -330,56 +333,55 @@ msgstr ""
 msgid "conflicting matchers specified"
 msgstr "đã ghi rõ dữ liệu khớp mà xung đột"
 
-#: src/grep.c:1715
+#: src/grep.c:1716
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
 msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" cần thiết giá trị (\"=...\"); nên bỏ qua."
 
-#: src/grep.c:1719
+#: src/grep.c:1720
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
 msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" là luận lý thì không chấp nhận giá trị (\"=%s\"); nên bỏ qua."
 
-#: src/grep.c:1727
+#: src/grep.c:1729
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
 msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" %s."
 
-#: src/grep.c:1750
+#: src/grep.c:1752
 #, c-format
 msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
 msgstr "Đã dừng xử lý chuỗi « GREP_COLORS=\"%s\" » dạng sai ở chuỗi phụ còn lại « %s »."
 
-#: src/grep.c:1883
+#: src/grep.c:1885
 msgid "unknown devices method"
-msgstr "không nhận ra phương pháp thiết bị"
+msgstr "không rõ phương pháp thiết bị"
 
-#: src/grep.c:1956
+#: src/grep.c:1959
 msgid "unknown directories method"
-msgstr "không nhận ra phương pháp thư mục"
+msgstr "không rõ phương pháp thư mục"
 
-#: src/grep.c:2023
+#: src/grep.c:2027
 msgid "invalid max count"
 msgstr "số đếm tối đa không hợp lệ"
 
-#: src/grep.c:2078
+#: src/grep.c:2082
 msgid "unknown binary-files type"
-msgstr "không nhận ra kiểu tập tin nhị phân (binary-files)"
+msgstr "không rõ kiểu tập tin nhị phân (binary-files)"
 
-#: src/grep.c:2182
-#, c-format
-msgid "Copyright (C) 1988, 1992-2002, 2004, 2005  Free Software Foundation, Inc.\n"
-msgstr "Tác quyền © năm 1988, 1992-2002, 2004, 2005  của Tổ chức Phần mềm Tự do.\n"
-
-#: src/grep.c:2184
+#: src/grep.c:2186
 #, c-format
 msgid ""
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
-"Chương trình này là phần mềm tự do; xem mã nguồn để tìm điều kiện sao chép.\n"
-"KHÔNG CÓ BẢO HÀNH GÌ CẢ, THẬM CHÍ KHÔNG CÓ BẢO ĐẢM ĐƯỢC NGỤ Ý\n"
-"KHẢ NĂNG BÁN HAY KHẢ NĂNG LÀM ĐƯỢC VIỆC DỨT KHOÁT.\n"
+"Tác quyền © %s Tổ chức Phần mềm Tự do.\n"
+"Giấy phép GPL pb3+: Giấy phép Công cộng GNU phiên bản 3 và sau:\n"
+"<http://gnu.org/licenses/gpl.html>\n"
+"Đây là phần mềm tự do : bạn có quyền sửa đổi và phát hành lại nó.\n"
+"KHÔNG CÓ BẢO HÀNH GÌ CẢ, với điều kiện được pháp luật cho phép.\n"
 
 #: src/search.c:619
 msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
@@ -393,9 +395,13 @@ msgstr "Không thể dùng với nhau hai tùy chọn « -P » và « -z »"
 msgid "The -P option only supports a single pattern"
 msgstr "Tùy chọn « -P » chỉ hỗ trợ một mẫu riêng lẻ"
 
-#: lib/error.c:117
+#: src/system.h:52 lib/error.c:117
 msgid "Unknown system error"
 msgstr "Lỗi hệ thống không rõ"
+
+#: lib/closeout.c:108
+msgid "write error"
+msgstr "lỗi ghi"
 
 #: lib/getopt.c:675
 #, c-format
@@ -478,11 +484,70 @@ msgstr "« "
 msgid "'"
 msgstr " »"
 
-#~ msgid "out of memory"
-#~ msgstr "hết bộ nhớ"
+#: lib/regex.c:1308
+msgid "Success"
+msgstr "Thành công"
 
-#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-#~ msgstr "Cách sử dụng: %s [TÙYCHỌN]... MẪU [TẬPTIN]...\n"
+#: lib/regex.c:1311
+msgid "No match"
+msgstr "Không tìm thấy"
 
-#~ msgid "%s (GNU grep) %s\n"
-#~ msgstr "%s (trình grep của GNU) %s\n"
+#: lib/regex.c:1314
+msgid "Invalid regular expression"
+msgstr "Biểu thức chính quy không hợp lệ"
+
+#: lib/regex.c:1317
+msgid "Invalid collation character"
+msgstr "Ký tự đối chiếu không hợp lệ"
+
+#: lib/regex.c:1320
+msgid "Invalid character class name"
+msgstr "Tên hạng ký tự không hợp lệ"
+
+#: lib/regex.c:1323
+msgid "Trailing backslash"
+msgstr "Dấu chéo ngược theo sau"
+
+#: lib/regex.c:1326
+msgid "Invalid back reference"
+msgstr "Tham khảo ngược không hợp lệ"
+
+#: lib/regex.c:1329
+msgid "Unmatched [ or [^"
+msgstr "Có ký tự riêng lẻ « [ » hoặc « [^ »"
+
+#: lib/regex.c:1332
+msgid "Unmatched ( or \\("
+msgstr "Có ký tự riêng lẻ « ( » hoặc « \\( »"
+
+#: lib/regex.c:1335
+msgid "Unmatched \\{"
+msgstr "Có ký tự riêng lẻ « \\{ »"
+
+#: lib/regex.c:1338
+msgid "Invalid content of \\{\\}"
+msgstr "\\{\\} có nội dung sai"
+
+#: lib/regex.c:1341
+msgid "Invalid range end"
+msgstr "Sai kết thức phạm vi"
+
+#: lib/regex.c:1347
+msgid "Invalid preceding regular expression"
+msgstr "Biểu thức chính quy đi trước mà không hợp lệ"
+
+#: lib/regex.c:1350
+msgid "Premature end of regular expression"
+msgstr "Biểu thức chính quy kết thức quá sớm"
+
+#: lib/regex.c:1353
+msgid "Regular expression too big"
+msgstr "Biểu thức chính quy quá lớn"
+
+#: lib/regex.c:1356
+msgid "Unmatched ) or \\)"
+msgstr "Có ký tự riêng lẻ « ) » hoặc « \\) »"
+
+#: lib/regex.c:7583
+msgid "No previous regular expression"
+msgstr "Không có biểu thức chính quy nằm trước"

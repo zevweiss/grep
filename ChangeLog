@@ -1,3 +1,7 @@
+2009-02-01  Tony Abou-Assaleh <taa@acm.org>
+
+	* po/*.po: update from the Translation Project
+
 2009-02-01  Karl Berry  <karl@tug.org>
 
 	* configure.ac.in (AM_GNU_GETTEXT): specify [external], since
