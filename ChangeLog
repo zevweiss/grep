@@ -4,6 +4,8 @@
 
 	* po/Makefile.in.in: Remove deleted file ChangeLog from DISTFILES
 
+	* configure.ac.in: Replace obsolete macro AC_OUTPUT with modern equivalent
+
 2009-02-01  Karl Berry  <karl@tug.org>
 
 	* missing: re-add (from gnulib), since it's missing.

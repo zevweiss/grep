@@ -160,4 +160,16 @@ if test x"$testpcre" = x"yes"; then
 	AC_CHECK_LIB(pcre, pcre_exec)
 fi
 
-AC_OUTPUT(Makefile lib/Makefile lib/posix/Makefile src/Makefile tests/Makefile po/Makefile.in intl/Makefile doc/Makefile m4/Makefile vms/Makefile bootstrap/Makefile, [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile; echo timestamp > stamp-h])
+AC_CONFIG_FILES([Makefile
+				 lib/Makefile
+				 lib/posix/Makefile
+				 src/Makefile
+				 tests/Makefile
+				 po/Makefile.in
+				 intl/Makefile
+				 doc/Makefile
+				 m4/Makefile
+				 vms/Makefile
+				 bootstrap/Makefile])
+AC_CONFIG_COMMANDS([stamp-h], [echo timestamp > stamp-h])
+AC_OUTPUT
