@@ -90,7 +90,7 @@ esac
 
 dnl I18N feature
 ALL_LINGUAS="@ALL_LINGUAS@"
-AM_GNU_GETTEXT[external]
+AM_GNU_GETTEXT
 
 dnl DOS file name convention
 dnl sets HAVE_DOS_FILE_NAMES
