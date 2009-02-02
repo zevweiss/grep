@@ -1,3 +1,7 @@
+2009-02-02  Karl Berry  <karl@tug.org>
+
+	* configure.ac.in (pcre): set CPPFLAGS, not CFLAGS.
+
 2009-02-01  Tony Abou-Assaleh <taa@acm.org>
 
 	* po/*.po: update from the Translation Project
