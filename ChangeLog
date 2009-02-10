@@ -1,3 +1,9 @@
+2009-02-10  Tony Abou-Assaleh <taa@acm.org>
+
+	* po/*.po: update from the Translation Project
+
+	* configure.ac.in: update version to 2.6-cvs
+
 2009-02-02  Karl Berry  <karl@tug.org>
 
 	* configure.ac.in (pcre): set CPPFLAGS, not CFLAGS.
