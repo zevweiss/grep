@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: grep 2.5.4-pre4\n"
+"Project-Id-Version: grep 2.5.4-pre6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-23 01:15-0400\n"
-"PO-Revision-Date: 2009-01-24 18:37+0100\n"
+"POT-Creation-Date: 2009-01-31 23:12-0400\n"
+"PO-Revision-Date: 2009-02-04 13:40+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -56,7 +56,7 @@ msgstr ") bez náprotivku"
 
 #. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
 #. before exiting when memory is exhausted.  Goes through gettext.
-#: src/dfa.c:3007 src/kwset.c:177 src/kwset.c:185 src/kwset.c:408
+#: src/dfa.c:3007 src/kwset.c:178 src/kwset.c:186 src/kwset.c:409
 #: src/search.c:68 src/search.c:225 lib/obstack.c:471 lib/xmalloc.c:66
 msgid "memory exhausted"
 msgstr "pamäť bola vyčerpaná"
@@ -309,52 +309,61 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: <%s>\n"
 msgstr ""
 "\n"
-"Oznamovať chyby <%s>.\n"
+"Chyby oznamujte na: <%s>\n"
 
-#: src/grep.c:1522
+#: src/grep.c:1510
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr "Domovská stránka GNU Grep: <%s>\n"
+
+#: src/grep.c:1512
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr "Všeobecná pomoc pri používaní softvéru GNU: <http://www.gnu.org/gethelp/>\n"
+
+#: src/grep.c:1527
 msgid "conflicting matchers specified"
 msgstr "boli zadané konfliktné špecifikátory"
 
-#: src/grep.c:1715
+#: src/grep.c:1721
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
 msgstr "V GREP_COLORS=\"%s\", potrebuje \"%s\" hodnotu (\"=...\"); preskakujem."
 
-#: src/grep.c:1719
+#: src/grep.c:1725
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
 msgstr "V GREP_COLORS=\"%s\", je \"%s\" booleovského typu a nemôže nadobúdať hodnotu (\"=%s\"); preskakuje sa."
 
-#: src/grep.c:1727
+#: src/grep.c:1734
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
 msgstr "V GREP_COLORS=\"%s\", \"%s\" %s."
 
-#: src/grep.c:1750
+#: src/grep.c:1757
 #, c-format
 msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
 msgstr "Prerušené spracovanie zle utvoreného GREP_COLORS=\"%s\" na zvyšnom podreťazci \"%s\"."
 
-#: src/grep.c:1883
+#: src/grep.c:1890
 msgid "unknown devices method"
 msgstr "neznáme metódy zariadení"
 
-#: src/grep.c:1957
+#: src/grep.c:1964
 msgid "unknown directories method"
 msgstr "neznáme metódy adresárov"
 
-#: src/grep.c:2025
+#: src/grep.c:2032
 msgid "invalid max count"
 msgstr "neplatný maximálny počet"
 
-#: src/grep.c:2080
+#: src/grep.c:2087
 msgid "unknown binary-files type"
 msgstr "neznámy typ binárneho súboru"
 
-#: src/grep.c:2184
+#: src/grep.c:2191
 #, c-format
 msgid ""
 "Copyright (C) %s Free Software Foundation, Inc.\n"

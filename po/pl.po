@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5.4\n"
+"Project-Id-Version: GNU grep 2.5.4-pre6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-26 02:13-0400\n"
-"PO-Revision-Date: 2009-01-30 12:30+0100\n"
+"POT-Creation-Date: 2009-01-31 23:12-0400\n"
+"PO-Revision-Date: 2009-02-02 13:30+0100\n"
 "Last-Translator: Rafał Maszkowski <rzm@icm.edu.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -312,10 +312,19 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: <%s>\n"
 msgstr ""
 "\n"
-"Raporty o błędach należy wysyłać do %s .\n"
+"Raporty o błędach należy wysyłać do %s\n"
+
+#: src/grep.c:1510
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr "Strona domowa GNU Grepa: %s\n"
+
+#: src/grep.c:1512
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr "Pomoc w używaniu oprogramowania GNU: http://www.gnu.org/gethelp/\n"
 
 #  viendo los fuentes , hay varias opciones
 #  que hay sin documentar. O quiza es que getopt() lo he entendido mal
@@ -325,47 +334,47 @@ msgstr ""
 #  grep --help ->
 #  usage: grep [-[[AB] ]<num>] [-[CEFGVchilnqsvwx]] [-[ef]] <expr> [<files...>]
 #  La opción -X es a la que corresponde esta línea.
-#: src/grep.c:1522
+#: src/grep.c:1527
 msgid "conflicting matchers specified"
 msgstr "podane sprzeczne wzorce"
 
-#: src/grep.c:1716
+#: src/grep.c:1721
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
 msgstr "W GREP_COLORS=\"%s\", własność \"%s\" musi mieć wartość (\"=...\"); pominięta."
 
-#: src/grep.c:1720
+#: src/grep.c:1725
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
 msgstr "W GREP_COLORS=\"%s\", własność \"%s\" jest binarna i nie może mieć podanej wartości (\"=%s\"); pominięta."
 
-#: src/grep.c:1729
+#: src/grep.c:1734
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
 msgstr "W GREP_COLORS=\"%s\", własność \"%s\" to %s."
 
-#: src/grep.c:1752
+#: src/grep.c:1757
 #, c-format
 msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
 msgstr "Zaprzestano przetwarzanie źle sformatowanych GREP_COLORS=\"%s\" na znakach: \"%s\"."
 
-#: src/grep.c:1885
+#: src/grep.c:1890
 msgid "unknown devices method"
 msgstr "nieznany sposób przeglądania urządzeń"
 
-#: src/grep.c:1959
+#: src/grep.c:1964
 msgid "unknown directories method"
 msgstr "nieznany sposób przeglądania katalogów"
 
-#: src/grep.c:2027
+#: src/grep.c:2032
 msgid "invalid max count"
 msgstr "błędna maksymalna liczba powtórzeń"
 
-#: src/grep.c:2082
+#: src/grep.c:2087
 msgid "unknown binary-files type"
 msgstr "nieznany typ pliku binarnego"
 
-#: src/grep.c:2186
+#: src/grep.c:2191
 #, c-format
 msgid ""
 "Copyright (C) %s Free Software Foundation, Inc.\n"

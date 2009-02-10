@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: grep-2.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-26 02:13-0400\n"
+"POT-Creation-Date: 2009-02-03 14:51-0400\n"
 "PO-Revision-Date: 2009-01-30 18:22+0100\n"
 "Last-Translator: Milo Casagrande <milo@casagrande.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -121,7 +121,8 @@ msgstr "MODELLO è un insieme di stringhe letterali separate da newline.\n"
 #: src/grep.c:1421
 #, c-format
 msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
-msgstr "MODELLO è, in modo predefinito, un'espressione regolare di base (BRE).\n"
+msgstr ""
+"MODELLO è, in modo predefinito, un'espressione regolare di base (BRE).\n"
 
 #: src/grep.c:1424
 #, c-format
@@ -138,12 +139,14 @@ msgstr ""
 #, c-format
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
 "  -E, --extended-regexp     MODELLO è un'espressione regolare estesa\n"
-"  -F, --fixed-strings       MODELLO è un insieme di stringhe letterali separate da newline\n"
+"  -F, --fixed-strings       MODELLO è un insieme di stringhe letterali "
+"separate da newline\n"
 "  -G, --basic-regexp        MODELLO è un'espressione regolare semplice\n"
 "  -P, --perl-regexp         MODELLO è un'espressione regolare Perl\n"
 
@@ -160,9 +163,12 @@ msgstr ""
 "  -e, --regexp=MODELLO      Usa MODELLO per la corrispondenza\n"
 "  -f, --file=FILE           Ottiene il MODELLO dal FILE\n"
 "  -i, --ignore-case         Ignora la distinzione tra maiuscole e minuscole\n"
-"  -w, --word-regexp         Forza MODELLO a corrispondere solo a parole intere\n"
-"  -x, --line-regexp         Forza MODELLO a corrispondere solo a righe intere\n"
-"  -z, --null-data           Una riga di dati termina con il byte 0 invece che\n"
+"  -w, --word-regexp         Forza MODELLO a corrispondere solo a parole "
+"intere\n"
+"  -x, --line-regexp         Forza MODELLO a corrispondere solo a righe "
+"intere\n"
+"  -z, --null-data           Una riga di dati termina con il byte 0 invece "
+"che\n"
 "                            newline\n"
 
 #: src/grep.c:1443
@@ -208,7 +214,8 @@ msgid ""
 "                            ACTION is `read' or `skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
 "      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
-"      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
 "      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
 "      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n"
 "  -L, --files-without-match print only names of FILEs containing no match\n"
@@ -221,31 +228,40 @@ msgstr ""
 "Controllo dell'output:\n"
 "  -m, --max-count=NUM       Si ferma dopo NUM corrispondenze\n"
 "  -b, --byte-offset         Stampa l'offset del byte con le righe di output\n"
-"  -n, --line-number         Stampa il numero della riga con le righe di output\n"
+"  -n, --line-number         Stampa il numero della riga con le righe di "
+"output\n"
 "      --line-buffered       Fa il flush dell'output con ogni riga\n"
 "  -H, --with-filename       Stampa il nome del file per ogni corrispondenza\n"
 "  -h, --no-filename         Elimina il nome del file davanti all'output\n"
-"      --label=ETICH         Stampa ETICH al posto del nome del file per lo standard\n"
+"      --label=ETICH         Stampa ETICH al posto del nome del file per lo "
+"standard\n"
 "                            input\n"
-"  -o, --only-matching       Mostra solo la parte della riga corrispondente al\n"
+"  -o, --only-matching       Mostra solo la parte della riga corrispondente "
+"al\n"
 "                            MODELLO\n"
 "  -q, --quiet, --silent     Elimina tutto l'output normale\n"
-"      --binary-files=TIPO   Suppone che i file binari siano del TIPO \"binary\",\n"
+"      --binary-files=TIPO   Suppone che i file binari siano del TIPO \"binary"
+"\",\n"
 "                            \"text\" oppure \"without-match\"\n"
 "  -a, --text                Equivale a --binary-files=text\n"
 "  -I                        Equivale a --binary-files=without-match\n"
-"  -d, --directories=AZIONE  Come gestire le directory: AZIONE è \"read\", \"recurse\"\n"
+"  -d, --directories=AZIONE  Come gestire le directory: AZIONE è \"read\", "
+"\"recurse\"\n"
 "                            o \"skip\"\n"
-"  -D, --devices=AZIONE      Come gestire device, FIFO e socket: AZIONE è \"read\"\n"
+"  -D, --devices=AZIONE      Come gestire device, FIFO e socket: AZIONE è "
+"\"read\"\n"
 "                            o \"skip\" \n"
 "  -R, -r, --recursive       Equivale a --directories=recurse\n"
 "      --include=MODELLO     Esamina i file corrispondenti al MODELLO\n"
 "      --exclude=MODELLO     Salta i file corrispondenti al MODELLO\n"
 "      --exclude-from=FILE   Salta i file corrispondenti ai modelli nel FILE\n"
 "      --exclude-dir=MODELLO Salta le directory corrispondenti al MODELLO\n"
-"  -L, --files-without-match Stampa solo i nomi dei FILE senza corrispondenze\n"
-"  -l, --files-with-matches  Stampa solo i nomi dei FILE contenenti corrispondenze\n"
-"  -c, --count               Stampa solo il conteggio delle righe occorrenti in ogni\n"
+"  -L, --files-without-match Stampa solo i nomi dei FILE senza "
+"corrispondenze\n"
+"  -l, --files-with-matches  Stampa solo i nomi dei FILE contenenti "
+"corrispondenze\n"
+"  -c, --count               Stampa solo il conteggio delle righe occorrenti "
+"in ogni\n"
 "                            FILE\n"
 "  -T, --initial-tab         Allinea le tabulazioni (se necessario)\n"
 "  -Z, --null                Stampa il byte 0 dopo ogni nome di FILE\n"
@@ -273,10 +289,13 @@ msgstr ""
 "  -C, --context=NUM         Stampa NUM righe di contesto dell'output\n"
 "  -NUM                      Come --context=NUM\n"
 "      --color[=QUANDO]\n"
-"      --colour[=QUANDO]     Usa i colori per distinguere le stringhe corrispondenti.\n"
-"                            QUANDO può essere \"always\", \"never\" o \"auto\".\n"
+"      --colour[=QUANDO]     Usa i colori per distinguere le stringhe "
+"corrispondenti.\n"
+"                            QUANDO può essere \"always\", \"never\" o \"auto"
+"\".\n"
 "  -U, --binary              Non rimuove i caratteri CR all'EOL (MSDOS)\n"
-"  -u, --unix-byte-offsets   Segnala gli offset come se non ci fossero CR (MSDOS)\n"
+"  -u, --unix-byte-offsets   Segnala gli offset come se non ci fossero CR "
+"(MSDOS)\n"
 "\n"
 
 #: src/grep.c:1495
@@ -301,81 +320,110 @@ msgstr ""
 #: src/grep.c:1505
 #, c-format
 msgid ""
-"With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n"
-"are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
+"With no FILE, or when FILE is -, read standard input.  If less than two "
+"FILEs\n"
+"are given, assume -h.  Exit status is 0 if any line was selected, 1 "
+"otherwise;\n"
 "if any error occurs and -q was not given, the exit status is 2.\n"
 msgstr ""
 "Se non c'è alcun FILE o il FILE è -, legge lo standard input. Se sono stati\n"
 "specificati meno di due FILE presume -h. Esce con lo stato 0 se è stata\n"
-"selezionata almeno una riga, 1 altrimenti. Se si verifica un errore e l'opzione\n"
+"selezionata almeno una riga, 1 altrimenti. Se si verifica un errore e "
+"l'opzione\n"
 "-q non è stata usata, lo stato è 2.\n"
 
 #: src/grep.c:1509
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: %s\n"
 msgstr ""
 "\n"
 "Segnalare i bug a <%s>.\n"
 
-#: src/grep.c:1522
+#: src/grep.c:1510
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr ""
+
+#: src/grep.c:1512
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+
+#: src/grep.c:1527
 msgid "conflicting matchers specified"
 msgstr "specificate corrispondenze in conflitto"
 
-#: src/grep.c:1716
+#: src/grep.c:1721
 #, c-format
-msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
-msgstr "In GREP_COLORS=\"%s\", la capacità \"%s\" necessita un valore (\"=...\"); saltato."
+msgid ""
+"In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
+msgstr ""
+"In GREP_COLORS=\"%s\", la capacità \"%s\" necessita un valore (\"=...\"); "
+"saltato."
 
-#: src/grep.c:1720
+#: src/grep.c:1725
 #, c-format
-msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
-msgstr "In GREP_COLORS=\"%s\", la capacità \"%s\" è booleana e non può accettare un valore (\"=%s\"); saltato."
+msgid ""
+"In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a "
+"value (\"=%s\"); skipped."
+msgstr ""
+"In GREP_COLORS=\"%s\", la capacità \"%s\" è booleana e non può accettare un "
+"valore (\"=%s\"); saltato."
 
 # (ndt) ???
-#: src/grep.c:1729
+#: src/grep.c:1734
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
 msgstr "In GREP_COLORS=\"%s\", la capacità \"%s\" %s."
 
-#: src/grep.c:1752
+#: src/grep.c:1757
 #, c-format
-msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
-msgstr "Elaborazione dei GREP_COLORS=\"%s\" mal formati nelle sottostringhe \"%s\" rimanenti fermata."
+msgid ""
+"Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring "
+"\"%s\"."
+msgstr ""
+"Elaborazione dei GREP_COLORS=\"%s\" mal formati nelle sottostringhe \"%s\" "
+"rimanenti fermata."
 
-#: src/grep.c:1885
+#: src/grep.c:1890
 msgid "unknown devices method"
 msgstr "metodo per i device sconosciuto"
 
-#: src/grep.c:1959
+#: src/grep.c:1964
 msgid "unknown directories method"
 msgstr "metodo per le directory sconosciuto"
 
-#: src/grep.c:2027
+#: src/grep.c:2032
 msgid "invalid max count"
 msgstr "numero massimo non valido"
 
-#: src/grep.c:2082
+#: src/grep.c:2087
 msgid "unknown binary-files type"
 msgstr "tipo di file binario sconosciuto"
 
-#: src/grep.c:2186
+#: src/grep.c:2191
 #, c-format
 msgid ""
 "Copyright (C) %s Free Software Foundation, Inc.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 "Copyright © %s Free Software Foundation, Inc.\n"
-"Licenza GPLv3+: GNU GPL versione 3 o successive <http://gnu.org/licenses/gpl.html>\n"
+"Licenza GPLv3+: GNU GPL versione 3 o successive <http://gnu.org/licenses/gpl."
+"html>\n"
 "Questo è software libero: siete liberi di modificarlo e ridistribuirlo.\n"
 "Non c'è ALCUNA GARANZIA, per quanto consentito dalle vigenti normative.\n"
 
 #: src/search.c:619
-msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
-msgstr "Il supporto all'opzione -P non è compilato in questo binario --disable-perl-regexp"
+msgid ""
+"Support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+"Il supporto all'opzione -P non è compilato in questo binario --disable-perl-"
+"regexp"
 
 #: src/search.c:632
 msgid "The -P and -z options cannot be combined"

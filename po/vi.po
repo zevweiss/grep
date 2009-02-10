@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: grep 2.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-26 02:13-0400\n"
+"POT-Creation-Date: 2009-02-03 14:51-0400\n"
 "PO-Revision-Date: 2009-01-30 23:27+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -138,7 +138,8 @@ msgstr ""
 #, c-format
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
@@ -209,7 +210,8 @@ msgid ""
 "                            ACTION is `read' or `skip'\n"
 "  -R, -r, --recursive       equivalent to --directories=recurse\n"
 "      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
-"      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
 "      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
 "      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n"
 "  -L, --files-without-match print only names of FILEs containing no match\n"
@@ -226,10 +228,12 @@ msgstr ""
 "      --line-buffered       xoá sách kết xuất trên mỗi dòng\n"
 "  -H, --with-filename       in ra tên tập tin cho mỗi lần khớp\n"
 "  -h, --no-filename         thu hồi tên tập tin tiền tố trong kết xuất\n"
-"      --label=NHÃN         in ra NHÃN như tên tập tin cho đầu vào tiêu chuẩn\n"
+"      --label=NHÃN         in ra NHÃN như tên tập tin cho đầu vào tiêu "
+"chuẩn\n"
 "  -o, --only-matching       hiện chỉ phần dòng khớp MẪU\n"
 "  -q, --quiet, --silent     thu hồi tất cả kết xuất bình thường\n"
-"      --binary-files=KIỂU   giả sử các tập tin nhị phân là KIỂU, mà KIỂU là:\n"
+"      --binary-files=KIỂU   giả sử các tập tin nhị phân là KIỂU, mà KIỂU "
+"là:\n"
 "\t\t\t\t\t\t• binary\tnhị phân\n"
 "\t\t\t\t\t\t• text\tvăn bản\n"
 "\t\t\t\t\t\t• without-match    không khớp\n"
@@ -245,14 +249,16 @@ msgstr ""
 "\t\t\t\t\t\t• skip\t    bỏ qua\n"
 "  -R, -r, --recursive       bằng « --directories=recurse »\n"
 "      --include=MẪU_TẬP_TIN  \ttìm chỉ những tập tin khớp mẫu tập tin này\n"
-"      --exclude=MẪU_TẬP_TIN  \tbỏ qua các tập tin/thư mục khớp mẫu tập tin này\n"
+"      --exclude=MẪU_TẬP_TIN  \tbỏ qua các tập tin/thư mục khớp mẫu tập tin "
+"này\n"
 "      --exclude-from=TẬP_TIN  \tbỏ qua các tập tin khớp mẫu tập tin nào\n"
 "\t\t\t\t\t\t\ttừ tập tin này\n"
 "      --exclude-dir=MẪU\tbỏ qua các thư mục khớp mẫu này\n"
 "  -L, --files-without-match \t\tin ra chỉ tên của những tập tin không chứa\n"
 "\t\t\t\t\t\t\tchuỗi khớp\n"
 "  -l, --files-with-matches  \tin ra chỉ tên của các tập tin chứa chuỗi khớp\n"
-"  -c, --count           \tin ra chỉ số đếm những dòng khớp trong mỗi tập tin\n"
+"  -c, --count           \tin ra chỉ số đếm những dòng khớp trong mỗi tập "
+"tin\n"
 "  -T, --initial-tab     \tcanh lề các cột tab (nếu cần)\n"
 "    -Z, --null                \tin ra 0 byte sau tên tập tin\n"
 
@@ -285,8 +291,10 @@ msgstr ""
 "\t\t\t\t\t • always\t\tluôn luôn\n"
 "\t\t\t\t\t • never\t\tkhông bao giờ\n"
 "\t\t\t\t\t • auto\t\ttự động (viết tắt)\n"
-"  -U, --binary              \tđừng gỡ bỏ các ký tự CR ở kết thúc dòng (MSDOS)\n"
-"  -u, --unix-byte-offsets\tthông báo các hiệu số đúng như không có CR (MSDOS)\n"
+"  -U, --binary              \tđừng gỡ bỏ các ký tự CR ở kết thúc dòng "
+"(MSDOS)\n"
+"  -u, --unix-byte-offsets\tthông báo các hiệu số đúng như không có CR "
+"(MSDOS)\n"
 "\n"
 
 #: src/grep.c:1495
@@ -311,8 +319,10 @@ msgstr ""
 #: src/grep.c:1505
 #, c-format
 msgid ""
-"With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n"
-"are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n"
+"With no FILE, or when FILE is -, read standard input.  If less than two "
+"FILEs\n"
+"are given, assume -h.  Exit status is 0 if any line was selected, 1 "
+"otherwise;\n"
 "if any error occurs and -q was not given, the exit status is 2.\n"
 msgstr ""
 "Không có TẬP_TIN, hoặc khi TẬP_TIN là « - » thì đọc đầu vào tiêu chuẩn.\n"
@@ -321,59 +331,79 @@ msgstr ""
 "Gặp lỗi khi « -q » không được đặt thì trạng thái thoát là 2.\n"
 
 #: src/grep.c:1509
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: %s\n"
 msgstr ""
 "\n"
 "Báo cáo lỗi nào cho <%s>.\n"
 
-#: src/grep.c:1522
+#: src/grep.c:1510
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr ""
+
+#: src/grep.c:1512
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+
+#: src/grep.c:1527
 msgid "conflicting matchers specified"
 msgstr "đã ghi rõ dữ liệu khớp mà xung đột"
 
-#: src/grep.c:1716
+#: src/grep.c:1721
 #, c-format
-msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
-msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" cần thiết giá trị (\"=...\"); nên bỏ qua."
+msgid ""
+"In GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped."
+msgstr ""
+"Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" cần thiết giá trị (\"=..."
+"\"); nên bỏ qua."
 
-#: src/grep.c:1720
+#: src/grep.c:1725
 #, c-format
-msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a value (\"=%s\"); skipped."
-msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" là luận lý thì không chấp nhận giá trị (\"=%s\"); nên bỏ qua."
+msgid ""
+"In GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a "
+"value (\"=%s\"); skipped."
+msgstr ""
+"Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" là luận lý thì không chấp "
+"nhận giá trị (\"=%s\"); nên bỏ qua."
 
-#: src/grep.c:1729
+#: src/grep.c:1734
 #, c-format
 msgid "In GREP_COLORS=\"%s\", the \"%s\" capacity %s."
 msgstr "Trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" %s."
 
-#: src/grep.c:1752
+#: src/grep.c:1757
 #, c-format
-msgid "Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring \"%s\"."
-msgstr "Đã dừng xử lý chuỗi « GREP_COLORS=\"%s\" » dạng sai ở chuỗi phụ còn lại « %s »."
+msgid ""
+"Stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring "
+"\"%s\"."
+msgstr ""
+"Đã dừng xử lý chuỗi « GREP_COLORS=\"%s\" » dạng sai ở chuỗi phụ còn lại « %s »."
 
-#: src/grep.c:1885
+#: src/grep.c:1890
 msgid "unknown devices method"
 msgstr "không rõ phương pháp thiết bị"
 
-#: src/grep.c:1959
+#: src/grep.c:1964
 msgid "unknown directories method"
 msgstr "không rõ phương pháp thư mục"
 
-#: src/grep.c:2027
+#: src/grep.c:2032
 msgid "invalid max count"
 msgstr "số đếm tối đa không hợp lệ"
 
-#: src/grep.c:2082
+#: src/grep.c:2087
 msgid "unknown binary-files type"
 msgstr "không rõ kiểu tập tin nhị phân (binary-files)"
 
-#: src/grep.c:2186
+#: src/grep.c:2191
 #, c-format
 msgid ""
 "Copyright (C) %s Free Software Foundation, Inc.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
@@ -384,8 +414,12 @@ msgstr ""
 "KHÔNG CÓ BẢO HÀNH GÌ CẢ, với điều kiện được pháp luật cho phép.\n"
 
 #: src/search.c:619
-msgid "Support for the -P option is not compiled into this --disable-perl-regexp binary"
-msgstr "Khả năng hỗ trợ tùy chọn « -P » không được biên dịch vào tập tin nhị phân « --disable-perl-regexp » này"
+msgid ""
+"Support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+"Khả năng hỗ trợ tùy chọn « -P » không được biên dịch vào tập tin nhị phân « --"
+"disable-perl-regexp » này"
 
 #: src/search.c:632
 msgid "The -P and -z options cannot be combined"

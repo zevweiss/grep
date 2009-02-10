@@ -2,7 +2,7 @@
 # Copyright (C) 2003 Free Software Foundation, Inc.
 # Volodymyr M. Lisivka <lvm@mystery.lviv.net>, 2001-2002.
 # Dmytro O. Redchuk <dor@kiev-online.net>, 2002.
-# $Id: uk.po,v 1.3 2009/02/01 03:11:06 taa Exp $
+# $Id: uk.po,v 1.4 2009/02/10 04:31:57 taa Exp $
 #
 msgid ""
 msgstr ""
