@@ -1,5 +1,9 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* Makefile.cvs: Remove.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* m4/largefile.m4: Remove.
 	* m4/lib-ld.m4: Remove.
 	* m4/lib-prefix.m4: Remove.
