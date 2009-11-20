@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-chmod +x tests/*.sh   # fix a bug in CVS
-
 # Generate configure.ac with ALL_LINGUAS matching the languages
 # we have...
 ALL_LINGUAS=""
