@@ -153,7 +153,6 @@ fi
 
 AC_CONFIG_FILES([Makefile
 				 lib/Makefile
-				 lib/posix/Makefile
 				 src/Makefile
 				 tests/Makefile
 				 po/Makefile.in
