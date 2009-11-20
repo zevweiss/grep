@@ -171,7 +171,8 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	      namep += new_name_space - name_space;
 	      name_space = new_name_space;
 	    }
-	  namep = stpcpy (namep, dp->d_name) + 1;
+	  strcpy (namep, dp->d_name);
+	  namep += NAMLEN (dp) + 1;
 	}
     }
   *namep = '\0';

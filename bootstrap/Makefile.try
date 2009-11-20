@@ -59,20 +59,16 @@ LIB_OBJ_getopt   =  $(libdir)/getopt.$(OBJEXT) $(libdir)/getopt1.$(OBJEXT)
 #LIB_OBJ_memchr   =  $(libdir)/memchr.$(OBJEXT)
 LIB_OBJ_obstack  =  $(libdir)/obstack.$(OBJEXT)
 #LIB_OBJ_strtoul  =  $(libdir)/strtoul.$(OBJEXT)
-LIB_OBJ_stpcpy   =  $(libdir)/stpcpy.$(OBJEXT)
-LIB_OBJ_strtoull = $(libdir)/strtoull.$(OBJEXT)
 
 LIB_OBJS = $(LIB_OBJS_core) $(LIB_OBJ_atexit) $(LIB_OBJ_alloca) \
            $(LIB_OBJ_fnmatch) $(LIB_OBJ_getopt) $(LIB_OBJ_memchr) \
-           $(LIB_OBJ_obstack) $(LIB_OBJ_strtoul) $(LIB_OBJ_stpcpy) \
-           $(LIB_OBJ_strtoull)
+           $(LIB_OBJ_obstack) $(LIB_OBJ_strtoul)
 
 # For Linux
 #LIB_OBJS = $(LIB_OBJS_core)
 
 # For QNX/Neutrino
-#LIB_OBJS = $(LIB_OBJS_core) $(LIB_OBJ_getopt) $(LIB_OBJ_obstack) \
-#            $(LIB_OBJ_stpcpy) $(LIB_OBJ_strtoull)
+#LIB_OBJS = $(LIB_OBJS_core) $(LIB_OBJ_getopt) $(LIB_OBJ_obstack)
 
 # Where is DIR and opendir/readdir defined.
 #  or -DHAVE_DIRENT_H
@@ -91,7 +87,6 @@ DEFS_core = \
            -DHAVE_DIRENT_H \
            -DHAVE_STRERROR \
            -Dconst= \
-           -Dsize_t=unsigned \
            -Duintmax_t=long
 
 # SunOS-4.1.x k&r cc
@@ -111,7 +106,8 @@ DEFS_ansi_c = -DPROTOTYPES
 
 # No wchar support
 # DEFS_wchar = -DUSE_WIDE_CHAR -DHAVE_WCHAR_H
-DEFS_wchar = -Dwchar_t=int -Dmbstate_t=int
+# DEFS_wchar =  -Dwchar_t=int -Dmbstate_t=int
+DEFS_wchar =  -DHAVE_WCHAR_H
 
 # Is strtol() and strtoul()  declarared ?
 #DEFS_strtol = -DHAVE_DECL_STRTOULL=0 -DHAVE_DECL_STRTOUL=0
@@ -124,12 +120,16 @@ DEFS_alloc = -DHAVE_DONE_WORKING_MALLOC_CHECK=1 \
              -DHAVE_DONE_WORKING_REALLOC_CHECK=1
 
 DEFS = $(DEFS_core) $(DEFS_ansi_c) $(DEFS_wchar) $(DEFS_strtol) $(DEFS_alloc) \
-       -DHAVE_DECL_STRERROR_R=0 -DHAVE_VPRINTF -DCHAR_BIT=8
+       -DHAVE_DECL_STRERROR_R=1 -DHAVE_VPRINTF -DCHAR_BIT=8 \
+       -DSTDOUT_FILENO=1
 
 
 ####
 
-CFLAGS = $(DEFS) -I. -I.. -I$(libdir) -DVERSION=\"bootstrap\" -DPACKAGE=\"grep\"
+CFLAGS = $(DEFS) -I. -I.. -I$(libdir) \
+	 -DVERSION=\"bootstrap\" -DPACKAGE=\"grep\" \
+	 -DPACKAGE_STRING=\"grep\ bootstrap\" \
+	 -DPACKAGE_BUGREPORT=\"bug-grep@gnu.org\"
 
 libdir = ../lib
 

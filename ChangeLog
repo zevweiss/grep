@@ -1,5 +1,11 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap/Makefile.try: Adjust.
+	* lib/savedir.c: Avoid using stpcpy, so that bootstrapping does not
+	need it.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac: Slightly modernize.
 	* Makefile.am: Modernize, use dependencies.
 	* Makefile.am: Modernize, use dependencies.
