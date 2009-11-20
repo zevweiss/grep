@@ -1,5 +1,11 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* doc/Makefile.am: Remove AUTOMAKE_OPTIONS.
+	* lib/posix/Makefile.am: Remove AUTOMAKE_OPTIONS.
+	* vms/Makefile.am: Remove AUTOMAKE_OPTIONS.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* Makefile.cvs: Remove.
 
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>

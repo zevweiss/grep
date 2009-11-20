@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AUTOMAKE_OPTIONS=no-dependencies
-
 info_TEXINFOS = grep.texi
 grep_TEXINFOS = fdl.texi
 
