@@ -1,5 +1,10 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* autogen.sh: Rename to...
+	* bootstrap: ... this.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* bootstrap/*: Remove.
 	* configure.ac: Do not create bootstrap/Makefile.
 	* Makefile.am: Do not recurse into bootstrap, distribute new files.
