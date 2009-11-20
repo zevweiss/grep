@@ -89,7 +89,7 @@ case "$ac_cv_prog_CC" in
 esac
 
 dnl I18N feature
-AM_GNU_GETTEXT_VERSION([0.15])
+AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
 
 dnl DOS file name convention

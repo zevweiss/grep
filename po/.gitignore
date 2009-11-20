@@ -1,4 +1,6 @@
 *.gmo
+*.po
+*.pot
 .reference
 LINGUAS
 Makefile.in.in

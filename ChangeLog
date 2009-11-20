@@ -1,5 +1,17 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap: Add autopoint invocation and fetching of .po files.
+	* configure.ac: Bump to GNU gettext 0.17.
+
+	* ABOUT-NLS: Remove.
+	* m4/gettext.m4: Remove.
+	* m4/iconv.m4: Remove.
+	* m4/lib-link.m4: Remove.
+	* m4/po.m4: Remove.
+	* po/*.po: Remove.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* autogen.sh: Rename to...
 	* bootstrap: ... this.
 
