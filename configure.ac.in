@@ -90,7 +90,8 @@ esac
 
 dnl I18N feature
 ALL_LINGUAS="@ALL_LINGUAS@"
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION([0.15])
+AM_GNU_GETTEXT([external])
 
 dnl DOS file name convention
 dnl sets HAVE_DOS_FILE_NAMES
@@ -157,9 +158,7 @@ AC_CONFIG_FILES([Makefile
 				 src/Makefile
 				 tests/Makefile
 				 po/Makefile.in
-				 intl/Makefile
 				 doc/Makefile
-				 m4/Makefile
 				 vms/Makefile
 				 bootstrap/Makefile])
 AC_CONFIG_COMMANDS([stamp-h], [echo timestamp > stamp-h])

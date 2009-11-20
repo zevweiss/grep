@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = gnu 1.10
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = intl po lib doc src tests m4 vms bootstrap
+SUBDIRS = po lib doc src tests vms bootstrap
 
-EXTRA_DIST = TODO README README-alpha
+EXTRA_DIST = build-aux/config.rpath  TODO README README-alpha
 
 
 # make cvs-clean blatantly stolen from KDE CVS ;)

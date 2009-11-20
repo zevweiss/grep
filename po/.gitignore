@@ -1,4 +1,14 @@
 *.gmo
-POTFILES
-grep.pot
-stamp-cat-id
+.reference
+LINGUAS
+Makefile.in.in
+Makevars.template
+Rules-quot
+boldquot.sed
+en@boldquot.header
+en@quot.header
+insert-header.sed
+insert-header.sin
+quot.sed
+remove-potcdate.sed
+remove-potcdate.sin

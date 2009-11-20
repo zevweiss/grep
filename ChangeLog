@@ -1,5 +1,38 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* configure.ac.in: Remove m4/Makefile creation.
+	* Makefile.am: Remove m4 subdirectory.
+	* m4/Makefile.am: Remove.
+	* m4/codeset.m4: Remove.
+	* m4/glibc.m4: Remove.
+	* m4/glibc21.m4: Remove.
+	* m4/header.m4: Remove.
+	* m4/install.m4: Remove.
+	* m4/isc-posix.m4: Remove.
+	* m4/lcmessage.m4: Remove.
+	* m4/sanity.m4: Remove.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
+	* configure.ac.in (AM_GNU_GETTEXT_VERSION): Bump to 0.17.
+	* Makefile.am (EXTRA_DIST): Add build-aux/config.rpath.
+	* intl/*: Remove.
+	* m4/gettext.m4: Upgrade to gettext-0.17.
+	* m4/iconv.m4: Upgrade to gettext-0.17.
+	* m4/lib-ld.m4: New file, from gettext-0.17.
+	* m4/lib-link.m4: New file, from gettext-0.17.
+	* m4/lib-prefix.m4: New file, from gettext-0.17.
+	* m4/nls.m4: New file, from gettext-0.17.
+	* m4/po.m4: New file, from gettext-0.17.
+	* m4/progtest.m4: Upgrade to gettext-0.17.
+	* m4/Makefile.am (EXTRA_DIST): Add the new files.
+	* po/Makefile.in.in: Upgrade to gettext-0.17.
+	* po/Makevars: New.
+	* po/cat-id-tbl.c: New.
+	* src/Makefile.am: Replace @INTLLIBS@ with @LIBINTL@.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac.in: Test for limits.h, locale.h, stddef.h, mempcpy
 	and setlocale, though already done implicitly via AM_GNU_GETTEXT.
 
