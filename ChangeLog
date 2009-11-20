@@ -1,5 +1,14 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* m4/largefile.m4: Remove.
+	* m4/lib-ld.m4: Remove.
+	* m4/lib-prefix.m4: Remove.
+	* m4/missing.m4: Remove.
+	* m4/nls.m4: Remove.
+	* m4/progtest.m4: Remove.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* bootstrap: Add autopoint invocation and fetching of .po files.
 	* configure.ac: Bump to GNU gettext 0.17.
 
