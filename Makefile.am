@@ -19,9 +19,10 @@
 AUTOMAKE_OPTIONS = gnu 1.10
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = po lib doc src tests vms bootstrap
+SUBDIRS = po lib doc src tests vms
 
-EXTRA_DIST = build-aux/config.rpath  TODO README README-alpha
+EXTRA_DIST = build-aux/config.rpath TODO README README-alpha \
+	     Makefile.boot README-boot
 
 
 # make cvs-clean blatantly stolen from KDE CVS ;)

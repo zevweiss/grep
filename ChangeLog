@@ -1,5 +1,13 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap/*: Remove.
+	* configure.ac: Do not create bootstrap/Makefile.
+	* Makefile.am: Do not recurse into bootstrap, distribute new files.
+	* Makefile.boot: Move from bootstrap/Makefile.try.
+	* README-boot: Move from bootstrap/README.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* lib/Makefile.am: Distribute gettext.h.
 	* lib/closeout.c: Use it.
 	* lib/gettext.h: New.

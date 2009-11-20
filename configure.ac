@@ -158,6 +158,5 @@ AC_CONFIG_FILES([Makefile
 				 tests/Makefile
 				 po/Makefile.in
 				 doc/Makefile
-				 vms/Makefile
-				 bootstrap/Makefile])
+				 vms/Makefile])
 AC_OUTPUT
