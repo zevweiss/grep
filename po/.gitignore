@@ -1,6 +1,4 @@
 *.gmo
-Makefile.in
-Makefile
 POTFILES
 grep.pot
 stamp-cat-id

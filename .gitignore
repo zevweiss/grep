@@ -1,0 +1,16 @@
+/aclocal.m4
+/autom4te.cache
+/configure
+/configure.ac
+/config.cache
+/config.h
+/config.hin
+/config.log
+/config.status
+/stamp-h 
+/stamp-h1
+Makefile
+Makefile.in
+*.o
+*.a
+.deps
