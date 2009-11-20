@@ -96,22 +96,9 @@ extern void free();
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
-/* Don't use gettext if ENABLE_NLS is not defined */
-/* If we (don't) have I18N.  */
-/* glibc defines _ */
-#ifdef ENABLE_NLS
-# ifndef _
-#  ifdef HAVE_LIBINTL_H
-#   include <libintl.h>
-#   ifndef _
-#    define _(Str) gettext (Str)
-#   endif
-#  endif
-# endif
-#endif
-#ifndef _
-# define _(Str) (Str)
-#endif
+#include <gettext.h>
+#define N_(String) gettext_noop(String)
+#define _(String) gettext(String)
 
 #include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
 #ifdef MBS_SUPPORT

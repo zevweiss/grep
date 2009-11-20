@@ -189,13 +189,9 @@ ptr_t memchr();
 
 #define TOLOWER(C) (ISUPPER(C) ? tolower(C) : (C))
 
-#if ENABLE_NLS
-# include <libintl.h>
-# define _(String) gettext (String)
-#else
-# define _(String) String
-#endif
-#define N_(String) String
+#include <gettext.h>
+#define N_(String) gettext_noop(String)
+#define _(String) gettext(String)
 
 #if HAVE_SETLOCALE
 # include <locale.h>

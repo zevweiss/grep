@@ -30,13 +30,9 @@
 
 #include <ctype.h>
 
-#if ENABLE_NLS
-# include <libintl.h>
-# define _(text) gettext (text)
-#else
-# define _(text) text
-#endif
-#define N_(text) text
+#include <gettext.h>
+#define N_(String) gettext_noop(String)
+#define _(String) gettext(String)
 
 #if HAVE_LIMITS_H
 # include <limits.h>

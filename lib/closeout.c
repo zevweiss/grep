@@ -19,12 +19,8 @@
 # include <config.h>
 #endif
 
-#if ENABLE_NLS
-# include <libintl.h>
-# define _(Text) gettext (Text)
-#else
-# define _(Text) Text
-#endif
+#include <gettext.h>
+#define _(String) gettext(String)
 
 #if HAVE_STDLIB_H
 # include <stdlib.h>

@@ -1,5 +1,15 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* lib/Makefile.am: Distribute gettext.h.
+	* lib/closeout.c: Use it.
+	* lib/gettext.h: New.
+	* lib/quotearg.c: Use it.
+	* lib/xmalloc.c: Use it.
+	* src/dfa.c: Use it.
+	* src/system.h: Use it.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac.in: Rename...
 	* configure.ac: ... to this.  Remove ALL_LINGUAS definition.
 	* autogen.sh: Generate po/LINGUAS instead of configure.ac.

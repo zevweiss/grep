@@ -27,7 +27,7 @@ libgreputils_a_SOURCES = \
 
 libgreputils_a_LIBADD = @LIBOBJS@ @ALLOCA@
 noinst_HEADERS = \
-  closeout.h error.h exclude.h fnmatch.h getopt.h \
+  closeout.h error.h exclude.h fnmatch.h getopt.h gettext.h \
   hard-locale.h obstack.h quotearg.h regex.h savedir.h xalloc.h xstrtol.h
 
 EXTRA_DIST = strtol.c malloc.c realloc.c
