@@ -89,7 +89,6 @@ case "$ac_cv_prog_CC" in
 esac
 
 dnl I18N feature
-ALL_LINGUAS="@ALL_LINGUAS@"
 AM_GNU_GETTEXT_VERSION([0.15])
 AM_GNU_GETTEXT([external])
 

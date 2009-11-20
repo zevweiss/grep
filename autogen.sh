@@ -23,7 +23,7 @@ for i in po/*.po; do
 done
 # Eliminate leading whitespace
 ALL_LINGUAS="`echo $ALL_LINGUAS |cut -b1-`"
-sed -e "s,@ALL_LINGUAS@,$ALL_LINGUAS," configure.ac.in >configure.ac
+echo "$ALL_LINGUAS" > po/LINGUAS
 
 # Let auto* do its work
 if \

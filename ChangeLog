@@ -1,5 +1,11 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* configure.ac.in: Rename...
+	* configure.ac: ... to this.  Remove ALL_LINGUAS definition.
+	* autogen.sh: Generate po/LINGUAS instead of configure.ac.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac.in: Remove pointless (?) stamp-h rule.
 
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
