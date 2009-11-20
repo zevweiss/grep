@@ -1,5 +1,9 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* configure.ac.in: Remove pointless (?) stamp-h rule.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac.in: Remove m4/Makefile creation.
 	* Makefile.am: Remove m4 subdirectory.
 	* m4/Makefile.am: Remove.

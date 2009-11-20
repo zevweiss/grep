@@ -161,5 +161,4 @@ AC_CONFIG_FILES([Makefile
 				 doc/Makefile
 				 vms/Makefile
 				 bootstrap/Makefile])
-AC_CONFIG_COMMANDS([stamp-h], [echo timestamp > stamp-h])
 AC_OUTPUT
