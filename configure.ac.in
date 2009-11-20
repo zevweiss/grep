@@ -20,6 +20,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_INIT(GNU grep, 2.6-cvs, bug-grep@gnu.org, grep)
+AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE(GREP, 1, [We are building grep])
 AC_PREREQ(2.53)
@@ -99,15 +100,6 @@ AC_DOSFILE
 dnl check for the environ separator
 dnl sets SEP
 AM_SEP
-
-dnl OS specifics
-dnl sets {EXE,OBJ}EXT
-AC_EXEEXT
-dnl Invoke the (capitalized) ac_objext macro without spelling its name.
-dnl This works around a bug in automake 1.4 with ansi2knr.
-dnl Automake looks for (capitalized) ac_objext by grepping for it,
-dnl so it won't find it in this file.
-ifelse(,, [AC][_OBJEXT])
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...

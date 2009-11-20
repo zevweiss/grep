@@ -9,6 +9,7 @@
 /config.status
 /stamp-h 
 /stamp-h1
+/INSTALL
 Makefile
 Makefile.in
 *.o

@@ -1,5 +1,16 @@
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
+	* configure.ac: Slightly modernize.
+	* Makefile.am: Modernize, use dependencies.
+	* Makefile.am: Modernize, use dependencies.
+	* lib/Makefile.am: Remove ansi2knr.
+	* src/Makefile.am: Remove ansi2knr.
+
+	* .gitignore: Add INSTALL
+	* build-aux/.gitignore: New.
+
+2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
+
 	* autogen.sh: Remove what is useless with git.
 
 2009-02-10  Tony Abou-Assaleh <taa@acm.org>
