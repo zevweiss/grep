@@ -1,3 +1,8 @@
+2009-11-21  Paolo Bonzini  <bonzini@gnu.org>
+
+	* configure.ac: Remove AC_SEP.
+	* m4/envsep.m4: Remove.
+
 2009-11-20  Paolo Bonzini  <bonzini@gnu.org>
 
 	* configure.ac: Do not generate lib/posix/Makefile.

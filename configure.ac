@@ -96,10 +96,6 @@ dnl DOS file name convention
 dnl sets HAVE_DOS_FILE_NAMES
 AC_DOSFILE
 
-dnl check for the environ separator
-dnl sets SEP
-AM_SEP
-
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
 dnl if glibc2 regex is not included
