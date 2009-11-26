@@ -3,6 +3,7 @@ config.rpath
 config.sub
 depcomp
 install-sh
+link-warning.h
 mdate-sh
 missing
 texinfo.tex

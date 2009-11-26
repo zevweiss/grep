@@ -15,18 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-noinst_LIBRARIES = libgreputils.a
+include gnulib.mk
 
-INCLUDES = -I.. -I$(srcdir) -I../intl
-DEFS = -DLIBDIR=\"$(libdir)\" @DEFS@
+INCLUDES = -I.. -I$(srcdir)
+DEFS = @DEFS@
 
-libgreputils_a_SOURCES = \
-  closeout.c error.c exclude.c hard-locale.c \
-  isdir.c obstack.c quotearg.c savedir.c xmalloc.c xstrtol.c  xstrtoumax.c
+libgreputils_a_SOURCES += \
+  closeout.c exclude.c hard-locale.c isdir.c quotearg.c savedir.c
 
-libgreputils_a_LIBADD = @LIBOBJS@ @ALLOCA@
-noinst_HEADERS = \
-  closeout.h error.h exclude.h fnmatch.h getopt.h gettext.h \
-  hard-locale.h obstack.h quotearg.h regex.h savedir.h xalloc.h xstrtol.h
-
-EXTRA_DIST = strtol.c malloc.c realloc.c
+libgreputils_a_LIBADD += @LIBOBJS@ @ALLOCA@
+noinst_HEADERS += \
+  closeout.h exclude.h hard-locale.h quotearg.h savedir.h

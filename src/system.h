@@ -46,12 +46,6 @@ int open(), read(), close();
 extern int errno;
 #endif
 
-#ifndef HAVE_STRERROR
-extern int sys_nerr;
-extern char *sys_errlist[];
-# define strerror(E) (0 <= (E) && (E) < sys_nerr ? _(sys_errlist[E]) : _("Unknown system error"))
-#endif
-
 /* Some operating systems treat text and binary files differently.  */
 #ifdef __BEOS__
 # undef O_BINARY /* BeOS 5 has O_BINARY and O_TEXT, but they have no effect. */

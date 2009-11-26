@@ -1,5 +1,45 @@
 2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap.conf: Add gnulib modules and build libgreputils.a.
+	* configure.ac: Remove macros subsumed by gnulib.
+	* lib/Makefile.am: Remove files subsumed by gnulib.
+	* lib/alloca.c: Remove.
+	* lib/atexit.c: Remove.
+	* lib/error.c: Remove.
+	* lib/error.h: Remove.
+	* lib/fnmatch.c: Remove.
+	* lib/fnmatch.h: Remove.
+	* lib/getopt.c: Remove.
+	* lib/getopt.h: Remove.
+	* lib/getopt1.c: Remove.
+	* lib/gettext.h: Remove.
+	* lib/malloc.c: Remove.
+	* lib/memchr.c: Remove.
+	* lib/obstack.c: Remove.
+	* lib/obstack.h: Remove.
+	* lib/quotearg.c: Remove.
+	* lib/quotearg.h: Remove.
+	* lib/realloc.c: Remove.
+	* lib/stpcpy.c: Remove.
+	* lib/strtol.c: Remove.
+	* lib/strtoul.c: Remove.
+	* lib/strtoull.c: Remove.
+	* lib/xalloc.h: Remove.
+	* lib/xmalloc.c: Remove.
+	* lib/xstrtol.c: Remove.
+	* lib/xstrtol.h: Remove.
+	* lib/xstrtoumax.c: Remove.
+	* m4/error.m4: Remove.
+	* m4/inttypes_h.m4: Remove.
+	* m4/malloc.m4: Remove.
+	* m4/realloc.m4: Remove.
+	* m4/uintmax_t.m4: Remove.
+	* m4/ulonglong.m4: Remove.
+	* m4/xstrtoumax.m4: Remove.
+	* src/system.h: Remove strerror, sys_nerr, sys_errlist.
+
+2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
+
 	* bootstrap: Use gnulib's build-aux/bootstrap.
 	* configure.ac: Add gl_INIT and gl_EARLY.
 
