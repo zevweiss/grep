@@ -25,9 +25,7 @@
 # define getpagesize() B_PAGE_SIZE
 #endif
 
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #if !defined getpagesize && defined _SC_PAGESIZE
 # if !(defined VMS && __VMS_VER < 70000000)

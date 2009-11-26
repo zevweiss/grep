@@ -39,7 +39,6 @@
 #include <stdio.h>
 #include "system.h"
 #include "getopt.h"
-#include "getpagesize.h"
 #include "grep.h"
 #include "savedir.h"
 #include "xstrtol.h"

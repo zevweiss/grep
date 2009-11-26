@@ -4,6 +4,8 @@ alloca.in.h
 atexit.c
 btowc.c
 config.charset
+dirent.h
+dirent.in.h
 dummy.c
 errno.h
 errno.in.h
@@ -20,6 +22,7 @@ getopt.h
 getopt.in.h
 getopt1.c
 getopt_int.h
+getpagesize.c
 gettext.h
 gnulib.mk
 intprops.h
@@ -27,13 +30,18 @@ inttypes.h
 inttypes.in.h
 localcharset.c
 localcharset.h
+locale.h
+locale.in.h
 malloc.c
+mbrlen.c
 mbrtowc.c
 mbsinit.c
 mbsrtowcs-state.c
 mbsrtowcs.c
 memchr.c
 memchr.valgrind
+memmove.c
+mempcpy.c
 obstack.c
 obstack.h
 quotearg.c
@@ -69,6 +77,11 @@ strtol.c
 strtoll.c
 strtoul.c
 strtoull.c
+sys
+sys_stat.h
+sys_stat.in.h
+time.h
+time.in.h
 unistd.h
 unistd.in.h
 verify.h

@@ -1,5 +1,23 @@
 2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap.conf: Add gnulib modules for replacement functions and
+	headers.
+	* configure.ac: Remove macros subsumed by gnulib.
+	* lib/hard-locale.c: Remove guards for headers/functions provided by gnulib.
+	* lib/regex.c: Likewise.
+	* lib/savedir.c: Likewise.
+	* src/dfa.c: Likewise.
+	* src/grep.c: Likewise.
+	* src/mbsupport.h: Likewise.
+	* src/system.h: Likewise.
+
+	* src/dfa.h: Do not look at PROTOTYPES.
+
+	* m4/mbstate_t.m4: Remove.
+	* src/getpagesize.h: Remove.
+
+2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
+
 	* bootstrap.conf: Add gnulib modules and build libgreputils.a.
 	* configure.ac: Remove macros subsumed by gnulib.
 	* lib/Makefile.am: Remove files subsumed by gnulib.

@@ -48,28 +48,19 @@ AC_PROG_RANLIB
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_SYS_LARGEFILE
-AM_C_PROTOTYPES
 AC_TYPE_SIZE_T
-AC_CHECK_TYPE(ssize_t, int)
 AC_C_CONST
 gl_INIT
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(stddef.h string.h stdlib.h sys/param.h memory.h unistd.h locale.h limits.h wctype.h wchar.h)
 AC_HEADER_DIRENT
-AC_HEADER_STAT
 
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 
-dnl getpagesize is checked for by AC_FUNC_MMAP.
-AC_CHECK_FUNCS(btowc isascii iswctype mbrlen memmove mempcpy setlocale setmode wcrtomb wcscoll wctype)
-# We can use mbrtowc only if we have mbstate_t.
-AC_FUNC_MBRTOWC
-# Yet we need a mbstate_t stub in every case.
-AC_MBSTATE_T
+AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale setmode wcscoll)
 
 dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.17])

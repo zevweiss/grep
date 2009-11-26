@@ -3,6 +3,7 @@ alloca.m4
 atexit.m4
 btowc.m4
 codeset.m4
+dirent_h.m4
 errno_h.m4
 error.m4
 exitfail.m4
@@ -10,6 +11,7 @@ extensions.m4
 fcntl_h.m4
 fnmatch.m4
 getopt.m4
+getpagesize.m4
 gettext.m4
 glibc2.m4
 glibc21.m4
@@ -36,13 +38,18 @@ localcharset.m4
 locale-fr.m4
 locale-ja.m4
 locale-zh.m4
+locale_h.m4
 lock.m4
 longlong.m4
 malloc.m4
+mbrlen.m4
 mbrtowc.m4
 mbsinit.m4
 mbsrtowcs.m4
+mbstate_t.m4
 memchr.m4
+memmove.m4
+mempcpy.m4
 mmap-anon.m4
 multiarch.m4
 nls.m4
@@ -69,7 +76,9 @@ strtoll.m4
 strtoul.m4
 strtoull.m4
 strtoumax.m4
+sys_stat_h.m4
 threadlib.m4
+time_h.m4
 unistd_h.m4
 visibility.m4
 wchar.m4

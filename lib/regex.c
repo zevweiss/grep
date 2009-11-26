@@ -46,7 +46,7 @@
 # include <sys/types.h>
 #endif
 
-#define WIDE_CHAR_SUPPORT (HAVE_WCTYPE_H && HAVE_WCHAR_H && HAVE_BTOWC)
+#define WIDE_CHAR_SUPPORT (HAVE_WCTYPE_H && HAVE_WCHAR_H)
 
 /* For platform which support the ISO C amendement 1 functionality we
    support user defined character classes.  */

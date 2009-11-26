@@ -30,17 +30,7 @@
 #include <stdlib.h>
 #endif
 
-#if    defined(HAVE_ISWCTYPE) \
-    && defined(HAVE_LOCALE_H) \
-    && defined(HAVE_MBRLEN) \
-    && defined(HAVE_MBRTOWC) \
-    && defined(HAVE_WCHAR_H) \
-    && defined(HAVE_WCRTOMB) \
-    && defined(HAVE_WCSCOLL) \
-    && defined(HAVE_WCTYPE) \
-    && defined(HAVE_WCTYPE_H) \
-    && (defined(HAVE_STDLIB_H) && defined(MB_CUR_MAX)) \
-/* We can handle multibyte strings.  */
+#if defined(HAVE_WCSCOLL) && defined(HAVE_ISWCTYPE)
 # define MBS_SUPPORT 1
 #else
 # undef MBS_SUPPORT

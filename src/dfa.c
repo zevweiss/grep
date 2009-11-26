@@ -20,36 +20,15 @@
 /* Written June, 1988 by Mike Haertel
    Modified July, 1988 by Arthur David Olson to assist BMG speedups  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-
-#ifndef VMS
 #include <sys/types.h>
-#else
 #include <stddef.h>
-#endif
-#ifdef STDC_HEADERS
 #include <stdlib.h>
-#else
-extern char *calloc(), *malloc(), *realloc();
-extern void free();
-#endif
-
-#if defined(HAVE_STRING_H) || defined(STDC_HEADERS)
 #include <string.h>
-#else
-#include <strings.h>
-#endif
-
-#if HAVE_SETLOCALE
-# include <locale.h>
-#endif
-
+#include <locale.h>
 
 #ifndef DEBUG	/* use the same approach as regex.c */
 #undef assert

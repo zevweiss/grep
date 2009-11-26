@@ -23,25 +23,9 @@
 #endif
 
 #include <sys/types.h>
-
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-
-#if HAVE_DIRENT_H
-# include <dirent.h>
-#else
-# define dirent direct
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
+#include <unistd.h>
+#include <dirent.h>
+#include <stddef.h>
 
 #ifdef CLOSEDIR_VOID
 /* Fake a return value. */
@@ -50,21 +34,8 @@
 # define CLOSEDIR(d) closedir (d)
 #endif
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <string.h>
-#else
-char *malloc ();
-char *realloc ();
-#endif
-#ifndef NULL
-# define NULL 0
-#endif
-
-#ifndef stpcpy
-char *stpcpy ();
-#endif
-
+#include <stdlib.h>
+#include <string.h>
 #include <fnmatch.h>
 #include "savedir.h"
 
