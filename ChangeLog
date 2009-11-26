@@ -1,5 +1,10 @@
 2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap: Use gnulib's build-aux/bootstrap.
+	* configure.ac: Add gl_INIT and gl_EARLY.
+
+2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
+
 	* configure.ac: Bump AC_PREREQ to 2.59.
 
 2009-11-26  Paolo Bonzini  <bonzini@gnu.org>

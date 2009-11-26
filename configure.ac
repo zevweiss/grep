@@ -41,8 +41,9 @@ AC_ARG_ENABLE(perl-regexp,
 dnl Checks for programs.
 AC_CANONICAL_HOST
 AC_PROG_AWK
-AC_PROG_CC
 AC_PROG_INSTALL
+AC_PROG_CC
+gl_EARLY
 AC_PROG_RANLIB
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -52,6 +53,7 @@ AC_TYPE_SIZE_T
 AC_CHECK_TYPE(ssize_t, int)
 AC_C_CONST
 jm_AC_TYPE_UINTMAX_T
+gl_INIT
 
 dnl Checks for header files.
 AC_HEADER_STDC
