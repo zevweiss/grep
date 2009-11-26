@@ -2,10 +2,15 @@ alloca.c
 alloca.h
 alloca.in.h
 atexit.c
+basename-lgpl.c
+basename.c
 btowc.c
 config.charset
 dirent.h
 dirent.in.h
+dirname-lgpl.c
+dirname.c
+dirname.h
 dummy.c
 errno.h
 errno.in.h
@@ -70,6 +75,9 @@ streq.h
 strerror.c
 string.h
 string.in.h
+stripslash.c
+strndup.c
+strnlen.c
 strnlen1.c
 strnlen1.h
 strtoimax.c
@@ -93,6 +101,8 @@ wctype.in.h
 xalloc-die.c
 xalloc.h
 xmalloc.c
+xstrndup.c
+xstrndup.h
 xstrtol-error.c
 xstrtol.c
 xstrtol.h

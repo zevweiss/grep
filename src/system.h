@@ -35,30 +35,11 @@
 #include <unistd.h>
 #include <errno.h>
 
-/* Some operating systems treat text and binary files differently.  */
-#ifdef __BEOS__
-# undef O_BINARY /* BeOS 5 has O_BINARY and O_TEXT, but they have no effect. */
-#endif
-#ifdef HAVE_DOS_FILE_CONTENTS
-# include <io.h>
-# ifdef HAVE_SETMODE
-#  define SET_BINARY(fd)  setmode (fd, O_BINARY)
-# else
-#  define SET_BINARY(fd)  _setmode (fd, O_BINARY)
-# endif
-#endif
+#include "binary-io.h"
+#include "dirname.h"
 
-#ifdef HAVE_DOS_FILE_NAMES
-# define IS_SLASH(c) ((c) == '/' || (c) == '\\')
-# define FILESYSTEM_PREFIX_LEN(f) ((f)[0] && (f)[1] == ':' ? 2 : 0)
-#endif
-
-#ifndef IS_SLASH
-# define IS_SLASH(c) ((c) == '/')
-#endif
-
-#ifndef FILESYSTEM_PREFIX_LEN
-# define FILESYSTEM_PREFIX_LEN(f) 0
+#if O_BINARY
+# define HAVE_DOS_FILE_CONTENTS 1
 #endif
 
 int isdir PARAMS ((char const *));

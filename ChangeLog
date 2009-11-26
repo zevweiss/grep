@@ -1,5 +1,13 @@
 2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
 
+	* bootstrap.conf: Add binary-io, dirname.
+	* configure.ac: Remove check for setmode, AC_DOSFILE.
+	* m4/dosfile.m4: Remove.
+	* src/grep.c: Adjust for dirname.h.
+	* src/system.h: Adjust for new gnulib modules.
+
+2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
+
 	* bootstrap.conf: Add gnulib modules for replacement functions and
 	headers.
 	* configure.ac: Remove macros subsumed by gnulib.

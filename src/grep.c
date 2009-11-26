@@ -1369,8 +1369,8 @@ grepdir (char const *dir, struct stats const *stats)
   else
     {
       size_t dirlen = strlen (dir);
-      int needs_slash = ! (dirlen == FILESYSTEM_PREFIX_LEN (dir)
-			   || IS_SLASH (dir[dirlen - 1]));
+      int needs_slash = ! (dirlen == FILE_SYSTEM_PREFIX_LEN (dir)
+			   || ISSLASH (dir[dirlen - 1]));
       char *file = NULL;
       char const *namep = name_space;
       struct stats child;

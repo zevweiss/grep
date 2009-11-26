@@ -4,6 +4,9 @@ atexit.m4
 btowc.m4
 codeset.m4
 dirent_h.m4
+dirname.m4
+dos.m4
+double-slash-root.m4
 errno_h.m4
 error.m4
 exitfail.m4
@@ -70,6 +73,8 @@ stdlib_h.m4
 stpcpy.m4
 strerror.m4
 string_h.m4
+strndup.m4
+strnlen.m4
 strtoimax.m4
 strtol.m4
 strtoll.m4
@@ -88,4 +93,5 @@ wctype.m4
 wint_t.m4
 xalloc.m4
 xsize.m4
+xstrndup.m4
 xstrtol.m4

@@ -60,15 +60,11 @@ dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_MMAP
 
-AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale setmode wcscoll)
+AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale wcscoll)
 
 dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
-
-dnl DOS file name convention
-dnl sets HAVE_DOS_FILE_NAMES
-AC_DOSFILE
 
 dnl some folks ask for this, that's fine by me
 dnl hope they know what they're doing ...
