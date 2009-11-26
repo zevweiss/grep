@@ -30,10 +30,8 @@
 
 #if HAVE_DIRENT_H
 # include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
 # define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
 # if HAVE_SYS_NDIR_H
 #  include <sys/ndir.h>
 # endif
@@ -134,7 +132,8 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	  || (dp->d_name[1] != '\0'
 	      && (dp->d_name[1] != '.' || dp->d_name[2] != '\0')))
 	{
-	  off_t size_needed = (namep - name_space) + NAMLEN (dp) + 2;
+	  size_t namlen = strlen (dp->d_name);
+	  size_t size_needed = (namep - name_space) + namlen + 2;
 
 	  if ((included_patterns || excluded_patterns)
 	      && !isdir1 (dir, dp->d_name))
@@ -172,7 +171,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	      name_space = new_name_space;
 	    }
 	  strcpy (namep, dp->d_name);
-	  namep += NAMLEN (dp) + 1;
+	  namep += namlen + 1;
 	}
     }
   *namep = '\0';

@@ -1,3 +1,7 @@
+2009-11-26  Paolo Bonzini  <bonzini@gnu.org>
+
+	* lib/savedir.c: Do not use NAMLEN.
+
 2009-11-21  Paolo Bonzini  <bonzini@gnu.org>
 
 	* configure.ac: Remove AC_SEP.
