@@ -23,7 +23,7 @@ AC_INIT(GNU grep, 2.6-cvs, bug-grep@gnu.org, grep)
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE(GREP, 1, [We are building grep])
-AC_PREREQ(2.53)
+AC_PREREQ(2.59)
 
 dnl Automake stuff.
 AM_INIT_AUTOMAKE(dist-bzip2)
