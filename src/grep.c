@@ -1338,7 +1338,7 @@ grepdir (char const *dir, struct stats const *stats)
   char *name_space;
   int status = 1;
   if ( excluded_directory_patterns &&
-       excluded_filename (excluded_directory_patterns, dir, 0)  ) {
+       excluded_file_name (excluded_directory_patterns, dir)  ) {
        return 1;
   }	
 
@@ -2263,10 +2263,10 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 	      && !isdir (file))
 	    {
 	      if (included_patterns &&
-		  ! excluded_filename (included_patterns, file, 0))
+		  ! excluded_file_name (included_patterns, file))
 		continue;
 	      if (excluded_patterns &&
-		  excluded_filename (excluded_patterns, file, 0))
+		  excluded_file_name (excluded_patterns, file))
 		continue;
 	    }
 	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file,

@@ -18,11 +18,8 @@
 include gnulib.mk
 
 INCLUDES = -I.. -I$(srcdir)
-DEFS = @DEFS@
 
 libgreputils_a_SOURCES += \
-  closeout.c exclude.c hard-locale.c isdir.c quotearg.c savedir.c
+  savedir.c savedir.h
 
 libgreputils_a_LIBADD += @LIBOBJS@ @ALLOCA@
-noinst_HEADERS += \
-  closeout.h exclude.h hard-locale.h quotearg.h savedir.h

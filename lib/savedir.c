@@ -110,10 +110,10 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	      && !isdir1 (dir, dp->d_name))
 	    {
 	      if (included_patterns
-		  && !excluded_filename (included_patterns, dp->d_name, 0))
+		  && !excluded_file_name (included_patterns, dp->d_name))
 		continue;
 	      if (excluded_patterns
-		  && excluded_filename (excluded_patterns, dp->d_name, 0))
+		  && excluded_file_name (excluded_patterns, dp->d_name))
 		continue;
 	    }
 	     
@@ -121,7 +121,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	      && isdir1 (dir, dp->d_name) )
 	    {
 	      if (excluded_directory_patterns
-		  && excluded_filename (excluded_directory_patterns, dp->d_name, 0))
+		  && excluded_file_name (excluded_directory_patterns, dp->d_name))
 		continue;
 	    }
 
