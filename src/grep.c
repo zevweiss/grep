@@ -463,7 +463,7 @@ reset (int fd, char const *file, struct stats *stats)
 	  bufoffset = lseek (fd, 0, SEEK_CUR);
 	  if (bufoffset < 0)
 	    {
-	      error (0, errno, "lseek");
+	      error (0, errno, _("lseek failed"));
 	      return 0;
 	    }
 	}
@@ -584,7 +584,7 @@ fillbuf (size_t save, struct stats const *stats)
 	  if (bufoffset != initial_bufoffset
 	      && lseek (bufdesc, bufoffset, SEEK_SET) < 0)
 	    {
-	      error (0, errno, "lseek");
+	      error (0, errno, _("lseek failed"));
 	      cc = 0;
 	    }
 	}

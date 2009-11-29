@@ -39,7 +39,6 @@ local-checks-to-skip =			\
   sc_space_tab				\
   sc_trailing_blank			\
   sc_two_space_separator_in_usage	\
-  sc_unmarked_diagnostics		\
   sc_useless_cpp_parens
 
 # Tools used to bootstrap this package, used for "announcement".
