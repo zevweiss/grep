@@ -1,0 +1,4 @@
+src/egrep.c
+src/fgrep.c
+src/esearch.c
+src/fsearch.c

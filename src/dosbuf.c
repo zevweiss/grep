@@ -29,6 +29,8 @@
 
 */
 
+#include <config.h>
+
 typedef enum {
   UNKNOWN, DOS_BINARY, DOS_TEXT, UNIX_TEXT
 } File_type;

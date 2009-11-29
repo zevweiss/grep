@@ -27,6 +27,8 @@
 
         Written by Phillip C. Brisco 8/98.
       */
+
+#include <config.h>
 #include "vms_fab.h"
 
 void
