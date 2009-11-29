@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AWK=@AWK@
-
 TESTS = warning.sh khadafy.sh spencer1.sh bre.sh ere.sh pcre.sh \
         status.sh empty.sh options.sh backref.sh file.sh foad1.sh \
         fmbtest.sh yesno.sh

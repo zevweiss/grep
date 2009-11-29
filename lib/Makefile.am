@@ -22,4 +22,4 @@ INCLUDES = -I.. -I$(srcdir)
 libgreputils_a_SOURCES += \
   savedir.c savedir.h
 
-libgreputils_a_LIBADD += @LIBOBJS@ @ALLOCA@
+libgreputils_a_LIBADD += $(LIBOBJS) $(ALLOCA)

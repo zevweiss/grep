@@ -23,7 +23,7 @@ egrep_SOURCES = egrep.c esearch.c kwset.c dfa.c
 fgrep_SOURCES = fgrep.c fsearch.c kwset.c
 noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h mbsupport.h
 
-LDADD = @LIBINTL@ ../lib/libgreputils.a
+LDADD = $(LIBINTL) ../lib/libgreputils.a
 localedir = $(datadir)/locale
 INCLUDES = -I../intl -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
