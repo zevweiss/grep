@@ -33,9 +33,7 @@ local-checks-to-skip =			\
   sc_prohibit_have_config_h		\
   sc_prohibit_magic_number_exit		\
   sc_prohibit_strcmp			\
-  sc_prohibit_xalloc_without_use	\
   sc_space_tab				\
-  sc_two_space_separator_in_usage	\
   sc_useless_cpp_parens
 
 # Tools used to bootstrap this package, used for "announcement".

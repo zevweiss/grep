@@ -1472,8 +1472,8 @@ Output control:\n\
       --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
       --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
-      --exclude-dir=PATTERN directories that match PATTERN will be skipped.\n\
-  -L, --files-without-match print only names of FILEs containing no match\n\
+      --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
+  -L, --files-without-match  print only names of FILEs containing no match\n\
   -l, --files-with-matches  print only names of FILEs containing matches\n\
   -c, --count               print only a count of matching lines per FILE\n\
   -T, --initial-tab         make tabs line up (if needed)\n\

@@ -40,7 +40,7 @@
 #ifdef GREP
 # include "xalloc.h"
 # undef malloc
-# define malloc xmalloc
+# define malloc(s) xmalloc(s)
 #endif
 
 #define NCHAR (UCHAR_MAX + 1)
