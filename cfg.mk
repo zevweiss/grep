@@ -28,7 +28,6 @@ local-checks-to-skip =			\
   sc_cast_of_x_alloc_return_value	\
   sc_error_message_uppercase		\
   sc_file_system			\
-  sc_immutable_NEWS			\
   sc_m4_quote_check			\
   sc_makefile_TAB_only_indentation	\
   sc_makefile_check			\
@@ -53,4 +52,4 @@ bootstrap-tools = autoconf,automake,gnulib
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = ?
+old_NEWS_hash = f81932a59c299cb94579f099231305a6
