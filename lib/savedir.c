@@ -98,7 +98,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 
   while ((dp = readdir (dirp)) != NULL)
     {
-      /* Skip "." and ".." (some NFS filesystems' directories lack them). */
+      /* Skip "." and ".." (some NFS file systems' directories lack them). */
       if (dp->d_name[0] != '.'
 	  || (dp->d_name[1] != '\0'
 	      && (dp->d_name[1] != '.' || dp->d_name[2] != '\0')))
@@ -116,7 +116,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 		  && excluded_file_name (excluded_patterns, dp->d_name))
 		continue;
 	    }
-	     
+
 	  if ( excluded_directory_patterns
 	      && isdir1 (dir, dp->d_name) )
 	    {

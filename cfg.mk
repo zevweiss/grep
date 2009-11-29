@@ -27,7 +27,6 @@ local-checks-to-skip =			\
   sc_cast_of_argument_to_free		\
   sc_cast_of_x_alloc_return_value	\
   sc_error_message_uppercase		\
-  sc_file_system			\
   sc_m4_quote_check			\
   sc_makefile_TAB_only_indentation	\
   sc_makefile_check			\
