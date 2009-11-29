@@ -32,7 +32,6 @@ local-checks-to-skip =			\
   sc_makefile_check			\
   sc_makefile_path_separator_check	\
   sc_po_check				\
-  sc_program_name			\
   sc_prohibit_have_config_h		\
   sc_prohibit_magic_number_exit		\
   sc_prohibit_strcmp			\

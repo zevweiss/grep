@@ -47,6 +47,7 @@
 #include "exclude.h"
 #include "exitfail.h"
 #include "closeout.h"
+#include "progname.h"
 
 #undef MAX
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
@@ -351,7 +352,6 @@ unsigned char eolbyte;
 
 /* For error messages. */
 /* The name the program was run with, stripped of any leading path. */
-char *program_name;
 static char const *filename;
 static int errseen;
 
@@ -1341,7 +1341,7 @@ grepdir (char const *dir, struct stats const *stats)
   if ( excluded_directory_patterns &&
        excluded_file_name (excluded_directory_patterns, dir)  ) {
        return 1;
-  }	
+  }
 
 
   /* Mingw32 does not support st_ino.  No known working hosts use zero
@@ -1511,7 +1511,7 @@ if any error occurs and -q was not given, the exit status is 2.\n"));
               "http://www.gnu.org/software/grep/");
       fputs (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"),
              stdout);
-              
+
     }
   exit (status);
 }
@@ -1834,6 +1834,7 @@ main (int argc, char **argv)
   extern int optind;
 
   initialize_main (&argc, &argv);
+  set_program_name (argv[0]);
   program_name = argv[0];
 
   keys = NULL;
@@ -2130,15 +2131,15 @@ main (int argc, char **argv)
         if (!excluded_directory_patterns)
 	  excluded_directory_patterns = new_exclude ();
 	add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
-        break;	
-	
+        break;
+
       case INCLUDE_OPTION:
 	if (!included_patterns)
 	  included_patterns = new_exclude ();
 	add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE);
 	break;
-	
-	
+
+
 
       case LINE_BUFFERED_OPTION:
 	line_buffered = 1;

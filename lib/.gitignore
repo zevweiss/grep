@@ -104,6 +104,8 @@ openat.c
 openat.h
 opendir-safer.c
 pipe-safer.c
+progname.c
+progname.h
 quotearg.c
 quotearg.h
 realloc.c
