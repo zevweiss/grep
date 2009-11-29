@@ -45,6 +45,7 @@
 #include "xalloc.h"
 #include "error.h"
 #include "exclude.h"
+#include "exitfail.h"
 #include "closeout.h"
 
 #undef MAX
@@ -2043,7 +2044,7 @@ main (int argc, char **argv)
 
       case 'q':
 	exit_on_match = 1;
-	close_stdout_set_status(0);
+	exit_failure = 0;
 	break;
 
       case 'R':
