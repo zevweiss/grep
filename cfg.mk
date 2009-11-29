@@ -37,7 +37,6 @@ local-checks-to-skip =			\
   sc_prohibit_strcmp			\
   sc_prohibit_xalloc_without_use	\
   sc_space_tab				\
-  sc_trailing_blank			\
   sc_two_space_separator_in_usage	\
   sc_useless_cpp_parens
 

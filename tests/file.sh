@@ -27,7 +27,7 @@ if test $? -ne 0 ; then
         failures=1
 fi
 
-# match 
+# match
 echo "GNU" | ${GREP} -G -f patfile  > /dev/null 2>&1
 if test $? -ne 0 ; then
         echo "File_pattern: Wrong status code, test \#2 failed"

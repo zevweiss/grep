@@ -12,12 +12,12 @@ $     ccopt = "/decc/prefix=all" + ccopt
 $   endif
 $ endif
 $ if f$extract(1,3,f$getsyi("Version")) .lts. "7.0"
-$ then 
+$ then
 $   if f$search("x11vms:xvmsutils.olb").eqs.""
 $   then
 $     type sys$input
-To build grep on OpenVMS versions prior to 7.x you need to install the 
-xvmsutils to get the close-/open-/readdir functions. The library can be 
+To build grep on OpenVMS versions prior to 7.x you need to install the
+xvmsutils to get the close-/open-/readdir functions. The library can be
 found at http://www.decus.de:8080/www/vms/sw/xvmsutils.htmlx
 
 Exiting now

@@ -1,6 +1,6 @@
   Copyright (C) 1992, 1997, 1998, 1999, 2000, 2001, 2002, 2004,
   2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
-  
+
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
@@ -31,5 +31,5 @@ email message to <grep-commit-request@gnu.org> with "subscribe" (without
 the quotation marks) in the subject header field (or in the body) of
 the email, or visit <http://lists.gnu.org/mailman/listinfo/grep-commit>.
 
-A web page containing information for GNU grep developers is at 
+A web page containing information for GNU grep developers is at
 <http://www.gnu.org/software/grep/devel.html>.

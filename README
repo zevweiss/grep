@@ -1,6 +1,6 @@
   Copyright (C) 1992, 1997, 1998, 1999, 2000, 2001, 2002, 2004,
   2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
-  
+
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
@@ -42,7 +42,7 @@ and have been disabled.
 The combination of -o and -i options is broken and the known failing cases
 are disabled in foad1.sh
 
-The option -i does not work properly in some multibyte locales such as 
+The option -i does not work properly in some multibyte locales such as
 tr_TR.UTF-8 where the upper case and lower case forms of a character are not
 necessarily of the same byte length.
 

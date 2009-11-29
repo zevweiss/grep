@@ -552,7 +552,7 @@ parse_bracket_exp_mb ()
 				       work_mbc->nchars + 2);
 		  work_mbc->chars[work_mbc->nchars++] = L'[';
 		  work_mbc->chars[work_mbc->nchars++] = delim;
-		  break; 
+		  break;
 		}
 
 	      if (--lexleft, *lexptr++ != ']')
@@ -2619,7 +2619,7 @@ check_matching_with_multibyte_ops (struct dfa *d, int s, int index)
    of check_matching_with_multibyte_ops() for optimization.
    `mbclen' and `pps' are the output.  `mbclen' is the length of the
    character consumed, and `pps' is the set this function enumerate.  */
-static status_transit_state 
+static status_transit_state
 transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
 			     int *match_lens, int *mbclen, position_set *pps)
 {

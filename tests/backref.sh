@@ -1,6 +1,6 @@
 #! /bin/sh
 # Test for backreferences and other things.
-# 
+#
 # Copyright (C) 2001, 2006, 2009 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,

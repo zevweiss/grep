@@ -7,7 +7,7 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 #
-# grep [ -E| -F][ -c| -l| -q ][-insvx] -e pattern_list 
+# grep [ -E| -F][ -c| -l| -q ][-insvx] -e pattern_list
 #      [-f pattern_file] ... [file. ..]
 # grep [ -E| -F][ -c| -l| -q ][-insvx][-e pattern_list]
 #      -f pattern_file ... [file ...]
@@ -31,7 +31,7 @@ if test $? -ne 0 ; then
         failures=1
 fi
 
-# checking for fixed string 
+# checking for fixed string
 echo "abababccccccd" | ${GREP} -F -e 'c\{3\}' > /dev/null 2>&1
 if test $? -ne 1 ; then
 	echo "Options: Wrong status code, test \#3 failed"
