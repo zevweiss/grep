@@ -2113,13 +2113,13 @@ main (int argc, char **argv)
       case EXCLUDE_OPTION:
 	if (!excluded_patterns)
 	  excluded_patterns = new_exclude ();
-	add_exclude (excluded_patterns, optarg);
+	add_exclude (excluded_patterns, optarg, EXCLUDE_WILDCARDS);
 	break;
       case EXCLUDE_FROM_OPTION:
 	if (!excluded_patterns)
 	  excluded_patterns = new_exclude ();
-        if (add_exclude_file (add_exclude, excluded_patterns, optarg, '\n')
-	    != 0)
+        if (add_exclude_file (add_exclude, excluded_patterns, optarg,
+			      EXCLUDE_WILDCARDS, '\n') != 0)
           {
             error (2, errno, "%s", optarg);
           }
@@ -2128,13 +2128,13 @@ main (int argc, char **argv)
       case EXCLUDE_DIRECTORY_OPTION:
         if (!excluded_directory_patterns)
 	  excluded_directory_patterns = new_exclude ();
-	add_exclude (excluded_directory_patterns, optarg);
+	add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
         break;	
 	
       case INCLUDE_OPTION:
 	if (!included_patterns)
 	  included_patterns = new_exclude ();
-	add_exclude (included_patterns, optarg);
+	add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE);
 	break;
 	
 	
