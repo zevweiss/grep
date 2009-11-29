@@ -1,5 +1,5 @@
 # Process this file with automake to create Makefile.in
-# 
+#
 # Copyright 1997, 1998, 2005, 2006, 2007, 2008, 2009 Free Software
 # Foundation, Inc.
 #
@@ -53,3 +53,18 @@ cvs-clean:
 	    fi ; \
 	  done; \
 	done
+
+# Arrange so that .tarball-version appears only in the distribution
+# tarball, and never in a checked-out repository.
+dist-hook: gen-ChangeLog
+	$(AM_V_GEN)echo $(VERSION) > $(distdir)/.tarball-version
+
+gen_start_date = 2009-11-27
+.PHONY: gen-ChangeLog
+gen-ChangeLog:
+	$(AM_V_GEN)if test -d .git; then				\
+	  $(top_srcdir)/build-aux/gitlog-to-changelog			\
+	    --since=$(gen_start_date) > $(distdir)/cl-t;		\
+	  rm -f $(distdir)/ChangeLog;					\
+	  mv $(distdir)/cl-t $(distdir)/ChangeLog;			\
+	fi

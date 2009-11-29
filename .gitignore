@@ -15,5 +15,6 @@
 /configure.ac
 /stamp-h1
 ABOUT-NLS
+ChangeLog
 Makefile
 Makefile.in

@@ -4,6 +4,7 @@ alloca.in.h
 atexit.c
 basename-lgpl.c
 basename.c
+binary-io.h
 btowc.c
 config.charset
 dirent.h

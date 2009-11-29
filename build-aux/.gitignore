@@ -2,6 +2,7 @@ config.guess
 config.rpath
 config.sub
 depcomp
+gitlog-to-changelog
 install-sh
 link-warning.h
 mdate-sh
