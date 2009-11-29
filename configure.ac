@@ -19,7 +19,10 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT(GNU grep, 2.6-cvs, bug-grep@gnu.org, grep)
+AC_INIT([GNU grep],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
+        [bug-grep@gnu.org])
+
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE(GREP, 1, [We are building grep])
