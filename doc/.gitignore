@@ -1,5 +1,6 @@
 egrep.1
 fgrep.1
+gendocs_template
 grep.info*
 stamp-vti
 version.texi

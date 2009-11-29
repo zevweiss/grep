@@ -3,6 +3,7 @@
 *~
 .deps
 /ABOUT-NLS
+/GNUmakefile
 /INSTALL
 /aclocal.m4
 /autom4te.cache
@@ -13,6 +14,7 @@
 /config.status
 /configure
 /configure.ac
+/maint.mk
 /stamp-h1
 ABOUT-NLS
 ChangeLog
