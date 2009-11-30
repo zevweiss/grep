@@ -5,15 +5,14 @@
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-The development source code is available via CVS from Savannah: see
-<http://savannah.gnu.org/cvs/?group=grep>.  The main project page is at
+The development source code is available via Git from Savannah: see
+<http://git.savannah.gnu.org/cgit/grep.git>.  The main project page is at
 <http://savannah.gnu.org/projects/grep/>.
 
-The source code in the CVS uses autotools to generate some files. Before
+The source code in the Git uses autotools to generate some files. Before
 following the instructions in the INSTALL file for compiling grep, you
-need to run the autogen.sh script. If you don't have the autotools
-installed on your system, you can download a CVS release file (generated
-with `make dist') from <http://www.dal-acm.ca/~taa/grep/>.
+need to run the bootstrap script. If you don't have the autotools
+installed on your system, see README-boot.
 
 Test releases are available at <http://alpha.gnu.org/gnu/grep/>.
 

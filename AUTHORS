@@ -53,3 +53,5 @@ version 2.5.1, ie. from Sep 2001 till 2003.
 Stepan Kasal <kasal@ucw.cz> maintained GNU grep since Feb 2004.
 
 Tony Abou-Assaleh <taa@acm.org> maintains GNU grep since Oct 2007.
+
+Jim Meyering <jim@meyering.net> and Paolo Bonzini <bonzini@gnu.org> maintain GNU grep since Nov 2009.
