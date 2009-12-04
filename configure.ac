@@ -88,12 +88,13 @@ if test "$jm_with_regex" = no; then
 fi
 
 # support for pcre
+PKG_PROG_PKG_CONFIG
 if test x"$testpcre" = x"yes"; then
-	if pcre-config --cflags >/dev/null 2>&1; then
-		CPPFLAGS="$CPPFLAGS `pcre-config --cflags`"
-		LIBS="$LIBS `pcre-config --libs`"
-	fi
-	AC_CHECK_LIB(pcre, pcre_exec)
+  PKG_CHECK_MODULES(PCRE, [libpcre],
+	  [AC_DEFINE([HAVE_LIBPCRE], 1,
+	    [Define to 1 if you have the `pcre' library (-lpcre).])
+	   CPPFLAGS="$CPPFLAGS $PCRE_CFLAGS"],
+	  [:])
 fi
 
 AC_CONFIG_FILES([Makefile
