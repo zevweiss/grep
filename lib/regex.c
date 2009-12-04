@@ -27,9 +27,7 @@
 #undef	_GNU_SOURCE
 #define _GNU_SOURCE
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 #ifndef PARAMS
 # if defined __GNUC__ || (defined __STDC__ && __STDC__)

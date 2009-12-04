@@ -19,9 +19,7 @@
 
 /* Written July 1992 by Mike Haertel.  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #if defined(HAVE_MMAP)
