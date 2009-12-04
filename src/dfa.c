@@ -173,9 +173,9 @@ xrealloc (ptr_t p, size_t n)
   return r;
 }
 
-#define CALLOC(p, t, n) ((p) = (t *) xcalloc((size_t)(n), sizeof (t)))
-#define MALLOC(p, t, n) ((p) = (t *) xmalloc((n) * sizeof (t)))
-#define REALLOC(p, t, n) ((p) = (t *) xrealloc((ptr_t) (p), (n) * sizeof (t)))
+#define CALLOC(p, t, n) ((p) = xcalloc((size_t)(n), sizeof (t)))
+#define MALLOC(p, t, n) ((p) = xmalloc((n) * sizeof (t)))
+#define REALLOC(p, t, n) ((p) = xrealloc((ptr_t) (p), (n) * sizeof (t)))
 
 /* Reallocate an array of type t if nalloc is too small for index. */
 #define REALLOC_IF_NECESSARY(p, t, nalloc, index) \

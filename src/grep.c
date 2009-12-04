@@ -796,7 +796,7 @@ print_line_middle (const char *beg, const char *lim,
     {
       int i = lim - beg;
 
-      ibeg = buf = (char *) xmalloc(i);
+      ibeg = buf = xmalloc(i);
       /* This can't possibly be correct with UTF-8,
 	 but it's equivalent to what was there so far.  */
       while (--i >= 0)
@@ -1620,7 +1620,7 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
       int prepended = prepend_args (options, buf, (char **) NULL);
       int argc = *pargc;
       char * const *argv = *pargv;
-      char **pp = (char **) xmalloc ((prepended + argc + 1) * sizeof *pp);
+      char **pp = xmalloc ((prepended + argc + 1) * sizeof *pp);
       *pargc = prepended + argc;
       *pargv = pp;
       *pp++ = *argv++;
