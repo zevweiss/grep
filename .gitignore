@@ -7,6 +7,7 @@
 /INSTALL
 /aclocal.m4
 /autom4te.cache
+/build-aux/compile
 /config.cache
 /config.h
 /config.hin
@@ -14,8 +15,17 @@
 /config.status
 /configure
 /configure.ac
+/lib/charset.alias
+/lib/configmake.h
+/lib/uniwidth/
 /maint.mk
+/po/POTFILES
+/po/stamp-po
 /stamp-h1
+/tests/*.log
+/tests/csinput
+/tests/cspatfile
+/tests/yesno.txt
 ABOUT-NLS
 ChangeLog
 Makefile
