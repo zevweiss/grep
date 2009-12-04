@@ -16,17 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-src/dfa.c
-src/kwset.c
-src/grep.c
-src/search.c
-src/system.h
-
-# Library files
 lib/closeout.c
 lib/error.c
 lib/getopt.c
 lib/obstack.c
 lib/quotearg.c
 lib/regex.c
-lib/xmalloc.c
+lib/xalloc-die.c
+lib/xstrtol-error.c
+src/dfa.c
+src/grep.c
+src/kwset.c
+src/search.c

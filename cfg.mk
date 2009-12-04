@@ -29,7 +29,6 @@ local-checks-to-skip =			\
   sc_error_message_uppercase		\
   sc_m4_quote_check			\
   sc_makefile_TAB_only_indentation	\
-  sc_po_check				\
   sc_prohibit_have_config_h		\
   sc_prohibit_magic_number_exit		\
   sc_prohibit_strcmp			\
