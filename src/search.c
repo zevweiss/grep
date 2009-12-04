@@ -273,8 +273,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   dfacomp (pattern, size, &dfa, 1);
   kwsmusts ();
 
-  if (motif)
-    free((char *) motif);
+  free((char *) motif);
 }
 
 #ifndef EGREP_PROGRAM
@@ -479,9 +478,8 @@ EXECUTE_FCT(EGexecute)
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
-        free((char*)buf);
-      if (mb_properties)
-        free(mb_properties);
+        free ((char *) buf);
+      free (mb_properties);
     }
 #endif /* MBS_SUPPORT */
   return ret_val;
@@ -595,9 +593,8 @@ EXECUTE_FCT(Fexecute)
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
-        free((char*)buf);
-      if (mb_properties)
-        free(mb_properties);
+        free ((char *) buf);
+      free (mb_properties);
     }
 #endif /* MBS_SUPPORT */
   return ret_val;

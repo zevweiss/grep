@@ -1,0 +1,2 @@
+^lib/regex\.c$
+^src/dfa\.c$

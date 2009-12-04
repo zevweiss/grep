@@ -854,8 +854,7 @@ print_line_middle (const char *beg, const char *lim,
       cur = b + match_size;
     }
 
-  if (buf)
-    free(buf);	/* XXX */
+  free (buf);	/* XXX */
 
   if (only_matching)
     cur = lim;
@@ -1388,8 +1387,7 @@ grepdir (char const *dir, struct stats const *stats)
 	  status &= grepfile (file, &child);
 	}
       out_file -= !no_filenames;
-      if (file)
-        free (file);
+      free (file);
       free (name_space);
     }
 
