@@ -489,18 +489,32 @@ EXECUTE_FCT(EGexecute)
 #if defined(GREP_PROGRAM) || defined(FGREP_PROGRAM)
 COMPILE_FCT(Fcompile)
 {
-  char const *beg, *lim, *err;
+  char const *beg, *end, *lim, *err;
 
   kwsinit ();
   beg = pattern;
   do
     {
-      for (lim = beg; lim < pattern + size && *lim != '\n'; ++lim)
-	;
-      if ((err = kwsincr (kwset, beg, lim - beg)) != 0)
+      for (lim = beg;; ++lim)
+	{
+	  end = lim;
+	  if (lim >= pattern + size)
+	    break;
+	 if (*lim == '\n')
+	   {
+	     lim++;
+	     break;
+	   }
+#if HAVE_DOS_FILE_CONTENTS
+	 if (*lim == '\r' && lim + 1 < pattern + size && lim[1] == '\n')
+	   {
+	     lim += 2;
+	     break;
+	   }
+#endif
+	}
+      if ((err = kwsincr (kwset, beg, end - beg)) != 0)
 	error (2, 0, err);
-      if (lim < pattern + size)
-	++lim;
       beg = lim;
     }
   while (beg < pattern + size);
