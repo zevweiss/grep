@@ -332,8 +332,10 @@ EXECUTE_FCT(EGexecute)
 	      beg += offset;
 	      /* Narrow down to the line containing the candidate, and
 		 run it through DFA. */
-	      end = memchr(beg, eol, buflim - beg);
-	      end++;
+	      if ((end = memchr(beg, eol, buflim - beg)) != NULL)
+	        end++;
+              else
+                end = buflim;
 #ifdef MBS_SUPPORT
 	      if (MB_CUR_MAX > 1 && mb_properties[beg - buf] == 0)
 		continue;
@@ -353,8 +355,10 @@ EXECUTE_FCT(EGexecute)
 		break;
 	      /* Narrow down to the line we've found. */
 	      beg += offset;
-	      end = memchr (beg, eol, buflim - beg);
-	      end++;
+	      if ((end = memchr(beg, eol, buflim - beg)) != NULL)
+	        end++;
+              else
+                end = buflim;
 	      while (beg > buf && beg[-1] != eol)
 		--beg;
 	    }
@@ -592,8 +596,10 @@ EXECUTE_FCT(Fexecute)
   goto out;
 
  success:
-  end = memchr (beg + len, eol, (buf + size) - (beg + len));
-  end++;
+  if ((end = memchr (beg + len, eol, (buf + size) - (beg + len))) != NULL)
+    end++;
+  else
+    end = buf + size;
   while (buf < beg && beg[-1] != eol)
     --beg;
   len = end - beg;
