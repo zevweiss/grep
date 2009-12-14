@@ -1635,19 +1635,27 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
 static int
 get_nondigit_option (int argc, char *const *argv, int *default_context)
 {
-  int opt;
+  static int prev_digit_optind = -1;
+  int opt, this_digit_optind, was_digit;
   char buf[sizeof (uintmax_t) * CHAR_BIT + 4];
   char *p = buf;
 
-  /* Set buf[0] to anything but '0', for the leading-zero test below.  */
-  buf[0] = '\0';
-
+  was_digit = 0;
+  this_digit_optind = optind;
   while (opt = getopt_long (argc, argv, short_options, long_options, NULL),
 	 '0' <= opt && opt <= '9')
     {
-      /* Suppress trivial leading zeros, to avoid incorrect
-	 diagnostic on strings like 00000000000.  */
-      p -= buf[0] == '0';
+      if (prev_digit_optind != this_digit_optind || !was_digit)
+        {
+          /* Reset to start another context length argument.  */
+          p = buf;
+        }
+      else
+        {
+          /* Suppress trivial leading zeros, to avoid incorrect
+             diagnostic on strings like 00000000000.  */
+          p -= buf[0] == '0';
+        }
 
       if (p == buf + sizeof buf - 4)
 	{
@@ -1659,6 +1667,10 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
 	  break;
 	}
       *p++ = opt;
+
+      was_digit = 1;
+      prev_digit_optind = this_digit_optind;
+      this_digit_optind = optind;
     }
   if (p != buf)
     {

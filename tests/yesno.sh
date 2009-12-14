@@ -64,6 +64,7 @@ set x \
   '-o'              "$c$d$e$h$i$m$n$z0" \
   '-C,1'            "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
   '-C,1,-o'         "$c$d$e$h$i$s$m$n$z0" \
+  '-C,4,-1'         "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
   '-m,4'            "$C$D$E$H$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-o'         "$c$d$e$h$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-C,1'       "$rB$C$D$E$rF$rG$H$z0$XI$XJ$XK$XL$XM$XN" \
@@ -79,6 +80,8 @@ set x \
   '-v,-o'           "$z0" \
   '-v,-C,1'         "$A$B$rC$s$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-v,-C,1,-o'      "$rc$s$re$rh$ri$rm$z0" \
+  '-4,-1'           "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
+  '-4,-v,-1'        "$A$B$rC$s$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-m,1,-v'         "$A$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,1,-v,-o'      "$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,1,-v,-C,1'    "$A$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \

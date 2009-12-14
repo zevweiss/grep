@@ -2,6 +2,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+  - A command line like -1 -2 or -1 -v -2 result in two lines of
+    context (the last value that appears on the command line) instead
+    twelve (the concatenation of all the values).  This is consistent
+    with the behavior of options -A/-B/-C.
 
 * Noteworthy changes in release 2.5.4 (2009-02-10) [stable]
 
