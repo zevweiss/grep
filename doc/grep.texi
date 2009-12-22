@@ -414,12 +414,12 @@ This is the default when there is only one file
 @opindex --label
 @cindex changing name of standard input
 Display input actually coming from standard input
-as input coming from file @var{LABEL}.
-This is especially useful for tools like @command{zgrep};
-e.g.:
+as input coming from file @var{LABEL}.  This is
+especially useful when implementing tools like
+@command{zgrep}; e.g.:
 
 @example
-gzip -cd foo.gz | grep --label=foo something
+gzip -cd foo.gz | grep --label=foo -H something
 @end example
 
 @item -n
