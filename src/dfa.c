@@ -2808,13 +2808,13 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
       MALLOC(inputwcs, wchar_t, end - (unsigned char const *)begin + 2);
       memset(&mbs, 0, sizeof(mbstate_t));
       remain_bytes = 0;
-      for (i = 0; i < end - (unsigned char const *)begin + 1; i++)
+      for (i = 0; i < end - (unsigned char const *)begin; i++)
 	{
 	  if (remain_bytes == 0)
 	    {
 	      remain_bytes
 		= mbrtowc(inputwcs + i, begin + i,
-			  end - (unsigned char const *)begin - i + 1, &mbs);
+			  end - (unsigned char const *)begin - i, &mbs);
 	      if (remain_bytes <= 1)
 		{
 		  remain_bytes = 0;
