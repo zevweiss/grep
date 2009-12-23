@@ -1433,23 +1433,26 @@ copy (position_set const *src, position_set *dst)
 static void
 insert (position p, position_set *s)
 {
-  int i;
-  position t1, t2;
+  int count = s->nelem;
+  int lo = 0, hi = count;
+  while (lo < hi)
+    {
+      int mid = ((unsigned) lo + (unsigned) hi) >> 1;
+      if (s->elems[mid].index < p.index)
+        lo = mid + 1;
+      else
+        hi = mid;
+    }
 
-  for (i = 0; i < s->nelem && p.index < s->elems[i].index; ++i)
-    continue;
-  if (i < s->nelem && p.index == s->elems[i].index)
-    s->elems[i].constraint |= p.constraint;
+  if (lo < count && p.index == s->elems[lo].index)
+    s->elems[lo].constraint |= p.constraint;
   else
     {
-      t1 = p;
+      int i;
+      for (i = count; i > lo; i--)
+        s->elems[i] = s->elems[i - 1];
+      s->elems[lo] = p;
       ++s->nelem;
-      while (i < s->nelem)
-	{
-	  t2 = s->elems[i];
-	  s->elems[i++] = t1;
-	  t1 = t2;
-	}
     }
 }
 
