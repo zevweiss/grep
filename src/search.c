@@ -30,6 +30,7 @@
 #endif
 
 #include "system.h"
+#include "ignore-value.h"
 #include "grep.h"
 #ifndef FGREP_PROGRAM
 # include <regex.h>
@@ -138,15 +139,14 @@ kwsmusts (void)
    are not single byte character nor the first byte of a multibyte
    character.  Caller must free the array.  */
 static char*
-check_multibyte_string(char const *buf, size_t size)
+check_multibyte_string(char *buf, size_t size)
 {
-  char *mb_properties = xmalloc(size);
+  char *mb_properties = xcalloc(size, 1);
   mbstate_t cur_state;
   wchar_t wc;
   int i;
 
   memset(&cur_state, 0, sizeof(mbstate_t));
-  memset(mb_properties, 0, sizeof(char)*size);
 
   for (i = 0; i < size ;)
     {
@@ -164,8 +164,36 @@ check_multibyte_string(char const *buf, size_t size)
 	  if (iswupper((wint_t)wc))
 	    {
 	      wc = towlower((wint_t)wc);
-	      wcrtomb(buf + i, wc, &cur_state);
+	      ignore_value (wcrtomb(buf + i, wc, &cur_state));
 	    }
+	}
+      mb_properties[i] = mbclen;
+      i += mbclen;
+    }
+
+  return mb_properties;
+}
+
+static char*
+check_multibyte_string_no_icase(const char *buf, size_t size)
+{
+  char *mb_properties = xcalloc(size, 1);
+  mbstate_t cur_state;
+  wchar_t wc;
+  int i;
+
+  memset(&cur_state, 0, sizeof(mbstate_t));
+
+  for (i = 0; i < size ;)
+    {
+      size_t mbclen;
+      mbclen = mbrtowc(&wc, buf + i, size - i, &cur_state);
+
+      if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
+	{
+	  /* An invalid sequence, or a truncated multibyte character.
+	     We treat it as a single byte character.  */
+	  mbclen = 1;
 	}
       mb_properties[i] = mbclen;
       i += mbclen;
@@ -309,10 +337,13 @@ EXECUTE_FCT(EGexecute)
           memcpy(case_buf, buf, size);
 	  if (start_ptr)
 	    start_ptr = case_buf + (start_ptr - buf);
+	  if (kwset)
+	    mb_properties = check_multibyte_string(case_buf, size);
           buf = case_buf;
         }
-      if (kwset)
-        mb_properties = check_multibyte_string(buf, size);
+      else
+	if (kwset)
+	  mb_properties = check_multibyte_string_no_icase(buf, size);
     }
 #endif /* MBS_SUPPORT */
 
@@ -538,13 +569,14 @@ EXECUTE_FCT(Fexecute)
     {
       if (match_icase)
         {
-          char *case_buf = xmalloc(size);
-          memcpy(case_buf, buf, size);
+          char *case_buf = xmemdup (buf, size);
 	  if (start_ptr)
 	    start_ptr = case_buf + (start_ptr - buf);
+	  mb_properties = check_multibyte_string(case_buf, size);
           buf = case_buf;
         }
-      mb_properties = check_multibyte_string(buf, size);
+      else
+	mb_properties = check_multibyte_string_no_icase(buf, size);
     }
 #endif /* MBS_SUPPORT */
 
