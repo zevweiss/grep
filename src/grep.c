@@ -912,7 +912,8 @@ prline (char const *beg, char const *lim, int sep)
       if (matching && (only_matching || *match_color))
 	beg = print_line_middle(beg, lim, line_color, match_color);
 
-      if (!only_matching && *line_color);
+      /* FIXME: this test may be removable.  */
+      if (!only_matching && *line_color)
 	beg = print_line_tail(beg, lim, line_color);
     }
 
