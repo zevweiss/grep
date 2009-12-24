@@ -25,7 +25,7 @@ noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h mbsupport.h
 LDADD = $(LIBINTL) ../lib/libgreputils.a
 grep_LDADD = $(PCRE_LIBS) $(LDADD)
 localedir = $(datadir)/locale
-INCLUDES = -I../intl -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
+INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
 EXTRA_DIST = \
              dosbuf.c \
