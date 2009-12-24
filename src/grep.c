@@ -46,9 +46,6 @@
 #include "closeout.h"
 #include "progname.h"
 
-#undef MAX
-#define MAX(A,B) ((A) > (B) ? (A) : (B))
-
 #define SEP_CHAR_SELECTED ':'
 #define SEP_CHAR_REJECTED '-'
 #define SEP_STR_GROUP    "--"
@@ -1392,6 +1389,7 @@ grepdir (char const *dir, struct stats const *stats)
   return status;
 }
 
+static void usage (int status) __attribute__ ((noreturn));
 static void
 usage (int status)
 {
@@ -1454,21 +1452,29 @@ Output control:\n\
   -H, --with-filename       print the filename for each match\n\
   -h, --no-filename         suppress the prefixing filename on output\n\
       --label=LABEL         print LABEL as filename for standard input\n\
+"));
+      printf (_("\
   -o, --only-matching       show only the part of a line matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE;\n\
                             TYPE is `binary', `text', or `without-match'\n\
   -a, --text                equivalent to --binary-files=text\n\
+"));
+      printf (_("\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories;\n\
                             ACTION is `read', `recurse', or `skip'\n\
   -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n\
                             ACTION is `read' or `skip'\n\
   -R, -r, --recursive       equivalent to --directories=recurse\n\
+"));
+      printf (_("\
       --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
       --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
+"));
+      printf (_("\
   -L, --files-without-match  print only names of FILEs containing no match\n\
   -l, --files-with-matches  print only names of FILEs containing matches\n\
   -c, --count               print only a count of matching lines per FILE\n\
@@ -1480,6 +1486,8 @@ Context control:\n\
   -B, --before-context=NUM  print NUM lines of leading context\n\
   -A, --after-context=NUM   print NUM lines of trailing context\n\
   -C, --context=NUM         print NUM lines of output context\n\
+"));
+      printf (_("\
   -NUM                      same as --context=NUM\n\
       --color[=WHEN],\n\
       --colour[=WHEN]       use markers to highlight the matching strings;\n\
