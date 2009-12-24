@@ -96,3 +96,5 @@ int isdir PARAMS ((char const *));
 #ifndef initialize_main
 #define initialize_main(argcp, argvp)
 #endif
+
+#include "unlocked-io.h"
