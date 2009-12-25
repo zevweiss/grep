@@ -469,7 +469,7 @@ fetch_wc (char const *eoferr)
    This function  parse a bracket expression and build a struct
    mb_char_classes.  */
 static void
-parse_bracket_exp_mb ()
+parse_bracket_exp_mb (void)
 {
   wint_t wc, wc1, wc2;
 
@@ -2433,18 +2433,18 @@ transit_state_singlebyte (struct dfa *d, int s, unsigned char const *p,
 /* Check whether period can match or not in the current context.  If it can,
    return the amount of the bytes with which period can match, otherwise
    return 0.
-   `pos' is the position of the period.  `index' is the index from the
+   `pos' is the position of the period.  `idx' is the index from the
    buf_begin, and it is the current position in the buffer.  */
 static int
-match_anychar (struct dfa *d, int s, position pos, int index)
+match_anychar (struct dfa *d, int s, position pos, int idx)
 {
   int newline = 0;
   int letter = 0;
   wchar_t wc;
   int mbclen;
 
-  wc = inputwcs[index];
-  mbclen = (mblen_buf[index] == 0)? 1 : mblen_buf[index];
+  wc = inputwcs[idx];
+  mbclen = (mblen_buf[idx] == 0)? 1 : mblen_buf[idx];
 
   /* Check context.  */
   if (wc == (wchar_t)eolbyte)
@@ -2473,10 +2473,10 @@ match_anychar (struct dfa *d, int s, position pos, int index)
 /* Check whether bracket expression can match or not in the current context.
    If it can, return the amount of the bytes with which expression can match,
    otherwise return 0.
-   `pos' is the position of the bracket expression.  `index' is the index
+   `pos' is the position of the bracket expression.  `idx' is the index
    from the buf_begin, and it is the current position in the buffer.  */
 int
-match_mb_charset (struct dfa *d, int s, position pos, int index)
+match_mb_charset (struct dfa *d, int s, position pos, int idx)
 {
   int i;
   int match;		/* Flag which represent that matching succeed.  */
@@ -2493,7 +2493,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   int letter = 0;
   wchar_t wc;		/* Current refering character.  */
 
-  wc = inputwcs[index];
+  wc = inputwcs[idx];
 
   /* Check context.  */
   if (wc == (wchar_t)eolbyte)
@@ -2517,7 +2517,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   /* Assign the current refering operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
-  match_len = (mblen_buf[index] == 0)? 1 : mblen_buf[index];
+  match_len = (mblen_buf[idx] == 0)? 1 : mblen_buf[idx];
 
   /* match with a character class?  */
   for (i = 0; i<work_mbc->nch_classes; i++)
@@ -2526,14 +2526,14 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
 	goto charset_matched;
     }
 
-  strncpy(buffer, (char const *) buf_begin + index, match_len);
+  strncpy(buffer, (char const *) buf_begin + idx, match_len);
   buffer[match_len] = '\0';
 
   /* match with an equivalent class?  */
   for (i = 0; i<work_mbc->nequivs; i++)
     {
       op_len = strlen(work_mbc->equivs[i]);
-      strncpy(buffer, (char const *) buf_begin + index, op_len);
+      strncpy(buffer, (char const *) buf_begin + idx, op_len);
       buffer[op_len] = '\0';
       if (strcoll(work_mbc->equivs[i], buffer) == 0)
 	{
@@ -2546,7 +2546,7 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
   for (i = 0; i<work_mbc->ncoll_elems; i++)
     {
       op_len = strlen(work_mbc->coll_elems[i]);
-      strncpy(buffer, (char const *) buf_begin + index, op_len);
+      strncpy(buffer, (char const *) buf_begin + idx, op_len);
       buffer[op_len] = '\0';
 
       if (strcoll(work_mbc->coll_elems[i], buffer) == 0)
@@ -2587,11 +2587,11 @@ match_mb_charset (struct dfa *d, int s, position pos, int index)
    array which corresponds to `d->states[s].mbps.elem' and each element of
    the array contains the amount of the bytes with which the element can
    match.
-   `index' is the index from the buf_begin, and it is the current position
+   `idx' is the index from the buf_begin, and it is the current position
    in the buffer.
    Caller MUST free the array which this function return.  */
 static int*
-check_matching_with_multibyte_ops (struct dfa *d, int s, int index)
+check_matching_with_multibyte_ops (struct dfa *d, int s, int idx)
 {
   int i;
   int* rarray;
@@ -2603,10 +2603,10 @@ check_matching_with_multibyte_ops (struct dfa *d, int s, int index)
       switch(d->tokens[pos.index])
 	{
 	case ANYCHAR:
-	  rarray[i] = match_anychar(d, s, pos, index);
+	  rarray[i] = match_anychar(d, s, pos, idx);
 	  break;
 	case MBCSET:
-	  rarray[i] = match_mb_charset(d, s, pos, index);
+	  rarray[i] = match_mb_charset(d, s, pos, idx);
 	  break;
 	default:
 	  break; /* can not happen.  */
