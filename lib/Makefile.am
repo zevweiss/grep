@@ -18,6 +18,8 @@ include gnulib.mk
 
 INCLUDES = -I.. -I$(srcdir)
 
+AM_CFLAGS += $(WARN_CFLAGS) $(WERROR_CFLAGS)
+
 libgreputils_a_SOURCES += \
   savedir.c savedir.h
 

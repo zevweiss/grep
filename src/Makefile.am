@@ -16,6 +16,8 @@
 
 LN = ln
 
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
+
 bin_PROGRAMS = grep egrep fgrep
 grep_SOURCES  =  grep.c  search.c kwset.c dfa.c
 egrep_SOURCES = egrep.c esearch.c kwset.c dfa.c
