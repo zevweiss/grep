@@ -2682,7 +2682,6 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   int nelem = d->states[s].mbps.nelem; /* Just a alias.  */
   position_set follows;
   unsigned char const *p1 = *pp;
-  status_transit_state rs;
   wchar_t wc;
 
   if (nelem > 0)
@@ -2725,7 +2724,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
      not be a character but a (multi character) collating element.
      We enumerate all of the positions which `s' can reach by consuming
      `maxlen' bytes.  */
-  rs = transit_state_consume_1char(d, s, pp, match_lens, &mbclen, &follows);
+  transit_state_consume_1char(d, s, pp, match_lens, &mbclen, &follows);
 
   wc = inputwcs[*pp - mbclen - buf_begin];
   s1 = state_index(d, &follows, wc == L'\n', iswalnum(wc));
@@ -2734,7 +2733,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   while (*pp - p1 < maxlen)
     {
       follows.nelem = 0;
-      rs = transit_state_consume_1char(d, s1, pp, NULL, &mbclen, &follows);
+      transit_state_consume_1char(d, s1, pp, NULL, &mbclen, &follows);
 
       for (i = 0; i < nelem ; i++)
 	{
