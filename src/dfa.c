@@ -76,7 +76,6 @@
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
 #include <gettext.h>
-#define N_(String) gettext_noop(String)
 #define _(String) gettext(String)
 
 #include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
