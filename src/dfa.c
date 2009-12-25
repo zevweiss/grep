@@ -2475,7 +2475,7 @@ match_anychar (struct dfa *d, int s, position pos, int idx)
    otherwise return 0.
    `pos' is the position of the bracket expression.  `idx' is the index
    from the buf_begin, and it is the current position in the buffer.  */
-int
+static int
 match_mb_charset (struct dfa *d, int s, position pos, int idx)
 {
   int i;
