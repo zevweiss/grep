@@ -86,7 +86,7 @@ size_t pcount;
 void
 dfaerror (char const *mesg)
 {
-  error (2, 0, mesg);
+  error (2, 0, "%s", mesg);
 }
 
 /* Number of compiled fixed strings known to exactly match the regexp.
@@ -115,8 +115,8 @@ kwsmusts (void)
 	  if (!dm->exact)
 	    continue;
 	  ++kwset_exact_matches;
-	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != 0)
-	    error (2, 0, err);
+	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
+	    error (2, 0, "%s", err);
 	}
       /* Now, we compile the substrings that will require
 	 the use of the regexp matcher.  */
@@ -124,11 +124,11 @@ kwsmusts (void)
 	{
 	  if (dm->exact)
 	    continue;
-	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != 0)
-	    error (2, 0, err);
+	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
+	    error (2, 0, "%s", err);
 	}
-      if ((err = kwsprep (kwset)) != 0)
-	error (2, 0, err);
+      if ((err = kwsprep (kwset)) != NULL)
+	error (2, 0, "%s", err);
     }
 }
 #endif /* !FGREP_PROGRAM */
@@ -252,8 +252,8 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
       patterns[pcount] = patterns0;
 
       if ((err = re_compile_pattern (motif, len,
-				    &(patterns[pcount].regexbuf))) != 0)
-	error (2, 0, err);
+				    &(patterns[pcount].regexbuf))) != NULL)
+	error (2, 0, "%s", err);
       pcount++;
 
       motif = sep;
@@ -546,14 +546,14 @@ COMPILE_FCT(Fcompile)
 	   }
 #endif
 	}
-      if ((err = kwsincr (kwset, beg, end - beg)) != 0)
-	error (2, 0, err);
+      if ((err = kwsincr (kwset, beg, end - beg)) != NULL)
+	error (2, 0, "%s", err);
       beg = lim;
     }
   while (beg < pattern + size);
 
-  if ((err = kwsprep (kwset)) != 0)
-    error (2, 0, err);
+  if ((err = kwsprep (kwset)) != NULL)
+    error (2, 0, "%s", err);
 }
 
 EXECUTE_FCT(Fexecute)
@@ -716,11 +716,11 @@ COMPILE_FCT(Pcompile)
 
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
-    error (2, 0, ep);
+    error (2, 0, "%s", ep);
 
   extra = pcre_study (cre, 0, &ep);
   if (ep)
-    error (2, 0, ep);
+    error (2, 0, "%s", ep);
 
   free (re);
 #endif
