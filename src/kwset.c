@@ -35,6 +35,8 @@
 #include "kwset.h"
 #include "obstack.h"
 
+#define link kwset_link
+
 #ifdef GREP
 # include "xalloc.h"
 # undef malloc
