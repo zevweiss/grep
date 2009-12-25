@@ -3354,7 +3354,7 @@ resetmust (must *mp)
 }
 
 static void
-dfamust (struct dfa *dfa)
+dfamust (struct dfa *d)
 {
   must *musts;
   must *mp;
@@ -3369,13 +3369,13 @@ dfamust (struct dfa *dfa)
 
   result = empty_string;
   exact = 0;
-  musts = (must *) malloc((dfa->tindex + 1) * sizeof *musts);
+  musts = (must *) malloc((d->tindex + 1) * sizeof *musts);
   if (musts == NULL)
     return;
   mp = musts;
-  for (i = 0; i <= dfa->tindex; ++i)
+  for (i = 0; i <= d->tindex; ++i)
     mp[i] = must0;
-  for (i = 0; i <= dfa->tindex; ++i)
+  for (i = 0; i <= d->tindex; ++i)
     {
       mp[i].in = (char **) malloc(sizeof *mp[i].in);
       mp[i].left = malloc(2);
@@ -3389,16 +3389,16 @@ dfamust (struct dfa *dfa)
     }
 #ifdef DEBUG
   fprintf(stderr, "dfamust:\n");
-  for (i = 0; i < dfa->tindex; ++i)
+  for (i = 0; i < d->tindex; ++i)
     {
       fprintf(stderr, " %d:", i);
-      prtok(dfa->tokens[i]);
+      prtok(d->tokens[i]);
     }
   putc('\n', stderr);
 #endif
-  for (ri = 0; ri < dfa->tindex; ++ri)
+  for (ri = 0; ri < d->tindex; ++ri)
     {
-      switch (t = dfa->tokens[ri])
+      switch (t = d->tokens[ri])
 	{
 	case LPAREN:
 	case RPAREN:
@@ -3567,7 +3567,7 @@ dfamust (struct dfa *dfa)
 	}
 #ifdef DEBUG
       fprintf(stderr, " node: %d:", ri);
-      prtok(dfa->tokens[ri]);
+      prtok(d->tokens[ri]);
       fprintf(stderr, "\n  in:");
       for (i = 0; mp->in[i]; ++i)
 	fprintf(stderr, " \"%s\"", mp->in[i]);
@@ -3584,11 +3584,11 @@ dfamust (struct dfa *dfa)
       dm->exact = exact;
       MALLOC(dm->must, char, strlen(result) + 1);
       strcpy(dm->must, result);
-      dm->next = dfa->musts;
-      dfa->musts = dm;
+      dm->next = d->musts;
+      d->musts = dm;
     }
   mp = musts;
-  for (i = 0; i <= dfa->tindex; ++i)
+  for (i = 0; i <= d->tindex; ++i)
     {
       freelist(mp[i].in);
       ifree((char *) mp[i].in);
