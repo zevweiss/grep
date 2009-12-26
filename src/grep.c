@@ -45,6 +45,7 @@
 #include "exitfail.h"
 #include "closeout.h"
 #include "progname.h"
+#include "isdir.h"
 
 #define SEP_CHAR_SELECTED ':'
 #define SEP_CHAR_REJECTED '-'

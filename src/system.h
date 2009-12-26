@@ -42,8 +42,6 @@
 # define HAVE_DOS_FILE_CONTENTS 1
 #endif
 
-int isdir PARAMS ((char const *));
-
 #ifdef EISDIR
 # define is_EISDIR(e, f) ((e) == EISDIR)
 #else
