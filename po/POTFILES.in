@@ -20,7 +20,7 @@ lib/error.c
 lib/getopt.c
 lib/obstack.c
 lib/quotearg.c
-lib/regex.c
+lib/regcomp.c
 lib/xalloc-die.c
 lib/xstrtol-error.c
 src/dfa.c

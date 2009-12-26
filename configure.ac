@@ -151,20 +151,12 @@ dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
 
-dnl some folks ask for this, that's fine by me
-dnl hope they know what they're doing ...
-dnl if glibc2 regex is not included
-
-dnl Many GNU/Linux people have different
-dnl glibc versions with buggy regex.
-jm_INCLUDED_REGEX(lib/regex.c)
-
 dnl Some installers want to be informed if we do not use our regex.
 dnl For example, if the host platform uses dynamic linking and the installer
 dnl knows that the grep may be invoked on other hosts with buggy libraries,
 dnl then the installer should configure --with-included-regex.
-if test "$jm_with_regex" = no; then
-	AC_MSG_WARN(Included lib/regex.c not used)
+if test "$ac_use_included_regex" = no; then
+  AC_MSG_WARN([Included lib/regex.c not used])
 fi
 
 # support for pcre
