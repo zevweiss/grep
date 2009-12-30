@@ -39,6 +39,14 @@ export VERBOSE = yes
 
 old_NEWS_hash = f81932a59c299cb94579f099231305a6
 
+# Many m4 macros names once began with `jm_'.
+# Make sure that none are inadvertently reintroduced.
+sc_prohibit_jm_in_m4:
+	@grep -nE 'jm_[A-Z]'						\
+		$$($(VC_LIST) m4 |grep '\.m4$$'; echo /dev/null) &&	\
+	    { echo '$(ME): do not use jm_ in m4 macro names'		\
+	      1>&2; exit 1; } || :
+
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
