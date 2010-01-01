@@ -1,3 +1,7 @@
+!/lib/Makefile.am
+!/lib/savedir.c
+!/lib/savedir.h
+!/m4/djgpp.m4
 *.a
 *.o
 *~
@@ -15,9 +19,11 @@
 /config.status
 /configure
 /configure.ac
+/lib/*
 /lib/charset.alias
 /lib/configmake.h
 /lib/uniwidth/
+/m4/*
 /maint.mk
 /po/POTFILES
 /po/stamp-po
