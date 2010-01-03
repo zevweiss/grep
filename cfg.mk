@@ -38,3 +38,7 @@ bootstrap-tools = autoconf,automake,gnulib
 export VERBOSE = yes
 
 old_NEWS_hash = f81932a59c299cb94579f099231305a6
+
+update-copyright-env = \
+  UPDATE_COPYRIGHT_USE_INTERVALS=1 \
+  UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
