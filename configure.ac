@@ -96,11 +96,14 @@ if test x"$testpcre" = x"yes"; then
 	  [:])
 fi
 
-AC_CONFIG_FILES([Makefile
-				 lib/Makefile
-				 src/Makefile
-				 tests/Makefile
-				 po/Makefile.in
-				 doc/Makefile
-				 vms/Makefile])
+AC_CONFIG_FILES([
+  Makefile
+  lib/Makefile
+  src/Makefile
+  tests/Makefile
+  po/Makefile.in
+  doc/Makefile
+  vms/Makefile
+  gnulib-tests/Makefile
+])
 AC_OUTPUT

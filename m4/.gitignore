@@ -1,5 +1,6 @@
 00gnulib.m4
 alloca.m4
+argmatch.m4
 atexit.m4
 btowc.m4
 chdir-long.m4
@@ -16,6 +17,8 @@ dirname.m4
 dos.m4
 double-slash-root.m4
 dup2.m4
+eealloc.m4
+environ.m4
 errno_h.m4
 error.m4
 exclude.m4
@@ -49,6 +52,7 @@ intl.m4
 intldir.m4
 intlmacosx.m4
 intmax.m4
+inttostr.m4
 inttypes-pri.m4
 inttypes.m4
 inttypes_h.m4
@@ -61,12 +65,14 @@ lib-prefix.m4
 localcharset.m4
 locale-fr.m4
 locale-ja.m4
+locale-tr.m4
 locale-zh.m4
 locale_h.m4
 lock.m4
 longlong.m4
 lstat.m4
 malloc.m4
+malloca.m4
 mbchar.m4
 mbiter.m4
 mbrlen.m4
@@ -86,15 +92,19 @@ nls.m4
 onceonly.m4
 open.m4
 openat.m4
+pathmax.m4
 po.m4
 printf-posix.m4
 progtest.m4
+putenv.m4
+quote.m4
 quotearg.m4
 realloc.m4
 regex.m4
 rmdir.m4
 save-cwd.m4
 savedir.m4
+setenv.m4
 size_max.m4
 ssize_t.m4
 stat.m4
@@ -116,6 +126,7 @@ strtoll.m4
 strtoul.m4
 strtoull.m4
 strtoumax.m4
+symlink.m4
 sys_stat_h.m4
 threadlib.m4
 time_h.m4
@@ -126,6 +137,7 @@ visibility.m4
 wchar.m4
 wchar_t.m4
 wcrtomb.m4
+wctob.m4
 wctype.m4
 wcwidth.m4
 wint_t.m4
