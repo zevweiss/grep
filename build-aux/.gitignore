@@ -18,3 +18,4 @@ texinfo.tex
 update-copyright
 useless-if-before-free
 vc-list-files
+warn-on-use.h
