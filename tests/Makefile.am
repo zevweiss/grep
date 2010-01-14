@@ -14,20 +14,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TESTS = warning.sh khadafy.sh spencer1.sh bre.sh ere.sh pcre.sh \
-        status.sh empty.sh options.sh backref.sh file.sh foad1.sh \
-        fmbtest.sh yesno.sh
-EXTRA_DIST = $(TESTS) \
-             khadafy.lines khadafy.regexp \
-             spencer1.awk spencer1.tests \
-             bre.awk ere.awk bre.tests ere.tests
-CLEANFILES = spencer1.script bre.script ere.script khadafy.out patfile \
-             cspatfile csinput yesno.txt
+TESTS =		\
+  backref.sh	\
+  bre.sh	\
+  empty.sh	\
+  ere.sh	\
+  file.sh	\
+  fmbtest.sh	\
+  foad1.sh	\
+  khadafy.sh	\
+  options.sh	\
+  pcre.sh	\
+  spencer1.sh	\
+  status.sh	\
+  warning.sh	\
+  yesno.sh
+
+EXTRA_DIST =	\
+  $(TESTS)	\
+  bre.awk	\
+  bre.tests	\
+  ere.awk	\
+  ere.tests	\
+  khadafy.lines	\
+  khadafy.regexp \
+  spencer1.awk	\
+  spencer1.tests
+
+CLEANFILES = \
+  spencer1.script bre.script ere.script khadafy.out patfile \
+  cspatfile csinput yesno.txt
+
 TESTS_ENVIRONMENT = \
-	AWK=$(AWK) \
-	GREP=$(top_builddir)/src/grep \
-	GREP_OPTIONS='' \
-	LC_ALL=C
+  AWK=$(AWK) \
+  GREP=$(top_builddir)/src/grep \
+  GREP_OPTIONS='' \
+  LC_ALL=C
 
 # the *.sh when checkout does not have the right permission
 # make sure everyting is ok.
