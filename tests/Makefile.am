@@ -50,8 +50,3 @@ TESTS_ENVIRONMENT = \
   GREP=$(top_builddir)/src/grep \
   GREP_OPTIONS='' \
   LC_ALL=C
-
-# the *.sh when checkout does not have the right permission
-# make sure everyting is ok.
-dist-hook:
-	cd $(distdir); for i in $(TESTS); do chmod +x $$i; done
