@@ -23,6 +23,7 @@ TESTS =		\
   fmbtest.sh	\
   foad1.sh	\
   khadafy.sh	\
+  max-count-vs-context \
   options.sh	\
   pcre.sh	\
   spencer1.sh	\
