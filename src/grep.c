@@ -1879,6 +1879,7 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 #endif
 
+  exit_failure = EXIT_TROUBLE;
   atexit (close_stdout);
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
