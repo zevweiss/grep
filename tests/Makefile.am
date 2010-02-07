@@ -22,6 +22,7 @@ TESTS =		\
   file.sh	\
   fmbtest.sh	\
   foad1.sh	\
+  help-version	\
   khadafy.sh	\
   max-count-vs-context \
   options.sh	\
@@ -74,6 +75,7 @@ TESTS_ENVIRONMENT =				\
   abs_top_builddir='$(abs_top_builddir)'	\
   abs_top_srcdir='$(abs_top_srcdir)'		\
   abs_srcdir='$(abs_srcdir)'			\
+  built_programs='grep egrep fgrep'		\
   srcdir='$(srcdir)'				\
   top_srcdir='$(top_srcdir)'			\
   CC='$(CC)'					\
