@@ -54,6 +54,8 @@
 #include <string.h>
 #include <ctype.h>
 
+enum { EXIT_TROUBLE = 2 };
+
 /* The extra casts work around common compiler bugs.  */
 #define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
 #define TYPE_MINIMUM(t) ((t) (TYPE_SIGNED (t) \

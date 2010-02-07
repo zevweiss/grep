@@ -64,7 +64,7 @@ kwsinit (void)
       trans[i] = TOLOWER (i);
 
   if (!(kwset = kwsalloc (match_icase ? trans : (char *) 0)))
-    error (2, 0, _("memory exhausted"));
+    xalloc_die ();
 }
 
 #ifndef FGREP_PROGRAM
@@ -86,7 +86,7 @@ size_t pcount;
 void
 dfaerror (char const *mesg)
 {
-  error (2, 0, "%s", mesg);
+  error (EXIT_TROUBLE, 0, "%s", mesg);
 }
 
 /* Number of compiled fixed strings known to exactly match the regexp.
@@ -116,7 +116,7 @@ kwsmusts (void)
 	    continue;
 	  ++kwset_exact_matches;
 	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
-	    error (2, 0, "%s", err);
+	    error (EXIT_TROUBLE, 0, "%s", err);
 	}
       /* Now, we compile the substrings that will require
 	 the use of the regexp matcher.  */
@@ -125,10 +125,10 @@ kwsmusts (void)
 	  if (dm->exact)
 	    continue;
 	  if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
-	    error (2, 0, "%s", err);
+	    error (EXIT_TROUBLE, 0, "%s", err);
 	}
       if ((err = kwsprep (kwset)) != NULL)
-	error (2, 0, "%s", err);
+	error (EXIT_TROUBLE, 0, "%s", err);
     }
 }
 #endif /* !FGREP_PROGRAM */
@@ -248,12 +248,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 
       patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
       if (patterns == NULL)
-	error (2, errno, _("memory exhausted"));
+	error (EXIT_TROUBLE, errno, _("memory exhausted"));
       patterns[pcount] = patterns0;
 
       if ((err = re_compile_pattern (motif, len,
 				    &(patterns[pcount].regexbuf))) != NULL)
-	error (2, 0, "%s", err);
+	error (EXIT_TROUBLE, 0, "%s", err);
       pcount++;
 
       motif = sep;
@@ -547,13 +547,13 @@ COMPILE_FCT(Fcompile)
 #endif
 	}
       if ((err = kwsincr (kwset, beg, end - beg)) != NULL)
-	error (2, 0, "%s", err);
+	error (EXIT_TROUBLE, 0, "%s", err);
       beg = lim;
     }
   while (beg < pattern + size);
 
   if ((err = kwsprep (kwset)) != NULL)
-    error (2, 0, "%s", err);
+    error (EXIT_TROUBLE, 0, "%s", err);
 }
 
 EXECUTE_FCT(Fexecute)
@@ -663,7 +663,9 @@ static pcre_extra *extra;
 COMPILE_FCT(Pcompile)
 {
 #if !HAVE_LIBPCRE
-  error (2, 0, "%s", _("Support for the -P option is not compiled into this --disable-perl-regexp binary"));
+  error (EXIT_TROUBLE, 0, "%s",
+	 _("Support for the -P option is not compiled into "
+	   "this --disable-perl-regexp binary"));
 #else
   int e;
   char const *ep;
@@ -676,9 +678,9 @@ COMPILE_FCT(Pcompile)
 
   /* FIXME: Remove these restrictions.  */
   if (eolbyte != '\n')
-    error (2, 0, _("The -P and -z options cannot be combined"));
+    error (EXIT_TROUBLE, 0, _("The -P and -z options cannot be combined"));
   if (memchr(pattern, '\n', size))
-    error (2, 0, _("The -P option only supports a single pattern"));
+    error (EXIT_TROUBLE, 0, _("The -P option only supports a single pattern"));
 
   *n = '\0';
   if (match_lines)
@@ -716,11 +718,11 @@ COMPILE_FCT(Pcompile)
 
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
-    error (2, 0, "%s", ep);
+    error (EXIT_TROUBLE, 0, "%s", ep);
 
   extra = pcre_study (cre, 0, &ep);
   if (ep)
-    error (2, 0, "%s", ep);
+    error (EXIT_TROUBLE, 0, "%s", ep);
 
   free (re);
 #endif
@@ -748,7 +750,7 @@ EXECUTE_FCT(Pexecute)
 	  return -1;
 
 	case PCRE_ERROR_NOMEMORY:
-	  error (2, 0, _("Memory exhausted"));
+	  error (EXIT_TROUBLE, 0, _("Memory exhausted"));
 
 	default:
 	  abort ();

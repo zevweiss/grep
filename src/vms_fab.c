@@ -63,7 +63,7 @@ vms_fab (int * argp, char **argvp[])
   if (fab_stat != 65537)
     {
       fprintf (stderr, "No Matches found.\n");
-      exit (0);
+      exit (EXIT_SUCCESS);
     }
 
   /*

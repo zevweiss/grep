@@ -396,7 +396,8 @@ context_length_arg (char const *str, int *out)
 	 && 0 <= (*out = value)
 	 && *out == value))
     {
-      error (2, 0, "%s: %s\n", str, _("invalid context length argument"));
+      error (EXIT_TROUBLE, 0, "%s: %s\n", str,
+	     _("invalid context length argument"));
     }
 }
 
@@ -657,7 +658,7 @@ add_count (uintmax_t a, uintmax_t b)
 {
   uintmax_t sum = a + b;
   if (sum < a)
-    error (2, 0, _("input is too large to count"));
+    error (EXIT_TROUBLE, 0, _("input is too large to count"));
   return sum;
 }
 
@@ -1047,7 +1048,7 @@ grepbuf (char const *beg, char const *lim)
 	  if (!outleft || done_on_match)
 	    {
 	      if (exit_on_match)
-		exit (0);
+		exit (EXIT_SUCCESS);
 	      after_last_match = bufoffset - (buflim - endp);
 	      return nlines;
 	    }
@@ -1529,7 +1530,7 @@ static void
 setmatcher (char const *m)
 {
   if (matcher && strcmp (matcher, m) != 0)
-    error (2, 0, _("conflicting matchers specified"));
+    error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
   matcher = m;
 }
 
@@ -1905,7 +1906,7 @@ main (int argc, char **argv)
 	else if (strcmp (optarg, "skip") == 0)
 	  devices = SKIP_DEVICES;
 	else
-	  error (2, 0, _("unknown devices method"));
+	  error (EXIT_TROUBLE, 0, _("unknown devices method"));
 	break;
 
 #ifdef GREP_PROGRAM
@@ -1979,7 +1980,7 @@ main (int argc, char **argv)
 	else if (strcmp (optarg, "recurse") == 0)
 	  directories = RECURSE_DIRECTORIES;
 	else
-	  error (2, 0, _("unknown directories method"));
+	  error (EXIT_TROUBLE, 0, _("unknown directories method"));
 	break;
 
       case 'e':
@@ -1993,7 +1994,7 @@ main (int argc, char **argv)
       case 'f':
 	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
 	if (!fp)
-	  error (2, errno, "%s", optarg);
+	  error (EXIT_TROUBLE, errno, "%s", optarg);
 	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
 	  ;
 	keys = xrealloc (keys, keyalloc);
@@ -2047,7 +2048,7 @@ main (int argc, char **argv)
 	      break;
 
 	    default:
-	      error (2, 0, _("invalid max count"));
+	      error (EXIT_TROUBLE, 0, _("invalid max count"));
 	    }
 	}
 	break;
@@ -2102,7 +2103,7 @@ main (int argc, char **argv)
 	else if (strcmp (optarg, "without-match") == 0)
 	  binary_files = WITHOUT_MATCH_BINARY_FILES;
 	else
-	  error (2, 0, _("unknown binary-files type"));
+	  error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
 	break;
 
       case COLOR_OPTION:
@@ -2140,7 +2141,7 @@ main (int argc, char **argv)
         if (add_exclude_file (add_exclude, excluded_patterns, optarg,
 			      EXCLUDE_WILDCARDS, '\n') != 0)
           {
-            error (2, errno, "%s", optarg);
+            error (EXIT_TROUBLE, errno, "%s", optarg);
           }
         break;
 
@@ -2171,7 +2172,7 @@ main (int argc, char **argv)
 	break;
 
       default:
-	usage (2);
+	usage (EXIT_TROUBLE);
 	break;
 
       }
@@ -2213,11 +2214,11 @@ This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n"),
         "2009");
       printf ("\n");
-      exit (0);
+      exit (EXIT_SUCCESS);
     }
 
   if (show_help)
-    usage (0);
+    usage (EXIT_SUCCESS);
 
   if (keys)
     {
@@ -2240,7 +2241,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 	strcpy(keys, argv[optind++]);
       }
     else
-      usage (2);
+      usage (EXIT_TROUBLE);
 
 #ifdef GREP_PROGRAM
   if (! matcher)
@@ -2270,7 +2271,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 #endif
 
   if (max_count == 0)
-    exit (1);
+    exit (EXIT_FAILURE);
 
   if (optind < argc)
     {
@@ -2297,6 +2298,6 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
     status = grepfile ((char *) NULL, &stats_base);
 
   /* We register via atexit() to test stdout.  */
-  exit (errseen ? 2 : status);
+  exit (errseen ? EXIT_TROUBLE : status);
 }
 /* vim:set shiftwidth=2: */
