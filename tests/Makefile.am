@@ -83,7 +83,7 @@ TESTS_ENVIRONMENT =				\
   PERL='$(PERL)'				\
   PREFERABLY_POSIX_SHELL='$(PREFERABLY_POSIX_SHELL)' \
   REPLACE_GETCWD=$(REPLACE_GETCWD)		\
-  PATH='$(abs_top_builddir)$(PATH_SEPARATOR)'"$$PATH" \
+  PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
   ; shell_or_perl_
 
 VERBOSE = yes
