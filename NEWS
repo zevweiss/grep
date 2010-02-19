@@ -13,6 +13,10 @@ GNU grep NEWS                                    -*- outline -*-
   with the behavior of options -A/-B/-C.
 
 
+  - Two new command-line options, --group-separator=ARGUMENT and
+    --no-group-separator, enable further customization of the output
+    when -A, -B or -C is being used.
+
 * Noteworthy changes in release 2.5.4 (2009-02-10) [stable]
 
   - This is a bugfix release. No new features.

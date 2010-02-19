@@ -513,6 +513,19 @@ Print @var{num} lines of leading context before matching lines.
 @cindex context
 Print @var{num} lines of leading and trailing output context.
 
+@item --group-separator=@var{string}
+@opindex --group-separator
+@cindex group separator
+When @option{-A}, @option{-B} or @option{-C} are in use,
+print @var{string} instead of @samp{--} around disjoint groups
+of lines.
+
+@item --no-group-separator
+@opindex --group-separator
+@cindex group separator
+When @option{-A}, @option{-B} or @option{-C} are in use,
+print disjoint groups of lines adjacent to each other.
+
 @end table
 
 Matching lines normally use @samp{:} as a separator
@@ -522,11 +535,12 @@ When no context is specified,
 matching lines are simply output one right after another.
 When nonzero context is specified,
 lines that are adjacent in the input form a group
-and are output one right after another,
-but disjoint groups of lines are separated by a @samp{--}
-without any prefix and on a line of its own.
-Each group may contain several matching lines
-when they are close enough to each other
+and are output one right after another, while
+a separator appears by default between disjoint groups on a line
+of its own and without any prefix.  The default separator
+is @samp{--}, however whether to include it and its appearance
+can be changed with the options above.  Each group may contain
+several matching lines when they are close enough to each other
 that two otherwise adjacent but divided groups connect
 and can just merge into a single contiguous one.
 

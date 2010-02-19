@@ -81,6 +81,9 @@ static int only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static int align_tabs;
 
+/* The group separator used when context is requested. */
+static const char *group_separator = SEP_STR_GROUP;
+
 /* The context and logic for choosing default --color screen attributes
    (foreground and background colors, etc.) are the following.
       -- There are eight basic colors available, each with its own
@@ -280,7 +283,8 @@ enum
   EXCLUDE_FROM_OPTION,
   LINE_BUFFERED_OPTION,
   LABEL_OPTION,
-  EXCLUDE_DIRECTORY_OPTION
+  EXCLUDE_DIRECTORY_OPTION,
+  GROUP_SEPARATOR_OPTION
 };
 
 /* Long options equivalences. */
@@ -309,6 +313,7 @@ static struct option const long_options[] =
   {"file", required_argument, NULL, 'f'},
   {"files-with-matches", no_argument, NULL, 'l'},
   {"files-without-match", no_argument, NULL, 'L'},
+  {"group-separator", required_argument, NULL, GROUP_SEPARATOR_OPTION},
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
@@ -320,6 +325,7 @@ static struct option const long_options[] =
   {"max-count", required_argument, NULL, 'm'},
   {"mmap", no_argument, &mmap_option, 1},
   {"no-filename", no_argument, NULL, 'h'},
+  {"no-group-separator", no_argument, NULL, GROUP_SEPARATOR_OPTION},
   {"no-messages", no_argument, NULL, 's'},
   {"null", no_argument, NULL, 'Z'},
   {"null-data", no_argument, NULL, 'z'},
@@ -978,10 +984,10 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 
       /* We print the SEP_STR_GROUP separator only if our output is
 	 discontiguous from the last output in the file. */
-      if ((out_before || out_after) && used && p != lastout)
+      if ((out_before || out_after) && used && p != lastout && group_separator)
 	{
 	  PR_SGR_START_IF(sep_color);
-	  fputs (SEP_STR_GROUP, stdout);
+	  fputs (group_separator, stdout);
 	  PR_SGR_END_IF(sep_color);
 	  fputc('\n', stdout);
 	}
@@ -2157,7 +2163,9 @@ main (int argc, char **argv)
 	add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE);
 	break;
 
-
+      case GROUP_SEPARATOR_OPTION:
+        group_separator = optarg;
+        break;
 
       case LINE_BUFFERED_OPTION:
 	line_buffered = 1;

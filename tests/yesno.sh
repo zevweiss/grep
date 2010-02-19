@@ -50,8 +50,9 @@ K='11:100:[K11 no ]/'; rK='11-100-[K11 no ]/'; XK='X[K11 no ]/';
 L='12:110:[L12 no ]/'; rL='12-110-[L12 no ]/'; XL='X[L12 no ]/';
 M='13:120:[M13 yes]/'; rM='13-120-[M13 yes]/'; XM='X[M13 yes]/'; m='13:125:yes/'; rm='13-125-yes/'
 N='14:130:[N14 yes]/'; rN='14-130-[N14 yes]/'; XN='X[N14 yes]/'; n='14:135:yes/'; rn='14-135-yes/'
-# Group separator.
+# Group separators.
 s='--/'
+S='XYZ/'
 # Exit statuses.
 z0='?0/'
 z1='?1/'
@@ -64,7 +65,11 @@ set x \
   '-o'              "$c$d$e$h$i$m$n$z0" \
   '-C,1'            "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
   '-C,1,-o'         "$c$d$e$h$i$s$m$n$z0" \
+  '-C,1,-o,--group=XYZ' "$c$d$e$h$i$S$m$n$z0" \
+  '-C,1,-o,--no-gr' "$c$d$e$h$i$m$n$z0" \
   '-C,4,-1'         "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
+  '-C,1,--group=XYZ' "$rB$C$D$E$rF$rG$H$I$rJ$S$rL$M$N$z0" \
+  '-C,1,--no-gr'    "$rB$C$D$E$rF$rG$H$I$rJ$rL$M$N$z0" \
   '-m,4'            "$C$D$E$H$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-o'         "$c$d$e$h$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-C,1'       "$rB$C$D$E$rF$rG$H$z0$XI$XJ$XK$XL$XM$XN" \
@@ -80,6 +85,8 @@ set x \
   '-v,-o'           "$z0" \
   '-v,-C,1'         "$A$B$rC$s$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-v,-C,1,-o'      "$rc$s$re$rh$ri$rm$z0" \
+  '-v,-C,1,--group=XYZ' "$A$B$rC$S$rE$F$G$rH$rI$J$K$L$rM$z0" \
+  '-v,-C,1,--no-gr' "$A$B$rC$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-4,-1'           "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$N$z0" \
   '-4,-v,-1'        "$A$B$rC$s$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-m,1,-v'         "$A$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
