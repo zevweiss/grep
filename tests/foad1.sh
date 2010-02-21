@@ -23,7 +23,7 @@ grep_test ()
   INPUT="$1"
   EXPECT="$2"
   shift 2
-  OUTPUT=`echo -n "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
+  OUTPUT=`printf %s "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
   if test "$OUTPUT" != "$EXPECT" || test "$VERBOSE" = "1"; then
     echo "Testing:  $GREP $@"
     test "$LC_ALL" != C && test "$LC_ALL" != "" && echo "  LC_ALL: \"$LC_ALL\""
