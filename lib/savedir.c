@@ -35,30 +35,35 @@
 #include <string.h>
 #include <fnmatch.h>
 #include "savedir.h"
+#include "xalloc.h"
+
+static char *path;
+static size_t pathlen;
 
 extern int isdir (const char *path);
-
-char *path;
-size_t pathlen;
 
 static int
 isdir1 (const char *dir, const char *file)
 {
-  int status;
-  int slash;
   size_t dirlen = strlen (dir);
   size_t filelen = strlen (file);
+
+  while (dirlen && path[dirlen - 1] == '/')
+    dirlen--;
+
   if ((dirlen + filelen + 2) > pathlen)
     {
-      path = calloc (dirlen + 1 + filelen + 1, sizeof (*path));
-      pathlen = dirlen + filelen + 2;
+      pathlen *= 2;
+      if ((dirlen + filelen + 2) > pathlen)
+        pathlen = dirlen + filelen + 2;
+
+      path = xrealloc (path, pathlen);
     }
-  strcpy (path, dir);
-  slash = (path[dirlen] != '/');
+
+  memcpy (path, dir, dirlen);
   path[dirlen] = '/';
-  strcpy (path + dirlen + slash , file);
-  status  = isdir (path);
-  return status;
+  strcpy (path + dirlen + 1, file);
+  return isdir (path);
 }
 
 /* Return a freshly allocated string containing the filenames
@@ -133,7 +138,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 	      if (new_name_space == NULL)
 		{
 		  closedir (dirp);
-		  return NULL;
+		  goto fail;
 		}
 	      namep += new_name_space - name_space;
 	      name_space = new_name_space;
@@ -145,8 +150,9 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
   *namep = '\0';
   if (CLOSEDIR (dirp))
     {
+     fail:
       free (name_space);
-      return NULL;
+      name_space = NULL;
     }
   if (path)
     {
