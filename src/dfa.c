@@ -561,8 +561,14 @@ parse_bracket_exp_mb (void)
 		/* build character class.  */
 		{
 		  wctype_t wt;
+
 		  /* Query the character class as wctype_t.  */
-		  wt = wctype (str);
+		  if (case_fold
+		      && (!strcasecmp (str, "upper")
+			  || !strcasecmp (str, "lower")))
+		    wt = wctype ("alpha");
+		  else
+		    wt = wctype (str);
 
 		  if (ch_classes_al == 0)
 		    MALLOC(work_mbc->ch_classes, wctype_t, ++ch_classes_al);

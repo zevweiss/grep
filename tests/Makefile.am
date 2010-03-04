@@ -18,6 +18,7 @@ TESTS =						\
   backref.sh					\
   bre.sh					\
   case-fold-char-class				\
+  case-fold-char-type				\
   empty.sh					\
   ere.sh					\
   file.sh					\
