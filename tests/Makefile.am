@@ -14,36 +14,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TESTS =		\
-  backref.sh	\
-  bre.sh	\
-  empty.sh	\
-  ere.sh	\
-  file.sh	\
-  fmbtest.sh	\
-  foad1.sh	\
-  help-version	\
-  khadafy.sh	\
-  max-count-vs-context \
-  options.sh	\
-  pcre.sh	\
-  spencer1.sh	\
-  status.sh	\
-  warning.sh	\
-  word-multi-file \
-  yesno.sh	\
+TESTS =						\
+  backref.sh					\
+  bre.sh					\
+  case-fold-char-class				\
+  empty.sh					\
+  ere.sh					\
+  file.sh					\
+  fmbtest.sh					\
+  foad1.sh					\
+  help-version					\
+  khadafy.sh					\
+  max-count-vs-context				\
+  options.sh					\
+  pcre.sh					\
+  spencer1.sh					\
+  status.sh					\
+  warning.sh					\
+  word-multi-file				\
+  yesno.sh					\
   fedora.sh
 
-EXTRA_DIST =	\
-  $(TESTS)	\
-  bre.awk	\
-  bre.tests	\
-  ere.awk	\
-  ere.tests	\
-  init.sh	\
-  khadafy.lines	\
-  khadafy.regexp \
-  spencer1.awk	\
+EXTRA_DIST =					\
+  $(TESTS)					\
+  bre.awk					\
+  bre.tests					\
+  ere.awk					\
+  ere.tests					\
+  init.sh					\
+  khadafy.lines					\
+  khadafy.regexp				\
+  spencer1.awk					\
   spencer1.tests
 
 CLEANFILES = \
@@ -72,6 +73,8 @@ TESTS_ENVIRONMENT =				\
     fi;						\
   };						\
   export					\
+  LOCALE_FR='$(LOCALE_FR)'                      \
+  LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'            \
   AWK=$(AWK)					\
   GREP=$(top_builddir)/src/grep			\
   GREP_OPTIONS=''				\

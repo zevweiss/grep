@@ -654,6 +654,13 @@ parse_bracket_exp_mb (void)
 	  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
 			       work_mbc->nchars + 1);
 	  work_mbc->chars[work_mbc->nchars++] = (wchar_t)wc;
+	  if (case_fold && (iswlower(wc) || iswupper(wc)))
+	    {
+	      REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
+				   work_mbc->nchars + 1);
+	      work_mbc->chars[work_mbc->nchars++] =
+		(wchar_t) (iswlower(wc) ? towupper(wc) : towlower(wc));
+	    }
 	}
     }
   while ((wc = wc1) != L']');

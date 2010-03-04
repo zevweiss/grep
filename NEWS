@@ -4,6 +4,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -i with a character class would malfunction in multi-byte locales.
+  For example, echo Y | LC_ALL=en_US.UTF-8 grep -i '[y]' would print nothing.
+
   grep would mistakenly exit with status 1 upon error, rather than 2,
   as it is documented to do.
 
