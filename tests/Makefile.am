@@ -30,6 +30,7 @@ TESTS =		\
   spencer1.sh	\
   status.sh	\
   warning.sh	\
+  word-multi-file \
   yesno.sh
 
 EXTRA_DIST =	\
