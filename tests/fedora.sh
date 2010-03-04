@@ -85,4 +85,12 @@ echo test | grep -e 'HighlightThis' -e '' > 204255.first
 echo test | grep -e '' -e 'HighlightThis' > 204255.second
 diff 204255.first 204255.second && ok || fail
 
+U=https://bugzilla.redhat.com/show_bug.cgi?id=324781
+echo -n "bad handling of line breaks with grep -P #1: "
+echo -ne "a\na" | ${GREP} -P '[^a]' >/dev/null && fail || ok
+
+# This is mostly a check that fix for above doesn't break -P further
+echo -n "bad handling of line breaks with grep -P #2: "
+echo -ne "a\na" | ${GREP} -P '[^b].[^b]' >/dev/null && fail || ok
+
 exit $failures

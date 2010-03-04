@@ -738,9 +738,30 @@ EXECUTE_FCT(Pexecute)
      is just for performance improvement in pcre_exec.  */
   int sub[300];
 
-  int e = pcre_exec (cre, extra, buf, size,
-		     start_ptr ? (start_ptr - buf) : 0, 0,
-		     sub, sizeof sub / sizeof *sub);
+  const char *line_buf, *line_end, *line_next;
+  int e = PCRE_ERROR_NOMATCH;
+  ptrdiff_t start_ofs = start_ptr ? start_ptr - buf : 0;
+
+  /* PCRE can't limit the matching to single lines, therefore we have to
+     match each line in the buffer separately.  */
+  for (line_next = buf;
+       e == PCRE_ERROR_NOMATCH && line_next < buf + size; 
+       start_ofs -= line_next - line_buf)
+    {
+      line_buf = line_next;
+      line_end = memchr (line_buf, eolbyte, (buf + size) - line_buf);
+      if (line_end == NULL)
+        line_next = line_end = buf + size;
+      else
+        line_next = line_end + 1;
+
+      if (start_ptr && start_ptr >= line_end)
+        continue;
+
+      e = pcre_exec (cre, extra, line_buf, line_end - line_buf,
+                     start_ofs < 0 ? 0 : start_ofs, 0,
+                     sub, sizeof sub / sizeof *sub);
+    }
 
   if (e <= 0)
     {
@@ -759,8 +780,8 @@ EXECUTE_FCT(Pexecute)
   else
     {
       /* Narrow down to the line we've found.  */
-      char const *beg = buf + sub[0];
-      char const *end = buf + sub[1];
+      char const *beg = line_buf + sub[0];
+      char const *end = line_buf + sub[1];
       char const *buflim = buf + size;
       char eol = eolbyte;
       if (!start_ptr)
