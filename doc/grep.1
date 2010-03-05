@@ -595,13 +595,17 @@ Regular expressions are constructed analogously to arithmetic
 expressions, by using various operators to combine smaller expressions.
 .PP
 .B grep
-understands two different versions of regular expression syntax:
-\*(lqbasic\*(rq and \*(lqextended.\*(rq  In
+understands three different versions of regular expression syntax:
+\*(lqbasic,\*(rq \*(lqextended\*(rq and \*(lqperl.\*(rq In
 .RB "\s-1GNU\s0\ " grep ,
-there is no difference in available functionality using either syntax.
+there is no difference in available functionality between basic and
+extended syntaxes.
 In other implementations, basic regular expressions are less powerful.
 The following description applies to extended regular expressions;
 differences for basic regular expressions are summarized afterwards.
+Perl regular expressions give additional functionality, and are
+documented in pcresyntax(3) and pcrepattern(3), but may not be
+available on every system.
 .PP
 The fundamental building blocks are the regular expressions
 that match a single character.
@@ -1210,7 +1214,7 @@ Back-references are very slow, and may require exponential time.
 awk(1), cmp(1), diff(1), find(1), gzip(1),
 perl(1), sed(1), sort(1), xargs(1), zgrep(1),
 mmap(2), read(2),
-pcre(3), pcrepattern(3),
+pcre(3), pcresyntax(3), pcrepattern(3),
 terminfo(5),
 glob(7), regex(7).
 .SS "\s-1POSIX\s0 Programmer's Manual Page"

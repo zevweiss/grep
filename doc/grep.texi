@@ -1045,13 +1045,17 @@ A @dfn{regular expression} is a pattern that describes a set of strings.
 Regular expressions are constructed analogously to arithmetic expressions,
 by using various operators to combine smaller expressions.
 @command{grep} understands
-two different versions of regular expression syntax:
-``basic''(BRE) and ``extended''(ERE).
+three different versions of regular expression syntax:
+``basic,'' (BRE) ``extended'' (ERE) and ``perl''.
 In @sc{gnu} @command{grep},
-there is no difference in available functionality using either syntax.
+there is no difference in available functionality between basic and
+extended syntaxes.
 In other implementations, basic regular expressions are less powerful.
 The following description applies to extended regular expressions;
 differences for basic regular expressions are summarized afterwards.
+Perl regular expressions give additional functionality, and are
+documented in pcresyntax(3) and pcrepattern(3), but may not be
+available on every system.
 
 @menu
 * Fundamental Structure::
