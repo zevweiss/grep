@@ -2984,7 +2984,7 @@ dfainit (struct dfa *d)
 void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
-  if (case_fold)	/* dummy folding in service of dfamust() */
+  if (case_fold && len)	/* dummy folding in service of dfamust() */
     {
       char *lcopy;
       int i;
