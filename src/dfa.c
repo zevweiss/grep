@@ -75,8 +75,9 @@
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
-#include <gettext.h>
-#define _(String) gettext(String)
+/* gettext.h ensures that we don't use gettext if ENABLE_NLS is not defined */
+#include "gettext.h"
+#define _(str) gettext (str)
 
 #include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
 #ifdef MBS_SUPPORT
@@ -935,6 +936,9 @@ lex (void)
 	  if (c != '}')
 	    dfaerror(_("malformed repeat count"));
 	  laststart = 0;
+#ifdef GAWK
+	  dfa->broken = (minrep == maxrep && minrep == 0);
+#endif
 	  return lasttok = REPMN;
 
 	case '|':
@@ -1593,7 +1597,7 @@ static void
 epsclosure (position_set *s, struct dfa const *d)
 {
   int i, j;
-  char *visited;
+  char *visited;	/* array of booleans, enough to use char, not int */
   position p, old;
 
   CALLOC(visited, char, d->tindex);
