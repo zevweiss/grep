@@ -140,7 +140,7 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
 		  closedir (dirp);
 		  goto fail;
 		}
-	      namep += new_name_space - name_space;
+	      namep = new_name_space + (namep - name_space);
 	      name_space = new_name_space;
 	    }
 	  strcpy (namep, dp->d_name);
