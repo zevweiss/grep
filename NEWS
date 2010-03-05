@@ -10,6 +10,11 @@ GNU grep NEWS                                    -*- outline -*-
   example, echo Y | LC_ALL=en_US.UTF-8 grep -i '[[:lower:]]' would print
   nothing.
 
+  Various bugs in grep -P, caused by expressions such as [^b] or \S matching
+  newlines, were fixed.  grep -P also supports the special sequences \Z and
+  \z, and can be combined with the command-line option -z to perform searches
+  on NUL-separated records.
+
   grep would mistakenly exit with status 1 upon error, rather than 2,
   as it is documented to do.
 

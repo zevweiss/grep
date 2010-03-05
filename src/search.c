@@ -677,8 +677,6 @@ COMPILE_FCT(Pcompile)
   char const *pnul;
 
   /* FIXME: Remove these restrictions.  */
-  if (eolbyte != '\n')
-    error (EXIT_TROUBLE, 0, _("The -P and -z options cannot be combined"));
   if (memchr(pattern, '\n', size))
     error (EXIT_TROUBLE, 0, _("The -P option only supports a single pattern"));
 

@@ -29,6 +29,7 @@ TESTS =						\
   max-count-vs-context				\
   options.sh					\
   pcre.sh					\
+  pcre-z					\
   spencer1.sh					\
   status.sh					\
   warning.sh					\
