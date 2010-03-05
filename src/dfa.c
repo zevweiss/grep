@@ -710,7 +710,7 @@ static struct {
   { ":graph:]", is_graph },
   { ":cntrl:]", is_cntrl },
   { ":blank:]", is_blank },
-  { 0 }
+  { 0, 0 }
 };
 
 /* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
