@@ -313,11 +313,14 @@ This is the default when there is only one file
 .TP
 .BI \-\^\-label= LABEL
 Display input actually coming from standard input as input coming from file
-.I LABEL.
+.IR LABEL .
 This is especially useful when implementing tools like
 .BR zgrep ,
 e.g.,
-.B "gzip -cd foo.gz | grep --label=foo -H something"
+.BR "gzip -cd foo.gz | grep --label=foo -H something" .
+See also the
+.B \-H
+option.
 .TP
 .BR \-n ", " \-\^\-line\-number
 Prefix each line of output with the 1-based line number
