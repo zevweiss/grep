@@ -990,6 +990,21 @@ lex (void)
 	  laststart = 0;
 	  return lasttok = CSET + charclass_index(ccl);
 
+#ifndef GAWK
+	case 's':
+	case 'S':
+	  if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
+	    goto normal_char;
+	  zeroset(ccl);
+	  for (c2 = 0; c2 < NOTCHAR; ++c2)
+	    if (ISSPACE(c2))
+	      setbit(c2, ccl);
+	  if (c == 'S')
+	    notset(ccl);
+	  laststart = 0;
+	  return lasttok = CSET + charclass_index(ccl);
+#endif
+
 	case 'w':
 	case 'W':
 	  if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
