@@ -2872,19 +2872,18 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
       if (MB_CUR_MAX > 1)
 	while ((t = trans[s]))
 	  {
-	    if (d->states[s].mbps.nelem != 0)
+	    SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
+
+	    if (d->states[s].mbps.nelem == 0)
 	      {
-		/* Can match with a multibyte character (and multi character
-		   collating element).  Transition table might be updated.  */
-		SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
-		s = transit_state(d, s, &p);
-		trans = d->trans;
-	      }
-	    else
-	      {
-		SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
 		s = t[*p++];
+		continue;
 	      }
+
+	    /* Can match with a multibyte character (and multi character
+	       collating element).  Transition table might be updated.  */
+	    s = transit_state(d, s, &p);
+	    trans = d->trans;
 	  }
       else
 #endif /* MBS_SUPPORT */
@@ -2925,21 +2924,21 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 #ifdef MBS_SUPPORT
 	  if (MB_CUR_MAX > 1)
 	    {
-		SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
-		if (d->states[s].mbps.nelem != 0)
-		  {
-		    /* Can match with a multibyte character (and multicharacter
-		       collating element).  Transition table might be
-		       updated.  */
-		    s = transit_state(d, s, &p);
-		    trans = d->trans;
-		  }
-		else
-		  s = t[*p++];
-	    }
+              SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
+              if (d->states[s].mbps.nelem == 0)
+                {
+                  s = t[*p++];
+                  continue;
+                }
+
+              /* Can match with a multibyte character (and multicharacter 
+                 collating element).  Transition table might be updated.  */
+              s = transit_state(d, s, &p);
+              trans = d->trans;
+            }
 	  else
 #endif /* MBS_SUPPORT */
-	    s = t[*p++];
+	  s = t[*p++];
 	}
       else
 	{
