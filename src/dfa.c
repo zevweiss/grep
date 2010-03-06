@@ -411,7 +411,7 @@ update_mb_len_index (char const *p, int len)
 #ifdef MBS_SUPPORT
 /* Note that characters become unsigned here. */
 # define FETCH(c, eoferr)			\
-  {						\
+  do {						\
     if (! lexleft)				\
      {						\
 	if (eoferr != 0)			\
@@ -423,7 +423,7 @@ update_mb_len_index (char const *p, int len)
       update_mb_len_index(lexptr, lexleft);	\
     (c) = (unsigned char) *lexptr++;		\
     --lexleft;					\
-  }
+  } while(0)
 
 /* This function fetch a wide character, and update cur_mb_len,
    used only if the current locale is a multibyte environment.  */
@@ -452,7 +452,7 @@ fetch_wc (char const *eoferr)
 #else
 /* Note that characters become unsigned here. */
 # define FETCH(c, eoferr)   	      \
-  {			   	      \
+  do {			   	      \
     if (! lexleft)	   	      \
       {				      \
 	if (eoferr != 0)	      \
@@ -462,7 +462,7 @@ fetch_wc (char const *eoferr)
       }				      \
     (c) = (unsigned char) *lexptr++;  \
     --lexleft;		   	      \
-  }
+  } while(0)
 #endif /* MBS_SUPPORT */
 
 #ifdef MBS_SUPPORT
