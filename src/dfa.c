@@ -469,7 +469,7 @@ fetch_wc (char const *eoferr)
 /* Multibyte character handling sub-routine for lex.
    This function  parse a bracket expression and build a struct
    mb_char_classes.  */
-static void
+static token
 parse_bracket_exp_mb (void)
 {
   wint_t wc, wc1, wc2;
@@ -671,6 +671,7 @@ parse_bracket_exp_mb (void)
 	}
     }
   while ((wc = wc1) != L']');
+  return MBCSET;
 }
 #endif /* MBS_SUPPORT */
 
@@ -1038,8 +1039,7 @@ lex (void)
 	      /* In multibyte environment a bracket expression may contain
 		 multibyte characters, which must be treated as characters
 		 (not bytes).  So we parse it by parse_bracket_exp_mb().  */
-	      parse_bracket_exp_mb();
-	      return lasttok = MBCSET;
+	      return lasttok = parse_bracket_exp_mb();
 	    }
 #endif
 	  zeroset(ccl);
