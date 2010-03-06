@@ -3,12 +3,20 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-printf 'Y\n'      > exp || framework_failure
+printf 'Y\n'      > exp1 || framework_failure
 fail=0
 
 for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
-  printf 'X\nY\nZ\n' | LC_ALL=$LOC grep -i '[y]' > out || fail=1
-  compare out exp || fail=1
+  printf 'X\nY\nZ\n' | LC_ALL=$LOC grep -i '[y]' > out1 || fail=1
+  compare out1 exp1 || fail=1
+done
+
+printf 'y\n'      > exp2 || framework_failure
+fail=0
+
+for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
+  printf 'x\ny\nz\n' | LC_ALL=$LOC grep -i '[Y]' > out2 || fail=1
+  compare out2 exp2 || fail=1
 done
 
 Exit $fail
