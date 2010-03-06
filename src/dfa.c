@@ -465,6 +465,13 @@ fetch_wc (char const *eoferr)
   } while(0)
 #endif /* MBS_SUPPORT */
 
+static int
+in_coll_range (char ch, char from, char to)
+{
+  char c[6] = { from, 0, ch, 0, to, 0 };
+  return strcoll (&c[0], &c[2]) <= 0 && 0 <= strcoll (&c[2], &c[4]);
+}
+
 #ifdef MBS_SUPPORT
 /* Multibyte character handling sub-routine for lex.
    This function  parse a bracket expression and build a struct
@@ -1091,30 +1098,25 @@ lex (void)
 		      if (c2 == '\\'
 			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
 			FETCH(c2, _("Unbalanced ["));
-		      FETCH(c1, _("Unbalanced ["));
-		      if (!hard_LC_COLLATE) {
-		        for (; c <= c2; c++)
+
+                      c1 = c;
+		      if (!hard_LC_COLLATE)
+		        for (c = c1; c <= c2; c++)
 			  setbit_case_fold (c, ccl);
-		      } else {
-			/* POSIX locales are painful - leave the decision to libc */
-			regex_t re;
-			char expr[6]; /* = { '[', c, '-', c2, ']', '\0' }; */
-
-			expr[0] = '['; expr[1] = c; expr[2] = '-';
-			expr[3] = c2; expr[4] = ']'; expr[5] = '\0';
-			if (regcomp (&re, expr, case_fold ? REG_ICASE : 0) == REG_NOERROR) {
-			  for (c = 0; c < NOTCHAR; ++c) {
-			    regmatch_t mat;
-			    char buf[2]; /* = { c, '\0' }; */
-
-			    buf[0] = c; buf[1] = '\0';
-			    if (regexec (&re, buf, 1, &mat, 0) == REG_NOERROR
-                               && mat.rm_so == 0 && mat.rm_eo == 1)
+		      else
+                        {
+                          if (case_fold)
+                            {
+                              c1 = tolower (c1);
+                              c2 = tolower (c2);
+                            }
+                          for (c = 0; c < NOTCHAR; ++c)
+                            if (!(case_fold && ISUPPER (c))
+                                && in_coll_range (c, c1, c2))
                               setbit_case_fold (c, ccl);
-			  }
-			  regfree (&re);
-			}
-		      }
+                        }
+
+		      FETCH(c1, _("Unbalanced ["));
 		      continue;
 		    }
 		}
