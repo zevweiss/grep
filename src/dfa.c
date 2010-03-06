@@ -2797,12 +2797,11 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 size_t
 dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 {
-  register int s;	/* Current state. */
-  register unsigned char const *p; /* Current input character. */
-  register unsigned char const *end; /* One past the last input character.  */
-  register int **trans, *t;	/* Copy of d->trans so it can be optimized
-				   into a register. */
-  register unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
+  int s;	/* Current state. */
+  unsigned char const *p; /* Current input character. */
+  unsigned char const *end; /* One past the last input character.  */
+  int **trans, *t;	/* Local copy of d->trans. */
+  unsigned char eol = eolbyte;	/* Hoping it goes into a register.  */
   static int sbit[NOTCHAR];	/* Table for anding with d->success. */
   static int sbit_init;
 
