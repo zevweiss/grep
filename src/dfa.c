@@ -2401,8 +2401,10 @@ transit_state_singlebyte (struct dfa *d, int s, unsigned char const *p,
       else if (works < 0)
 	{
 	  if (p == buf_end)
-	    /* At the moment, it must not happen.  */
-	    return TRANSIT_STATE_END_BUFFER;
+	    {
+	      /* At the moment, it must not happen.  */
+	      abort ();
+	    }
 	  works = 0;
 	}
       else if (d->fails[works])
