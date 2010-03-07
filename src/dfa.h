@@ -243,6 +243,7 @@ struct dfamust
    e.g. [a-c], [[:alpha:]], etc.  */
 struct mb_char_classes
 {
+  int cset;
   int invert;
   wchar_t *chars;		/* Normal characters.  */
   int nchars;

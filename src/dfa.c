@@ -238,17 +238,40 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
   eolbyte = eol;
 }
 
-/* Like setbit, but if case is folded, set both cases of a letter.  */
+/* Like setbit, but if case is folded, set both cases of a letter.
+   For MB_CUR_MAX > 1, one or both of the two cases may not be set,
+   so the resulting charset may only be used as an optimization.  */
 static void
 setbit_case_fold (unsigned b, charclass c)
 {
-  setbit (b, c);
   if (case_fold)
     {
-      if (ISUPPER (b))
-	setbit (tolower (b), c);
-      else if (ISLOWER (b))
-	setbit (toupper (b), c);
+#ifdef MBS_SUPPORT
+      if (MB_CUR_MAX > 1)
+        {
+          wint_t b1 = iswupper(b) ? towlower(b) : b;
+          wint_t b2 = iswlower(b) ? towupper(b) : b;
+          if (wctob ((unsigned char)b1) == b1)
+            setbit (b1, c);
+          if (b2 != b1 && wctob ((unsigned char)b2) == b2)
+            setbit (b2, c);
+        }
+      else
+        {
+#endif
+          unsigned char b1 = ISUPPER(b) ? tolower(b) : b;
+          unsigned char b2 = ISLOWER(b) ? toupper(b) : b;
+	  setbit (b1, c);
+          if (b2 != b1)
+            setbit (b2, c);
+        }
+    }
+  else
+    {
+#ifdef MBS_SUPPORT
+      if (wctob ((unsigned char)b) == b)
+#endif
+        setbit (b, c);
     }
 }
 
@@ -315,43 +338,39 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 
 #ifdef MBS_SUPPORT
 /* Note that characters become unsigned here. */
-# define FETCH(c, eoferr)			\
+# define FETCH_WC(c, wc, eoferr)		\
   do {						\
     if (! lexleft)				\
-     {						\
-	if (eoferr != 0)			\
+      {						\
+        if (eoferr != 0)			\
 	  dfaerror (eoferr);			\
-	else					\
+        else					\
 	  return lasttok = END;			\
       }						\
-    (c) = (unsigned char) *lexptr++;		\
-    --lexleft;					\
+    else					\
+      {						\
+        cur_mb_len = mbrtowc(&wc, lexptr, lexleft, &mbs); \
+        if (cur_mb_len <= 0)			\
+          {					\
+            cur_mb_len = 1;			\
+            --lexleft;				\
+            wc = c = (unsigned char) *lexptr++;	\
+          }					\
+        else					\
+          {					\
+            lexptr += cur_mb_len;		\
+            lexleft -= cur_mb_len;		\
+            (c) = wctob(wc);			\
+          }					\
+      }						\
   } while(0)
 
-/* This function fetch a wide character, and update cur_mb_len,
-   used only if the current locale is a multibyte environment.  */
-static wint_t
-fetch_wc (char const *eoferr)
-{
-  wchar_t wc;
-  if (! lexleft)
-    {
-      if (eoferr != 0)
-	dfaerror (eoferr);
-      else
-	return WEOF;
-    }
+# define FETCH(c, eoferr)			\
+  do {						\
+    wint_t _wc;					\
+    FETCH_WC(c, _wc, eoferr);			\
+  } while(0)
 
-  cur_mb_len = mbrtowc(&wc, lexptr, lexleft, &mbs);
-  if (cur_mb_len <= 0)
-   {
-      cur_mb_len = 1;
-      wc = (unsigned char) *lexptr;
-    }
-  lexptr += cur_mb_len;
-  lexleft -= cur_mb_len;
-  return wc;
-}
 #else
 /* Note that characters become unsigned here. */
 # define FETCH(c, eoferr)	      \
@@ -366,6 +385,10 @@ fetch_wc (char const *eoferr)
     (c) = (unsigned char) *lexptr++;  \
     --lexleft;			      \
   } while(0)
+
+# define FETCH_WC(c, unused, eoferr)		\
+  FETCH(c, eoferr)
+
 #endif /* MBS_SUPPORT */
 
 static int
@@ -375,13 +398,70 @@ in_coll_range (char ch, char from, char to)
   return strcoll (&c[0], &c[2]) <= 0 && 0 <= strcoll (&c[2], &c[4]);
 }
 
-#ifdef MBS_SUPPORT
+static int is_alpha(int c) { return ISALPHA(c); }
+static int is_upper(int c) { return ISUPPER(c); }
+static int is_lower(int c) { return ISLOWER(c); }
+static int is_digit(int c) { return ISDIGIT(c); }
+static int is_xdigit(int c) { return ISXDIGIT(c); }
+static int is_space(int c) { return ISSPACE(c); }
+static int is_punct(int c) { return ISPUNCT(c); }
+static int is_alnum(int c) { return ISALNUM(c); }
+static int is_print(int c) { return ISPRINT(c); }
+static int is_graph(int c) { return ISGRAPH(c); }
+static int is_cntrl(int c) { return ISCNTRL(c); }
+
+static int
+is_blank (int c)
+{
+   return (c == ' ' || c == '\t');
+}
+
+typedef int predicate (int);
+
+/* The following list maps the names of the Posix named character classes
+   to predicate functions that determine whether a given character is in
+   the class.  The leading [ has already been eaten by the lexical analyzer. */
+static struct {
+  const char *name;
+  predicate *pred;
+} const prednames[] = {
+  { "alpha", is_alpha },
+  { "upper", is_upper },
+  { "lower", is_lower },
+  { "digit", is_digit },
+  { "xdigit", is_xdigit },
+  { "space", is_space },
+  { "punct", is_punct },
+  { "alnum", is_alnum },
+  { "print", is_print },
+  { "graph", is_graph },
+  { "cntrl", is_cntrl },
+  { "blank", is_blank },
+  { NULL, NULL }
+};
+
+static predicate *
+find_pred (const char *str)
+{
+  unsigned int i;
+  for (i = 0; prednames[i].name; ++i)
+    if (!strcmp(str, prednames[i].name))
+      break;
+
+  return prednames[i].pred;
+}
+
 /* Multibyte character handling sub-routine for lex.
    This function  parse a bracket expression and build a struct
    mb_char_classes.  */
 static token
-parse_bracket_exp_mb (void)
+parse_bracket_exp (void)
 {
+  int invert;
+  int c, c1, c2;
+  charclass ccl;
+
+#ifdef MBS_SUPPORT
   wint_t wc, wc1, wc2;
 
   /* Work area to build a mb_char_classes.  */
@@ -389,63 +469,68 @@ parse_bracket_exp_mb (void)
   int chars_al, range_sts_al, range_ends_al, ch_classes_al,
     equivs_al, coll_elems_al;
 
-  REALLOC_IF_NECESSARY(dfa->mbcsets, struct mb_char_classes,
-		       dfa->mbcsets_alloc, dfa->nmbcsets + 1);
-  /* dfa->multibyte_prop[] hold the index of dfa->mbcsets.
-     We will update dfa->multibyte_prop[] in addtok(), because we can't
-     decide the index in dfa->tokens[].  */
-
-  /* Initialize work are */
-  work_mbc = &(dfa->mbcsets[dfa->nmbcsets++]);
-
   chars_al = 1;
   range_sts_al = range_ends_al = 0;
   ch_classes_al = equivs_al = coll_elems_al = 0;
-
-  work_mbc->nchars = work_mbc->nranges = work_mbc->nch_classes = 0;
-  work_mbc->nequivs = work_mbc->ncoll_elems = 0;
-  work_mbc->chars = NULL;
-  work_mbc->ch_classes = NULL;
-  work_mbc->range_sts = work_mbc->range_ends = NULL;
-  work_mbc->equivs = work_mbc->coll_elems = NULL;
-
-  wc = fetch_wc(_("unbalanced ["));
-  if (wc == L'^')
+  if (MB_CUR_MAX > 1)
     {
-      wc = fetch_wc(_("unbalanced ["));
-      work_mbc->invert = 1;
+      REALLOC_IF_NECESSARY(dfa->mbcsets, struct mb_char_classes,
+                           dfa->mbcsets_alloc, dfa->nmbcsets + 1);
+
+      /* dfa->multibyte_prop[] hold the index of dfa->mbcsets.
+         We will update dfa->multibyte_prop[] in addtok(), because we can't
+         decide the index in dfa->tokens[].  */
+
+      /* Initialize work area.  */
+      work_mbc = &(dfa->mbcsets[dfa->nmbcsets++]);
+      work_mbc->nchars = work_mbc->nranges = work_mbc->nch_classes = 0;
+      work_mbc->nequivs = work_mbc->ncoll_elems = 0;
+      work_mbc->chars = NULL;
+      work_mbc->ch_classes = NULL;
+      work_mbc->range_sts = work_mbc->range_ends = NULL;
+      work_mbc->equivs = work_mbc->coll_elems = NULL;
     }
   else
-    work_mbc->invert = 0;
+    work_mbc = NULL;
+#endif
+
+  memset (ccl, 0, sizeof(ccl));
+  FETCH_WC (c, wc, _("unbalanced ["));
+  if (c == '^')
+    {
+      FETCH_WC (c, wc, _("unbalanced ["));
+      invert = 1;
+    }
+  else
+    invert = 0;
+
   do
     {
-      wc1 = WEOF; /* mark wc1 is not initialized".  */
+      c1 = EOF; /* mark c1 is not initialized".  */
 
       /* Note that if we're looking at some other [:...:] construct,
 	 we just treat it as a bunch of ordinary characters.  We can do
 	 this because we assume regex has checked for syntax errors before
 	 dfa is ever called. */
-      if (wc == L'[' && (syntax_bits & RE_CHAR_CLASSES))
+      if (c == '[' && (syntax_bits & RE_CHAR_CLASSES))
 	{
 #define BRACKET_BUFFER_SIZE 128
 	  char str[BRACKET_BUFFER_SIZE];
-	  wc1 = wc;
-	  wc = fetch_wc(_("unbalanced ["));
+	  FETCH_WC (c1, wc1, _("unbalanced ["));
 
 	  /* If pattern contains `[[:', `[[.', or `[[='.  */
-	  if (cur_mb_len == 1 && (wc == L':' || wc == L'.' || wc == L'='))
+	  if (c1 == ':'
+#ifdef MBS_SUPPORT
+              /* TODO: handle `[[.' and `[[=' also for MB_CUR_MAX == 1.  */
+	      || (MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
+#endif
+	      )
 	    {
-	      unsigned char c;
-	      unsigned char delim = (unsigned char)wc;
 	      int len = 0;
 	      for (;;)
 		{
-		  if (! lexleft)
-		    dfaerror (_("unbalanced ["));
-		  c = (unsigned char) *lexptr++;
-		  --lexleft;
-
-		  if ((c == delim && *lexptr == ']') || lexleft == 0)
+		  FETCH (c, _("unbalanced ["));
+		  if ((c == c1 && *lexptr == ']') || lexleft == 0)
 		    break;
 		  if (len < BRACKET_BUFFER_SIZE)
 		    str[len++] = c;
@@ -455,18 +540,9 @@ parse_bracket_exp_mb (void)
 		}
 	      str[len] = '\0';
 
-	      if (lexleft == 0)
-		{
-		  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
-				       work_mbc->nchars + 2);
-		  work_mbc->chars[work_mbc->nchars++] = L'[';
-		  work_mbc->chars[work_mbc->nchars++] = delim;
-		  break;
-		}
-
-	      if (--lexleft, *lexptr++ != ']')
-		dfaerror (_("unbalanced ["));
-	      if (delim == ':')
+              /* Fetch bracket.  */
+	      FETCH (c, _("unbalanced ["));
+	      if (c1 == ':')
 		/* build character class.  */
 		{
 		  char const *class
@@ -474,24 +550,39 @@ parse_bracket_exp_mb (void)
 				     || !strcmp (str, "lower"))
 				       ? "alpha"
 				       : str);
-		  /* Query the character class as wctype_t.  */
-		  wctype_t wt = wctype (class);
+#ifdef MBS_SUPPORT
+                  if (MB_CUR_MAX > 1)
+                    {
+		      /* Store the character class as wctype_t.  */
+                      wctype_t wt = wctype (class);
 
-		  if (ch_classes_al == 0)
-		    MALLOC(work_mbc->ch_classes, wctype_t, ++ch_classes_al);
-		  REALLOC_IF_NECESSARY(work_mbc->ch_classes, wctype_t,
-				       ch_classes_al,
-				       work_mbc->nch_classes + 1);
-		  work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
+                      if (ch_classes_al == 0)
+                        MALLOC(work_mbc->ch_classes, wctype_t, ++ch_classes_al);
+                      REALLOC_IF_NECESSARY(work_mbc->ch_classes, wctype_t,
+                                           ch_classes_al,
+                                           work_mbc->nch_classes + 1);
+                      work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
+                    }
+#endif
 
-		}
-	      else if (delim == '=' || delim == '.')
+                  {
+                    predicate *pred = find_pred (class);
+                    if (!pred)
+                      dfaerror(_("invalid character class"));
+                    for (c2 = 0; c2 < NOTCHAR; ++c2)
+                      if ((*pred)(c2))
+                        setbit_case_fold (c2, ccl);
+                  }
+                }
+
+#ifdef MBS_SUPPORT
+	      else if (c1 == '=' || c1 == '.')
 		{
 		  char *elem;
 		  MALLOC(elem, char, len + 1);
 		  strncpy(elem, str, len + 1);
 
-		  if (delim == '=')
+		  if (c1 == '=')
 		    /* build equivalent class.  */
 		    {
 		      if (equivs_al == 0)
@@ -502,7 +593,7 @@ parse_bracket_exp_mb (void)
 		      work_mbc->equivs[work_mbc->nequivs++] = elem;
 		    }
 
-		  if (delim == '.')
+		  if (c1 == '.')
 		    /* build collating element.  */
 		    {
 		      if (coll_elems_al == 0)
@@ -513,158 +604,157 @@ parse_bracket_exp_mb (void)
 		      work_mbc->coll_elems[work_mbc->ncoll_elems++] = elem;
 		    }
 		}
-	      wc1 = wc = WEOF;
+#endif
+
+              /* Fetch new lookahead character.  */
+	      FETCH_WC (c1, wc1, _("unbalanced ["));
+              continue;
 	    }
-	  else
-	    /* We treat '[' as a normal character here.  */
-	    {
-	      wc2 = wc1; wc1 = wc; wc = wc2; /* swap */
-	    }
-	}
-      else
-	{
-	  if (wc == L'\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-	    wc = fetch_wc(("unbalanced ["));
+
+          /* We treat '[' as a normal character here.  c/c1/wc/wc1
+             are already set up.  */
 	}
 
-      if (wc1 == WEOF)
-	wc1 = fetch_wc(_("unbalanced ["));
+      if (c == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
+        FETCH_WC(c, wc, _("unbalanced ["));
 
-      if (wc1 == L'-')
+      if (c1 == EOF)
+	FETCH_WC(c1, wc1, _("unbalanced ["));
+
+      if (c1 == '-')
 	/* build range characters.  */
 	{
-	  wc2 = fetch_wc(_("unbalanced ["));
-	  if (wc2 == L']')
+	  FETCH_WC(c2, wc2, _("unbalanced ["));
+	  if (c2 == ']')
 	    {
 	      /* In the case [x-], the - is an ordinary hyphen,
 		 which is left in c1, the lookahead character. */
 	      lexptr -= cur_mb_len;
 	      lexleft += cur_mb_len;
-	      wc2 = wc;
-	    }
-	  else
-	    {
-	      if (wc2 == L'\\'
-		  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-		wc2 = fetch_wc(_("unbalanced ["));
-	      wc1 = fetch_wc(_("unbalanced ["));
-	    }
+            }
+        }
 
-	  /* When case folding map a range, say [m-z] (or even [M-z]) to the
-	     pair of ranges, [m-z] [M-Z].  */
-	  if (range_sts_al == 0)
-	    {
-	      MALLOC(work_mbc->range_sts, wchar_t, ++range_sts_al);
-	      MALLOC(work_mbc->range_ends, wchar_t, ++range_ends_al);
-	    }
-	  REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
-			       range_sts_al, work_mbc->nranges + 1);
-	  REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
-			       range_ends_al, work_mbc->nranges + 1);
-	  work_mbc->range_sts[work_mbc->nranges] =
-            case_fold ? towlower(wc) : (wchar_t)wc;
-	  work_mbc->range_ends[work_mbc->nranges++] =
-            case_fold ? towlower(wc2) : (wchar_t)wc2;
+      if (c1 == '-' && c2 != ']')
+        {
+          if (c2 == '\\'
+              && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
+            FETCH_WC(c2, wc2, _("unbalanced ["));
 
-#ifndef GREP
-	  if (case_fold)
+#ifdef MBS_SUPPORT
+          if (MB_CUR_MAX > 1)
             {
+	      /* When case folding map a range, say [m-z] (or even [M-z])
+		 to the pair of ranges, [m-z] [M-Z].  */
+	      if (range_sts_al == 0)
+                {
+                  MALLOC(work_mbc->range_sts, wchar_t, ++range_sts_al);
+                  MALLOC(work_mbc->range_ends, wchar_t, ++range_ends_al);
+                }
               REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
                                    range_sts_al, work_mbc->nranges + 1);
-              work_mbc->range_sts[work_mbc->nranges] = towupper(wc);
               REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
                                    range_ends_al, work_mbc->nranges + 1);
-              work_mbc->range_ends[work_mbc->nranges++] = towupper(wc2);
-            }
-#endif
-	}
-      else if (wc != WEOF)
-	/* build normal characters.  */
-	{
-	  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
-			       work_mbc->nchars + 1);
-	  work_mbc->chars[work_mbc->nchars++] =
-		(wchar_t) (case_fold ? towlower(wc) : wc);
+              work_mbc->range_sts[work_mbc->nranges] =
+                case_fold ? towlower(wc) : (wchar_t)wc;
+              work_mbc->range_ends[work_mbc->nranges++] =
+                case_fold ? towlower(wc2) : (wchar_t)wc2;
+
 #ifndef GREP
-	  if (case_fold)
+              if (case_fold && (iswalpha(wc) || iswalpha(wc2)))
+                {
+                  REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
+                                       range_sts_al, work_mbc->nranges + 1);
+                  work_mbc->range_sts[work_mbc->nranges] = towupper(wc);
+                  REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
+                                       range_ends_al, work_mbc->nranges + 1);
+                  work_mbc->range_ends[work_mbc->nranges++] = towupper(wc2);
+                }
+#endif
+            }
+          else
+#endif
+            {
+              c1 = c;
+              if (case_fold)
+                {
+                  c1 = tolower (c1);
+                  c2 = tolower (c2);
+                }
+              if (!hard_LC_COLLATE)
+                for (c = c1; c <= c2; c++)
+                  setbit_case_fold (c, ccl);
+              else
+                for (c = 0; c < NOTCHAR; ++c)
+                  if (!(case_fold && ISUPPER (c))
+                      && in_coll_range (c, c1, c2))
+                    setbit_case_fold (c, ccl);
+            }
+
+          FETCH_WC(c1, wc1, _("unbalanced ["));
+	  continue;
+	}
+
+      setbit_case_fold (c, ccl);
+#ifdef MBS_SUPPORT
+      /* Build normal characters.  */
+      if (MB_CUR_MAX > 1)
+        {
+          if (case_fold && iswalpha(wc))
+            {
+              wc = towlower(wc);
+              c = wctob(wc);
+              if (c == EOF || (wint_t)c != (wint_t)wc)
+                {
+                  REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
+                                       work_mbc->nchars + 1);
+                  work_mbc->chars[work_mbc->nchars++] = wc;
+                }
+#ifdef GREP
+	      continue;
+#else
+              wc = towupper(wc);
+              c = wctob(wc);
+#endif
+            }
+          if (c == EOF || (wint_t)c != (wint_t)wc)
             {
               REALLOC_IF_NECESSARY(work_mbc->chars, wchar_t, chars_al,
                                    work_mbc->nchars + 1);
-              work_mbc->chars[work_mbc->nchars++] = towupper(wc);
+              work_mbc->chars[work_mbc->nchars++] = wc;
             }
 #endif
         }
     }
-  while ((wc = wc1) != L']');
-  return MBCSET;
-}
-#endif /* MBS_SUPPORT */
+  while ((wc = wc1, (c = c1) != L']'));
 
-#ifdef __STDC__
-#define FUNC(F, P) static int F(int c) { return P(c); }
-#else
-#define FUNC(F, P) static int F(c) int c; { return P(c); }
+#ifdef MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    {
+      static charclass zeroclass;
+      work_mbc->invert = invert;
+      work_mbc->cset = equal(ccl, zeroclass) ? -1 : charclass_index(ccl);
+      return MBCSET;
+    }
 #endif
 
-FUNC(is_alpha, ISALPHA)
-FUNC(is_upper, ISUPPER)
-FUNC(is_lower, ISLOWER)
-FUNC(is_digit, ISDIGIT)
-FUNC(is_xdigit, ISXDIGIT)
-FUNC(is_space, ISSPACE)
-FUNC(is_punct, ISPUNCT)
-FUNC(is_alnum, ISALNUM)
-FUNC(is_print, ISPRINT)
-FUNC(is_graph, ISGRAPH)
-FUNC(is_cntrl, ISCNTRL)
+  if (invert)
+    {
+      notset(ccl);
+      if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
+        clrbit(eolbyte, ccl);
+    }
 
-static int
-is_blank (int c)
-{
-   return (c == ' ' || c == '\t');
+  return CSET + charclass_index(ccl);
 }
-
-/* The following list maps the names of the Posix named character classes
-   to predicate functions that determine whether a given character is in
-   the class.  The leading [ has already been eaten by the lexical analyzer. */
-static struct {
-  const char *name;
-  int (*pred) (int);
-} const prednames[] = {
-  { ":alpha:]", is_alpha },
-  { ":upper:]", is_upper },
-  { ":lower:]", is_lower },
-  { ":digit:]", is_digit },
-  { ":xdigit:]", is_xdigit },
-  { ":space:]", is_space },
-  { ":punct:]", is_punct },
-  { ":alnum:]", is_alnum },
-  { ":print:]", is_print },
-  { ":graph:]", is_graph },
-  { ":cntrl:]", is_cntrl },
-  { ":blank:]", is_blank },
-  { 0, 0 }
-};
 
 /* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
 #define IS_WORD_CONSTITUENT(C) (ISALNUM(C) || (C) == '_')
 
-static int
-looking_at (char const *s)
-{
-  size_t len;
-
-  len = strlen(s);
-  if (lexleft < len)
-    return 0;
-  return strncmp(s, lexptr, len) == 0;
-}
-
 static token
 lex (void)
 {
-  unsigned c, c1, c2;
-  int backslash = 0, invert;
+  unsigned c, c2;
+  int backslash = 0;
   charclass ccl;
   int i;
 
@@ -679,10 +769,7 @@ lex (void)
 #ifdef MBS_SUPPORT
       if (MB_CUR_MAX > 1)
         {
-          wint_t wi = fetch_wc (NULL);
-          if (wi == WEOF)
-            return lasttok = EOF;
-          wctok = wi, c = wctob (wi);
+          FETCH_WC (c, wctok, NULL);
           if ((int)c == EOF)
             goto normal_char;
         }
@@ -963,100 +1050,7 @@ lex (void)
 	  if (backslash)
 	    goto normal_char;
 	  laststart = 0;
-#ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
-	    {
-	      /* In multibyte environment a bracket expression may contain
-		 multibyte characters, which must be treated as characters
-		 (not bytes).  So we parse it by parse_bracket_exp_mb().  */
-	      return lasttok = parse_bracket_exp_mb();
-	    }
-#endif
-	  zeroset(ccl);
-	  FETCH(c, _("unbalanced ["));
-	  if (c == '^')
-	    {
-	      FETCH(c, _("unbalanced ["));
-	      invert = 1;
-	    }
-	  else
-	    invert = 0;
-	  do
-	    {
-	      /* Nobody ever said this had to be fast. :-)
-		 Note that if we're looking at some other [:...:]
-		 construct, we just treat it as a bunch of ordinary
-		 characters.  We can do this because we assume
-		 regex has checked for syntax errors before
-		 dfa is ever called. */
-	      if (c == '[' && (syntax_bits & RE_CHAR_CLASSES))
-		for (c1 = 0; prednames[c1].name; ++c1)
-		  if (looking_at(prednames[c1].name))
-		    {
-		      int (*pred) (int) = prednames[c1].pred;
-
-		      for (c2 = 0; c2 < NOTCHAR; ++c2)
-			if ((*pred)(c2))
-			  setbit_case_fold (c2, ccl);
-		      lexptr += strlen(prednames[c1].name);
-		      lexleft -= strlen(prednames[c1].name);
-		      FETCH(c1, _("unbalanced ["));
-		      goto skip;
-		    }
-	      if (c == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-		FETCH(c, _("unbalanced ["));
-	      FETCH(c1, _("unbalanced ["));
-	      if (c1 == '-')
-		{
-		  FETCH(c2, _("unbalanced ["));
-		  if (c2 == ']')
-		    {
-		      /* In the case [x-], the - is an ordinary hyphen,
-			 which is left in c1, the lookahead character. */
-		      --lexptr;
-		      ++lexleft;
-		    }
-		  else
-		    {
-		      if (c2 == '\\'
-			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-			FETCH(c2, _("unbalanced ["));
-
-                      c1 = c;
-		      if (!hard_LC_COLLATE)
-		        for (c = c1; c <= c2; c++)
-			  setbit_case_fold (c, ccl);
-		      else
-                        {
-                          if (case_fold)
-                            {
-                              c1 = tolower (c1);
-                              c2 = tolower (c2);
-                            }
-                          for (c = 0; c < NOTCHAR; ++c)
-                            if (!(case_fold && ISUPPER (c))
-                                && in_coll_range (c, c1, c2))
-                              setbit_case_fold (c, ccl);
-                        }
-
-		      FETCH(c1, _("unbalanced ["));
-		      continue;
-		    }
-		}
-
-	      setbit_case_fold (c, ccl);
-
-	    skip:
-	      ;
-	    }
-	  while ((c = c1) != ']');
-	  if (invert)
-	    {
-	      notset(ccl);
-	      if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
-		clrbit(eolbyte, ccl);
-	    }
-	  return lasttok = CSET + charclass_index(ccl);
+	  return lasttok = parse_bracket_exp();
 
 	default:
 	normal_char:
@@ -2498,6 +2492,11 @@ match_mb_charset (struct dfa *d, int s, position pos, int idx)
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
   match_len = (mblen_buf[idx] == 0)? 1 : mblen_buf[idx];
+
+  /* Match in range 0-255?  */
+  if (wc < NOTCHAR && work_mbc->cset != -1
+      && tstbit((unsigned char)wc, d->charclasses[work_mbc->cset]))
+    goto charset_matched;
 
   /* match with a character class?  */
   for (i = 0; i<work_mbc->nch_classes; i++)
