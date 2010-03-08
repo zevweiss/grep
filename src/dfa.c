@@ -2101,7 +2101,7 @@ dfastate (int s, struct dfa *d, int trans[])
 	  insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
 
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1)
+      if (d->mb_cur_max > 1)
 	{
 	  /* If a token in follows.elems is not 1st byte of a multibyte
 	     character, or the states of follows must accept the bytes
@@ -2136,7 +2136,7 @@ dfastate (int s, struct dfa *d, int trans[])
       /* If we are building a searching matcher, throw in the positions
 	 of state 0 as well. */
 #ifdef MBS_SUPPORT
-      if (d->searchflag && (MB_CUR_MAX == 1 || !next_isnt_1st_byte))
+      if (d->searchflag && (d->mb_cur_max == 1 || !next_isnt_1st_byte))
 #else
       if (d->searchflag)
 #endif
@@ -2755,7 +2755,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   *end = eol;
 
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (d->mb_cur_max > 1)
     {
       int remain_bytes, i;
       buf_begin = (unsigned char *) begin;
@@ -2800,7 +2800,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   for (;;)
     {
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1)
+      if (d->mb_cur_max > 1)
 	while ((t = trans[s]))
 	  {
 	    if ((char *) p > end)
@@ -2837,7 +2837,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 	      if (backref)
 		*backref = (d->states[s].backref != 0);
 #ifdef MBS_SUPPORT
-	      if (MB_CUR_MAX > 1)
+	      if (d->mb_cur_max > 1)
 		{
 		  free(mblen_buf);
 		  free(inputwcs);
@@ -2849,7 +2849,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
 	  s1 = s;
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
+	  if (d->mb_cur_max > 1)
 	    {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
@@ -2870,7 +2870,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       if ((char *) p > end)
 	{
 #ifdef MBS_SUPPORT
-	  if (MB_CUR_MAX > 1)
+	  if (d->mb_cur_max > 1)
 	    {
 	      free(mblen_buf);
 	      free(inputwcs);
@@ -2897,6 +2897,37 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     }
 }
 
+static void
+free_mbdata (struct dfa *d)
+{
+  unsigned i;
+
+  free(d->multibyte_prop);
+  d->multibyte_prop = NULL;
+
+  for (i = 0; i < d->nmbcsets; ++i)
+    {
+      unsigned j;
+      struct mb_char_classes *p = &(d->mbcsets[i]);
+      free(p->chars);
+      free(p->ch_classes);
+      free(p->range_sts);
+      free(p->range_ends);
+
+      for (j = 0; j < p->nequivs; ++j)
+        free(p->equivs[j]);
+      free(p->equivs);
+
+      for (j = 0; j < p->ncoll_elems; ++j)
+        free(p->coll_elems[j]);
+      free(p->coll_elems);
+    }
+
+  free(d->mbcsets);
+  d->mbcsets = NULL;
+  d->nmbcsets = 0;
+}
+
 /* Initialize the components of a dfa that the other routines don't
    initialize for themselves. */
 void
@@ -2909,8 +2940,10 @@ dfainit (struct dfa *d)
   d->talloc = 1;
   MALLOC(d->tokens, token, d->talloc);
   d->tindex = d->depth = d->nleaves = d->nregexps = 0;
+
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  d->mb_cur_max = MB_CUR_MAX;
+  if (d->mb_cur_max > 1)
     {
       d->nmultibyte_prop = 1;
       MALLOC(d->multibyte_prop, int, d->nmultibyte_prop);
@@ -2954,28 +2987,8 @@ dfafree (struct dfa *d)
   free(d->tokens);
 
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    {
-      free(d->multibyte_prop);
-      for (i = 0; i < d->nmbcsets; ++i)
-	{
-	  int j;
-	  struct mb_char_classes *p = &(d->mbcsets[i]);
-	  free(p->chars);
-	  free(p->ch_classes);
-	  free(p->range_sts);
-	  free(p->range_ends);
-
-	  for (j = 0; j < p->nequivs; ++j)
-	    free(p->equivs[j]);
-	  free(p->equivs);
-
-	  for (j = 0; j < p->ncoll_elems; ++j)
-	    free(p->coll_elems[j]);
-	  free(p->coll_elems);
-	}
-      free(d->mbcsets);
-    }
+  if (d->mb_cur_max > 1)
+    free_mbdata(d);
 #endif /* MBS_SUPPORT */
 
   for (i = 0; i < d->sindex; ++i) {

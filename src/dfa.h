@@ -277,6 +277,8 @@ struct dfa
   int nregexps;			/* Count of parallel regexps being built
 				   with dfaparse(). */
 #ifdef MBS_SUPPORT
+  unsigned mb_cur_max;		/* Cached value of MB_CUR_MAX.  */
+
   /* The following are used only if MB_CUR_MAX > 1.  */
 
   /* The value of multibyte_prop[i] is defined by following rule.
