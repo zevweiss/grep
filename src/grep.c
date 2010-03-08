@@ -2267,6 +2267,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 #endif /* MBS_SUPPORT */
 
   compile(keys, keycc);
+  free (keys);
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
