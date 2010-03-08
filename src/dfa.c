@@ -79,6 +79,7 @@
 /* We can handle multibyte strings. */
 # include <wchar.h>
 # include <wctype.h>
+# include <langinfo.h>
 #endif
 
 #include "regex.h"
@@ -251,6 +252,25 @@ setbit_case_fold (unsigned b, charclass c)
     }
 }
 
+
+/* UTF-8 encoding allows some optimizations that we can't otherwise
+   assume in a multibyte encoding. */
+static inline int
+using_utf8 (void)
+{
+  static int utf8 = -1;
+  if (utf8 == -1)
+    {
+#if defined HAVE_LANGINFO_CODESET && defined MBS_SUPPORT
+      utf8 = (strcmp (nl_langinfo (CODESET), "UTF-8") == 0);
+#else
+      utf8 = 0;
+#endif
+    }
+
+  return utf8;
+}
+
 /* Lexical analyzer.  All the dross that deals with the obnoxious
    GNU Regex syntax bits is located here.  The poor, suffering
    reader is referred to the GNU Regex documentation for the
@@ -291,6 +311,7 @@ static wchar_t *inputwcs;	/* Wide character representation of input
 static unsigned char const *buf_begin;	/* reference to begin in dfaexec().  */
 static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 #endif /* MBS_SUPPORT  */
+
 
 #ifdef MBS_SUPPORT
 /* Note that characters become unsigned here. */
@@ -1126,6 +1147,7 @@ addtok (token t)
     addtok_mb (t, 3);
 }
 
+#ifdef MBS_SUPPORT
 /* We treat a multibyte character as a single atom, so that DFA
    can treat a multibyte character as a single expression.
 
@@ -1147,6 +1169,7 @@ addtok_wc (wint_t wc)
       addtok(CAT);
     }
 }
+#endif
 
 /* The grammar understood by the parser is as follows.
 
@@ -2897,6 +2920,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     }
 }
 
+#ifdef MBS_SUPPORT
 static void
 free_mbdata (struct dfa *d)
 {
@@ -2927,6 +2951,7 @@ free_mbdata (struct dfa *d)
   d->mbcsets = NULL;
   d->nmbcsets = 0;
 }
+#endif
 
 /* Initialize the components of a dfa that the other routines don't
    initialize for themselves. */
@@ -2966,11 +2991,12 @@ dfainit (struct dfa *d)
 #endif
 }
 
+#ifdef MBS_SUPPORT
 static void
 dfaoptimize (struct dfa *d)
 {
   unsigned i;
-  if (!using_utf8)
+  if (!using_utf8())
     return;
 
   for (i = 0; i < d->tindex; ++i)
@@ -2989,6 +3015,7 @@ dfaoptimize (struct dfa *d)
   free_mbdata (d);
   d->mb_cur_max = 1;
 }
+#endif
 
 /* Parse and analyze a single string of the given length. */
 void
@@ -2997,7 +3024,9 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfainit(d);
   dfaparse(s, len, d);
   dfamust(d);
+#ifdef MBS_SUPPORT
   dfaoptimize(d);
+#endif
   dfaanalyze(d, searchflag);
 }
 
