@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Speed improvements
+
+  grep is much faster on multibyte character sets, especially (but not
+  limited to) UTF-8 character sets.  The speed improvement is also very
+  pronounced with case-insensitive matches.
+
 ** Bug fixes
 
   Character classes would malfunction in multi-byte locales when using grep -i.
