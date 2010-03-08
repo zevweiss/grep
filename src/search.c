@@ -225,20 +225,22 @@ kwsmusts (void)
 
 #ifdef MBS_SUPPORT
 
-static char*
-check_multibyte_string(const char *buf, size_t size)
+static bool
+is_mb_middle(const char **good, const char *buf, const char *end)
 {
-  char *mb_properties = xcalloc(size, 1);
+  const char *p = *good;
+  const char *prev = p;
   mbstate_t cur_state;
-  wchar_t wc;
-  int i;
 
+  /* TODO: can be optimized for UTF-8.  */
   memset(&cur_state, 0, sizeof(mbstate_t));
-
-  for (i = 0; i < size ;)
+  while (p < buf)
     {
-      size_t mbclen;
-      mbclen = mbrtowc(&wc, buf + i, size - i, &cur_state);
+      size_t mbclen = mbrlen(p, end - p, &cur_state);
+
+      /* Store the beginning of the previous complete multibyte character.  */
+      if (mbclen != (size_t) -2)
+        prev = p;
 
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
 	{
@@ -246,11 +248,11 @@ check_multibyte_string(const char *buf, size_t size)
 	     We treat it as a single byte character.  */
 	  mbclen = 1;
 	}
-      mb_properties[i] = mbclen;
-      i += mbclen;
+      p += mbclen;
     }
 
-  return mb_properties;
+  *good = prev;
+  return p > buf;
 }
 #endif /* MBS_SUPPORT */
 
@@ -372,13 +374,12 @@ COMPILE_FCT(Ecompile)
 
 EXECUTE_FCT(EGexecute)
 {
-  register char const *buflim, *beg, *end, *match, *best_match;
+  char const *buflim, *beg, *end, *match, *best_match, *mb_start;
   char eol = eolbyte;
   int backref, start, len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
 #ifdef MBS_SUPPORT
-  char *mb_properties = NULL;
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
@@ -390,12 +391,10 @@ EXECUTE_FCT(EGexecute)
 	    start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;
         }
-
-      if (kwset)
-        mb_properties = check_multibyte_string(buf, size);
     }
 #endif /* MBS_SUPPORT */
 
+  mb_start = buf;
   buflim = buf + size;
 
   for (beg = end = buf; end < buflim; beg = end)
@@ -416,14 +415,18 @@ EXECUTE_FCT(EGexecute)
 	        end++;
               else
                 end = buflim;
-#ifdef MBS_SUPPORT
-	      if (MB_CUR_MAX > 1 && mb_properties[beg - buf] == 0)
-		continue;
-#endif
+	      match = beg;
 	      while (beg > buf && beg[-1] != eol)
 		--beg;
 	      if (kwsm.index < kwset_exact_matches)
-		goto success;
+                {
+#ifdef MBS_SUPPORT
+                  if (mb_start < beg)
+                    mb_start = beg;
+                  if (MB_CUR_MAX == 1 || !is_mb_middle (&mb_start, match, buflim))
+#endif
+                    goto success;
+                }
 	      if (dfaexec (&dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
 		continue;
 	    }
@@ -557,10 +560,6 @@ EXECUTE_FCT(EGexecute)
   *match_size = len;
   ret_val = beg - buf;
  out:
-#ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    free (mb_properties);
-#endif /* MBS_SUPPORT */
   return ret_val;
 }
 #endif /* defined(GREP_PROGRAM) || defined(EGREP_PROGRAM) */
@@ -612,13 +611,12 @@ COMPILE_FCT(Fcompile)
 
 EXECUTE_FCT(Fexecute)
 {
-  register char const *beg, *try, *end;
-  register size_t len;
+  char const *beg, *try, *end, *mb_start;
+  size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
 #ifdef MBS_SUPPORT
-  char *mb_properties = NULL;
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
@@ -628,19 +626,20 @@ EXECUTE_FCT(Fexecute)
 	    start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;
         }
-
-      mb_properties = check_multibyte_string(buf, size);
     }
 #endif /* MBS_SUPPORT */
 
-  for (beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
+  for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
       size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
       if (offset == (size_t) -1)
 	goto failure;
 #ifdef MBS_SUPPORT
-      if (MB_CUR_MAX > 1 && mb_properties[offset+beg-buf] == 0)
-	continue; /* It is a part of multibyte character.  */
+      if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size))
+        {
+          beg = mb_start - 1;
+          continue; /* It is a part of multibyte character.  */
+        }
 #endif /* MBS_SUPPORT */
       beg += offset;
       len = kwsmatch.size[0];
@@ -692,10 +691,6 @@ EXECUTE_FCT(Fexecute)
   *match_size = len;
   ret_val = beg - buf;
  out:
-#ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    free (mb_properties);
-#endif /* MBS_SUPPORT */
   return ret_val;
 }
 #endif /* defined(GREP_PROGRAM) || defined(FGREP_PROGRAM) */

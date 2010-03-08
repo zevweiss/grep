@@ -25,6 +25,7 @@ TESTS =						\
   dfaexec-multibyte				\
   empty.sh					\
   ere.sh					\
+  euc-mb					\
   fedora					\
   file.sh					\
   fmbtest.sh					\
