@@ -1627,7 +1627,7 @@ prepend_args (char const *options, char *buf, char **argv)
 static void
 prepend_default_options (char const *options, int *pargc, char ***pargv)
 {
-  if (options)
+  if (options && *options)
     {
       char *buf = xmalloc (strlen (options) + 1);
       int prepended = prepend_args (options, buf, (char **) NULL);
