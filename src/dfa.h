@@ -134,12 +134,6 @@ typedef enum
 
   RPAREN,			/* RPAREN never appears in the parse tree. */
 
-  CRANGE,			/* CRANGE never appears in the parse tree.
-				   It stands for a character range that can
-				   match a string of one or more characters.
-				   For example, [a-z] can match "ch" in
-				   a Spanish locale.  */
-
 #ifdef MBS_SUPPORT
   ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
                                   any multibyte (or single byte) characters.

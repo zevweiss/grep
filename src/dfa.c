@@ -147,7 +147,6 @@ prtok (token t)
 	case ORTOP: s = "ORTOP"; break;
 	case LPAREN: s = "LPAREN"; break;
 	case RPAREN: s = "RPAREN"; break;
-	case CRANGE: s = "CRANGE"; break;
 #ifdef MBS_SUPPORT
 	case ANYCHAR: s = "ANYCHAR"; break;
 	case MBCSET: s = "MBCSET"; break;
@@ -1170,7 +1169,6 @@ addtok (token t)
      ENDWORD
      LIMWORD
      NOTLIMWORD
-     CRANGE
      LPAREN regexp RPAREN
      <empty>
 
@@ -1206,22 +1204,6 @@ atom (void)
 	    }
 	}
 #endif /* MBS_SUPPORT  */
-    }
-  else if (tok == CRANGE)
-    {
-      /* A character range like "[a-z]" in a locale other than "C" or
-	 "POSIX".  This range might any sequence of one or more
-	 characters.  Unfortunately the POSIX locale primitives give
-	 us no practical way to find what character sequences might be
-	 matched.  Treat this approximately like "(.\1)" -- i.e. match
-	 one character, and then punt to the full matcher.  */
-      charclass ccl;
-      zeroset (ccl);
-      notset (ccl);
-      addtok (CSET + charclass_index (ccl));
-      addtok (BACKREF);
-      addtok (CAT);
-      tok = lex ();
     }
   else if (tok == LPAREN)
     {
