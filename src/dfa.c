@@ -2966,6 +2966,30 @@ dfainit (struct dfa *d)
 #endif
 }
 
+static void
+dfaoptimize (struct dfa *d)
+{
+  unsigned i;
+  if (!using_utf8)
+    return;
+
+  for (i = 0; i < d->tindex; ++i)
+    {
+      switch(d->tokens[i])
+	{
+	case ANYCHAR:
+	case MBCSET:
+	  /* Requires multi-byte algorithm.  */
+	  return;
+	default:
+	  break;
+	}
+    }
+
+  free_mbdata (d);
+  d->mb_cur_max = 1;
+}
+
 /* Parse and analyze a single string of the given length. */
 void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
@@ -2973,6 +2997,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfainit(d);
   dfaparse(s, len, d);
   dfamust(d);
+  dfaoptimize(d);
   dfaanalyze(d, searchflag);
 }
 
