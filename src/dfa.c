@@ -21,6 +21,7 @@
    Modified July, 1988 by Arthur David Olson to assist BMG speedups  */
 
 #include <config.h>
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -728,7 +729,14 @@ parse_bracket_exp (void)
   while ((wc = wc1, (c = c1) != L']'));
 
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1
+      && (!using_utf8()
+	  || invert
+          || work_mbc->nchars != 0
+          || work_mbc->nch_classes != 0
+          || work_mbc->nranges != 0
+          || work_mbc->nequivs != 0
+          || work_mbc->ncoll_elems != 0))
     {
       static charclass zeroclass;
       work_mbc->invert = invert;
@@ -739,6 +747,9 @@ parse_bracket_exp (void)
 
   if (invert)
     {
+#ifdef MBS_SUPPORT
+      assert(MB_CUR_MAX == 1);
+#endif
       notset(ccl);
       if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
         clrbit(eolbyte, ccl);
