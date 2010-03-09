@@ -2932,7 +2932,7 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
                   continue;
                 }
 
-              /* Can match with a multibyte character (and multicharacter 
+              /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
               s = transit_state(d, s, &p);
               trans = d->trans;
