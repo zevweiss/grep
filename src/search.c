@@ -333,7 +333,8 @@ EXECUTE_FCT(EGexecute)
     {
       if (match_icase)
         {
-          char *case_buf = xmalloc(size);
+          /* Add one for the sentinel byte dfaexec may add.  */
+          char *case_buf = xmalloc(size + 1);
           memcpy(case_buf, buf, size);
 	  if (start_ptr)
 	    start_ptr = case_buf + (start_ptr - buf);
@@ -375,17 +376,18 @@ EXECUTE_FCT(EGexecute)
 		--beg;
 	      if (kwsm.index < kwset_exact_matches)
 		goto success;
-	      if (dfaexec (&dfa, beg, end - beg, &backref) == (size_t) -1)
+	      if (dfaexec (&dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
 		continue;
 	    }
 	  else
 	    {
 	      /* No good fixed strings; start with DFA. */
-	      size_t offset = dfaexec (&dfa, beg, buflim - beg, &backref);
-	      if (offset == (size_t) -1)
+	      char const *next_beg = dfaexec (&dfa, beg, (char *) buflim,
+					      0, NULL, &backref);
+	      if (next_beg == NULL)
 		break;
 	      /* Narrow down to the line we've found. */
-	      beg += offset;
+	      beg = next_beg;
 	      if ((end = memchr(beg, eol, buflim - beg)) != NULL)
 	        end++;
               else

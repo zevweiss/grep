@@ -1295,7 +1295,14 @@ copytoks (int tindex, int ntokens)
   int i;
 
   for (i = 0; i < ntokens; ++i)
-    addtok(dfa->tokens[tindex + i]);
+    {
+      addtok(dfa->tokens[tindex + i]);
+#ifdef MBS_SUPPORT
+      /* Update index into multibyte csets.  */
+      if (MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
+	dfa->multibyte_prop[dfa->tindex - 1] = dfa->multibyte_prop[tindex + i];
+#endif
+    }
 }
 
 static void
@@ -2291,6 +2298,7 @@ build_state (int s, struct dfa *d)
 	d->trans = d->realtrans + 1;
 	REALLOC(d->fails, int *, d->tralloc);
 	REALLOC(d->success, int, d->tralloc);
+	REALLOC(d->newlines, int, d->tralloc);
 	while (oldalloc < d->tralloc)
 	  {
 	    d->trans[oldalloc] = NULL;
@@ -2298,7 +2306,9 @@ build_state (int s, struct dfa *d)
 	  }
       }
 
-  /* Newline is a sentinel.  */
+  /* Keep the newline transition in a special place so we can use it as
+     a sentinel. */
+  d->newlines[s] = trans[eolbyte];
   trans[eolbyte] = -1;
 
   if (ACCEPTING(s, *d))
@@ -2316,6 +2326,7 @@ build_state_zero (struct dfa *d)
   d->trans = d->realtrans + 1;
   CALLOC(d->fails, int *, d->tralloc);
   MALLOC(d->success, int, d->tralloc);
+  MALLOC(d->newlines, int, d->tralloc);
   build_state(0, d);
 }
 
@@ -2334,13 +2345,14 @@ build_state_zero (struct dfa *d)
     {							\
       while (inputwcs[p - buf_begin] == 0		\
             && mblen_buf[p - buf_begin] > 0		\
-	    && p < buf_end)				\
+            && (unsigned char const *) p < buf_end)	\
         ++p;						\
-      if (p >= end)					\
+      if ((char *) p >= end)				\
 	{						\
           free(mblen_buf);				\
           free(inputwcs);				\
-	  return (size_t) -1;				\
+	  *end = saved_end;				\
+	  return NULL;					\
 	}						\
     }
 
@@ -2359,6 +2371,7 @@ realloc_trans_if_necessary(struct dfa *d, int new_state)
       d->trans = d->realtrans + 1;
       REALLOC(d->fails, int *, d->tralloc);
       REALLOC(d->success, int, d->tralloc);
+      REALLOC(d->newlines, int, d->tralloc);
       while (oldalloc < d->tralloc)
 	{
 	  d->trans[oldalloc] = NULL;
@@ -2747,22 +2760,26 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 #endif /* MBS_SUPPORT */
 
 /* Search through a buffer looking for a match to the given struct dfa.
-   Find the first occurrence of a string matching the regexp in the buffer,
-   and the shortest possible version thereof.  Return the offset of the first
-   character after the match, or (size_t) -1 if none is found.  BEGIN points to
-   the beginning of the buffer, and SIZE is the size of the buffer.  If SIZE
-   is nonzero, BEGIN[SIZE - 1] must be a newline.  BACKREF points to a place
-   where we're supposed to store a 1 if backreferencing happened and the
-   match needs to be verified by a backtracking matcher.  Otherwise
-   we store a 0 in *backref. */
-size_t
-dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
+   Find the first occurrence of a string matching the regexp in the
+   buffer, and the shortest possible version thereof.  Return a pointer to
+   the first character after the match, or NULL if none is found.  BEGIN
+   points to the beginning of the buffer, and END points to the first byte
+   after its end.  Note however that we store a sentinel byte (usually
+   newline) in *END, so the actual buffer must be one byte longer.
+   When NEWLINE is nonzero, newlines may appear in the matching string.
+   If COUNT is non-NULL, increment *COUNT once for each newline processed.
+   Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
+   encountered a back-reference (1) or not (0).  The caller may use this
+   to decide whether to fall back on a backtracking matcher. */
+char *
+dfaexec (struct dfa *d, char const *begin, char *end,
+	 int newline, int *count, int *backref)
 {
-  int s;	/* Current state. */
+  int s, s1, tmp;	/* Current state. */
   unsigned char const *p; /* Current input character. */
-  unsigned char const *end; /* One past the last input character.  */
-  int **trans, *t;	/* Local copy of d->trans. */
-  unsigned char eol = eolbyte;	/* Hoping it goes into a register.  */
+  int **trans, *t;	/* Copy of d->trans so it can be optimized
+				   into a register. */
+  unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
   static int sbit[NOTCHAR];	/* Table for anding with d->success. */
   static int sbit_init;
 
@@ -2779,31 +2796,32 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
   if (! d->tralloc)
     build_state_zero(d);
 
-  s = 0;
+  s = s1 = 0;
   p = (unsigned char const *) begin;
-  end = p + size;
   trans = d->trans;
+  unsigned char saved_end = *(unsigned char *) end;
+  *end = eol;
 
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       int remain_bytes, i;
-      buf_begin = (unsigned char const *) begin;
-      buf_end = end;
+      buf_begin = (unsigned char *) begin;
+      buf_end = (unsigned char *) end;
 
       /* initialize mblen_buf, and inputwcs.  */
-      MALLOC(mblen_buf, unsigned char, end - (unsigned char const *)begin + 2);
-      MALLOC(inputwcs, wchar_t, end - (unsigned char const *)begin + 2);
+      MALLOC(mblen_buf, unsigned char, end - begin + 2);
+      MALLOC(inputwcs, wchar_t, end - begin + 2);
       memset(&mbs, 0, sizeof(mbstate_t));
       remain_bytes = 0;
-      for (i = 0; i < end - (unsigned char const *)begin; i++)
+      for (i = 0; i < end - begin + 1; i++)
 	{
 	  if (remain_bytes == 0)
 	    {
 	      remain_bytes
-		= mbrtowc(inputwcs + i, begin + i,
-			  end - (unsigned char const *)begin - i, &mbs);
-	      if (remain_bytes <= 1)
+		= mbrtowc(inputwcs + i, begin + i, end - begin - i + 1, &mbs);
+	      if (remain_bytes < 1
+		|| (remain_bytes == 1 && inputwcs[i] == (wchar_t)begin[i]))
 		{
 		  remain_bytes = 0;
 		  inputwcs[i] = (wchar_t)begin[i];
@@ -2833,6 +2851,9 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
       if (MB_CUR_MAX > 1)
 	while ((t = trans[s]))
 	  {
+	    if ((char *) p > end)
+	      break;
+	    s1 = s;
 	    SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
 
 	    if (d->states[s].mbps.nelem == 0)
@@ -2848,25 +2869,16 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 	  }
       else
 #endif /* MBS_SUPPORT */
-        while ((t = trans[s]))
-	  s = t[*p++];
-
-      if (s < 0)
-	{
-	  if (p == end)
-	    {
-#ifdef MBS_SUPPORT
-	      if (MB_CUR_MAX > 1)
-		{
-		  free(mblen_buf);
-		  free(inputwcs);
-		}
-#endif /* MBS_SUPPORT */
-	      return (size_t) -1;
-	    }
-	  s = 0;
+      while ((t = trans[s]) != 0) { /* hand-optimized loop */
+	s1 = t[*p++];
+	if ((t = trans[s1]) == 0) {
+	  tmp = s ; s = s1 ; s1 = tmp ; /* swap */
+	  break;
 	}
-      else if ((t = d->fails[s]))
+	s = t[*p++];
+      }
+
+      if (s >= 0 && (char *) p <= end && d->fails[s])
 	{
 	  if (d->success[s] & sbit[*p])
 	    {
@@ -2879,19 +2891,14 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
 		  free(inputwcs);
 		}
 #endif /* MBS_SUPPORT */
-	      return (char const *) p - begin;
+	      *end = saved_end;
+	      return (char *) p;
 	    }
 
+	  s1 = s;
 #ifdef MBS_SUPPORT
 	  if (MB_CUR_MAX > 1)
 	    {
-              SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
-              if (d->states[s].mbps.nelem == 0)
-                {
-                  s = t[*p++];
-                  continue;
-                }
-
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
               s = transit_state(d, s, &p);
@@ -2899,13 +2906,42 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
             }
 	  else
 #endif /* MBS_SUPPORT */
-	  s = t[*p++];
+	  s = d->fails[s][*p++];
+	  continue;
 	}
-      else
+
+      /* If the previous character was a newline, count it. */
+      if (count && (char *) p <= end && p[-1] == eol)
+	++*count;
+
+      /* Check if we've run off the end of the buffer. */
+      if ((char *) p > end)
+	{
+#ifdef MBS_SUPPORT
+	  if (MB_CUR_MAX > 1)
+	    {
+	      free(mblen_buf);
+	      free(inputwcs);
+	    }
+#endif /* MBS_SUPPORT */
+	  *end = saved_end;
+	  return NULL;
+	}
+
+      if (s >= 0)
 	{
 	  build_state(s, d);
 	  trans = d->trans;
+	  continue;
 	}
+
+      if (p[-1] == eol && newline)
+	{
+	  s = d->newlines[s1];
+	  continue;
+	}
+
+      s = 0;
     }
 }
 
@@ -2936,6 +2972,13 @@ dfainit (struct dfa *d)
   d->tralloc = 0;
 
   d->musts = 0;
+  d->realtrans = 0;
+  d->fails = 0;
+  d->newlines = 0;
+  d->success = 0;
+#ifdef GAWK
+  d->broken = 0;
+#endif
 }
 
 /* Parse and analyze a single string of the given length. */
@@ -3018,8 +3061,13 @@ dfafree (struct dfa *d)
     }
 #endif /* MBS_SUPPORT */
 
-  for (i = 0; i < d->sindex; ++i)
+  for (i = 0; i < d->sindex; ++i) {
     free((ptr_t) d->states[i].elems.elems);
+#ifdef MBS_SUPPORT
+    if (d->states[i].mbps.nelem > 0)
+      free((ptr_t) d->states[i].mbps.elems);
+#endif /* MBS_SUPPORT */
+  }
   free((ptr_t) d->states);
   for (i = 0; i < d->tindex; ++i)
     if (d->follows[i].elems)
@@ -3032,6 +3080,7 @@ dfafree (struct dfa *d)
       free((ptr_t) d->fails[i]);
   if (d->realtrans) free((ptr_t) d->realtrans);
   if (d->fails) free((ptr_t) d->fails);
+  if (d->newlines) free((ptr_t) d->newlines);
   if (d->success) free((ptr_t) d->success);
   for (dm = d->musts; dm; dm = ndm)
     {

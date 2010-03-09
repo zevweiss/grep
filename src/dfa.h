@@ -355,9 +355,19 @@ struct dfa
 				   on a state that potentially could do so. */
   int *success;			/* Table of acceptance conditions used in
 				   dfaexec and computed in build_state. */
+  int *newlines;		/* Transitions on newlines.  The entry for a
+				   newline in any transition table is always
+				   -1 so we can count lines without wasting
+				   too many cycles.  The transition for a
+				   newline is stored separately and handled
+				   as a special case. */
   struct dfamust *musts;	/* List of strings, at least one of which
 				   is known to appear in any r.e. matching
 				   the dfa. */
+#ifdef GAWK
+  int broken;			/* True if using a feature where there
+				   are bugs and gawk should use regex. */
+#endif
 };
 
 /* Some macros for user access to dfa internals. */
@@ -388,14 +398,20 @@ extern void dfasyntax (reg_syntax_t, int, unsigned char);
    exact matcher. */
 extern void dfacomp (char const *, size_t, struct dfa *, int);
 
-/* Execute the given struct dfa on the buffer of characters.  The
-   last byte of the buffer must equal the end-of-line byte.
-   The final argument points to a flag that will
-   be set if further examination by a backtracking matcher is needed in
-   order to verify backreferencing; otherwise the flag will be cleared.
-   Returns (size_t) -1 if no match is found, or the offset of the first
-   character after the first & shortest matching string in the buffer. */
-extern size_t dfaexec (struct dfa *, char const *, size_t, int *);
+/* Search through a buffer looking for a match to the given struct dfa.
+   Find the first occurrence of a string matching the regexp in the
+   buffer, and the shortest possible version thereof.  Return a pointer to
+   the first character after the match, or NULL if none is found.  BEGIN
+   points to the beginning of the buffer, and END points to the first byte
+   after its end.  Note however that we store a sentinel byte (usually
+   newline) in *END, so the actual buffer must be one byte longer.
+   When NEWLINE is nonzero, newlines may appear in the matching string.
+   If COUNT is non-NULL, increment *COUNT once for each newline processed.
+   Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
+   encountered a back-reference (1) or not (0).  The caller may use this
+   to decide whether to fall back on a backtracking matcher. */
+extern char *dfaexec (struct dfa *d, char const *begin, char *end,
+		      int newline, int *count, int *backref);
 
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree (struct dfa *);
