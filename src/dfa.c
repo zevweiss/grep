@@ -1569,8 +1569,8 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
   d->states[i].constraint = 0;
   d->states[i].first_end = 0;
 #ifdef MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
-    d->states[i].mbps.nelem = 0;
+  d->states[i].mbps.nelem = 0;
+  d->states[i].mbps.elems = NULL;
 #endif
   for (j = 0; j < s->nelem; ++j)
     if (d->tokens[s->elems[j].index] < 0)
