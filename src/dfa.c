@@ -498,7 +498,6 @@ parse_bracket_exp_mb (void)
   chars_al = 1;
   range_sts_al = range_ends_al = 0;
   ch_classes_al = equivs_al = coll_elems_al = 0;
-  MALLOC(work_mbc->chars, wchar_t, chars_al);
 
   work_mbc->nchars = work_mbc->nranges = work_mbc->nch_classes = 0;
   work_mbc->nequivs = work_mbc->ncoll_elems = 0;
