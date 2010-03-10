@@ -28,7 +28,8 @@ struct kwsmatch
   size_t size[1];		/* Length of each submatch. */
 };
 
-typedef ptr_t kwset_t;
+struct kwset;
+typedef struct kwset *kwset_t;
 
 /* Return an opaque pointer to a newly allocated keyword set, or NULL
    if enough memory cannot be obtained.  The argument if non-NULL
