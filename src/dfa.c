@@ -89,6 +89,7 @@
 #include "regex.h"
 #include "dfa.h"
 #include "hard-locale.h"
+#include "xalloc.h"
 
 /* HPUX, define those as macros in sys/param.h */
 #ifdef setbit
@@ -101,41 +102,9 @@
 static void dfamust (struct dfa *dfa);
 static void regexp (int toplevel);
 
-static ptr_t
-xcalloc (size_t n, size_t s)
-{
-  ptr_t r = calloc(n, s);
-
-  if (!r)
-    dfaerror(_("Memory exhausted"));
-  return r;
-}
-
-static ptr_t
-xmalloc (size_t n)
-{
-  ptr_t r = malloc(n);
-
-  assert(n != 0);
-  if (!r)
-    dfaerror(_("Memory exhausted"));
-  return r;
-}
-
-static ptr_t
-xrealloc (ptr_t p, size_t n)
-{
-  ptr_t r = realloc(p, n);
-
-  assert(n != 0);
-  if (!r)
-    dfaerror(_("Memory exhausted"));
-  return r;
-}
-
 #define CALLOC(p, t, n) ((p) = xcalloc((size_t)(n), sizeof (t)))
 #define MALLOC(p, t, n) ((p) = xmalloc((n) * sizeof (t)))
-#define REALLOC(p, t, n) ((p) = xrealloc((ptr_t) (p), (n) * sizeof (t)))
+#define REALLOC(p, t, n) ((p) = xrealloc((p), (n) * sizeof (t)))
 
 /* Reallocate an array of type t if nalloc is too small for index. */
 #define REALLOC_IF_NECESSARY(p, t, nalloc, index) \
