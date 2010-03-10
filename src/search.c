@@ -215,9 +215,9 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
 #endif /* EGREP_PROGRAM */
   const char *err;
-  const char *sep;
+  const char *p, *sep;
   size_t total = size;
-  char const *motif = pattern;
+  char *motif;
 
 #if 0
   if (match_icase)
@@ -230,13 +230,14 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
      errors like "[\nallo\n]\n".  The patterns here are "[", "allo" and "]"
      GNU regex should have raise a syntax error.  The same for backref, where
      the backref should have been local to each pattern.  */
+  p = pattern;
   do
     {
       size_t len;
-      sep = memchr (motif, '\n', total);
+      sep = memchr (p, '\n', total);
       if (sep)
 	{
-	  len = sep - motif;
+	  len = sep - p;
 	  sep++;
 	  total -= (len + 1);
 	}
@@ -251,12 +252,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 	error (EXIT_TROUBLE, errno, _("memory exhausted"));
       patterns[pcount] = patterns0;
 
-      if ((err = re_compile_pattern (motif, len,
+      if ((err = re_compile_pattern (p, len,
 				    &(patterns[pcount].regexbuf))) != NULL)
 	error (EXIT_TROUBLE, 0, "%s", err);
       pcount++;
 
-      motif = sep;
+      p = sep;
     } while (sep && total != 0);
 
   /* In the match_words and match_lines cases, we use a different pattern
@@ -299,7 +300,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   dfacomp (pattern, size, &dfa, 1);
   kwsmusts ();
 
-  free((char *) motif);
+  free(motif);
 }
 
 #ifndef EGREP_PROGRAM
