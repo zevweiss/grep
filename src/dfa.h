@@ -23,18 +23,6 @@
    In addition to clobbering modularity, we eat up valuable
    name space. */
 
-#ifdef __STDC__
-# ifndef _PTR_T
-# define _PTR_T
-  typedef void * ptr_t;
-# endif
-#else
-# ifndef _PTR_T
-# define _PTR_T
-  typedef char * ptr_t;
-# endif
-#endif
-
 /* Number of bits in an unsigned char. */
 #ifndef CHARBITS
 #define CHARBITS 8

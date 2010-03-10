@@ -22,7 +22,6 @@ gpg_key_ID = B9AB9A16
 
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip =			\
-  sc_cast_of_argument_to_free		\
   sc_error_message_uppercase		\
   sc_m4_quote_check			\
   sc_makefile_TAB_only_indentation	\

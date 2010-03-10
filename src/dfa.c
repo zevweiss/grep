@@ -2205,16 +2205,11 @@ build_state (int s, struct dfa *d)
   if (d->trcount >= 1024)
     {
       for (i = 0; i < d->tralloc; ++i)
-	if (d->trans[i])
-	  {
-	    free((ptr_t) d->trans[i]);
-	    d->trans[i] = NULL;
-	  }
-	else if (d->fails[i])
-	  {
-	    free((ptr_t) d->fails[i]);
-	    d->fails[i] = NULL;
-	  }
+        {
+	  free(d->trans[i]);
+	  free(d->fails[i]);
+	  d->trans[i] = d->fails[i] = NULL;
+	}
       d->trcount = 0;
     }
 
@@ -2666,8 +2661,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
       if (rs == TRANSIT_STATE_DONE)
 	++*pp;
 
-      if (match_lens != NULL)
-	free(match_lens);
+      free(match_lens);
       return s1;
     }
 
@@ -2978,66 +2972,58 @@ dfafree (struct dfa *d)
   int i;
   struct dfamust *dm, *ndm;
 
-  free((ptr_t) d->charclasses);
-  free((ptr_t) d->tokens);
+  free(d->charclasses);
+  free(d->tokens);
 
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
-      free((ptr_t) d->multibyte_prop);
+      free(d->multibyte_prop);
       for (i = 0; i < d->nmbcsets; ++i)
 	{
 	  int j;
 	  struct mb_char_classes *p = &(d->mbcsets[i]);
-	  if (p->chars != NULL)
-	    free(p->chars);
-	  if (p->ch_classes != NULL)
-	    free(p->ch_classes);
-	  if (p->range_sts != NULL)
-	    free(p->range_sts);
-	  if (p->range_ends != NULL)
-	    free(p->range_ends);
+	  free(p->chars);
+	  free(p->ch_classes);
+	  free(p->range_sts);
+	  free(p->range_ends);
 
 	  for (j = 0; j < p->nequivs; ++j)
 	    free(p->equivs[j]);
-	  if (p->equivs != NULL)
-	    free(p->equivs);
+	  free(p->equivs);
 
 	  for (j = 0; j < p->ncoll_elems; ++j)
 	    free(p->coll_elems[j]);
-	  if (p->coll_elems != NULL)
-	    free(p->coll_elems);
+	  free(p->coll_elems);
 	}
-      free((ptr_t) d->mbcsets);
+      free(d->mbcsets);
     }
 #endif /* MBS_SUPPORT */
 
   for (i = 0; i < d->sindex; ++i) {
-    free((ptr_t) d->states[i].elems.elems);
+    free(d->states[i].elems.elems);
 #ifdef MBS_SUPPORT
-    if (d->states[i].mbps.nelem > 0)
-      free((ptr_t) d->states[i].mbps.elems);
+    free(d->states[i].mbps.elems);
 #endif /* MBS_SUPPORT */
   }
-  free((ptr_t) d->states);
+  free(d->states);
   for (i = 0; i < d->tindex; ++i)
-    if (d->follows[i].elems)
-      free((ptr_t) d->follows[i].elems);
-  free((ptr_t) d->follows);
+    free(d->follows[i].elems);
+  free(d->follows);
   for (i = 0; i < d->tralloc; ++i)
-    if (d->trans[i])
-      free((ptr_t) d->trans[i]);
-    else if (d->fails[i])
-      free((ptr_t) d->fails[i]);
-  if (d->realtrans) free((ptr_t) d->realtrans);
-  if (d->fails) free((ptr_t) d->fails);
-  if (d->newlines) free((ptr_t) d->newlines);
-  if (d->success) free((ptr_t) d->success);
+    {
+      free(d->trans[i]);
+      free(d->fails[i]);
+    }
+  free(d->realtrans);
+  free(d->fails);
+  free(d->newlines);
+  free(d->success);
   for (dm = d->musts; dm; dm = ndm)
     {
       ndm = dm->next;
       free(dm->must);
-      free((ptr_t) dm);
+      free(dm);
     }
 }
 
@@ -3163,13 +3149,6 @@ istrstr (char *lookin, char *lookfor)
     if (strncmp(cp, lookfor, len) == 0)
       return cp;
   return NULL;
-}
-
-static void
-ifree (char *cp)
-{
-  if (cp != NULL)
-    free(cp);
 }
 
 static void
@@ -3434,7 +3413,7 @@ dfamust (struct dfa *d)
 	    if (new == NULL)
 	      goto done;
 	    freelist(lmp->in);
-	    free((char *) lmp->in);
+	    free(lmp->in);
 	    lmp->in = new;
 	  }
 	  break;
@@ -3569,11 +3548,11 @@ dfamust (struct dfa *d)
   for (i = 0; i <= d->tindex; ++i)
     {
       freelist(mp[i].in);
-      ifree((char *) mp[i].in);
-      ifree(mp[i].left);
-      ifree(mp[i].right);
-      ifree(mp[i].is);
+      free(mp[i].in);
+      free(mp[i].left);
+      free(mp[i].right);
+      free(mp[i].is);
     }
-  free((char *) mp);
+  free(mp);
 }
 /* vim:set shiftwidth=2: */
