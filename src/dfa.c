@@ -99,47 +99,7 @@
 #endif
 
 static void dfamust PARAMS ((struct dfa *dfa));
-
-static ptr_t xcalloc PARAMS ((size_t n, size_t s));
-static ptr_t xmalloc PARAMS ((size_t n));
-static ptr_t xrealloc PARAMS ((ptr_t p, size_t n));
-#ifdef DEBUG
-static void prtok PARAMS ((token t));
-#endif
-static int tstbit PARAMS ((unsigned b, charclass c));
-static void setbit PARAMS ((unsigned b, charclass c));
-static void clrbit PARAMS ((unsigned b, charclass c));
-static void copyset PARAMS ((charclass src, charclass dst));
-static void zeroset PARAMS ((charclass s));
-static void notset PARAMS ((charclass s));
-static int equal PARAMS ((charclass s1, charclass s2));
-static int charclass_index PARAMS ((charclass s));
-static int looking_at PARAMS ((const char *s));
-static token lex PARAMS ((void));
-static void addtok PARAMS ((token t));
-static void atom PARAMS ((void));
-static int nsubtoks PARAMS ((int tindex));
-static void copytoks PARAMS ((int tindex, int ntokens));
-static void closure PARAMS ((void));
-static void branch PARAMS ((void));
 static void regexp PARAMS ((int toplevel));
-static void copy PARAMS ((position_set const *src, position_set *dst));
-static void insert PARAMS ((position p, position_set *s));
-static void merge PARAMS ((position_set const *s1, position_set const *s2, position_set *m));
-static void delete PARAMS ((position p, position_set *s));
-static int state_index PARAMS ((struct dfa *d, position_set const *s,
-			  int newline, int letter));
-static void build_state PARAMS ((int s, struct dfa *d));
-static void build_state_zero PARAMS ((struct dfa *d));
-static char *icatalloc PARAMS ((char *old, char *new));
-static char *icpyalloc PARAMS ((char *string));
-static char *istrstr PARAMS ((char *lookin, char *lookfor));
-static void ifree PARAMS ((char *cp));
-static void freelist PARAMS ((char **cpp));
-static char **enlist PARAMS ((char **cpp, char *new, size_t len));
-static char **comsubs PARAMS ((char *left, char *right));
-static char **addlists PARAMS ((char **old, char **new));
-static char **inboth PARAMS ((char **left, char **right));
 
 static ptr_t
 xcalloc (size_t n, size_t s)
