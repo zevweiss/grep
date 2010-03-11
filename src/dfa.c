@@ -526,15 +526,13 @@ parse_bracket_exp_mb (void)
 	      if (delim == ':')
 		/* build character class.  */
 		{
-		  wctype_t wt;
-
+		  char const *class
+		    = (case_fold && (!strcmp (str, "upper")
+				     || !strcmp (str, "lower"))
+				       ? "alpha"
+				       : str);
 		  /* Query the character class as wctype_t.  */
-		  if (case_fold
-		      && (!strcasecmp (str, "upper")
-			  || !strcasecmp (str, "lower")))
-		    wt = wctype ("alpha");
-		  else
-		    wt = wctype (str);
+		  wctype_t wt = wctype (class);
 
 		  if (ch_classes_al == 0)
 		    MALLOC(work_mbc->ch_classes, wctype_t, ++ch_classes_al);
