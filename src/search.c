@@ -743,7 +743,7 @@ EXECUTE_FCT(Pexecute)
   /* PCRE can't limit the matching to single lines, therefore we have to
      match each line in the buffer separately.  */
   for (line_next = buf;
-       e == PCRE_ERROR_NOMATCH && line_next < buf + size; 
+       e == PCRE_ERROR_NOMATCH && line_next < buf + size;
        start_ofs -= line_next - line_buf)
     {
       line_buf = line_next;
