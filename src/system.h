@@ -16,19 +16,16 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-#undef PARAMS
 #if defined (__STDC__) && __STDC__
 # ifndef _PTR_T
 # define _PTR_T
   typedef void * ptr_t;
 # endif
-# define PARAMS(x) x
 #else
 # ifndef _PTR_T
 # define _PTR_T
   typedef char * ptr_t;
 # endif
-# define PARAMS(x) ()
 #endif
 
 #include <fcntl.h>

@@ -98,8 +98,8 @@
 # undef clrbit
 #endif
 
-static void dfamust PARAMS ((struct dfa *dfa));
-static void regexp PARAMS ((int toplevel));
+static void dfamust (struct dfa *dfa);
+static void regexp (int toplevel);
 
 static ptr_t
 xcalloc (size_t n, size_t s)
@@ -670,7 +670,7 @@ is_blank (int c)
    the class.  The leading [ has already been eaten by the lexical analyzer. */
 static struct {
   const char *name;
-  int (*pred) PARAMS ((int));
+  int (*pred) (int);
 } const prednames[] = {
   { ":alpha:]", is_alpha },
   { ":upper:]", is_upper },
@@ -1029,7 +1029,7 @@ lex (void)
 		for (c1 = 0; prednames[c1].name; ++c1)
 		  if (looking_at(prednames[c1].name))
 		    {
-		      int (*pred) PARAMS ((int)) = prednames[c1].pred;
+		      int (*pred) (int) = prednames[c1].pred;
 
 		      for (c2 = 0; c2 < NOTCHAR; ++c2)
 			if ((*pred)(c2))

@@ -23,21 +23,16 @@
    In addition to clobbering modularity, we eat up valuable
    name space. */
 
-#ifdef PARAMS
-# undef PARAMS
-#endif
 #ifdef __STDC__
 # ifndef _PTR_T
 # define _PTR_T
   typedef void * ptr_t;
 # endif
-# define PARAMS(x) x
 #else
 # ifndef _PTR_T
 # define _PTR_T
   typedef char * ptr_t;
 # endif
-# define PARAMS(x) ()
 #endif
 
 /* Number of bits in an unsigned char. */
@@ -386,12 +381,12 @@ struct dfa
 /* dfasyntax() takes three arguments; the first sets the syntax bits described
    earlier in this file, the second sets the case-folding flag, and the
    third specifies the line terminator. */
-extern void dfasyntax PARAMS ((reg_syntax_t, int, unsigned char));
+extern void dfasyntax (reg_syntax_t, int, unsigned char);
 
 /* Compile the given string of the given length into the given struct dfa.
    Final argument is a flag specifying whether to build a searching or an
    exact matcher. */
-extern void dfacomp PARAMS ((char const *, size_t, struct dfa *, int));
+extern void dfacomp (char const *, size_t, struct dfa *, int);
 
 /* Execute the given struct dfa on the buffer of characters.  The
    last byte of the buffer must equal the end-of-line byte.
@@ -400,30 +395,30 @@ extern void dfacomp PARAMS ((char const *, size_t, struct dfa *, int));
    order to verify backreferencing; otherwise the flag will be cleared.
    Returns (size_t) -1 if no match is found, or the offset of the first
    character after the first & shortest matching string in the buffer. */
-extern size_t dfaexec PARAMS ((struct dfa *, char const *, size_t, int *));
+extern size_t dfaexec (struct dfa *, char const *, size_t, int *);
 
 /* Free the storage held by the components of a struct dfa. */
-extern void dfafree PARAMS ((struct dfa *));
+extern void dfafree (struct dfa *);
 
 /* Entry points for people who know what they're doing. */
 
 /* Initialize the components of a struct dfa. */
-extern void dfainit PARAMS ((struct dfa *));
+extern void dfainit (struct dfa *);
 
 /* Incrementally parse a string of given length into a struct dfa. */
-extern void dfaparse PARAMS ((char const *, size_t, struct dfa *));
+extern void dfaparse (char const *, size_t, struct dfa *);
 
 /* Analyze a parsed regexp; second argument tells whether to build a searching
    or an exact matcher. */
-extern void dfaanalyze PARAMS ((struct dfa *, int));
+extern void dfaanalyze (struct dfa *, int);
 
 /* Compute, for each possible character, the transitions out of a given
    state, storing them in an array of integers. */
-extern void dfastate PARAMS ((int, struct dfa *, int []));
+extern void dfastate (int, struct dfa *, int []);
 
 /* Error handling. */
 
 /* dfaerror() is called by the regexp routines whenever an error occurs.  It
    takes a single argument, a NUL-terminated string describing the error.
    The user must supply a dfaerror.  */
-extern void dfaerror PARAMS ((const char *));
+extern void dfaerror (const char *);

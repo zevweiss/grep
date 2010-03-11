@@ -43,8 +43,8 @@
 # define COMPILE_FCT(f) static COMPILE_RET f COMPILE_ARGS
 # define EXECUTE_FCT(f) static EXECUTE_RET f EXECUTE_ARGS
 /* Function pointer types.  */
-typedef COMPILE_RET (*compile_fp_t) PARAMS (COMPILE_ARGS);
-typedef EXECUTE_RET (*execute_fp_t) PARAMS (EXECUTE_ARGS);
+typedef COMPILE_RET (*compile_fp_t) COMPILE_ARGS;
+typedef EXECUTE_RET (*execute_fp_t) EXECUTE_ARGS;
 
 /* grep.c expects the matchers vector to be terminated
    by an entry with a NULL compile, and to contain at least
@@ -61,8 +61,8 @@ extern struct matcher
 # define COMPILE_FCT(f) COMPILE_RET compile COMPILE_ARGS
 # define EXECUTE_FCT(f) EXECUTE_RET execute EXECUTE_ARGS
 /* Function prototypes.  */
-extern COMPILE_RET compile PARAMS (COMPILE_ARGS);
-extern EXECUTE_RET execute PARAMS (EXECUTE_ARGS);
+extern COMPILE_RET compile COMPILE_ARGS;
+extern EXECUTE_RET execute EXECUTE_ARGS;
 #endif /* GREP_PROGRAM */
 
 /* The following flags are exported from grep for the matchers

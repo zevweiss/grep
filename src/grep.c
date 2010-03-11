@@ -371,9 +371,9 @@ static enum
     SKIP_DEVICES
   } devices = READ_DEVICES;
 
-static int grepdir PARAMS ((char const *, struct stats const *));
+static int grepdir (char const *, struct stats const *);
 #if defined(HAVE_DOS_FILE_CONTENTS)
-static inline int undossify_input PARAMS ((register char *, size_t));
+static inline int undossify_input (register char *, size_t);
 #endif
 
 /* Functions we'll use to search. */
