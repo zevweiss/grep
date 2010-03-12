@@ -46,7 +46,7 @@ cvs-clean:
 	      if grep "^/$$f/" CVS/Entries > /dev/null; then \
 		a="b"; \
 	      else \
-	        echo "F $$i/$$f"; \
+		echo "F $$i/$$f"; \
 		rm -f "$$pwd/$$i/$$f"; \
 	      fi; \
 	    fi ; \
