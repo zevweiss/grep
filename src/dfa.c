@@ -21,7 +21,6 @@
    Modified July, 1988 by Arthur David Olson to assist BMG speedups  */
 
 #include <config.h>
-#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -29,11 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
-
-#ifndef DEBUG	/* use the same approach as regex.c */
-#undef assert
-#define assert(e)
-#endif /* DEBUG */
 
 #ifndef isgraph
 #define isgraph(C) (isprint(C) && !isspace(C))
