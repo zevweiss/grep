@@ -667,7 +667,7 @@ COMPILE_FCT(Pcompile)
 {
 #if !HAVE_LIBPCRE
   error (EXIT_TROUBLE, 0, "%s",
-	 _("Support for the -P option is not compiled into "
+	 _("support for the -P option is not compiled into "
 	   "this --disable-perl-regexp binary"));
 #else
   int e;
@@ -681,7 +681,7 @@ COMPILE_FCT(Pcompile)
 
   /* FIXME: Remove these restrictions.  */
   if (memchr(pattern, '\n', size))
-    error (EXIT_TROUBLE, 0, _("The -P option only supports a single pattern"));
+    error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
 
   *n = '\0';
   if (match_lines)
@@ -772,7 +772,7 @@ EXECUTE_FCT(Pexecute)
 	  return -1;
 
 	case PCRE_ERROR_NOMEMORY:
-	  error (EXIT_TROUBLE, 0, _("Memory exhausted"));
+	  error (EXIT_TROUBLE, 0, _("memory exhausted"));
 
 	default:
 	  abort ();

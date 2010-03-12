@@ -434,10 +434,10 @@ parse_bracket_exp_mb (void)
   work_mbc->range_sts = work_mbc->range_ends = NULL;
   work_mbc->equivs = work_mbc->coll_elems = NULL;
 
-  wc = fetch_wc(_("Unbalanced ["));
+  wc = fetch_wc(_("unbalanced ["));
   if (wc == L'^')
     {
-      wc = fetch_wc(_("Unbalanced ["));
+      wc = fetch_wc(_("unbalanced ["));
       work_mbc->invert = 1;
     }
   else
@@ -455,7 +455,7 @@ parse_bracket_exp_mb (void)
 #define BRACKET_BUFFER_SIZE 128
 	  char str[BRACKET_BUFFER_SIZE];
 	  wc1 = wc;
-	  wc = fetch_wc(_("Unbalanced ["));
+	  wc = fetch_wc(_("unbalanced ["));
 
 	  /* If pattern contains `[[:', `[[.', or `[[='.  */
 	  if (cur_mb_len == 1 && (wc == L':' || wc == L'.' || wc == L'='))
@@ -466,7 +466,7 @@ parse_bracket_exp_mb (void)
 	      for (;;)
 		{
 		  if (! lexleft)
-		    dfaerror (_("Unbalanced ["));
+		    dfaerror (_("unbalanced ["));
 		  c = (unsigned char) *lexptr++;
 		  --lexleft;
 
@@ -490,7 +490,7 @@ parse_bracket_exp_mb (void)
 		}
 
 	      if (--lexleft, *lexptr++ != ']')
-		dfaerror (_("Unbalanced ["));
+		dfaerror (_("unbalanced ["));
 	      if (delim == ':')
 		/* build character class.  */
 		{
@@ -549,16 +549,16 @@ parse_bracket_exp_mb (void)
       else
 	{
 	  if (wc == L'\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-	    wc = fetch_wc(("Unbalanced ["));
+	    wc = fetch_wc(("unbalanced ["));
 	}
 
       if (wc1 == WEOF)
-	wc1 = fetch_wc(_("Unbalanced ["));
+	wc1 = fetch_wc(_("unbalanced ["));
 
       if (wc1 == L'-')
 	/* build range characters.  */
 	{
-	  wc2 = fetch_wc(_("Unbalanced ["));
+	  wc2 = fetch_wc(_("unbalanced ["));
 	  if (wc2 == L']')
 	    {
 	      /* In the case [x-], the - is an ordinary hyphen,
@@ -571,8 +571,8 @@ parse_bracket_exp_mb (void)
 	    {
 	      if (wc2 == L'\\'
 		  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-		wc2 = fetch_wc(_("Unbalanced ["));
-	      wc1 = fetch_wc(_("Unbalanced ["));
+		wc2 = fetch_wc(_("unbalanced ["));
+	      wc1 = fetch_wc(_("unbalanced ["));
 	    }
 
 	  if (range_sts_al == 0)
@@ -698,7 +698,7 @@ lex (void)
 	  if (backslash)
 	    goto normal_char;
 	  if (lexleft == 0)
-	    dfaerror(_("Unfinished \\ escape"));
+	    dfaerror(_("unfinished \\ escape"));
 	  backslash = 1;
 	  break;
 
@@ -975,10 +975,10 @@ lex (void)
 	    }
 #endif
 	  zeroset(ccl);
-	  FETCH(c, _("Unbalanced ["));
+	  FETCH(c, _("unbalanced ["));
 	  if (c == '^')
 	    {
-	      FETCH(c, _("Unbalanced ["));
+	      FETCH(c, _("unbalanced ["));
 	      invert = 1;
 	    }
 	  else
@@ -1002,15 +1002,15 @@ lex (void)
 			  setbit_case_fold (c2, ccl);
 		      lexptr += strlen(prednames[c1].name);
 		      lexleft -= strlen(prednames[c1].name);
-		      FETCH(c1, _("Unbalanced ["));
+		      FETCH(c1, _("unbalanced ["));
 		      goto skip;
 		    }
 	      if (c == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-		FETCH(c, _("Unbalanced ["));
-	      FETCH(c1, _("Unbalanced ["));
+		FETCH(c, _("unbalanced ["));
+	      FETCH(c1, _("unbalanced ["));
 	      if (c1 == '-')
 		{
-		  FETCH(c2, _("Unbalanced ["));
+		  FETCH(c2, _("unbalanced ["));
 		  if (c2 == ']')
 		    {
 		      /* In the case [x-], the - is an ordinary hyphen,
@@ -1022,7 +1022,7 @@ lex (void)
 		    {
 		      if (c2 == '\\'
 			  && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-			FETCH(c2, _("Unbalanced ["));
+			FETCH(c2, _("unbalanced ["));
 
                       c1 = c;
 		      if (!hard_LC_COLLATE)
@@ -1041,7 +1041,7 @@ lex (void)
                               setbit_case_fold (c, ccl);
                         }
 
-		      FETCH(c1, _("Unbalanced ["));
+		      FETCH(c1, _("unbalanced ["));
 		      continue;
 		    }
 		}
@@ -1210,7 +1210,7 @@ atom (void)
       tok = lex();
       regexp(0);
       if (tok != RPAREN)
-	dfaerror(_("Unbalanced ("));
+	dfaerror(_("unbalanced ("));
       tok = lex();
     }
   else
@@ -1342,7 +1342,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #endif /* MBS_SUPPORT  */
 
   if (! syntax_bits_set)
-    dfaerror(_("No syntax specified"));
+    dfaerror(_("no syntax specified"));
 
   tok = lex();
   depth = d->depth;
@@ -1350,7 +1350,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   regexp(1);
 
   if (tok != END)
-    dfaerror(_("Unbalanced )"));
+    dfaerror(_("unbalanced )"));
 
   addtok(END - d->nregexps);
   addtok(CAT);
