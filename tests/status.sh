@@ -36,15 +36,15 @@ else
 	# should return 2 file not found
 	${GREP} -E -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
 	if test $? -ne 2 ; then
-        	echo "Status: Wrong status code, test \#3 failed"
-        	failures=1
+		echo "Status: Wrong status code, test \#3 failed"
+		failures=1
 	fi
 
 	# should return 2 file not found
 	${GREP} -E -s -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
 	if test $? -ne 2 ; then
-        	echo "Status: Wrong status code, test \#4 failed"
-        	failures=1
+		echo "Status: Wrong status code, test \#4 failed"
+		failures=1
 	fi
 
 	# should return 2 file not found
