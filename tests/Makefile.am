@@ -33,6 +33,7 @@ TESTS =						\
   pcre.sh					\
   pcre-z					\
   spencer1.sh					\
+  spencer1-locale				\
   status.sh					\
   warning.sh					\
   word-multi-file				\
@@ -48,7 +49,8 @@ EXTRA_DIST =					\
   khadafy.lines					\
   khadafy.regexp				\
   spencer1.awk					\
-  spencer1.tests
+  spencer1.tests				\
+  spencer1-locale.awk
 
 CLEANFILES = \
   spencer1.script bre.script ere.script khadafy.out patfile \
