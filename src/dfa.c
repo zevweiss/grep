@@ -569,6 +569,8 @@ parse_bracket_exp_mb (void)
 	      wc1 = fetch_wc(_("unbalanced ["));
 	    }
 
+      	  /* When case folding map a range, say [m-z] (or even [M-z]) to the
+     	     pair of ranges, [m-z] [M-Z].  */
 	  if (range_sts_al == 0)
 	    {
 	      MALLOC(work_mbc->range_sts, wchar_t, ++range_sts_al);
@@ -576,10 +578,22 @@ parse_bracket_exp_mb (void)
 	    }
 	  REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
 			       range_sts_al, work_mbc->nranges + 1);
-	  work_mbc->range_sts[work_mbc->nranges] = (wchar_t)wc;
 	  REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
 			       range_ends_al, work_mbc->nranges + 1);
-	  work_mbc->range_ends[work_mbc->nranges++] = (wchar_t)wc2;
+	  work_mbc->range_sts[work_mbc->nranges] =
+            case_fold ? towlower(wc) : (wchar_t)wc;
+	  work_mbc->range_ends[work_mbc->nranges++] =
+            case_fold ? towlower(wc2) : (wchar_t)wc2;
+
+	  if (case_fold)
+            {
+              REALLOC_IF_NECESSARY(work_mbc->range_sts, wchar_t,
+                                   range_sts_al, work_mbc->nranges + 1);
+              work_mbc->range_sts[work_mbc->nranges] = towupper(wc);
+              REALLOC_IF_NECESSARY(work_mbc->range_ends, wchar_t,
+                                   range_ends_al, work_mbc->nranges + 1);
+              work_mbc->range_ends[work_mbc->nranges++] = towupper(wc2);
+            }
 	}
       else if (wc != WEOF)
 	/* build normal characters.  */

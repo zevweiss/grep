@@ -18,6 +18,7 @@ TESTS =						\
   backref.sh					\
   bre.sh					\
   case-fold-char-class				\
+  case-fold-char-range				\
   case-fold-char-type				\
   dfaexec-multibyte				\
   empty.sh					\

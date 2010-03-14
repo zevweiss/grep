@@ -4,11 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
-  grep -i with a character class would malfunction in multi-byte locales.
-  For example, echo Y | LC_ALL=en_US.UTF-8 grep -i '[y]' would print nothing.
-  Character types would malfunction in multi-byte locales similarly; for
-  example, echo Y | LC_ALL=en_US.UTF-8 grep -i '[[:lower:]]' would print
-  nothing.
+  Character classes would malfunction in multi-byte locales when using grep -i.
+  Examples which would print nothing for LC_ALL=en_US.UTF-8 include:
+  - for ranges, echo Z | grep -i '[a-z]'
+  - for single characters, echo Y | grep -i '[y]'
+  - for character types, echo Y | grep -i '[[:lower:]]'
 
   Various bugs in grep -P, caused by expressions such as [^b] or \S matching
   newlines, were fixed.  grep -P also supports the special sequences \Z and
