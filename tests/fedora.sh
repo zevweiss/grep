@@ -76,7 +76,7 @@ echo za a > 179698.out
 LANG=ja_JP.eucjp grep -w a 179698.out | diff - 179698.out && ok || fail
 
 # Skip the rest of tests in compiled without PCRE
-echo a |grep -P a >/dev/null || exit $failures
+echo a |grep -P a >/dev/null || Exit $failures
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=171379
 echo -n "grep -P crashes on whitespace lines: "
@@ -97,4 +97,4 @@ echo -ne "a\na" | grep -P '[^a]' >/dev/null && fail || ok
 echo -n "bad handling of line breaks with grep -P #2: "
 echo -ne "a\na" | grep -P '[^b].[^b]' >/dev/null && fail || ok
 
-exit $failures
+Exit $failures
