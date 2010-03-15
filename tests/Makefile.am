@@ -22,6 +22,7 @@ TESTS =						\
   dfaexec-multibyte				\
   empty.sh					\
   ere.sh					\
+  fedora					\
   file.sh					\
   fmbtest.sh					\
   foad1.sh					\
@@ -35,8 +36,7 @@ TESTS =						\
   status.sh					\
   warning.sh					\
   word-multi-file				\
-  yesno.sh					\
-  fedora.sh
+  yesno.sh
 
 EXTRA_DIST =					\
   $(TESTS)					\
