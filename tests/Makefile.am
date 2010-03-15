@@ -89,6 +89,7 @@ TESTS_ENVIRONMENT =				\
   srcdir='$(srcdir)'				\
   top_srcdir='$(top_srcdir)'			\
   CC='$(CC)'					\
+  GREP_TEST_NAME=`echo $$tst|sed 's,^\./,,;s,/,-,g'` \
   MAKE=$(MAKE)					\
   PACKAGE_BUGREPORT='$(PACKAGE_BUGREPORT)'	\
   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
