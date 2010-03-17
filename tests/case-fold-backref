@@ -1,0 +1,14 @@
+#!/bin/sh
+# This would fail for grep-2.5.3
+: ${srcdir=.}
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+printf 'the the\nThe the\nTHE the\n'      > exp1 || framework_failure
+fail=0
+
+for LOC in en_US.UTF-8 en_US zh_CN $LOCALE_FR_UTF8 C; do
+  LC_ALL=$LOC grep -Ei '(the) \1' exp1 > out1 || fail=1
+  compare out1 exp1 || fail=1
+done
+
+Exit $fail
