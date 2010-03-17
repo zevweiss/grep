@@ -3,27 +3,20 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-printf 'aa\n' > exp-aa || framework_failure
-printf 'ab\n' > exp-ab || framework_failure
-printf '1 2 3\n' > exp-123 || framework_failure
+printf 'aa\nab\nba\nbb\n' > exp1 || framework_failure
+printf '1 2 3\n' > exp2 || framework_failure
 
 fail=0
 
 for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
-  LC_ALL=$LOC grep -E '([a]|[b]){2}' < exp-aa > out || fail=1
-  compare out exp-aa || fail=1
+  LC_ALL=$LOC grep -E '([a]|[b]){2}' < exp1 > out1-ab-$LOC || fail=1
+  compare out1-ab-$LOC exp1 || fail=1
 
-  LC_ALL=$LOC grep -E '([b]|[a]){2}' < exp-aa > out || fail=1
-  compare out exp-aa || fail=1
+  LC_ALL=$LOC grep -E '([b]|[a]){2}' < exp1 > out1-ba-$LOC || fail=1
+  compare out1-ba-$LOC exp1 || fail=1
 
-  LC_ALL=$LOC grep -E '([b]|[a]){2}' < exp-ab > out || fail=1
-  compare out exp-ab || fail=1
-
-  LC_ALL=$LOC grep -E '([a]|[b]){2}' < exp-ab > out || fail=1
-  compare out exp-ab || fail=1
-
-  LC_ALL=$LOC grep -E '^([[:digit:]]+[[:space:]]+){2}' < exp-123 > out || fail=1
-  compare out exp-123 || fail=1
+  LC_ALL=$LOC grep -E '^([[:digit:]]+[[:space:]]+){2}' < exp2 > out2-$LOC || fail=1
+  compare out2-$LOC exp2 || fail=1
 
 done
 
