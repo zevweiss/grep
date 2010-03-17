@@ -51,10 +51,10 @@ static int       inp_map_idx = 0, out_map_idx = 1;
 
 /* Guess DOS file type by looking at its contents.  */
 static inline File_type
-guess_type (char *buf, register size_t buflen)
+guess_type (char *buf, size_t buflen)
 {
   int crlf_seen = 0;
-  register char *bp = buf;
+  char *bp = buf;
 
   while (buflen--)
     {
@@ -77,7 +77,7 @@ guess_type (char *buf, register size_t buflen)
    Return the count of characters left in the buffer.
    Build table to map character positions when reporting byte counts.  */
 static inline int
-undossify_input (register char *buf, size_t buflen)
+undossify_input (char *buf, size_t buflen)
 {
   int chars_left = 0;
 

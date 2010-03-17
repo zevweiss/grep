@@ -132,10 +132,10 @@ const char *
 kwsincr (kwset_t kws, char const *text, size_t len)
 {
   struct kwset *kwset;
-  register struct trie *trie;
-  register unsigned char label;
-  register struct tree *link;
-  register int depth;
+  struct trie *trie;
+  unsigned char label;
+  struct tree *link;
+  int depth;
   struct tree *links[DEPTH_SIZE];
   enum { L, R } dirs[DEPTH_SIZE];
   struct tree *t, *r, *l, *rl, *lr;
@@ -302,10 +302,10 @@ enqueue (struct tree *tree, struct trie **last)
    from the given tree, given the failure function for their parent as
    well as a last resort failure node. */
 static void
-treefails (register struct tree const *tree, struct trie const *fail,
+treefails (struct tree const *tree, struct trie const *fail,
 	   struct trie *recourse)
 {
-  register struct tree *link;
+  struct tree *link;
 
   if (!tree)
     return;
@@ -337,8 +337,8 @@ treefails (register struct tree const *tree, struct trie const *fail,
 /* Set delta entries for the links of the given tree such that
    the preexisting delta value is larger than the current depth. */
 static void
-treedelta (register struct tree const *tree,
-	   register unsigned int depth,
+treedelta (struct tree const *tree,
+	   unsigned int depth,
 	   unsigned char delta[])
 {
   if (!tree)
@@ -351,7 +351,7 @@ treedelta (register struct tree const *tree,
 
 /* Return true if A has every label in B. */
 static int
-hasevery (register struct tree const *a, register struct tree const *b)
+hasevery (struct tree const *a, struct tree const *b)
 {
   if (!b)
     return 1;
@@ -384,10 +384,10 @@ treenext (struct tree const *tree, struct trie *next[])
 const char *
 kwsprep (kwset_t kws)
 {
-  register struct kwset *kwset;
-  register int i;
-  register struct trie *curr;
-  register char const *trans;
+  struct kwset *kwset;
+  int i;
+  struct trie *curr;
+  char const *trans;
   unsigned char delta[NCHAR];
 
   kwset = (struct kwset *) kws;
@@ -425,7 +425,7 @@ kwsprep (kwset_t kws)
     }
   else
     {
-      register struct trie *fail;
+      struct trie *fail;
       struct trie *last, *next[NCHAR];
 
       /* Traverse the nodes of the trie in level order, simultaneously
@@ -501,9 +501,9 @@ static size_t
 bmexec (kwset_t kws, char const *text, size_t size)
 {
   struct kwset const *kwset;
-  register unsigned char const *d1;
-  register char const *ep, *sp, *tp;
-  register int d, gc, i, len, md2;
+  unsigned char const *d1;
+  char const *ep, *sp, *tp;
+  int d, gc, i, len, md2;
 
   kwset = (struct kwset const *) kws;
   len = kwset->mind;
@@ -591,12 +591,12 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
   struct trie const *trie;
   struct trie const *accept;
   char const *beg, *lim, *mch, *lmch;
-  register unsigned char c;
-  register unsigned char const *delta;
-  register int d;
-  register char const *end, *qlim;
-  register struct tree const *tree;
-  register char const *trans;
+  unsigned char c;
+  unsigned char const *delta;
+  int d;
+  char const *end, *qlim;
+  struct tree const *tree;
+  char const *trans;
 
 #ifdef lint
   accept = NULL;

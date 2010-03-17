@@ -373,7 +373,7 @@ static enum
 
 static int grepdir (char const *, struct stats const *);
 #if defined(HAVE_DOS_FILE_CONTENTS)
-static inline int undossify_input (register char *, size_t);
+static inline int undossify_input (char *, size_t);
 #endif
 
 /* Functions we'll use to search. */
@@ -1072,7 +1072,7 @@ static int
 grepbuf (char const *beg, char const *lim)
 {
   int nlines, n;
-  register char const *p;
+  char const *p;
   size_t match_offset;
   size_t match_size;
 
