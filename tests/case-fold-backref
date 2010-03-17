@@ -7,8 +7,9 @@ printf 'the the\nThe the\nTHE the\n'      > exp1 || framework_failure
 fail=0
 
 for LOC in en_US.UTF-8 en_US zh_CN $LOCALE_FR_UTF8 C; do
-  LC_ALL=$LOC grep -Ei '(the) \1' exp1 > out1-$LOC || fail=1
-  compare out1-$LOC exp1 || fail=1
+  out=out1-$LOC
+  LC_ALL=$LOC grep -Ei '(the) \1' exp1 > $out || fail=1
+  compare $out exp1 || fail=1
 done
 
 Exit $fail

@@ -7,15 +7,17 @@ printf 'Y\n'      > exp1 || framework_failure
 fail=0
 
 for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
-  printf '1\nY\n.\n' | LC_ALL=$LOC grep -i '[[:lower:]]' > out1-$LOC || fail=1
-  compare out1-$LOC exp1 || fail=1
+  out=out1-$LOC
+  printf '1\nY\n.\n' | LC_ALL=$LOC grep -i '[[:lower:]]' > $out || fail=1
+  compare $out exp1 || fail=1
 done
 
 printf 'y\n'      > exp2 || framework_failure
 
 for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
-  printf '1\ny\n.\n' | LC_ALL=$LOC grep -i '[[:upper:]]' > out2-$LOC || fail=1
-  compare out2-$LOC exp2 || fail=1
+  out=out2-$LOC
+  printf '1\ny\n.\n' | LC_ALL=$LOC grep -i '[[:upper:]]' > $out || fail=1
+  compare $out exp2 || fail=1
 done
 
 Exit $fail
