@@ -3,12 +3,12 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-printf 'the the\nThe the\nTHE the\n'      > exp1 || framework_failure
+printf 'foo foo\nFoo foo\nFOO foo\n'      > exp1 || framework_failure
 fail=0
 
 for LOC in en_US.UTF-8 en_US zh_CN $LOCALE_FR_UTF8 C; do
   out=out1-$LOC
-  LC_ALL=$LOC grep -Ei '(the) \1' exp1 > $out || fail=1
+  LC_ALL=$LOC grep -Ei '(foo) \1' exp1 > $out || fail=1
   compare $out exp1 || fail=1
 done
 
