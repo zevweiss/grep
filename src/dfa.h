@@ -198,8 +198,8 @@ typedef enum
    a constraint. */
 typedef struct
 {
-  unsigned index;		/* Index into the parse array. */
-  unsigned constraint;		/* Constraint for matching this position. */
+  unsigned int index;		/* Index into the parse array. */
+  unsigned int constraint;	/* Constraint for matching this position. */
 } position;
 
 /* Sets of positions are stored as arrays. */
@@ -278,7 +278,7 @@ struct dfa
   int nregexps;			/* Count of parallel regexps being built
 				   with dfaparse(). */
 #ifdef MBS_SUPPORT
-  unsigned mb_cur_max;		/* Cached value of MB_CUR_MAX.  */
+  unsigned int mb_cur_max;	/* Cached value of MB_CUR_MAX.  */
 
   /* The following are used only if MB_CUR_MAX > 1.  */
 

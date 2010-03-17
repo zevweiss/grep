@@ -158,19 +158,19 @@ prtok (token t)
 /* Stuff pertaining to charclasses. */
 
 static int
-tstbit (unsigned b, charclass c)
+tstbit (unsigned int b, charclass c)
 {
   return c[b / INTBITS] & 1 << b % INTBITS;
 }
 
 static void
-setbit (unsigned b, charclass c)
+setbit (unsigned int b, charclass c)
 {
   c[b / INTBITS] |= 1 << b % INTBITS;
 }
 
 static void
-clrbit (unsigned b, charclass c)
+clrbit (unsigned int b, charclass c)
 {
   c[b / INTBITS] &= ~(1 << b % INTBITS);
 }
@@ -243,7 +243,7 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
    For MB_CUR_MAX > 1, one or both of the two cases may not be set,
    so the resulting charset may only be used as an optimization.  */
 static void
-setbit_case_fold (unsigned b, charclass c)
+setbit_case_fold (unsigned int b, charclass c)
 {
   if (case_fold)
     {
@@ -764,7 +764,7 @@ parse_bracket_exp (void)
 static token
 lex (void)
 {
-  unsigned c, c2;
+  unsigned int c, c2;
   int backslash = 0;
   charclass ccl;
   int i;
@@ -2934,14 +2934,14 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 static void
 free_mbdata (struct dfa *d)
 {
-  unsigned i;
+  unsigned int i;
 
   free(d->multibyte_prop);
   d->multibyte_prop = NULL;
 
   for (i = 0; i < d->nmbcsets; ++i)
     {
-      unsigned j;
+      unsigned int j;
       struct mb_char_classes *p = &(d->mbcsets[i]);
       free(p->chars);
       free(p->ch_classes);
@@ -3005,7 +3005,7 @@ dfainit (struct dfa *d)
 static void
 dfaoptimize (struct dfa *d)
 {
-  unsigned i;
+  unsigned int i;
   if (!using_utf8())
     return;
 
