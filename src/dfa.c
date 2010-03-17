@@ -354,17 +354,17 @@ fetch_wc (char const *eoferr)
 }
 #else
 /* Note that characters become unsigned here. */
-# define FETCH(c, eoferr)   	      \
-  do {			   	      \
-    if (! lexleft)	   	      \
+# define FETCH(c, eoferr)	      \
+  do {				      \
+    if (! lexleft)		      \
       {				      \
 	if (eoferr != 0)	      \
 	  dfaerror (eoferr);	      \
-	else		   	      \
+	else			      \
 	  return lasttok = END;	      \
       }				      \
     (c) = (unsigned char) *lexptr++;  \
-    --lexleft;		   	      \
+    --lexleft;			      \
   } while(0)
 #endif /* MBS_SUPPORT */
 
@@ -484,7 +484,7 @@ parse_bracket_exp_mb (void)
 				       work_mbc->nch_classes + 1);
 		  work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
 
- 		}
+		}
 	      else if (delim == '=' || delim == '.')
 		{
 		  char *elem;
@@ -512,7 +512,7 @@ parse_bracket_exp_mb (void)
 					   work_mbc->ncoll_elems + 1);
 		      work_mbc->coll_elems[work_mbc->ncoll_elems++] = elem;
 		    }
- 		}
+		}
 	      wc1 = wc = WEOF;
 	    }
 	  else
@@ -550,8 +550,8 @@ parse_bracket_exp_mb (void)
 	      wc1 = fetch_wc(_("unbalanced ["));
 	    }
 
-      	  /* When case folding map a range, say [m-z] (or even [M-z]) to the
-     	     pair of ranges, [m-z] [M-Z].  */
+	  /* When case folding map a range, say [m-z] (or even [M-z]) to the
+	     pair of ranges, [m-z] [M-Z].  */
 	  if (range_sts_al == 0)
 	    {
 	      MALLOC(work_mbc->range_sts, wchar_t, ++range_sts_al);
