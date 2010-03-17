@@ -261,12 +261,12 @@ struct mb_char_classes
 /* A compiled regular expression. */
 struct dfa
 {
-  /* Stuff built by the scanner. */
+  /* Fields filled by the scanner. */
   charclass *charclasses;	/* Array of character sets for CSET tokens. */
   int cindex;			/* Index for adding new charclasses. */
   int calloc;			/* Number of charclasses currently allocated. */
 
-  /* Stuff built by the parser. */
+  /* Fields filled by the parser. */
   token *tokens;		/* Postfix parse array. */
   int tindex;			/* Index for adding new tokens. */
   int talloc;			/* Number of tokens currently allocated. */
@@ -277,15 +277,15 @@ struct dfa
   int nregexps;			/* Count of parallel regexps being built
 				   with dfaparse(). */
 #ifdef MBS_SUPPORT
-  /* These stuff are used only if MB_CUR_MAX > 1 or multibyte environments.  */
-  int nmultibyte_prop;
-  int *multibyte_prop;
+  /* The following are used only if MB_CUR_MAX > 1.  */
+
   /* The value of multibyte_prop[i] is defined by following rule.
        if tokens[i] < NOTCHAR
-         bit 1 : tokens[i] is a single byte character, or the last-byte of
-	         a multibyte character.
-	 bit 0 : tokens[i] is a single byte character, or the 1st-byte of
-	         a multibyte character.
+         bit 0 : tokens[i] is the first byte of a character, including
+                 single-byte characters.
+         bit 1 : tokens[i] is the last byte of a character, including
+                 single-byte characters.
+
        if tokens[i] = MBCSET
          ("the index of mbcsets correspnd to this operator" << 2) + 3
 
@@ -296,19 +296,21 @@ struct dfa
      multibyte_prop
         = 3     , 1               ,  0              ,  2              , 3
   */
+  int nmultibyte_prop;
+  int *multibyte_prop;
 
-  /* Array of the bracket expressoin in the DFA.  */
+  /* Array of the bracket expression in the DFA.  */
   struct mb_char_classes *mbcsets;
   int nmbcsets;
   int mbcsets_alloc;
 #endif
 
-  /* Stuff owned by the state builder. */
+  /* Fields filled by the state builder. */
   dfa_state *states;		/* States of the dfa. */
   int sindex;			/* Index for adding new states. */
   int salloc;			/* Number of states currently allocated. */
 
-  /* Stuff built by the structure analyzer. */
+  /* Fields filled by the parse tree->NFA conversion. */
   position_set *follows;	/* Array of follow sets, indexed by position
 				   index.  The follow of a position is the set
 				   of positions containing characters that
@@ -324,7 +326,7 @@ struct dfa
 				   string matching, but anchored to the
 				   beginning of the buffer. */
 
-  /* Stuff owned by the executor. */
+  /* Fields filled by dfaexec. */
   int tralloc;			/* Number of transition tables that have
 				   slots so far. */
   int trcount;			/* Number of transition tables that have
@@ -349,6 +351,7 @@ struct dfa
   struct dfamust *musts;	/* List of strings, at least one of which
 				   is known to appear in any r.e. matching
 				   the dfa. */
+
 #ifdef GAWK
   int broken;			/* True if using a feature where there
 				   are bugs and gawk should use regex. */
