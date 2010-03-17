@@ -21,4 +21,4 @@ fi
 make_input BABAAB |euc_grep AB || \
   fail_ 'whole line rejected after matching in the middle of a multibyte char'
 
-exit 0
+Exit 0
