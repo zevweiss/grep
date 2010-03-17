@@ -39,7 +39,7 @@ grep -F -w -f 116909.list 116909.in | diff - 116909.out && ok || fail
 U=https://bugzilla.redhat.com/show_bug.cgi?id=123362
 echo -n "bad handling of brackets in UTF-8: "
 echo Y > 123362.out
-echo Y | LC_ALL=de_DE.UTF-8 grep -i '[y,Y]' | diff - 123362.out && ok | fail
+echo Y | LC_ALL=de_DE.UTF-8 grep -i '[y,Y]' | diff - 123362.out && ok || fail
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=112869
 echo -n "crash with \W: "
