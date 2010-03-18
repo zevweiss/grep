@@ -25,7 +25,8 @@ fgrep_SOURCES = fgrep.c fsearch.c
 noinst_HEADERS = grep.h dfa.h kwset.h search.h system.h mbsupport.h
 
 noinst_LIBRARIES = libsearch.a
-libsearch_a_SOURCES = kwset.c dfa.c searchutils.c
+libsearch_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
+	pcresearch.c
 
 LDADD = $(LIBINTL) libsearch.a ../lib/libgreputils.a
 grep_LDADD = $(LDADD) $(PCRE_LIBS)
@@ -34,5 +35,4 @@ INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
 EXTRA_DIST = \
              dosbuf.c \
-	     pcresearch.c dfasearch.c kwsearch.c \
              vms_fab.c vms_fab.h

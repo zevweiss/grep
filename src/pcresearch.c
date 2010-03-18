@@ -32,7 +32,7 @@ static pcre *cre;
 static pcre_extra *extra;
 #endif
 
-static void
+void
 Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
@@ -99,7 +99,7 @@ Pcompile (char const *pattern, size_t size)
 #endif
 }
 
-static size_t
+size_t
 Pexecute (char const *buf, size_t size, size_t *match_size,
 	  char const *start_ptr)
 {

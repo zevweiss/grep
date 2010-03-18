@@ -29,7 +29,7 @@
    any string matching the regexp. */
 static kwset_t kwset;
 
-static void
+void
 Fcompile (char const *pattern, size_t size)
 {
   char const *beg, *end, *lim, *err, *pat;
@@ -74,7 +74,7 @@ Fcompile (char const *pattern, size_t size)
     error (EXIT_TROUBLE, 0, "%s", err);
 }
 
-static size_t
+size_t
 Fexecute (char const *buf, size_t size, size_t *match_size,
 	  char const *start_ptr)
 {

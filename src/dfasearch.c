@@ -110,8 +110,7 @@ kwsmusts (void)
     }
 }
 
-/* No __VA_ARGS__ in C89.  So we have to do it this way.  */
-static void
+void
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   const char *err;
@@ -195,7 +194,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   free(motif);
 }
 
-static size_t
+size_t
 EGexecute (char const *buf, size_t size, size_t *match_size,
 	   char const *start_ptr)
 {

@@ -37,11 +37,25 @@
 #include "kwset.h"
 #include "xalloc.h"
 
+/* searchutils.c */
 void kwsinit (kwset_t *);
 
 #ifdef MBS_SUPPORT
 char * mbtolower (const char *, size_t *);
 bool is_mb_middle(const char **, const char *, const char *);
 #endif
+
+/* dfasearch.c */
+void GEAcompile (char const *, size_t, reg_syntax_t);
+size_t EGexecute (char const *, size_t, size_t *, char const *);
+
+/* kwsearch.c */
+void Fcompile (char const *, size_t);
+size_t Fexecute (char const *, size_t, size_t *, char const *);
+
+/* pcresearch.c */
+void Pcompile (char const *, size_t);
+size_t Pexecute (char const *, size_t, size_t *, char const *);
+
 
 #endif /* GREP_SEARCH_H */

@@ -1,6 +1,5 @@
-#include "dfasearch.c"
-#include "pcresearch.c"
-#include "kwsearch.c"
+#include <config.h>
+#include "search.h"
 
 static void
 Gcompile (char const *pattern, size_t size)

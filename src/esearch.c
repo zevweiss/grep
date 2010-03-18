@@ -1,4 +1,5 @@
-#include "dfasearch.c"
+#include <config.h>
+#include "search.h"
 
 static void
 Ecompile (char const *pattern, size_t size)
