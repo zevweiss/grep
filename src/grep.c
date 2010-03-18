@@ -1026,7 +1026,8 @@ prtext (char const *beg, char const *lim, int *nlinesp)
   used = 1;
 }
 
-static EXECUTE_RET do_execute EXECUTE_ARGS
+static size_t
+do_execute (char const *buf, size_t size, size_t *match_size, char const *start_ptr)
 {
   size_t result;
   const char *line_next;

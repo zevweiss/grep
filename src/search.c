@@ -258,7 +258,7 @@ is_mb_middle(const char **good, const char *buf, const char *end)
 
 #if defined(GREP_PROGRAM) || defined(EGREP_PROGRAM)
 /* No __VA_ARGS__ in C89.  So we have to do it this way.  */
-static COMPILE_RET
+static void
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   const char *err;
@@ -349,7 +349,8 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 }
 
 #ifndef EGREP_PROGRAM
-COMPILE_FCT(Gcompile)
+static void
+Gcompile (char const *pattern, size_t size)
 {
   return GEAcompile (pattern, size,
 		     (RE_SYNTAX_GREP
@@ -357,18 +358,22 @@ COMPILE_FCT(Gcompile)
 		      | RE_NO_EMPTY_RANGES));
 }
 
-COMPILE_FCT(Acompile)
+static void
+Acompile (char const *pattern, size_t size)
 {
   return GEAcompile (pattern, size, RE_SYNTAX_AWK);
 }
 #endif /* !EGREP_PROGRAM */
 
-COMPILE_FCT(Ecompile)
+static void
+Ecompile (char const *pattern, size_t size)
 {
   return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES);
 }
 
-EXECUTE_FCT(EGexecute)
+static size_t
+EGexecute (char const *buf, size_t size, size_t *match_size,
+	   char const *start_ptr)
 {
   char const *buflim, *beg, *end, *match, *best_match, *mb_start;
   char eol = eolbyte;
@@ -561,7 +566,8 @@ EXECUTE_FCT(EGexecute)
 #endif /* defined(GREP_PROGRAM) || defined(EGREP_PROGRAM) */
 
 #if defined(GREP_PROGRAM) || defined(FGREP_PROGRAM)
-COMPILE_FCT(Fcompile)
+static void
+Fcompile (char const *pattern, size_t size)
 {
   char const *beg, *end, *lim, *err, *pat;
   size_t psize;
@@ -605,7 +611,9 @@ COMPILE_FCT(Fcompile)
     error (EXIT_TROUBLE, 0, "%s", err);
 }
 
-EXECUTE_FCT(Fexecute)
+static size_t
+Fexecute (char const *buf, size_t size, size_t *match_size,
+	  char const *start_ptr)
 {
   char const *beg, *try, *end, *mb_start;
   size_t len;
@@ -700,7 +708,8 @@ static pcre *cre;
 static pcre_extra *extra;
 #endif
 
-COMPILE_FCT(Pcompile)
+static void
+Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
   error (EXIT_TROUBLE, 0, "%s",
@@ -766,7 +775,9 @@ COMPILE_FCT(Pcompile)
 #endif
 }
 
-EXECUTE_FCT(Pexecute)
+static size_t
+Pexecute (char const *buf, size_t size, size_t *match_size,
+	  char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
   abort ();

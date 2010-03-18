@@ -29,21 +29,9 @@
 # define GREP_PROGRAM
 #endif
 
-/* The two functions each matcher provides.  */
-#define COMPILE_RET void
-#define COMPILE_ARGS \
-  (char const *pattern, size_t size)
-#define EXECUTE_RET size_t
-#define EXECUTE_ARGS \
-  (char const *buf, size_t size, size_t *match_size, char const *start_ptr)
-  /* start_ptr == NULL means the caller is not looking for an exact match.  */
-
-# define COMPILE_FCT(f) static COMPILE_RET f COMPILE_ARGS
-# define EXECUTE_FCT(f) static EXECUTE_RET f EXECUTE_ARGS
-
 /* Function pointer types.  */
-typedef COMPILE_RET (*compile_fp_t) COMPILE_ARGS;
-typedef EXECUTE_RET (*execute_fp_t) EXECUTE_ARGS;
+typedef void (*compile_fp_t) (char const *, size_t);
+typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);
 
 /* grep.c expects the matchers vector to be terminated by an entry
    with a NULL name, and to contain at least one entry. */
