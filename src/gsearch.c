@@ -12,6 +12,12 @@ Gcompile (char const *pattern, size_t size)
 }
 
 static void
+Ecompile (char const *pattern, size_t size)
+{
+  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES);
+}
+
+static void
 Acompile (char const *pattern, size_t size)
 {
   return GEAcompile (pattern, size, RE_SYNTAX_AWK);

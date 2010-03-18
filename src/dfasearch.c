@@ -195,12 +195,6 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   free(motif);
 }
 
-static void
-Ecompile (char const *pattern, size_t size)
-{
-  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES);
-}
-
 static size_t
 EGexecute (char const *buf, size_t size, size_t *match_size,
 	   char const *start_ptr)
