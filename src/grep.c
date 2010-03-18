@@ -1589,7 +1589,7 @@ install_matcher (char const *name)
 {
   int i;
 
-  for (i = 0; matchers[i].compile; i++)
+  for (i = 0; matchers[i].name; i++)
     if (strcmp (name, matchers[i].name) == 0)
       {
 	compile = matchers[i].compile;

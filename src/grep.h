@@ -47,11 +47,11 @@ typedef COMPILE_RET (*compile_fp_t) COMPILE_ARGS;
 typedef EXECUTE_RET (*execute_fp_t) EXECUTE_ARGS;
 
 /* grep.c expects the matchers vector to be terminated
-   by an entry with a NULL compile, and to contain at least
+   by an entry with a NULL name, and to contain at least
    an entry named "default". */
 extern struct matcher
 {
-  char name[8];
+  const char *name;
   compile_fp_t compile;
   execute_fp_t execute;
 } const matchers[];

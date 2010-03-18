@@ -849,6 +849,6 @@ struct matcher const matchers[] = {
   { "awk",     Acompile, EGexecute },
   { "fgrep",   Fcompile, Fexecute },
   { "perl",    Pcompile, Pexecute },
-  { "", 0, 0 },
+  { NULL, NULL, NULL },
 };
 #endif /* GREP_PROGRAM */
