@@ -841,14 +841,4 @@ EXECUTE_FCT(Pexecute)
     }
 #endif
 }
-
-struct matcher const matchers[] = {
-  { "default", Gcompile, EGexecute },
-  { "grep",    Gcompile, EGexecute },
-  { "egrep",   Ecompile, EGexecute },
-  { "awk",     Acompile, EGexecute },
-  { "fgrep",   Fcompile, Fexecute },
-  { "perl",    Pcompile, Pexecute },
-  { NULL, NULL, NULL },
-};
 #endif /* GREP_PROGRAM */

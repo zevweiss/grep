@@ -380,10 +380,8 @@ static inline int undossify_input (char *, size_t);
 #endif
 
 /* Functions we'll use to search. */
-#ifdef GREP_PROGRAM
 static compile_fp_t compile;
 static execute_fp_t execute;
-#endif
 
 /* Like error, but suppress the diagnostic if requested.  */
 static void
@@ -1570,9 +1568,9 @@ if any error occurs and -q was not given, the exit status is 2.\n"));
   exit (status);
 }
 
-#ifdef GREP_PROGRAM
 static char const *matcher;
 
+#ifdef GREP_PROGRAM
 /* Set the matcher to M, reporting any conflicts.  */
 static void
 setmatcher (char const *m)
@@ -1581,6 +1579,7 @@ setmatcher (char const *m)
     error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
   matcher = m;
 }
+#endif
 
 /* Go through the matchers vector and look for the specified matcher.
    If we find it, install it in compile and execute, and return 1.  */
@@ -1598,7 +1597,6 @@ install_matcher (char const *name)
       }
   return 0;
 }
-#endif /* GREP_PROGRAM */
 
 static void
 set_limits(void)
@@ -2229,13 +2227,12 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
     else
       usage (EXIT_TROUBLE);
 
-#ifdef GREP_PROGRAM
-  if (! matcher)
-    matcher = "grep";
-
-  if (!install_matcher (matcher) && !install_matcher ("default"))
+  if (matcher && install_matcher (matcher))
+    ;
+  else if (install_matcher (matchers[0].name))
+    ;
+  else
     abort ();
-#endif /* GREP_PROGRAM */
 
   set_limits();
 

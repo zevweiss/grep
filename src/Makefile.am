@@ -19,7 +19,7 @@ LN = ln
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 
 bin_PROGRAMS = grep egrep fgrep
-grep_SOURCES  =  grep.c  search.c kwset.c dfa.c
+grep_SOURCES  =  grep.c gsearch.c kwset.c dfa.c
 egrep_SOURCES = egrep.c esearch.c kwset.c dfa.c
 fgrep_SOURCES = fgrep.c fsearch.c kwset.c
 noinst_HEADERS = grep.h dfa.h kwset.h system.h mbsupport.h
@@ -30,5 +30,5 @@ localedir = $(datadir)/locale
 INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
 EXTRA_DIST = \
-             dosbuf.c \
+             dosbuf.c search.c \
              vms_fab.c vms_fab.h
