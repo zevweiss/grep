@@ -22,7 +22,7 @@ bin_PROGRAMS = grep egrep fgrep
 grep_SOURCES  =  grep.c  search.c kwset.c dfa.c
 egrep_SOURCES = egrep.c esearch.c kwset.c dfa.c
 fgrep_SOURCES = fgrep.c fsearch.c kwset.c
-noinst_HEADERS = grep.h dfa.h kwset.h getpagesize.h system.h mbsupport.h
+noinst_HEADERS = grep.h dfa.h kwset.h system.h mbsupport.h
 
 LDADD = $(LIBINTL) ../lib/libgreputils.a
 grep_LDADD = $(PCRE_LIBS) $(LDADD)
