@@ -30,3 +30,9 @@ struct matcher const matchers[] = {
   { "perl",    Pcompile, Pexecute },
   { NULL, NULL, NULL },
 };
+
+const char before_options[] =
+N_("PATTERN is, by default, a basic regular expression (BRE).\n");
+const char after_options[] =
+N_("`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
+Direct invocation as either `egrep' or `fgrep' is deprecated.\n");

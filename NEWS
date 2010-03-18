@@ -40,6 +40,12 @@ GNU grep NEWS                                    -*- outline -*-
   --no-group-separator, enable further customization of the output
   when -A, -B or -C is being used.
 
+** Other changes
+
+  egrep accepts the -E option and fgrep accepts the -F option.  If egrep
+  and fgrep are given another of the -E/-F/-G options, they print a more
+  meaningful error message.
+
 * Noteworthy changes in release 2.5.4 (2009-02-10) [stable]
 
   - This is a bugfix release. No new features.

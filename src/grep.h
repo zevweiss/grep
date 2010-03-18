@@ -21,14 +21,6 @@
 # define __attribute__(x)
 #endif
 
-/* We build specialized legacy "egrep" and "fgrep" programs.
-   No program adjusts its behavior according to its argv[0].
-   No scripts are provided as an alternative.  Distributors
-   are free to do otherwise, but it is their burden to do so.  */
-#if !defined(GREP_PROGRAM) && !defined(EGREP_PROGRAM) && !defined(FGREP_PROGRAM)
-# define GREP_PROGRAM
-#endif
-
 /* Function pointer types.  */
 typedef void (*compile_fp_t) (char const *, size_t);
 typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);
@@ -41,6 +33,9 @@ extern struct matcher
   compile_fp_t compile;
   execute_fp_t execute;
 } const matchers[];
+
+extern const char before_options[];
+extern const char after_options[];
 
 /* The following flags are exported from grep for the matchers
    to look at. */

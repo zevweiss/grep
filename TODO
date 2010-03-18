@@ -28,8 +28,6 @@ Multithreading?
 GNU grep does 32-bit arithmetic, it needs to move to 64-bit (i.e.
 size_t/ptrdiff_t).
 
-Clean up, too many #ifdefs!
-
 Lazy dynamic linking of libpcre.
 
 Check FreeBSD's integration of zgrep (-Z) and bzgrep (-J) in one

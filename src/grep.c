@@ -270,11 +270,7 @@ static struct exclude *included_patterns;
 static struct exclude *excluded_directory_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:D:HITUVabcd:e:f:hiKLlm:noqRrsuvwxyZz"
-#ifdef GREP_PROGRAM
-"EFGPX:"
-#endif
-;
+"0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -293,13 +289,11 @@ enum
 /* Long options equivalences. */
 static struct option const long_options[] =
 {
-#ifdef GREP_PROGRAM
   {"basic-regexp",    no_argument, NULL, 'G'},
   {"extended-regexp", no_argument, NULL, 'E'},
   {"fixed-regexp",    no_argument, NULL, 'F'},
   {"fixed-strings",   no_argument, NULL, 'F'},
   {"perl-regexp",     no_argument, NULL, 'P'},
-#endif
   {"after-context", required_argument, NULL, 'A'},
   {"before-context", required_argument, NULL, 'B'},
   {"binary-files", required_argument, NULL, BINARY_FILES_OPTION},
@@ -1454,28 +1448,18 @@ usage (int status)
       printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), program_name);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n"));
-#if defined(EGREP_PROGRAM)
-      printf (_("\
-PATTERN is an extended regular expression (ERE).\n"));
-#elif defined(FGREP_PROGRAM)
-      printf (_("\
-PATTERN is a set of newline-separated fixed strings.\n"));
-#else
-      printf (_("\
-PATTERN is, by default, a basic regular expression (BRE).\n"));
-#endif /* ?GREP_PROGRAM */
+      printf ("%s", gettext (before_options));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
 Regexp selection and interpretation:\n"), program_name);
-#ifdef GREP_PROGRAM
-      printf (_("\
+      if (matchers[1].name)
+        printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n\
   -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
   /* -X is undocumented on purpose. */
-#endif /* GREP_PROGRAM */
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN for matching\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -1544,17 +1528,7 @@ Context control:\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n"));
-#if defined(EGREP_PROGRAM)
-      printf (_("\
-Invocation as `egrep' is deprecated; use `grep -E' instead.\n"));
-#elif defined(FGREP_PROGRAM)
-      printf (_("\
-Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"));
-#else
-      printf (_("\
-`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n\
-Direct invocation as either `egrep' or `fgrep' is deprecated.\n"));
-#endif /* ?GREP_PROGRAM */
+      printf ("%s", after_options);
       printf (_("\
 With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
 are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
@@ -1569,34 +1543,48 @@ if any error occurs and -q was not given, the exit status is 2.\n"));
   exit (status);
 }
 
-static char const *matcher;
-
-#ifdef GREP_PROGRAM
-/* Set the matcher to M, reporting any conflicts.  */
+/* If M is NULL, initialize the matcher to the default.  Otherwise set the
+   matcher to M if available.  Exit in case of conflicts or if M is not
+   available.  */
 static void
 setmatcher (char const *m)
 {
-  if (matcher && strcmp (matcher, m) != 0)
-    error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
-  matcher = m;
-}
-#endif
+  static char const *matcher;
+  unsigned int i;
 
-/* Go through the matchers vector and look for the specified matcher.
-   If we find it, install it in compile and execute, and return 1.  */
-static int
-install_matcher (char const *name)
-{
-  int i;
+  if (!m)
+    {
+      compile = matchers[0].compile;
+      execute = matchers[0].execute;
+      if (!matchers[1].name)
+	matcher = matchers[0].name;
+    }
 
-  for (i = 0; matchers[i].name; i++)
-    if (strcmp (name, matchers[i].name) == 0)
-      {
-	compile = matchers[i].compile;
-	execute = matchers[i].execute;
-	return 1;
-      }
-  return 0;
+  else if (matcher)
+    {
+      if (matcher && strcmp (matcher, m) == 0)
+        ;
+
+      else if (!matchers[1].name)
+        error (EXIT_TROUBLE, 0, _("%s can only use the %s pattern syntax"),
+               program_name, matcher);
+      else
+        error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
+    }
+
+  else
+    {
+      for (i = 0; matchers[i].name; i++)
+        if (strcmp (m, matchers[i].name) == 0)
+          {
+            compile = matchers[i].compile;
+            execute = matchers[i].execute;
+            matcher = m;
+            return;
+          }
+
+      error (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
+    }
 }
 
 static void
@@ -1865,6 +1853,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
+  setmatcher (NULL);
 
   while ((opt = get_nondigit_option (argc, argv, &default_context)) != -1)
     switch (opt)
@@ -1892,7 +1881,6 @@ main (int argc, char **argv)
 	  error (EXIT_TROUBLE, 0, _("unknown devices method"));
 	break;
 
-#ifdef GREP_PROGRAM
       case 'E':
 	setmatcher ("egrep");
 	break;
@@ -1912,7 +1900,6 @@ main (int argc, char **argv)
       case 'X': /* undocumented on purpose */
 	setmatcher (optarg);
 	break;
-#endif /* GREP_PROGRAM */
 
       case 'H':
 	with_filenames = 1;
@@ -2228,15 +2215,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
     else
       usage (EXIT_TROUBLE);
 
-  if (matcher && install_matcher (matcher))
-    ;
-  else if (install_matcher (matchers[0].name))
-    ;
-  else
-    abort ();
-
   set_limits();
-
   compile(keys, keycc);
   free (keys);
 

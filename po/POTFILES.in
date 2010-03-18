@@ -27,4 +27,7 @@ src/dfa.c
 src/grep.c
 src/kwset.c
 src/dfasearch.c
+src/esearch.c
+src/fsearch.c
+src/gsearch.c
 src/pcresearch.c
