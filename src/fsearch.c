@@ -1,5 +1,4 @@
-#define FGREP_PROGRAM
-#include "search.c"
+#include "kwsearch.c"
 
 struct matcher const matchers[] = {
   { "fgrep", Fcompile, Fexecute },

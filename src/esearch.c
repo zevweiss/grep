@@ -1,5 +1,4 @@
-#define EGREP_PROGRAM
-#include "search.c"
+#include "dfasearch.c"
 
 struct matcher const matchers[] = {
   { "egrep", Ecompile, EGexecute },

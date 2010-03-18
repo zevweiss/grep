@@ -1,4 +1,21 @@
-#include "search.c"
+#include "dfasearch.c"
+#include "pcresearch.c"
+#include "kwsearch.c"
+
+static void
+Gcompile (char const *pattern, size_t size)
+{
+  return GEAcompile (pattern, size,
+		     RE_SYNTAX_GREP
+		     | RE_HAT_LISTS_NOT_NEWLINE
+		     | RE_NO_EMPTY_RANGES);
+}
+
+static void
+Acompile (char const *pattern, size_t size)
+{
+  return GEAcompile (pattern, size, RE_SYNTAX_AWK);
+}
 
 struct matcher const matchers[] = {
   { "grep",    Gcompile, EGexecute },
@@ -8,4 +25,3 @@ struct matcher const matchers[] = {
   { "perl",    Pcompile, Pexecute },
   { NULL, NULL, NULL },
 };
-

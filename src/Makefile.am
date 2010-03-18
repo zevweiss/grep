@@ -19,16 +19,20 @@ LN = ln
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 
 bin_PROGRAMS = grep egrep fgrep
-grep_SOURCES  =  grep.c gsearch.c kwset.c dfa.c
-egrep_SOURCES = egrep.c esearch.c kwset.c dfa.c
-fgrep_SOURCES = fgrep.c fsearch.c kwset.c
-noinst_HEADERS = grep.h dfa.h kwset.h system.h mbsupport.h
+grep_SOURCES  =  grep.c gsearch.c
+egrep_SOURCES = egrep.c esearch.c
+fgrep_SOURCES = fgrep.c fsearch.c
+noinst_HEADERS = grep.h dfa.h kwset.h search.h system.h mbsupport.h
 
-LDADD = $(LIBINTL) ../lib/libgreputils.a
-grep_LDADD = $(PCRE_LIBS) $(LDADD)
+noinst_LIBRARIES = libsearch.a
+libsearch_a_SOURCES = kwset.c dfa.c searchutils.c
+
+LDADD = $(LIBINTL) libsearch.a ../lib/libgreputils.a
+grep_LDADD = $(LDADD) $(PCRE_LIBS)
 localedir = $(datadir)/locale
 INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
 EXTRA_DIST = \
-             dosbuf.c search.c \
+             dosbuf.c \
+	     pcresearch.c dfasearch.c kwsearch.c \
              vms_fab.c vms_fab.h

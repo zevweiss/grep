@@ -26,4 +26,5 @@ lib/xstrtol-error.c
 src/dfa.c
 src/grep.c
 src/kwset.c
-src/search.c
+src/dfasearch.c
+src/pcresearch.c
