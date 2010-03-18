@@ -315,26 +315,20 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
       static char const line_end_no_bk[] = ")$";
       static char const word_beg_no_bk[] = "(^|[^[:alnum:]_])(";
       static char const word_end_no_bk[] = ")([^[:alnum:]_]|$)";
-#ifdef EGREP_PROGRAM
-# define IF_BK(x, y) (y)
-      char *n = xmalloc (sizeof word_beg_no_bk - 1 + size + sizeof word_end_no_bk);
-#else
       static char const line_beg_bk[] = "^\\(";
       static char const line_end_bk[] = "\\)$";
       static char const word_beg_bk[] = "\\(^\\|[^[:alnum:]_]\\)\\(";
       static char const word_end_bk[] = "\\)\\([^[:alnum:]_]\\|$\\)";
       int bk = !(syntax_bits & RE_NO_BK_PARENS);
-# define IF_BK(x, y) ((bk) ? (x) : (y))
       char *n = xmalloc (sizeof word_beg_bk - 1 + size + sizeof word_end_bk);
-#endif /* EGREP_PROGRAM */
 
-      strcpy (n, match_lines ? IF_BK(line_beg_bk, line_beg_no_bk)
-			     : IF_BK(word_beg_bk, word_beg_no_bk));
+      strcpy (n, match_lines ? (bk ? line_beg_bk : line_beg_no_bk)
+			     : (bk ? word_beg_bk : word_beg_no_bk));
       total = strlen(n);
       memcpy (n + total, pattern, size);
       total += size;
-      strcpy (n + total, match_lines ? IF_BK(line_end_bk, line_end_no_bk)
-				     : IF_BK(word_end_bk, word_end_no_bk));
+      strcpy (n + total, match_lines ? (bk ? line_end_bk : line_end_no_bk)
+				     : (bk ? word_end_bk : word_end_no_bk));
       total += strlen (n + total);
       pattern = motif = n;
       size = total;
