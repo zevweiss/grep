@@ -1,8 +1,10 @@
+!/gnulib-tests/Makefile.am
 !/lib/Makefile.am
 !/lib/savedir.c
 !/lib/savedir.h
 !/m4/djgpp.m4
 *.a
+*.exe
 *.o
 *~
 .deps
@@ -19,6 +21,7 @@
 /config.status
 /configure
 /configure.ac
+/gnulib-tests/*
 /lib/*
 /lib/charset.alias
 /lib/configmake.h

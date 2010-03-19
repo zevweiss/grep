@@ -802,7 +802,7 @@ print_line_middle (const char *beg, const char *lim,
       /* This can't possibly be correct with UTF-8,
 	 but it's equivalent to what was there so far.  */
       while (--i >= 0)
-	buf[i] = tolower(beg[i]);
+	buf[i] = tolower((unsigned char) beg[i]);
     }
   else
     {
@@ -1830,8 +1830,6 @@ main (int argc, char **argv)
   int opt, cc, status;
   int default_context;
   FILE *fp;
-  extern char *optarg;
-  extern int optind;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
