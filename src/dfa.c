@@ -350,17 +350,19 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
       }						\
     else					\
       {						\
-        cur_mb_len = mbrtowc(&wc, lexptr, lexleft, &mbs); \
+        wchar_t _wc;				\
+        cur_mb_len = mbrtowc(&_wc, lexptr, lexleft, &mbs); \
         if (cur_mb_len <= 0)			\
           {					\
             cur_mb_len = 1;			\
             --lexleft;				\
-            wc = c = (unsigned char) *lexptr++;	\
+            (wc) = (c) = (unsigned char) *lexptr++; \
           }					\
         else					\
           {					\
             lexptr += cur_mb_len;		\
             lexleft -= cur_mb_len;		\
+            (wc) = _wc;				\
             (c) = wctob(wc);			\
           }					\
       }						\
@@ -368,8 +370,8 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 
 # define FETCH(c, eoferr)			\
   do {						\
-    wint_t _wc;					\
-    FETCH_WC(c, _wc, eoferr);			\
+    wint_t wc;					\
+    FETCH_WC(c, wc, eoferr);			\
   } while(0)
 
 #else
@@ -525,7 +527,7 @@ parse_bracket_exp (void)
 	      int len = 0;
 	      for (;;)
 		{
-		  FETCH (c, _("unbalanced ["));
+		  FETCH_WC (c, wc, _("unbalanced ["));
 		  if ((c == c1 && *lexptr == ']') || lexleft == 0)
 		    break;
 		  if (len < BRACKET_BUFFER_SIZE)
@@ -537,7 +539,7 @@ parse_bracket_exp (void)
 	      str[len] = '\0';
 
               /* Fetch bracket.  */
-	      FETCH (c, _("unbalanced ["));
+	      FETCH_WC (c, wc, _("unbalanced ["));
 	      if (c1 == ':')
 		/* build character class.  */
 		{
