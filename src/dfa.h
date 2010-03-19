@@ -350,7 +350,8 @@ struct dfa
 				   -1 so we can count lines without wasting
 				   too many cycles.  The transition for a
 				   newline is stored separately and handled
-				   as a special case. */
+				   as a special case.  Newline is also used
+				   as a sentinel at the end of the buffer. */
   struct dfamust *musts;	/* List of strings, at least one of which
 				   is known to appear in any r.e. matching
 				   the dfa. */
