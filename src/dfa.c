@@ -343,7 +343,7 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
   do {						\
     if (! lexleft)				\
       {						\
-        if (eoferr != 0)			\
+        if ((eoferr) != 0)			\
 	  dfaerror (eoferr);			\
         else					\
 	  return lasttok = END;			\
@@ -380,7 +380,7 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
   do {				      \
     if (! lexleft)		      \
       {				      \
-	if (eoferr != 0)	      \
+	if ((eoferr) != 0)	      \
 	  dfaerror (eoferr);	      \
 	else			      \
 	  return lasttok = END;	      \
@@ -389,8 +389,7 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
     --lexleft;			      \
   } while(0)
 
-# define FETCH_WC(c, unused, eoferr)		\
-  FETCH(c, eoferr)
+# define FETCH_WC(c, unused, eoferr) FETCH (c, eoferr)
 
 #endif /* MBS_SUPPORT */
 
