@@ -24,10 +24,10 @@ lib/regcomp.c
 lib/xalloc-die.c
 lib/xstrtol-error.c
 src/dfa.c
+src/dfasearch.c
+src/egrep.c
+src/fgrep.c
 src/grep.c
 src/kwset.c
-src/dfasearch.c
-src/esearch.c
-src/fsearch.c
-src/gsearch.c
+src/main.c
 src/pcresearch.c

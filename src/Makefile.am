@@ -19,14 +19,14 @@ LN = ln
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 
 bin_PROGRAMS = grep egrep fgrep
-grep_SOURCES  = gsearch.c
-egrep_SOURCES = esearch.c
-fgrep_SOURCES = fsearch.c
+grep_SOURCES  = grep.c
+egrep_SOURCES = egrep.c
+fgrep_SOURCES = fgrep.c
 noinst_HEADERS = grep.h dfa.h kwset.h search.h system.h mbsupport.h
 
 noinst_LIBRARIES = libgrep.a
 libgrep_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
-	pcresearch.c grep.c
+	pcresearch.c main.c
 
 LDADD = $(LIBINTL) libgrep.a ../lib/libgreputils.a
 grep_LDADD = $(LDADD) $(PCRE_LIBS)
