@@ -36,6 +36,7 @@ TESTS =						\
   options.sh					\
   pcre.sh					\
   pcre-z					\
+  reversed-range-endpoints			\
   spencer1.sh					\
   spencer1-locale				\
   status.sh					\

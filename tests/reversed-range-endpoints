@@ -1,0 +1,20 @@
+#!/bin/sh
+# Ensure that an invalid range like [b-a] evokes exit status of 2.
+: ${srcdir=.}
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+fail=0
+
+printf 'Invalid range end\n' > exp
+for prog in grep egrep 'grep -E'; do
+  $prog '[b-a]' < /dev/null > out 2>&1
+  # exit status must be 2, not 1
+  test $? = 2 || fail=1
+
+  # Remove "program_name: " prefix from actual output.
+  sed 's/^[a-z]*: //' out > k && mv k out
+
+  compare out exp || fail=1
+done
+
+Exit $fail
