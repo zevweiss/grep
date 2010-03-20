@@ -260,7 +260,7 @@ is_mb_middle(const char **good, const char *buf, const char *end)
 #ifdef EGREP_PROGRAM
 COMPILE_FCT(Ecompile)
 {
-  reg_syntax_t syntax_bits = RE_SYNTAX_POSIX_EGREP;
+  reg_syntax_t syntax_bits = RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES;
 #else
 /* No __VA_ARGS__ in C89.  So we have to do it this way.  */
 static COMPILE_RET
@@ -358,7 +358,9 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 COMPILE_FCT(Gcompile)
 {
   return GEAcompile (pattern, size,
-		     RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
+		     (RE_SYNTAX_GREP
+		      | RE_HAT_LISTS_NOT_NEWLINE
+		      | RE_NO_EMPTY_RANGES));
 }
 
 COMPILE_FCT(Acompile)
@@ -368,7 +370,7 @@ COMPILE_FCT(Acompile)
 
 COMPILE_FCT(Ecompile)
 {
-  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP);
+  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES);
 }
 #endif /* !EGREP_PROGRAM */
 
