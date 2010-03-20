@@ -1,5 +1,6 @@
 announce-gen
 arg-nonnull.h
+c++defs.h
 config.guess
 config.rpath
 config.sub
