@@ -33,6 +33,7 @@
 # include <wchar.h>
 # include <wctype.h>
 #endif
+#include <fcntl.h>
 #include <stdio.h>
 #include "system.h"
 
