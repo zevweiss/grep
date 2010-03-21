@@ -41,13 +41,6 @@
 
 enum { EXIT_TROUBLE = 2 };
 
-/* The extra casts work around common compiler bugs.  */
-#define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-#define TYPE_MINIMUM(t) ((t) (TYPE_SIGNED (t) \
-			      ? ~ (t) 0 << (sizeof (t) * CHAR_BIT - 1) \
-			      : (t) 0))
-#define TYPE_MAXIMUM(t) ((t) (~ (t) 0 - TYPE_MINIMUM (t)))
-
 #ifndef isgraph
 # define isgraph(C) (isprint(C) && !isspace(C))
 #endif

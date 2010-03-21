@@ -42,6 +42,7 @@
 #include "exitfail.h"
 #include "getopt.h"
 #include "grep.h"
+#include "intprops.h"
 #include "isdir.h"
 #include "progname.h"
 #include "savedir.h"
