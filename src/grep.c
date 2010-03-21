@@ -35,17 +35,18 @@
 #endif
 #include <stdio.h>
 #include "system.h"
-#include "getopt.h"
-#include "grep.h"
-#include "savedir.h"
-#include "xstrtol.h"
-#include "xalloc.h"
+
+#include "closeout.h"
 #include "error.h"
 #include "exclude.h"
 #include "exitfail.h"
-#include "closeout.h"
-#include "progname.h"
+#include "getopt.h"
+#include "grep.h"
 #include "isdir.h"
+#include "progname.h"
+#include "savedir.h"
+#include "xalloc.h"
+#include "xstrtol.h"
 
 #define SEP_CHAR_SELECTED ':'
 #define SEP_CHAR_REJECTED '-'
