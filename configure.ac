@@ -143,7 +143,6 @@ AC_HEADER_DIRENT
 
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
-AC_FUNC_MMAP
 
 AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale wcscoll)
 

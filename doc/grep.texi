@@ -667,12 +667,10 @@ This can cause a performance penalty.
 @item --mmap
 @opindex --mmap
 @cindex memory mapped input
-If possible, use the @code{mmap} system call to read input,
-instead of the default @code{read} system call.
-In some situations, @samp{--mmap} yields better performance.
-However, @samp{--mmap} can cause undefined behavior (including core dumps)
-if an input file shrinks while @command{grep} is operating,
-or if an I/O error occurs.
+This option is ignored for backwards compatibility.  It used to read
+input with the @code{mmap} system call, instead of the default @code{read}
+system call.  On modern systems, @samp{--mmap} rarely if ever yields
+better performance.
 
 @item -U
 @itemx --binary

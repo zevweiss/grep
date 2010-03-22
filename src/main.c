@@ -21,9 +21,6 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(HAVE_MMAP)
-# include <sys/mman.h>
-#endif
 #if defined(HAVE_SETRLIMIT)
 # include <sys/time.h>
 # include <sys/resource.h>
@@ -71,9 +68,6 @@ static int show_version;
 
 /* If nonzero, suppress diagnostics for nonexistent or unreadable files.  */
 static int suppress_errors;
-
-/* If nonzero, use mmap if possible.  */
-static int mmap_option;
 
 /* If nonzero, use color markers.  */
 static int color_option;
@@ -283,7 +277,8 @@ enum
   LINE_BUFFERED_OPTION,
   LABEL_OPTION,
   EXCLUDE_DIRECTORY_OPTION,
-  GROUP_SEPARATOR_OPTION
+  GROUP_SEPARATOR_OPTION,
+  MMAP_OPTION
 };
 
 /* Long options equivalences. */
@@ -320,7 +315,9 @@ static struct option const long_options[] =
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
   {"max-count", required_argument, NULL, 'm'},
-  {"mmap", no_argument, &mmap_option, 1},
+
+  /* FIXME: disabled in Mar 2010; warn towards end of 2011; remove in 2013.  */
+  {"mmap", no_argument, NULL, MMAP_OPTION},
   {"no-filename", no_argument, NULL, 'h'},
   {"no-group-separator", no_argument, NULL, GROUP_SEPARATOR_OPTION},
   {"no-messages", no_argument, NULL, 's'},
@@ -419,13 +416,6 @@ static off_t after_last_match;	/* Pointer after last matching line that
 				   would have been output if we were
 				   outputting characters. */
 
-#if defined(HAVE_MMAP)
-static int bufmapped;		/* True if buffer is memory-mapped.  */
-static off_t initial_bufoffset;	/* Initial value of bufoffset. */
-#else
-# define bufmapped 0
-#endif
-
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
 #define ALIGN_TO(val, alignment) \
@@ -464,16 +454,6 @@ reset (int fd, char const *file, struct stats *stats)
 	      return 0;
 	    }
 	}
-#if defined(HAVE_MMAP)
-      initial_bufoffset = bufoffset;
-      bufmapped = mmap_option && bufoffset % pagesize == 0;
-#endif
-    }
-  else
-    {
-#if defined(HAVE_MMAP)
-      bufmapped = 0;
-#endif
     }
   return 1;
 }
@@ -545,48 +525,6 @@ fillbuf (size_t save, struct stats const *stats)
 
   readsize = buffer + bufalloc - readbuf;
   readsize -= readsize % pagesize;
-
-#if defined(HAVE_MMAP)
-  if (bufmapped)
-    {
-      size_t mmapsize = readsize;
-
-      /* Don't mmap past the end of the file; some hosts don't allow this.
-	 Use `read' on the last page.  */
-      if (stats->stat.st_size - bufoffset < mmapsize)
-	{
-	  mmapsize = stats->stat.st_size - bufoffset;
-	  mmapsize -= mmapsize % pagesize;
-	}
-
-      if (mmapsize
-	  && (mmap ((caddr_t) readbuf, mmapsize,
-		    PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_FIXED,
-		    bufdesc, bufoffset)
-	      != (caddr_t) -1))
-	{
-	  /* Do not bother to use madvise with MADV_SEQUENTIAL or
-	     MADV_WILLNEED on the mmapped memory.  One might think it
-	     would help, but it slows us down about 30% on SunOS 4.1.  */
-	  fillsize = mmapsize;
-	}
-      else
-	{
-	  /* Stop using mmap on this file.  Synchronize the file
-	     offset.  Do not warn about mmap failures.  On some hosts
-	     (e.g. Solaris 2.5) mmap can fail merely because some
-	     other process has an advisory read lock on the file.
-	     There's no point alarming the user about this misfeature.  */
-	  bufmapped = 0;
-	  if (bufoffset != initial_bufoffset
-	      && lseek (bufdesc, bufoffset, SEEK_SET) < 0)
-	    {
-	      error (0, errno, _("lseek failed"));
-	      cc = 0;
-	    }
-	}
-    }
-#endif /*HAVE_MMAP*/
 
   if (! fillsize)
     {
@@ -1352,7 +1290,7 @@ grepfile (char const *file, struct stats *stats)
       if (! file)
 	{
 	  off_t required_offset = outleft ? bufoffset : after_last_match;
-	  if ((bufmapped || required_offset != bufoffset)
+	  if (required_offset != bufoffset
 	      && lseek (desc, required_offset, SEEK_SET) < 0
 	      && S_ISREG (stats->stat.st_mode))
 	    error (0, errno, "%s", filename);
@@ -1474,7 +1412,7 @@ Miscellaneous:\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
       --help                display this help and exit\n\
-      --mmap                use memory-mapped input if possible\n"));
+      --mmap                ignored for backwards compatibility\n"));
       printf (_("\
 \n\
 Output control:\n\
