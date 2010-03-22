@@ -28,7 +28,13 @@ noinst_LIBRARIES = libgrep.a
 libgrep_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
 	pcresearch.c main.c
 
-LDADD = $(LIBINTL) libgrep.a ../lib/libgreputils.a
+# Sometimes, the expansion of $(LIBINTL) includes -lc which may
+# include modules defining variables like `optind', so libgreputils.a
+# must precede $(LIBINTL) in order to ensure we use GNU getopt.
+# But libgreputils.a must also follow $(LIBINTL), since libintl uses
+# replacement functions defined in libgreputils.a.
+LDADD = libgrep.a ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
+
 grep_LDADD = $(LDADD) $(PCRE_LIBS)
 localedir = $(datadir)/locale
 INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
