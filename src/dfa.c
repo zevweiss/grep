@@ -258,8 +258,8 @@ setbit_case_fold (wint_t b, charclass c)
             setbit (b2, c);
         }
       else
-        {
 #endif
+        {
           unsigned char b1 = ISUPPER(b) ? tolower(b) : b;
           unsigned char b2 = ISLOWER(b) ? toupper(b) : b;
 	  setbit (b1, c);
