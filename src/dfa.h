@@ -39,6 +39,10 @@
 /* Number of ints required to hold a bit for every character. */
 #define CHARCLASS_INTS ((NOTCHAR + INTBITS - 1) / INTBITS)
 
+#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 6) || __STRICT_ANSI__
+# define __attribute__(x)
+#endif
+
 /* Sets of unsigned characters are stored as bit vectors in arrays of ints. */
 typedef int charclass[CHARCLASS_INTS];
 
@@ -429,4 +433,4 @@ extern void dfastate (int, struct dfa *, int []);
 /* dfaerror() is called by the regexp routines whenever an error occurs.  It
    takes a single argument, a NUL-terminated string describing the error.
    The user must supply a dfaerror.  */
-extern void dfaerror (const char *);
+extern void dfaerror (const char *) __attribute__ ((noreturn));

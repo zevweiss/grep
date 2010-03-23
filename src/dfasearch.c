@@ -49,6 +49,10 @@ void
 dfaerror (char const *mesg)
 {
   error (EXIT_TROUBLE, 0, "%s", mesg);
+
+  /* notreached */
+  /* Tell static analyzers that this function does not return.  */
+  abort ();
 }
 
 /* Number of compiled fixed strings known to exactly match the regexp.
