@@ -22,6 +22,7 @@ TESTS =						\
   case-fold-char-class				\
   case-fold-char-range				\
   case-fold-char-type				\
+  char-class-multibyte				\
   dfaexec-multibyte				\
   empty.sh					\
   ere.sh					\

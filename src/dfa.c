@@ -243,7 +243,7 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
    For MB_CUR_MAX > 1, one or both of the two cases may not be set,
    so the resulting charset may only be used as an optimization.  */
 static void
-setbit_case_fold (unsigned int b, charclass c)
+setbit_case_fold (wint_t b, charclass c)
 {
   if (case_fold)
     {
@@ -691,7 +691,7 @@ parse_bracket_exp (void)
 	  continue;
 	}
 
-      setbit_case_fold (c, ccl);
+      setbit_case_fold (wc, ccl);
 #ifdef MBS_SUPPORT
       /* Build normal characters.  */
       if (MB_CUR_MAX > 1)

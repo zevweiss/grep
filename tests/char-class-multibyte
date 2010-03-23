@@ -1,0 +1,23 @@
+#!/bin/sh
+# This would segfault for grep-2.6
+: ${srcdir=.}
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+printf 'É\n'      > exp1 || framework_failure
+fail=0
+
+for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
+  out=out1-$LOC
+  printf 'á\nç\nÉ\n' | LC_ALL=$LOC grep '[é]' > $out || fail=1
+  compare $out exp1 || fail=1
+done
+
+printf 'é\n'      > exp2 || framework_failure
+
+for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
+  out=out2-$LOC
+  printf 'á\nç\né\n' | LC_ALL=$LOC grep '[É]' > $out || fail=1
+  compare $out exp2 || fail=1
+done
+
+Exit $fail
