@@ -7,6 +7,10 @@ GNU grep NEWS                                    -*- outline -*-
   Character classes could cause a segmentation fault if they included a
   multibyte character.  [bug introduced in 2.6]
 
+** Portability
+
+  Avoid a link failure on Solaris 8.
+
 
 * Noteworthy changes in release 2.6 (2010-03-23) [stable]
 
