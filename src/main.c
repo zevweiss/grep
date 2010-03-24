@@ -724,16 +724,20 @@ print_line_middle (const char *beg, const char *lim,
   size_t match_offset;
   const char *cur = beg;
   const char *mid = NULL;
-  char *buf;		/* XXX */
-  const char *ibeg;	/* XXX */
+  char *buf;
+  const char *ibeg;
 
-  if (match_icase)	/* XXX - None of the -i stuff should be here.  */
+  /* XXX - should not be needed anymore now that we use RE_ICASE.
+     Revisit after 2.6.x stabilizes.  */
+  if (match_icase
+#ifdef MBS_SUPPORT
+      && MB_CUR_MAX == 1
+#endif
+     )
     {
       int i = lim - beg;
 
       ibeg = buf = xmalloc(i);
-      /* This can't possibly be correct with UTF-8,
-	 but it's equivalent to what was there so far.  */
       while (--i >= 0)
 	buf[i] = tolower((unsigned char) beg[i]);
     }
