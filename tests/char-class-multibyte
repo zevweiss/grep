@@ -3,6 +3,10 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
+if printf '\xc3\n' | LC_ALL=en_US.UTF-8 grep -q '[é]'; then
+  skip_ UTF-8 matching seems not to work
+fi
+
 printf 'é\n'      > exp1 || framework_failure_
 fail=0
 

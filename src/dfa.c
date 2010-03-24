@@ -243,7 +243,13 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
    For MB_CUR_MAX > 1, one or both of the two cases may not be set,
    so the resulting charset may only be used as an optimization.  */
 static void
-setbit_case_fold (wint_t b, charclass c)
+setbit_case_fold (
+#ifdef MBS_SUPPORT
+                  wint_t b,
+#else
+                  unsigned int b,
+#endif
+                  charclass c)
 {
   if (case_fold)
     {
@@ -309,11 +315,11 @@ static int parens;		/* Count of outstanding left parens. */
 static int minrep, maxrep;	/* Repeat counts for {m,n}. */
 static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
+static int cur_mb_len = 1;	/* Length of the multibyte representation of
+				   wctok.  */
 #ifdef MBS_SUPPORT
 /* These variables are used only if (MB_CUR_MAX > 1).  */
 static mbstate_t mbs;		/* Mbstate for mbrlen().  */
-static int cur_mb_len;		/* Length of the multibyte representation of
-				   wctok.  */
 static wchar_t wctok;		/* Wide character representation of the current
 				   multibyte character.  */
 static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec().
@@ -691,9 +697,9 @@ parse_bracket_exp (void)
 	  continue;
 	}
 
-      setbit_case_fold (wc, ccl);
 #ifdef MBS_SUPPORT
       /* Build normal characters.  */
+      setbit_case_fold (wc, ccl);
       if (MB_CUR_MAX > 1)
         {
           if (case_fold && iswalpha(wc))
@@ -719,10 +725,16 @@ parse_bracket_exp (void)
                                    work_mbc->nchars + 1);
               work_mbc->chars[work_mbc->nchars++] = wc;
             }
-#endif
         }
+#else
+      setbit_case_fold (c, ccl);
+#endif
     }
-  while ((wc = wc1, (c = c1) != L']'));
+  while ((
+#ifdef MBS_SUPPORT
+	 wc = wc1,
+#endif
+	 (c = c1) != ']'));
 
 #ifdef MBS_SUPPORT
   if (MB_CUR_MAX > 1

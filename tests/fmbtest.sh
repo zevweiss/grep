@@ -11,6 +11,14 @@
 LC_ALL=cs_CZ.UTF-8 locale -k LC_CTYPE 2>/dev/null | ${GREP} -q charmap.*UTF-8 \
   || exit 77
 
+# If matching is done in single-byte mode, skip this test too
+printf 'é\n' | LC_ALL=cz_CZ.UTF-8 ${GREP} -Eq '^[é]{2}$'
+case $? in
+  0) exit 77;;
+  1) ;;
+  *) exit 1;;
+esac
+
 failures=0
 
 cat > csinput <<EOF

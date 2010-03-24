@@ -37,9 +37,11 @@ Fcompile (char const *pattern, size_t size)
 
   kwsinit (&kwset);
   psize = size;
+#ifdef MBS_SUPPORT
   if (match_icase && MB_CUR_MAX > 1)
     pat = mbtolower (pattern, &psize);
   else
+#endif
     pat = pattern;
 
   beg = pat;
