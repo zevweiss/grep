@@ -1466,7 +1466,7 @@ Context control:\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
 \n"));
-      printf ("%s", after_options);
+      printf ("%s", _(after_options));
       printf (_("\
 With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
 are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
