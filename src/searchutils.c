@@ -131,6 +131,7 @@ is_mb_middle(const char **good, const char *buf, const char *end)
 	  /* An invalid sequence, or a truncated multibyte character.
 	     We treat it as a single byte character.  */
 	  mbclen = 1;
+	  memset(&cur_state, 0, sizeof cur_state);
 	}
       p += mbclen;
     }
