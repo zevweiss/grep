@@ -2,6 +2,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Build-related
+
+  configure no longer relies on pkg-config to detect PCRE support.
+
 
 * Noteworthy changes in release 2.6.1 (2010-03-25) [stable]
 

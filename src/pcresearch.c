@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include "search.h"
-#ifdef HAVE_LIBPCRE
+#if HAVE_LIBPCRE
 # include <pcre.h>
 #endif
 

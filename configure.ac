@@ -33,15 +33,6 @@ AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 
 AC_CONFIG_HEADERS([config.h:config.hin])
 
-dnl Check for arguments
-AC_ARG_ENABLE(perl-regexp,
- [  --disable-perl-regexp           disable perl-regexp],
- [case "${enableval}" in
-  yes) testpcre=yes ;;
-  no)  testpcre=no ;;
-  *)   AC_MSG_ERROR(bad value ${enableval} for --disable-perl-regexp) ;;
- esac],[testpcre=yes])
-
 dnl Checks for programs.
 AC_CANONICAL_HOST
 AC_PROG_AWK
@@ -158,15 +149,7 @@ if test "$ac_use_included_regex" = no; then
   AC_MSG_WARN([Included lib/regex.c not used])
 fi
 
-# support for pcre
-PKG_PROG_PKG_CONFIG
-if test x"$testpcre" = x"yes"; then
-  PKG_CHECK_MODULES(PCRE, [libpcre],
-	  [AC_DEFINE([HAVE_LIBPCRE], 1,
-	    [Define to 1 if you have the `pcre' library (-lpcre).])
-	   CPPFLAGS="$CPPFLAGS $PCRE_CFLAGS"],
-	  [:])
-fi
+gl_FUNC_PCRE
 
 AC_CONFIG_FILES([
   Makefile

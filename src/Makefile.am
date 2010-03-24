@@ -35,7 +35,7 @@ libgrep_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
 # replacement functions defined in libgreputils.a.
 LDADD = libgrep.a ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
-grep_LDADD = $(LDADD) $(PCRE_LIBS)
+grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
 INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 
