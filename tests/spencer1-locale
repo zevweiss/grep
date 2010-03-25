@@ -15,7 +15,7 @@ fail=0
 
 # . . . and the following by Henry Spencer.
 
-${AWK-awk} -vextra_locale=$LOCALE_FR_UTF8 \
+${AWK-awk} -v extra_locale=$LOCALE_FR_UTF8 \
     -f "$abs_srcdir/spencer1-locale.awk" "$abs_srcdir/spencer1.tests" \
   > spencer1-locale.script || fail=1
 
