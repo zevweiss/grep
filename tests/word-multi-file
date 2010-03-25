@@ -4,20 +4,20 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-mkdir a || framework_failure
+mkdir a || framework_failure_
 ( cd a \
     && echo aa bb cc > 1 \
     && echo bb dd ff > 2 \
     && echo ff gg hh > 3 \
     && echo bb xx zz > 4 \
-) || framework_failure
+) || framework_failure_
 
-cat << \EOF > exp1 || framework_failure
+cat << \EOF > exp1 || framework_failure_
 a/1:aa bb cc
 a/2:bb dd ff
 a/4:bb xx zz
 EOF
-sed s/..// exp1 > exp2 || framework_failure
+sed s/..// exp1 > exp2 || framework_failure_
 
 fail=0
 grep -rw bb a > out || fail=1

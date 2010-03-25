@@ -3,7 +3,7 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-printf 'é\n'      > exp1 || framework_failure
+printf 'é\n'      > exp1 || framework_failure_
 fail=0
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
@@ -12,7 +12,7 @@ for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   compare $out exp1 || fail=1
 done
 
-printf 'É\n'      > exp2 || framework_failure
+printf 'É\n'      > exp2 || framework_failure_
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out2-$LOC

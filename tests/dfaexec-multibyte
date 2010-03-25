@@ -3,8 +3,8 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-printf 'aa\nab\nba\nbb\n' > exp1 || framework_failure
-printf '1 2 3\n' > exp2 || framework_failure
+printf 'aa\nab\nba\nbb\n' > exp1 || framework_failure_
+printf '1 2 3\n' > exp2 || framework_failure_
 
 fail=0
 

@@ -61,6 +61,7 @@ Exit () { set +e; (exit $1); exit $1; }
 
 fail_() { echo "$ME_: failed test: $@" 1>&2; Exit 1; }
 skip_() { echo "$ME_: skipped test: $@" 1>&2; Exit 77; }
+framework_failure_() { echo "$ME_: set-up failure: $@" 1>&2; Exit 1; }
 
 # This is a stub function that is run upon trap (upon regular exit and
 # interrupt).  Override it with a per-test function, e.g., to unmount

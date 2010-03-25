@@ -3,7 +3,7 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
-cat <<EOF > in || framework_failure
+cat <<EOF > in || framework_failure_
 needle
 1st line of context
 2nd line of context
@@ -13,7 +13,7 @@ another needle
 6th line...
 EOF
 
-sed 4q in > exp || framework_failure
+sed 4q in > exp || framework_failure_
 
 fail=0
 grep -m1 -A5 needle in > out 2>err || fail=1
