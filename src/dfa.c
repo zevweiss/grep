@@ -397,7 +397,7 @@ static int
 in_coll_range (char ch, char from, char to)
 {
   char c[6] = { from, 0, ch, 0, to, 0 };
-  return strcoll (&c[0], &c[2]) <= 0 && 0 <= strcoll (&c[2], &c[4]);
+  return strcoll (&c[0], &c[2]) <= 0 && strcoll (&c[2], &c[4]) <= 0;
 }
 
 static int is_alpha(int c) { return ISALPHA(c); }

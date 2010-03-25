@@ -7,6 +7,9 @@ GNU grep NEWS                                    -*- outline -*-
   Character classes could cause a segmentation fault if they included a
   multibyte character.  [bug introduced in 2.6]
 
+  Character ranges would not work in single-byte character sets other
+  than C (for example, ISO-8859-1 or KOI8-R).  [bug introduced in 2.6]
+
 ** Portability
 
   Avoid a link failure on Solaris 8.

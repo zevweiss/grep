@@ -12,6 +12,8 @@ BEGIN {
 
 $0 !~ /^#/  && NF == 3 {
         test("en_US.UTF-8")
+        test("ru_RU.KOI8-R")
+        test("fr_FR.ISO-8859-1")
         test("zh_CN")
 	if (extra_locale != "") {
 		test(extra_locale)
