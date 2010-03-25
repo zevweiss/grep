@@ -10,6 +10,9 @@ GNU grep NEWS                                    -*- outline -*-
   Character ranges would not work in single-byte character sets other
   than C (for example, ISO-8859-1 or KOI8-R).  [bug introduced in 2.6]
 
+  The output of grep was incorrect for whole-word (-w) matches if the
+  patterns included a backreference.
+
 ** Portability
 
   Avoid a link failure on Solaris 8.

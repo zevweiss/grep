@@ -357,8 +357,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 		{
 		  /* Good enough for a non-exact match.
 		     No need to look at further patterns, if any.  */
-		  beg = match;
-		  goto success_in_len;
+		  goto success;
 		}
 	      if (match < best_match || (match == best_match && len > best_len))
 		{

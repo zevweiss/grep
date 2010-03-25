@@ -16,6 +16,7 @@
 
 TESTS =						\
   backref.sh					\
+  backref-word					\
   bre.sh					\
   case-fold-backref				\
   case-fold-backslash-w				\
