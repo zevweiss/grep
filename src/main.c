@@ -724,32 +724,10 @@ print_line_middle (const char *beg, const char *lim,
   size_t match_offset;
   const char *cur = beg;
   const char *mid = NULL;
-  char *buf;
-  const char *ibeg;
 
-  /* XXX - should not be needed anymore now that we use RE_ICASE.
-     Revisit after 2.6.x stabilizes.  */
-  if (match_icase
-#ifdef MBS_SUPPORT
-      && MB_CUR_MAX == 1
-#endif
-     )
-    {
-      int i = lim - beg;
-
-      ibeg = buf = xmalloc(i);
-      while (--i >= 0)
-	buf[i] = tolower((unsigned char) beg[i]);
-    }
-  else
-    {
-      buf = NULL;
-      ibeg = beg;
-    }
-
-  while (   lim > cur
-	 && ((match_offset = execute(ibeg, lim - beg, &match_size,
-				     ibeg + (cur - beg))) != (size_t) -1))
+  while (cur < lim
+	 && ((match_offset = execute(beg, lim - beg, &match_size,
+				     beg + (cur - beg))) != (size_t) -1))
     {
       char const *b = beg + match_offset;
 
@@ -792,8 +770,6 @@ print_line_middle (const char *beg, const char *lim,
 	}
       cur = b + match_size;
     }
-
-  free (buf);	/* XXX */
 
   if (only_matching)
     cur = lim;
