@@ -33,6 +33,7 @@ TESTS =						\
   fmbtest.sh					\
   foad1						\
   help-version					\
+  include-exclude				\
   khadafy.sh					\
   max-count-vs-context				\
   options.sh					\

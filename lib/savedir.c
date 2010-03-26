@@ -48,7 +48,7 @@ isdir1 (const char *dir, const char *file)
   size_t dirlen = strlen (dir);
   size_t filelen = strlen (file);
 
-  while (dirlen && path[dirlen - 1] == '/')
+  while (dirlen && dir[dirlen - 1] == '/')
     dirlen--;
 
   if ((dirlen + filelen + 2) > pathlen)
