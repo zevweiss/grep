@@ -9,9 +9,9 @@
 #
 # This set of tests was started by Julian Foad.
 
-: ${GREP=../src/grep}
+: ${srcdir=.}
+. "$srcdir/init.sh"; path_prepend_ ../src
 
-: ${VERBOSE=}  # empty or "1"
 failures=0
 
 # grep_test INPUT EXPECTED_OUTPUT PATTERN_AND_OPTIONS...
@@ -23,9 +23,9 @@ grep_test ()
   INPUT="$1"
   EXPECT="$2"
   shift 2
-  OUTPUT=`printf %s "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
-  if test "$OUTPUT" != "$EXPECT" || test "$VERBOSE" = "1"; then
-    echo "Testing:  $GREP $@"
+  OUTPUT=`printf %s "$INPUT" | tr "/" "\n" | grep "$@" | tr "\n" "/"`
+  if test "$OUTPUT" != "$EXPECT" || test "$VERBOSE" = "yes"; then
+    echo "Testing:  grep $@"
     test "$LC_ALL" != C && test "$LC_ALL" != "" && echo "  LC_ALL: \"$LC_ALL\""
     echo "  input:  \"$INPUT\""
     echo "  output: \"$OUTPUT\""
@@ -139,12 +139,12 @@ grep_test "$x3" "$y3" -E -w --color=always bc
 grep_test "$x3" "$y3" -F -w --color=always bc
 
 # Skip the rest of the tests - known to fail. TAA.
-exit $failures
+Exit $failures
 
 # The rest of this file is meant to be executed under this locale.
 LC_ALL=cs_CZ.UTF-8; export LC_ALL
 # If the UTF-8 locale doesn't work, skip these tests silently.
-locale -k LC_CTYPE 2>/dev/null | "${GREP}" -q "charmap.*UTF-8" || exit $failures
+locale -k LC_CTYPE 2>/dev/null | grep -q "charmap.*UTF-8" || Exit $failures
 
 # Test character class erroneously matching a '[' character.
 grep_test "[/" "" "[[:alpha:]]" -E
@@ -202,4 +202,4 @@ done
 # Insert them before LC_ALL is set above to avoid this.
 # Leave this comment last.
 
-exit $failures
+Exit $failures
