@@ -31,7 +31,7 @@ TESTS =						\
   fedora					\
   file.sh					\
   fmbtest.sh					\
-  foad1.sh					\
+  foad1						\
   help-version					\
   khadafy.sh					\
   max-count-vs-context				\
