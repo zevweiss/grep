@@ -52,6 +52,7 @@ EXTRA_DIST =					\
   bre.tests					\
   ere.awk					\
   ere.tests					\
+  init.cfg					\
   init.sh					\
   khadafy.lines					\
   khadafy.regexp				\
