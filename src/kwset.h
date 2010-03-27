@@ -28,6 +28,8 @@ struct kwsmatch
   size_t size[1];		/* Length of each submatch. */
 };
 
+#include "arg-nonnull.h"
+
 struct kwset;
 typedef struct kwset *kwset_t;
 
@@ -52,8 +54,8 @@ extern const char *kwsprep (kwset_t);
    the matching substring in the integer it points to.  Similarly,
    if foundindex is non-NULL, store the index of the particular
    keyword found therein. */
-extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *);
+extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *)
+  _GL_ARG_NONNULL ((4));
 
 /* Deallocate the given keyword set and all its associated storage. */
 extern void kwsfree (kwset_t);
-

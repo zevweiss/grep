@@ -583,7 +583,7 @@ bmexec (kwset_t kws, char const *text, size_t size)
 }
 
 /* Hairy multiple string search. */
-static size_t
+static size_t _GL_ARG_NONNULL ((4))
 cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
 {
   struct kwset const *kwset;
@@ -731,31 +731,26 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
 	d = 1;
     }
 
-  if (kwsmatch)
-    {
-      kwsmatch->index = accept->accepting / 2;
-      kwsmatch->offset[0] = mch - text;
-      kwsmatch->size[0] = accept->depth;
-    }
+  kwsmatch->index = accept->accepting / 2;
+  kwsmatch->offset[0] = mch - text;
+  kwsmatch->size[0] = accept->depth;
+
   return mch - text;
 }
 
-/* Search through the given text for a match of any member of the
-   given keyword set.  Return a pointer to the first character of
-   the matching substring, or NULL if no match is found.  If FOUNDLEN
-   is non-NULL store in the referenced location the length of the
-   matching substring.  Similarly, if FOUNDIDX is non-NULL, store
-   in the referenced location the index number of the particular
-   keyword matched. */
+/* Search TEXT for a match of any member of the keyword set, KWS.
+   Return the offset (into TEXT) of the first byte of the matching substring,
+   or (size_t) -1 if no match is found.  Upon a match, store details in
+   *KWSMATCH: index of matched keyword, start offset (same as the return
+   value), and length.  */
 size_t
-kwsexec (kwset_t kws, char const *text, size_t size,
-	 struct kwsmatch *kwsmatch)
+kwsexec (kwset_t kws, char const *text, size_t size, struct kwsmatch *kwsmatch)
 {
   struct kwset const *kwset = (struct kwset *) kws;
   if (kwset->words == 1 && kwset->trans == NULL)
     {
       size_t ret = bmexec (kws, text, size);
-      if (kwsmatch != NULL && ret != (size_t) -1)
+      if (ret != (size_t) -1)
 	{
 	  kwsmatch->index = 0;
 	  kwsmatch->offset[0] = ret;
