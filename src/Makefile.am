@@ -37,7 +37,7 @@ LDADD = libgrep.a ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
 grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
-INCLUDES = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
+INCLUDES = -I$(top_srcdir)/lib
 
 EXTRA_DIST = \
              dosbuf.c \

@@ -21,6 +21,7 @@
 #include <errno.h>
 
 #include "binary-io.h"
+#include "configmake.h"
 #include "dirname.h"
 
 #if O_BINARY
