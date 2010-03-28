@@ -30,7 +30,7 @@ TESTS =						\
   euc-mb					\
   fedora					\
   file.sh					\
-  fmbtest.sh					\
+  fmbtest					\
   foad1						\
   help-version					\
   include-exclude				\
