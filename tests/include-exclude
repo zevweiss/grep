@@ -12,6 +12,7 @@ printf '%s\n' x/b:b x/dir/d:d > exp-not-a   || framework_failure_
 printf '%s\n'       x/dir/d:d > exp-not-ab  || framework_failure_
 printf '%s\n' x/a:a x/b:b     > exp-not-d   || framework_failure_
 printf '%s\n' x/a:a x/b:b     > exp-not-dir || framework_failure_
+printf '%s\n' x/a:a           > exp-a       || framework_failure_
 
 grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
@@ -28,5 +29,9 @@ compare out exp-not-d || fail=1
 grep -r --exclude-dir=dir . x > out || fail=1
 sort out > k && mv k out
 compare out exp-not-dir || fail=1
+
+grep -r --include=a    . x > out || fail=1
+# no need to sort
+compare out exp-a || fail=1
 
 Exit $fail

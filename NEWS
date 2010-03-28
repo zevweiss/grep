@@ -4,6 +4,8 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  The --include option works once again.  [bug introduced in 2.6]
+
   Using any of the --include or --exclude* options would cause a NULL
   dereference.  [bug introduced in 2.6]
 
