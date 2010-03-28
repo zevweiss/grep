@@ -104,8 +104,11 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (offset == (size_t) -1)
 	goto failure;
 #ifdef MBS_SUPPORT
+      char const *s0 = mb_start;
       if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size))
         {
+	  if (mb_start == s0)
+	    goto failure;
           beg = mb_start - 1;
           continue; /* It is a part of multibyte character.  */
         }
