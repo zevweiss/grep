@@ -103,9 +103,11 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
       if (offset == (size_t) -1)
 	goto failure;
+      len = kwsmatch.size[0];
 #ifdef MBS_SUPPORT
       char const *s0 = mb_start;
-      if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size))
+      if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size,
+					  len))
         {
 	  if (mb_start == s0)
 	    goto failure;
@@ -114,7 +116,6 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
         }
 #endif /* MBS_SUPPORT */
       beg += offset;
-      len = kwsmatch.size[0];
       if (start_ptr && !match_words)
 	goto success_in_beg_and_len;
       if (match_lines)

@@ -114,7 +114,8 @@ mbtolower (const char *beg, size_t *n)
 
 
 bool
-is_mb_middle(const char **good, const char *buf, const char *end)
+is_mb_middle (const char **good, const char *buf, const char *end,
+	      size_t match_len)
 {
   const char *p = *good;
   const char *prev = p;
@@ -141,6 +142,6 @@ is_mb_middle(const char **good, const char *buf, const char *end)
     }
 
   *good = prev;
-  return p > buf;
+  return p > buf || match_len < mbrlen (p, end - p, &cur_state);
 }
 #endif /* MBS_SUPPORT */

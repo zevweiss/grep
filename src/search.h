@@ -42,7 +42,7 @@ void kwsinit (kwset_t *);
 
 #ifdef MBS_SUPPORT
 char * mbtolower (const char *, size_t *);
-bool is_mb_middle(const char **, const char *, const char *);
+bool is_mb_middle(const char **, const char *, const char *, size_t);
 #endif
 
 /* dfasearch.c */

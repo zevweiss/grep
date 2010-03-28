@@ -251,7 +251,9 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 #ifdef MBS_SUPPORT
                   if (mb_start < beg)
                     mb_start = beg;
-                  if (MB_CUR_MAX == 1 || !is_mb_middle (&mb_start, match, buflim))
+                  if (MB_CUR_MAX == 1
+		      || !is_mb_middle (&mb_start, match, buflim,
+					kwsm.size[0]))
 #endif
                     goto success;
                 }

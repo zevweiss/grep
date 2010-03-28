@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -F no longer mistakenly reports a match when searching
+  for an incomplete prefix of a multibyte character.
+  [bug present since "the beginning"]
+
   grep -F no longer goes into an infinite loop when it finds a match for an
   incomplete (non-prefix of a) multibyte character.  [bug introduced in 2.6]
 
