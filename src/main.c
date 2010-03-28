@@ -2066,7 +2066,8 @@ main (int argc, char **argv)
       case INCLUDE_OPTION:
 	if (!included_patterns)
 	  included_patterns = new_exclude ();
-	add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE);
+	add_exclude (included_patterns, optarg,
+		     EXCLUDE_WILDCARDS | EXCLUDE_INCLUDE);
 	break;
 
       case GROUP_SEPARATOR_OPTION:
