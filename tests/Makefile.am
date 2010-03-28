@@ -44,6 +44,7 @@ TESTS =						\
   spencer1.sh					\
   spencer1-locale				\
   status.sh					\
+  prefix-of-multibyte				\
   warning.sh					\
   word-multi-file				\
   yesno.sh
