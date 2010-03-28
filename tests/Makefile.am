@@ -29,6 +29,7 @@ TESTS =						\
   ere.sh					\
   euc-mb					\
   fedora					\
+  fgrep-infloop					\
   file.sh					\
   fmbtest					\
   foad1						\
