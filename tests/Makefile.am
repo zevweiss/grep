@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+check_PROGRAMS = get-mb-cur-max
+LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
+
 TESTS =						\
   backref.sh					\
   backref-word					\

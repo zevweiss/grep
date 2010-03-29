@@ -4,20 +4,27 @@
 # character, and a suffix of a valid double-byte character
 
 : ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "$srcdir/init.sh"; path_prepend_ . ../src
 
 require_timeout_
 
-# % becomes a half-width katakana in SJIS, and an invalid sequence
-# in UTF-8.  Use this to try skipping implementations that do not
-# support SJIS.
+locale=ja_JP.SHIFT_JIS
+
+# Sequences used in this test ("%" and "@" become 8-bit characters, while "A"
+# is the real ASCII character for "A"):
+# - "%" becomes an half-width katakana in SJIS, but it is an invalid sequence
+#   in UTF-8.
+# - "@@" and "@A" are both valid sequences in SJIS.  We try to fool grep into
+#   matching "A" against "@A", or mistaking a valid "A" match for the second
+#   byte of a multi-byte character.
+
 encode() { echo "$1" | tr @% '\203\301'; }
 
 k=0
 test_grep_reject() {
   k=$(expr $k + 1)
   encode "$2" | \
-    LC_ALL=ja_JP.SHIFT_JIS \
+    LC_ALL=$locale \
       timeout 10s grep $1 $(encode "$3") > out$k 2>&1
   test $? = 1
 }
@@ -25,13 +32,12 @@ test_grep_reject() {
 test_grep() {
   k=$(expr $k + 1)
   encode "$2" > exp$k
-  LC_ALL=ja_JP.SHIFT_JIS \
+  LC_ALL=$locale \
     timeout 10s grep $1 $(encode "$3") exp$k > out$k 2>&1
   test $? = 0 && compare out$k exp$k
 }
 
-test_grep_reject -F @@ @ || skip_ 'system does not seem to know about SJIS'
-test_grep -F %%AA A || skip_ 'system seems to treat SJIS the same as UTF-8'
+test "$(get-mb-cur-max $locale)" = 2 || skip_ 'SJIS locale not found'
 
 failure_tests=@A
 successful_tests='%%AA @AA @A@@A'
@@ -42,6 +48,8 @@ for i in $successful_tests; do
   test_grep -E $i A || fail=1
 done
 
+test_grep_reject -F @@ @
+test_grep_reject -E @@ @
 for i in $failure_tests; do
   test_grep_reject -F $i A || fail=1
   test_grep_reject -E $i A || fail=1
