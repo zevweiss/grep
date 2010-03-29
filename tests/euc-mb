@@ -12,12 +12,12 @@ make_input () {
 }
 
 euc_grep () {
-  pat=`make_input "$1"`
+  pat=$(make_input "$1")
   LC_ALL=$locale grep "$pat"
 }
 
 
-case `get-mb-cur-max $locale` in
+case $(get-mb-cur-max $locale) in
   2|3) ;;
   *) skip_ 'EUC-JP locale not found' ;;
 esac

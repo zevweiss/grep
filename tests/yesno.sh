@@ -110,11 +110,11 @@ shift
 # Test execution and reporting.
 t=1
 while test xx != "x$1"; do
-  opts=`echo "$1" | sed 's/,/ /g'`
+  opts=$(echo "$1" | sed 's/,/ /g')
   expect="$2"
   shift 2
 
-  output=`{ $GREP -F -n -b $opts yes 2>/dev/null; echo "?$?"; sed 's!^!X!'; } < "$yn" | tr '\n' '/'`
+  output=$({ $GREP -F -n -b $opts yes 2>/dev/null; echo "?$?"; sed 's!^!X!'; } < "$yn" | tr '\n' '/')
 
   if test "$output" != "$expect" || test "$VERBOSE" = "1"; then
     echo " Test #$t:  { $GREP -F -n -b $opts yes; echo \"?\$?\"; sed 's!^!X!'; }"
@@ -128,7 +128,7 @@ while test xx != "x$1"; do
     echo '    PASS'
   fi
 
-  t=`expr $t + 1`
+  t=$(expr $t + 1)
 done
 
 exit $failures

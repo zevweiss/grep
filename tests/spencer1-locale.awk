@@ -22,7 +22,7 @@ $0 !~ /^#/  && NF == 3 {
 
 function test(locale)
 {
-	printf ("status=`echo '%s'| { LC_ALL=%s grep -E -e '%s' >/dev/null 2>&1 ; echo $?; }`\n",$3, locale, $2);
+	printf ("status=$(echo '%s'| { LC_ALL=%s grep -E -e '%s' >/dev/null 2>&1 ; echo $?; })\n",$3, locale, $2);
 	printf ("if test $status -ne %s ; then\n", $1);
 	printf ("\techo Spencer test \\#%d failed \\(%s\\)\n", ++n, locale);
 	printf ("\tfailures=1\n");

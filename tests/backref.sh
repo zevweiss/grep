@@ -19,7 +19,7 @@ if test $? -ne 0 ; then
 fi
 
 # hit hard with the `Bond' tests
-# For now, remove the ``?'' in the last parentheses, so that new glibc can do it.  --Stepan
+# For now, remove the `?' in the last parentheses, so that new glibc can do it.  --Stepan
 echo "civic" | ${GREP} -E -e '^(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.).?\9\8\7\6\5\4\3\2\1$' > /dev/null 2>&1
 if test $? -ne 0 ; then
         echo "Options: Bond, test #2 failed"
