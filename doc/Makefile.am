@@ -21,14 +21,9 @@ grep_TEXINFOS = fdl.texi
 
 man_MANS = grep.1 fgrep.1 egrep.1
 
-EXTRA_DIST = grep.1 egrep.man fgrep.man
-
+EXTRA_DIST = grep.1
 CLEANFILES = egrep.1 fgrep.1
 
-fgrep.1: fgrep.man
-	inst=`echo "grep" | sed '$(transform)'`.1; \
-sed -e "s%@grep@%$$inst%g" $(srcdir)/fgrep.man > $@
-
-egrep.1: egrep.man
-	inst=`echo "grep" | sed '$(transform)'`.1; \
-sed -e "s%@grep@%$$inst%g" $(srcdir)/egrep.man > $@
+egrep.1 fgrep.1: Makefile.am
+	$(AM_V_GEN)inst=`echo grep | sed '$(transform)'`.1 \
+	  && echo ".so man1/$$inst" > $@-t && mv $@-t $@
