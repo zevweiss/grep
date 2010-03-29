@@ -41,6 +41,7 @@ TESTS =						\
   pcre.sh					\
   pcre-z					\
   reversed-range-endpoints			\
+  sjis-mb					\
   spencer1.sh					\
   spencer1-locale				\
   status.sh					\
