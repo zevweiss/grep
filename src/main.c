@@ -1629,7 +1629,8 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
 
   was_digit = 0;
   this_digit_optind = optind;
-  while (opt = getopt_long (argc, argv, short_options, long_options, NULL),
+  while (opt = getopt_long (argc, (char **) argv, short_options, long_options,
+                            NULL),
 	 '0' <= opt && opt <= '9')
     {
       if (prev_digit_optind != this_digit_optind || !was_digit)

@@ -40,7 +40,7 @@
 static char *path;
 static size_t pathlen;
 
-extern int isdir (const char *path);
+extern int isdir (const char *name);
 
 static int
 isdir1 (const char *dir, const char *file)
