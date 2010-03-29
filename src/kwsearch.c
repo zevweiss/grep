@@ -105,14 +105,20 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
 	goto failure;
       len = kwsmatch.size[0];
 #ifdef MBS_SUPPORT
-      char const *s0 = mb_start;
       if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size,
 					  len))
         {
-	  if (mb_start == s0)
-	    goto failure;
-          beg = mb_start - 1;
-          continue; /* It is a part of multibyte character.  */
+          /* The match was a part of multibyte character, advance at least
+             one byte to ensure no infinite loop happens.  */
+          mbstate_t s;
+          memset (&s, 0, sizeof s);
+          size_t mb_len = mbrlen (mb_start, (buf + size) - (beg + offset), &s);
+          if (mb_len == (size_t) -2)
+            goto failure;
+          beg = mb_start;
+          if (mb_len != (size_t) -1)
+            beg += mb_len - 1;
+          continue;
         }
 #endif /* MBS_SUPPORT */
       beg += offset;
