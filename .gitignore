@@ -48,6 +48,7 @@
 /tests/*.log
 /tests/csinput
 /tests/cspatfile
+/tests/get-mb-cur-max
 /tests/yesno.txt
 ABOUT-NLS
 ChangeLog
