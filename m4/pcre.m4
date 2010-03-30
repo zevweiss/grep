@@ -23,7 +23,9 @@ AC_DEFUN([gl_FUNC_PCRE],
 
   if test x"$test_pcre" = x"yes"; then
     AC_CHECK_HEADERS([pcre.h])
-    if test $ac_cv_header_pcre_h = yes; then
+    AC_CHECK_HEADERS([pcre/pcre.h])
+    if test $ac_cv_header_pcre_h = yes \
+        || test $ac_cv_header_pcre_pcre_h = yes; then
       pcre_saved_LIBS=$LIBS
       AC_SEARCH_LIBS([pcre_compile], [pcre],
 	[test "$ac_cv_search_pcre_compile" = "none required" ||

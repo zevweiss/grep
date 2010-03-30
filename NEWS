@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  PCRE support is once again detected on systems with <pcre/pcre.h>
+  [bug introduced in 2.6.2]
+
 
 * Noteworthy changes in release 2.6.2 (2010-03-29) [stable]
 
