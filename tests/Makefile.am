@@ -15,6 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 check_PROGRAMS = get-mb-cur-max
+AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
+
+# Tell the linker to omit references to unused shared libraries.
+AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
 TESTS =						\

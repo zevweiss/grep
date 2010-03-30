@@ -18,12 +18,13 @@
 
 #include <config.h>
 #include <locale.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "progname.h"
+
 int
-main(int argc, char **argv)
+main (int argc, char **argv)
 {
   set_program_name (argv[0]);
   if (setlocale (LC_ALL, argv[1]))
