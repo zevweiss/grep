@@ -59,6 +59,7 @@ Once all the builds and tests have passed,
     To: info-gnu@gnu.org
     Cc: coordinator@translationproject.org, bug-grep@gnu.org
     Subject: grep-2.6 released [stable]
+    Reply-To: bug-grep@gnu.org
 
 * Announce it on Savannah, too:
   From here:
