@@ -54,9 +54,7 @@ for locale in C en_US.UTF-8; do
         fi
     done
 
-    # -F -w omitted because it fails test #6, will be revisited after 2.6
-    # stabilizes.
-    for options in '-E -w' '-E -x' '-E -w -x' '-F -x' '-F -w -x'; do
+    for options in '-E -w' '-E -x' '-E -w -x' '-F -w' '-F -x' '-F -w -x'; do
 
         # should return 0 found a match
         echo "" | LC_ALL=$locale timeout 10s grep $options -e ''
