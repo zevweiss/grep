@@ -29,7 +29,7 @@ main (int argc, char **argv)
   set_program_name (argv[0]);
   if (setlocale (LC_ALL, argv[1]))
     {
-      printf ("%d\n", MB_CUR_MAX);
+      printf ("%d\n", (int) MB_CUR_MAX);
       exit (EXIT_SUCCESS);
     }
 
