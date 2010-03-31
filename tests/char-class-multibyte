@@ -1,11 +1,12 @@
 #!/bin/sh
 # This would segfault for grep-2.6
 : ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "$srcdir/init.sh"; path_prepend_ . ../src
 
-if printf '\xc3\n' | LC_ALL=en_US.UTF-8 grep -q '[é]'; then
-  skip_ UTF-8 matching seems not to work
-fi
+case $(get-mb-cur-max en_US.UTF-8) in
+  [3456]) ;;
+  *) skip_ 'UTF-8 locale not found' ;;
+esac
 
 printf 'é\n'      > exp1 || framework_failure_
 fail=0
@@ -22,6 +23,12 @@ for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out2-$LOC
   printf 'Á\nÇ\nÉ\n' | LC_ALL=$LOC grep '[É]' > $out || fail=1
   compare $out exp2 || fail=1
+done
+
+for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
+  out=out3-$LOC
+  printf '\xc3\n' | LC_ALL=$LOC grep '[é]' > $out
+  test $? = 1 || fail=1
 done
 
 Exit $fail
