@@ -142,6 +142,11 @@ is_mb_middle (const char **good, const char *buf, const char *end,
     }
 
   *good = prev;
-  return p > buf || match_len < mbrlen (p, end - p, &cur_state);
+
+  if (p > buf)
+    return true;
+
+  /* P == BUF here.  */
+  return 0 < match_len && match_len < mbrlen (p, end - p, &cur_state);
 }
 #endif /* MBS_SUPPORT */
