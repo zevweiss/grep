@@ -15,5 +15,5 @@ failures=0
 
 ${AWK-awk} -f $srcdir/spencer1.awk $srcdir/spencer1.tests > spencer1.script
 
-sh spencer1.script && exit $failures
+${SHELL-sh} spencer1.script && exit $failures
 exit 1

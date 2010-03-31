@@ -14,5 +14,5 @@ failures=0
 
 ${AWK-awk} -f $srcdir/bre.awk $srcdir/bre.tests > bre.script
 
-sh bre.script && exit $failures
+${SHELL-sh} bre.script && exit $failures
 exit 1

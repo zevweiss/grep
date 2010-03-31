@@ -15,5 +15,5 @@ failures=0
 
 ${AWK-awk} -f $srcdir/ere.awk $srcdir/ere.tests > ere.script
 
-sh ere.script && exit $failures
+${SHELL-sh} ere.script && exit $failures
 exit 1
