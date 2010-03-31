@@ -33,7 +33,7 @@ TESTS =						\
   case-fold-char-type				\
   char-class-multibyte				\
   dfaexec-multibyte				\
-  empty.sh					\
+  empty						\
   ere.sh					\
   euc-mb					\
   fedora					\
