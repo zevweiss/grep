@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Searching with grep -Fw for an empty string would not match an
+  empty line. [bug present since "the beginning"]
+
 
 * Noteworthy changes in release 2.6.3 (2010-04-02) [stable]
 

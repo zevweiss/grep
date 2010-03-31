@@ -133,12 +133,14 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
           goto success;
         }
       else if (match_words)
-        for (try = beg; len; )
+        for (try = beg; ; )
           {
             if (try > buf && WCHAR((unsigned char) try[-1]))
               break;
             if (try + len < buf + size && WCHAR((unsigned char) try[len]))
               {
+                if (!len)
+                  break;
                 offset = kwsexec (kwset, beg, --len, &kwsmatch);
                 if (offset == (size_t) -1)
                   break;
