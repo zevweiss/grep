@@ -870,8 +870,7 @@ parse_bracket_exp (void)
                   if (!pred)
                     dfaerror(_("invalid character class"));
 
-#if MBS_SUPPORT
-                  if (MB_CUR_MAX > 1 && !pred->single_byte_only)
+                  if (MBS_SUPPORT && MB_CUR_MAX > 1 && !pred->single_byte_only)
                     {
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
@@ -883,15 +882,13 @@ parse_bracket_exp (void)
                                            work_mbc->nch_classes + 1);
                       work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
                     }
-#endif
 
                   for (c2 = 0; c2 < NOTCHAR; ++c2)
                     if (pred->func(c2))
                       setbit_case_fold_c (c2, ccl);
                 }
 
-#if MBS_SUPPORT
-              else if (c1 == '=' || c1 == '.')
+              else if (MBS_SUPPORT && (c1 == '=' || c1 == '.'))
                 {
                   char *elem;
                   MALLOC(elem, len + 1);
@@ -919,7 +916,6 @@ parse_bracket_exp (void)
                       work_mbc->coll_elems[work_mbc->ncoll_elems++] = elem;
                     }
                 }
-#endif
               colon_warning_state |= 8;
 
               /* Fetch new lookahead character.  */
@@ -956,8 +952,7 @@ parse_bracket_exp (void)
               && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
             FETCH_WC(c2, wc2, _("unbalanced ["));
 
-#if MBS_SUPPORT
-          if (MB_CUR_MAX > 1)
+          if (MBS_SUPPORT && MB_CUR_MAX > 1)
             {
               /* When case folding map a range, say [m-z] (or even [M-z])
                  to the pair of ranges, [m-z] [M-Z].  */
@@ -988,7 +983,6 @@ parse_bracket_exp (void)
 #endif
             }
           else
-#endif
             {
               c1 = c;
               if (case_fold)
