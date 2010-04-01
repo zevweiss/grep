@@ -1092,15 +1092,13 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-#if MBS_SUPPORT
-      if (MB_CUR_MAX > 1)
+      if (MBS_SUPPORT && MB_CUR_MAX > 1)
         {
           FETCH_WC (c, wctok, NULL);
           if ((int)c == EOF)
             goto normal_char;
         }
       else
-#endif /* MBS_SUPPORT  */
         FETCH(c, NULL);
 
       switch (c)
@@ -1323,15 +1321,13 @@ lex (void)
         case '.':
           if (backslash)
             goto normal_char;
-#if MBS_SUPPORT
-          if (MB_CUR_MAX > 1)
+          if (MBS_SUPPORT && MB_CUR_MAX > 1)
             {
               /* In multibyte environment period must match with a single
                  character not a byte.  So we use ANYCHAR.  */
               laststart = 0;
               return lasttok = ANYCHAR;
             }
-#endif /* MBS_SUPPORT */
           zeroset(ccl);
           notset(ccl);
           if (!(syntax_bits & RE_DOT_NEWLINE))
@@ -1376,12 +1372,10 @@ lex (void)
         default:
         normal_char:
           laststart = 0;
-#if MBS_SUPPORT
           /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
-          if (MB_CUR_MAX > 1)
+          if (MBS_SUPPORT && MB_CUR_MAX > 1)
             return lasttok = WCHAR;
-#endif
 
           if (case_fold && isalpha(c))
             {
@@ -3977,10 +3971,9 @@ dfamust (struct dfa *d)
               goto done;
             }
           else if (t >= CSET
-#if MBS_SUPPORT
+                   || !MBS_SUPPORT
                    || t == ANYCHAR
                    || t == MBCSET
-#endif /* MBS_SUPPORT */
                    )
             {
               /* easy enough */
