@@ -158,7 +158,7 @@ static const char *context_line_color  = "";	/* default color pair */
 	    of 1 ("\33[I"), i.e., it performs pure movement to the next
 	    tab stop, without any clearing of either content or screen
 	    attributes (including background color); try
-	       echo -ne 'asdfqwerzxcv\rASDF\tZXCV\n'
+	       printf 'asdfqwerzxcv\rASDF\tZXCV\n'
 	    in a bash(1) shell to demonstrate this.  This is not what the
 	    user would instinctively expect of HT (but is ok for CHT).
 	    The instinctive behavior would include clearing the terminal

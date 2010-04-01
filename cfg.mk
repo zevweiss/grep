@@ -42,6 +42,11 @@ sc_prohibit_jm_in_m4:
 	    { echo '$(ME): do not use jm_ in m4 macro names'		\
 	      1>&2; exit 1; } || :
 
+sc_prohibit_echo_minus_en:
+	@re='\<echo -[en]'						\
+	msg='do not use echo ''-e or echo ''-n; use printf instead'	\
+	  $(_prohibit_regexp)
+
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79

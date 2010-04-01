@@ -15,8 +15,8 @@ then
 	D='\033[0m'
 fi
 
-ok ()	{ echo -e "${G}OK${D}"; }
-fail () { echo -e "${R}FAIL${D} (See ${U})"; failures=1; }
+ok ()	{ printf "${G}OK${D}"; }
+fail () { printf "${R}FAIL${D} (See ${U})"; failures=1; }
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=116909
 printf "fgrep false negatives: "
