@@ -2363,9 +2363,7 @@ dfastate (int s, struct dfa *d, int trans[])
   int wants_letter;		/* New state wants to know letter context. */
   int state_letter;		/* New state on a letter transition. */
   static int initialized;	/* Flag for static initialization. */
-#if MBS_SUPPORT
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
-#endif
   int i, j, k;
 
   grps = xnmalloc (NOTCHAR, sizeof *grps);
@@ -2390,10 +2388,10 @@ dfastate (int s, struct dfa *d, int trans[])
         setbit(d->tokens[pos.index], matches);
       else if (d->tokens[pos.index] >= CSET)
         copyset(d->charclasses[d->tokens[pos.index] - CSET], matches);
-#if MBS_SUPPORT
-      else if (d->tokens[pos.index] == ANYCHAR
-               || d->tokens[pos.index] == MBCSET)
-      /* MB_CUR_MAX > 1  */
+      else if (MBS_SUPPORT
+               && (d->tokens[pos.index] == ANYCHAR
+                   || d->tokens[pos.index] == MBCSET))
+        /* MB_CUR_MAX > 1  */
         {
           /* ANYCHAR and MBCSET must match with a single character, so we
              must put it to d->states[s].mbps, which contains the positions
@@ -2405,7 +2403,6 @@ dfastate (int s, struct dfa *d, int trans[])
           insert(pos, &(d->states[s].mbps));
           continue;
         }
-#endif /* MBS_SUPPORT */
       else
         continue;
 
@@ -2542,8 +2539,7 @@ dfastate (int s, struct dfa *d, int trans[])
         for (k = 0; k < d->follows[grps[i].elems[j].index].nelem; ++k)
           insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
 
-#if MBS_SUPPORT
-      if (d->mb_cur_max > 1)
+      if (MBS_SUPPORT && d->mb_cur_max > 1)
         {
           /* If a token in follows.elems is not 1st byte of a multibyte
              character, or the states of follows must accept the bytes
@@ -2573,7 +2569,6 @@ dfastate (int s, struct dfa *d, int trans[])
                 }
             }
         }
-#endif
 
       /* If we are building a searching matcher, throw in the positions
          of state 0 as well. */
