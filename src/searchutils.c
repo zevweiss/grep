@@ -17,6 +17,7 @@
    02110-1301, USA.  */
 
 #include <config.h>
+#include <assert.h>
 #include "search.h"
 
 #define NCHAR (UCHAR_MAX + 1)
@@ -51,6 +52,7 @@ kwsinit (kwset_t *kwset)
    to the length (in bytes) of the resulting string (not including the
    trailing NUL byte), and return a pointer to the lowercase string.
    Upon memory allocation failure, this function exits.
+   Note that on input, *N must be larger than zero.
 
    Note that while this function returns a pointer to malloc'd storage,
    the caller must not free it, since this function retains a pointer
@@ -66,11 +68,15 @@ mbtolower (const char *beg, size_t *n)
   const char *end;
   char *p;
 
+  assert (0 < *n);
+
   if (*n > outalloc)
     {
       out = xrealloc (out, *n);
       outalloc = *n;
     }
+  /* appease clang-2.6 */
+  assert (out);
 
   memset (&is, 0, sizeof (is));
   memset (&os, 0, sizeof (os));
@@ -108,7 +114,7 @@ mbtolower (const char *beg, size_t *n)
     }
 
   *n = p - out;
-  *p++ = 0;
+  *p = 0;
   return out;
 }
 
