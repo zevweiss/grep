@@ -1785,13 +1785,11 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #ifdef LC_COLLATE
   hard_LC_COLLATE = hard_locale (LC_COLLATE);
 #endif
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
       memset(&mbs, 0, sizeof mbs);
     }
-#endif /* MBS_SUPPORT  */
 
   if (! syntax_bits_set)
     dfaerror(_("no syntax specified"));
