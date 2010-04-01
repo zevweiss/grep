@@ -1019,34 +1019,33 @@ parse_bracket_exp (void)
 
       colon_warning_state |= (c == ':') ? 2 : 4;
 
-#if MBS_SUPPORT
-      if (MB_CUR_MAX > 1)
+      if (!MBS_SUPPORT || MB_CUR_MAX == 1)
         {
-          if (case_fold && iswalpha(wc))
-            {
-              wc = towlower(wc);
-              if (!setbit_wc (wc, ccl))
-                {
-                  REALLOC_IF_NECESSARY(work_mbc->chars, chars_al,
-                                       work_mbc->nchars + 1);
-                  work_mbc->chars[work_mbc->nchars++] = wc;
-                }
-#ifdef GREP
-              continue;
-#else
-              wc = towupper(wc);
-#endif
-            }
+          setbit_case_fold_c (c, ccl);
+          continue;
+        }
+
+      if (case_fold && iswalpha(wc))
+        {
+          wc = towlower(wc);
           if (!setbit_wc (wc, ccl))
             {
               REALLOC_IF_NECESSARY(work_mbc->chars, chars_al,
                                    work_mbc->nchars + 1);
               work_mbc->chars[work_mbc->nchars++] = wc;
             }
-        }
-      else
+#ifdef GREP
+          continue;
+#else
+          wc = towupper(wc);
 #endif
-        setbit_case_fold_c (c, ccl);
+        }
+      if (!setbit_wc (wc, ccl))
+        {
+          REALLOC_IF_NECESSARY(work_mbc->chars, chars_al,
+                               work_mbc->nchars + 1);
+          work_mbc->chars[work_mbc->nchars++] = wc;
+        }
     }
   while ((
 #if MBS_SUPPORT
