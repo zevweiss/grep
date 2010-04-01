@@ -31,42 +31,12 @@
 #include <string.h>
 #include <locale.h>
 
-#ifndef isgraph
-#define isgraph(C) (isprint(C) && !isspace(C))
-#endif
-
-#if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
-#define ISALPHA(C) isalpha(C)
-#define ISUPPER(C) isupper(C)
-#define ISLOWER(C) islower(C)
-#define ISDIGIT(C) isdigit(C)
-#define ISXDIGIT(C) isxdigit(C)
-#define ISSPACE(C) isspace(C)
-#define ISPUNCT(C) ispunct(C)
-#define ISALNUM(C) isalnum(C)
-#define ISPRINT(C) isprint(C)
-#define ISGRAPH(C) isgraph(C)
-#define ISCNTRL(C) iscntrl(C)
-#else
-#define ISALPHA(C) (isascii(C) && isalpha(C))
-#define ISUPPER(C) (isascii(C) && isupper(C))
-#define ISLOWER(C) (isascii(C) && islower(C))
-#define ISDIGIT(C) (isascii(C) && isdigit(C))
-#define ISXDIGIT(C) (isascii(C) && isxdigit(C))
-#define ISSPACE(C) (isascii(C) && isspace(C))
-#define ISPUNCT(C) (isascii(C) && ispunct(C))
-#define ISALNUM(C) (isascii(C) && isalnum(C))
-#define ISPRINT(C) (isascii(C) && isprint(C))
-#define ISGRAPH(C) (isascii(C) && isgraph(C))
-#define ISCNTRL(C) (isascii(C) && iscntrl(C))
-#endif
-
-/* ISASCIIDIGIT differs from ISDIGIT, as follows:
+/* ISASCIIDIGIT differs from isdigit, as follows:
    - Its arg may be any int or unsigned int; it need not be an unsigned char.
    - It's guaranteed to evaluate its argument exactly once.
    - It's typically faster.
    Posix 1003.2-1992 section 2.5.2.1 page 50 lines 1556-1558 says that
-   only '0' through '9' are digits.  Prefer ISASCIIDIGIT to ISDIGIT unless
+   only '0' through '9' are digits.  Prefer ISASCIIDIGIT to isdigit unless
    it's important to use the locale's definition of `digit' even when the
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
@@ -266,8 +236,8 @@ setbit_case_fold (
       else
 #endif
         {
-          unsigned char b1 = ISUPPER(b) ? tolower(b) : b;
-          unsigned char b2 = ISLOWER(b) ? toupper(b) : b;
+          unsigned char b1 = isupper(b) ? tolower(b) : b;
+          unsigned char b2 = islower(b) ? toupper(b) : b;
 	  setbit (b1, c);
           if (b2 != b1)
             setbit (b2, c);
@@ -406,24 +376,6 @@ in_coll_range (char ch, char from, char to)
   return strcoll (&c[0], &c[2]) <= 0 && strcoll (&c[2], &c[4]) <= 0;
 }
 
-static int is_alpha(int c) { return ISALPHA(c); }
-static int is_upper(int c) { return ISUPPER(c); }
-static int is_lower(int c) { return ISLOWER(c); }
-static int is_digit(int c) { return ISDIGIT(c); }
-static int is_xdigit(int c) { return ISXDIGIT(c); }
-static int is_space(int c) { return ISSPACE(c); }
-static int is_punct(int c) { return ISPUNCT(c); }
-static int is_alnum(int c) { return ISALNUM(c); }
-static int is_print(int c) { return ISPRINT(c); }
-static int is_graph(int c) { return ISGRAPH(c); }
-static int is_cntrl(int c) { return ISCNTRL(c); }
-
-static int
-is_blank (int c)
-{
-   return (c == ' ' || c == '\t');
-}
-
 typedef int predicate (int);
 
 /* The following list maps the names of the Posix named character classes
@@ -433,18 +385,18 @@ static struct {
   const char *name;
   predicate *pred;
 } const prednames[] = {
-  { "alpha", is_alpha },
-  { "upper", is_upper },
-  { "lower", is_lower },
-  { "digit", is_digit },
-  { "xdigit", is_xdigit },
-  { "space", is_space },
-  { "punct", is_punct },
-  { "alnum", is_alnum },
-  { "print", is_print },
-  { "graph", is_graph },
-  { "cntrl", is_cntrl },
-  { "blank", is_blank },
+  { "alpha", isalpha },
+  { "upper", isupper },
+  { "lower", islower },
+  { "digit", isdigit },
+  { "xdigit", isxdigit },
+  { "space", isspace },
+  { "punct", ispunct },
+  { "alnum", isalnum },
+  { "print", isprint },
+  { "graph", isgraph },
+  { "cntrl", iscntrl },
+  { "blank", isblank },
   { NULL, NULL }
 };
 
@@ -688,7 +640,7 @@ parse_bracket_exp (void)
                   setbit_case_fold (c, ccl);
               else
                 for (c = 0; c < NOTCHAR; ++c)
-                  if (!(case_fold && ISUPPER (c))
+                  if (!(case_fold && isupper (c))
                       && in_coll_range (c, c1, c2))
                     setbit_case_fold (c, ccl);
             }
@@ -767,7 +719,7 @@ parse_bracket_exp (void)
 }
 
 /* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
-#define IS_WORD_CONSTITUENT(C) (ISALNUM(C) || (C) == '_')
+#define IS_WORD_CONSTITUENT(C) (isalnum(C) || (C) == '_')
 
 static token
 lex (void)
@@ -1044,7 +996,7 @@ lex (void)
 	    goto normal_char;
 	  zeroset(ccl);
 	  for (c2 = 0; c2 < NOTCHAR; ++c2)
-	    if (ISSPACE(c2))
+	    if (isspace(c2))
 	      setbit(c2, ccl);
 	  if (c == 'S')
 	    notset(ccl);
@@ -1081,7 +1033,7 @@ lex (void)
             return lasttok = WCHAR;
 #endif
 
-	  if (case_fold && ISALPHA(c))
+	  if (case_fold && isalpha(c))
 	    {
 	      zeroset(ccl);
 	      setbit_case_fold (c, ccl);
