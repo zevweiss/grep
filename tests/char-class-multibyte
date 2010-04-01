@@ -1,12 +1,9 @@
 #!/bin/sh
 # This would segfault for grep-2.6
 : ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ . ../src
+. "$srcdir/init.sh"; path_prepend_ ../src
 
-case $(get-mb-cur-max en_US.UTF-8) in
-  [3456]) ;;
-  *) skip_ 'UTF-8 locale not found' ;;
-esac
+require_en_utf8_locale_
 
 printf 'é\n'      > exp1 || framework_failure_
 fail=0

@@ -3,6 +3,8 @@
 : ${srcdir=.}
 . "$srcdir/init.sh"; path_prepend_ ../src
 
+require_en_utf8_locale_
+
 encode() { echo "$1" | tr ABC '\357\274\241'; }
 
 fail=0
