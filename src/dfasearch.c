@@ -76,16 +76,10 @@ static int kwset_exact_matches;
 static char const *
 kwsincr_case (const char *must)
 {
-  const char *buf;
-  size_t n;
-
-  n = strlen (must);
-#if MBS_SUPPORT
-  if (match_icase && MB_CUR_MAX > 1)
-    buf = mbtolower (must, &n);
-  else
-#endif
-    buf = must;
+  size_t n = strlen (must);
+  const char *buf = (MBS_SUPPORT && match_icase && MB_CUR_MAX > 1
+                     ? mbtolower (must, &n)
+                     : must);
   return kwsincr (kwset, buf, n);
 }
 
