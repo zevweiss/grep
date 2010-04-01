@@ -3280,8 +3280,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   for (;;)
     {
-#if MBS_SUPPORT
-      if (d->mb_cur_max > 1)
+      if (MBS_SUPPORT && d->mb_cur_max > 1)
         while ((t = trans[s]))
           {
             if (p > buf_end)
@@ -3314,16 +3313,17 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             trans = d->trans;
           }
       else
-#endif /* MBS_SUPPORT */
-      while ((t = trans[s]) != 0)
         {
-          s1 = t[*p++];
-          if ((t = trans[s1]) == 0)
+          while ((t = trans[s]) != 0)
             {
-              int tmp = s; s = s1; s1 = tmp; /* swap */
-              break;
+              s1 = t[*p++];
+              if ((t = trans[s1]) == 0)
+                {
+                  int tmp = s; s = s1; s1 = tmp; /* swap */
+                  break;
+                }
+              s = t[*p++];
             }
-          s = t[*p++];
         }
 
       if (s >= 0 && (char *) p <= end && d->fails[s])
@@ -3332,20 +3332,17 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             {
               if (backref)
                 *backref = (d->states[s].backref != 0);
-#if MBS_SUPPORT
-              if (d->mb_cur_max > 1)
+              if (MBS_SUPPORT && d->mb_cur_max > 1)
                 {
                   free(mblen_buf);
                   free(inputwcs);
                 }
-#endif /* MBS_SUPPORT */
               *end = saved_end;
               return (char *) p;
             }
 
           s1 = s;
-#if MBS_SUPPORT
-          if (d->mb_cur_max > 1)
+          if (MBS_SUPPORT && d->mb_cur_max > 1)
             {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
@@ -3353,8 +3350,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
               trans = d->trans;
             }
           else
-#endif /* MBS_SUPPORT */
-          s = d->fails[s][*p++];
+            s = d->fails[s][*p++];
           continue;
         }
 
@@ -3373,13 +3369,11 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       /* Check if we've run off the end of the buffer. */
       if ((char *) p > end)
         {
-#if MBS_SUPPORT
-          if (d->mb_cur_max > 1)
+          if (MBS_SUPPORT && d->mb_cur_max > 1)
             {
               free(mblen_buf);
               free(inputwcs);
             }
-#endif /* MBS_SUPPORT */
           *end = saved_end;
           return NULL;
         }
