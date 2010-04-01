@@ -30,5 +30,6 @@ grep.1: grep.in.1
 	  < $(srcdir)/grep.in.1 > $@-t && chmod 444 $@-t && mv $@-t $@
 
 egrep.1 fgrep.1: Makefile.am
-	$(AM_V_GEN)inst=`echo grep | sed '$(transform)'`.1 \
-	  && echo ".so man1/$$inst" > $@-t && mv $@-t $@
+	$(AM_V_GEN)rm -f $@ $@-t
+	$(AM_V_AT)inst=`echo grep | sed '$(transform)'`.1 \
+	  && echo ".so man1/$$inst" > $@-t && chmod 444 $@-t && mv $@-t $@
