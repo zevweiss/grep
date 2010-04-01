@@ -1057,21 +1057,17 @@ parse_bracket_exp (void)
   if (colon_warning_state == 7)
     dfawarn (_("character class syntax is [[:space:]], not [:space:]"));
 
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1)
     {
       static charclass zeroclass;
       work_mbc->invert = invert;
       work_mbc->cset = equal(ccl, zeroclass) ? -1 : charclass_index(ccl);
       return MBCSET;
     }
-#endif
 
   if (invert)
     {
-#if MBS_SUPPORT
-      assert(MB_CUR_MAX == 1);
-#endif
+      assert(!MBS_SUPPORT || MB_CUR_MAX == 1);
       notset(ccl);
       if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
         clrbit(eolbyte, ccl);
