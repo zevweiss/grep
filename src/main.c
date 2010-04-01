@@ -2010,13 +2010,15 @@ main (int argc, char **argv)
             show_help = 1;
         } else
           color_option = 2;
-        if(color_option == 2) {
-          if(isatty(STDOUT_FILENO) && getenv("TERM") &&
-	     strcmp(getenv("TERM"), "dumb"))
-                  color_option = 1;
-          else
-            color_option = 0;
-        }
+        if (color_option == 2)
+	  {
+	    char const *t;
+	    if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
+		&& strcmp (t, "dumb"))
+	      color_option = 1;
+	    else
+	      color_option = 0;
+	  }
 	break;
 
       case EXCLUDE_OPTION:
