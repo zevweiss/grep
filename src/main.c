@@ -26,7 +26,7 @@
 # include <sys/resource.h>
 #endif
 #include "mbsupport.h"
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 # include <wchar.h>
 # include <wctype.h>
 #endif

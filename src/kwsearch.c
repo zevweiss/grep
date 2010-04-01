@@ -37,7 +37,7 @@ Fcompile (char const *pattern, size_t size)
 
   kwsinit (&kwset);
   psize = size;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (match_icase && MB_CUR_MAX > 1)
     pat = mbtolower (pattern, &psize);
   else
@@ -85,7 +85,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
@@ -104,7 +104,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (offset == (size_t) -1)
 	goto failure;
       len = kwsmatch.size[0];
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size,
 					  len))
         {

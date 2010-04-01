@@ -28,7 +28,7 @@ kwsinit (kwset_t *kwset)
   int i;
 
   if (match_icase
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       && MB_CUR_MAX == 1
 #endif
      )
@@ -45,7 +45,7 @@ kwsinit (kwset_t *kwset)
     xalloc_die ();
 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* Convert the *N-byte string, BEG, to lowercase, and write the
    NUL-terminated result into malloc'd storage.  Upon success, set *N
    to the length (in bytes) of the resulting string (not including the

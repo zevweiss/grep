@@ -24,7 +24,7 @@
 #include <sys/types.h>
 
 #include "mbsupport.h"
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* We can handle multibyte strings. */
 # include <wchar.h>
 # include <wctype.h>
@@ -40,7 +40,7 @@
 /* searchutils.c */
 void kwsinit (kwset_t *);
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 char * mbtolower (const char *, size_t *);
 bool is_mb_middle(const char **, const char *, const char *, size_t);
 #endif

@@ -33,5 +33,5 @@
 #if defined HAVE_WCSCOLL && defined HAVE_ISWCTYPE
 # define MBS_SUPPORT 1
 #else
-# undef MBS_SUPPORT
+# define MBS_SUPPORT 0
 #endif

@@ -67,7 +67,7 @@ kwsincr_case (const char *must)
   size_t n;
 
   n = strlen (must);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (match_icase && MB_CUR_MAX > 1)
     buf = mbtolower (must, &n);
   else
@@ -207,7 +207,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   int backref, start, len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
@@ -248,7 +248,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 		--beg;
 	      if (kwsm.index < kwset_exact_matches)
                 {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
                   if (mb_start < beg)
                     mb_start = beg;
                   if (MB_CUR_MAX == 1

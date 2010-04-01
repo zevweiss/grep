@@ -48,7 +48,7 @@
 #define _(str) gettext (str)
 
 #include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* We can handle multibyte strings. */
 # include <wchar.h>
 # include <wctype.h>
@@ -117,7 +117,7 @@ prtok (token t)
 	case ORTOP: s = "ORTOP"; break;
 	case LPAREN: s = "LPAREN"; break;
 	case RPAREN: s = "RPAREN"; break;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	case ANYCHAR: s = "ANYCHAR"; break;
 	case MBCSET: s = "MBCSET"; break;
 #endif /* MBS_SUPPORT */
@@ -217,7 +217,7 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
    so the resulting charset may only be used as an optimization.  */
 static void
 setbit_case_fold (
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
                   wint_t b,
 #else
                   unsigned int b,
@@ -226,7 +226,7 @@ setbit_case_fold (
 {
   if (case_fold)
     {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (MB_CUR_MAX > 1)
         {
           wint_t b1 = iswupper(b) ? towlower(b) : b;
@@ -248,7 +248,7 @@ setbit_case_fold (
     }
   else
     {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (wctob ((unsigned char)b) == b)
 #endif
         setbit (b, c);
@@ -290,7 +290,7 @@ static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
 static int cur_mb_len = 1;	/* Length of the multibyte representation of
 				   wctok.  */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* These variables are used only if (MB_CUR_MAX > 1).  */
 static mbstate_t mbs;		/* Mbstate for mbrlen().  */
 static wchar_t wctok;		/* Wide character representation of the current
@@ -316,7 +316,7 @@ static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
 #endif /* MBS_SUPPORT  */
 
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* Note that characters become unsigned here. */
 # define FETCH_WC(c, wc, eoferr)		\
   do {						\
@@ -424,7 +424,7 @@ parse_bracket_exp (void)
   int c, c1, c2;
   charclass ccl;
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   wint_t wc, wc1, wc2;
 
   /* Work area to build a mb_char_classes.  */
@@ -478,7 +478,7 @@ parse_bracket_exp (void)
 
 	  /* If pattern contains `[[:', `[[.', or `[[='.  */
 	  if (c1 == ':'
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
               /* TODO: handle `[[.' and `[[=' also for MB_CUR_MAX == 1.  */
 	      || (MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
 #endif
@@ -508,7 +508,7 @@ parse_bracket_exp (void)
 				     || STREQ  (str, "lower"))
 				       ? "alpha"
 				       : str);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
                   if (MB_CUR_MAX > 1)
                     {
 		      /* Store the character class as wctype_t.  */
@@ -533,7 +533,7 @@ parse_bracket_exp (void)
                   }
                 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	      else if (c1 == '=' || c1 == '.')
 		{
 		  char *elem;
@@ -598,7 +598,7 @@ parse_bracket_exp (void)
               && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
             FETCH_WC(c2, wc2, _("unbalanced ["));
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
           if (MB_CUR_MAX > 1)
             {
 	      /* When case folding map a range, say [m-z] (or even [M-z])
@@ -652,7 +652,7 @@ parse_bracket_exp (void)
 	  continue;
 	}
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       /* Build normal characters.  */
       setbit_case_fold (wc, ccl);
       if (MB_CUR_MAX > 1)
@@ -686,12 +686,12 @@ parse_bracket_exp (void)
 #endif
     }
   while ((
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	 wc = wc1,
 #endif
 	 (c = c1) != ']'));
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1
       && (!using_utf8()
 	  || invert
@@ -710,7 +710,7 @@ parse_bracket_exp (void)
 
   if (invert)
     {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       assert(MB_CUR_MAX == 1);
 #endif
       notset(ccl);
@@ -740,7 +740,7 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (MB_CUR_MAX > 1)
         {
           FETCH_WC (c, wctok, NULL);
@@ -974,7 +974,7 @@ lex (void)
 	case '.':
 	  if (backslash)
 	    goto normal_char;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	  if (MB_CUR_MAX > 1)
 	    {
 	      /* In multibyte environment period must match with a single
@@ -1029,7 +1029,7 @@ lex (void)
 	default:
 	normal_char:
 	  laststart = 0;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	  /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
           if (MB_CUR_MAX > 1)
@@ -1065,7 +1065,7 @@ static int depth;		/* Current depth of a hypothetical stack
 static void
 addtok_mb (token t, int mbprop)
 {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       REALLOC_IF_NECESSARY(dfa->multibyte_prop, int, dfa->nmultibyte_prop,
@@ -1107,7 +1107,7 @@ addtok_mb (token t, int mbprop)
 static void
 addtok (token t)
 {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1 && t == MBCSET)
     addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
   else
@@ -1115,7 +1115,7 @@ addtok (token t)
     addtok_mb (t, 3);
 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* We treat a multibyte character as a single atom, so that DFA
    can treat a multibyte character as a single expression.
 
@@ -1184,7 +1184,7 @@ addtok_wc (wint_t wc)
 static void
 atom (void)
 {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (tok == WCHAR)
     {
       addtok_wc (case_fold ? towlower(wctok) : wctok);
@@ -1203,7 +1203,7 @@ atom (void)
 
   if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
       || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       || tok == ANYCHAR || tok == MBCSET /* MB_CUR_MAX > 1 */
 #endif /* MBS_SUPPORT */
       || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
@@ -1254,7 +1254,7 @@ copytoks (int tindex, int ntokens)
   for (i = 0; i < ntokens; ++i)
     {
       addtok(dfa->tokens[tindex + i]);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       /* Update index into multibyte csets.  */
       if (MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
 	dfa->multibyte_prop[dfa->tindex - 1] = dfa->multibyte_prop[tindex + i];
@@ -1338,7 +1338,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #ifdef LC_COLLATE
   hard_LC_COLLATE = hard_locale (LC_COLLATE);
 #endif
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
@@ -1489,7 +1489,7 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
   d->states[i].backref = 0;
   d->states[i].constraint = 0;
   d->states[i].first_end = 0;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   d->states[i].mbps.nelem = 0;
   d->states[i].mbps.elems = NULL;
 #endif
@@ -1533,7 +1533,7 @@ epsclosure (position_set *s, struct dfa const *d)
   for (i = 0; i < s->nelem; ++i)
     if (d->tokens[s->elems[i].index] >= NOTCHAR
 	&& d->tokens[s->elems[i].index] != BACKREF
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	&& d->tokens[s->elems[i].index] != ANYCHAR
 	&& d->tokens[s->elems[i].index] != MBCSET
 #endif
@@ -1816,7 +1816,7 @@ dfaanalyze (struct dfa *d, int searchflag)
      it with its epsilon closure. */
   for (i = 0; i < d->tindex; ++i)
     if (d->tokens[i] < NOTCHAR || d->tokens[i] == BACKREF
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
         || d->tokens[i] == ANYCHAR
         || d->tokens[i] == MBCSET
 #endif
@@ -1921,7 +1921,7 @@ dfastate (int s, struct dfa *d, int trans[])
   int wants_letter;		/* New state wants to know letter context. */
   int state_letter;		/* New state on a letter transition. */
   static int initialized;	/* Flag for static initialization. */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
 #endif
   int i, j, k;
@@ -1945,7 +1945,7 @@ dfastate (int s, struct dfa *d, int trans[])
 	setbit(d->tokens[pos.index], matches);
       else if (d->tokens[pos.index] >= CSET)
 	copyset(d->charclasses[d->tokens[pos.index] - CSET], matches);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       else if (d->tokens[pos.index] == ANYCHAR
                || d->tokens[pos.index] == MBCSET)
       /* MB_CUR_MAX > 1  */
@@ -2098,7 +2098,7 @@ dfastate (int s, struct dfa *d, int trans[])
 	for (k = 0; k < d->follows[grps[i].elems[j].index].nelem; ++k)
 	  insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (d->mb_cur_max > 1)
 	{
 	  /* If a token in follows.elems is not 1st byte of a multibyte
@@ -2133,7 +2133,7 @@ dfastate (int s, struct dfa *d, int trans[])
 
       /* If we are building a searching matcher, throw in the positions
 	 of state 0 as well. */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (d->searchflag && (d->mb_cur_max == 1 || !next_isnt_1st_byte))
 #else
       if (d->searchflag)
@@ -2281,7 +2281,7 @@ build_state_zero (struct dfa *d)
   build_state(0, d);
 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* Multibyte character handling sub-routines for dfaexec.  */
 
 /* Initial state may encounter the byte which is not a single byte character
@@ -2757,7 +2757,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   unsigned char saved_end = *(unsigned char *) end;
   *end = eol;
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (d->mb_cur_max > 1)
     {
       int remain_bytes, i;
@@ -2802,7 +2802,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   for (;;)
     {
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
       if (d->mb_cur_max > 1)
 	while ((t = trans[s]))
 	  {
@@ -2839,7 +2839,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 	    {
 	      if (backref)
 		*backref = (d->states[s].backref != 0);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	      if (d->mb_cur_max > 1)
 		{
 		  free(mblen_buf);
@@ -2851,7 +2851,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 	    }
 
 	  s1 = s;
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	  if (d->mb_cur_max > 1)
 	    {
               /* Can match with a multibyte character (and multicharacter
@@ -2872,7 +2872,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       /* Check if we've run off the end of the buffer. */
       if ((char *) p > end)
 	{
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 	  if (d->mb_cur_max > 1)
 	    {
 	      free(mblen_buf);
@@ -2900,7 +2900,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     }
 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 static void
 free_mbdata (struct dfa *d)
 {
@@ -2946,7 +2946,7 @@ dfainit (struct dfa *d)
   MALLOC(d->tokens, token, d->talloc);
   d->tindex = d->depth = d->nleaves = d->nregexps = 0;
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   d->mb_cur_max = MB_CUR_MAX;
   if (d->mb_cur_max > 1)
     {
@@ -2971,7 +2971,7 @@ dfainit (struct dfa *d)
 #endif
 }
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 static void
 dfaoptimize (struct dfa *d)
 {
@@ -3004,7 +3004,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfainit(d);
   dfaparse(s, len, d);
   dfamust(d);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   dfaoptimize(d);
 #endif
   dfaanalyze(d, searchflag);
@@ -3020,14 +3020,14 @@ dfafree (struct dfa *d)
   free(d->charclasses);
   free(d->tokens);
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   if (d->mb_cur_max > 1)
     free_mbdata(d);
 #endif /* MBS_SUPPORT */
 
   for (i = 0; i < d->sindex; ++i) {
     free(d->states[i].elems.elems);
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
     free(d->states[i].mbps.elems);
 #endif /* MBS_SUPPORT */
   }
@@ -3526,7 +3526,7 @@ dfamust (struct dfa *d)
 	      goto done;
 	    }
 	  else if (t >= CSET
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 		   || t == ANYCHAR
 		   || t == MBCSET
 #endif /* MBS_SUPPORT */

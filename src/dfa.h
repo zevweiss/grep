@@ -126,7 +126,7 @@ typedef enum
 
   RPAREN,			/* RPAREN never appears in the parse tree. */
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
                                   any multibyte (or single byte) characters.
 			          It is used only if MB_CUR_MAX > 1.  */
@@ -225,7 +225,7 @@ typedef struct
   char backref;			/* True if this state matches a \<digit>. */
   unsigned char constraint;	/* Constraint for this state to accept. */
   int first_end;		/* Token value of the first END in elems. */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   position_set mbps;           /* Positions which can match multibyte
                                   characters.  e.g. period.
 				  These staff are used only if
@@ -242,7 +242,7 @@ struct dfamust
   struct dfamust *next;
 };
 
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
 /* A bracket operator.
    e.g. [a-c], [[:alpha:]], etc.  */
 struct mb_char_classes
@@ -281,7 +281,7 @@ struct dfa
   int nleaves;			/* Number of leaves on the parse tree. */
   int nregexps;			/* Count of parallel regexps being built
 				   with dfaparse(). */
-#ifdef MBS_SUPPORT
+#if MBS_SUPPORT
   unsigned int mb_cur_max;	/* Cached value of MB_CUR_MAX.  */
 
   /* The following are used only if MB_CUR_MAX > 1.  */
