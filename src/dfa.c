@@ -1406,16 +1406,12 @@ static int depth;		/* Current depth of a hypothetical stack
 static void
 addtok_mb (token t, int mbprop)
 {
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1)
     {
       REALLOC_IF_NECESSARY(dfa->multibyte_prop, dfa->nmultibyte_prop,
                            dfa->tindex + 1);
       dfa->multibyte_prop[dfa->tindex] = mbprop;
     }
-#else
-  (void) mbprop;
-#endif
 
   REALLOC_IF_NECESSARY(dfa->tokens, dfa->talloc, dfa->tindex + 1);
   dfa->tokens[dfa->tindex++] = t;
@@ -1530,7 +1526,11 @@ addtok_wc (wint_t wc)
       addtok(CAT);
     }
 }
+#else
+static void addtok_wc (wint_t wc) {}
+#endif
 
+#if MBS_SUPPORT
 static void
 add_utf8_anychar (void)
 {
@@ -1623,8 +1623,7 @@ atom (void)
     {
       /* empty */
     }
-#if MBS_SUPPORT
-  else if (tok == WCHAR)
+  else if (MBS_SUPPORT && tok == WCHAR)
     {
       addtok_wc (case_fold ? towlower(wctok) : wctok);
 #ifndef GREP
@@ -1637,8 +1636,7 @@ atom (void)
 
       tok = lex();
     }
-
-  else if (tok == ANYCHAR && using_utf8())
+  else if (MBS_SUPPORT && tok == ANYCHAR && using_utf8())
     {
       /* For UTF-8 expand the period to a series of CSETs that define a valid
          UTF-8 character.  This avoids using the slow multibyte path.  I'm
@@ -1650,8 +1648,6 @@ atom (void)
       add_utf8_anychar();
       tok = lex();
     }
-#endif /* MBS_SUPPORT  */
-
   else if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
            || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
 #if MBS_SUPPORT
@@ -1704,11 +1700,9 @@ copytoks (int tindex, int ntokens)
   for (i = 0; i < ntokens; ++i)
     {
       addtok(dfa->tokens[tindex + i]);
-#if MBS_SUPPORT
       /* Update index into multibyte csets.  */
-      if (MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
+      if (MBS_SUPPORT && MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
         dfa->multibyte_prop[dfa->tindex - 1] = dfa->multibyte_prop[tindex + i];
-#endif
     }
 }
 
