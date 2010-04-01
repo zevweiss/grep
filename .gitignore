@@ -21,6 +21,7 @@
 /config.status
 /configure
 /configure.ac
+/doc/grep.1
 /doc/grep.aux
 /doc/grep.cp
 /doc/grep.cps
