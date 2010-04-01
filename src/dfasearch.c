@@ -214,8 +214,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   int backref, start, len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1)
     {
       if (match_icase)
         {
@@ -227,7 +226,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           buf = case_buf;
         }
     }
-#endif /* MBS_SUPPORT */
 
   mb_start = buf;
   buflim = buf + size;
@@ -255,13 +253,14 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 --beg;
               if (kwsm.index < kwset_exact_matches)
                 {
-#if MBS_SUPPORT
+                  if (!MBS_SUPPORT)
+                    goto success;
+
                   if (mb_start < beg)
                     mb_start = beg;
                   if (MB_CUR_MAX == 1
                       || !is_mb_middle (&mb_start, match, buflim,
                                         kwsm.size[0]))
-#endif
                     goto success;
                 }
               if (dfaexec (dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
