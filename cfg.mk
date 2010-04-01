@@ -23,8 +23,7 @@ gpg_key_ID = B9AB9A16
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip =			\
   sc_prohibit_strcmp			\
-  sc_texinfo_acronym			\
-  sc_useless_cpp_parens
+  sc_texinfo_acronym
 
 # Tools used to bootstrap this package, used for "announcement".
 bootstrap-tools = autoconf,automake,gnulib

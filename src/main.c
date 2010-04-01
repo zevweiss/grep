@@ -21,7 +21,7 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(HAVE_SETRLIMIT)
+#if defined HAVE_SETRLIMIT
 # include <sys/time.h>
 # include <sys/resource.h>
 #endif
@@ -367,7 +367,7 @@ static enum
   } devices = READ_DEVICES;
 
 static int grepdir (char const *, struct stats const *);
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
 static inline int undossify_input (char *, size_t);
 #endif
 
@@ -540,7 +540,7 @@ fillbuf (size_t save, struct stats const *stats)
     }
 
   bufoffset += fillsize;
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
   if (fillsize)
     fillsize = undossify_input (readbuf, fillsize);
 #endif
@@ -587,7 +587,7 @@ static int pending;		/* Pending lines of output.
 static int done_on_match;	/* Stop scanning file on first match.  */
 static int exit_on_match;	/* Exit on first match.  */
 
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
 # include "dosbuf.c"
 #endif
 
@@ -695,7 +695,7 @@ print_line_head (char const *beg, char const *lim, int sep)
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
       pos = dossified_pos (pos);
 #endif
       if (pending_sep)
@@ -1216,7 +1216,7 @@ grepfile (char const *file, struct stats *stats)
 	      if (directories == SKIP_DIRECTORIES)
 		switch (e)
 		  {
-#if defined(EISDIR)
+#if defined EISDIR
 		  case EISDIR:
 		    return 1;
 #endif
@@ -1236,7 +1236,7 @@ grepfile (char const *file, struct stats *stats)
       filename = file;
     }
 
-#if defined(SET_BINARY)
+#if defined SET_BINARY
   /* Set input to binary mode.  Pipes are simulated with files
      on DOS, so this includes the case of "foo | grep bar".  */
   if (!isatty (desc))
@@ -1509,7 +1509,7 @@ setmatcher (char const *m)
 static void
 set_limits(void)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
+#if defined HAVE_SETRLIMIT && defined RLIMIT_STACK
   struct rlimit rlim;
 
   /* I think every platform needs to do this, so that regex.c
@@ -1761,10 +1761,10 @@ main (int argc, char **argv)
   only_matching = 0;
 
   /* Internationalization. */
-#if defined(HAVE_SETLOCALE)
+#if defined HAVE_SETLOCALE
   setlocale (LC_ALL, "");
 #endif
-#if defined(ENABLE_NLS)
+#if defined ENABLE_NLS
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 #endif
@@ -1835,13 +1835,13 @@ main (int argc, char **argv)
 	break;
 
       case 'U':
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
 	dos_use_file_type = DOS_BINARY;
 #endif
 	break;
 
       case 'u':
-#if defined(HAVE_DOS_FILE_CONTENTS)
+#if defined HAVE_DOS_FILE_CONTENTS
 	dos_report_unix_offset = 1;
 #endif
 	break;
