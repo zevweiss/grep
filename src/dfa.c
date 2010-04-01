@@ -3268,15 +3268,13 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   saved_end = *(unsigned char *) end;
   *end = eol;
 
-#if MBS_SUPPORT
-  if (d->mb_cur_max > 1)
+  if (MBS_SUPPORT && d->mb_cur_max > 1)
     {
       MALLOC(mblen_buf, end - begin + 2);
       MALLOC(inputwcs, end - begin + 2);
       memset(&mbs, 0, sizeof(mbstate_t));
       prepare_wc_buf ((const char *) p, end);
     }
-#endif /* MBS_SUPPORT */
 
   for (;;)
     {
