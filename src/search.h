@@ -24,16 +24,14 @@
 #include <sys/types.h>
 
 #include "mbsupport.h"
-#if MBS_SUPPORT
-/* We can handle multibyte strings. */
-# include <wchar.h>
-# include <wctype.h>
-#endif
 
+#include <wchar.h>
+#include <wctype.h>
 #include <regex.h>
+
 #include "system.h"
-#include "grep.h"
 #include "error.h"
+#include "grep.h"
 #include "kwset.h"
 #include "xalloc.h"
 

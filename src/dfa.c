@@ -48,10 +48,10 @@
 #define _(str) gettext (str)
 
 #include "mbsupport.h"  /* defines MBS_SUPPORT if appropriate */
-#if MBS_SUPPORT
-/* We can handle multibyte strings. */
-# include <wchar.h>
-# include <wctype.h>
+#include <wchar.h>
+#include <wctype.h>
+
+#if HAVE_LANGINFO_CODESET
 # include <langinfo.h>
 #endif
 

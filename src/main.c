@@ -26,10 +26,8 @@
 # include <sys/resource.h>
 #endif
 #include "mbsupport.h"
-#if MBS_SUPPORT
-# include <wchar.h>
-# include <wctype.h>
-#endif
+#include <wchar.h>
+#include <wctype.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include "system.h"
