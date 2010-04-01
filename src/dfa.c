@@ -3510,16 +3510,13 @@ dfafree (struct dfa *d)
   free(d->charclasses);
   free(d->tokens);
 
-#if MBS_SUPPORT
-  if (d->mb_cur_max > 1)
+  if (MBS_SUPPORT && d->mb_cur_max > 1)
     free_mbdata(d);
-#endif /* MBS_SUPPORT */
 
   for (i = 0; i < d->sindex; ++i) {
     free(d->states[i].elems.elems);
-#if MBS_SUPPORT
-    free(d->states[i].mbps.elems);
-#endif /* MBS_SUPPORT */
+    if (MBS_SUPPORT)
+      free(d->states[i].mbps.elems);
   }
   free(d->states);
   for (i = 0; i < d->tindex; ++i)
