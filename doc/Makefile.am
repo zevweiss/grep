@@ -26,10 +26,10 @@ CLEANFILES = grep.1 egrep.1 fgrep.1
 
 grep.1: grep.in.1
 	$(AM_V_GEN)rm -f $@ $@-t
-	$(AM_V_AT)sed 's/@''VERSION@/$(VERSION)/' \
+	$(AM_V_at)sed 's/@''VERSION@/$(VERSION)/' \
 	  < $(srcdir)/grep.in.1 > $@-t && chmod 444 $@-t && mv $@-t $@
 
 egrep.1 fgrep.1: Makefile.am
 	$(AM_V_GEN)rm -f $@ $@-t
-	$(AM_V_AT)inst=`echo grep | sed '$(transform)'`.1 \
+	$(AM_V_at)inst=`echo grep | sed '$(transform)'`.1 \
 	  && echo ".so man1/$$inst" > $@-t && chmod 444 $@-t && mv $@-t $@
