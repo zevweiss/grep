@@ -3401,7 +3401,6 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     }
 }
 
-#if MBS_SUPPORT
 static void
 free_mbdata (struct dfa *d)
 {
@@ -3432,7 +3431,6 @@ free_mbdata (struct dfa *d)
   d->mbcsets = NULL;
   d->nmbcsets = 0;
 }
-#endif
 
 /* Initialize the components of a dfa that the other routines don't
    initialize for themselves. */
