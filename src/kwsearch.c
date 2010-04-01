@@ -22,7 +22,7 @@
 #include "search.h"
 
 /* For -w, we also consider _ to be word constituent.  */
-#define WCHAR(C) (ISALNUM(C) || (C) == '_')
+#define WCHAR(C) (isalnum (C) || (C) == '_')
 
 /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
    a list of strings, at least one of which is known to occur in

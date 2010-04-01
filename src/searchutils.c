@@ -34,7 +34,7 @@ kwsinit (kwset_t *kwset)
      )
     {
       for (i = 0; i < NCHAR; ++i)
-        trans[i] = TOLOWER (i);
+        trans[i] = tolower (i);
 
       *kwset = kwsalloc (trans);
     }

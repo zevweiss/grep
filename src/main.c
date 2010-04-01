@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include "system.h"
 
+#include "c-ctype.h"
 #include "closeout.h"
 #include "error.h"
 #include "exclude.h"
@@ -1552,7 +1553,7 @@ prepend_args (char const *options, char *buf, char **argv)
 
   for (;;)
     {
-      while (ISSPACE ((unsigned char) *o))
+      while (c_isspace ((unsigned char) *o))
 	o++;
       if (!*o)
 	return n;
@@ -1563,7 +1564,7 @@ prepend_args (char const *options, char *buf, char **argv)
       do
 	if ((*b++ = *o++) == '\\' && *o)
 	  b[-1] = *o++;
-      while (*o && ! ISSPACE ((unsigned char) *o));
+      while (*o && ! c_isspace ((unsigned char) *o));
 
       *b++ = '\0';
     }

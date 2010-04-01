@@ -42,30 +42,6 @@
 
 enum { EXIT_TROUBLE = 2 };
 
-#ifndef isgraph
-# define isgraph(C) (isprint(C) && !isspace(C))
-#endif
-
-#if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
-# define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii(c)
-#endif
-
-#define ISALPHA(C)	(IN_CTYPE_DOMAIN (C) && isalpha (C))
-#define ISUPPER(C)	(IN_CTYPE_DOMAIN (C) && isupper (C))
-#define ISLOWER(C)	(IN_CTYPE_DOMAIN (C) && islower (C))
-#define ISDIGIT(C)	(IN_CTYPE_DOMAIN (C) && isdigit (C))
-#define ISXDIGIT(C)	(IN_CTYPE_DOMAIN (C) && isxdigit (C))
-#define ISSPACE(C)	(IN_CTYPE_DOMAIN (C) && isspace (C))
-#define ISPUNCT(C)	(IN_CTYPE_DOMAIN (C) && ispunct (C))
-#define ISALNUM(C)	(IN_CTYPE_DOMAIN (C) && isalnum (C))
-#define ISPRINT(C)	(IN_CTYPE_DOMAIN (C) && isprint (C))
-#define ISGRAPH(C)	(IN_CTYPE_DOMAIN (C) && isgraph (C))
-#define ISCNTRL(C)	(IN_CTYPE_DOMAIN (C) && iscntrl (C))
-
-#define TOLOWER(C) (ISUPPER(C) ? tolower(C) : (C))
-
 #include <gettext.h>
 #define N_(String) gettext_noop(String)
 #define _(String) gettext(String)
