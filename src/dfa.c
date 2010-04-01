@@ -836,10 +836,8 @@ parse_bracket_exp (void)
 
           /* If pattern contains `[[:', `[[.', or `[[='.  */
           if (c1 == ':'
-#if MBS_SUPPORT
               /* TODO: handle `[[.' and `[[=' also for MB_CUR_MAX == 1.  */
-              || (MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
-#endif
+              || (MBS_SUPPORT && MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
               )
             {
               size_t len = 0;
