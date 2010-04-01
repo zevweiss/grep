@@ -1931,10 +1931,11 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
   d->states[i].backref = 0;
   d->states[i].constraint = 0;
   d->states[i].first_end = 0;
-#if MBS_SUPPORT
-  d->states[i].mbps.nelem = 0;
-  d->states[i].mbps.elems = NULL;
-#endif
+  if (MBS_SUPPORT)
+    {
+      d->states[i].mbps.nelem = 0;
+      d->states[i].mbps.elems = NULL;
+    }
   for (j = 0; j < s->nelem; ++j)
     if (d->tokens[s->elems[j].index] < 0)
       {
