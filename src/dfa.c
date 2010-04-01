@@ -484,7 +484,7 @@ parse_bracket_exp (void)
 #endif
 	      )
 	    {
-	      int len = 0;
+	      size_t len = 0;
 	      for (;;)
 		{
 		  FETCH_WC (c, wc, _("unbalanced ["));
