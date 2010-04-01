@@ -31,6 +31,8 @@
 #include <string.h>
 #include <locale.h>
 
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 /* ISASCIIDIGIT differs from isdigit, as follows:
    - Its arg may be any int or unsigned int; it need not be an unsigned char.
    - It's guaranteed to evaluate its argument exactly once.
@@ -82,6 +84,7 @@ static void regexp (int toplevel);
       while ((index) >= (nalloc));		  \
       REALLOC(p, t, nalloc);			  \
     }
+
 
 #ifdef DEBUG
 
@@ -262,7 +265,7 @@ using_utf8 (void)
   if (utf8 == -1)
     {
 #if defined HAVE_LANGINFO_CODESET && defined MBS_SUPPORT
-      utf8 = (strcmp (nl_langinfo (CODESET), "UTF-8") == 0);
+      utf8 = (STREQ (nl_langinfo (CODESET), "UTF-8"));
 #else
       utf8 = 0;
 #endif
@@ -405,7 +408,7 @@ find_pred (const char *str)
 {
   unsigned int i;
   for (i = 0; prednames[i].name; ++i)
-    if (!strcmp(str, prednames[i].name))
+    if (STREQ (str, prednames[i].name))
       break;
 
   return prednames[i].pred;
@@ -501,8 +504,8 @@ parse_bracket_exp (void)
 		/* build character class.  */
 		{
 		  char const *class
-		    = (case_fold && (!strcmp (str, "upper")
-				     || !strcmp (str, "lower"))
+		    = (case_fold && (STREQ  (str, "upper")
+				     || STREQ  (str, "lower"))
 				       ? "alpha"
 				       : str);
 #ifdef MBS_SUPPORT
@@ -3412,7 +3415,7 @@ dfamust (struct dfa *d)
 	    rmp = --mp;
 	    lmp = --mp;
 	    /* Guaranteed to be.  Unlikely, but. . . */
-	    if (strcmp(lmp->is, rmp->is) != 0)
+	    if (!STREQ (lmp->is, rmp->is))
 	      lmp->is[0] = '\0';
 	    /* Left side--easy */
 	    i = 0;
@@ -3451,7 +3454,7 @@ dfamust (struct dfa *d)
 	  for (i = 0; musts[0].in[i] != NULL; ++i)
 	    if (strlen(musts[0].in[i]) > strlen(result))
 	      result = musts[0].in[i];
-	  if (strcmp(result, musts[0].is) == 0)
+	  if (STREQ (result, musts[0].is))
 	    exact = 1;
 	  goto done;
 	case CAT:

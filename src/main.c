@@ -52,6 +52,8 @@
 #define SEP_CHAR_REJECTED '-'
 #define SEP_STR_GROUP    "--"
 
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 struct stats
 {
   struct stats const *parent;
@@ -1481,7 +1483,7 @@ setmatcher (char const *m)
 
   else if (matcher)
     {
-      if (matcher && strcmp (matcher, m) == 0)
+      if (matcher && STREQ (matcher, m))
         ;
 
       else if (!matchers[1].name)
@@ -1494,7 +1496,7 @@ setmatcher (char const *m)
   else
     {
       for (i = 0; matchers[i].name; i++)
-        if (strcmp (m, matchers[i].name) == 0)
+        if (STREQ (m, matchers[i].name))
           {
             compile = matchers[i].compile;
             execute = matchers[i].execute;
@@ -1681,7 +1683,7 @@ parse_grep_colors (void)
 	/* Empty name without val (empty cap)
 	 * won't match and will be ignored.  */
 	for (cap = color_dict; cap->name; cap++)
-	  if (strcmp(cap->name, name) == 0)
+	  if (STREQ (cap->name, name))
 	    break;
 	/* If name unknown, go on for forward compatibility.  */
 	if (cap->name)
@@ -1793,9 +1795,9 @@ main (int argc, char **argv)
 	break;
 
       case 'D':
-	if (strcmp (optarg, "read") == 0)
+	if (STREQ (optarg, "read"))
 	  devices = READ_DEVICES;
-	else if (strcmp (optarg, "skip") == 0)
+	else if (STREQ (optarg, "skip"))
 	  devices = SKIP_DEVICES;
 	else
 	  error (EXIT_TROUBLE, 0, _("unknown devices method"));
@@ -1863,11 +1865,11 @@ main (int argc, char **argv)
 	break;
 
       case 'd':
-	if (strcmp (optarg, "read") == 0)
+	if (STREQ (optarg, "read"))
 	  directories = READ_DIRECTORIES;
-	else if (strcmp (optarg, "skip") == 0)
+	else if (STREQ (optarg, "skip"))
 	  directories = SKIP_DIRECTORIES;
-	else if (strcmp (optarg, "recurse") == 0)
+	else if (STREQ (optarg, "recurse"))
 	  directories = RECURSE_DIRECTORIES;
 	else
 	  error (EXIT_TROUBLE, 0, _("unknown directories method"));
@@ -1882,7 +1884,7 @@ main (int argc, char **argv)
 	break;
 
       case 'f':
-	fp = strcmp (optarg, "-") != 0 ? fopen (optarg, "r") : stdin;
+	fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
 	if (!fp)
 	  error (EXIT_TROUBLE, errno, "%s", optarg);
 	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
@@ -1986,11 +1988,11 @@ main (int argc, char **argv)
 	break;
 
       case BINARY_FILES_OPTION:
-	if (strcmp (optarg, "binary") == 0)
+	if (STREQ (optarg, "binary"))
 	  binary_files = BINARY_BINARY_FILES;
-	else if (strcmp (optarg, "text") == 0)
+	else if (STREQ (optarg, "text"))
 	  binary_files = TEXT_BINARY_FILES;
-	else if (strcmp (optarg, "without-match") == 0)
+	else if (STREQ (optarg, "without-match"))
 	  binary_files = WITHOUT_MATCH_BINARY_FILES;
 	else
 	  error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
@@ -2015,7 +2017,7 @@ main (int argc, char **argv)
 	  {
 	    char const *t;
 	    if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
-		&& strcmp (t, "dumb"))
+		&& !STREQ (t, "dumb"))
 	      color_option = 1;
 	    else
 	      color_option = 0;
@@ -2171,7 +2173,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 		  excluded_file_name (excluded_patterns, file))
 		continue;
 	    }
-	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file,
+	  status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
 			      &stats_base);
 	}
 	while ( ++optind < argc);
