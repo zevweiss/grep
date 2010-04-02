@@ -3138,7 +3138,7 @@ dfafree (struct dfa *d)
    'psi|epsilon' is likelier)? */
 
 static char *
-icatalloc (char *old, char *new)
+icatalloc (char const *old, char const *new)
 {
   char *result;
   size_t oldsize, newsize;
@@ -3147,33 +3147,33 @@ icatalloc (char *old, char *new)
   if (old == NULL)
     oldsize = 0;
   else if (newsize == 0)
-    return old;
+    return (char *) old;
   else	oldsize = strlen(old);
   if (old == NULL)
-    result = (char *) malloc(newsize + 1);
+    result = malloc(newsize + 1);
   else
-    result = (char *) realloc((void *) old, oldsize + newsize + 1);
+    result = realloc((void *) old, oldsize + newsize + 1);
   if (result != NULL && new != NULL)
     (void) strcpy(result + oldsize, new);
   return result;
 }
 
 static char *
-icpyalloc (char *string)
+icpyalloc (char const *string)
 {
-  return icatalloc((char *) NULL, string);
+  return icatalloc (NULL, string);
 }
 
 static char *
-istrstr (char *lookin, char *lookfor)
+istrstr (char const *lookin, char const *lookfor)
 {
-  char *cp;
+  char const *cp;
   size_t len;
 
   len = strlen(lookfor);
   for (cp = lookin; *cp != '\0'; ++cp)
     if (strncmp(cp, lookfor, len) == 0)
-      return cp;
+      return (char *) cp;
   return NULL;
 }
 
@@ -3225,7 +3225,7 @@ enlist (char **cpp, char *new, size_t len)
 	cpp[i] = NULL;
       }
   /* Add the new string. */
-  cpp = (char **) realloc((char *) cpp, (i + 2) * sizeof *cpp);
+  cpp = realloc((char *) cpp, (i + 2) * sizeof *cpp);
   if (cpp == NULL)
     return NULL;
   cpp[i] = new;
@@ -3237,7 +3237,7 @@ enlist (char **cpp, char *new, size_t len)
    list of their distinct common substrings. Return NULL if something
    seems wild. */
 static char **
-comsubs (char *left, char *right)
+comsubs (char *left, char const *right)
 {
   char **cpp;
   char *lcp;
@@ -3246,7 +3246,7 @@ comsubs (char *left, char *right)
 
   if (left == NULL || right == NULL)
     return NULL;
-  cpp = (char **) malloc(sizeof *cpp);
+  cpp = malloc(sizeof *cpp);
   if (cpp == NULL)
     return NULL;
   cpp[0] = NULL;
@@ -3297,7 +3297,7 @@ inboth (char **left, char **right)
 
   if (left == NULL || right == NULL)
     return NULL;
-  both = (char **) malloc(sizeof *both);
+  both = malloc(sizeof *both);
   if (both == NULL)
     return NULL;
   both[0] = NULL;
@@ -3352,7 +3352,7 @@ dfamust (struct dfa *d)
 
   result = empty_string;
   exact = 0;
-  musts = (must *) malloc((d->tindex + 1) * sizeof *musts);
+  musts = malloc((d->tindex + 1) * sizeof *musts);
   if (musts == NULL)
     return;
   mp = musts;
@@ -3360,7 +3360,7 @@ dfamust (struct dfa *d)
     mp[i] = must0;
   for (i = 0; i <= d->tindex; ++i)
     {
-      mp[i].in = (char **) malloc(sizeof *mp[i].in);
+      mp[i].in = malloc(sizeof *mp[i].in);
       mp[i].left = malloc(2);
       mp[i].right = malloc(2);
       mp[i].is = malloc(2);
