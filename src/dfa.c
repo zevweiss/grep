@@ -131,7 +131,7 @@ prtok (token t)
 /* Stuff pertaining to charclasses. */
 
 static int
-tstbit (unsigned int b, charclass c)
+tstbit (unsigned int b, charclass const c)
 {
   return c[b / INTBITS] & 1 << b % INTBITS;
 }
@@ -149,7 +149,7 @@ clrbit (unsigned int b, charclass c)
 }
 
 static void
-copyset (charclass src, charclass dst)
+copyset (charclass const src, charclass dst)
 {
   memcpy (dst, src, sizeof (charclass));
 }
@@ -170,7 +170,7 @@ notset (charclass s)
 }
 
 static int
-equal (charclass s1, charclass s2)
+equal (charclass const s1, charclass const s2)
 {
   return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
@@ -180,7 +180,7 @@ static struct dfa *dfa;
 
 /* Find the index of charclass s in dfa->charclasses, or allocate a new charclass. */
 static int
-charclass_index (charclass s)
+charclass_index (charclass const s)
 {
   int i;
 
