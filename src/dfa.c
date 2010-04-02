@@ -2740,7 +2740,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   if (! sbit_init)
     {
-      int i;
+      unsigned int i;
 
       sbit_init = 1;
       for (i = 0; i < NOTCHAR; ++i)
@@ -2760,7 +2760,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 #if MBS_SUPPORT
   if (d->mb_cur_max > 1)
     {
-      int remain_bytes, i;
+      unsigned int i;
+      int remain_bytes;
       buf_begin = (unsigned char *) begin;
       buf_end = (unsigned char *) end;
 
