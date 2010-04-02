@@ -1175,6 +1175,13 @@ addtok_wc (wint_t wc)
   int i;
   memset (&s, 0, sizeof(s));
   cur_mb_len = wcrtomb ((char *) buf, wc, &s);
+
+  /* This is merely stop-gap.  When cur_mb_len is 0 or negative,
+     buf[0] is undefined, yet skipping the addtok_mb call altogether
+     can result in heap corruption.  */
+  if (cur_mb_len <= 0)
+    buf[0] = 0;
+
   addtok_mb(buf[0], cur_mb_len == 1 ? 3 : 1);
   for (i = 1; i < cur_mb_len; i++)
     {
