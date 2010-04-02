@@ -158,7 +158,6 @@ AC_CONFIG_FILES([
   tests/Makefile
   po/Makefile.in
   doc/Makefile
-  vms/Makefile
   gnulib-tests/Makefile
 ])
 AC_OUTPUT

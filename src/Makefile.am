@@ -42,6 +42,4 @@ grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 
-EXTRA_DIST = \
-             dosbuf.c \
-             vms_fab.c vms_fab.h
+EXTRA_DIST = dosbuf.c
