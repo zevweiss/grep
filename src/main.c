@@ -1690,20 +1690,20 @@ parse_grep_colors (void)
 	        if (val)
               *(cap->var) = val;
 	        else
-              error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
-			        "needs a value (\"=...\"); skipped."), p, name);
+              error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+			        "needs a value (\"=...\"); skipped"), p, name);
           }
         else if (val)
-          error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity "
-                "is boolean and cannot take a value (\"=%s\"); "
-                "skipped."), p, name, val);
+          error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+                "is boolean and cannot take a value (\"=%s\"); skipped"),
+		p, name, val);
       }
 	if (cap->fct)
 	  {
 	    const char *err_str = cap->fct();
 
 	    if (err_str)
-	      error(0, 0, _("In GREP_COLORS=\"%s\", the \"%s\" capacity %s."),
+	      error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity %s"),
 		    p, name, err_str);
 	  }
 	if (c == '\0')
@@ -1726,8 +1726,8 @@ parse_grep_colors (void)
       goto ill_formed;
 
  ill_formed:
-  error(0, 0, _("Stopped processing of ill-formed GREP_COLORS=\"%s\" "
-		"at remaining substring \"%s\"."), p, q);
+  error(0, 0, _("stopped processing of ill-formed GREP_COLORS=\"%s\" "
+		"at remaining substring \"%s\""), p, q);
 }
 
 int
