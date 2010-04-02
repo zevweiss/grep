@@ -452,7 +452,7 @@ parse_bracket_exp (void)
     work_mbc = NULL;
 #endif
 
-  memset (ccl, 0, sizeof(ccl));
+  memset (ccl, 0, sizeof ccl);
   FETCH_WC (c, wc, _("unbalanced ["));
   if (c == '^')
     {
@@ -1128,7 +1128,7 @@ addtok_wc (wint_t wc)
   unsigned char buf[MB_LEN_MAX];
   mbstate_t s;
   int i;
-  memset (&s, 0, sizeof(s));
+  memset (&s, 0, sizeof s);
   cur_mb_len = wcrtomb ((char *) buf, wc, &s);
 
   /* This is merely stop-gap.  When cur_mb_len is 0 or negative,
@@ -1342,7 +1342,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   if (MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
-      memset(&mbs, 0, sizeof(mbstate_t));
+      memset(&mbs, 0, sizeof mbs);
     }
 #endif /* MBS_SUPPORT  */
 
@@ -2767,7 +2767,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       /* initialize mblen_buf, and inputwcs.  */
       MALLOC(mblen_buf, unsigned char, end - begin + 2);
       MALLOC(inputwcs, wchar_t, end - begin + 2);
-      memset(&mbs, 0, sizeof(mbstate_t));
+      memset(&mbs, 0, sizeof mbs);
       remain_bytes = 0;
       for (i = 0; i < end - begin + 1; i++)
 	{
