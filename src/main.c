@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include "system.h"
 
+#include "argmatch.h"
 #include "c-ctype.h"
 #include "closeout.h"
 #include "error.h"
@@ -351,13 +352,25 @@ unsigned char eolbyte;
 static char const *filename;
 static int errseen;
 
-/* How to handle directories.  */
-static enum
+enum directories_type
   {
-    READ_DIRECTORIES,
+    READ_DIRECTORIES = 2,
     RECURSE_DIRECTORIES,
     SKIP_DIRECTORIES
-  } directories = READ_DIRECTORIES;
+  };
+
+/* How to handle directories.  */
+static char const *const directories_args[] =
+{
+  "read", "recurse", "skip", NULL
+};
+static enum directories_type const directories_types[] =
+{
+  READ_DIRECTORIES, RECURSE_DIRECTORIES, SKIP_DIRECTORIES
+};
+ARGMATCH_VERIFY (directories_args, directories_types);
+
+static enum directories_type directories = READ_DIRECTORIES;
 
 /* How to handle devices. */
 static enum
@@ -1351,8 +1364,8 @@ grepdir (char const *dir, struct stats const *stats)
   return status;
 }
 
-static void usage (int status) __attribute__ ((noreturn));
-static void
+void usage (int status) __attribute__ ((noreturn));
+void
 usage (int status)
 {
   if (status != 0)
@@ -1863,14 +1876,8 @@ main (int argc, char **argv)
 	break;
 
       case 'd':
-	if (STREQ (optarg, "read"))
-	  directories = READ_DIRECTORIES;
-	else if (STREQ (optarg, "skip"))
-	  directories = SKIP_DIRECTORIES;
-	else if (STREQ (optarg, "recurse"))
-	  directories = RECURSE_DIRECTORIES;
-	else
-	  error (EXIT_TROUBLE, 0, _("unknown directories method"));
+	directories = XARGMATCH ("--directories", optarg,
+				 directories_args, directories_types);
 	break;
 
       case 'e':
