@@ -2572,11 +2572,9 @@ dfastate (int s, struct dfa *d, int trans[])
 
       /* If we are building a searching matcher, throw in the positions
          of state 0 as well. */
-#if MBS_SUPPORT
-      if (d->searchflag && (d->mb_cur_max == 1 || !next_isnt_1st_byte))
-#else
-      if (d->searchflag)
-#endif
+      if (d->searchflag
+          && (! MBS_SUPPORT
+              || (d->mb_cur_max == 1 || !next_isnt_1st_byte)))
         for (j = 0; j < d->states[0].elems.nelem; ++j)
           insert(d->states[0].elems.elems[j], &follows);
 
