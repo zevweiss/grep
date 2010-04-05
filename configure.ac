@@ -128,8 +128,8 @@ if test "$gl_gcc_warnings" = yes; then
   AC_SUBST([GNULIB_WARN_CFLAGS])
 fi
 
-# By default, argmatch should fail calling usage (1).
-AC_DEFINE([ARGMATCH_DIE], [usage (1)],
+# By default, argmatch should fail calling usage (EXIT_FAILURE).
+AC_DEFINE([ARGMATCH_DIE], [usage (EXIT_FAILURE)],
           [Define to the function xargmatch calls on failures.])
 AC_DEFINE([ARGMATCH_DIE_DECL], [void usage (int _e)],
           [Define to the declaration of the xargmatch failure function.])
