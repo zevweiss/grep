@@ -41,9 +41,9 @@ sc_prohibit_jm_in_m4:
 	      1>&2; exit 1; } || :
 
 sc_prohibit_echo_minus_en:
-	@re='\<echo -[en]'						\
-	msg='do not use echo ''-e or echo ''-n; use printf instead'	\
-	  $(_prohibit_regexp)
+	@prohibit='\<echo -[en]'					\
+	halt='do not use echo ''-e or echo ''-n; use printf instead'	\
+	  $(_sc_search_regexp)
 
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
