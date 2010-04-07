@@ -3,7 +3,10 @@
 # too greedily.
 # Derived from https://savannah.gnu.org/bugs/?23814
 : ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ . ../src
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+# Add "." to PATH for the use of get-mb-cur-max.
+path_prepend_ .
 
 locale=ja_JP.EUC-JP
 
@@ -15,7 +18,6 @@ euc_grep () {
   pat=$(make_input "$1")
   LC_ALL=$locale grep "$pat"
 }
-
 
 case $(get-mb-cur-max $locale) in
   2|3) ;;

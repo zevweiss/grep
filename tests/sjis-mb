@@ -4,7 +4,10 @@
 # character, and a suffix of a valid double-byte character
 
 : ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ . ../src
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+# Add "." to PATH for the use of get-mb-cur-max.
+path_prepend_ .
 
 require_timeout_
 
