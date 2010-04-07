@@ -31,7 +31,7 @@
 static kwset_t kwset;
 
 /* DFA compiled regexp. */
-static struct dfa dfa;
+static struct dfa *dfa;
 
 /* The Regex compiled patterns.  */
 static struct patterns
@@ -86,13 +86,14 @@ kwsmusts (void)
   struct dfamust const *dm;
   char const *err;
 
-  if (dfa.musts)
+  dm = dfamusts (dfa);
+  if (dm)
     {
       kwsinit (&kwset);
       /* First, we compile in the substrings known to be exact
 	 matches.  The kwset matcher will return the index
 	 of the matching string that it chooses. */
-      for (dm = dfa.musts; dm; dm = dm->next)
+      for (; dm; dm = dm->next)
 	{
 	  if (!dm->exact)
 	    continue;
@@ -102,7 +103,7 @@ kwsmusts (void)
 	}
       /* Now, we compile the substrings that will require
 	 the use of the regexp matcher.  */
-      for (dm = dfa.musts; dm; dm = dm->next)
+      for (dm = dfamusts (dfa); dm; dm = dm->next)
 	{
 	  if (dm->exact)
 	    continue;
@@ -192,7 +193,8 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   else
     motif = NULL;
 
-  dfacomp (pattern, size, &dfa, 1);
+  dfa = dfaalloc ();
+  dfacomp (pattern, size, dfa, 1);
   kwsmusts ();
 
   free(motif);
@@ -257,13 +259,13 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 #endif
                     goto success;
                 }
-	      if (dfaexec (&dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
+	      if (dfaexec (dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
 		continue;
 	    }
 	  else
 	    {
 	      /* No good fixed strings; start with DFA. */
-	      char const *next_beg = dfaexec (&dfa, beg, (char *) buflim,
+	      char const *next_beg = dfaexec (dfa, beg, (char *) buflim,
 					      0, NULL, &backref);
 	      if (next_beg == NULL)
 		break;
