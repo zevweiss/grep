@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-test "$VERBOSE" = yes && set -x
-
 # Ensure that $SHELL is set to *some* value and exported.
 # This is required for dircolors, which would fail e.g., when
 # invoked via debuild (which removes SHELL from the environment).
@@ -26,7 +24,7 @@ test "x$SHELL" = x && SHELL=/bin/sh
 export SHELL
 
 : ${srcdir=.}
-. "$srcdir/init.sh"
+. "$srcdir/init.sh"; path_prepend_ ../src
 
 expected_failure_status_chroot=125
 expected_failure_status_env=125
@@ -59,7 +57,20 @@ expected_failure_status_egrep=2
 expected_failure_status_fgrep=2
 
 test "$built_programs" \
-  || { echo "$this_test: no programs built!?!" 1>&2; Exit 1; }
+  || fail_ "built_programs not specified!?!"
+
+test "$VERSION" \
+  || fail_ "set envvar VERSION; it is required for a PATH sanity-check"
+
+# Extract version from --version output of the first program
+for i in $built_programs; do
+  v=$(env $i --version | sed -n '1s/.* //p;q')
+  break
+done
+
+# Ensure that it matches $VERSION.
+test "x$v" = "x$VERSION" \
+  || fail_ "--version-\$VERSION mismatch"
 
 for lang in C fr da; do
   for i in $built_programs; do
