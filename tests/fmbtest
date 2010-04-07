@@ -16,9 +16,9 @@ LC_ALL=$cz locale -k LC_CTYPE 2>/dev/null | grep -q charmap.*UTF-8 \
 # If matching is done in single-byte mode, skip this test too
 printf 'é\n' | LC_ALL=$cz grep -Eq '^[é]{2}$'
 case $? in
-  0) skip_test_ this test works only in multibyte mode;;
+  0) skip_ "built without multi-byte support";;
   1) ;;
-  *) framework_failure_ grep exited with unexpected status $? ;;
+  *) fail_ "unexpected exit status: $?";;
 esac
 
 failures=0
