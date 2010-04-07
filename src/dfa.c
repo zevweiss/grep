@@ -644,7 +644,6 @@ static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
 static int cur_mb_len = 1;	/* Length of the multibyte representation of
                                    wctok.  */
-#if MBS_SUPPORT
 /* These variables are used only if (MB_CUR_MAX > 1).  */
 static mbstate_t mbs;		/* Mbstate for mbrlen().  */
 static wchar_t wctok;		/* Wide character representation of the current
@@ -667,7 +666,6 @@ static wchar_t *inputwcs;	/* Wide character representation of input
                                    And inputwcs[i] is the codepoint.  */
 static unsigned char const *buf_begin;	/* reference to begin in dfaexec().  */
 static unsigned char const *buf_end;	/* reference to end in dfaexec().  */
-#endif /* MBS_SUPPORT  */
 
 
 #if MBS_SUPPORT
@@ -781,8 +779,8 @@ parse_bracket_exp (void)
      Bit 3 = includes ranges, char/equiv classes or collation elements.  */
   int colon_warning_state;
 
-#if MBS_SUPPORT
-  wint_t wc, wc1, wc2;
+  wint_t wc;
+  wint_t wc2;
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
@@ -806,7 +804,6 @@ parse_bracket_exp (void)
     }
   else
     work_mbc = NULL;
-#endif
 
   memset (ccl, 0, sizeof ccl);
   FETCH_WC (c, wc, _("unbalanced ["));
@@ -818,6 +815,7 @@ parse_bracket_exp (void)
   else
     invert = 0;
 
+  wint_t wc1 = 0;
   colon_warning_state = (c == ':');
   do
     {
@@ -1045,11 +1043,7 @@ parse_bracket_exp (void)
           work_mbc->chars[work_mbc->nchars++] = wc;
         }
     }
-  while ((
-#if MBS_SUPPORT
-         wc = wc1,
-#endif
-         (c = c1) != ']'));
+  while ((wc = wc1, (c = c1) != ']'));
 
   if (colon_warning_state == 7)
     dfawarn (_("character class syntax is [[:space:]], not [:space:]"));
@@ -2720,7 +2714,6 @@ build_state_zero (struct dfa *d)
   build_state(0, d);
 }
 
-#if MBS_SUPPORT
 /* Multibyte character handling sub-routines for dfaexec.  */
 
 /* Initial state may encounter the byte which is not a single byte character
@@ -3147,6 +3140,8 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   free(follows.elems);
   return s1;
 }
+
+#if MBS_SUPPORT
 
 /* Initialize mblen_buf and inputwcs with data from the next line.  */
 
