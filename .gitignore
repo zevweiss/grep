@@ -10,6 +10,7 @@
 .deps
 /ABOUT-NLS
 /GNUmakefile
+/ID
 /INSTALL
 /aclocal.m4
 /autom4te.cache
@@ -55,3 +56,4 @@ ABOUT-NLS
 ChangeLog
 Makefile
 Makefile.in
+TAGS
