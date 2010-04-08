@@ -8,7 +8,7 @@ index d5968bd..4926676 100644
  size_t
 -regerror (int errcode, const regex_t *_Restrict_ preg,
 +regerror (int errcode, const regex_t *_Restrict_ preg _UNUSED_PARAMETER_,
-          char *_Restrict_ errbuf, size_t errbuf_size)
+ 	  char *_Restrict_ errbuf, size_t errbuf_size)
  #endif
  {
 @@ -1383,7 +1383,7 @@ calc_first (void *extra, bin_tree_t *node)
@@ -28,7 +28,7 @@ index d5968bd..4926676 100644
 +			re_charset_t *mbcset _UNUSED_PARAMETER_,
 +			Idx *coll_sym_alloc _UNUSED_PARAMETER_,
  # endif
-                        const unsigned char *name)
+ 			const unsigned char *name)
  {
 @@ -3323,7 +3324,8 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
 
@@ -37,7 +37,7 @@ index d5968bd..4926676 100644
 -		       re_token_t *token, int token_len, re_dfa_t *dfa,
 +		       re_token_t *token, int token_len,
 +		       re_dfa_t *dfa _UNUSED_PARAMETER_,
-                       reg_syntax_t syntax, bool accept_hyphen)
+ 		       reg_syntax_t syntax, bool accept_hyphen)
  {
  #ifdef RE_ENABLE_I18N
 @@ -3410,8 +3412,9 @@ parse_bracket_symbol (bracket_elem_t *elem, re_string_t *regexp,

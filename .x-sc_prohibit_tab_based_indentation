@@ -1,3 +1,4 @@
 (^|/)ChangeLog[^/]*$
 (^|/)(GNU)?[Mm]akefile[^/]*$
 \.(am|mk)$
+^gl/lib/.*\.c\.diff$
