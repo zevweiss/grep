@@ -25,7 +25,8 @@ EXTRA_DIST =		\
   README		\
   README-alpha		\
   README-boot		\
-  TODO
+  TODO			\
+  cfg.mk
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
