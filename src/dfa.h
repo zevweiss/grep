@@ -98,5 +98,5 @@ extern void dfaerror (const char *) __attribute__ ((noreturn));
 #ifdef GAWK
 /* Returns true if the regex is one where the dfa matcher
    is broken and thus should not be used. */
-extern int dfabroken (struct dfa *);
+extern int dfabroken (struct dfa const *);
 #endif
