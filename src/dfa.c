@@ -264,7 +264,6 @@ typedef struct
 #endif
 } dfa_state;
 
-#if MBS_SUPPORT
 /* A bracket operator.
    e.g. [a-c], [[:alpha:]], etc.  */
 struct mb_char_classes
@@ -283,7 +282,6 @@ struct mb_char_classes
   char **coll_elems;
   int ncoll_elems;		/* Collating elements.  */
 };
-#endif
 
 /* A compiled regular expression. */
 struct dfa
