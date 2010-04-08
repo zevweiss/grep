@@ -256,12 +256,10 @@ typedef struct
   char backref;			/* True if this state matches a \<digit>. */
   unsigned char constraint;	/* Constraint for this state to accept. */
   int first_end;		/* Token value of the first END in elems. */
-#if MBS_SUPPORT
   position_set mbps;           /* Positions which can match multibyte
                                   characters.  e.g. period.
                                   These staff are used only if
                                   MB_CUR_MAX > 1.  */
-#endif
 } dfa_state;
 
 /* A bracket operator.
