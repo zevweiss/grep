@@ -18,6 +18,10 @@
 
 /* Written June, 1988 by Mike Haertel */
 
+#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 6) || __STRICT_ANSI__
+# define __attribute__(x)
+#endif
+
 /* Element of a list of strings, at least one of which is known to
    appear in any R.E. matching the DFA. */
 struct dfamust
