@@ -74,7 +74,7 @@ isdir1 (const char *dir, const char *file)
    Return NULL if DIR cannot be opened or if out of memory. */
 char *
 savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
-	 struct exclude *excluded_patterns, struct exclude *excluded_directory_patterns )
+         struct exclude *excluded_patterns, struct exclude *excluded_directory_patterns )
 {
   DIR *dirp;
   struct dirent *dp;
@@ -102,50 +102,50 @@ savedir (const char *dir, off_t name_size, struct exclude *included_patterns,
     {
       /* Skip "." and ".." (some NFS file systems' directories lack them). */
       if (dp->d_name[0] != '.'
-	  || (dp->d_name[1] != '\0'
-	      && (dp->d_name[1] != '.' || dp->d_name[2] != '\0')))
-	{
-	  size_t namlen = strlen (dp->d_name);
-	  size_t size_needed = (namep - name_space) + namlen + 2;
+          || (dp->d_name[1] != '\0'
+              && (dp->d_name[1] != '.' || dp->d_name[2] != '\0')))
+        {
+          size_t namlen = strlen (dp->d_name);
+          size_t size_needed = (namep - name_space) + namlen + 2;
 
-	  if ((included_patterns || excluded_patterns)
-	      && !isdir1 (dir, dp->d_name))
-	    {
-	      if (included_patterns
-		  && excluded_file_name (included_patterns, dp->d_name))
-		continue;
-	      if (excluded_patterns
-		  && excluded_file_name (excluded_patterns, dp->d_name))
-		continue;
-	    }
+          if ((included_patterns || excluded_patterns)
+              && !isdir1 (dir, dp->d_name))
+            {
+              if (included_patterns
+                  && excluded_file_name (included_patterns, dp->d_name))
+                continue;
+              if (excluded_patterns
+                  && excluded_file_name (excluded_patterns, dp->d_name))
+                continue;
+            }
 
-	  if ( excluded_directory_patterns
-	      && isdir1 (dir, dp->d_name) )
-	    {
-	      if (excluded_directory_patterns
-		  && excluded_file_name (excluded_directory_patterns, dp->d_name))
-		continue;
-	    }
+          if ( excluded_directory_patterns
+              && isdir1 (dir, dp->d_name) )
+            {
+              if (excluded_directory_patterns
+                  && excluded_file_name (excluded_directory_patterns, dp->d_name))
+                continue;
+            }
 
-	  if (size_needed > name_size)
-	    {
-	      char *new_name_space;
+          if (size_needed > name_size)
+            {
+              char *new_name_space;
 
-	      while (size_needed > name_size)
-		name_size += 1024;
+              while (size_needed > name_size)
+                name_size += 1024;
 
-	      new_name_space = realloc (name_space, name_size);
-	      if (new_name_space == NULL)
-		{
-		  closedir (dirp);
-		  goto fail;
-		}
-	      namep = new_name_space + (namep - name_space);
-	      name_space = new_name_space;
-	    }
-	  strcpy (namep, dp->d_name);
-	  namep += namlen + 1;
-	}
+              new_name_space = realloc (name_space, name_size);
+              if (new_name_space == NULL)
+                {
+                  closedir (dirp);
+                  goto fail;
+                }
+              namep = new_name_space + (namep - name_space);
+              name_space = new_name_space;
+            }
+          strcpy (namep, dp->d_name);
+          namep += namlen + 1;
+        }
     }
   *namep = '\0';
   if (CLOSEDIR (dirp))

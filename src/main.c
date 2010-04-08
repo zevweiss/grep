@@ -86,45 +86,45 @@ static const char *group_separator = SEP_STR_GROUP;
 /* The context and logic for choosing default --color screen attributes
    (foreground and background colors, etc.) are the following.
       -- There are eight basic colors available, each with its own
-	 nominal luminosity to the human eye and foreground/background
-	 codes (black [0 %, 30/40], blue [11 %, 34/44], red [30 %, 31/41],
-	 magenta [41 %, 35/45], green [59 %, 32/42], cyan [70 %, 36/46],
-	 yellow [89 %, 33/43], and white [100 %, 37/47]).
+         nominal luminosity to the human eye and foreground/background
+         codes (black [0 %, 30/40], blue [11 %, 34/44], red [30 %, 31/41],
+         magenta [41 %, 35/45], green [59 %, 32/42], cyan [70 %, 36/46],
+         yellow [89 %, 33/43], and white [100 %, 37/47]).
       -- Sometimes, white as a background is actually implemented using
-	 a shade of light gray, so that a foreground white can be visible
-	 on top of it (but most often not).
+         a shade of light gray, so that a foreground white can be visible
+         on top of it (but most often not).
       -- Sometimes, black as a foreground is actually implemented using
-	 a shade of dark gray, so that it can be visible on top of a
-	 background black (but most often not).
+         a shade of dark gray, so that it can be visible on top of a
+         background black (but most often not).
       -- Sometimes, more colors are available, as extensions.
       -- Other attributes can be selected/deselected (bold [1/22],
-	 underline [4/24], standout/inverse [7/27], blink [5/25], and
-	 invisible/hidden [8/28]).  They are sometimes implemented by
-	 using colors instead of what their names imply; e.g., bold is
-	 often achieved by using brighter colors.  In practice, only bold
-	 is really available to us, underline sometimes being mapped by
-	 the terminal to some strange color choice, and standout best
-	 being left for use by downstream programs such as less(1).
+         underline [4/24], standout/inverse [7/27], blink [5/25], and
+         invisible/hidden [8/28]).  They are sometimes implemented by
+         using colors instead of what their names imply; e.g., bold is
+         often achieved by using brighter colors.  In practice, only bold
+         is really available to us, underline sometimes being mapped by
+         the terminal to some strange color choice, and standout best
+         being left for use by downstream programs such as less(1).
       -- We cannot assume that any of the extensions or special features
-	 are available for the purpose of choosing defaults for everyone.
+         are available for the purpose of choosing defaults for everyone.
       -- The most prevalent default terminal backgrounds are pure black
-	 and pure white, and are not necessarily the same shades of
-	 those as if they were selected explicitly with SGR sequences.
-	 Some terminals use dark or light pictures as default background,
-	 but those are covered over by an explicit selection of background
-	 color with an SGR sequence; their users will appreciate their
-	 background pictures not be covered like this, if possible.
+         and pure white, and are not necessarily the same shades of
+         those as if they were selected explicitly with SGR sequences.
+         Some terminals use dark or light pictures as default background,
+         but those are covered over by an explicit selection of background
+         color with an SGR sequence; their users will appreciate their
+         background pictures not be covered like this, if possible.
       -- Some uses of colors attributes is to make some output items
-	 more understated (e.g., context lines); this cannot be achieved
-	 by changing the background color.
+         more understated (e.g., context lines); this cannot be achieved
+         by changing the background color.
       -- For these reasons, the grep color defaults should strive not
-	 to change the background color from its default, unless it's
-	 for a short item that should be highlighted, not understated.
+         to change the background color from its default, unless it's
+         for a short item that should be highlighted, not understated.
       -- The grep foreground color defaults (without an explicitly set
-	 background) should provide enough contrast to be readable on any
-	 terminal with either a black (dark) or white (light) background.
-	 This only leaves red, magenta, green, and cyan (and their bold
-	 counterparts) and possibly bold blue.  */
+         background) should provide enough contrast to be readable on any
+         terminal with either a black (dark) or white (light) background.
+         This only leaves red, magenta, green, and cyan (and their bold
+         counterparts) and possibly bold blue.  */
 /* The color strings used for matched text.
    The user can overwrite them using the deprecated
    environment variable GREP_COLOR or the new GREP_COLORS.  */
@@ -142,54 +142,54 @@ static const char *context_line_color  = "";	/* default color pair */
 /* Select Graphic Rendition (SGR, "\33[...m") strings.  */
 /* Also Erase in Line (EL) to Right ("\33[K") by default.  */
 /*    Why have EL to Right after SGR?
-	 -- The behavior of line-wrapping when at the bottom of the
-	    terminal screen and at the end of the current line is often
-	    such that a new line is introduced, entirely cleared with
-	    the current background color which may be different from the
-	    default one (see the boolean back_color_erase terminfo(5)
-	    capability), thus scrolling the display by one line.
-	    The end of this new line will stay in this background color
-	    even after reverting to the default background color with
-	    "\33[m', unless it is explicitly cleared again with "\33[K"
-	    (which is the behavior the user would instinctively expect
-	    from the whole thing).  There may be some unavoidable
-	    background-color flicker at the end of this new line because
-	    of this (when timing with the monitor's redraw is just right).
-	 -- The behavior of HT (tab, "\t") is usually the same as that of
-	    Cursor Forward Tabulation (CHT) with a default parameter
-	    of 1 ("\33[I"), i.e., it performs pure movement to the next
-	    tab stop, without any clearing of either content or screen
-	    attributes (including background color); try
-	       printf 'asdfqwerzxcv\rASDF\tZXCV\n'
-	    in a bash(1) shell to demonstrate this.  This is not what the
-	    user would instinctively expect of HT (but is ok for CHT).
-	    The instinctive behavior would include clearing the terminal
-	    cells that are skipped over by HT with blank cells in the
-	    current screen attributes, including background color;
-	    the boolean dest_tabs_magic_smso terminfo(5) capability
-	    indicates this saner behavior for HT, but only some rare
-	    terminals have it (although it also indicates a special
-	    glitch with standout mode in the Teleray terminal for which
-	    it was initially introduced).  The remedy is to add "\33K"
-	    after each SGR sequence, be it START (to fix the behavior
-	    of any HT after that before another SGR) or END (to fix the
-	    behavior of an HT in default background color that would
-	    follow a line-wrapping at the bottom of the screen in another
-	    background color, and to complement doing it after START).
-	    Piping grep's output through a pager such as less(1) avoids
-	    any HT problems since the pager performs tab expansion.
+         -- The behavior of line-wrapping when at the bottom of the
+            terminal screen and at the end of the current line is often
+            such that a new line is introduced, entirely cleared with
+            the current background color which may be different from the
+            default one (see the boolean back_color_erase terminfo(5)
+            capability), thus scrolling the display by one line.
+            The end of this new line will stay in this background color
+            even after reverting to the default background color with
+            "\33[m', unless it is explicitly cleared again with "\33[K"
+            (which is the behavior the user would instinctively expect
+            from the whole thing).  There may be some unavoidable
+            background-color flicker at the end of this new line because
+            of this (when timing with the monitor's redraw is just right).
+         -- The behavior of HT (tab, "\t") is usually the same as that of
+            Cursor Forward Tabulation (CHT) with a default parameter
+            of 1 ("\33[I"), i.e., it performs pure movement to the next
+            tab stop, without any clearing of either content or screen
+            attributes (including background color); try
+               printf 'asdfqwerzxcv\rASDF\tZXCV\n'
+            in a bash(1) shell to demonstrate this.  This is not what the
+            user would instinctively expect of HT (but is ok for CHT).
+            The instinctive behavior would include clearing the terminal
+            cells that are skipped over by HT with blank cells in the
+            current screen attributes, including background color;
+            the boolean dest_tabs_magic_smso terminfo(5) capability
+            indicates this saner behavior for HT, but only some rare
+            terminals have it (although it also indicates a special
+            glitch with standout mode in the Teleray terminal for which
+            it was initially introduced).  The remedy is to add "\33K"
+            after each SGR sequence, be it START (to fix the behavior
+            of any HT after that before another SGR) or END (to fix the
+            behavior of an HT in default background color that would
+            follow a line-wrapping at the bottom of the screen in another
+            background color, and to complement doing it after START).
+            Piping grep's output through a pager such as less(1) avoids
+            any HT problems since the pager performs tab expansion.
 
       Generic disadvantages of this remedy are:
-	 -- Some very rare terminals might support SGR but not EL (nobody
-	    will use "grep --color" on a terminal that does not support
-	    SGR in the first place).
-	 -- Having these extra control sequences might somewhat complicate
-	    the task of any program trying to parse "grep --color"
-	    output in order to extract structuring information from it.
+         -- Some very rare terminals might support SGR but not EL (nobody
+            will use "grep --color" on a terminal that does not support
+            SGR in the first place).
+         -- Having these extra control sequences might somewhat complicate
+            the task of any program trying to parse "grep --color"
+            output in order to extract structuring information from it.
       A specific disadvantage to doing it after SGR START is:
-	 -- Even more possible background color flicker (when timing
-	    with the monitor's redraw is just right), even when not at the
-	    bottom of the screen.
+         -- Even more possible background color flicker (when timing
+            with the monitor's redraw is just right), even when not at the
+            bottom of the screen.
       There are no additional disadvantages specific to doing it after
       SGR END.
 
@@ -405,11 +405,11 @@ context_length_arg (char const *str, int *out)
 {
   uintmax_t value;
   if (! (xstrtoumax (str, 0, 10, &value, "") == LONGINT_OK
-	 && 0 <= (*out = value)
-	 && *out == value))
+         && 0 <= (*out = value)
+         && *out == value))
     {
       error (EXIT_TROUBLE, 0, "%s: %s\n", str,
-	     _("invalid context length argument"));
+             _("invalid context length argument"));
     }
 }
 
@@ -427,8 +427,8 @@ static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
 static off_t bufoffset;		/* Read offset; defined on regular files.  */
 static off_t after_last_match;	/* Pointer after last matching line that
-				   would have been output if we were
-				   outputting characters. */
+                                   would have been output if we were
+                                   outputting characters. */
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
@@ -446,7 +446,7 @@ reset (int fd, char const *file, struct stats *stats)
     {
       pagesize = getpagesize ();
       if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
-	abort ();
+        abort ();
       bufalloc = ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + 1;
       buffer = xmalloc (bufalloc);
     }
@@ -458,16 +458,16 @@ reset (int fd, char const *file, struct stats *stats)
   if (S_ISREG (stats->stat.st_mode))
     {
       if (file)
-	bufoffset = 0;
+        bufoffset = 0;
       else
-	{
-	  bufoffset = lseek (fd, 0, SEEK_CUR);
-	  if (bufoffset < 0)
-	    {
-	      error (0, errno, _("lseek failed"));
-	      return 0;
-	    }
-	}
+        {
+          bufoffset = lseek (fd, 0, SEEK_CUR);
+          if (bufoffset < 0)
+            {
+              error (0, errno, _("lseek failed"));
+              return 0;
+            }
+        }
     }
   return 1;
 }
@@ -502,27 +502,27 @@ fillbuf (size_t save, struct stats const *stats)
 
       /* Grow newsize until it is at least as great as minsize.  */
       for (newsize = bufalloc - pagesize - 1; newsize < minsize; newsize *= 2)
-	if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
-	  xalloc_die ();
+        if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
+          xalloc_die ();
 
       /* Try not to allocate more memory than the file size indicates,
-	 as that might cause unnecessary memory exhaustion if the file
-	 is large.  However, do not use the original file size as a
-	 heuristic if we've already read past the file end, as most
-	 likely the file is growing.  */
+         as that might cause unnecessary memory exhaustion if the file
+         is large.  However, do not use the original file size as a
+         heuristic if we've already read past the file end, as most
+         likely the file is growing.  */
       if (S_ISREG (stats->stat.st_mode))
-	{
-	  off_t to_be_read = stats->stat.st_size - bufoffset;
-	  off_t maxsize_off = save + to_be_read;
-	  if (0 <= to_be_read && to_be_read <= maxsize_off
-	      && maxsize_off == (size_t) maxsize_off
-	      && minsize <= (size_t) maxsize_off
-	      && (size_t) maxsize_off < newsize)
-	    newsize = maxsize_off;
-	}
+        {
+          off_t to_be_read = stats->stat.st_size - bufoffset;
+          off_t maxsize_off = save + to_be_read;
+          if (0 <= to_be_read && to_be_read <= maxsize_off
+              && maxsize_off == (size_t) maxsize_off
+              && minsize <= (size_t) maxsize_off
+              && (size_t) maxsize_off < newsize)
+            newsize = maxsize_off;
+        }
 
       /* Add enough room so that the buffer is aligned and has room
-	 for byte sentinels fore and aft.  */
+         for byte sentinels fore and aft.  */
       newalloc = newsize + pagesize + 1;
 
       newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
@@ -531,10 +531,10 @@ fillbuf (size_t save, struct stats const *stats)
       memmove (bufbeg, buffer + saved_offset, save);
       bufbeg[-1] = eolbyte;
       if (newbuf != buffer)
-	{
-	  free (buffer);
-	  buffer = newbuf;
-	}
+        {
+          free (buffer);
+          buffer = newbuf;
+        }
     }
 
   readsize = buffer + bufalloc - readbuf;
@@ -544,12 +544,12 @@ fillbuf (size_t save, struct stats const *stats)
     {
       ssize_t bytesread;
       while ((bytesread = read (bufdesc, readbuf, readsize)) < 0
-	     && errno == EINTR)
-	continue;
+             && errno == EINTR)
+        continue;
       if (bytesread < 0)
-	cc = 0;
+        cc = 0;
       else
-	fillsize = bytesread;
+        fillsize = bytesread;
     }
 
   bufoffset += fillsize;
@@ -581,9 +581,9 @@ static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
 static off_t max_count;		/* Stop after outputting this many
-				   lines from an input file.  */
+                                   lines from an input file.  */
 static int line_buffered;       /* If nonzero, use line buffering, i.e.
-				   fflush everyline out.  */
+                                   fflush everyline out.  */
 static char *label = NULL;      /* Fake filename for stdin */
 
 
@@ -591,12 +591,12 @@ static char *label = NULL;      /* Fake filename for stdin */
 static uintmax_t totalcc;	/* Total character count before bufbeg. */
 static char const *lastnl;	/* Pointer after last newline counted. */
 static char const *lastout;	/* Pointer after last character output;
-				   NULL if no character has been output
-				   or if it's conceptually before bufbeg. */
+                                   NULL if no character has been output
+                                   or if it's conceptually before bufbeg. */
 static uintmax_t totalnl;	/* Total newline count before lastnl. */
 static off_t outleft;		/* Maximum number of lines to be output.  */
 static int pending;		/* Pending lines of output.
-				   Always kept 0 if out_quiet is true.  */
+                                   Always kept 0 if out_quiet is true.  */
 static int done_on_match;	/* Stop scanning file on first match.  */
 static int exit_on_match;	/* Exit on first match.  */
 
@@ -624,7 +624,7 @@ nlscan (char const *lim)
     {
       beg = memchr (beg, eolbyte, lim - beg);
       if (!beg)
-	break;
+        break;
       newlines++;
     }
   totalnl = add_count (totalnl, newlines);
@@ -686,21 +686,21 @@ print_line_head (char const *beg, char const *lim, int sep)
     {
       print_filename();
       if (filename_mask)
-	pending_sep = 1;
+        pending_sep = 1;
       else
-	fputc(0, stdout);
+        fputc(0, stdout);
     }
 
   if (out_line)
     {
       if (lastnl < lim)
-	{
-	  nlscan (beg);
-	  totalnl = add_count (totalnl, 1);
-	  lastnl = lim;
-	}
+        {
+          nlscan (beg);
+          totalnl = add_count (totalnl, 1);
+          lastnl = lim;
+        }
       if (pending_sep)
-	print_sep(sep);
+        print_sep(sep);
       print_offset (totalnl, 4, line_num_color);
       pending_sep = 1;
     }
@@ -712,7 +712,7 @@ print_line_head (char const *beg, char const *lim, int sep)
       pos = dossified_pos (pos);
 #endif
       if (pending_sep)
-	print_sep(sep);
+        print_sep(sep);
       print_offset (pos, 6, byte_num_color);
       pending_sep = 1;
     }
@@ -720,11 +720,11 @@ print_line_head (char const *beg, char const *lim, int sep)
   if (pending_sep)
     {
       /* This assumes sep is one column wide.
-	 Try doing this any other way with Unicode
-	 (and its combining and wide characters)
-	 filenames and you're wasting your efforts.  */
+         Try doing this any other way with Unicode
+         (and its combining and wide characters)
+         filenames and you're wasting your efforts.  */
       if (align_tabs)
-	fputs("\t\b", stdout);
+        fputs("\t\b", stdout);
 
       print_sep(sep);
     }
@@ -732,7 +732,7 @@ print_line_head (char const *beg, char const *lim, int sep)
 
 static const char *
 print_line_middle (const char *beg, const char *lim,
-		   const char *line_color, const char *match_color)
+                   const char *line_color, const char *match_color)
 {
   size_t match_size;
   size_t match_offset;
@@ -740,48 +740,48 @@ print_line_middle (const char *beg, const char *lim,
   const char *mid = NULL;
 
   while (cur < lim
-	 && ((match_offset = execute(beg, lim - beg, &match_size,
-				     beg + (cur - beg))) != (size_t) -1))
+         && ((match_offset = execute(beg, lim - beg, &match_size,
+                                     beg + (cur - beg))) != (size_t) -1))
     {
       char const *b = beg + match_offset;
 
       /* Avoid matching the empty line at the end of the buffer. */
       if (b == lim)
-	break;
+        break;
 
       /* Avoid hanging on grep --color "" foo */
       if (match_size == 0)
-	{
-	  /* Make minimal progress; there may be further non-empty matches.  */
-	  /* XXX - Could really advance by one whole multi-octet character.  */
-	  match_size = 1;
-	  if (!mid)
-	    mid = cur;
-	}
+        {
+          /* Make minimal progress; there may be further non-empty matches.  */
+          /* XXX - Could really advance by one whole multi-octet character.  */
+          match_size = 1;
+          if (!mid)
+            mid = cur;
+        }
       else
-	{
-	  /* This function is called on a matching line only,
-	     but is it selected or rejected/context?  */
-	  if (only_matching)
-	    print_line_head(b, lim, out_invert ? SEP_CHAR_REJECTED
-					       : SEP_CHAR_SELECTED);
-	  else
-	    {
-	      PR_SGR_START(line_color);
-	      if (mid)
-		{
-		  cur = mid;
-		  mid = NULL;
-		}
-	      fwrite (cur, sizeof (char), b - cur, stdout);
-	    }
+        {
+          /* This function is called on a matching line only,
+             but is it selected or rejected/context?  */
+          if (only_matching)
+            print_line_head(b, lim, out_invert ? SEP_CHAR_REJECTED
+                                               : SEP_CHAR_SELECTED);
+          else
+            {
+              PR_SGR_START(line_color);
+              if (mid)
+                {
+                  cur = mid;
+                  mid = NULL;
+                }
+              fwrite (cur, sizeof (char), b - cur, stdout);
+            }
 
-	  PR_SGR_START_IF(match_color);
-	  fwrite (b, sizeof (char), match_size, stdout);
-	  PR_SGR_END_IF(match_color);
-	  if (only_matching)
-	    fputs("\n", stdout);
-	}
+          PR_SGR_START_IF(match_color);
+          fwrite (b, sizeof (char), match_size, stdout);
+          PR_SGR_END_IF(match_color);
+          if (only_matching)
+            fputs("\n", stdout);
+        }
       cur = b + match_size;
     }
 
@@ -829,10 +829,10 @@ prline (char const *beg, char const *lim, int sep)
   if (color_option)
     {
       line_color  = (  (sep == SEP_CHAR_SELECTED)
-		     ^ (out_invert && (color_option < 0)))
-		  ? selected_line_color  : context_line_color;
+                     ^ (out_invert && (color_option < 0)))
+                  ? selected_line_color  : context_line_color;
       match_color = (sep == SEP_CHAR_SELECTED)
-		  ? selected_match_color : context_match_color;
+                  ? selected_match_color : context_match_color;
     }
   else
     line_color = match_color = NULL; /* Shouldn't be used.  */
@@ -842,11 +842,11 @@ prline (char const *beg, char const *lim, int sep)
     {
       /* We already know that non-matching lines have no match (to colorize).  */
       if (matching && (only_matching || *match_color))
-	beg = print_line_middle(beg, lim, line_color, match_color);
+        beg = print_line_middle(beg, lim, line_color, match_color);
 
       /* FIXME: this test may be removable.  */
       if (!only_matching && *line_color)
-	beg = print_line_tail(beg, lim, line_color);
+        beg = print_line_tail(beg, lim, line_color);
     }
 
   if (!only_matching && lim > beg)
@@ -874,12 +874,12 @@ prpending (char const *lim)
       size_t match_size;
       --pending;
       if (outleft
-	  || ((execute(lastout, nl + 1 - lastout,
-		       &match_size, NULL) == (size_t) -1)
-	      == !out_invert))
-	prline (lastout, nl + 1, SEP_CHAR_REJECTED);
+          || ((execute(lastout, nl + 1 - lastout,
+                       &match_size, NULL) == (size_t) -1)
+              == !out_invert))
+        prline (lastout, nl + 1, SEP_CHAR_REJECTED);
       else
-	pending = 0;
+        pending = 0;
     }
 }
 
@@ -904,41 +904,41 @@ prtext (char const *beg, char const *lim, int *nlinesp)
 
       bp = lastout ? lastout : bufbeg;
       for (i = 0; i < out_before; ++i)
-	if (p > bp)
-	  do
-	    --p;
-	  while (p[-1] != eol);
+        if (p > bp)
+          do
+            --p;
+          while (p[-1] != eol);
 
       /* We print the SEP_STR_GROUP separator only if our output is
-	 discontiguous from the last output in the file. */
+         discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout && group_separator)
-	{
-	  PR_SGR_START_IF(sep_color);
-	  fputs (group_separator, stdout);
-	  PR_SGR_END_IF(sep_color);
-	  fputc('\n', stdout);
-	}
+        {
+          PR_SGR_START_IF(sep_color);
+          fputs (group_separator, stdout);
+          PR_SGR_END_IF(sep_color);
+          fputc('\n', stdout);
+        }
 
       while (p < beg)
-	{
-	  char const *nl = memchr (p, eol, beg - p);
-	  nl++;
-	  prline (p, nl, SEP_CHAR_REJECTED);
-	  p = nl;
-	}
+        {
+          char const *nl = memchr (p, eol, beg - p);
+          nl++;
+          prline (p, nl, SEP_CHAR_REJECTED);
+          p = nl;
+        }
     }
 
   if (nlinesp)
     {
       /* Caller wants a line count. */
       for (n = 0; p < lim && n < outleft; n++)
-	{
-	  char const *nl = memchr (p, eol, lim - p);
-	  nl++;
-	  if (!out_quiet)
-	    prline (p, nl, SEP_CHAR_SELECTED);
-	  p = nl;
-	}
+        {
+          char const *nl = memchr (p, eol, lim - p);
+          nl++;
+          if (!out_quiet)
+            prline (p, nl, SEP_CHAR_SELECTED);
+          p = nl;
+        }
       *nlinesp = n;
 
       /* relying on it that this function is never called when outleft = 0.  */
@@ -987,7 +987,7 @@ do_execute (char const *buf, size_t size, size_t *match_size, char const *start_
 
       result = execute (line_buf, line_next - line_buf, match_size, start_ptr);
       if (result != (size_t) -1)
-	return (line_buf - buf) + result;
+        return (line_buf - buf) + result;
     }
 
   return (size_t) -1;
@@ -1007,34 +1007,34 @@ grepbuf (char const *beg, char const *lim)
   nlines = 0;
   p = beg;
   while ((match_offset = do_execute(p, lim - p, &match_size,
-				    NULL)) != (size_t) -1)
+                                    NULL)) != (size_t) -1)
     {
       char const *b = p + match_offset;
       char const *endp = b + match_size;
       /* Avoid matching the empty line at the end of the buffer. */
       if (b == lim)
-	break;
+        break;
       if (!out_invert)
-	{
-	  prtext (b, endp, (int *) 0);
-	  nlines++;
+        {
+          prtext (b, endp, (int *) 0);
+          nlines++;
           outleft--;
-	  if (!outleft || done_on_match)
-	    {
-	      if (exit_on_match)
-		exit (EXIT_SUCCESS);
-	      after_last_match = bufoffset - (buflim - endp);
-	      return nlines;
-	    }
-	}
+          if (!outleft || done_on_match)
+            {
+              if (exit_on_match)
+                exit (EXIT_SUCCESS);
+              after_last_match = bufoffset - (buflim - endp);
+              return nlines;
+            }
+        }
       else if (p < b)
-	{
-	  prtext (p, b, &n);
-	  nlines += n;
+        {
+          prtext (p, b, &n);
+          nlines += n;
           outleft -= n;
-	  if (!outleft)
-	    return nlines;
-	}
+          if (!outleft)
+            return nlines;
+        }
       p = endp;
     }
   if (out_invert && p < lim)
@@ -1067,9 +1067,9 @@ grep (int fd, char const *file, struct stats *stats)
       && S_ISDIR (stats->stat.st_mode))
     {
       /* Close fd now, so that we don't open a lot of file descriptors
-	 when we recurse deeply.  */
+         when we recurse deeply.  */
       if (close (fd) != 0)
-	error (0, errno, "%s", file);
+        error (0, errno, "%s", file);
       return grepdir (file, stats) - 2;
     }
 
@@ -1087,13 +1087,13 @@ grep (int fd, char const *file, struct stats *stats)
   if (! fillbuf (save, stats))
     {
       if (! is_EISDIR (errno, file))
-	suppressible_error (filename, errno);
+        suppressible_error (filename, errno);
       return 0;
     }
 
   not_text = (((binary_files == BINARY_BINARY_FILES && !out_quiet)
-	       || binary_files == WITHOUT_MATCH_BINARY_FILES)
-	      && memchr (bufbeg, eol ? '\0' : '\200', buflim - bufbeg));
+               || binary_files == WITHOUT_MATCH_BINARY_FILES)
+              && memchr (bufbeg, eol ? '\0' : '\200', buflim - bufbeg));
   if (not_text && binary_files == WITHOUT_MATCH_BINARY_FILES)
     return 0;
   done_on_match += not_text;
@@ -1103,71 +1103,71 @@ grep (int fd, char const *file, struct stats *stats)
     {
       lastnl = bufbeg;
       if (lastout)
-	lastout = bufbeg;
+        lastout = bufbeg;
 
       beg = bufbeg + save;
 
       /* no more data to scan (eof) except for maybe a residue -> break */
       if (beg == buflim)
-	break;
+        break;
 
       /* Determine new residue (the length of an incomplete line at the end of
          the buffer, 0 means there is no incomplete last line).  */
       oldc = beg[-1];
       beg[-1] = eol;
       for (lim = buflim; lim[-1] != eol; lim--)
-	continue;
+        continue;
       beg[-1] = oldc;
       if (lim == beg)
-	lim = beg - residue;
+        lim = beg - residue;
       beg -= residue;
       residue = buflim - lim;
 
       if (beg < lim)
-	{
-	  if (outleft)
-	    nlines += grepbuf (beg, lim);
-	  if (pending)
-	    prpending (lim);
-	  if((!outleft && !pending) || (nlines && done_on_match && !out_invert))
-	    goto finish_grep;
-	}
+        {
+          if (outleft)
+            nlines += grepbuf (beg, lim);
+          if (pending)
+            prpending (lim);
+          if((!outleft && !pending) || (nlines && done_on_match && !out_invert))
+            goto finish_grep;
+        }
 
       /* The last OUT_BEFORE lines at the end of the buffer will be needed as
-	 leading context if there is a matching line at the begin of the
-	 next data. Make beg point to their begin.  */
+         leading context if there is a matching line at the begin of the
+         next data. Make beg point to their begin.  */
       i = 0;
       beg = lim;
       while (i < out_before && beg > bufbeg && beg != lastout)
-	{
-	  ++i;
-	  do
-	    --beg;
-	  while (beg[-1] != eol);
-	}
+        {
+          ++i;
+          do
+            --beg;
+          while (beg[-1] != eol);
+        }
 
       /* detect if leading context is discontinuous from last printed line.  */
       if (beg != lastout)
-	lastout = 0;
+        lastout = 0;
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
       if (out_byte)
-	totalcc = add_count (totalcc, buflim - bufbeg - save);
+        totalcc = add_count (totalcc, buflim - bufbeg - save);
       if (out_line)
-	nlscan (beg);
+        nlscan (beg);
       if (! fillbuf (save, stats))
-	{
-	  if (! is_EISDIR (errno, file))
-	    suppressible_error (filename, errno);
-	  goto finish_grep;
-	}
+        {
+          if (! is_EISDIR (errno, file))
+            suppressible_error (filename, errno);
+          goto finish_grep;
+        }
     }
   if (residue)
     {
       *buflim++ = eol;
       if (outleft)
-	nlines += grepbuf (bufbeg + save - residue, buflim);
+        nlines += grepbuf (bufbeg + save - residue, buflim);
       if (pending)
         prpending (buflim);
     }
@@ -1202,49 +1202,49 @@ grepfile (char const *file, struct stats *stats)
       if (directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
         return 1;
       if (devices == SKIP_DEVICES && (S_ISCHR (stats->stat.st_mode)
-				      || S_ISBLK (stats->stat.st_mode)
-				      || S_ISSOCK (stats->stat.st_mode)
-				      || S_ISFIFO (stats->stat.st_mode)))
+                                      || S_ISBLK (stats->stat.st_mode)
+                                      || S_ISSOCK (stats->stat.st_mode)
+                                      || S_ISFIFO (stats->stat.st_mode)))
         return 1;
       while ((desc = open (file, O_RDONLY)) < 0 && errno == EINTR)
-	continue;
+        continue;
 
       if (desc < 0)
-	{
-	  int e = errno;
+        {
+          int e = errno;
 
-	  if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
-	    {
-	      if (stat (file, &stats->stat) != 0)
-		{
-		  error (0, errno, "%s", file);
-		  return 1;
-		}
+          if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
+            {
+              if (stat (file, &stats->stat) != 0)
+                {
+                  error (0, errno, "%s", file);
+                  return 1;
+                }
 
-	      return grepdir (file, stats);
-	    }
+              return grepdir (file, stats);
+            }
 
-	  if (!suppress_errors)
-	    {
-	      if (directories == SKIP_DIRECTORIES)
-		switch (e)
-		  {
+          if (!suppress_errors)
+            {
+              if (directories == SKIP_DIRECTORIES)
+                switch (e)
+                  {
 #if defined EISDIR
-		  case EISDIR:
-		    return 1;
+                  case EISDIR:
+                    return 1;
 #endif
-		  case EACCES:
-		    /* When skipping directories, don't worry about
-		       directories that can't be opened.  */
-		    if (isdir (file))
-		      return 1;
-		    break;
-		  }
-	    }
+                  case EACCES:
+                    /* When skipping directories, don't worry about
+                       directories that can't be opened.  */
+                    if (isdir (file))
+                      return 1;
+                    break;
+                  }
+            }
 
-	  suppressible_error (file, e);
-	  return 1;
-	}
+          suppressible_error (file, e);
+          return 1;
+        }
 
       filename = file;
     }
@@ -1262,40 +1262,40 @@ grepfile (char const *file, struct stats *stats)
   else
     {
       if (count_matches)
-	{
-	  if (out_file)
-	    {
-	      print_filename();
-	      if (filename_mask)
-		print_sep(SEP_CHAR_SELECTED);
-	      else
-		fputc(0, stdout);
-	    }
-	  printf ("%d\n", count);
-	}
+        {
+          if (out_file)
+            {
+              print_filename();
+              if (filename_mask)
+                print_sep(SEP_CHAR_SELECTED);
+              else
+                fputc(0, stdout);
+            }
+          printf ("%d\n", count);
+        }
 
       status = !count;
       if (list_files == 1 - 2 * status)
-	{
-	  print_filename();
-	  fputc('\n' & filename_mask, stdout);
-	}
+        {
+          print_filename();
+          fputc('\n' & filename_mask, stdout);
+        }
 
       if (! file)
-	{
-	  off_t required_offset = outleft ? bufoffset : after_last_match;
-	  if (required_offset != bufoffset
-	      && lseek (desc, required_offset, SEEK_SET) < 0
-	      && S_ISREG (stats->stat.st_mode))
-	    error (0, errno, "%s", filename);
-	}
+        {
+          off_t required_offset = outleft ? bufoffset : after_last_match;
+          if (required_offset != bufoffset
+              && lseek (desc, required_offset, SEEK_SET) < 0
+              && S_ISREG (stats->stat.st_mode))
+            error (0, errno, "%s", filename);
+        }
       else
-	while (close (desc) != 0)
-	  if (errno != EINTR)
-	    {
-	      error (0, errno, "%s", file);
-	      break;
-	    }
+        while (close (desc) != 0)
+          if (errno != EINTR)
+            {
+              error (0, errno, "%s", file);
+              break;
+            }
     }
 
   return status;
@@ -1318,44 +1318,44 @@ grepdir (char const *dir, struct stats const *stats)
   if (stats->stat.st_ino)
     for (ancestor = stats;  (ancestor = ancestor->parent) != 0;  )
       if (ancestor->stat.st_ino == stats->stat.st_ino
-	  && ancestor->stat.st_dev == stats->stat.st_dev)
-	{
-	  if (!suppress_errors)
-	    error (0, 0, _("warning: %s: %s\n"), dir,
-		   _("recursive directory loop"));
-	  return 1;
-	}
+          && ancestor->stat.st_dev == stats->stat.st_dev)
+        {
+          if (!suppress_errors)
+            error (0, 0, _("warning: %s: %s\n"), dir,
+                   _("recursive directory loop"));
+          return 1;
+        }
 
   name_space = savedir (dir, stats->stat.st_size, included_patterns,
-			excluded_patterns, excluded_directory_patterns);
+                        excluded_patterns, excluded_directory_patterns);
 
   if (! name_space)
     {
       if (errno)
-	suppressible_error (dir, errno);
+        suppressible_error (dir, errno);
       else
-	xalloc_die ();
+        xalloc_die ();
     }
   else
     {
       size_t dirlen = strlen (dir);
       int needs_slash = ! (dirlen == FILE_SYSTEM_PREFIX_LEN (dir)
-			   || ISSLASH (dir[dirlen - 1]));
+                           || ISSLASH (dir[dirlen - 1]));
       char *file = NULL;
       char const *namep = name_space;
       struct stats child;
       child.parent = stats;
       out_file += !no_filenames;
       while (*namep)
-	{
-	  size_t namelen = strlen (namep);
-	  file = xrealloc (file, dirlen + 1 + namelen + 1);
-	  strcpy (file, dir);
-	  file[dirlen] = '/';
-	  strcpy (file + dirlen + needs_slash, namep);
-	  namep += namelen + 1;
-	  status &= grepfile (file, &child);
-	}
+        {
+          size_t namelen = strlen (namep);
+          file = xrealloc (file, dirlen + 1 + namelen + 1);
+          strcpy (file, dir);
+          file[dirlen] = '/';
+          strcpy (file + dirlen + needs_slash, namep);
+          namep += namelen + 1;
+          status &= grepfile (file, &child);
+        }
       out_file -= !no_filenames;
       free (file);
       free (name_space);
@@ -1371,9 +1371,9 @@ usage (int status)
   if (status != 0)
     {
       fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
-	       program_name);
+               program_name);
       fprintf (stderr, _("Try `%s --help' for more information.\n"),
-	       program_name);
+               program_name);
     }
   else
     {
@@ -1489,7 +1489,7 @@ setmatcher (char const *m)
       compile = matchers[0].compile;
       execute = matchers[0].execute;
       if (!matchers[1].name)
-	matcher = matchers[0].name;
+        matcher = matchers[0].name;
     }
 
   else if (matcher)
@@ -1539,15 +1539,15 @@ set_limits(void)
       /* Approximate the amount regex.c needs, plus some more.  */
       newlim = re_max_failures * 2 * 20 * sizeof (char *);
       if (newlim > rlim.rlim_max)
-	{
-	  newlim = rlim.rlim_max;
-	  re_max_failures = newlim / (2 * 20 * sizeof (char *));
-	}
+        {
+          newlim = rlim.rlim_max;
+          re_max_failures = newlim / (2 * 20 * sizeof (char *));
+        }
       if (rlim.rlim_cur < newlim)
-	{
-	  rlim.rlim_cur = newlim;
-	  setrlimit (RLIMIT_STACK, &rlim);
-	}
+        {
+          rlim.rlim_cur = newlim;
+          setrlimit (RLIMIT_STACK, &rlim);
+        }
     }
 #endif
 }
@@ -1567,16 +1567,16 @@ prepend_args (char const *options, char *buf, char **argv)
   for (;;)
     {
       while (c_isspace ((unsigned char) *o))
-	o++;
+        o++;
       if (!*o)
-	return n;
+        return n;
       if (argv)
-	argv[n] = b;
+        argv[n] = b;
       n++;
 
       do
-	if ((*b++ = *o++) == '\\' && *o)
-	  b[-1] = *o++;
+        if ((*b++ = *o++) == '\\' && *o)
+          b[-1] = *o++;
       while (*o && ! c_isspace ((unsigned char) *o));
 
       *b++ = '\0';
@@ -1601,7 +1601,7 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
       *pp++ = *argv++;
       pp += prepend_args (options, buf, pp);
       while ((*pp++ = *argv++))
-	continue;
+        continue;
     }
 }
 
@@ -1621,7 +1621,7 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
   this_digit_optind = optind;
   while (opt = getopt_long (argc, (char **) argv, short_options, long_options,
                             NULL),
-	 '0' <= opt && opt <= '9')
+         '0' <= opt && opt <= '9')
     {
       if (prev_digit_optind != this_digit_optind || !was_digit)
         {
@@ -1636,14 +1636,14 @@ get_nondigit_option (int argc, char *const *argv, int *default_context)
         }
 
       if (p == buf + sizeof buf - 4)
-	{
-	  /* Too many digits.  Append "..." to make context_length_arg
-	     complain about "X...", where X contains the digits seen
-	     so far.  */
-	  strcpy (p, "...");
-	  p += 3;
-	  break;
-	}
+        {
+          /* Too many digits.  Append "..." to make context_length_arg
+             complain about "X...", where X contains the digits seen
+             so far.  */
+          strcpy (p, "...");
+          p += 3;
+          break;
+        }
       *p++ = opt;
 
       was_digit = 1;
@@ -1687,50 +1687,50 @@ parse_grep_colors (void)
   for (;;)
     if (*q == ':' || *q == '\0')
       {
-	char c = *q;
-	struct color_cap *cap;
+        char c = *q;
+        struct color_cap *cap;
 
-	*q++ = '\0'; /* Terminate name or val.  */
-	/* Empty name without val (empty cap)
-	 * won't match and will be ignored.  */
-	for (cap = color_dict; cap->name; cap++)
-	  if (STREQ (cap->name, name))
-	    break;
-	/* If name unknown, go on for forward compatibility.  */
-	if (cap->name)
-	  {
-	    if (cap->var)
-	      {
-	        if (val)
+        *q++ = '\0'; /* Terminate name or val.  */
+        /* Empty name without val (empty cap)
+         * won't match and will be ignored.  */
+        for (cap = color_dict; cap->name; cap++)
+          if (STREQ (cap->name, name))
+            break;
+        /* If name unknown, go on for forward compatibility.  */
+        if (cap->name)
+          {
+            if (cap->var)
+              {
+                if (val)
               *(cap->var) = val;
-	        else
+                else
               error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
-			        "needs a value (\"=...\"); skipped"), p, name);
+                                "needs a value (\"=...\"); skipped"), p, name);
           }
         else if (val)
           error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
                 "is boolean and cannot take a value (\"=%s\"); skipped"),
-		p, name, val);
+                p, name, val);
       }
-	if (cap->fct)
-	  {
-	    const char *err_str = cap->fct();
+        if (cap->fct)
+          {
+            const char *err_str = cap->fct();
 
-	    if (err_str)
-	      error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity %s"),
-		    p, name, err_str);
-	  }
-	if (c == '\0')
-	  return;
-	name = q;
-	val = NULL;
+            if (err_str)
+              error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity %s"),
+                    p, name, err_str);
+          }
+        if (c == '\0')
+          return;
+        name = q;
+        val = NULL;
       }
     else if (*q == '=')
       {
-	if (q == name || val)
-	  goto ill_formed;
-	*q++ = '\0'; /* Terminate name.  */
-	val = q; /* Can be the empty string.  */
+        if (q == name || val)
+          goto ill_formed;
+        *q++ = '\0'; /* Terminate name.  */
+        val = q; /* Can be the empty string.  */
       }
     else if (val == NULL)
       q++; /* Accumulate name.  */
@@ -1741,7 +1741,7 @@ parse_grep_colors (void)
 
  ill_formed:
   error(0, 0, _("stopped processing of ill-formed GREP_COLORS=\"%s\" "
-		"at remaining substring \"%s\""), p, q);
+                "at remaining substring \"%s\""), p, q);
 }
 
 int
@@ -1792,216 +1792,216 @@ main (int argc, char **argv)
     switch (opt)
       {
       case 'A':
-	context_length_arg (optarg, &out_after);
-	break;
+        context_length_arg (optarg, &out_after);
+        break;
 
       case 'B':
-	context_length_arg (optarg, &out_before);
-	break;
+        context_length_arg (optarg, &out_before);
+        break;
 
       case 'C':
-	/* Set output match context, but let any explicit leading or
-	   trailing amount specified with -A or -B stand. */
-	context_length_arg (optarg, &default_context);
-	break;
+        /* Set output match context, but let any explicit leading or
+           trailing amount specified with -A or -B stand. */
+        context_length_arg (optarg, &default_context);
+        break;
 
       case 'D':
-	if (STREQ (optarg, "read"))
-	  devices = READ_DEVICES;
-	else if (STREQ (optarg, "skip"))
-	  devices = SKIP_DEVICES;
-	else
-	  error (EXIT_TROUBLE, 0, _("unknown devices method"));
-	break;
+        if (STREQ (optarg, "read"))
+          devices = READ_DEVICES;
+        else if (STREQ (optarg, "skip"))
+          devices = SKIP_DEVICES;
+        else
+          error (EXIT_TROUBLE, 0, _("unknown devices method"));
+        break;
 
       case 'E':
-	setmatcher ("egrep");
-	break;
+        setmatcher ("egrep");
+        break;
 
       case 'F':
-	setmatcher ("fgrep");
-	break;
+        setmatcher ("fgrep");
+        break;
 
       case 'P':
-	setmatcher ("perl");
-	break;
+        setmatcher ("perl");
+        break;
 
       case 'G':
-	setmatcher ("grep");
-	break;
+        setmatcher ("grep");
+        break;
 
       case 'X': /* undocumented on purpose */
-	setmatcher (optarg);
-	break;
+        setmatcher (optarg);
+        break;
 
       case 'H':
-	with_filenames = 1;
-	no_filenames = 0;
-	break;
+        with_filenames = 1;
+        no_filenames = 0;
+        break;
 
       case 'I':
-	binary_files = WITHOUT_MATCH_BINARY_FILES;
-	break;
+        binary_files = WITHOUT_MATCH_BINARY_FILES;
+        break;
 
       case 'T':
-	align_tabs = 1;
-	break;
+        align_tabs = 1;
+        break;
 
       case 'U':
 #if defined HAVE_DOS_FILE_CONTENTS
-	dos_use_file_type = DOS_BINARY;
+        dos_use_file_type = DOS_BINARY;
 #endif
-	break;
+        break;
 
       case 'u':
 #if defined HAVE_DOS_FILE_CONTENTS
-	dos_report_unix_offset = 1;
+        dos_report_unix_offset = 1;
 #endif
-	break;
+        break;
 
       case 'V':
-	show_version = 1;
-	break;
+        show_version = 1;
+        break;
 
       case 'a':
-	binary_files = TEXT_BINARY_FILES;
-	break;
+        binary_files = TEXT_BINARY_FILES;
+        break;
 
       case 'b':
-	out_byte = 1;
-	break;
+        out_byte = 1;
+        break;
 
       case 'c':
-	count_matches = 1;
-	break;
+        count_matches = 1;
+        break;
 
       case 'd':
-	directories = XARGMATCH ("--directories", optarg,
-				 directories_args, directories_types);
-	break;
+        directories = XARGMATCH ("--directories", optarg,
+                                 directories_args, directories_types);
+        break;
 
       case 'e':
-	cc = strlen (optarg);
-	keys = xrealloc (keys, keycc + cc + 1);
-	strcpy (&keys[keycc], optarg);
-	keycc += cc;
-	keys[keycc++] = '\n';
-	break;
+        cc = strlen (optarg);
+        keys = xrealloc (keys, keycc + cc + 1);
+        strcpy (&keys[keycc], optarg);
+        keycc += cc;
+        keys[keycc++] = '\n';
+        break;
 
       case 'f':
-	fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
-	if (!fp)
-	  error (EXIT_TROUBLE, errno, "%s", optarg);
-	for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
-	  ;
-	keys = xrealloc (keys, keyalloc);
-	oldcc = keycc;
-	while (!feof (fp)
-	       && (cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) > 0)
-	  {
-	    keycc += cc;
-	    if (keycc == keyalloc - 1)
-	      keys = xrealloc (keys, keyalloc *= 2);
-	  }
-	if (fp != stdin)
-	  fclose(fp);
-	/* Append final newline if file ended in non-newline. */
-	if (oldcc != keycc && keys[keycc - 1] != '\n')
-	  keys[keycc++] = '\n';
-	break;
+        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
+        if (!fp)
+          error (EXIT_TROUBLE, errno, "%s", optarg);
+        for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
+          ;
+        keys = xrealloc (keys, keyalloc);
+        oldcc = keycc;
+        while (!feof (fp)
+               && (cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) > 0)
+          {
+            keycc += cc;
+            if (keycc == keyalloc - 1)
+              keys = xrealloc (keys, keyalloc *= 2);
+          }
+        if (fp != stdin)
+          fclose(fp);
+        /* Append final newline if file ended in non-newline. */
+        if (oldcc != keycc && keys[keycc - 1] != '\n')
+          keys[keycc++] = '\n';
+        break;
 
       case 'h':
-	with_filenames = 0;
-	no_filenames = 1;
-	break;
+        with_filenames = 0;
+        no_filenames = 1;
+        break;
 
       case 'i':
       case 'y':			/* For old-timers . . . */
-	match_icase = 1;
-	break;
+        match_icase = 1;
+        break;
 
       case 'L':
-	/* Like -l, except list files that don't contain matches.
-	   Inspired by the same option in Hume's gre. */
-	list_files = -1;
-	break;
+        /* Like -l, except list files that don't contain matches.
+           Inspired by the same option in Hume's gre. */
+        list_files = -1;
+        break;
 
       case 'l':
-	list_files = 1;
-	break;
+        list_files = 1;
+        break;
 
       case 'm':
-	{
-	  uintmax_t value;
-	  switch (xstrtoumax (optarg, 0, 10, &value, ""))
-	    {
-	    case LONGINT_OK:
-	      max_count = value;
-	      if (0 <= max_count && max_count == value)
-		break;
-	      /* Fall through.  */
-	    case LONGINT_OVERFLOW:
-	      max_count = TYPE_MAXIMUM (off_t);
-	      break;
+        {
+          uintmax_t value;
+          switch (xstrtoumax (optarg, 0, 10, &value, ""))
+            {
+            case LONGINT_OK:
+              max_count = value;
+              if (0 <= max_count && max_count == value)
+                break;
+              /* Fall through.  */
+            case LONGINT_OVERFLOW:
+              max_count = TYPE_MAXIMUM (off_t);
+              break;
 
-	    default:
-	      error (EXIT_TROUBLE, 0, _("invalid max count"));
-	    }
-	}
-	break;
+            default:
+              error (EXIT_TROUBLE, 0, _("invalid max count"));
+            }
+        }
+        break;
 
       case 'n':
-	out_line = 1;
-	break;
+        out_line = 1;
+        break;
 
       case 'o':
-	only_matching = 1;
-	break;
+        only_matching = 1;
+        break;
 
       case 'q':
-	exit_on_match = 1;
-	exit_failure = 0;
-	break;
+        exit_on_match = 1;
+        exit_failure = 0;
+        break;
 
       case 'R':
       case 'r':
-	directories = RECURSE_DIRECTORIES;
-	break;
+        directories = RECURSE_DIRECTORIES;
+        break;
 
       case 's':
-	suppress_errors = 1;
-	break;
+        suppress_errors = 1;
+        break;
 
       case 'v':
-	out_invert = 1;
-	break;
+        out_invert = 1;
+        break;
 
       case 'w':
-	match_words = 1;
-	break;
+        match_words = 1;
+        break;
 
       case 'x':
-	match_lines = 1;
-	break;
+        match_lines = 1;
+        break;
 
       case 'Z':
-	filename_mask = 0;
-	break;
+        filename_mask = 0;
+        break;
 
       case 'z':
-	eolbyte = '\0';
-	break;
+        eolbyte = '\0';
+        break;
 
       case BINARY_FILES_OPTION:
-	if (STREQ (optarg, "binary"))
-	  binary_files = BINARY_BINARY_FILES;
-	else if (STREQ (optarg, "text"))
-	  binary_files = TEXT_BINARY_FILES;
-	else if (STREQ (optarg, "without-match"))
-	  binary_files = WITHOUT_MATCH_BINARY_FILES;
-	else
-	  error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
-	break;
+        if (STREQ (optarg, "binary"))
+          binary_files = BINARY_BINARY_FILES;
+        else if (STREQ (optarg, "text"))
+          binary_files = TEXT_BINARY_FILES;
+        else if (STREQ (optarg, "without-match"))
+          binary_files = WITHOUT_MATCH_BINARY_FILES;
+        else
+          error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
+        break;
 
       case COLOR_OPTION:
         if(optarg) {
@@ -2019,26 +2019,26 @@ main (int argc, char **argv)
         } else
           color_option = 2;
         if (color_option == 2)
-	  {
-	    char const *t;
-	    if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
-		&& !STREQ (t, "dumb"))
-	      color_option = 1;
-	    else
-	      color_option = 0;
-	  }
-	break;
+          {
+            char const *t;
+            if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
+                && !STREQ (t, "dumb"))
+              color_option = 1;
+            else
+              color_option = 0;
+          }
+        break;
 
       case EXCLUDE_OPTION:
-	if (!excluded_patterns)
-	  excluded_patterns = new_exclude ();
-	add_exclude (excluded_patterns, optarg, EXCLUDE_WILDCARDS);
-	break;
+        if (!excluded_patterns)
+          excluded_patterns = new_exclude ();
+        add_exclude (excluded_patterns, optarg, EXCLUDE_WILDCARDS);
+        break;
       case EXCLUDE_FROM_OPTION:
-	if (!excluded_patterns)
-	  excluded_patterns = new_exclude ();
+        if (!excluded_patterns)
+          excluded_patterns = new_exclude ();
         if (add_exclude_file (add_exclude, excluded_patterns, optarg,
-			      EXCLUDE_WILDCARDS, '\n') != 0)
+                              EXCLUDE_WILDCARDS, '\n') != 0)
           {
             error (EXIT_TROUBLE, errno, "%s", optarg);
           }
@@ -2046,36 +2046,36 @@ main (int argc, char **argv)
 
       case EXCLUDE_DIRECTORY_OPTION:
         if (!excluded_directory_patterns)
-	  excluded_directory_patterns = new_exclude ();
-	add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
+          excluded_directory_patterns = new_exclude ();
+        add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
         break;
 
       case INCLUDE_OPTION:
-	if (!included_patterns)
-	  included_patterns = new_exclude ();
-	add_exclude (included_patterns, optarg,
-		     EXCLUDE_WILDCARDS | EXCLUDE_INCLUDE);
-	break;
+        if (!included_patterns)
+          included_patterns = new_exclude ();
+        add_exclude (included_patterns, optarg,
+                     EXCLUDE_WILDCARDS | EXCLUDE_INCLUDE);
+        break;
 
       case GROUP_SEPARATOR_OPTION:
         group_separator = optarg;
         break;
 
       case LINE_BUFFERED_OPTION:
-	line_buffered = 1;
-	break;
+        line_buffered = 1;
+        break;
 
       case LABEL_OPTION:
-	label = optarg;
-	break;
+        label = optarg;
+        break;
 
       case 0:
-	/* long options */
-	break;
+        /* long options */
+        break;
 
       default:
-	usage (EXIT_TROUBLE);
-	break;
+        usage (EXIT_TROUBLE);
+        break;
 
       }
 
@@ -2100,7 +2100,7 @@ main (int argc, char **argv)
       /* Legacy.  */
       char *userval = getenv ("GREP_COLOR");
       if (userval != NULL && *userval != '\0')
-	selected_match_color = context_match_color = userval;
+        selected_match_color = context_match_color = userval;
 
       /* New GREP_COLORS has priority.  */
       parse_grep_colors();
@@ -2125,22 +2125,22 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
   if (keys)
     {
       if (keycc == 0)
-	{
-	  /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
-	  out_invert ^= 1;
-	  match_lines = match_words = 0;
-	}
+        {
+          /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
+          out_invert ^= 1;
+          match_lines = match_words = 0;
+        }
       else
-	/* Strip trailing newline. */
+        /* Strip trailing newline. */
         --keycc;
     }
   else
     if (optind < argc)
       {
-	/* A copy must be made in case of an xrealloc() or free() later.  */
-	keycc = strlen(argv[optind]);
-	keys = xmalloc(keycc + 1);
-	strcpy(keys, argv[optind++]);
+        /* A copy must be made in case of an xrealloc() or free() later.  */
+        keycc = strlen(argv[optind]);
+        keys = xmalloc(keycc + 1);
+        strcpy(keys, argv[optind++]);
       }
     else
       usage (EXIT_TROUBLE);
@@ -2164,24 +2164,24 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
 
   if (optind < argc)
     {
-	status = 1;
-	do
-	{
-	  char *file = argv[optind];
-	  if ((included_patterns || excluded_patterns)
-	      && !isdir (file))
-	    {
-	      if (included_patterns &&
-		  ! excluded_file_name (included_patterns, file))
-		continue;
-	      if (excluded_patterns &&
-		  excluded_file_name (excluded_patterns, file))
-		continue;
-	    }
-	  status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
-			      &stats_base);
-	}
-	while ( ++optind < argc);
+        status = 1;
+        do
+        {
+          char *file = argv[optind];
+          if ((included_patterns || excluded_patterns)
+              && !isdir (file))
+            {
+              if (included_patterns &&
+                  ! excluded_file_name (included_patterns, file))
+                continue;
+              if (excluded_patterns &&
+                  excluded_file_name (excluded_patterns, file))
+                continue;
+            }
+          status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
+                              &stats_base);
+        }
+        while ( ++optind < argc);
     }
   else
     status = grepfile ((char *) NULL, &stats_base);

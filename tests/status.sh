@@ -31,42 +31,42 @@ fi
 
 # the filename MMMMMMMM.MMM should not exist hopefully
 if test -r MMMMMMMM.MMM; then
-	echo "Please remove MMMMMMMM.MMM to run check"
+        echo "Please remove MMMMMMMM.MMM to run check"
 else
-	# should return 2 file not found
-	${GREP} -E -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
-	if test $? -ne 2 ; then
-		echo "Status: Wrong status code, test \#3 failed"
-		failures=1
-	fi
+        # should return 2 file not found
+        ${GREP} -E -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
+        if test $? -ne 2 ; then
+                echo "Status: Wrong status code, test \#3 failed"
+                failures=1
+        fi
 
-	# should return 2 file not found
-	${GREP} -E -s -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
-	if test $? -ne 2 ; then
-		echo "Status: Wrong status code, test \#4 failed"
-		failures=1
-	fi
+        # should return 2 file not found
+        ${GREP} -E -s -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
+        if test $? -ne 2 ; then
+                echo "Status: Wrong status code, test \#4 failed"
+                failures=1
+        fi
 
-	# should return 2 file not found
-	echo "abcd" | ${GREP} -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
-	if test $? -ne 2 ; then
-		echo "Status: Wrong status code, test \#5 failed"
-		failures=1
-	fi
+        # should return 2 file not found
+        echo "abcd" | ${GREP} -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
+        if test $? -ne 2 ; then
+                echo "Status: Wrong status code, test \#5 failed"
+                failures=1
+        fi
 
-	# should return 0 found a match
-	echo "abcd" | ${GREP} -E -q -s 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
-	if test $? -ne 0 ; then
-		echo "Status: Wrong status code, test \#6 failed"
-		failures=1
-	fi
+        # should return 0 found a match
+        echo "abcd" | ${GREP} -E -q -s 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
+        if test $? -ne 0 ; then
+                echo "Status: Wrong status code, test \#6 failed"
+                failures=1
+        fi
 
-	# should still return 0 found a match
-	echo "abcd" | ${GREP} -E -q 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
-	if test $? -ne 0 ; then
-		echo "Status: Wrong status code, test \#7 failed"
-		failures=1
-	fi
+        # should still return 0 found a match
+        echo "abcd" | ${GREP} -E -q 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
+        if test $? -ne 0 ; then
+                echo "Status: Wrong status code, test \#7 failed"
+                failures=1
+        fi
 fi
 
 exit $failures

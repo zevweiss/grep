@@ -29,15 +29,15 @@ fi
 # backref are local should be error
 echo "123" | ${GREP} -e 'a\(.\)' -e 'b\1' > /dev/null 2>&1
 if test $? -ne 2 ; then
-	echo "Backref: Backref not local, test #3 failed"
-	failures=1
+        echo "Backref: Backref not local, test #3 failed"
+        failures=1
 fi
 
 # Pattern should fail
 echo "123" | ${GREP} -e '[' -e ']' > /dev/null 2>&1
 if test $? -ne 2 ; then
-	echo "Backref: Compiled not local, test #4 failed"
-	failures=1
+        echo "Backref: Compiled not local, test #4 failed"
+        failures=1
 fi
 
 exit $failures

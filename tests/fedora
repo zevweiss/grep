@@ -9,10 +9,10 @@
 
 if [ -t 1 ]
 then
-	# Colored output on terimal
-	G='\033[32m'
-	R='\033[31m'
-	D='\033[0m'
+        # Colored output on terimal
+        G='\033[32m'
+        R='\033[31m'
+        D='\033[0m'
 fi
 
 ok ()	{ printf "${G}OK${D}"; }

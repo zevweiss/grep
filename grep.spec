@@ -53,7 +53,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %preun
 if [ $1 = 0 ]; then
-	[ -e %{_infodir}/grep.info.* ] && /sbin/install-info --quiet --info-dir=%{_infodir} --delete %{_infodir}/grep.info.*
+        [ -e %{_infodir}/grep.info.* ] && /sbin/install-info --quiet --info-dir=%{_infodir} --delete %{_infodir}/grep.info.*
 fi
 
 %files -f %{name}.lang

@@ -11,22 +11,22 @@ To compile the GNU grep package with DJGPP tools, you will need the
 following tools (the names of the archives on DJGPP ftp sites where
 these tools are available are in parentheses):
 
-	  -  The basic DJGPP development environment, including the
+          -  The basic DJGPP development environment, including the
              GCC compiler and the libraries (v2gnu/gccNNNb.zip,
              v2gnu/bnuNNNb.zip, v2/djdevNNN.zip).
 
-	  -  GNU Make revision 3.75 or later (v2gnu/makNNNb.zip).
+          -  GNU Make revision 3.75 or later (v2gnu/makNNNb.zip).
 
-	  -  GNU Bash (v2gnu/bshNNNb.zip).
+          -  GNU Bash (v2gnu/bshNNNb.zip).
 
-	  -  GNU Sed (v2gnu/sedNNNb.zip).
+          -  GNU Sed (v2gnu/sedNNNb.zip).
 
-	  -  GNU M4 (v2gnu/m4-NNNb.zip).
+          -  GNU M4 (v2gnu/m4-NNNb.zip).
 
-	  -  GNU Fileutils (v2gnu/filNNNb.zip), Textutils
+          -  GNU Fileutils (v2gnu/filNNNb.zip), Textutils
              (v2gnu/txtNNNb.zip) and Diffutils (v2gnu/difNNNb.zip).
 
-	  -  A (previous version of) GNU grep (v2gnu/grepNNb.zip).
+          -  A (previous version of) GNU grep (v2gnu/grepNNb.zip).
 
 Running the tests ("make check" in the top-level directory)
 additionally requires Gawk (v2gnu/gwkNNNb.zip).  TAGS and ID targets
@@ -36,9 +36,9 @@ ID-utils, v2gnu/iduNNb.zip), respectively.
 All of these tools are available from the DJGPP archive sites.
 
 To build grep:
-	  sh autogen.sh
+          sh autogen.sh
       sh configure
-	  make
+          make
 
 
 Source distributions on DJGPP sites usually come pre-configured, so
@@ -79,4 +79,4 @@ perform the following in the docs directory:
 2.5f ported by Andrew Cottrell <anddjgpp@ihug.com.au>
 
 Enjoy,
-				Eli Zaretskii <eliz@is.elta.co.il>
+                                Eli Zaretskii <eliz@is.elta.co.il>

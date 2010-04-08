@@ -17,10 +17,10 @@ failures=0
 ${GREP} -E -f $srcdir/khadafy.regexp $srcdir/khadafy.lines > khadafy.out
 if cmp $srcdir/khadafy.lines khadafy.out
 then
-	:
+        :
 else
-	echo Khadafy test failed -- output left on khadafy.out
-	failures=1
+        echo Khadafy test failed -- output left on khadafy.out
+        failures=1
 fi
 
 exit $failures

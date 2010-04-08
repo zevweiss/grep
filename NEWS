@@ -194,7 +194,7 @@ Version 2.4.1
     --binary-files='binary' (the default) outputs a 1-line summary of matches.
     --binary-files='without-match' assumes binary files do not match.
     --binary-files='text' treats binary files as text
-	(equivalent to the -a or --text option).
+        (equivalent to the -a or --text option).
 
   - New option -I; equivalent to --binary-files='without-match'.
 

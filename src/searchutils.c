@@ -121,7 +121,7 @@ mbtolower (const char *beg, size_t *n)
 
 bool
 is_mb_middle (const char **good, const char *buf, const char *end,
-	      size_t match_len)
+              size_t match_len)
 {
   const char *p = *good;
   const char *prev = p;
@@ -138,12 +138,12 @@ is_mb_middle (const char **good, const char *buf, const char *end,
         prev = p;
 
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
-	{
-	  /* An invalid sequence, or a truncated multibyte character.
-	     We treat it as a single byte character.  */
-	  mbclen = 1;
-	  memset(&cur_state, 0, sizeof cur_state);
-	}
+        {
+          /* An invalid sequence, or a truncated multibyte character.
+             We treat it as a single byte character.  */
+          mbclen = 1;
+          memset(&cur_state, 0, sizeof cur_state);
+        }
       p += mbclen;
     }
 

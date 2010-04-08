@@ -125,8 +125,8 @@ undossify_input (char *buf, size_t buflen)
                     {
                       dos_pos_map_size = inp_map_idx ? inp_map_idx * 2 : 1000;
                       dos_pos_map = xrealloc((char *)dos_pos_map,
-					     dos_pos_map_size *
-					     sizeof(struct dos_map));
+                                             dos_pos_map_size *
+                                             sizeof(struct dos_map));
                     }
 
                   if (!inp_map_idx)

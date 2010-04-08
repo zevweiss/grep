@@ -39,8 +39,8 @@ Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
   error (EXIT_TROUBLE, 0, "%s",
-	 _("support for the -P option is not compiled into "
-	   "this --disable-perl-regexp binary"));
+         _("support for the -P option is not compiled into "
+           "this --disable-perl-regexp binary"));
 #else
   int e;
   char const *ep;
@@ -75,7 +75,7 @@ Pcompile (char const *pattern, size_t size)
       memcpy (n, p, pnul - p);
       n += pnul - p;
       for (p = pnul; pattern < p && p[-1] == '\\'; p--)
-	continue;
+        continue;
       n -= (pnul - p) & 1;
       strcpy (n, "\\000");
       n += 4;
@@ -103,7 +103,7 @@ Pcompile (char const *pattern, size_t size)
 
 size_t
 Pexecute (char const *buf, size_t size, size_t *match_size,
-	  char const *start_ptr)
+          char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
   abort ();
@@ -141,16 +141,16 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   if (e <= 0)
     {
       switch (e)
-	{
-	case PCRE_ERROR_NOMATCH:
-	  return -1;
+        {
+        case PCRE_ERROR_NOMATCH:
+          return -1;
 
-	case PCRE_ERROR_NOMEMORY:
-	  error (EXIT_TROUBLE, 0, _("memory exhausted"));
+        case PCRE_ERROR_NOMEMORY:
+          error (EXIT_TROUBLE, 0, _("memory exhausted"));
 
-	default:
-	  abort ();
-	}
+        default:
+          abort ();
+        }
     }
   else
     {
@@ -160,18 +160,18 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       char const *buflim = buf + size;
       char eol = eolbyte;
       if (!start_ptr)
-	{
-	  /* FIXME: The case when '\n' is not found indicates a bug:
-	     Since grep is line oriented, the match should never contain
-	     a newline, so there _must_ be a newline following.
-	   */
-	  if (!(end = memchr (end, eol, buflim - end)))
-	    end = buflim;
-	  else
-	    end++;
-	  while (buf < beg && beg[-1] != eol)
-	    --beg;
-	}
+        {
+          /* FIXME: The case when '\n' is not found indicates a bug:
+             Since grep is line oriented, the match should never contain
+             a newline, so there _must_ be a newline following.
+           */
+          if (!(end = memchr (end, eol, buflim - end)))
+            end = buflim;
+          else
+            end++;
+          while (buf < beg && beg[-1] != eol)
+            --beg;
+        }
 
       *match_size = end - beg;
       return beg - buf;

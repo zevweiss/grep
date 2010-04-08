@@ -34,8 +34,8 @@ fi
 # checking for fixed string
 echo "abababccccccd" | ${GREP} -F -e 'c\{3\}' > /dev/null 2>&1
 if test $? -ne 1 ; then
-	echo "Options: Wrong status code, test \#3 failed"
-	failures=1
+        echo "Options: Wrong status code, test \#3 failed"
+        failures=1
 fi
 
 exit $failures
