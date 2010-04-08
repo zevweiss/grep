@@ -20,8 +20,12 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = po lib doc src tests gnulib-tests
 
-EXTRA_DIST = build-aux/config.rpath TODO README README-alpha \
-	     Makefile.boot README-boot
+EXTRA_DIST =		\
+  Makefile.boot		\
+  README		\
+  README-alpha		\
+  README-boot		\
+  TODO
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
