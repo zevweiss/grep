@@ -3722,7 +3722,7 @@ dfamust (struct dfa *d)
         {
         case LPAREN:
         case RPAREN:
-          goto done;		/* "cannot happen" */
+          assert (!"neither LPAREN nor RPAREN may appear here");
         case EMPTY:
         case BEGLINE:
         case ENDLINE:
@@ -3735,15 +3735,13 @@ dfamust (struct dfa *d)
           break;
         case STAR:
         case QMARK:
-          if (mp <= musts)
-            goto done;		/* "cannot happen" */
+          assert (musts < mp);
           --mp;
           resetmust(mp);
           break;
         case OR:
         case ORTOP:
-          if (mp < &musts[2])
-            goto done;		/* "cannot happen" */
+          assert (&musts[2] <= mp);
           {
             char **new;
             must *lmp;
@@ -3781,14 +3779,12 @@ dfamust (struct dfa *d)
           }
           break;
         case PLUS:
-          if (mp <= musts)
-            goto done;		/* "cannot happen" */
+          assert (musts < mp);
           --mp;
           mp->is[0] = '\0';
           break;
         case END:
-          if (mp != &musts[1])
-            goto done;		/* "cannot happen" */
+          assert (mp == &musts[1]);
           for (i = 0; musts[0].in[i] != NULL; ++i)
             if (strlen(musts[0].in[i]) > strlen(result))
               result = musts[0].in[i];
@@ -3796,8 +3792,7 @@ dfamust (struct dfa *d)
             exact = 1;
           goto done;
         case CAT:
-          if (mp < &musts[2])
-            goto done;		/* "cannot happen" */
+          assert (&musts[2] <= mp);
           {
             must *lmp;
             must *rmp;
@@ -3855,8 +3850,7 @@ dfamust (struct dfa *d)
         default:
           if (t < END)
             {
-              /* "cannot happen" */
-              goto done;
+              assert (!"oops! t >= END");
             }
           else if (t == '\0')
             {
