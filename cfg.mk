@@ -30,7 +30,7 @@ bootstrap-tools = autoconf,automake,gnulib
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 6b4d3b539bb872fcfef458ceb3d3461b
+old_NEWS_hash = 62f7c4d1bdc4f161dcec5ad9c314cf4a
 
 # Many m4 macros names once began with `jm_'.
 # Make sure that none are inadvertently reintroduced.
@@ -43,6 +43,18 @@ sc_prohibit_jm_in_m4:
 sc_prohibit_echo_minus_en:
 	@prohibit='\<echo -[en]'					\
 	halt='do not use echo ''-e or echo ''-n; use printf instead'	\
+	  $(_sc_search_regexp)
+
+# Indent only with spaces.
+sc_prohibit_tab_based_indentation:
+	@prohibit='^ *	'						\
+	halt='TAB in indentation; use only spaces'			\
+	  $(_sc_search_regexp)
+
+# Don't use "indent-tabs-mode: nil" anymore.  No longer needed.
+sc_prohibit_emacs__indent_tabs_mode__setting:
+	@prohibit='^( *[*#] *)?indent-tabs-mode:'			\
+	halt='use of emacs indent-tabs-mode: setting'			\
 	  $(_sc_search_regexp)
 
 update-copyright-env = \

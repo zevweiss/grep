@@ -1,0 +1,3 @@
+(^|/)ChangeLog[^/]*$
+(^|/)(GNU)?[Mm]akefile[^/]*$
+\.(am|mk)$
