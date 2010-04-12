@@ -13,4 +13,3 @@ for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
 done
 
 Exit $fail
-
