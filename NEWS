@@ -7,6 +7,8 @@ GNU grep NEWS                                    -*- outline -*-
   Searching with grep -Fw for an empty string would not match an
   empty line. [bug present since "the beginning"]
 
+  X{0,0} is implemented correctly.  It used to be a synonym of X{0,1}.
+  [bug present since "the beginning"]
 
 * Noteworthy changes in release 2.6.3 (2010-04-02) [stable]
 

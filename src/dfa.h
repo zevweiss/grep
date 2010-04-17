@@ -94,9 +94,3 @@ extern void dfastate (int, struct dfa *, int []);
    takes a single argument, a NUL-terminated string describing the error.
    The user must supply a dfaerror.  */
 extern void dfaerror (const char *) __attribute__ ((noreturn));
-
-#ifdef GAWK
-/* Returns true if the regex is one where the dfa matcher
-   is broken and thus should not be used. */
-extern int dfabroken (struct dfa const *);
-#endif

@@ -387,11 +387,6 @@ struct dfa
   struct dfamust *musts;	/* List of strings, at least one of which
                                    is known to appear in any r.e. matching
                                    the dfa. */
-
-#ifdef GAWK
-  int broken;			/* True if using a feature where there
-                                   are bugs and gawk should use regex. */
-#endif
 };
 
 /* Some macros for user access to dfa internals. */
@@ -1271,9 +1266,6 @@ lex (void)
           if (c != '}')
             dfaerror(_("malformed repeat count"));
           laststart = 0;
-#ifdef GAWK
-          dfa->broken = (minrep == maxrep && minrep == 0);
-#endif
           return lasttok = REPMN;
 
         case '|':
@@ -1606,7 +1598,7 @@ closure (void)
 
   atom();
   while (tok == QMARK || tok == STAR || tok == PLUS || tok == REPMN)
-    if (tok == REPMN)
+    if (tok == REPMN && (minrep || maxrep))
       {
         ntokens = nsubtoks(dfa->tindex);
         tindex = dfa->tindex - ntokens;
@@ -1626,6 +1618,12 @@ closure (void)
             addtok(CAT);
           }
         tok = lex();
+      }
+    else if (tok == REPMN)
+      {
+        dfa->tindex -= nsubtoks(dfa->tindex);
+        tok = lex();
+        closure();
       }
     else
       {
@@ -3912,10 +3910,4 @@ dfamusts (struct dfa const *d)
   return d->musts;
 }
 
-#ifdef GAWK
-int dfabroken (struct dfa const *d)
-{
-  return d->broken;
-}
-#endif
 /* vim:set shiftwidth=2: */

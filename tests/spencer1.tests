@@ -111,6 +111,15 @@
 0@(bc+d$|ef*g.|h?i(j|k))@reffgz
 1@((((((((((a))))))))))@-
 0@(((((((((a)))))))))@a
+0@ca{0,0}b@cb
+1@ca{0,0}b@cab
+0@ca{0,1}b@cb
+0@ca{0,1}b@cab
+1@ca{0,1}b@caab
+1@ca{1,2}b@cb
+0@ca{1,2}b@cab
+0@ca{1,2}b@caab
+1@ca{1,2}b@caaab
 1@multiple words of text@uh-uh
 0@multiple words@multiple words, yeah
 0@(.*)c(.*)@abcde
