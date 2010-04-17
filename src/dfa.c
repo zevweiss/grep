@@ -3276,13 +3276,13 @@ free_mbdata (struct dfa *d)
 void
 dfainit (struct dfa *d)
 {
+  memset (d, 0, sizeof *d);
+
   d->calloc = 1;
   MALLOC(d->charclasses, charclass, d->calloc);
-  d->cindex = 0;
 
   d->talloc = 1;
   MALLOC(d->tokens, token, d->talloc);
-  d->tindex = d->depth = d->nleaves = d->nregexps = 0;
 
 #if MBS_SUPPORT
   d->mb_cur_max = MB_CUR_MAX;
@@ -3290,22 +3290,9 @@ dfainit (struct dfa *d)
     {
       d->nmultibyte_prop = 1;
       MALLOC(d->multibyte_prop, int, d->nmultibyte_prop);
-      d->nmbcsets = 0;
       d->mbcsets_alloc = 1;
       MALLOC(d->mbcsets, struct mb_char_classes, d->mbcsets_alloc);
     }
-#endif
-
-  d->searchflag = 0;
-  d->tralloc = 0;
-
-  d->musts = 0;
-  d->realtrans = 0;
-  d->fails = 0;
-  d->newlines = 0;
-  d->success = 0;
-#ifdef GAWK
-  d->broken = 0;
 #endif
 }
 
