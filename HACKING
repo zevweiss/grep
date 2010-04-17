@@ -24,9 +24,9 @@ You can get a copy of the latest with this command:
 
 That downloads the entire repository, including revision control history
 dating back to 1991.  The repository (the part you download, and which
-resides in grep/.git) currently weighs in at about 30MB.  So you
-don't want to download it more often than necessary.  Once downloaded,
-you can get incremental updates by running one of these commands from
+resides in grep/.git) currently weighs in at about 9MB.  So you don't
+want to download it more often than necessary.  Once downloaded, you
+can get incremental updates by running one of these commands from
 inside your new grep/ directory:
 
 If you have made *no* changes:
