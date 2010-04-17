@@ -207,9 +207,6 @@ typedef enum
   OR,				/* OR is an operator of two arguments that
                                    matches either of its arguments. */
 
-  ORTOP,			/* OR at the toplevel in the parse tree.
-                                   This is used for a boyer-moore heuristic. */
-
   LPAREN,			/* LPAREN never appears in the parse tree,
                                    it is only a lexeme. */
 
@@ -401,7 +398,7 @@ struct dfa
                        prevn, currn, prevl, currl)
 
 static void dfamust (struct dfa *dfa);
-static void regexp (int toplevel);
+static void regexp (void);
 
 #define CALLOC(p, t, n) ((p) = xcalloc((size_t)(n), sizeof (t)))
 #define MALLOC(p, t, n) ((p) = xmalloc((n) * sizeof (t)))
@@ -446,7 +443,6 @@ prtok (token t)
         case PLUS: s = "PLUS"; break;
         case CAT: s = "CAT"; break;
         case OR: s = "OR"; break;
-        case ORTOP: s = "ORTOP"; break;
         case LPAREN: s = "LPAREN"; break;
         case RPAREN: s = "RPAREN"; break;
 #if MBS_SUPPORT
@@ -1417,7 +1413,6 @@ addtok_mb (token t, int mbprop)
 
     case CAT:
     case OR:
-    case ORTOP:
       --depth;
       break;
 
@@ -1543,7 +1538,7 @@ atom (void)
   else if (tok == LPAREN)
     {
       tok = lex();
-      regexp(0);
+      regexp();
       if (tok != RPAREN)
         dfaerror(_("unbalanced ("));
       tok = lex();
@@ -1568,7 +1563,6 @@ nsubtoks (int tindex)
       return 1 + nsubtoks(tindex - 1);
     case CAT:
     case OR:
-    case ORTOP:
       ntoks1 = nsubtoks(tindex - 1);
       return 1 + ntoks1 + nsubtoks(tindex - 1 - ntoks1);
     }
@@ -1644,17 +1638,14 @@ branch (void)
 }
 
 static void
-regexp (int toplevel)
+regexp (void)
 {
   branch();
   while (tok == OR)
     {
       tok = lex();
       branch();
-      if (toplevel)
-        addtok(ORTOP);
-      else
-        addtok(OR);
+      addtok(OR);
     }
 }
 
@@ -1687,7 +1678,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   tok = lex();
   depth = d->depth;
 
-  regexp(1);
+  regexp();
 
   if (tok != END)
     dfaerror(_("unbalanced )"));
@@ -1696,7 +1687,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   addtok(CAT);
 
   if (d->nregexps)
-    addtok(ORTOP);
+    addtok(OR);
 
   ++d->nregexps;
 }
@@ -2092,7 +2083,6 @@ dfaanalyze (struct dfa *d, int searchflag)
         break;
 
       case OR:
-      case ORTOP:
         /* The firstpos is the union of the firstpos of each argument. */
         nfirstpos[-2] += nfirstpos[-1];
         --nfirstpos;
@@ -3725,7 +3715,6 @@ dfamust (struct dfa *d)
           resetmust(mp);
           break;
         case OR:
-        case ORTOP:
           assert (&musts[2] <= mp);
           {
             char **new;
