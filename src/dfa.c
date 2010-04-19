@@ -308,6 +308,7 @@ struct dfa
                                    with dfaparse(). */
 #if MBS_SUPPORT
   unsigned int mb_cur_max;	/* Cached value of MB_CUR_MAX.  */
+  int utf8_anychar_classes[5];	/* To lower ANYCHAR in UTF-8 locales.  */
 
   /* The following are used only if MB_CUR_MAX > 1.  */
 
@@ -1470,6 +1471,44 @@ addtok_wc (wint_t wc)
 }
 #endif
 
+static void
+add_utf8_anychar (void)
+{
+  static const charclass utf8_classes[5] = {
+      {  0,  0,  0,  0, ~0, ~0, 0, 0 },            /* 80-bf: non-lead bytes */
+      { ~0, ~0, ~0, ~0, 0, 0, 0, 0 },              /* 00-7f: 1-byte sequence */
+      {  0,  0,  0,  0,  0,  0, 0xfffffffcU, 0 },  /* c2-df: 2-byte sequence */
+      {  0,  0,  0,  0,  0,  0,  0, 0xffff },      /* e0-ef: 3-byte sequence */
+      {  0,  0,  0,  0,  0,  0,  0, 0xff0000 }     /* f0-f7: 4-byte sequence */
+  };
+  const unsigned int n = sizeof (utf8_classes) / sizeof (utf8_classes[0]);
+  unsigned int i;
+
+  /* Define the five character classes that are needed below.  */
+  if (dfa->utf8_anychar_classes[0] == 0)
+    for (i = 0; i < n; i++)
+      dfa->utf8_anychar_classes[i] = CSET + charclass_index(utf8_classes[i]);
+
+  /* A valid UTF-8 character is
+
+          ([0x00-0x7f]
+           |[0xc2-0xdf][0x80-0xbf]
+           |[0xe0-0xef[0x80-0xbf][0x80-0xbf]
+           |[0xf0-f7][0x80-0xbf][0x80-0xbf][0x80-0xbf])
+
+     which I'll write more concisely "B|CA|DAA|EAAA".  Factor the [0x00-0x7f]
+     and you get "B|(C|(D|EA)A)A".  And since the token buffer is in reverse
+     Polish notation, you get "B C D E A CAT OR A CAT OR A CAT OR".  */
+  for (i = 1; i < n; i++)
+    addtok (dfa->utf8_anychar_classes[i]);
+  while (--i > 1)
+    {
+      addtok (dfa->utf8_anychar_classes[0]);
+      addtok (CAT);
+      addtok (OR);
+    }
+}
+
 /* The grammar understood by the parser is as follows.
 
    regexp:
@@ -1508,8 +1547,12 @@ addtok_wc (wint_t wc)
 static void
 atom (void)
 {
+  if (0)
+    {
+      /* empty */
+    }
 #if MBS_SUPPORT
-  if (tok == WCHAR)
+  else if (tok == WCHAR)
     {
       addtok_wc (case_fold ? towlower(wctok) : wctok);
 #ifndef GREP
@@ -1521,16 +1564,28 @@ atom (void)
 #endif
 
       tok = lex();
-      return;
+    }
+
+  else if (tok == ANYCHAR && using_utf8())
+    {
+      /* For UTF-8 expand the period to a series of CSETs that define a valid
+	 UTF-8 character.  This avoids using the slow multibyte path.  I'm
+	 pretty sure it would be both profitable and correct to do it for
+	 any encoding; however, the optimization must be done manually as
+	 it is done above in add_utf8_anychar.	So, let's start with
+	 UTF-8: it is the most used, and the structure of the encoding
+	 makes the correctness more obvious.  */
+      add_utf8_anychar();
+      tok = lex();
     }
 #endif /* MBS_SUPPORT  */
 
-  if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
-      || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
+  else if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
+       	   || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
 #if MBS_SUPPORT
-      || tok == ANYCHAR || tok == MBCSET /* MB_CUR_MAX > 1 */
+     	   || tok == ANYCHAR || tok == MBCSET
 #endif /* MBS_SUPPORT */
-      || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
+	   || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
     {
       addtok(tok);
       tok = lex();
@@ -3297,6 +3352,8 @@ dfaoptimize (struct dfa *d)
       switch(d->tokens[i])
         {
         case ANYCHAR:
+          /* Lowered.  */
+          abort ();
         case MBCSET:
           /* Requires multi-byte algorithm.  */
           return;
