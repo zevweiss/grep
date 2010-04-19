@@ -42,8 +42,8 @@ static struct patterns
                                Q@#%!# library interface in regex.c.  */
 } patterns0;
 
-struct patterns *patterns;
-size_t pcount;
+static struct patterns *patterns;
+static size_t pcount;
 
 void
 dfaerror (char const *mesg)
