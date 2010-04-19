@@ -1569,23 +1569,23 @@ atom (void)
   else if (tok == ANYCHAR && using_utf8())
     {
       /* For UTF-8 expand the period to a series of CSETs that define a valid
-	 UTF-8 character.  This avoids using the slow multibyte path.  I'm
-	 pretty sure it would be both profitable and correct to do it for
-	 any encoding; however, the optimization must be done manually as
-	 it is done above in add_utf8_anychar.	So, let's start with
-	 UTF-8: it is the most used, and the structure of the encoding
-	 makes the correctness more obvious.  */
+         UTF-8 character.  This avoids using the slow multibyte path.  I'm
+         pretty sure it would be both profitable and correct to do it for
+         any encoding; however, the optimization must be done manually as
+         it is done above in add_utf8_anychar.	So, let's start with
+         UTF-8: it is the most used, and the structure of the encoding
+         makes the correctness more obvious.  */
       add_utf8_anychar();
       tok = lex();
     }
 #endif /* MBS_SUPPORT  */
 
   else if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
-       	   || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
+           || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
 #if MBS_SUPPORT
-     	   || tok == ANYCHAR || tok == MBCSET
+           || tok == ANYCHAR || tok == MBCSET
 #endif /* MBS_SUPPORT */
-	   || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
+           || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
     {
       addtok(tok);
       tok = lex();
