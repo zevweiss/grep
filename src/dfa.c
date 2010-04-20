@@ -212,7 +212,6 @@ typedef enum
 
   RPAREN,			/* RPAREN never appears in the parse tree. */
 
-#if MBS_SUPPORT
   ANYCHAR,                     /* ANYCHAR is a terminal symbol that matches
                                   any multibyte (or single byte) characters.
                                   It is used only if MB_CUR_MAX > 1.  */
@@ -222,7 +221,6 @@ typedef enum
 
   WCHAR,			/* Only returned by lex.  wctok contains
                                    the wide character representation.  */
-#endif /* MBS_SUPPORT */
 
   CSET				/* CSET and (and any value greater) is a
                                    terminal symbol that matches any of a
@@ -306,7 +304,6 @@ struct dfa
   int nleaves;			/* Number of leaves on the parse tree. */
   int nregexps;			/* Count of parallel regexps being built
                                    with dfaparse(). */
-#if MBS_SUPPORT
   unsigned int mb_cur_max;	/* Cached value of MB_CUR_MAX.  */
   int utf8_anychar_classes[5];	/* To lower ANYCHAR in UTF-8 locales.  */
 
@@ -336,7 +333,6 @@ struct dfa
   struct mb_char_classes *mbcsets;
   int nmbcsets;
   int mbcsets_alloc;
-#endif
 
   /* Fields filled by the state builder. */
   dfa_state *states;		/* States of the dfa. */
