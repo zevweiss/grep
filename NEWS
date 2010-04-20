@@ -16,6 +16,9 @@ GNU grep NEWS                                    -*- outline -*-
   slow in other multibyte locales. [bug present since multi-byte
   character set support was introduced in 2.5.2]
 
+  --mmap was meant to be ignored in 2.6.x, but it was instead
+  removed by mistake.  [bug introduced in 2.6]
+
 * Noteworthy changes in release 2.6.3 (2010-04-02) [stable]
 
 ** Bug fixes
