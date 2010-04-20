@@ -1487,7 +1487,18 @@ add_utf8_anychar (void)
   /* Define the five character classes that are needed below.  */
   if (dfa->utf8_anychar_classes[0] == 0)
     for (i = 0; i < n; i++)
-      dfa->utf8_anychar_classes[i] = CSET + charclass_index(utf8_classes[i]);
+      {
+        charclass c;
+        memcpy (c, utf8_classes[i], sizeof c);
+        if (i == 1)
+          {
+            if (!(syntax_bits & RE_DOT_NEWLINE))
+              clrbit (eolbyte, c);
+            if (syntax_bits & RE_DOT_NOT_NULL)
+              clrbit ('\0', c);
+          }
+        dfa->utf8_anychar_classes[i] = CSET + charclass_index(c);
+      }
 
   /* A valid UTF-8 character is
 
