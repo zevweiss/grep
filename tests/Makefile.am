@@ -46,6 +46,7 @@ TESTS =						\
   fmbtest					\
   foad1						\
   help-version					\
+  ignore-mmap					\
   include-exclude				\
   khadafy.sh					\
   max-count-vs-context				\
