@@ -4,10 +4,7 @@
 static void
 Gcompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size,
-              RE_SYNTAX_GREP
-              | RE_HAT_LISTS_NOT_NEWLINE
-              | RE_NO_EMPTY_RANGES);
+  GEAcompile (pattern, size, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES);
 }
 
 static void
