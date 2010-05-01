@@ -26,9 +26,7 @@
    The tests should be *all* the ones that are needed for an individual
    application.  */
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 #if defined HAVE_WCSCOLL && defined HAVE_ISWCTYPE
 # define MBS_SUPPORT 1
