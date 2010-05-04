@@ -709,26 +709,29 @@ typedef int predicate (int);
 /* The following list maps the names of the Posix named character classes
    to predicate functions that determine whether a given character is in
    the class.  The leading [ has already been eaten by the lexical analyzer. */
-static struct {
+struct dfa_ctype {
   const char *name;
-  predicate *pred;
-} const prednames[] = {
-  { "alpha", isalpha },
-  { "upper", isupper },
-  { "lower", islower },
-  { "digit", isdigit },
-  { "xdigit", isxdigit },
-  { "space", isspace },
-  { "punct", ispunct },
-  { "alnum", isalnum },
-  { "print", isprint },
-  { "graph", isgraph },
-  { "cntrl", iscntrl },
-  { "blank", isblank },
-  { NULL, NULL }
+  predicate *func;
+  bool single_byte_only;
 };
 
-static predicate *
+static const struct dfa_ctype prednames[] = {
+  { "alpha", isalpha, false },
+  { "upper", isupper, false },
+  { "lower", islower, false },
+  { "digit", isdigit, true },
+  { "xdigit", isxdigit, true },
+  { "space", isspace, false },
+  { "punct", ispunct, false },
+  { "alnum", isalnum, false },
+  { "print", isprint, false },
+  { "graph", isgraph, false },
+  { "cntrl", iscntrl, false },
+  { "blank", isblank, false },
+  { NULL, NULL, false }
+};
+
+static const struct dfa_ctype *
 find_pred (const char *str)
 {
   unsigned int i;
@@ -736,7 +739,7 @@ find_pred (const char *str)
     if (STREQ (str, prednames[i].name))
       break;
 
-  return prednames[i].pred;
+  return &prednames[i];
 }
 
 /* Multibyte character handling sub-routine for lex.
@@ -833,8 +836,12 @@ parse_bracket_exp (void)
                                      || STREQ  (str, "lower"))
                                        ? "alpha"
                                        : str);
+                  const struct dfa_ctype *pred = find_pred (class);
+                  if (!pred)
+                    dfaerror(_("invalid character class"));
+
 #if MBS_SUPPORT
-                  if (MB_CUR_MAX > 1)
+                  if (MB_CUR_MAX > 1 && !pred->single_byte_only)
                     {
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
@@ -848,14 +855,9 @@ parse_bracket_exp (void)
                     }
 #endif
 
-                  {
-                    predicate *pred = find_pred (class);
-                    if (!pred)
-                      dfaerror(_("invalid character class"));
-                    for (c2 = 0; c2 < NOTCHAR; ++c2)
-                      if ((*pred)(c2))
-                        setbit_case_fold (c2, ccl);
-                  }
+                  for (c2 = 0; c2 < NOTCHAR; ++c2)
+                    if (pred->func(c2))
+                      setbit_case_fold (c2, ccl);
                 }
 
 #if MBS_SUPPORT
