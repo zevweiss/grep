@@ -10,6 +10,11 @@ GNU grep NEWS                                    -*- outline -*-
   X{0,0} is implemented correctly.  It used to be a synonym of X{0,1}.
   [bug present since "the beginning"]
 
+  In multibyte locales, regular expressions including backreferences
+  no longer exhibit quadratic complexity (i.e., they are orders
+  of magnitude faster). [bug present since multi-byte character set
+  support was introduced in 2.5.2]
+
   In UTF-8 locales, regular expressions including "." can be orders
   of magnitude faster.  For example, "grep ." is now twice as fast
   as "grep -v ^$", instead of being immensely slower.  It remains

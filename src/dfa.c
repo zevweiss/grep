@@ -3101,6 +3101,51 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 
 #endif /* MBS_SUPPORT */
 
+/* Initialize mblen_buf and inputwcs with data from the next line.  */
+
+static void
+prepare_wc_buf (const char *begin, const char *end)
+{
+  unsigned char eol = eolbyte;
+  size_t remain_bytes, i;
+
+  buf_begin = (unsigned char *) begin;
+
+  remain_bytes = 0;
+  for (i = 0; i < end - begin + 1; i++)
+    {
+      if (remain_bytes == 0)
+        {
+          remain_bytes
+            = mbrtowc(inputwcs + i, begin + i, end - begin - i + 1, &mbs);
+          if (remain_bytes < 1
+              || (remain_bytes == 1 && inputwcs[i] == (wchar_t)begin[i]))
+            {
+              remain_bytes = 0;
+              inputwcs[i] = (wchar_t)begin[i];
+              mblen_buf[i] = 0;
+              if (begin[i] == eol)
+                break;
+            }
+          else
+            {
+              mblen_buf[i] = remain_bytes;
+              remain_bytes--;
+            }
+        }
+      else
+        {
+          mblen_buf[i] = remain_bytes;
+          inputwcs[i] = 0;
+          remain_bytes--;
+        }
+    }
+
+  buf_end = (unsigned char *) (begin + i);
+  mblen_buf[i] = 0;
+  inputwcs[i] = 0; /* sentinel */
+}
+
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the
    buffer, and the shortest possible version thereof.  Return a pointer to
@@ -3147,44 +3192,10 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 #if MBS_SUPPORT
   if (d->mb_cur_max > 1)
     {
-      unsigned int i;
-      int remain_bytes;
-      buf_begin = (unsigned char *) begin;
-      buf_end = (unsigned char *) end;
-
-      /* initialize mblen_buf, and inputwcs.  */
       MALLOC(mblen_buf, unsigned char, end - begin + 2);
       MALLOC(inputwcs, wchar_t, end - begin + 2);
-      memset(&mbs, 0, sizeof mbs);
-      remain_bytes = 0;
-      for (i = 0; i < end - begin + 1; i++)
-        {
-          if (remain_bytes == 0)
-            {
-              remain_bytes
-                = mbrtowc(inputwcs + i, begin + i, end - begin - i + 1, &mbs);
-              if (remain_bytes < 1
-                || (remain_bytes == 1 && inputwcs[i] == (wchar_t)begin[i]))
-                {
-                  remain_bytes = 0;
-                  inputwcs[i] = (wchar_t)begin[i];
-                  mblen_buf[i] = 0;
-                }
-              else
-                {
-                  mblen_buf[i] = remain_bytes;
-                  remain_bytes--;
-                }
-            }
-          else
-            {
-              mblen_buf[i] = remain_bytes;
-              inputwcs[i] = 0;
-              remain_bytes--;
-            }
-        }
-      mblen_buf[i] = 0;
-      inputwcs[i] = 0; /* sentinel */
+      memset(&mbs, 0, sizeof(mbstate_t));
+      prepare_wc_buf (p, end);
     }
 #endif /* MBS_SUPPORT */
 
@@ -3194,7 +3205,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       if (d->mb_cur_max > 1)
         while ((t = trans[s]))
           {
-            if ((char *) p > end)
+            if (p > buf_end)
               break;
             s1 = s;
             SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p);
@@ -3254,8 +3265,16 @@ dfaexec (struct dfa *d, char const *begin, char *end,
         }
 
       /* If the previous character was a newline, count it. */
-      if (count && (char *) p <= end && p[-1] == eol)
-        ++*count;
+      if ((char *) p <= end && p[-1] == eol)
+        {
+          if (count)
+            ++*count;
+
+#if MBS_SUPPORT
+          if (d->mb_cur_max > 1)
+            prepare_wc_buf (p, end);
+#endif
+        }
 
       /* Check if we've run off the end of the buffer. */
       if ((char *) p > end)
