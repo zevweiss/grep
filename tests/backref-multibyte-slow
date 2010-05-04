@@ -1,0 +1,28 @@
+#!/bin/sh
+# This was approximately quadratic up to grep-2.6.3
+: ${srcdir=.}
+. "$srcdir/init.sh"; path_prepend_ ../src
+
+require_en_utf8_locale_
+require_timeout_
+
+fail=0
+
+set -x
+# Create a 12288-line input
+echo aba | \
+  sed 'p;p;p;p;p;p;p' | \
+  sed 'p;p;p;p;p;p;p' | \
+  sed 'p;p;p;p;p;p;p' | \
+  sed 'p;p;p;p;p;p;p' | \
+  sed 'p;p' > in
+
+  wc -l in
+for LOC in en_US.UTF-8; do
+  out=out-$LOC
+  LC_ALL=$LOC timeout 5s grep -E '^([a-z]).\1$' in > $out 2>&1
+  test $? = 0 || fail=1
+  compare $out in || fail=1
+done
+
+Exit $fail

@@ -30,6 +30,7 @@ TESTS =						\
   backref.sh					\
   backref-word					\
   bre.sh					\
+  backref-multibyte-slow			\
   case-fold-backref				\
   case-fold-backslash-w				\
   case-fold-char-class				\
