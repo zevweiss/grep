@@ -3119,6 +3119,8 @@ prepare_wc_buf (const char *begin, const char *end)
           remain_bytes
             = mbrtowc(inputwcs + i, begin + i, end - begin - i + 1, &mbs);
           if (remain_bytes < 1
+              || remain_bytes == (size_t) -1
+              || remain_bytes == (size_t) -2
               || (remain_bytes == 1 && inputwcs[i] == (wchar_t)begin[i]))
             {
               remain_bytes = 0;
