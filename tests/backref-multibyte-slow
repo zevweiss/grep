@@ -8,16 +8,9 @@ require_timeout_
 
 fail=0
 
-set -x
-# Create a 12288-line input
-echo aba | \
-  sed 'p;p;p;p;p;p;p' | \
-  sed 'p;p;p;p;p;p;p' | \
-  sed 'p;p;p;p;p;p;p' | \
-  sed 'p;p;p;p;p;p;p' | \
-  sed 'p;p' > in
+# Create a 13000-line input
+$AWK 'BEGIN {for (i=0; i<13000; i++) print "aba"}' /dev/null > in || fail=1
 
-  wc -l in
 for LOC in en_US.UTF-8; do
   out=out-$LOC
   LC_ALL=$LOC timeout 5s grep -E '^([a-z]).\1$' in > $out 2>&1
