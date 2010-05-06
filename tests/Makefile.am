@@ -85,6 +85,10 @@ CLEANFILES = \
   116909.out 123362.out 161700.out 171379.out 179698.out \
   204255.first 204255.second
 
+# Default to a nonzero value.  Environment overrides.
+# http://udrepper.livejournal.com/11429.html
+MALLOC_PERTURB_ = 1
+
 TESTS_ENVIRONMENT =				\
   tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
   TMPDIR=$$tmp__; export TMPDIR;		\
@@ -121,6 +125,7 @@ TESTS_ENVIRONMENT =				\
   CC='$(CC)'					\
   GREP_TEST_NAME=`echo $$tst|sed 's,^\./,,;s,/,-,g'` \
   MAKE=$(MAKE)					\
+  MALLOC_PERTURB_=$(MALLOC_PERTURB_); export MALLOC_PERTURB_ \
   PACKAGE_BUGREPORT='$(PACKAGE_BUGREPORT)'	\
   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
   PERL='$(PERL)'				\
