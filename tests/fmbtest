@@ -5,8 +5,7 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 # If cs_CZ.UTF-8 locale doesn't work, skip this test silently
 LC_ALL=cs_CZ.UTF-8 locale -k LC_CTYPE 2>/dev/null | grep -q charmap.*UTF-8 \

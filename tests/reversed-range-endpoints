@@ -1,7 +1,6 @@
 #!/bin/sh
 # Ensure that an invalid range like [b-a] evokes exit status of 2.
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 fail=0
 

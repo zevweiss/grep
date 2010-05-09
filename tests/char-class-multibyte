@@ -1,7 +1,6 @@
 #!/bin/sh
 # This would segfault for grep-2.6
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 require_en_utf8_locale_
 

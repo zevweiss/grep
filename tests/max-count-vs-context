@@ -1,7 +1,6 @@
 #!/bin/sh
 # Show how -m1 works with -A N when a 2nd match is < N lines after the first
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 cat <<EOF > in || framework_failure_
 needle

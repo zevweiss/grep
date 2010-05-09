@@ -8,8 +8,7 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 require_timeout_
 

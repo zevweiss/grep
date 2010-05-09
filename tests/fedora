@@ -1,7 +1,6 @@
 #!/bin/bash
 
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 # GREP Regression test suite for Fedora bugs and fixes
 # (c) 2008 Lubomir Rintel

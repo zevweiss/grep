@@ -1,8 +1,7 @@
 #!/bin/sh
 # test that \W works on case-insensitive matches.  It used to become \w.
 # Derived from https://savannah.gnu.org/bugs/?28162
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 if echo foo bar | LANG=C.ASCII grep '^foo\W'; then
   echo foo bar | LANG=C.ASCII grep -i '^foo\W' || fail_ ASCII insensitive

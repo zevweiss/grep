@@ -1,7 +1,6 @@
 #!/bin/sh
 # Use of any --include or --exclude* option would segfault in 2.6 and 2.6.1
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 mkdir -p x/dir || framework_failure_
 echo a > x/a || framework_failure_

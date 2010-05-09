@@ -1,7 +1,6 @@
 #!/bin/sh
 # This would infloop for grep-2.6.1
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 require_en_utf8_locale_
 require_timeout_

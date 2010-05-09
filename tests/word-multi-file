@@ -1,8 +1,7 @@
 #!/bin/sh
 # exercise the -w option on multiple files
 # Derived from http://bugzilla.redhat.com/570500
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 mkdir a || framework_failure_
 ( cd a \

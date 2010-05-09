@@ -1,7 +1,6 @@
 #!/bin/sh
 # Test Perl regex with NUL-separated input
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 echo a | grep -P a >/dev/null 2>err || skip_ 'PCRE not available.'
 compare err /dev/null || fail_ 'PCRE available, but stderr not empty.'

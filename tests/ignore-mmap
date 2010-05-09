@@ -1,7 +1,6 @@
 #!/bin/sh
 # Ensure that --mmap is ignored
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 echo a > in || framework_failure_
 fail=0

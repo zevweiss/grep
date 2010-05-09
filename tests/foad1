@@ -9,8 +9,7 @@
 #
 # This set of tests was started by Julian Foad.
 
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 failures=0
 

@@ -1,7 +1,6 @@
 #!/bin/sh
 # This would fail for grep-2.5.3
-: ${srcdir=.}
-. "$srcdir/init.sh"; path_prepend_ ../src
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 printf 'Y\n'      > exp1 || framework_failure_
 fail=0
