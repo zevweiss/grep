@@ -21,11 +21,16 @@
 # The typical skeleton of a test looks like this:
 #
 #   #!/bin/sh
-#   : ${srcdir=.}
-#   . "$srcdir/init.sh"; path_prepend_ .
+#   . "${srcdir=.}/init.sh"; path_prepend_ .
 #   Execute some commands.
 #   Note that these commands are executed in a subdirectory, therefore you
 #   need to prepend "../" to relative filenames in the build directory.
+#   Note that the "path_prepend_ ." is useful only if the body of your
+#   test invokes programs residing in the initial directory.
+#   For example, if the programs you want to test are in src/, and this test
+#   script is named tests/test-1, then you would use "path_prepend_ ../src",
+#   or perhaps export PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH"
+#   to all tests via automake's TESTS_ENVIRONMENT.
 #   Set the exit code 0 for success, 77 for skipped, or 1 or other for failure.
 #   Use the skip_ and fail_ functions to print a diagnostic and then exit
 #   with the corresponding exit code.
@@ -88,6 +93,13 @@ else
 fi
 
 test -n "$EXEEXT" && shopt -s expand_aliases
+
+# Enable glibc's malloc-perturbing option.
+# This is cheap and useful for exposing code that depends on the fact that
+# malloc-related functions often return memory that is mostly zeroed.
+# If you have the time and cycles, use valgrind to do an even better job.
+${MALLOC_PERTURB_=87}
+export MALLOC_PERTURB_
 
 # We use a trap below for cleanup.  This requires us to go through
 # hoops to get the right exit status transported through the handler.
@@ -225,10 +237,12 @@ setup_()
     || fail_ "failed to create temporary directory in $initial_cwd_"
   cd "$test_dir_"
 
-  # This pair of trap statements ensures that the temporary directory,
-  # $test_dir_, is removed upon exit as well as upon catchable signal.
+  # These trap statements ensure that the temporary directory, $test_dir_,
+  # is removed upon exit as well as upon receipt of any of the listed signals.
   trap remove_tmp_ 0
-  trap 'Exit $?' 1 2 13 15
+  for sig_ in 1 2 3 13 15; do
+    eval "trap 'Exit $(expr $sig_ + 128)' $sig_"
+  done
 }
 
 # Create a temporary directory, much like mktemp -d does.
