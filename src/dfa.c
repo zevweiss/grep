@@ -3199,7 +3199,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       MALLOC(mblen_buf, unsigned char, end - begin + 2);
       MALLOC(inputwcs, wchar_t, end - begin + 2);
       memset(&mbs, 0, sizeof(mbstate_t));
-      prepare_wc_buf (p, end);
+      prepare_wc_buf ((const char *) p, end);
     }
 #endif /* MBS_SUPPORT */
 
@@ -3276,7 +3276,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
 #if MBS_SUPPORT
           if (d->mb_cur_max > 1)
-            prepare_wc_buf (p, end);
+            prepare_wc_buf ((const char *) p, end);
 #endif
         }
 
