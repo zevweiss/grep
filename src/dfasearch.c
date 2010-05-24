@@ -326,7 +326,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 while (match <= best_match)
                   {
                     if ((match == buf || !WCHAR ((unsigned char) match[-1]))
-                        && (len == end - beg - 1
+                        && (start + len == end - buf - 1
                             || !WCHAR ((unsigned char) match[len])))
                       goto assess_pattern_match;
                     if (len > 0)
