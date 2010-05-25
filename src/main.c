@@ -408,7 +408,7 @@ context_length_arg (char const *str, int *out)
          && 0 <= (*out = value)
          && *out == value))
     {
-      error (EXIT_TROUBLE, 0, "%s: %s\n", str,
+      error (EXIT_TROUBLE, 0, "%s: %s", str,
              _("invalid context length argument"));
     }
 }
@@ -1321,7 +1321,7 @@ grepdir (char const *dir, struct stats const *stats)
           && ancestor->stat.st_dev == stats->stat.st_dev)
         {
           if (!suppress_errors)
-            error (0, 0, _("warning: %s: %s\n"), dir,
+            error (0, 0, _("warning: %s: %s"), dir,
                    _("recursive directory loop"));
           return 1;
         }
