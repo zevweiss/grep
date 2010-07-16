@@ -1334,6 +1334,12 @@ Match word constituent, it is a synonym for @samp{[[:alnum:]]}.
 @item @samp{\W}
 Match non-word constituent, it is a synonym for @samp{[^[:alnum:]]}.
 
+@item @samp{\s}
+Match whitespace, it is a synonym for @samp{[[:space:]]}.
+
+@item @samp{\S}
+Match non-whitespace, it is a synonym for @samp{[^[:space:]]}.
+
 @end table
 
 For example, @samp{\brat\b} matches the separate word @samp{rat},
