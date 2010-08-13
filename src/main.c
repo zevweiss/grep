@@ -2172,11 +2172,11 @@ There is NO WARRANTY, to the extent permitted by law.\n"),
           if ((included_patterns || excluded_patterns)
               && !isdir (file))
             {
-              if (included_patterns &&
-                  ! excluded_file_name (included_patterns, file))
+              if (included_patterns
+                  && excluded_file_name (included_patterns, file))
                 continue;
-              if (excluded_patterns &&
-                  excluded_file_name (excluded_patterns, file))
+              if (excluded_patterns
+                  && excluded_file_name (excluded_patterns, file))
                 continue;
             }
           status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,

@@ -39,4 +39,8 @@ grep -r --include='a*'    . x > out || fail=1
 # no need to sort
 compare out exp-a || fail=1
 
+# --include (without --recursive) uses different code
+grep --include=a a x/* > out || fail=1
+compare out exp-a || fail=1
+
 Exit $fail

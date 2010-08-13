@@ -4,6 +4,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep --include=FILE works once again, rather than working like --exclude=FILE
+  [bug introduced in grep-2.6]
+
   Searching with grep -Fw for an empty string would not match an
   empty line. [bug present since "the beginning"]
 
