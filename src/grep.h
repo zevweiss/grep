@@ -43,3 +43,5 @@ extern int match_icase;		/* -i */
 extern int match_words;		/* -w */
 extern int match_lines;		/* -x */
 extern unsigned char eolbyte;	/* -z */
+
+extern int warnings;
