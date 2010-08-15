@@ -63,6 +63,7 @@ TESTS =						\
   spencer1-locale				\
   status.sh					\
   prefix-of-multibyte				\
+  warn-char-classes				\
   warning.sh					\
   word-multi-file				\
   word-delim-multibyte				\
