@@ -46,6 +46,7 @@ TESTS =						\
   file.sh					\
   fmbtest					\
   foad1						\
+  grep-dev-null					\
   help-version					\
   ignore-mmap					\
   include-exclude				\
