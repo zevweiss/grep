@@ -752,6 +752,13 @@ parse_bracket_exp (void)
   int c, c1, c2;
   charclass ccl;
 
+  /* Used to warn about [:space:].
+     Bit 0 = first character is a colon.
+     Bit 1 = last character is a colon.
+     Bit 2 = includes any other character but a colon.
+     Bit 3 = includes ranges, char/equiv classes or collation elements.  */
+  int colon_warning_state;
+
 #if MBS_SUPPORT
   wint_t wc, wc1, wc2;
 
@@ -790,9 +797,11 @@ parse_bracket_exp (void)
   else
     invert = 0;
 
+  colon_warning_state = (c == ':');
   do
     {
       c1 = EOF; /* mark c1 is not initialized".  */
+      colon_warning_state &= ~2;
 
       /* Note that if we're looking at some other [:...:] construct,
          we just treat it as a bunch of ordinary characters.  We can do
@@ -890,6 +899,7 @@ parse_bracket_exp (void)
                     }
                 }
 #endif
+              colon_warning_state |= 8;
 
               /* Fetch new lookahead character.  */
               FETCH_WC (c1, wc1, _("unbalanced ["));
@@ -975,9 +985,12 @@ parse_bracket_exp (void)
                     setbit_case_fold (c, ccl);
             }
 
+          colon_warning_state |= 8;
           FETCH_WC(c1, wc1, _("unbalanced ["));
           continue;
         }
+
+      colon_warning_state |= (c == ':') ? 2 : 4;
 
 #if MBS_SUPPORT
       /* Build normal characters.  */
@@ -1017,6 +1030,9 @@ parse_bracket_exp (void)
          wc = wc1,
 #endif
          (c = c1) != ']'));
+
+  if (colon_warning_state == 7)
+    dfawarn (_("character class syntax is [[:space:]], not [:space:]"));
 
 #if MBS_SUPPORT
   if (MB_CUR_MAX > 1

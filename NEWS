@@ -27,6 +27,15 @@ GNU grep NEWS                                    -*- outline -*-
   --mmap was meant to be ignored in 2.6.x, but it was instead
   removed by mistake.  [bug introduced in 2.6]
 
+** New features
+
+  grep now will warn for very common regular expression mistakes,
+  such as using [:space:] instead of [[:space:]].  Warnings are
+  disabled by POSIXLY_CORRECT.  They are also disabled when stdout
+  is not a TTY, thus minimizing the chance of extraneous output
+  in a script.  However, the rules for enabling/disabling warnings
+  are experimental and subject to change in future releases.
+
 * Noteworthy changes in release 2.6.3 (2010-04-02) [stable]
 
 ** Bug fixes

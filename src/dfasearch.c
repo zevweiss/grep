@@ -46,6 +46,13 @@ static struct patterns *patterns;
 static size_t pcount;
 
 void
+dfawarn (char const *mesg)
+{
+  if (warnings)
+    error (0, 0, _("warning: %s"), mesg);
+}
+
+void
 dfaerror (char const *mesg)
 {
   error (EXIT_TROUBLE, 0, "%s", mesg);
