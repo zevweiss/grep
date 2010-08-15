@@ -24,7 +24,8 @@ LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
 # Remove this definition once the failing test passes.
 XFAIL_TESTS = \
-  word-delim-multibyte
+  word-delim-multibyte \
+  grep-dir
 
 TESTS =						\
   backref.sh					\
@@ -47,6 +48,7 @@ TESTS =						\
   fmbtest					\
   foad1						\
   grep-dev-null					\
+  grep-dir						\
   help-version					\
   ignore-mmap					\
   include-exclude				\
