@@ -68,15 +68,16 @@ mbtolower (const char *beg, size_t *n)
   const char *end;
   char *p;
 
-  assert (0 < *n);
-
-  if (*n > outalloc)
+  if (*n > outalloc || outalloc == 0)
     {
-      out = xrealloc (out, *n);
-      outalloc = *n;
+      outalloc = MAX(1, *n);
+      out = xrealloc (out, outalloc);
     }
+
   /* appease clang-2.6 */
   assert (out);
+  if (*n == 0)
+    return out;
 
   memset (&is, 0, sizeof (is));
   memset (&os, 0, sizeof (os));

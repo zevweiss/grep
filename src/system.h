@@ -23,6 +23,7 @@
 #include "binary-io.h"
 #include "configmake.h"
 #include "dirname.h"
+#include "minmax.h"
 
 #if O_BINARY
 # define HAVE_DOS_FILE_CONTENTS 1
