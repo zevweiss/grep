@@ -2306,8 +2306,8 @@ dfaanalyze (struct dfa *d, int searchflag)
 void
 dfastate (int s, struct dfa *d, int trans[])
 {
-  position_set grps[NOTCHAR];	/* As many as will ever be needed. */
-  charclass labels[NOTCHAR];	/* Labels corresponding to the groups. */
+  position_set *grps;		/* As many as will ever be needed. */
+  charclass *labels;		/* Labels corresponding to the groups. */
   int ngrps = 0;		/* Number of groups actually used. */
   position pos;			/* Current position being considered. */
   charclass matches;		/* Set of matching characters. */
@@ -2330,6 +2330,9 @@ dfastate (int s, struct dfa *d, int trans[])
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
 #endif
   int i, j, k;
+
+  grps = xnmalloc (NOTCHAR, sizeof *grps);
+  labels = xnmalloc (NOTCHAR, sizeof *labels);
 
   /* Initialize the set of letters, if necessary. */
   if (! initialized)
@@ -2593,6 +2596,8 @@ dfastate (int s, struct dfa *d, int trans[])
     free(grps[i].elems);
   free(follows.elems);
   free(tmp.elems);
+  free(grps);
+  free(labels);
 }
 
 /* Some routines for manipulating a compiled dfa's transition tables.
