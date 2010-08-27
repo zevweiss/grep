@@ -3171,6 +3171,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   int **trans, *t;	/* Copy of d->trans so it can be optimized
                                    into a register. */
   unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
+  unsigned char saved_end;
   static int sbit[NOTCHAR];	/* Table for anding with d->success. */
   static int sbit_init;
 
@@ -3190,7 +3191,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   s = s1 = 0;
   p = (unsigned char const *) begin;
   trans = d->trans;
-  unsigned char saved_end = *(unsigned char *) end;
+  saved_end = *(unsigned char *) end;
   *end = eol;
 
 #if MBS_SUPPORT
