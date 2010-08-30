@@ -43,7 +43,9 @@
 #include "intprops.h"
 #include "isdir.h"
 #include "progname.h"
+#include "propername.h"
 #include "savedir.h"
+#include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
 
@@ -52,6 +54,10 @@
 #define SEP_STR_GROUP    "--"
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
+
+#define AUTHORS \
+  proper_name ("Mike Haertel"), \
+  _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
 
 struct stats
 {
@@ -2156,15 +2162,9 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      printf ("%s\n\n", PACKAGE_STRING);
-      printf (_("\
-Copyright (C) %s Free Software Foundation, Inc.\n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n"),
-        "2009");
-      printf ("\n");
-      exit (EXIT_SUCCESS);
+      version_etc (stdout, program_name, PACKAGE_NAME, VERSION, AUTHORS, \
+                   (char *) NULL);					\
+      exit (EXIT_SUCCESS);						\
     }
 
   if (show_help)
