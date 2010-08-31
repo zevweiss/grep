@@ -286,8 +286,7 @@ enum
   LABEL_OPTION,
   EXCLUDE_DIRECTORY_OPTION,
   GROUP_SEPARATOR_OPTION,
-  MMAP_OPTION,
-  WARN_OPTION,
+  MMAP_OPTION
 };
 
 /* Long options equivalences. */
@@ -343,7 +342,6 @@ static struct option const long_options[] =
   {"binary", no_argument, NULL, 'U'},
   {"unix-byte-offsets", no_argument, NULL, 'u'},
   {"version", no_argument, NULL, 'V'},
-  {"warn", optional_argument, NULL, WARN_OPTION},
   {"with-filename", no_argument, NULL, 'H'},
   {"word-regexp", no_argument, NULL, 'w'},
   {0, 0, 0, 0}
@@ -354,7 +352,6 @@ int match_icase;
 int match_words;
 int match_lines;
 unsigned char eolbyte;
-int warnings;
 
 /* For error messages. */
 /* The name the program was run with, stripped of any leading path. */
@@ -387,27 +384,6 @@ static enum
     READ_DEVICES,
     SKIP_DEVICES
   } devices = READ_DEVICES;
-
-enum warn_type
-  {
-    WARN_ALWAYS = 0,
-    WARN_NEVER,
-    WARN_AUTO,
-  };
-
-static char const *const warn_args[] =
-{
-  "always", "yes", "force",
-  "never", "no", "none",
-  "auto", "tty", "if-tty", NULL
-};
-static enum warn_type const warn_types[] =
-{
-  WARN_ALWAYS, WARN_ALWAYS, WARN_ALWAYS,
-  WARN_NEVER, WARN_NEVER, WARN_NEVER,
-  WARN_AUTO, WARN_AUTO, WARN_AUTO
-};
-ARGMATCH_VERIFY (warn_args, warn_types);
 
 static int grepdir (char const *, struct stats const *);
 #if defined HAVE_DOS_FILE_CONTENTS
@@ -1783,7 +1759,6 @@ main (int argc, char **argv)
   int opt, cc, status;
   int default_context;
   FILE *fp;
-  enum warn_type w;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -1815,8 +1790,6 @@ main (int argc, char **argv)
 
   exit_failure = EXIT_TROUBLE;
   atexit (close_stdout);
-
-  w = getenv ("POSIXLY_CORRECT") ? WARN_NEVER : WARN_ALWAYS;
 
   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
   setmatcher (NULL);
@@ -2051,6 +2024,15 @@ main (int argc, char **argv)
             show_help = 1;
         } else
           color_option = 2;
+        if (color_option == 2)
+          {
+            char const *t;
+            if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
+                && !STREQ (t, "dumb"))
+              color_option = 1;
+            else
+              color_option = 0;
+          }
         break;
 
       case EXCLUDE_OPTION:
@@ -2098,13 +2080,6 @@ main (int argc, char **argv)
         /* long options */
         break;
 
-      case WARN_OPTION:
-        if (optarg)
-          w = XARGMATCH ("--warn", optarg, warn_args, warn_types);
-        else
-          w = WARN_ALWAYS;
-        break;
-
       default:
         usage (EXIT_TROUBLE);
         break;
@@ -2126,28 +2101,6 @@ main (int argc, char **argv)
     out_after = default_context;
   if (out_before < 0)
     out_before = default_context;
-
-  char const *t;
-  if (isatty (STDOUT_FILENO)
-      && (t = getenv ("TERM")) && !STREQ (t, "dumb"))
-    {
-      if (color_option == 2)
-        color_option = 1;
-      if (w == WARN_AUTO)
-        w = WARN_ALWAYS;
-    }
-  else
-    {
-      if (color_option == 2)
-        color_option = 0;
-
-      /* Redirected stdout: we're likely in a script, disable warnings.  */
-      if (w == WARN_AUTO)
-        w = WARN_NEVER;
-    }
-
-  /* assert (w == WARN_ALWAYS || w == WARN_NEVER); */
-  warnings = w == WARN_ALWAYS;
 
   if (color_option)
     {

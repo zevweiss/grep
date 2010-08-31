@@ -46,13 +46,6 @@ static struct patterns *patterns;
 static size_t pcount;
 
 void
-dfawarn (char const *mesg)
-{
-  if (warnings)
-    error (0, 0, _("warning: %s"), mesg);
-}
-
-void
 dfaerror (char const *mesg)
 {
   error (EXIT_TROUBLE, 0, "%s", mesg);
@@ -60,6 +53,19 @@ dfaerror (char const *mesg)
   /* notreached */
   /* Tell static analyzers that this function does not return.  */
   abort ();
+}
+
+/* For now, the sole dfawarn-eliciting condition (use of a regexp
+   like '[:lower:]') is unequivocally an error, so treat it as such,
+   when possible.  */
+void
+dfawarn (char const *mesg)
+{
+  static enum { NONE = 0, POSIX, GNU } mode;
+  if (mode == NONE)
+    mode = (getenv ("POSIXLY_CORRECT") ? POSIX : GNU);
+  if (mode == GNU)
+    dfaerror (mesg);
 }
 
 /* Number of compiled fixed strings known to exactly match the regexp.

@@ -7,12 +7,14 @@ set -x
 echo f > x || framework_failure_
 echo b >> x || framework_failure_
 echo h >> x || framework_failure_
+printf 'grep: character class syntax is [[:space:]], not [:space:]\n' \
+  > exp-err || framework_failure_
 
 # basic cases
 
 grep '[:space:]' x 2> err
-test $? = 1 || fail=1
-test -s err || fail=1
+test $? = 2 || fail=1
+compare err exp-err || fail=1
 
 grep '[[:space:]]' x 2> err
 test $? = 1 || fail=1

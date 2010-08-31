@@ -29,12 +29,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** New features
 
-  grep now will warn for very common regular expression mistakes,
-  such as using [:space:] instead of [[:space:]].  Warnings are
-  disabled by POSIXLY_CORRECT.  They are also disabled when stdout
-  is not a TTY, thus minimizing the chance of extraneous output
-  in a script.  However, the rules for enabling/disabling warnings
-  are experimental and subject to change in future releases.
+  grep now diagnoses (and fails with exit status 2) commonly mistyped
+  regular expression like [:space:], [:digit:], etc.  Before, those were
+  silently interpreted as [ac:eps] and [dgit:] respectively.  Virtually
+  all who make that class of mistake should have used [[:space:]] or
+  [[:digit:]].  This new behavior is disabled when the POSIXLY_CORRECT
+  environment variable is set.
+
 
 * Noteworthy changes in release 2.6.3 (2010-04-02) [stable]
 

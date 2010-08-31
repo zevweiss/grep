@@ -935,12 +935,8 @@ follow file names must be treated as file names;
 by default,
 such options are permuted to the front of the operand list
 and are treated as options.
-Also,
-@sc{posix.2} requires that unrecognized options be diagnosed as ``illegal'',
-but since they are not really against the law the default
-is to diagnose them as ``invalid''.
-@code{POSIXLY_CORRECT} also disables @code{_@var{N}_GNU_nonoption_argv_flags_},
-described below.
+Also, @code{POSIXLY_CORRECT} disables special handling of an
+invalid bracket expression.  @xref{invalid-bracket-expr}.
 
 @item _@var{N}_GNU_nonoption_argv_flags_
 @vindex _@var{N}_GNU_nonoption_argv_flags_ @r{environment variable}
@@ -1268,6 +1264,13 @@ encoding, whereas the former is independent of locale and character set.
 (Note that the brackets in these class names are
 part of the symbolic names, and must be included in addition to
 the brackets delimiting the bracket expression.)
+
+@anchor{invalid-bracket-expr}
+If you mistakenly omit the outer brackets, and search for say, @samp{[:upper:]},
+GNU @command{grep} prints a diagnostic and exits with status 2, on
+the assumption that you did not intend to search for the nominally
+equivalent regular expression: @samp{[:epru]}.
+Set the @code{POSIXLY_CORRECT} environment variable to disable this feature.
 
 Most meta-characters lose their special meaning inside bracket expressions.
 
