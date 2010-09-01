@@ -22,6 +22,7 @@ lib/getopt.c
 lib/obstack.c
 lib/quotearg.c
 lib/regcomp.c
+lib/version-etc.c
 lib/xalloc-die.c
 lib/xstrtol-error.c
 src/dfa.c
