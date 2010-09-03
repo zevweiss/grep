@@ -28,9 +28,9 @@ XFAIL_TESTS = \
   grep-dir
 
 TESTS =						\
-  backref.sh					\
+  backref					\
   backref-word					\
-  bre.sh					\
+  bre						\
   backref-multibyte-slow			\
   case-fold-backref				\
   case-fold-backslash-w				\
@@ -40,33 +40,33 @@ TESTS =						\
   char-class-multibyte				\
   dfaexec-multibyte				\
   empty						\
-  ere.sh					\
+  ere						\
   euc-mb					\
   fedora					\
   fgrep-infloop					\
-  file.sh					\
+  file						\
   fmbtest					\
   foad1						\
   grep-dev-null					\
-  grep-dir						\
+  grep-dir					\
   help-version					\
   ignore-mmap					\
   include-exclude				\
-  khadafy.sh					\
+  khadafy					\
   max-count-vs-context				\
-  options.sh					\
-  pcre.sh					\
+  options					\
+  pcre						\
   pcre-z					\
   reversed-range-endpoints			\
   sjis-mb					\
-  spencer1.sh					\
+  spencer1					\
   spencer1-locale				\
-  status.sh					\
+  status					\
   prefix-of-multibyte				\
   warn-char-classes				\
   word-multi-file				\
   word-delim-multibyte				\
-  yesno.sh
+  yesno
 
 EXTRA_DIST =					\
   $(TESTS)					\
