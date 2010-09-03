@@ -7,13 +7,15 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 
-: ${srcdir=.}
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
-failures=0
+fail=0
 
 # . . . and the following by Henry Spencer.
 
-${AWK-awk} -f $srcdir/ere.awk $srcdir/ere.tests > ere.script
+${AWK-awk} -f $abs_top_srcdir/tests/ere.awk $abs_top_srcdir/tests/ere.tests \
+  > ere.script || fail=1
 
-${SHELL-sh} ere.script && exit $failures
-exit 1
+${SHELL-sh} ere.script || fail=1
+
+Exit $fail

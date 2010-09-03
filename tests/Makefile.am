@@ -84,7 +84,7 @@ EXTRA_DIST =					\
   spencer1-locale.awk
 
 CLEANFILES = \
-  spencer1.script bre.script ere.script khadafy.out patfile \
+  spencer1.script khadafy.out patfile \
   cspatfile csinput 112869.out 116909.in 116909.list \
   116909.out 123362.out 161700.out 171379.out 179698.out \
   204255.first 204255.second
