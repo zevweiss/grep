@@ -64,7 +64,6 @@ TESTS =						\
   status.sh					\
   prefix-of-multibyte				\
   warn-char-classes				\
-  warning.sh					\
   word-multi-file				\
   word-delim-multibyte				\
   yesno.sh
