@@ -7,20 +7,20 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 
-: ${srcdir=.}
-: ${GREP=../src/grep}
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
-failures=0
+fail=0
 
 # The Khadafy test is brought to you by Scott Anderson . . .
 
-${GREP} -E -f $srcdir/khadafy.regexp $srcdir/khadafy.lines > khadafy.out
-if cmp $srcdir/khadafy.lines khadafy.out
+grep -E -f $abs_top_srcdir/tests/khadafy.regexp \
+    $abs_top_srcdir/tests/khadafy.lines > khadafy.out || fail=1
+if cmp $abs_top_srcdir/tests/khadafy.lines khadafy.out
 then
         :
 else
         echo Khadafy test failed -- output left on khadafy.out
-        failures=1
+        fail=1
 fi
 
-exit $failures
+Exit $fail

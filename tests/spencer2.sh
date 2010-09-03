@@ -8,13 +8,15 @@
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.
 
-: ${srcdir=.}
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
 
-failures=0
+fail=0
 
 # . . . and the following by Henry Spencer.
 
-${AWK-awk} -f $srcdir/spencer1.awk $srcdir/spencer2.tests > spencer2.script
+${AWK-awk} -f $abs_top_srcdir/tests/spencer1.awk \
+    $abs_top_srcdir/tests/spencer2.tests > spencer2.script || fail=1
 
-sh spencer2.script && exit $failures
-exit 1
+. ./spencer2.script || fail=1
+
+Exit 1

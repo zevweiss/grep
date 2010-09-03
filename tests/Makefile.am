@@ -82,12 +82,6 @@ EXTRA_DIST =					\
   spencer1.tests				\
   spencer1-locale.awk
 
-CLEANFILES = \
-  spencer1.script khadafy.out patfile \
-  cspatfile csinput 112869.out 116909.in 116909.list \
-  116909.out 123362.out 161700.out 171379.out 179698.out \
-  204255.first 204255.second
-
 # Default to a nonzero value.  Environment overrides.
 # http://udrepper.livejournal.com/11429.html
 MALLOC_PERTURB_ = 1
@@ -116,7 +110,6 @@ TESTS_ENVIRONMENT =				\
   LOCALE_FR='$(LOCALE_FR)'                      \
   LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'            \
   AWK=$(AWK)					\
-  GREP=$(top_builddir)/src/grep			\
   GREP_OPTIONS=''				\
   LC_ALL=C					\
   abs_top_builddir='$(abs_top_builddir)'	\
