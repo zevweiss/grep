@@ -9,7 +9,8 @@
 #
 # This set of tests was started by Charles Levert.
 
-: ${GREP=../src/grep}
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
 : ${VERBOSE=}  # empty or "1"
 failures=0
 
@@ -114,10 +115,10 @@ while test xx != "x$1"; do
   expect="$2"
   shift 2
 
-  output=$({ $GREP -F -n -b $opts yes 2>/dev/null; echo "?$?"; sed 's!^!X!'; } < "$yn" | tr '\n' '/')
+  output=$({ grep -F -n -b $opts yes 2>/dev/null; echo "?$?"; sed 's!^!X!'; } < "$yn" | tr '\n' '/')
 
   if test "$output" != "$expect" || test "$VERBOSE" = "1"; then
-    echo " Test #$t:  { $GREP -F -n -b $opts yes; echo \"?\$?\"; sed 's!^!X!'; }"
+    echo " Test #$t:  { grep -F -n -b $opts yes; echo \"?\$?\"; sed 's!^!X!'; }"
     echo "  output:  \"$output\""
   fi
   if test "$output" != "$expect"; then
@@ -131,4 +132,4 @@ while test xx != "x$1"; do
   t=$(expr $t + 1)
 done
 
-exit $failures
+Exit $failures
