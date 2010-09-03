@@ -1,6 +1,6 @@
 #! /bin/sh
 # Print a version string.
-scriptversion=2010-04-30.16; # UTC
+scriptversion=2010-07-06.10; # UTC
 
 # Bootstrap this package from checked-out sources.
 
@@ -90,7 +90,8 @@ bootstrap_epilogue() { :; }
 # options because the latest/%s directory and the .po files within are
 # all symlinks.
 po_download_command_format=\
-"rsync -Lrtvz 'translationproject.org::tp/latest/%s/' '%s'"
+"rsync --delete --exclude '*.s1' -Lrtvz \
+ 'translationproject.org::tp/latest/%s/' '%s'"
 
 extract_package_name='
   /^AC_INIT(/{
@@ -409,6 +410,7 @@ git_modules_config () {
 }
 
 gnulib_path=`git_modules_config submodule.gnulib.path`
+: ${gnulib_path=gnulib}
 
 # Get gnulib files.
 
@@ -424,7 +426,8 @@ case ${GNULIB_SRCDIR--} in
 
     trap cleanup_gnulib 1 2 13 15
 
-    git clone -h|grep -- --depth > /dev/null && shallow='--depth 2' || shallow=
+    shallow=
+    git clone -h 2>&1 | grep -- --depth > /dev/null && shallow='--depth 2'
     git clone $shallow git://git.sv.gnu.org/gnulib "$gnulib_path" ||
       cleanup_gnulib
 
@@ -473,22 +476,24 @@ download_po_files() {
   eval "$cmd"
 }
 
-# Download .po files to $po_dir/.reference and copy only the new
+# Mirror .po files to $po_dir/.reference and copy only the new
 # or modified ones into $po_dir.  Also update $po_dir/LINGUAS.
+# Note po files that exist locally only are left in $po_dir but will
+# not be included in LINGUAS and hence will not be distributed.
 update_po_files() {
   # Directory containing primary .po files.
   # Overwrite them only when we're sure a .po file is new.
   po_dir=$1
   domain=$2
 
-  # Download *.po files into this dir.
+  # Mirror *.po files into this dir.
   # Usually contains *.s1 checksum files.
   ref_po_dir="$po_dir/.reference"
 
   test -d $ref_po_dir || mkdir $ref_po_dir || return
   download_po_files $ref_po_dir $domain \
     && ls "$ref_po_dir"/*.po 2>/dev/null |
-      sed 's|.*/||; s|\.po$||' > "$po_dir/LINGUAS"
+      sed 's|.*/||; s|\.po$||' > "$po_dir/LINGUAS" || return
 
   langs=`cd $ref_po_dir && echo *.po|sed 's/\.po//g'`
   test "$langs" = '*' && langs=x

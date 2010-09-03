@@ -57,6 +57,41 @@
 #   4. Finally
 #   $ exit
 
+ME_=`expr "./$0" : '.*/\(.*\)$'`
+
+# We use a trap below for cleanup.  This requires us to go through
+# hoops to get the right exit status transported through the handler.
+# So use `Exit STATUS' instead of `exit STATUS' inside of the tests.
+# Turn off errexit here so that we don't trip the bug with OSF1/Tru64
+# sh inside this function.
+Exit () { set +e; (exit $1); exit $1; }
+
+# Print warnings (e.g., about skipped and failed tests) to this file number.
+# Override by defining to say, 9, in init.cfg, and putting say,
+# "export ...ENVVAR_SETTINGS...; exec 9>&2; $(SHELL)" in the definition
+# of TESTS_ENVIRONMENT in your tests/Makefile.am file.
+# This is useful when using automake's parallel tests mode, to print
+# the reason for skip/failure to console, rather than to the .log files.
+: ${stderr_fileno_=2}
+
+warn_() { echo "$@" 1>&$stderr_fileno_; }
+fail_() { warn_ "$ME_: failed test: $@"; Exit 1; }
+skip_() { warn_ "$ME_: skipped test: $@"; Exit 77; }
+framework_failure_() { warn_ "$ME_: set-up failure: $@"; Exit 99; }
+
+# Sanitize this shell to POSIX mode, if possible.
+DUALCASE=1; export DUALCASE
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
+  emulate sh
+  NULLCMD=:
+  alias -g '${1+"$@"}'='"$@"'
+  setopt NO_GLOB_SUBST
+else
+  case `(set -o) 2>/dev/null` in
+    *posix*) set -o posix ;;
+  esac
+fi
+
 # We require $(...) support unconditionally.
 # We require a few additional shell features only when $EXEEXT is nonempty,
 # in order to support automatic $EXEEXT emulation:
@@ -100,8 +135,14 @@ else
       test "$re_shell_" = fail && skip_ failed to find an adequate shell
       "$re_shell_" -c "$gl_shell_test_script_" 2>/dev/null
       if test $? = 9; then
-        # Found an acceptable shell.
-        exec "$re_shell_" "$0" --no-reexec "$@"
+        # Found an acceptable shell.  Preserve -v and -x.
+        case $- in
+          *v*x* | *x*v*) opts_=-vx ;;
+          *v*) opts_=-v ;;
+          *x*) opts_=-x ;;
+          *) opts_= ;;
+        esac
+        exec "$re_shell_" $opts_ "$0" --no-reexec "$@"
         echo "$ME_: exec failed" 1>&2
         exit 127
       fi
@@ -117,26 +158,6 @@ test -n "$EXEEXT" && shopt -s expand_aliases
 # If you have the time and cycles, use valgrind to do an even better job.
 : ${MALLOC_PERTURB_=87}
 export MALLOC_PERTURB_
-
-# We use a trap below for cleanup.  This requires us to go through
-# hoops to get the right exit status transported through the handler.
-# So use `Exit STATUS' instead of `exit STATUS' inside of the tests.
-# Turn off errexit here so that we don't trip the bug with OSF1/Tru64
-# sh inside this function.
-Exit () { set +e; (exit $1); exit $1; }
-
-# Print warnings (e.g., about skipped and failed tests) to this file number.
-# Override by defining to say, 9, in init.cfg, and putting say,
-# "export ...ENVVAR_SETTINGS...; exec 9>&2; $(SHELL)" in the definition
-# of TESTS_ENVIRONMENT in your tests/Makefile.am file.
-# This is useful when using automake's parallel tests mode, to print
-# the reason for skip/failure to console, rather than to the .log files.
-: ${stderr_fileno_=2}
-
-warn_() { echo "$@" 1>&$stderr_fileno_; }
-fail_() { warn_ "$ME_: failed test: $@"; Exit 1; }
-skip_() { warn_ "$ME_: skipped test: $@"; Exit 77; }
-framework_failure_() { warn_ "$ME_: set-up failure: $@"; Exit 1; }
 
 # This is a stub function that is run upon trap (upon regular exit and
 # interrupt).  Override it with a per-test function, e.g., to unmount
@@ -247,16 +268,15 @@ setup_()
   test "$VERBOSE" = yes && set -x
 
   initial_cwd_=$PWD
-  ME_=`expr "./$0" : '.*/\(.*\)$'`
 
   pfx_=`testdir_prefix_`
   test_dir_=`mktempd_ "$initial_cwd_" "$pfx_-$ME_.XXXX"` \
     || fail_ "failed to create temporary directory in $initial_cwd_"
   cd "$test_dir_"
 
-  # These trap statements ensure that the temporary directory, $test_dir_,
-  # is removed upon exit as well as upon receipt of any of the listed signals.
-  trap remove_tmp_ 0
+  # This trap statement, along with a trap on 0 below, ensure that the
+  # temporary directory, $test_dir_, is removed upon exit as well as
+  # upon receipt of any of the listed signals.
   for sig_ in 1 2 3 13 15; do
     eval "trap 'Exit $(expr $sig_ + 128)' $sig_"
   done
@@ -384,3 +404,6 @@ test -f "$srcdir/init.cfg" \
   && . "$srcdir/init.cfg"
 
 setup_ "$@"
+# This trap is here, rather than in the setup_ function, because some
+# shells run the exit trap at shell function exit, rather than script exit.
+trap remove_tmp_ 0
