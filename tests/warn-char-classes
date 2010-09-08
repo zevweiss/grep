@@ -2,8 +2,6 @@
 # Use of any --include or --exclude* option would segfault in 2.6 and 2.6.1
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
-set -x
-
 echo f > x || framework_failure_
 echo b >> x || framework_failure_
 echo h >> x || framework_failure_
