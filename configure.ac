@@ -151,6 +151,7 @@ dnl Some installers want to be informed if we do not use our regex.
 dnl For example, if the host platform uses dynamic linking and the installer
 dnl knows that the grep may be invoked on other hosts with buggy libraries,
 dnl then the installer should configure --with-included-regex.
+AM_CONDITIONAL([USE_INCLUDED_REGEX], [test "$ac_use_included_regex" = yes])
 if test "$ac_use_included_regex" = no; then
   AC_MSG_WARN([Included lib/regex.c not used])
 fi

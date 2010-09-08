@@ -27,6 +27,12 @@ XFAIL_TESTS = \
   word-delim-multibyte \
   grep-dir
 
+# Equivalence classes are only supported when using the system
+# matcher (which means only with glibc).
+if USE_INCLUDED_REGEX
+XFAIL_TESTS += equiv-classes
+endif
+
 TESTS =						\
   backref					\
   backref-word					\
@@ -41,6 +47,7 @@ TESTS =						\
   dfaexec-multibyte				\
   empty						\
   ere						\
+  equiv-classes                                 \
   euc-mb					\
   fedora					\
   fgrep-infloop					\
