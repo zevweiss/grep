@@ -3122,8 +3122,6 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   return s1;
 }
 
-#endif /* MBS_SUPPORT */
-
 /* Initialize mblen_buf and inputwcs with data from the next line.  */
 
 static void
@@ -3170,6 +3168,8 @@ prepare_wc_buf (const char *begin, const char *end)
   mblen_buf[i] = 0;
   inputwcs[i] = 0; /* sentinel */
 }
+
+#endif /* MBS_SUPPORT */
 
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the
