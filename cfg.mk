@@ -30,7 +30,7 @@ bootstrap-tools = autoconf,automake,gnulib
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 62f7c4d1bdc4f161dcec5ad9c314cf4a
+old_NEWS_hash = 0a303309a7ab8ffc64cac722c170b548
 
 # Many m4 macros names once began with `jm_'.
 # Make sure that none are inadvertently reintroduced.
