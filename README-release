@@ -25,7 +25,7 @@ Here are most of the steps we (maintainers) follow when making a release.
 * Set the date, version number, and release type [stable/alpha/beta] on
   line 3 of NEWS, commit that, and tag the release by running e.g.,
 
-    build-aux/do-release-commit-and-tag 2.6 stable
+    build-aux/do-release-commit-and-tag X.Y stable
 
 * Run the following to create release tarballs.  Your choice selects the
   corresponding upload-to destination in the emitted gnupload command.
@@ -39,7 +39,8 @@ Here are most of the steps we (maintainers) follow when making a release.
   it builds and passes all tests.
 
 * While that's happening, write the release announcement that you will
-  soon post.
+  soon post.  Start with the template, $HOME/announce-grep-X.Y
+  that was just created by that "make" command.
 
 Once all the builds and tests have passed,
 
@@ -54,14 +55,9 @@ Once all the builds and tests have passed,
     v=$(cat .prev-version)
     git push origin master tag v$v
 
-* Send the gpg-signed announcement mail, e.g.,
+* Announce it on Savannah first, so you can include the preferable
+  savannah.org announcement link in the email message.
 
-    To: info-gnu@gnu.org
-    Cc: coordinator@translationproject.org, bug-grep@gnu.org
-    Subject: grep-2.6 released [stable]
-    Reply-To: bug-grep@gnu.org
-
-* Announce it on Savannah, too:
   From here:
     https://savannah.gnu.org/projects/grep/
   click on the "submit news", then write something like the following:
@@ -69,14 +65,15 @@ Once all the builds and tests have passed,
    the Main -> "Select Features" menu item, or via this link:
    https://savannah.gnu.org/project/admin/editgroupfeatures.php?group=grep)
 
-    Subject: grep-2.6 released [stable]
-
+    Subject: grep-X.Y released [stable]
     +verbatim+
     ...paste the announcement here...
     -verbatim-
 
   Then go here to approve it:
     https://savannah.gnu.org/news/approve.php?group=grep
+
+* Send the announcement email message.
 
 * After each non-alpha release, update the on-line manual accessible via
 
