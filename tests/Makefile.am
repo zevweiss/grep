@@ -59,6 +59,7 @@ TESTS =						\
   help-version					\
   ignore-mmap					\
   include-exclude				\
+  inconsistent-range                            \
   khadafy					\
   max-count-vs-context				\
   options					\
