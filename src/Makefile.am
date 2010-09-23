@@ -36,7 +36,9 @@ libgrep_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
 # must precede $(LIBINTL) in order to ensure we use GNU getopt.
 # But libgreputils.a must also follow $(LIBINTL), since libintl uses
 # replacement functions defined in libgreputils.a.
-LDADD = libgrep.a ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
+LDADD = \
+  libgrep.a \
+  ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a $(LIBICONV)
 
 grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
