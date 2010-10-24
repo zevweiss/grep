@@ -17,6 +17,9 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
+#ifndef GREP_GREP_H
+#define GREP_GREP_H 1
+
 #if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 6) || __STRICT_ANSI__
 # define __attribute__(x)
 #endif
@@ -43,3 +46,5 @@ extern int match_icase;		/* -i */
 extern int match_words;		/* -w */
 extern int match_lines;		/* -x */
 extern unsigned char eolbyte;	/* -z */
+
+#endif

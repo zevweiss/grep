@@ -16,6 +16,9 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
+#ifndef GREP_SYSTEM_H
+#define GREP_SYSTEM_H 1
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -54,3 +57,4 @@ enum { EXIT_TROUBLE = 2 };
 #endif
 
 #include "unlocked-io.h"
+#endif
