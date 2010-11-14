@@ -22,6 +22,36 @@ AC_INIT([GNU grep],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [bug-grep@gnu.org])
 
+# Override grep during configure.
+fn_grep () {
+  test "$1" = -E && shift
+  case $@%:@:$1 in
+    0:*) AC_MSG_ERROR([fn_grep: expected pattern]) ;;
+    1:-*) AC_MSG_ERROR([fn_grep: invalid command line]) ;;
+    1:*) pattern=$1 ;;
+    2:--|2:-e|2:-Ee) pattern=$2 ;;
+    *) AC_MSG_ERROR([fn_grep: invalid command line]) ;;
+  esac
+
+  case $pattern in
+    *[].^$\\*[]*) AC_MSG_ERROR([fn_grep: regular expressions not supported])  ;;
+  esac
+
+  rc=1
+  while read line; do
+    case $line in
+      *$pattern*)
+        rc=0
+        AS_ECHO([$line]) ;;
+    esac
+  done
+  return $rc
+}
+
+test -n "$GREP" || GREP=fn_grep
+test -n "$EGREP" || EGREP=fn_grep
+ac_cv_path_EGREP=$EGREP
+
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE([GREP], 1, [We are building grep])
@@ -168,4 +198,6 @@ AC_CONFIG_FILES([
   doc/Makefile
   gnulib-tests/Makefile
 ])
+GREP="$ac_abs_top_builddir/src/grep"
+EGREP="$ac_abs_top_builddir/src/grep -E"
 AC_OUTPUT
