@@ -34,7 +34,8 @@ fn_grep () {
   esac
 
   case $pattern in
-    *[].^$\\*[]*) AC_MSG_ERROR([fn_grep: regular expressions not supported])  ;;
+    [*[].^$\\*[]*]) dnl The outer brackets are for M4.
+      AC_MSG_ERROR([fn_grep: regular expressions not supported])  ;;
   esac
 
   rc=1
