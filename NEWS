@@ -9,6 +9,9 @@ GNU grep NEWS                                    -*- outline -*-
   support was introduced in 2.5.2, though the steps needed to reproduce
   it changed in grep-2.6]
 
+  grep erroneously returned with exit status 1 on some memory allocation 
+  failure. [bug present since "the beginning"]
+
 * Noteworthy changes in release 2.7 (2010-09-16) [stable]
 
 ** Bug fixes

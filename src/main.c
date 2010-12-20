@@ -1760,6 +1760,7 @@ main (int argc, char **argv)
   int default_context;
   FILE *fp;
 
+  exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
   program_name = argv[0];
