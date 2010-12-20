@@ -22,7 +22,16 @@ AC_INIT([GNU grep],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [bug-grep@gnu.org])
 
-# Override grep during configure.
+# Set the GREP and EGREP variables to a dummy replacement for the 'grep'
+# command, so that AC_PROG_GREP and AC_PROG_EGREP don't fail when no good
+# 'grep' program is found. This makes it possible to build GNU grep on a
+# Solaris machine that has only /usr/bin/grep and no /usr/xpg4/bin/grep.
+# This function supports only restricted arguments:
+#   - No file names as arguments, process only standard input.
+#   - Only literal strings without backslashes, no regular expressions.
+#   - The only options are -e and -E (and -Ee).
+# This function also does not support long lines beyond what the shell
+# supports), and backslash-processes the input.
 fn_grep () {
   test "$1" = -E && shift
   case $@%:@:$1 in
