@@ -1927,7 +1927,7 @@ main (int argc, char **argv)
           {
             keycc += cc;
             if (keycc == keyalloc - 1)
-              keys = xrealloc (keys, keyalloc *= 2);
+              keys = x2nrealloc (keys, &keyalloc, sizeof *keys);
           }
         if (fp != stdin)
           fclose(fp);
