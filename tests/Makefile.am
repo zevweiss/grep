@@ -32,6 +32,7 @@ XFAIL_TESTS = \
 if USE_INCLUDED_REGEX
 XFAIL_TESTS += equiv-classes
 endif
+XFAIL_TESTS += turkish-I
 
 TESTS =						\
   backref					\
@@ -71,6 +72,7 @@ TESTS =						\
   spencer1					\
   spencer1-locale				\
   status					\
+  turkish-I					\
   warn-char-classes				\
   word-delim-multibyte				\
   word-multi-file				\
