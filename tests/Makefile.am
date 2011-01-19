@@ -35,9 +35,9 @@ endif
 
 TESTS =						\
   backref					\
+  backref-multibyte-slow			\
   backref-word					\
   bre						\
-  backref-multibyte-slow			\
   case-fold-backref				\
   case-fold-backslash-w				\
   case-fold-char-class				\
@@ -46,8 +46,8 @@ TESTS =						\
   char-class-multibyte				\
   dfaexec-multibyte				\
   empty						\
-  ere						\
   equiv-classes                                 \
+  ere						\
   euc-mb					\
   fedora					\
   fgrep-infloop					\
@@ -65,15 +65,15 @@ TESTS =						\
   options					\
   pcre						\
   pcre-z					\
+  prefix-of-multibyte				\
   reversed-range-endpoints			\
   sjis-mb					\
   spencer1					\
   spencer1-locale				\
   status					\
-  prefix-of-multibyte				\
   warn-char-classes				\
-  word-multi-file				\
   word-delim-multibyte				\
+  word-multi-file				\
   yesno
 
 EXTRA_DIST =					\
