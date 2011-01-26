@@ -22,7 +22,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <stddef.h>
 
 #ifdef CLOSEDIR_VOID
 /* Fake a return value. */
