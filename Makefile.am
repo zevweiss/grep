@@ -33,6 +33,10 @@ EXTRA_DIST =		\
 dist-hook: gen-ChangeLog
 	$(AM_V_GEN)echo $(VERSION) > $(distdir)/.tarball-version
 
+# Run syntax-check rules before creating a distribution tarball.
+dist-hook:
+	$(AM_V_GEN)test -d .git && $(MAKE) syntax-check || :
+
 gen_start_date = 2009-11-27
 .PHONY: gen-ChangeLog
 gen-ChangeLog:
