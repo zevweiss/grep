@@ -2529,7 +2529,7 @@ dfastate (int s, struct dfa *d, int trans[])
              by accepting accepts 1st byte of <mb A>, and state[i+1]
              accepts 2nd byte of <mb A>, if state[i+1] encounter the
              codepoint of <sb a>, it must not be <sb a> but 2nd byte of
-             <mb A>, so we can not add state[0].  */
+             <mb A>, so we cannot add state[0].  */
 
           next_isnt_1st_byte = 0;
           for (j = 0; j < follows.nelem; ++j)
@@ -2983,7 +2983,7 @@ check_matching_with_multibyte_ops (struct dfa *d, int s, int idx)
           rarray[i] = match_mb_charset(d, s, pos, idx);
           break;
         default:
-          break; /* can not happen.  */
+          break; /* cannot happen.  */
         }
     }
   return rarray;
