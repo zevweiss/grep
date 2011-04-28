@@ -36,24 +36,23 @@
 #include "xalloc.h"
 
 /* searchutils.c */
-void kwsinit (kwset_t *);
+extern void kwsinit (kwset_t *);
 
 #if MBS_SUPPORT
-char * mbtolower (const char *, size_t *);
-bool is_mb_middle(const char **, const char *, const char *, size_t);
+extern char *mbtolower (const char *, size_t *);
+extern bool is_mb_middle (const char **, const char *, const char *, size_t);
 #endif
 
 /* dfasearch.c */
-void GEAcompile (char const *, size_t, reg_syntax_t);
-size_t EGexecute (char const *, size_t, size_t *, char const *);
+extern void GEAcompile (char const *, size_t, reg_syntax_t);
+extern size_t EGexecute (char const *, size_t, size_t *, char const *);
 
 /* kwsearch.c */
-void Fcompile (char const *, size_t);
-size_t Fexecute (char const *, size_t, size_t *, char const *);
+extern void Fcompile (char const *, size_t);
+extern size_t Fexecute (char const *, size_t, size_t *, char const *);
 
 /* pcresearch.c */
-void Pcompile (char const *, size_t);
-size_t Pexecute (char const *, size_t, size_t *, char const *);
-
+extern void Pcompile (char const *, size_t);
+extern size_t Pexecute (char const *, size_t, size_t *, char const *);
 
 #endif /* GREP_SEARCH_H */
