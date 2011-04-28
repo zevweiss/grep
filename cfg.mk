@@ -54,6 +54,10 @@ sc_prohibit_emacs__indent_tabs_mode__setting:
 	halt='use of emacs indent-tabs-mode: setting'			\
 	  $(_sc_search_regexp)
 
+ALL_RECURSIVE_TARGETS = sc_tight_scope
+sc_tight_scope:
+	@$(MAKE) -s -C src $@
+
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
