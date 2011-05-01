@@ -1336,7 +1336,6 @@ lex (void)
           laststart = 0;
           return lasttok = CSET + charclass_index(ccl);
 
-#ifndef GAWK
         case 's':
         case 'S':
           if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
@@ -1349,7 +1348,6 @@ lex (void)
             notset(ccl);
           laststart = 0;
           return lasttok = CSET + charclass_index(ccl);
-#endif
 
         case 'w':
         case 'W':
