@@ -579,7 +579,8 @@ setbit_c (int b, charclass c)
   setbit (b, c);
 }
 #else
-#define setbit_c setbit
+# define setbit_c setbit
+static inline bool setbit_wc (wint_t wc, charclass c) { abort (); }
 #endif
 
 /* Like setbit_c, but if case is folded, set both cases of a letter.  For
@@ -1524,10 +1525,10 @@ addtok_wc (wint_t wc)
 static void addtok_wc (wint_t wc) {}
 #endif
 
-#if MBS_SUPPORT
 static void
 add_utf8_anychar (void)
 {
+#if MBS_SUPPORT
   static const charclass utf8_classes[5] = {
       {  0,  0,  0,  0, ~0, ~0, 0, 0 },            /* 80-bf: non-lead bytes */
       { ~0, ~0, ~0, ~0, 0, 0, 0, 0 },              /* 00-7f: 1-byte sequence */
@@ -1572,8 +1573,8 @@ add_utf8_anychar (void)
       addtok (CAT);
       addtok (OR);
     }
-}
 #endif
+}
 
 /* The grammar understood by the parser is as follows.
 
@@ -3141,13 +3142,13 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
   return s1;
 }
 
-#if MBS_SUPPORT
 
 /* Initialize mblen_buf and inputwcs with data from the next line.  */
 
 static void
 prepare_wc_buf (const char *begin, const char *end)
 {
+#if MBS_SUPPORT
   unsigned char eol = eolbyte;
   size_t remain_bytes, i;
 
@@ -3188,9 +3189,8 @@ prepare_wc_buf (const char *begin, const char *end)
   buf_end = (unsigned char *) (begin + i);
   mblen_buf[i] = 0;
   inputwcs[i] = 0; /* sentinel */
-}
-
 #endif /* MBS_SUPPORT */
+}
 
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the
