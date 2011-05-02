@@ -4,6 +4,7 @@
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 require_en_utf8_locale_
+require_compiled_in_MB_support
 
 LC_ALL=en_US.UTF-8
 export LC_ALL

@@ -4,6 +4,7 @@
 
 require_en_utf8_locale_
 require_timeout_
+require_compiled_in_MB_support
 
 encode() { echo "$1" | tr ABC '\357\274\241'; }
 

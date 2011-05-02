@@ -8,6 +8,7 @@
 # Add "." to PATH for the use of get-mb-cur-max.
 path_prepend_ .
 
+require_compiled_in_MB_support
 require_timeout_
 
 locale=ja_JP.SHIFT_JIS
