@@ -573,7 +573,8 @@ setbit_case_fold (
   else
     {
 #if MBS_SUPPORT
-      if (wctob ((unsigned char)b) == b)
+      int b2 = wctob ((unsigned char) b);
+      if (b2 == EOF || b2 == b)
 #endif
         setbit (b, c);
     }

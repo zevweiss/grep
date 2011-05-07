@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  echo c|grep '[c]' would fail for any c in 0x80..0xff, and in many locales.
+  E.g., printf '\xff\n'|grep "$(printf '[\xff]')" || echo FAIL
+  would print FAIL rather than the required matching line.
+  [bug introduced in grep-2.6]
+
   grep's interpretation of range expression is now more consistent with
   that of other tools.  [bug present since multi-byte character set
   support was introduced in 2.5.2, though the steps needed to reproduce
@@ -11,6 +16,7 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep erroneously returned with exit status 1 on some memory allocation
   failure. [bug present since "the beginning"]
+
 
 * Noteworthy changes in release 2.7 (2010-09-16) [stable]
 
