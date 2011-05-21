@@ -8,9 +8,7 @@
 # notice and this notice are preserved.
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
-
-# Test that grep was compiled with HAVE_LIBPCRE.  Otherwise, pass.
-echo . | grep -P . || skip_ no PCRE support
+require_pcre_
 
 fail=0
 
