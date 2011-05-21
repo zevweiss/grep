@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep -P no longer aborts when PCRE's backtracking limit is exceeded
+  Before, echo aaaaaaaaaaaaaab |grep -P '((a+)*)+$' would abort.  Now,
+  it diagnoses the problem and exits with status 2.
+
 
 * Noteworthy changes in release 2.8 (2011-05-13) [stable]
 

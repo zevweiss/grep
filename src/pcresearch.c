@@ -148,6 +148,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         case PCRE_ERROR_NOMEMORY:
           error (EXIT_TROUBLE, 0, _("memory exhausted"));
 
+        case PCRE_ERROR_MATCHLIMIT:
+          error (EXIT_TROUBLE, 0,
+                 _("exceeded PCRE's backtracking limit"));
+
         default:
           abort ();
         }

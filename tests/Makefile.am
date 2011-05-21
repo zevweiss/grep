@@ -33,7 +33,6 @@ if USE_INCLUDED_REGEX
 XFAIL_TESTS += equiv-classes
 endif
 XFAIL_TESTS += turkish-I
-XFAIL_TESTS += pcre-abort
 
 TESTS =						\
   backref					\

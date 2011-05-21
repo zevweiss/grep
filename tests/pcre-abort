@@ -1,5 +1,6 @@
 #! /bin/sh
-# Show how to make grep -P abort.
+# Show that grep handles PCRE's PCRE_ERROR_MATCHLIMIT.
+# In grep-2.8, it would abort.
 #
 # Copyright (C) 2011 Free Software Foundation, Inc.
 #
@@ -12,8 +13,9 @@ require_pcre_
 
 fail=0
 
-echo aaaaaaaaaaaaaab > in || framework_failure_
-grep -P '((a+)*)+$' in > out || fail=1
-compare in out || fail=1
+echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab > in || framework_failure_
+grep -P '((a+)*)+$' in > out
+test $? = 2 || fail=1
+compare out /dev/null || fail=1
 
 Exit $fail
