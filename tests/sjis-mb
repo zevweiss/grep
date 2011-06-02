@@ -39,7 +39,7 @@ test_grep() {
   test $? = 0 && compare out$k exp$k
 }
 
-test "$(get-mb-cur-max $locale)" = 2 || skip_ 'SJIS locale not found'
+test "$(get-mb-cur-max $locale)" = 2 || skip_test_ 'SJIS locale not found'
 
 failure_tests=@A
 successful_tests='%%AA @AA @A@@A'

@@ -20,7 +20,7 @@ euc_grep () {
 
 case $(get-mb-cur-max $locale) in
   2|3) ;;
-  *) skip_ 'EUC-JP locale not found' ;;
+  *) skip_test_ 'EUC-JP locale not found' ;;
 esac
 
 fail=0
