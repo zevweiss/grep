@@ -573,10 +573,14 @@ setbit_case_fold (
   else
     {
 #if MBS_SUPPORT
-      int b2 = wctob ((unsigned char) b);
-      if (b2 == EOF || b2 == b)
+      /* Below, note how when b2 != b and we have a uni-byte locale
+         (MB_CUR_MAX == 1), we set b = b2.  I.e., in a uni-byte locale,
+         we can safely call setbit with a non-EOF value returned by wctob.  */
+      int b2 = wctob (b);
+      if (b2 == EOF || b2 == b || (MB_CUR_MAX == 1 ? (b=b2), 1 : 0))
 #endif
-        setbit (b, c);
+        if (b < NOTCHAR)
+          setbit (b, c);
     }
 }
 

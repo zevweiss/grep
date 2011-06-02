@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  echo c|grep '[c]' would fail for any c in 0x80..0xff, with a uni-byte
+  encoding for which the byte-to-wide-char mapping is nontrivial.  For
+  example, the ISO-88591 locales are not affected, but ru_RU.KOI8-R is.
+
   grep -P no longer aborts when PCRE's backtracking limit is exceeded
   Before, echo aaaaaaaaaaaaaab |grep -P '((a+)*)+$' would abort.  Now,
   it diagnoses the problem and exits with status 2.
