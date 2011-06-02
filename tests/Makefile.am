@@ -63,6 +63,7 @@ TESTS =						\
   inconsistent-range                            \
   khadafy					\
   max-count-vs-context				\
+  unibyte-bracket-expr				\
   high-bit-range				\
   options					\
   pcre						\
