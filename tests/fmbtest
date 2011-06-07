@@ -7,12 +7,12 @@
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
-# If cs_CZ.UTF-8 locale doesn't work, skip this test silently
+# If cs_CZ.UTF-8 locale doesn't work, skip this test.
 LC_ALL=cs_CZ.UTF-8 locale -k LC_CTYPE 2>/dev/null | grep -q charmap.*UTF-8 \
   || skip_ this system lacks the cs_CZ.UTF-8 locale
 
 # If matching is done in single-byte mode, skip this test too
-printf 'é\n' | LC_ALL=cz_CZ.UTF-8 grep -Eq '^[é]{2}$'
+printf 'é\n' | LC_ALL=cs_CZ.UTF-8 grep -Eq '^[é]{2}$'
 case $? in
   0) Exit 77;;
   1) ;;
