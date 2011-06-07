@@ -1050,14 +1050,7 @@ parse_bracket_exp (void)
     dfawarn (_("character class syntax is [[:space:]], not [:space:]"));
 
 #if MBS_SUPPORT
-  if (MB_CUR_MAX > 1
-      && (!using_utf8()
-          || invert
-          || work_mbc->nchars != 0
-          || work_mbc->nch_classes != 0
-          || work_mbc->nranges != 0
-          || work_mbc->nequivs != 0
-          || work_mbc->ncoll_elems != 0))
+  if (MB_CUR_MAX > 1)
     {
       static charclass zeroclass;
       work_mbc->invert = invert;
@@ -1461,7 +1454,26 @@ addtok (token t)
 {
 #if MBS_SUPPORT
   if (MB_CUR_MAX > 1 && t == MBCSET)
-    addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+    {
+      struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
+
+      /* UTF-8 allows treating a simple, non-inverted MBCSET like a CSET.  */
+      if (work_mbc->invert
+          || (!using_utf8() && work_mbc->cset != -1)
+          || work_mbc->nchars != 0
+          || work_mbc->nch_classes != 0
+          || work_mbc->nranges != 0
+          || work_mbc->nequivs != 0
+          || work_mbc->ncoll_elems != 0)
+        addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+      else
+        {
+          /* The single-byte character set must be non-empty, or due to the
+             test above the entire MBCSET would be empty (which is invalid).  */
+          assert (using_utf8() && work_mbc->cset != -1);
+          addtok (CSET + work_mbc->cset);
+        }
+    }
   else
 #endif
     addtok_mb (t, 3);
