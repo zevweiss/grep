@@ -1447,6 +1447,8 @@ addtok_mb (token t, int mbprop)
     dfa->depth = depth;
 }
 
+static void addtok_wc (wint_t wc);
+
 /* Add the given token to the parse tree, maintaining the depth count and
    updating the maximum depth if necessary. */
 static void
@@ -1455,7 +1457,23 @@ addtok (token t)
 #if MBS_SUPPORT
   if (MB_CUR_MAX > 1 && t == MBCSET)
     {
+      bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
+
+      /* Extract wide characters into alternations for better performance.
+         This does not require UTF-8.  */
+      if (!work_mbc->invert)
+        {
+          int i;
+          for (i = 0; i < work_mbc->nchars; i++)
+            {
+              addtok_wc (work_mbc->chars[i]);
+              if (need_or)
+                addtok (OR);
+              need_or = true;
+            }
+          work_mbc->nchars = 0;
+        }
 
       /* UTF-8 allows treating a simple, non-inverted MBCSET like a CSET.  */
       if (work_mbc->invert
@@ -1465,13 +1483,22 @@ addtok (token t)
           || work_mbc->nranges != 0
           || work_mbc->nequivs != 0
           || work_mbc->ncoll_elems != 0)
-        addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+        {
+          addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+          if (need_or)
+            addtok (OR);
+        }
       else
         {
-          /* The single-byte character set must be non-empty, or due to the
-             test above the entire MBCSET would be empty (which is invalid).  */
-          assert (using_utf8() && work_mbc->cset != -1);
-          addtok (CSET + work_mbc->cset);
+          /* Characters have been handled above, so it is possible
+             that the mbcset is empty now.  Do nothing in that case.  */
+          if (work_mbc->cset != -1)
+            {
+              assert (using_utf8 ());
+              addtok (CSET + work_mbc->cset);
+              if (need_or)
+                addtok (OR);
+            }
         }
     }
   else
