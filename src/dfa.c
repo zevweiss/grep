@@ -2134,7 +2134,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   MALLOC(lastpos, position, d->nleaves);
   o_lastpos = lastpos, lastpos += d->nleaves;
   CALLOC(nalloc, int, d->tindex);
-  MALLOC(merged.elems, position, d->nleaves);
+  MALLOC(merged.elems, position, 2 * d->nleaves);
 
   CALLOC(d->follows, position_set, d->tindex);
 

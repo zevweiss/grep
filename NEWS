@@ -4,6 +4,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep no longer clobbers heap for an ERE like '(^| )*( |$)'
+  [bug introduced in grep-2.6]
+
   grep is faster on regular expressions that match multibyte characters
   in brackets (such as '[áéíóú]').
 
