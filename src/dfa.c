@@ -559,7 +559,7 @@ static void
 setbit_c (int b, charclass c)
 {
   /* Do nothing if b is invalid in this character set.  */
-  if (MB_CUR_MAX > 1 && btowc (b) == EOF)
+  if (MB_CUR_MAX > 1 && btowc (b) == WEOF)
     return;
   setbit (b, c);
 }
@@ -578,7 +578,7 @@ setbit_case_fold_c (int b, charclass c)
   if (MB_CUR_MAX > 1)
     {
       wint_t wc = btowc (b);
-      if (wc == EOF)
+      if (wc == WEOF)
         return;
       setbit (b, c);
       if (case_fold && iswalpha (wc))
