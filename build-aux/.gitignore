@@ -16,6 +16,7 @@
 /mdate-sh
 /missing
 /texinfo.tex
+/unused-parameter.h
 /update-copyright
 /useless-if-before-free
 /vc-list-files
