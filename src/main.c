@@ -1682,10 +1682,7 @@ parse_grep_colors (void)
     return;
 
   /* Work off a writable copy.  */
-  q = xmalloc(strlen(p) + 1);
-  if (q == NULL)
-    return;
-  strcpy(q, p);
+  q = xstrdup(p);
 
   name = q;
   val = NULL;
