@@ -44,7 +44,7 @@ Pcompile (char const *pattern, size_t size)
 #else
   int e;
   char const *ep;
-  char *re = xmalloc (4 * size + 7);
+  char *re = xnmalloc (4, size + 7);
   int flags = PCRE_MULTILINE | (match_icase ? PCRE_CASELESS : 0);
   char const *patlim = pattern + size;
   char *n = re;

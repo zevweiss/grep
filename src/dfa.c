@@ -396,19 +396,20 @@ struct dfa
 static void dfamust (struct dfa *dfa);
 static void regexp (void);
 
-#define CALLOC(p, t, n) ((p) = xcalloc((size_t)(n), sizeof (t)))
-#define MALLOC(p, t, n) ((p) = xmalloc((n) * sizeof (t)))
-#define REALLOC(p, t, n) ((p) = xrealloc((p), (n) * sizeof (t)))
+#define CALLOC(p, t, n) ((p) = XCALLOC (n, t))
+#define MALLOC(p, t, n) ((p) = XNMALLOC (n, t))
+#define REALLOC(p, t, n) ((p) = xnrealloc (p, n, sizeof (t)))
 
 /* Reallocate an array of type t if nalloc is too small for index. */
-#define REALLOC_IF_NECESSARY(p, t, nalloc, index) \
-  if ((index) >= (nalloc))			  \
-    {						  \
-      do					  \
-        (nalloc) *= 2;				  \
-      while ((index) >= (nalloc));		  \
-      REALLOC(p, t, nalloc);			  \
-    }
+#define REALLOC_IF_NECESSARY(p, t, nalloc, index)       \
+  do                                                    \
+    if ((nalloc) <= (index))                            \
+      {                                                 \
+        size_t new_nalloc = (index) + ! (p);            \
+        (p) = x2nrealloc (p, &new_nalloc, sizeof (t));  \
+        (nalloc) = new_nalloc;                          \
+      }                                                 \
+  while (false)
 
 
 #ifdef DEBUG

@@ -162,9 +162,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
           total = 0;
         }
 
-      patterns = realloc (patterns, (pcount + 1) * sizeof (*patterns));
-      if (patterns == NULL)
-        error (EXIT_TROUBLE, errno, _("memory exhausted"));
+      patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
       patterns[pcount] = patterns0;
 
       if ((err = re_compile_pattern (p, len,
