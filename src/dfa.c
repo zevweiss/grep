@@ -3712,9 +3712,7 @@ enlist (char **cpp, char *new, size_t len)
         cpp[i] = NULL;
       }
   /* Add the new string. */
-  cpp = realloc((char *) cpp, (i + 2) * sizeof *cpp);
-  if (cpp == NULL)
-    return NULL;
+  cpp = xnrealloc(cpp, i + 2, sizeof *cpp);
   cpp[i] = new;
   cpp[i + 1] = NULL;
   return cpp;
@@ -3839,9 +3837,7 @@ dfamust (struct dfa *d)
 
   result = empty_string;
   exact = 0;
-  musts = malloc((d->tindex + 1) * sizeof *musts);
-  if (musts == NULL)
-    return;
+  musts = xnmalloc(d->tindex + 1, sizeof *musts);
   mp = musts;
   for (i = 0; i <= d->tindex; ++i)
     mp[i] = must0;
