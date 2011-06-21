@@ -26,7 +26,6 @@ lib/version-etc.c
 lib/xalloc-die.c
 lib/xstrtol-error.c
 src/dfa.c
-src/dfasearch.c
 src/egrep.c
 src/fgrep.c
 src/grep.c
