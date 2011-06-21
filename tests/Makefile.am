@@ -129,3 +129,14 @@ TESTS_ENVIRONMENT =				\
   ; $(SHELL) 9>&2
 
 VERBOSE = yes
+
+check: check_executable_TESTS
+.PHONY: check_executable_TESTS
+check_executable_TESTS: Makefile
+	$(AM_V_GEN)fail=0;						\
+        cd $(srcdir) && for i in $(TESTS); do				\
+	  test -x $$i || { fail=1; echo $$i >&2; };			\
+	done;								\
+	test $$fail = 1							\
+          && { echo the above test scripts are not executable >&2; exit 1; } \
+          || :
