@@ -3,15 +3,15 @@
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 mkdir -p x/dir || framework_failure_
-echo a > x/a || framework_failure_
-echo b > x/b || framework_failure_
-echo d > x/dir/d || framework_failure_
+echo aaa > x/a || framework_failure_
+echo bbb > x/b || framework_failure_
+echo ddd > x/dir/d || framework_failure_
 
-printf '%s\n' x/b:b x/dir/d:d > exp-not-a   || framework_failure_
-printf '%s\n'       x/dir/d:d > exp-not-ab  || framework_failure_
-printf '%s\n' x/a:a x/b:b     > exp-not-d   || framework_failure_
-printf '%s\n' x/a:a x/b:b     > exp-not-dir || framework_failure_
-printf '%s\n' x/a:a           > exp-a       || framework_failure_
+printf '%s\n' x/b:bbb x/dir/d:ddd > exp-not-a   || framework_failure_
+printf '%s\n'         x/dir/d:ddd > exp-not-ab  || framework_failure_
+printf '%s\n' x/a:aaa x/b:bbb     > exp-not-d   || framework_failure_
+printf '%s\n' x/a:aaa x/b:bbb     > exp-not-dir || framework_failure_
+printf '%s\n' x/a:aaa             > exp-a       || framework_failure_
 
 grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
@@ -40,7 +40,7 @@ grep -r --include='a*'    . x > out || fail=1
 compare out exp-a || fail=1
 
 # --include (without --recursive) uses different code
-grep --include=a a x/* > out || fail=1
+grep --include=a '^aaa$' x/* > out || fail=1
 compare out exp-a || fail=1
 
 Exit $fail
