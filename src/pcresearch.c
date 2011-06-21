@@ -101,13 +101,19 @@ Pcompile (char const *pattern, size_t size)
 #endif
 }
 
-size_t
+/* Pexecute is a no-return function when building --without-pcre.  */
+#if !HAVE_LIBPCRE
+# define WITHOUT_PCRE_NORETURN _GL_ATTRIBUTE_NORETURN
+#else
+# define WITHOUT_PCRE_NORETURN /* empty */
+#endif
+
+size_t WITHOUT_PCRE_NORETURN
 Pexecute (char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
   abort ();
-  return -1;
 #else
   /* This array must have at least two elements; everything after that
      is just for performance improvement in pcre_exec.  */
