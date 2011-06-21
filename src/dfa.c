@@ -3625,7 +3625,7 @@ dfafree (struct dfa *d)
    'psi|epsilon' is likelier)? */
 
 static char *
-icatalloc (char const *old, char const *new)
+icatalloc (char *old, char const *new)
 {
   char *result;
   size_t oldsize, newsize;
@@ -3634,14 +3634,14 @@ icatalloc (char const *old, char const *new)
   if (old == NULL)
     oldsize = 0;
   else if (newsize == 0)
-    return (char *) old;
+    return old;
   else	oldsize = strlen(old);
   if (old == NULL)
     result = malloc(newsize + 1);
   else
-    result = realloc((void *) old, oldsize + newsize + 1);
+    result = realloc(old, oldsize + newsize + 1);
   if (result != NULL && new != NULL)
-    (void) strcpy(result + oldsize, new);
+    strcpy(result + oldsize, new);
   return result;
 }
 
