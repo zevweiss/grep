@@ -1,8 +1,3 @@
-!/gnulib-tests/Makefile.am
-!/lib/Makefile.am
-!/lib/savedir.c
-!/lib/savedir.h
-!/m4/djgpp.m4
 *.a
 *.exe
 *.o
@@ -58,3 +53,8 @@ ChangeLog
 Makefile
 Makefile.in
 TAGS
+!/gnulib-tests/Makefile.am
+!/lib/Makefile.am
+!/lib/savedir.c
+!/lib/savedir.h
+!/m4/djgpp.m4
