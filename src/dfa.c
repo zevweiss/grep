@@ -247,6 +247,7 @@ typedef struct
 {
   position *elems;		/* Elements of this position set. */
   int nelem;			/* Number of elements in this set. */
+  size_t alloc;			/* Number of elements allocated in ELEMS.  */
 } position_set;
 
 /* Sets of leaves are also stored as arrays. */
@@ -1835,6 +1836,7 @@ static void
 alloc_position_set (position_set *s, size_t size)
 {
   MALLOC(s->elems, size);
+  s->alloc = size;
   s->nelem = 0;
 }
 
@@ -2103,7 +2105,6 @@ dfaanalyze (struct dfa *d, int searchflag)
   position *firstpos;		/* Array where firstpos elements are stored. */
   int *nlastpos;		/* Element count stack for lastpos sets. */
   position *lastpos;		/* Array where lastpos elements are stored. */
-  int *nalloc;			/* Sizes of arrays allocated to follow sets. */
   position_set tmp;		/* Temporary set for merging sets. */
   position_set merged;		/* Result of merging sets. */
   int wants_newline;		/* True if some position wants newline info. */
@@ -2135,7 +2136,6 @@ dfaanalyze (struct dfa *d, int searchflag)
   o_nlast = nlastpos;
   MALLOC(lastpos, d->nleaves);
   o_lastpos = lastpos, lastpos += d->nleaves;
-  CALLOC(nalloc, d->tindex);
   alloc_position_set(&merged, d->nleaves);
 
   CALLOC(d->follows, d->tindex);
@@ -2163,7 +2163,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
             REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 nalloc[pos[j].index], merged.nelem);
+                                 d->follows[pos[j].index].alloc, merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
@@ -2183,7 +2183,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
             REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 nalloc[pos[j].index], merged.nelem);
+                                 d->follows[pos[j].index].alloc, merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
@@ -2243,7 +2243,6 @@ dfaanalyze (struct dfa *d, int searchflag)
         firstpos->constraint = lastpos->constraint = NO_CONSTRAINT;
 
         /* Allocate the follow set for this position. */
-        nalloc[i] = 1;
         alloc_position_set(&d->follows[i], nalloc[i]);
         break;
       }
@@ -2292,8 +2291,8 @@ dfaanalyze (struct dfa *d, int searchflag)
 #endif
         copy(&d->follows[i], &merged);
         epsclosure(&merged, d);
-        if (d->follows[i].nelem < merged.nelem)
-          REALLOC(d->follows[i].elems, merged.nelem);
+        REALLOC_IF_NECESSARY(d->follows[i].elems, d->follows[i].alloc,
+			     merged.nelem);
         copy(&merged, &d->follows[i]);
       }
 
@@ -2321,7 +2320,6 @@ dfaanalyze (struct dfa *d, int searchflag)
   free(o_firstpos);
   free(o_nlast);
   free(o_lastpos);
-  free(nalloc);
   free(merged.elems);
 }
 
