@@ -1831,6 +1831,13 @@ copy (position_set const *src, position_set *dst)
   dst->nelem = src->nelem;
 }
 
+static void
+alloc_position_set (position_set *s, size_t size)
+{
+  MALLOC(s->elems, size);
+  s->nelem = 0;
+}
+
 /* Insert position P in set S.  S is maintained in sorted order on
    decreasing index.  If there is already an entry in S with P.index
    then merge (logically-OR) P's constraints into the one in S.
@@ -1934,7 +1941,7 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
   /* We'll have to create a new state. */
   REALLOC_IF_NECESSARY(d->states, d->salloc, d->sindex + 1);
   d->states[i].hash = hash;
-  MALLOC(d->states[i].elems.elems, s->nelem);
+  alloc_position_set(&d->states[i].elems, s->nelem);
   copy(s, &d->states[i].elems);
   d->states[i].newline = newline;
   d->states[i].letter = letter;
@@ -2129,7 +2136,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   MALLOC(lastpos, d->nleaves);
   o_lastpos = lastpos, lastpos += d->nleaves;
   CALLOC(nalloc, d->tindex);
-  MALLOC(merged.elems, d->nleaves);
+  alloc_position_set(&merged, d->nleaves);
 
   CALLOC(d->follows, d->tindex);
 
@@ -2237,7 +2244,7 @@ dfaanalyze (struct dfa *d, int searchflag)
 
         /* Allocate the follow set for this position. */
         nalloc[i] = 1;
-        MALLOC(d->follows[i].elems, nalloc[i]);
+        alloc_position_set(&d->follows[i], nalloc[i]);
         break;
       }
 #ifdef DEBUG
@@ -2405,7 +2412,7 @@ dfastate (int s, struct dfa *d, int trans[])
              must put it to d->states[s].mbps, which contains the positions
              which can match with a single character not a byte.  */
           if (d->states[s].mbps.nelem == 0)
-            MALLOC(d->states[s].mbps.elems, d->states[s].elems.nelem);
+            alloc_position_set(&d->states[s].mbps, d->states[s].elems.nelem);
           insert(pos, &(d->states[s].mbps));
           continue;
         }
@@ -2502,8 +2509,8 @@ dfastate (int s, struct dfa *d, int trans[])
         }
     }
 
-  MALLOC(follows.elems, d->nleaves);
-  MALLOC(tmp.elems, d->nleaves);
+  alloc_position_set(&follows, d->nleaves);
+  alloc_position_set(&tmp, d->nleaves);
 
   /* If we are a searching matcher, the default transition is to a state
      containing the positions of state 0, otherwise the default transition
@@ -3119,8 +3126,7 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
     }
 
   /* This state has some operators which can match a multibyte character.  */
-  follows.nelem = 0;
-  MALLOC(follows.elems, d->nleaves);
+  alloc_position_set(&follows, d->nleaves);
 
   /* `maxlen' may be longer than the length of a character, because it may
      not be a character but a (multi character) collating element.
