@@ -1835,9 +1835,9 @@ copy (position_set const *src, position_set *dst)
   dst->nelem = src->nelem;
 }
 
-/* Insert a position in a set.  Position sets are maintained in sorted
-   order according to index.  If position already exists in the set with
-   the same index then their constraints are logically or'd together.
+/* Insert position P in set S.  S is maintained in sorted order on
+   decreasing index.  If there is already an entry in S with P.index
+   then merge (logically-OR) P's constraints into the one in S.
    S->elems must point to an array large enough to hold the resulting set. */
 static void
 insert (position p, position_set *s)
@@ -1847,7 +1847,7 @@ insert (position p, position_set *s)
   while (lo < hi)
     {
       int mid = ((unsigned) lo + (unsigned) hi) >> 1;
-      if (s->elems[mid].index < p.index)
+      if (s->elems[mid].index > p.index)
         lo = mid + 1;
       else
         hi = mid;
@@ -2132,7 +2132,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   MALLOC(lastpos, position, d->nleaves);
   o_lastpos = lastpos, lastpos += d->nleaves;
   CALLOC(nalloc, int, d->tindex);
-  MALLOC(merged.elems, position, 2 * d->nleaves);
+  MALLOC(merged.elems, position, d->nleaves);
 
   CALLOC(d->follows, position_set, d->tindex);
 
