@@ -1827,6 +1827,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 static void
 copy (position_set const *src, position_set *dst)
 {
+  REALLOC_IF_NECESSARY(dst->elems, dst->alloc, src->nelem);
   memcpy(dst->elems, src->elems, sizeof(dst->elems[0]) * src->nelem);
   dst->nelem = src->nelem;
 }
@@ -1848,6 +1849,7 @@ insert (position p, position_set *s)
 {
   int count = s->nelem;
   int lo = 0, hi = count;
+  int i;
   while (lo < hi)
     {
       int mid = ((unsigned) lo + (unsigned) hi) >> 1;
@@ -1858,15 +1860,16 @@ insert (position p, position_set *s)
     }
 
   if (lo < count && p.index == s->elems[lo].index)
-    s->elems[lo].constraint |= p.constraint;
-  else
     {
-      int i;
-      for (i = count; i > lo; i--)
-        s->elems[i] = s->elems[i - 1];
-      s->elems[lo] = p;
-      ++s->nelem;
+      s->elems[lo].constraint |= p.constraint;
+      return;
     }
+
+  REALLOC_IF_NECESSARY(s->elems, s->alloc, count + 1);
+  for (i = count; i > lo; i--)
+    s->elems[i] = s->elems[i - 1];
+  s->elems[lo] = p;
+  ++s->nelem;
 }
 
 /* Merge two sets of positions into a third.  The result is exactly as if
@@ -1876,6 +1879,7 @@ merge (position_set const *s1, position_set const *s2, position_set *m)
 {
   int i = 0, j = 0;
 
+  REALLOC_IF_NECESSARY(m->elems, m->alloc, s1->nelem + s2->nelem);
   m->nelem = 0;
   while (i < s1->nelem && j < s2->nelem)
     if (s1->elems[i].index > s2->elems[j].index)
@@ -2161,8 +2165,6 @@ dfaanalyze (struct dfa *d, int searchflag)
         for (j = 0; j < nlastpos[-1]; ++j)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
-            REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 d->follows[pos[j].index].alloc, merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
@@ -2181,8 +2183,6 @@ dfaanalyze (struct dfa *d, int searchflag)
         for (j = 0; j < nlastpos[-2]; ++j)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
-            REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 d->follows[pos[j].index].alloc, merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
@@ -2290,8 +2290,6 @@ dfaanalyze (struct dfa *d, int searchflag)
 #endif
         copy(&d->follows[i], &merged);
         epsclosure(&merged, d);
-        REALLOC_IF_NECESSARY(d->follows[i].elems, d->follows[i].alloc,
-			     merged.nelem);
         copy(&merged, &d->follows[i]);
       }
 
@@ -2409,7 +2407,7 @@ dfastate (int s, struct dfa *d, int trans[])
              must put it to d->states[s].mbps, which contains the positions
              which can match with a single character not a byte.  */
           if (d->states[s].mbps.nelem == 0)
-            alloc_position_set(&d->states[s].mbps, d->states[s].elems.nelem);
+            alloc_position_set(&d->states[s].mbps, 1);
           insert(pos, &(d->states[s].mbps));
           continue;
         }
