@@ -1555,7 +1555,7 @@ add_utf8_anychar (void)
     for (i = 0; i < n; i++)
       {
         charclass c;
-        memcpy (c, utf8_classes[i], sizeof c);
+        copyset (utf8_classes[i], c);
         if (i == 1)
           {
             if (!(syntax_bits & RE_DOT_NEWLINE))
