@@ -1831,10 +1831,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 static void
 copy (position_set const *src, position_set *dst)
 {
-  int i;
-
-  for (i = 0; i < src->nelem; ++i)
-    dst->elems[i] = src->elems[i];
+  memcpy(dst->elems, src->elems, sizeof(dst->elems[0]) * src->nelem);
   dst->nelem = src->nelem;
 }
 
