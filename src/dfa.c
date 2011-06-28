@@ -249,6 +249,13 @@ typedef struct
   int nelem;			/* Number of elements in this set. */
 } position_set;
 
+/* Sets of leaves are also stored as arrays. */
+typedef struct
+{
+  unsigned int *elems;		/* Elements of this position set. */
+  size_t nelem;			/* Number of elements in this set. */
+} leaf_set;
+
 /* A state of the dfa consists of a set of positions, some flags,
    and the token value of the lowest-numbered position of the state that
    contains an END token. */
@@ -2344,7 +2351,7 @@ dfaanalyze (struct dfa *d, int searchflag)
 void
 dfastate (int s, struct dfa *d, int trans[])
 {
-  position_set *grps;		/* As many as will ever be needed. */
+  leaf_set *grps;		/* As many as will ever be needed. */
   charclass *labels;		/* Labels corresponding to the groups. */
   int ngrps = 0;		/* Number of groups actually used. */
   position pos;			/* Current position being considered. */
@@ -2466,13 +2473,15 @@ dfastate (int s, struct dfa *d, int trans[])
               copyset(leftovers, labels[ngrps]);
               copyset(intersect, labels[j]);
               MALLOC(grps[ngrps].elems, d->nleaves);
-              copy(&grps[j], &grps[ngrps]);
+              memcpy(grps[ngrps].elems, grps[j].elems,
+                     sizeof (grps[j].elems[0]) * grps[j].nelem);
+              grps[ngrps].nelem = grps[j].nelem;
               ++ngrps;
             }
 
-          /* Put the position in the current group.  Note that there is no
-             reason to call insert() here. */
-          grps[j].elems[grps[j].nelem++] = pos;
+          /* Put the position in the current group.  The constraint is
+             irrelevant here.  */
+          grps[j].elems[grps[j].nelem++] = pos.index;
 
           /* If every character matching the current position has been
              accounted for, we're done. */
@@ -2488,7 +2497,7 @@ dfastate (int s, struct dfa *d, int trans[])
           zeroset(matches);
           MALLOC(grps[ngrps].elems, d->nleaves);
           grps[ngrps].nelem = 1;
-          grps[ngrps].elems[0] = pos;
+          grps[ngrps].elems[0] = pos.index;
           ++ngrps;
         }
     }
@@ -2535,8 +2544,8 @@ dfastate (int s, struct dfa *d, int trans[])
       /* Find the union of the follows of the positions of the group.
          This is a hideously inefficient loop.  Fix it someday. */
       for (j = 0; j < grps[i].nelem; ++j)
-        for (k = 0; k < d->follows[grps[i].elems[j].index].nelem; ++k)
-          insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
+        for (k = 0; k < d->follows[grps[i].elems[j]].nelem; ++k)
+          insert(d->follows[grps[i].elems[j]].elems[k], &follows);
 
       if (d->mb_cur_max > 1)
         {
