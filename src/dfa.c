@@ -3140,7 +3140,6 @@ transit_state (struct dfa *d, int s, unsigned char const **pp)
 
   while (*pp - p1 < maxlen)
     {
-      follows.nelem = 0;
       transit_state_consume_1char(d, s1, pp, NULL, &mbclen, &follows);
 
       for (i = 0; i < nelem ; i++)
