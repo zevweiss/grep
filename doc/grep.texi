@@ -1171,8 +1171,8 @@ of bracket expressions, you can use the @samp{C} locale by setting the
 Finally, certain named classes of characters are predefined within
 bracket expressions, as follows.
 Their interpretation depends on the @code{LC_CTYPE} locale;
-the interpretation below is that of the @samp{C} locale,
-which is the default if no @code{LC_CTYPE} locale is specified.
+for example, [[:alnum:]] means the character class of numbers and letters
+in the current locale.
 
 @cindex classes of characters
 @cindex character classes
@@ -1182,13 +1182,13 @@ which is the default if no @code{LC_CTYPE} locale is specified.
 @opindex alnum @r{character class}
 @cindex alphanumeric characters
 Alphanumeric characters:
-@samp{[:alpha:]} and @samp{[:digit:]}.
+@samp{[:alpha:]} and @samp{[:digit:]}; in the @samp{C} locale and @sc{ascii} character encoding, this is the same as @samp{[0-9A-Za-z]}.
 
 @item [:alpha:]
 @opindex alpha @r{character class}
 @cindex alphabetic characters
 Alphabetic characters:
-@samp{[:lower:]} and @samp{[:upper:]}.
+@samp{[:lower:]} and @samp{[:upper:]}; in the @samp{C} locale and @sc{ascii} character encoding, this is the same as @samp{[A-Za-z]}.
 
 @item [:blank:]
 @opindex blank @r{character class}
@@ -1220,7 +1220,8 @@ Graphical characters:
 @item [:lower:]
 @opindex lower @r{character class}
 @cindex lower-case letters
-Lower-case letters:
+Lower-case letters; in the @samp{C} locale and @sc{ascii} character
+encoding, this is
 @code{a b c d e f g h i j k l m n o p q r s t u v w x y z}.
 
 @item [:print:]
@@ -1232,21 +1233,23 @@ Printable characters:
 @item [:punct:]
 @opindex punct @r{character class}
 @cindex punctuation characters
-Punctuation characters:
+Punctuation characters; in the @samp{C} locale and @sc{ascii} character
+encoding, this is
 @code{!@: " # $ % & ' ( ) * + , - .@: / : ; < = > ?@: @@ [ \ ] ^ _ ` @{ | @} ~}.
 
 @item [:space:]
 @opindex space @r{character class}
 @cindex space characters
 @cindex whitespace characters
-Space characters:
+Space characters: in the @samp{C} locale, this is
 tab, newline, vertical tab, form feed, carriage return, and space.
 @xref{Usage}, for more discussion of matching newlines.
 
 @item [:upper:]
 @opindex upper @r{character class}
 @cindex upper-case letters
-Upper-case letters:
+Upper-case letters: in the @samp{C} locale and @sc{ascii} character
+encoding, this is
 @code{A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}.
 
 @item [:xdigit:]
@@ -1257,12 +1260,9 @@ Hexadecimal digits:
 @code{0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f}.
 
 @end table
-For example, @samp{[[:alnum:]]} means @samp{[0-9A-Za-z]}, except the latter
-depends upon the @samp{C} locale and the @sc{ascii} character
-encoding, whereas the former is independent of locale and character set.
-(Note that the brackets in these class names are
+Note that the brackets in these class names are
 part of the symbolic names, and must be included in addition to
-the brackets delimiting the bracket expression.)
+the brackets delimiting the bracket expression.
 
 @anchor{invalid-bracket-expr}
 If you mistakenly omit the outer brackets, and search for say, @samp{[:upper:]},
