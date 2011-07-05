@@ -798,7 +798,7 @@ parse_bracket_exp (void)
   int chars_al, range_sts_al, range_ends_al, ch_classes_al,
     equivs_al, coll_elems_al;
 
-  chars_al = 1;
+  chars_al = 0;
   range_sts_al = range_ends_al = 0;
   ch_classes_al = equivs_al = coll_elems_al = 0;
   if (MB_CUR_MAX > 1)
@@ -881,8 +881,6 @@ parse_bracket_exp (void)
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
 
-                      if (ch_classes_al == 0)
-                        MALLOC(work_mbc->ch_classes, ++ch_classes_al);
                       REALLOC_IF_NECESSARY(work_mbc->ch_classes,
                                            ch_classes_al,
                                            work_mbc->nch_classes + 1);
@@ -903,8 +901,6 @@ parse_bracket_exp (void)
                   if (c1 == '=')
                     /* build equivalent class.  */
                     {
-                      if (equivs_al == 0)
-                        MALLOC(work_mbc->equivs, ++equivs_al);
                       REALLOC_IF_NECESSARY(work_mbc->equivs,
                                            equivs_al,
                                            work_mbc->nequivs + 1);
@@ -914,8 +910,6 @@ parse_bracket_exp (void)
                   if (c1 == '.')
                     /* build collating element.  */
                     {
-                      if (coll_elems_al == 0)
-                        MALLOC(work_mbc->coll_elems, ++coll_elems_al);
                       REALLOC_IF_NECESSARY(work_mbc->coll_elems,
                                            coll_elems_al,
                                            work_mbc->ncoll_elems + 1);
@@ -962,11 +956,6 @@ parse_bracket_exp (void)
             {
               /* When case folding map a range, say [m-z] (or even [M-z])
                  to the pair of ranges, [m-z] [M-Z].  */
-              if (range_sts_al == 0)
-                {
-                  MALLOC(work_mbc->range_sts, ++range_sts_al);
-                  MALLOC(work_mbc->range_ends, ++range_ends_al);
-                }
               REALLOC_IF_NECESSARY(work_mbc->range_sts,
                                    range_sts_al, work_mbc->nranges + 1);
               REALLOC_IF_NECESSARY(work_mbc->range_ends,
