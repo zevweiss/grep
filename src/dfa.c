@@ -246,7 +246,7 @@ typedef struct
 typedef struct
 {
   position *elems;		/* Elements of this position set. */
-  int nelem;			/* Number of elements in this set. */
+  size_t nelem;			/* Number of elements in this set. */
   size_t alloc;			/* Number of elements allocated in ELEMS.  */
 } position_set;
 
@@ -430,7 +430,6 @@ static void regexp (void);
 #define REALLOC_IF_NECESSARY(p, n_alloc, n_required)		\
   do								\
     {								\
-      assert (0 <= (n_required));				\
       if ((n_alloc) <= (n_required))				\
         {							\
           size_t new_n_alloc = (n_required) + !(p);		\
