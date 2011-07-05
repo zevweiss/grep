@@ -2367,8 +2367,8 @@ dfastate (int s, struct dfa *d, int trans[])
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
   int i, j, k;
 
-  grps = xnmalloc (NOTCHAR, sizeof *grps);
-  labels = xnmalloc (NOTCHAR, sizeof *labels);
+  MALLOC (grps, NOTCHAR);
+  MALLOC (labels, NOTCHAR);
 
   /* Initialize the set of letters, if necessary. */
   if (! initialized)
@@ -3659,7 +3659,7 @@ enlist (char **cpp, char *new, size_t len)
         cpp[i] = NULL;
       }
   /* Add the new string. */
-  cpp = xnrealloc(cpp, i + 2, sizeof *cpp);
+  REALLOC(cpp, i + 2);
   cpp[i] = new;
   cpp[i + 1] = NULL;
   return cpp;
@@ -3792,7 +3792,7 @@ dfamust (struct dfa *d)
 
   result = empty_string;
   exact = 0;
-  musts = xnmalloc(d->tindex + 1, sizeof *musts);
+  MALLOC (musts, d->tindex + 1);
   mp = musts;
   for (i = 0; i <= d->tindex; ++i)
     mp[i] = must0;
