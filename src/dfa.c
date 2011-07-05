@@ -2398,9 +2398,7 @@ dfastate (int s, struct dfa *d, int trans[])
              must put it to d->states[s].mbps, which contains the positions
              which can match with a single character not a byte.  */
           if (d->states[s].mbps.nelem == 0)
-            {
-              MALLOC(d->states[s].mbps.elems, d->states[s].elems.nelem);
-            }
+            MALLOC(d->states[s].mbps.elems, d->states[s].elems.nelem);
           insert(pos, &(d->states[s].mbps));
           continue;
         }
