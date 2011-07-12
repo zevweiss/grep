@@ -401,14 +401,16 @@ static void regexp (void);
 #define REALLOC(p, t, n) ((p) = xnrealloc (p, n, sizeof (t)))
 
 /* Reallocate an array of type t if nalloc is too small for index. */
-#define REALLOC_IF_NECESSARY(p, t, nalloc, index)       \
-  do                                                    \
-    if ((nalloc) <= (index))                            \
-      {                                                 \
-        size_t new_nalloc = (index) + ! (p);            \
-        (p) = x2nrealloc (p, &new_nalloc, sizeof (t));  \
-        (nalloc) = new_nalloc;                          \
-      }                                                 \
+#define REALLOC_IF_NECESSARY(p, t, nalloc, index)		\
+  do								\
+    {								\
+      if ((nalloc) <= (index))					\
+        {							\
+          size_t new_nalloc = (index) + ! (p);			\
+          (p) = x2nrealloc (p, &new_nalloc, sizeof (t));	\
+          (nalloc) = new_nalloc;				\
+        }							\
+    }								\
   while (false)
 
 
