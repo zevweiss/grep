@@ -401,14 +401,14 @@ static void regexp (void);
 #define REALLOC(p, t, n) ((p) = xnrealloc (p, n, sizeof (t)))
 
 /* Reallocate an array of type *P if N_ALLOC is <= N_REQUIRED. */
-#define REALLOC_IF_NECESSARY(p, nalloc, index)			\
+#define REALLOC_IF_NECESSARY(p, n_alloc, index)			\
   do								\
     {								\
-      if ((nalloc) <= (index))					\
+      if ((n_alloc) <= (index))					\
         {							\
-          size_t new_nalloc = (index) + ! (p);			\
-          (p) = x2nrealloc (p, &new_nalloc, sizeof (*(p)));	\
-          (nalloc) = new_nalloc;				\
+          size_t new_n_alloc = (index) + ! (p);			\
+          (p) = x2nrealloc (p, &new_n_alloc, sizeof (*(p)));	\
+          (n_alloc) = new_n_alloc;				\
         }							\
     }								\
   while (false)
