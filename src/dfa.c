@@ -29,7 +29,6 @@
 #include <limits.h>
 #include <string.h>
 #include <locale.h>
-#include "verify.h"
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
