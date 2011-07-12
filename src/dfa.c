@@ -401,12 +401,13 @@ static void regexp (void);
 #define REALLOC(p, t, n) ((p) = xnrealloc (p, n, sizeof (t)))
 
 /* Reallocate an array of type *P if N_ALLOC is <= N_REQUIRED. */
-#define REALLOC_IF_NECESSARY(p, n_alloc, index)			\
+#define REALLOC_IF_NECESSARY(p, n_alloc, n_required)		\
   do								\
     {								\
-      if ((n_alloc) <= (index))					\
+      assert (0 <= (n_required));				\
+      if ((n_alloc) <= (n_required))				\
         {							\
-          size_t new_n_alloc = (index) + ! (p);			\
+          size_t new_n_alloc = (n_required) + !(p);		\
           (p) = x2nrealloc (p, &new_n_alloc, sizeof (*(p)));	\
           (n_alloc) = new_n_alloc;				\
         }							\
@@ -514,7 +515,7 @@ charclass_index (charclass const s)
   for (i = 0; i < dfa->cindex; ++i)
     if (equal(s, dfa->charclasses[i]))
       return i;
-  REALLOC_IF_NECESSARY(dfa->charclasses, dfa->calloc, dfa->cindex);
+  REALLOC_IF_NECESSARY(dfa->charclasses, dfa->calloc, dfa->cindex + 1);
   ++dfa->cindex;
   copyset(s, dfa->charclasses[i]);
   return i;
@@ -1417,14 +1418,14 @@ addtok_mb (token t, int mbprop)
   if (MB_CUR_MAX > 1)
     {
       REALLOC_IF_NECESSARY(dfa->multibyte_prop, dfa->nmultibyte_prop,
-                           dfa->tindex);
+                           dfa->tindex + 1);
       dfa->multibyte_prop[dfa->tindex] = mbprop;
     }
 #else
   (void) mbprop;
 #endif
 
-  REALLOC_IF_NECESSARY(dfa->tokens, dfa->talloc, dfa->tindex);
+  REALLOC_IF_NECESSARY(dfa->tokens, dfa->talloc, dfa->tindex + 1);
   dfa->tokens[dfa->tindex++] = t;
 
   switch (t)
@@ -1937,7 +1938,7 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
     }
 
   /* We'll have to create a new state. */
-  REALLOC_IF_NECESSARY(d->states, d->salloc, d->sindex);
+  REALLOC_IF_NECESSARY(d->states, d->salloc, d->sindex + 1);
   d->states[i].hash = hash;
   MALLOC(d->states[i].elems.elems, position, s->nelem);
   copy(s, &d->states[i].elems);
@@ -2162,7 +2163,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
             REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 nalloc[pos[j].index], merged.nelem - 1);
+                                 nalloc[pos[j].index], merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
@@ -2182,7 +2183,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           {
             merge(&tmp, &d->follows[pos[j].index], &merged);
             REALLOC_IF_NECESSARY(d->follows[pos[j].index].elems,
-                                 nalloc[pos[j].index], merged.nelem - 1);
+                                 nalloc[pos[j].index], merged.nelem);
             copy(&merged, &d->follows[pos[j].index]);
           }
 
