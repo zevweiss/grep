@@ -676,11 +676,10 @@ and
 .BR [:xdigit:].
 For example,
 .B [[:alnum:]]
-means
-.BR [0\-9A\-Za\-z] ,
-except the latter form depends upon the C locale and the
-\s-1ASCII\s0 character encoding, whereas the former is independent
-of locale and character set.
+means the character class of numbers and
+letters in the current locale. In the C locale and \s-1ASCII\s0
+character set encoding, this is the same as
+.BR [0\-9A\-Za\-z] .
 (Note that the brackets in these class names are part of the symbolic
 names, and must be included in addition to the brackets delimiting
 the bracket expression.)
