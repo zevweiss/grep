@@ -44,6 +44,7 @@
 #include "isdir.h"
 #include "progname.h"
 #include "propername.h"
+#include "quote.h"
 #include "savedir.h"
 #include "version-etc.h"
 #include "xalloc.h"
@@ -58,6 +59,11 @@
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
   _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
+
+/* When stdout is connected to a regular file, save its stat
+   information here, so that we can automatically skip it, thus
+   avoiding a potential (racy) infinite loop.  */
+static struct stat out_stat;
 
 struct stats
 {
@@ -1212,6 +1218,22 @@ grepfile (char const *file, struct stats *stats)
                                       || S_ISSOCK (stats->stat.st_mode)
                                       || S_ISFIFO (stats->stat.st_mode)))
         return 1;
+
+      /* If there's a regular file on stdout and the current file refers
+         to the same i-node, we have to report the problem and skip it.
+         Otherwise when matching lines from some other input reach the
+         disk before we open this file, we can end up reading and matching
+         those lines and appending them to the file from which we're reading.
+         Then we'd have what appears to be an infinite loop that'd terminate
+         only upon filling the output file system or reaching a quota.  */
+      if (S_ISREG (stats->stat.st_mode) && out_stat.st_ino
+          && SAME_REGULAR_FILE (stats->stat, out_stat))
+        {
+          error (0, 0, _("input file %s is also the output"), quote (file));
+          errseen = 1;
+          return 1;
+        }
+
       while ((desc = open (file, O_RDONLY)) < 0 && errno == EINTR)
         continue;
 
@@ -2120,6 +2142,10 @@ main (int argc, char **argv)
 
   if (show_help)
     usage (EXIT_SUCCESS);
+
+  struct stat tmp_stat;
+  if (fstat (STDOUT_FILENO, &tmp_stat) == 0 && S_ISREG (tmp_stat.st_mode))
+    out_stat = tmp_stat;
 
   if (keys)
     {

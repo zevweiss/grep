@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+  grep now rejects a command like "grep -r pattern . > out",
+  in which the output file is also one of the inputs,
+  because it can result in an "infinite" disk-filling loop.
+  [bug present since "the beginning"]
+
 
 * Noteworthy changes in release 2.9 (2011-06-21) [stable]
 
