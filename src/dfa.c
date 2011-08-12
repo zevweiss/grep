@@ -3643,20 +3643,12 @@ static char *
 icatalloc (char *old, char const *new)
 {
   char *result;
-  size_t oldsize, newsize;
-
-  newsize = (new == NULL) ? 0 : strlen(new);
-  if (old == NULL)
-    oldsize = 0;
-  else if (newsize == 0)
+  size_t oldsize = old == NULL ? 0 : strlen (old);
+  size_t newsize = new == NULL ? 0 : strlen (new);
+  if (newsize == 0)
     return old;
-  else	oldsize = strlen(old);
-  if (old == NULL)
-    result = malloc(newsize + 1);
-  else
-    result = realloc(old, oldsize + newsize + 1);
-  if (result != NULL && new != NULL)
-    strcpy(result + oldsize, new);
+  result = xrealloc (old, oldsize + newsize + 1);
+  strcpy (result + oldsize, new);
   return result;
 }
 
@@ -3764,8 +3756,16 @@ comsubs (char *left, char const *right)
         }
       if (len == 0)
         continue;
-      if ((cpp = enlist(cpp, lcp, len)) == NULL)
-        break;
+      {
+        char **p = enlist (cpp, lcp, len);
+        if (p == NULL)
+          {
+            freelist (cpp);
+            cpp = NULL;
+            break;
+          }
+        cpp = p;
+      }
     }
   return cpp;
 }
@@ -3858,13 +3858,10 @@ dfamust (struct dfa *d)
     mp[i] = must0;
   for (i = 0; i <= d->tindex; ++i)
     {
-      mp[i].in = malloc(sizeof *mp[i].in);
-      mp[i].left = malloc(2);
-      mp[i].right = malloc(2);
-      mp[i].is = malloc(2);
-      if (mp[i].in == NULL || mp[i].left == NULL ||
-          mp[i].right == NULL || mp[i].is == NULL)
-        goto done;
+      mp[i].in = xmalloc(sizeof *mp[i].in);
+      mp[i].left = xmalloc(2);
+      mp[i].right = xmalloc(2);
+      mp[i].is = xmalloc(2);
       mp[i].left[0] = mp[i].right[0] = mp[i].is[0] = '\0';
       mp[i].in[0] = NULL;
     }
@@ -3971,13 +3968,8 @@ dfamust (struct dfa *d)
                 char *tp;
 
                 tp = icpyalloc(lmp->right);
-                if (tp == NULL)
-                  goto done;
                 tp = icatalloc(tp, rmp->left);
-                if (tp == NULL)
-                  goto done;
-                lmp->in = enlist(lmp->in, tp,
-                                 strlen(tp));
+                lmp->in = enlist(lmp->in, tp, strlen(tp));
                 free(tp);
                 if (lmp->in == NULL)
                   goto done;
