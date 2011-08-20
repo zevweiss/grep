@@ -82,7 +82,6 @@ gl_EARLY
 AC_PROG_RANLIB
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_SYS_LARGEFILE
 AC_TYPE_SIZE_T
 AC_C_CONST
 gl_INIT
