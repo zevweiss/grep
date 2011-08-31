@@ -32,7 +32,6 @@ for i in 8 9 a b c d e f; do
     in=in-$i$j
     b=$(printf "\\x$i$j")
     echo "$b" > $in || framework_failure_
-    cp $in /t
     grep "[$b]" $in > out || fail=1
     compare out $in || fail=1
   done
