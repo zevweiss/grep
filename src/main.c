@@ -1442,9 +1442,9 @@ Output control:\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
       --line-buffered       flush output on every line\n\
-  -H, --with-filename       print the filename for each match\n\
-  -h, --no-filename         suppress the prefixing filename on output\n\
-      --label=LABEL         print LABEL as filename for standard input\n\
+  -H, --with-filename       print the file name for each match\n\
+  -h, --no-filename         suppress the file name prefix on output\n\
+      --label=LABEL         use LABEL as the standard input file name prefix\n\
 "));
       printf (_("\
   -o, --only-matching       show only the part of a line matching PATTERN\n\
