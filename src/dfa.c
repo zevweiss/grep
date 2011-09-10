@@ -3255,7 +3255,7 @@ char *
 dfaexec (struct dfa *d, char const *begin, char *end,
          int newline, int *count, int *backref)
 {
-  int s, s1, tmp;	/* Current state. */
+  int s, s1;		/* Current state. */
   unsigned char const *p; /* Current input character. */
   int **trans, *t;	/* Copy of d->trans so it can be optimized
                                    into a register. */
@@ -3333,7 +3333,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       while ((t = trans[s]) != 0) { /* hand-optimized loop */
         s1 = t[*p++];
         if ((t = trans[s1]) == 0) {
-          tmp = s ; s = s1 ; s1 = tmp ; /* swap */
+          int tmp = s; s = s1; s1 = tmp; /* swap */
           break;
         }
         s = t[*p++];
