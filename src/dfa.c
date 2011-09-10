@@ -3330,14 +3330,16 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           }
       else
 #endif /* MBS_SUPPORT */
-      while ((t = trans[s]) != 0) { /* hand-optimized loop */
-        s1 = t[*p++];
-        if ((t = trans[s1]) == 0) {
-          int tmp = s; s = s1; s1 = tmp; /* swap */
-          break;
+      while ((t = trans[s]) != 0)
+        {
+          s1 = t[*p++];
+          if ((t = trans[s1]) == 0)
+            {
+              int tmp = s; s = s1; s1 = tmp; /* swap */
+              break;
+            }
+          s = t[*p++];
         }
-        s = t[*p++];
-      }
 
       if (s >= 0 && (char *) p <= end && d->fails[s])
         {
