@@ -590,8 +590,7 @@ static inline bool setbit_wc (wint_t wc, charclass c) { abort (); }
 static void
 setbit_case_fold_c (int b, charclass c)
 {
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1)
     {
       wint_t wc = btowc (b);
       if (wc == WEOF)
@@ -601,7 +600,6 @@ setbit_case_fold_c (int b, charclass c)
         setbit_wc (iswupper (wc) ? towlower (wc) : towupper (wc), c);
     }
   else
-#endif
     {
       setbit (b, c);
       if (case_fold && isalpha (b))
@@ -1440,8 +1438,7 @@ static void addtok_wc (wint_t wc);
 static void
 addtok (token t)
 {
-#if MBS_SUPPORT
-  if (MB_CUR_MAX > 1 && t == MBCSET)
+  if (MBS_SUPPORT && MB_CUR_MAX > 1 && t == MBCSET)
     {
       bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
@@ -1488,8 +1485,9 @@ addtok (token t)
         }
     }
   else
-#endif
-    addtok_mb (t, 3);
+    {
+      addtok_mb (t, 3);
+    }
 }
 
 #if MBS_SUPPORT
@@ -3326,10 +3324,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           if (count)
             ++*count;
 
-#if MBS_SUPPORT
-          if (d->mb_cur_max > 1)
+          if (MBS_SUPPORT && d->mb_cur_max > 1)
             prepare_wc_buf ((const char *) p, end);
-#endif
         }
 
       /* Check if we've run off the end of the buffer. */
