@@ -2532,7 +2532,7 @@ dfastate (int s, struct dfa *d, int trans[])
         for (k = 0; k < d->follows[grps[i].elems[j].index].nelem; ++k)
           insert(d->follows[grps[i].elems[j].index].elems[k], &follows);
 
-      if (MBS_SUPPORT && d->mb_cur_max > 1)
+      if (d->mb_cur_max > 1)
         {
           /* If a token in follows.elems is not 1st byte of a multibyte
              character, or the states of follows must accept the bytes
@@ -3234,7 +3234,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   saved_end = *(unsigned char *) end;
   *end = eol;
 
-  if (MBS_SUPPORT && d->mb_cur_max > 1)
+  if (d->mb_cur_max > 1)
     {
       MALLOC(mblen_buf, end - begin + 2);
       MALLOC(inputwcs, end - begin + 2);
@@ -3244,7 +3244,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   for (;;)
     {
-      if (MBS_SUPPORT && d->mb_cur_max > 1)
+      if (d->mb_cur_max > 1)
         while ((t = trans[s]))
           {
             if (p > buf_end)
@@ -3296,7 +3296,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             {
               if (backref)
                 *backref = (d->states[s].backref != 0);
-              if (MBS_SUPPORT && d->mb_cur_max > 1)
+              if (d->mb_cur_max > 1)
                 {
                   free(mblen_buf);
                   free(inputwcs);
@@ -3306,7 +3306,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             }
 
           s1 = s;
-          if (MBS_SUPPORT && d->mb_cur_max > 1)
+          if (d->mb_cur_max > 1)
             {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
@@ -3324,14 +3324,14 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           if (count)
             ++*count;
 
-          if (MBS_SUPPORT && d->mb_cur_max > 1)
+          if (d->mb_cur_max > 1)
             prepare_wc_buf ((const char *) p, end);
         }
 
       /* Check if we've run off the end of the buffer. */
       if ((char *) p > end)
         {
-          if (MBS_SUPPORT && d->mb_cur_max > 1)
+          if (d->mb_cur_max > 1)
             {
               free(mblen_buf);
               free(inputwcs);
@@ -3401,8 +3401,8 @@ dfainit (struct dfa *d)
   d->talloc = 1;
   MALLOC(d->tokens, d->talloc);
 
-#if MBS_SUPPORT
   d->mb_cur_max = MB_CUR_MAX;
+
   if (d->mb_cur_max > 1)
     {
       d->nmultibyte_prop = 1;
@@ -3410,7 +3410,6 @@ dfainit (struct dfa *d)
       d->mbcsets_alloc = 1;
       MALLOC(d->mbcsets, d->mbcsets_alloc);
     }
-#endif
 }
 
 static void
@@ -3460,7 +3459,7 @@ dfafree (struct dfa *d)
   free(d->charclasses);
   free(d->tokens);
 
-  if (MBS_SUPPORT && d->mb_cur_max > 1)
+  if (d->mb_cur_max > 1)
     free_mbdata(d);
 
   for (i = 0; i < d->sindex; ++i) {
