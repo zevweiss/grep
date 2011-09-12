@@ -590,7 +590,7 @@ static inline bool setbit_wc (wint_t wc, charclass c) { abort (); }
 static void
 setbit_case_fold_c (int b, charclass c)
 {
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       wint_t wc = btowc (b);
       if (wc == WEOF)
@@ -834,7 +834,7 @@ parse_bracket_exp (void)
           /* If pattern contains `[[:', `[[.', or `[[='.  */
           if (c1 == ':'
               /* TODO: handle `[[.' and `[[=' also for MB_CUR_MAX == 1.  */
-              || (MBS_SUPPORT && MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
+              || (MB_CUR_MAX > 1 && (c1 == '.' || c1 == '='))
               )
             {
               size_t len = 0;
@@ -865,7 +865,7 @@ parse_bracket_exp (void)
                   if (!pred)
                     dfaerror(_("invalid character class"));
 
-                  if (MBS_SUPPORT && MB_CUR_MAX > 1 && !pred->single_byte_only)
+                  if (MB_CUR_MAX > 1 && !pred->single_byte_only)
                     {
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
@@ -947,7 +947,7 @@ parse_bracket_exp (void)
               && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
             FETCH_WC(c2, wc2, _("unbalanced ["));
 
-          if (MBS_SUPPORT && MB_CUR_MAX > 1)
+          if (MB_CUR_MAX > 1)
             {
               /* When case folding map a range, say [m-z] (or even [M-z])
                  to the pair of ranges, [m-z] [M-Z].  */
@@ -1014,7 +1014,7 @@ parse_bracket_exp (void)
 
       colon_warning_state |= (c == ':') ? 2 : 4;
 
-      if (!MBS_SUPPORT || MB_CUR_MAX == 1)
+      if (MB_CUR_MAX == 1)
         {
           setbit_case_fold_c (c, ccl);
           continue;
@@ -1047,7 +1047,7 @@ parse_bracket_exp (void)
   if (colon_warning_state == 7)
     dfawarn (_("character class syntax is [[:space:]], not [:space:]"));
 
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       static charclass zeroclass;
       work_mbc->invert = invert;
@@ -1057,7 +1057,7 @@ parse_bracket_exp (void)
 
   if (invert)
     {
-      assert(!MBS_SUPPORT || MB_CUR_MAX == 1);
+      assert(MB_CUR_MAX == 1);
       notset(ccl);
       if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
         clrbit(eolbyte, ccl);
@@ -1085,7 +1085,7 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-      if (MBS_SUPPORT && MB_CUR_MAX > 1)
+      if (MB_CUR_MAX > 1)
         {
           FETCH_WC (c, wctok, NULL);
           if ((int)c == EOF)
@@ -1314,7 +1314,7 @@ lex (void)
         case '.':
           if (backslash)
             goto normal_char;
-          if (MBS_SUPPORT && MB_CUR_MAX > 1)
+          if (MB_CUR_MAX > 1)
             {
               /* In multibyte environment period must match with a single
                  character not a byte.  So we use ANYCHAR.  */
@@ -1367,7 +1367,7 @@ lex (void)
           laststart = 0;
           /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
-          if (MBS_SUPPORT && MB_CUR_MAX > 1)
+          if (MB_CUR_MAX > 1)
             return lasttok = WCHAR;
 
           if (case_fold && isalpha(c))
@@ -1399,7 +1399,7 @@ static int depth;		/* Current depth of a hypothetical stack
 static void
 addtok_mb (token t, int mbprop)
 {
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       REALLOC_IF_NECESSARY(dfa->multibyte_prop, dfa->nmultibyte_prop,
                            dfa->tindex + 1);
@@ -1438,7 +1438,7 @@ static void addtok_wc (wint_t wc);
 static void
 addtok (token t)
 {
-  if (MBS_SUPPORT && MB_CUR_MAX > 1 && t == MBCSET)
+  if (MB_CUR_MAX > 1 && t == MBCSET)
     {
       bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
@@ -1694,7 +1694,7 @@ copytoks (int tindex, int ntokens)
     {
       addtok(dfa->tokens[tindex + i]);
       /* Update index into multibyte csets.  */
-      if (MBS_SUPPORT && MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
+      if (MB_CUR_MAX > 1 && dfa->tokens[tindex + i] == MBCSET)
         dfa->multibyte_prop[dfa->tindex - 1] = dfa->multibyte_prop[tindex + i];
     }
 }
@@ -1778,7 +1778,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 #ifdef LC_COLLATE
   hard_LC_COLLATE = hard_locale (LC_COLLATE);
 #endif
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
       memset(&mbs, 0, sizeof mbs);

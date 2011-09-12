@@ -77,7 +77,7 @@ static char const *
 kwsincr_case (const char *must)
 {
   size_t n = strlen (must);
-  const char *buf = (MBS_SUPPORT && match_icase && MB_CUR_MAX > 1
+  const char *buf = (match_icase && MB_CUR_MAX > 1
                      ? mbtolower (must, &n)
                      : must);
   return kwsincr (kwset, buf, n);
@@ -214,7 +214,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   int backref, start, len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       if (match_icase)
         {

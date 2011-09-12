@@ -34,7 +34,7 @@ Fcompile (char const *pattern, size_t size)
 {
   char const *err;
   size_t psize = size;
-  char const *pat = (MBS_SUPPORT && match_icase && MB_CUR_MAX > 1
+  char const *pat = (match_icase && MB_CUR_MAX > 1
                      ? mbtolower (pattern, &psize)
                      : pattern);
 
@@ -83,7 +83,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
-  if (MBS_SUPPORT && MB_CUR_MAX > 1)
+  if (MB_CUR_MAX > 1)
     {
       if (match_icase)
         {
@@ -100,8 +100,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (offset == (size_t) -1)
         goto failure;
       len = kwsmatch.size[0];
-      if (MBS_SUPPORT
-          && MB_CUR_MAX > 1
+      if (MB_CUR_MAX > 1
           && is_mb_middle (&mb_start, beg + offset, buf + size, len))
         {
           /* The match was a part of multibyte character, advance at least
