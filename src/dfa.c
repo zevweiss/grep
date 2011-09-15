@@ -458,10 +458,8 @@ prtok (token t)
         case OR: s = "OR"; break;
         case LPAREN: s = "LPAREN"; break;
         case RPAREN: s = "RPAREN"; break;
-#if MBS_SUPPORT
         case ANYCHAR: s = "ANYCHAR"; break;
         case MBCSET: s = "MBCSET"; break;
-#endif /* MBS_SUPPORT */
         default: s = "CSET"; break;
         }
       fprintf(stderr, "%s", s);
