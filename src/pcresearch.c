@@ -103,7 +103,7 @@ Pcompile (char const *pattern, size_t size)
 
 /* Pexecute is a no-return function when building --without-pcre.  */
 #if !HAVE_LIBPCRE
-# define WITHOUT_PCRE_NORETURN _GL_ATTRIBUTE_NORETURN
+# define WITHOUT_PCRE_NORETURN _Noreturn
 #else
 # define WITHOUT_PCRE_NORETURN /* empty */
 #endif
