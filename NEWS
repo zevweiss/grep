@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep no longer mishandles high-bit-set pattern bytes on systems
+  where "char" is a signed type. [bug appears to affect only MS-Windows]
+
   grep now rejects a command like "grep -r pattern . > out",
   in which the output file is also one of the inputs,
   because it can result in an "infinite" disk-filling loop.
