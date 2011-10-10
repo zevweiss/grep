@@ -44,6 +44,7 @@
 /po/stamp-po
 /stamp-h1
 /tests/*.log
+/tests/*.trs
 /tests/csinput
 /tests/cspatfile
 /tests/get-mb-cur-max

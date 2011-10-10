@@ -127,7 +127,9 @@ TESTS_ENVIRONMENT =				\
   PERL='$(PERL)'				\
   SHELL='$(SHELL)'				\
   PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
-  ; $(SHELL) 9>&2
+  ; 9>&2
+
+LOG_COMPILER = $(SHELL)
 
 VERBOSE = yes
 
