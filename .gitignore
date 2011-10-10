@@ -49,6 +49,11 @@
 /tests/cspatfile
 /tests/get-mb-cur-max
 /tests/yesno.txt
+/tests/bre.script
+/tests/ere.script
+/tests/khadafy.out
+/tests/patfile
+/tests/spencer1.script
 ABOUT-NLS
 ChangeLog
 Makefile
