@@ -31,7 +31,7 @@ EXTRA_DIST =		\
 # Run syntax-check rules before creating a distribution tarball.
 .PHONY: run-syntax-check
 run-syntax-check:
-	$(AM_V_GEN)test -d .git && $(MAKE) syntax-check || :
+	$(AM_V_GEN)test ! -d .git || $(MAKE) syntax-check
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
