@@ -68,7 +68,7 @@ AC_DEFINE([GREP], 1, [We are building grep])
 AC_PREREQ(2.59)
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE([1.11 dist-xz color-tests parallel-tests])
+AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz color-tests parallel-tests])
 AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 
 AC_CONFIG_HEADERS([config.h:config.hin])

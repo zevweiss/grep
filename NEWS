@@ -12,6 +12,12 @@ GNU grep NEWS                                    -*- outline -*-
   because it can result in an "infinite" disk-filling loop.
   [bug present since "the beginning"]
 
+** Build-related
+
+  "make dist" no longer builds .tar.gz files.
+  xz is portable enough and in wide-enough use that distributing
+  only .tar.xz files is enough.
+
 
 * Noteworthy changes in release 2.9 (2011-06-21) [stable]
 
