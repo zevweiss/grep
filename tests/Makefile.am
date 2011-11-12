@@ -105,7 +105,20 @@ MALLOC_PERTURB_ = 1
 TESTS_ENVIRONMENT =				\
   tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
   TMPDIR=$$tmp__; export TMPDIR;		\
-  export					\
+						\
+  export_with_values ()					\
+  {							\
+    sed_extract_var='s/=.*//';				\
+    sed_quote_value="s/=\\(.*\\)/='\\1'/";		\
+    for arg in "$$@"; do				\
+      var=`echo "$$arg" | sed -e "$$sed_extract_var"`;	\
+      arg=`echo "$$arg" | sed -e "$$sed_quote_value"`;	\
+      eval "$$arg";					\
+      export "$$var";					\
+    done;						\
+  };							\
+						\
+  export_with_values				\
   VERSION='$(VERSION)'                          \
   LOCALE_FR='$(LOCALE_FR)'                      \
   LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'            \
