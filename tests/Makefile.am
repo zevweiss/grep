@@ -106,17 +106,21 @@ TESTS_ENVIRONMENT =				\
   tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
   TMPDIR=$$tmp__; export TMPDIR;		\
 						\
-  export_with_values ()					\
-  {							\
-    sed_extract_var='s/=.*//';				\
-    sed_quote_value="s/'/'\\\\''/g;s/=\\(.*\\)/='\\1'/";\
-    for arg in "$$@"; do				\
-      var=`echo "$$arg" | sed "$$sed_extract_var"`;	\
-      arg=`echo "$$arg" | sed "$$sed_quote_value"`;	\
-      eval "$$arg";					\
-      export "$$var";					\
-    done;						\
-  };							\
+  if test -n "$BASH_VERSION" || (eval "export v=x") 2>/dev/null; then \
+    export_with_values () { export "$$@"; };		\
+  else							\
+    export_with_values ()				\
+    {							\
+      sed_extract_var='s/=.*//';			\
+      sed_quote_value="s/'/'\\\\''/g;s/=\\(.*\\)/='\\1'/";\
+      for arg in "$$@"; do				\
+        var=`echo "$$arg" | sed "$$sed_extract_var"`;	\
+        arg=`echo "$$arg" | sed "$$sed_quote_value"`;	\
+        eval "$$arg";					\
+        export "$$var";					\
+      done;						\
+    };							\
+  fi;							\
 						\
   export_with_values				\
   VERSION='$(VERSION)'                          \
