@@ -109,10 +109,10 @@ TESTS_ENVIRONMENT =				\
   export_with_values ()					\
   {							\
     sed_extract_var='s/=.*//';				\
-    sed_quote_value="s/=\\(.*\\)/='\\1'/";		\
+    sed_quote_value="s/'/'\\\\''/g;s/=\\(.*\\)/='\\1'/";\
     for arg in "$$@"; do				\
-      var=`echo "$$arg" | sed -e "$$sed_extract_var"`;	\
-      arg=`echo "$$arg" | sed -e "$$sed_quote_value"`;	\
+      var=`echo "$$arg" | sed "$$sed_extract_var"`;	\
+      arg=`echo "$$arg" | sed "$$sed_quote_value"`;	\
       eval "$$arg";					\
       export "$$var";					\
     done;						\
