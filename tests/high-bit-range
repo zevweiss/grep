@@ -20,8 +20,8 @@
 
 fail=0
 
-printf '\x81\n' > in || framework_failure_
-grep "$(printf '[\x81]')" in > out || fail=1
+printf '\201\n' > in || framework_failure_
+grep "$(printf '[\201]')" in > out || fail=1
 
 compare out in || fail=1
 
