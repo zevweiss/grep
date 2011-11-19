@@ -785,6 +785,7 @@ parse_bracket_exp (void)
 
   wint_t wc;
   wint_t wc2;
+  wint_t wc1 = 0;
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
@@ -819,7 +820,6 @@ parse_bracket_exp (void)
   else
     invert = 0;
 
-  wint_t wc1 = 0;
   colon_warning_state = (c == ':');
   do
     {
@@ -3420,10 +3420,11 @@ dfainit (struct dfa *d)
 static void
 dfaoptimize (struct dfa *d)
 {
+  unsigned int i;
+
   if (!MBS_SUPPORT || !using_utf8())
     return;
 
-  unsigned int i;
   for (i = 0; i < d->tindex; ++i)
     {
       switch(d->tokens[i])
