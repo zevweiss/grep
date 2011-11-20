@@ -2122,9 +2122,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   CALLOC(d->follows, d->tindex);
 
   for (i = 0; i < d->tindex; ++i)
-#ifdef DEBUG
-    {				/* Nonsyntactic #ifdef goo... */
-#endif
+    {
     switch (d->tokens[i])
       {
       case EMPTY:
@@ -2249,8 +2247,8 @@ dfaanalyze (struct dfa *d, int searchflag)
           prtok(d->tokens[lastpos[j].index]);
         }
       putc('\n', stderr);
-    }
 #endif
+    }
 
   /* For each follow set that is the follow set of a real position, replace
      it with its epsilon closure. */
