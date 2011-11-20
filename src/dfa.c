@@ -3248,7 +3248,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   for (;;)
     {
       if (d->mb_cur_max > 1)
-        while ((t = trans[s]))
+        while ((t = trans[s]) != NULL)
           {
             if (p > buf_end)
               break;
@@ -3281,10 +3281,10 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           }
       else
         {
-          while ((t = trans[s]) != 0)
+          while ((t = trans[s]) != NULL)
             {
               s1 = t[*p++];
-              if ((t = trans[s1]) == 0)
+              if ((t = trans[s1]) == NULL)
                 {
                   int tmp = s; s = s1; s1 = tmp; /* swap */
                   break;
