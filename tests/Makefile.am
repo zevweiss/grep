@@ -106,7 +106,7 @@ TESTS_ENVIRONMENT =				\
   tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
   TMPDIR=$$tmp__; export TMPDIR;		\
 						\
-  if test -n "$BASH_VERSION" || (eval "export v=x") 2>/dev/null; then \
+  if test -n "$$BASH_VERSION" || (eval "export v=x") 2>/dev/null; then \
     export_with_values () { export "$$@"; };		\
   else							\
     export_with_values ()				\
