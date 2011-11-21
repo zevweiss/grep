@@ -1071,8 +1071,18 @@ parse_bracket_exp (void)
   return CSET + charclass_index(ccl);
 }
 
+/* Add this to the test for whether a byte is word-constituent, since on
+   BSD-based systems, many values in the 128..255 range are classified as
+   alphabetic, while on glibc-based systems, they are not.  */
+#ifdef __GLIBC__
+# define is_valid_unibyte_character(c) 1
+#else
+# define is_valid_unibyte_character(c) (MBS_SUPPORT && btowc (c) != WEOF)
+#endif
+
 /* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
-#define IS_WORD_CONSTITUENT(C) (isalnum(C) || (C) == '_')
+#define IS_WORD_CONSTITUENT(C) \
+  (is_valid_unibyte_character(C) && (isalnum(C) || (C) == '_'))
 
 static token
 lex (void)
