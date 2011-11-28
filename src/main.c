@@ -1225,8 +1225,10 @@ grepfile (char const *file, struct stats *stats)
          disk before we open this file, we can end up reading and matching
          those lines and appending them to the file from which we're reading.
          Then we'd have what appears to be an infinite loop that'd terminate
-         only upon filling the output file system or reaching a quota.  */
-      if (S_ISREG (stats->stat.st_mode) && out_stat.st_ino
+         only upon filling the output file system or reaching a quota.
+         However, there is no risk of an infinite loop when we know that
+         grep will generate no output (-q).  */
+      if (!out_quiet && S_ISREG (stats->stat.st_mode) && out_stat.st_ino
           && SAME_REGULAR_FILE (stats->stat, out_stat))
         {
           error (0, 0, _("input file %s is also the output"), quote (file));
