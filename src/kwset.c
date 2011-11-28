@@ -350,7 +350,7 @@ treedelta (struct tree const *tree,
 }
 
 /* Return true if A has every label in B. */
-static int
+static int _GL_ATTRIBUTE_PURE
 hasevery (struct tree const *a, struct tree const *b)
 {
   if (!b)
@@ -497,7 +497,7 @@ kwsprep (kwset_t kws)
 }
 
 /* Fast boyer-moore search. */
-static size_t
+static size_t _GL_ATTRIBUTE_PURE
 bmexec (kwset_t kws, char const *text, size_t size)
 {
   struct kwset const *kwset;

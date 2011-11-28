@@ -164,6 +164,8 @@ if test "$gl_gcc_warnings" = yes; then
   #nw="$nw -Wmissing-prototypes"
   nw="$nw -Wold-style-definition"
   nw="$nw -Wcast-align"
+  nw="$nw -Wunsuffixed-float-constants"
+  gl_WARN_ADD([-Wno-format-nonliteral])
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
 fi

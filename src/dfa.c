@@ -755,7 +755,7 @@ static const struct dfa_ctype prednames[] = {
   { NULL, NULL, false }
 };
 
-static const struct dfa_ctype *
+static const struct dfa_ctype * _GL_ATTRIBUTE_PURE
 find_pred (const char *str)
 {
   unsigned int i;
@@ -1679,7 +1679,7 @@ atom (void)
 }
 
 /* Return the number of tokens in the given subexpression. */
-static int
+static int _GL_ATTRIBUTE_PURE
 nsubtoks (int tindex)
 {
   int ntoks1;
@@ -3605,7 +3605,7 @@ icpyalloc (char const *string)
   return icatalloc (NULL, string);
 }
 
-static char *
+static char * _GL_ATTRIBUTE_PURE
 istrstr (char const *lookin, char const *lookfor)
 {
   char const *cp;
@@ -4017,7 +4017,7 @@ dfaalloc (void)
   return xmalloc (sizeof (struct dfa));
 }
 
-struct dfamust *
+struct dfamust * _GL_ATTRIBUTE_PURE
 dfamusts (struct dfa const *d)
 {
   return d->musts;
