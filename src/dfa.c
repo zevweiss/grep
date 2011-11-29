@@ -585,7 +585,13 @@ setbit_c (int b, charclass c)
 }
 #else
 # define setbit_c setbit
-static inline bool setbit_wc (wint_t wc, charclass c) { abort (); }
+static inline bool
+setbit_wc (wint_t wc, charclass c)
+{
+  abort ();
+  /*NOTREACHED*/
+  return false;
+}
 #endif
 
 /* Like setbit_c, but if case is folded, set both cases of a letter.  For
