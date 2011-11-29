@@ -628,7 +628,7 @@ using_utf8 (void)
   static int utf8 = -1;
   if (utf8 == -1)
     {
-#if defined HAVE_LANGINFO_CODESET && defined MBS_SUPPORT
+#if defined HAVE_LANGINFO_CODESET && MBS_SUPPORT
       utf8 = (STREQ (nl_langinfo (CODESET), "UTF-8"));
 #else
       utf8 = 0;
