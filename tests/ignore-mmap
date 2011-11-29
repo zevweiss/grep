@@ -11,6 +11,6 @@ compare out in || fail=1
 grep --mmap b in > out 2>&1
 # Expect no match and no output.
 test $? = 1 || fail=1
-compare out /dev/null || fail=1
+compare /dev/null out || fail=1
 
 Exit $fail

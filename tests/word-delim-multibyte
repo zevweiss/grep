@@ -14,6 +14,6 @@ fail=0
 grep "\<$e_acute" in > out 2>err || fail=1
 
 compare out in || fail=1
-compare err /dev/null || fail=1
+compare /dev/null err || fail=1
 
 Exit $fail

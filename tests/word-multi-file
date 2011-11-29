@@ -21,9 +21,9 @@ sed s/..// exp1 > exp2 || framework_failure_
 fail=0
 grep -rw bb a > out || fail=1
 sort < out > k; mv k out
-compare out exp1 || fail=1
+compare exp1 out || fail=1
 
 (cd a && grep -w bb [1-4]) > out || fail=1
-compare out exp2 || fail=1
+compare exp2 out || fail=1
 
 Exit $fail

@@ -11,7 +11,7 @@ fail=0
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out1-$LOC
   printf 'á\nç\né\n' | LC_ALL=$LOC grep '[é]' > $out || fail=1
-  compare $out exp1 || fail=1
+  compare exp1 $out || fail=1
 done
 
 printf 'É\n'      > exp2 || framework_failure_
@@ -19,7 +19,7 @@ printf 'É\n'      > exp2 || framework_failure_
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out2-$LOC
   printf 'Á\nÇ\nÉ\n' | LC_ALL=$LOC grep '[É]' > $out || fail=1
-  compare $out exp2 || fail=1
+  compare exp2 $out || fail=1
 done
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do

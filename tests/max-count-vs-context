@@ -17,7 +17,7 @@ sed 4q in > exp || framework_failure_
 fail=0
 grep -m1 -A5 needle in > out 2>err || fail=1
 
-compare out exp || fail=1
-compare err /dev/null || fail=1
+compare exp out || fail=1
+compare /dev/null err || fail=1
 
 Exit $fail

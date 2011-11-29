@@ -15,32 +15,32 @@ printf '%s\n' x/a:aaa             > exp-a       || framework_failure_
 
 grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
-compare out exp-not-a || fail=1
+compare exp-not-a out || fail=1
 
 grep -r --exclude='[ab]'  . x > out || fail=1
 sort out > k && mv k out
-compare out exp-not-ab || fail=1
+compare exp-not-ab out || fail=1
 
 grep -r --exclude='*d'    . x > out || fail=1
 sort out > k && mv k out
-compare out exp-not-d || fail=1
+compare exp-not-d out || fail=1
 
 grep -r --exclude-dir=dir . x > out || fail=1
 sort out > k && mv k out
-compare out exp-not-dir || fail=1
+compare exp-not-dir out || fail=1
 
 # Test with a non-glob.
 grep -r --include=a    . x > out || fail=1
 # no need to sort
-compare out exp-a || fail=1
+compare exp-a out || fail=1
 
 # Also test --include with a "glob".
 grep -r --include='a*'    . x > out || fail=1
 # no need to sort
-compare out exp-a || fail=1
+compare exp-a out || fail=1
 
 # --include (without --recursive) uses different code
 grep --include=a '^aaa$' x/* > out || fail=1
-compare out exp-a || fail=1
+compare exp-a out || fail=1
 
 Exit $fail

@@ -12,7 +12,7 @@ printf 'grep: character class syntax is [[:space:]], not [:space:]\n' \
 
 grep '[:space:]' x 2> err
 test $? = 2 || fail=1
-compare err exp-err || fail=1
+compare exp-err err || fail=1
 
 grep '[[:space:]]' x 2> err
 test $? = 1 || fail=1

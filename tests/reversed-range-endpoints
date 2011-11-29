@@ -13,7 +13,7 @@ for prog in grep egrep 'grep -E'; do
   # Remove "program_name: " prefix from actual output.
   sed 's/^[a-z]*: //' out > k && mv k out
 
-  compare out exp || fail=1
+  compare exp out || fail=1
 done
 
 Exit $fail

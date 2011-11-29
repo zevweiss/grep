@@ -29,7 +29,7 @@ test_grep_reject() {
   encode "$2" | \
     LC_ALL=$locale \
       timeout 10s grep $1 $(encode "$3") > out$k 2>&1
-  test $? = 1 && compare out$k /dev/null
+  test $? = 1 && compare /dev/null out$k
 }
 
 test_grep() {
@@ -37,7 +37,7 @@ test_grep() {
   encode "$2" > exp$k
   LC_ALL=$locale \
     timeout 10s grep $1 $(encode "$3") exp$k > out$k 2>&1
-  test $? = 0 && compare out$k exp$k
+  test $? = 0 && compare exp$k out$k
 }
 
 test "$(get-mb-cur-max $locale)" = 2 || skip_ 'SJIS locale not found'
