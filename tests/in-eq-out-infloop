@@ -23,4 +23,13 @@ test $st = 2 || fail=1
 
 compare err.exp err || fail=1
 
+# But with each of the following options it must not exit-2.
+for i in -q -m1 -l -L; do
+  timeout 10 grep $i 0 out >> out 2> err; st=$?
+  test $st = 2 && fail=1
+done
+
+timeout 10 grep -2 0 out >> out 2> err; st=$?
+test $st = 2 || fail=1
+
 Exit $fail

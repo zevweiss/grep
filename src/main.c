@@ -1219,16 +1219,26 @@ grepfile (char const *file, struct stats *stats)
                                       || S_ISFIFO (stats->stat.st_mode)))
         return 1;
 
-      /* If there's a regular file on stdout and the current file refers
+      /* If there is a regular file on stdout and the current file refers
          to the same i-node, we have to report the problem and skip it.
          Otherwise when matching lines from some other input reach the
          disk before we open this file, we can end up reading and matching
          those lines and appending them to the file from which we're reading.
          Then we'd have what appears to be an infinite loop that'd terminate
          only upon filling the output file system or reaching a quota.
-         However, there is no risk of an infinite loop when we know that
-         grep will generate no output (-q).  */
-      if (!out_quiet && S_ISREG (stats->stat.st_mode) && out_stat.st_ino
+         However, there is no risk of an infinite loop if grep is generating
+         no output, i.e., with --silent, --quiet, -q.
+         Similarly, with any of these:
+           --max-count=N (-m) (for N >= 2)
+           --files-with-matches (-l)
+           --files-without-match (-L)
+         there is no risk of trouble.
+         For --max-count=1, grep stops after printing the first match,
+         so there is no risk of malfunction.  But even --max-count=2, with
+         input==output, while there is no risk of infloop, there is a race
+         condition that could result in "alternate" output.  */
+      if (!out_quiet && list_files == 0 && 1 < max_count
+          && S_ISREG (stats->stat.st_mode) && out_stat.st_ino
           && SAME_REGULAR_FILE (stats->stat, out_stat))
         {
           error (0, 0, _("input file %s is also the output"), quote (file));

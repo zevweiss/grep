@@ -2,6 +2,18 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep no longer rejects "grep -qr . > out", i.e., when run with -q
+  and an input file is the same as the output file, since with -q
+  grep generates no output, so there is no risk of infinite loop or
+  of an output-affecting race condition.  Thus, the use of the following
+  options also disables the input-equals-output failure:
+    --max-count=N (-m) (for N >= 2)
+    --files-with-matches (-l)
+    --files-without-match (-L)
+  [bug introduced in grep-2.10]
+
 
 * Noteworthy changes in release 2.10 (2011-11-16) [stable]
 
