@@ -17,21 +17,10 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-
-/* This file is needed so that we test for i18n support in just one place.
-   This gives us a consistent definition for all uses of MBS_SUPPORT. This
-   follows the ``Don't Repeat Yourself'' principle from "The Pragmatic
-   Programmer".
-
-   The tests should be *all* the ones that are needed for an individual
-   application.  */
-
 #include <stdlib.h>
 
-#if defined HAVE_WCSCOLL && defined HAVE_ISWCTYPE
+#ifndef MBS_SUPPORT
 # define MBS_SUPPORT 1
-#else
-# define MBS_SUPPORT 0
 #endif
 
 #if ! MBS_SUPPORT

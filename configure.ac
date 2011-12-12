@@ -183,7 +183,7 @@ AC_HEADER_DIRENT
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 
-AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale wcscoll)
+AC_CHECK_FUNCS_ONCE(isascii setlocale)
 
 dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.18])
