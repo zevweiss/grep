@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  The --include, --exclude, and --exclude-dir options now handle
+  command-line arguments more consistently.  --include and --exclude
+  apply only to non-directories and --exclude-dir applies only to
+  directories.  "-" (standard input) is never excluded, since it is
+  not a file name.
+  [bug introduced in grep-2.5]
+
   grep no longer rejects "grep -qr . > out", i.e., when run with -q
   and an input file is the same as the output file, since with -q
   grep generates no output, so there is no risk of infinite loop or

@@ -2205,15 +2205,26 @@ main (int argc, char **argv)
         do
         {
           char *file = argv[optind];
-          if ((included_patterns || excluded_patterns)
-              && !isdir (file))
+          if (!STREQ (file, "-")
+              && (included_patterns || excluded_patterns
+                  || excluded_directory_patterns))
             {
-              if (included_patterns
-                  && excluded_file_name (included_patterns, file))
-                continue;
-              if (excluded_patterns
-                  && excluded_file_name (excluded_patterns, file))
-                continue;
+              if (isdir (file))
+                {
+                  if (excluded_directory_patterns
+                      && excluded_file_name (excluded_directory_patterns,
+                                             file))
+                    continue;
+                }
+              else
+                {
+                  if (included_patterns
+                      && excluded_file_name (included_patterns, file))
+                    continue;
+                  if (excluded_patterns
+                      && excluded_file_name (excluded_patterns, file))
+                    continue;
+                }
             }
           status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
                               &stats_base);
