@@ -1098,8 +1098,7 @@ grep (int fd, char const *file, struct stats *stats)
 
   if (! fillbuf (save, stats))
     {
-      if (! is_EISDIR (errno, file))
-        suppressible_error (filename, errno);
+      suppressible_error (filename, errno);
       return 0;
     }
 
@@ -1170,8 +1169,7 @@ grep (int fd, char const *file, struct stats *stats)
         nlscan (beg);
       if (! fillbuf (save, stats))
         {
-          if (! is_EISDIR (errno, file))
-            suppressible_error (filename, errno);
+          suppressible_error (filename, errno);
           goto finish_grep;
         }
     }
@@ -1252,37 +1250,10 @@ grepfile (char const *file, struct stats *stats)
       if (desc < 0)
         {
           int e = errno;
-
-          if (is_EISDIR (e, file) && directories == RECURSE_DIRECTORIES)
-            {
-              if (stat (file, &stats->stat) != 0)
-                {
-                  error (0, errno, "%s", file);
-                  return 1;
-                }
-
-              return grepdir (file, stats);
-            }
-
-          if (!suppress_errors)
-            {
-              if (directories == SKIP_DIRECTORIES)
-                switch (e)
-                  {
-#if defined EISDIR
-                  case EISDIR:
-                    return 1;
-#endif
-                  case EACCES:
-                    /* When skipping directories, don't worry about
-                       directories that can't be opened.  */
-                    if (isdir (file))
-                      return 1;
-                    break;
-                  }
-            }
-
-          suppressible_error (file, e);
+          /* When skipping directories, don't worry about directories
+             that can't be opened.  */
+          if (! (directories == SKIP_DIRECTORIES && isdir (file)))
+            suppressible_error (file, e);
           return 1;
         }
 

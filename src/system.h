@@ -33,12 +33,6 @@
 # define HAVE_DOS_FILE_CONTENTS 1
 #endif
 
-#ifdef EISDIR
-# define is_EISDIR(e, f) ((e) == EISDIR)
-#else
-# define is_EISDIR(e, f) 0
-#endif
-
 #include <stdlib.h>
 #include <stddef.h>
 #include <limits.h>
