@@ -26,6 +26,12 @@ GNU grep NEWS                                    -*- outline -*-
     --files-without-match (-L)
   [bug introduced in grep-2.10]
 
+  grep no longer emits an error message and quits on MS-Windows when
+  invoked with the -r option.
+
+** New features
+
+  grep now supports color highlighting of matches on MS-Windows.
 
 * Noteworthy changes in release 2.10 (2011-11-16) [stable]
 
@@ -34,7 +40,7 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer mishandles high-bit-set pattern bytes on systems
   where "char" is a signed type. [bug appears to affect only MS-Windows]
 
-  grep now rejects a command like "grep -r pattern . > out",
+  On POSIX systems, grep now rejects a command like "grep -r pattern . > out",
   in which the output file is also one of the inputs,
   because it can result in an "infinite" disk-filling loop.
   [bug present since "the beginning"]
