@@ -63,4 +63,3 @@ TAGS
 !/lib/Makefile.am
 !/lib/savedir.c
 !/lib/savedir.h
-!/m4/djgpp.m4
