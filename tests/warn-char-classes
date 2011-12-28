@@ -12,6 +12,7 @@ printf 'grep: character class syntax is [[:space:]], not [:space:]\n' \
 
 grep '[:space:]' x 2> err
 test $? = 2 || fail=1
+sed 's/^\([A-Za-z]:\)\{0,1\}[^: ]*: /grep: /' err > err1 && mv err1 err
 compare exp-err err || fail=1
 
 grep '[[:space:]]' x 2> err

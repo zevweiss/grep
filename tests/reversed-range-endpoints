@@ -11,7 +11,7 @@ for prog in grep egrep 'grep -E'; do
   test $? = 2 || fail=1
 
   # Remove "program_name: " prefix from actual output.
-  sed 's/^[a-z]*: //' out > k && mv k out
+  sed 's/^\([A-Za-z]:\)\{0,1\}[^: ]*: //' out > k && mv k out
 
   compare exp out || fail=1
 done
