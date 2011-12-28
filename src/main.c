@@ -252,7 +252,7 @@ color_cap_ne_fct (void)
 }
 
 /* For GREP_COLORS.  */
-static struct color_cap color_dict[] =
+static const struct color_cap color_dict[] =
   {
     { "mt", &selected_match_color, color_cap_mt_fct }, /* both ms/mc */
     { "ms", &selected_match_color, NULL }, /* selected matched text */
@@ -303,7 +303,7 @@ w32_sgr2attr (const char *sgr_seq)
   const char *s, *p;
   int code, fg = norm_attr & 15, bg = norm_attr & (15 << 4);
   int bright = 0, inverse = 0;
-  static int fg_color[] = {
+  static const int fg_color[] = {
     0,			/* black */
     FOREGROUND_RED,	/* red */
     FOREGROUND_GREEN,	/* green */
@@ -313,7 +313,7 @@ w32_sgr2attr (const char *sgr_seq)
     FOREGROUND_BLUE | FOREGROUND_GREEN, /* cyan */
     FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE /* gray */
   };
-  static int bg_color[] = {
+  static const int bg_color[] = {
     0,			/* black */
     BACKGROUND_RED,	/* red */
     BACKGROUND_GREEN,	/* green */
@@ -1886,7 +1886,7 @@ parse_grep_colors (void)
     if (*q == ':' || *q == '\0')
       {
         char c = *q;
-        struct color_cap *cap;
+        struct color_cap const *cap;
 
         *q++ = '\0'; /* Terminate name or val.  */
         /* Empty name without val (empty cap)
