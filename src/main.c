@@ -209,18 +209,13 @@ static const char *context_line_color  = "";	/* default color pair */
       terminal program linked against ncurses or the like, so it will
       not detect terminfo(5) capabilities.  */
 static const char *sgr_start = "\33[%sm\33[K";
-#define SGR_START  sgr_start
 static const char *sgr_end   = "\33[m\33[K";
-#define SGR_END    sgr_end
 
 /* SGR utility macros.  */
-#define PR_SGR_FMT(fmt, s) do { if (*(s)) printf((fmt), (s)); } while (0)
-#define PR_SGR_FMT_IF(fmt, s) \
-  do { if (color_option && *(s)) printf((fmt), (s)); } while (0)
-#define PR_SGR_START(s)    PR_SGR_FMT(   SGR_START, (s))
-#define PR_SGR_END(s)      PR_SGR_FMT(   SGR_END,   (s))
-#define PR_SGR_START_IF(s) PR_SGR_FMT_IF(SGR_START, (s))
-#define PR_SGR_END_IF(s)   PR_SGR_FMT_IF(SGR_END,   (s))
+#define PR_SGR_START(s)    pr_sgr_start(s, 1)
+#define PR_SGR_END(s)      pr_sgr_end(s, 1)
+#define PR_SGR_START_IF(s) pr_sgr_start(s, color_option)
+#define PR_SGR_END_IF(s)   pr_sgr_end(s, color_option)
 
 struct color_cap
   {
@@ -272,6 +267,200 @@ static struct color_cap color_dict[] =
     { "ne", NULL,                  color_cap_ne_fct }, /* no EL on SGR_* */
     { NULL, NULL,                  NULL }
   };
+
+#ifdef __MINGW32__
+/* Support for colorization on MS-Windows console.  */
+
+#undef DATADIR	/* conflicts with objidl.h, which is included by windows.h */
+#include <windows.h>
+
+static HANDLE hstdout = INVALID_HANDLE_VALUE;
+static SHORT  norm_attr;
+
+/* Initialize the normal text attribute used by the console.  */
+static void
+w32_console_init (void)
+{
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+  hstdout = GetStdHandle (STD_OUTPUT_HANDLE);
+  if (hstdout != INVALID_HANDLE_VALUE
+      && GetConsoleScreenBufferInfo (hstdout, &csbi))
+     norm_attr = csbi.wAttributes;
+  else
+    hstdout = INVALID_HANDLE_VALUE;
+}
+
+/* Convert a color spec, a semi-colon separated list of the form
+   "NN;MM;KK;...", where each number is a value of the SGR parameter,
+   into the corresponding Windows console text attribute.
+
+   This function supports a subset of the SGR rendition aspects that
+   the Windows console can display.  */
+static int
+w32_sgr2attr (const char *sgr_seq)
+{
+  const char *s, *p;
+  int code, fg = norm_attr & 15, bg = norm_attr & (15 << 4);
+  int bright = 0, inverse = 0;
+  static int fg_color[] = {
+    0,			/* black */
+    FOREGROUND_RED,	/* red */
+    FOREGROUND_GREEN,	/* green */
+    FOREGROUND_GREEN | FOREGROUND_RED, /* yellow */
+    FOREGROUND_BLUE,		       /* blue */
+    FOREGROUND_BLUE | FOREGROUND_RED,  /* magenta */
+    FOREGROUND_BLUE | FOREGROUND_GREEN, /* cyan */
+    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE /* gray */
+  };
+  static int bg_color[] = {
+    0,			/* black */
+    BACKGROUND_RED,	/* red */
+    BACKGROUND_GREEN,	/* green */
+    BACKGROUND_GREEN | BACKGROUND_RED, /* yellow */
+    BACKGROUND_BLUE,		       /* blue */
+    BACKGROUND_BLUE | BACKGROUND_RED,  /* magenta */
+    BACKGROUND_BLUE | BACKGROUND_GREEN, /* cyan */
+    BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE /* gray */
+  };
+
+  for (s = p = sgr_seq; *s; p++)
+    {
+
+      if (*p == ';' || *p == '\0')
+	{
+	  code = strtol (s, NULL, 10);
+	  s = p + (*p != '\0');
+
+	  switch (code)
+	    {
+	      case 0:	/* all attributes off */
+		fg = norm_attr & 15;
+		bg = norm_attr & (15 << 4);
+		bright = 0;
+		inverse = 0;
+		break;
+	      case 1:	/* intensity on */
+		bright = 1;
+		break;
+	      case 7:	/* inverse video */
+		inverse = 1;
+		break;
+	      case 22:	/* intensity off */
+		bright = 0;
+		break;
+	      case 27:	/* inverse off */
+		inverse = 0;
+		break;
+	      case 30: case 31: case 32: case 33: /* foreground color */
+	      case 34: case 35: case 36: case 37:
+		fg = fg_color[code - 30];
+		break;
+	      case 39:	/* default foreground */
+		fg = norm_attr & 15;
+		break;
+	      case 40: case 41: case 42: case 43: /* background color */
+	      case 44: case 45: case 46: case 47:
+		bg = bg_color[code - 40];
+		break;
+	      case 49:	/* default background */
+		bg = norm_attr & (15 << 4);
+		break;
+	      default:
+		break;
+	    }
+	}
+    }
+  if (inverse)
+    {
+      int t = fg;
+      fg = (bg >> 4);
+      bg = (t << 4);
+    }
+  if (bright)
+    fg |= FOREGROUND_INTENSITY;
+
+  return (bg & (15 << 4)) | (fg & 15);
+}
+
+/* Start displaying text according to the spec in SGR_SEQ, but only if
+   SGR_SEQ is non-empty and COND is non-zero.  If stdout is connected
+   to a console, set the console text attribute; otherwise, emit the
+   SGR escape sequence as on Posix platforms (this is needed when Grep
+   is invoked as a subprocess of another program, such as Emacs, which
+   will handle the display of the matches).  */
+static void
+pr_sgr_start (const char *sgr_seq, int cond)
+{
+  if (cond && *sgr_seq)
+    {
+      if (hstdout != INVALID_HANDLE_VALUE)
+	{
+	  SHORT attr = w32_sgr2attr (sgr_seq);
+	  SetConsoleTextAttribute (hstdout, attr);
+	}
+      else
+	printf (sgr_start, sgr_seq);
+    }
+}
+
+/* Clear to the end of the current line with the default attribute.
+   This is needed for reasons similar to those that require the "EL to
+   Right after SGR" operation on Posix platforms: if we don't do this,
+   setting the `mt', `ms', or `mc' capabilities to use a non-default
+   background color spills that color to the empty space at the end of
+   the last screen line in a match whose line spans multiple screen
+   lines.  */
+static void
+w32_clreol (void)
+{
+  DWORD nchars;
+  COORD start_pos;
+  DWORD written;
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+  GetConsoleScreenBufferInfo (hstdout, &csbi);
+  start_pos = csbi.dwCursorPosition;
+  nchars = csbi.dwSize.X - start_pos.X;
+
+  FillConsoleOutputAttribute (hstdout, norm_attr, nchars, start_pos,
+			      &written);
+  FillConsoleOutputCharacter (hstdout, ' ', nchars, start_pos, &written);
+}
+
+/* Restore the normal text attribute.  */
+static void
+pr_sgr_end (const char *sgr_seq, int cond)
+{
+  if (cond && *sgr_seq)
+    {
+      if (hstdout != INVALID_HANDLE_VALUE)
+	{
+	  SetConsoleTextAttribute (hstdout, norm_attr);
+	  w32_clreol ();
+	}
+      else
+	printf ("%s", sgr_end);
+    }
+}
+#else
+
+static void
+pr_sgr_start (const char *sgr_seq, int cond)
+{
+  if (cond && *sgr_seq)
+    printf (sgr_start, sgr_seq);
+}
+
+
+/* Restore the normal text attribute.  */
+static void
+pr_sgr_end (const char *sgr_seq, int cond)
+{
+  if (cond && *sgr_seq)
+    printf ("%s", sgr_end);
+}
+#endif	/* __MINGW32__ */
 
 static struct exclude *excluded_patterns;
 static struct exclude *included_patterns;
@@ -1752,6 +1941,30 @@ parse_grep_colors (void)
                 "at remaining substring \"%s\""), p, q);
 }
 
+/* Return non-zero if we should highlight matches in output. */
+static int
+should_colorize (int fd)
+{
+  const char *t;
+
+#if defined(__MINGW32__) || defined(__DJGPP__)
+  return
+    isatty (fd)
+#ifdef __MINGW32__
+    /* Without the lseek call, Windows isatty returns non-zero for the
+       null device as well.  */
+    && lseek (fd, SEEK_CUR, 0) == -1
+#endif
+    /* $TERM is not normally defined on DOS/Windows, so don't require
+       it for highlighting.  But some programs, like Emacs, do define
+       it when running Grep as a subprocess, so make sure they don't
+       set TERM=dumb.  */
+    && !((t = getenv ("TERM")) && STREQ (t, "dumb"));
+#else  /* not __MINGW32__, not __DJGPP__ */
+  return isatty (fd) && (t = getenv ("TERM")) && !STREQ (t, "dumb");
+#endif
+}
+
 int
 main (int argc, char **argv)
 {
@@ -2027,15 +2240,6 @@ main (int argc, char **argv)
             show_help = 1;
         } else
           color_option = 2;
-        if (color_option == 2)
-          {
-            char const *t;
-            if (isatty (STDOUT_FILENO) && (t = getenv ("TERM"))
-                && !STREQ (t, "dumb"))
-              color_option = 1;
-            else
-              color_option = 0;
-          }
         break;
 
       case EXCLUDE_OPTION:
@@ -2088,6 +2292,12 @@ main (int argc, char **argv)
         break;
 
       }
+
+  if (color_option == 2)
+    color_option = should_colorize (STDOUT_FILENO);
+#ifdef __MINGW32__
+  w32_console_init();
+#endif
 
   /* POSIX.2 says that -q overrides -l, which in turn overrides the
      other output options.  */
