@@ -21,6 +21,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = po lib doc src tests gnulib-tests
 
 EXTRA_DIST =		\
+  ChangeLog-2009	\
   Makefile.boot		\
   README		\
   README-alpha		\
