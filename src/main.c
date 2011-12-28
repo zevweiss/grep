@@ -1657,8 +1657,9 @@ Context control:\n\
       --color[=WHEN],\n\
       --colour[=WHEN]       use markers to highlight the matching strings;\n\
                             WHEN is `always', `never', or `auto'\n\
-  -U, --binary              do not strip CR characters at EOL (MSDOS)\n\
-  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n\
+  -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)\n\
+  -u, --unix-byte-offsets   report offsets as if CRs were not there\n\
+                            (MSDOS/Windows)\n\
 \n"));
       printf ("%s", _(after_options));
       printf (_("\
@@ -1899,16 +1900,16 @@ parse_grep_colors (void)
             if (cap->var)
               {
                 if (val)
-              *(cap->var) = val;
+		  *(cap->var) = val;
                 else
-              error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+		  error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
                                 "needs a value (\"=...\"); skipped"), p, name);
-          }
-        else if (val)
-          error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
-                "is boolean and cannot take a value (\"=%s\"); skipped"),
-                p, name, val);
-      }
+	      }
+	    else if (val)
+	      error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+			    "is boolean and cannot take a value (\"=%s\"); skipped"),
+		    p, name, val);
+	  }
         if (cap->fct)
           {
             const char *err_str = cap->fct();
