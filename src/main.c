@@ -326,50 +326,49 @@ w32_sgr2attr (const char *sgr_seq)
 
   for (s = p = sgr_seq; *s; p++)
     {
-
       if (*p == ';' || *p == '\0')
-	{
-	  code = strtol (s, NULL, 10);
-	  s = p + (*p != '\0');
+        {
+          code = strtol (s, NULL, 10);
+          s = p + (*p != '\0');
 
-	  switch (code)
-	    {
-	      case 0:	/* all attributes off */
-		fg = norm_attr & 15;
-		bg = norm_attr & (15 << 4);
-		bright = 0;
-		inverse = 0;
-		break;
-	      case 1:	/* intensity on */
-		bright = 1;
-		break;
-	      case 7:	/* inverse video */
-		inverse = 1;
-		break;
-	      case 22:	/* intensity off */
-		bright = 0;
-		break;
-	      case 27:	/* inverse off */
-		inverse = 0;
-		break;
-	      case 30: case 31: case 32: case 33: /* foreground color */
-	      case 34: case 35: case 36: case 37:
-		fg = fg_color[code - 30];
-		break;
-	      case 39:	/* default foreground */
-		fg = norm_attr & 15;
-		break;
-	      case 40: case 41: case 42: case 43: /* background color */
-	      case 44: case 45: case 46: case 47:
-		bg = bg_color[code - 40];
-		break;
-	      case 49:	/* default background */
-		bg = norm_attr & (15 << 4);
-		break;
-	      default:
-		break;
-	    }
-	}
+          switch (code)
+            {
+              case 0:	/* all attributes off */
+                fg = norm_attr & 15;
+                bg = norm_attr & (15 << 4);
+                bright = 0;
+                inverse = 0;
+                break;
+              case 1:	/* intensity on */
+                bright = 1;
+                break;
+              case 7:	/* inverse video */
+                inverse = 1;
+                break;
+              case 22:	/* intensity off */
+                bright = 0;
+                break;
+              case 27:	/* inverse off */
+                inverse = 0;
+                break;
+              case 30: case 31: case 32: case 33: /* foreground color */
+              case 34: case 35: case 36: case 37:
+                fg = fg_color[code - 30];
+                break;
+              case 39:	/* default foreground */
+                fg = norm_attr & 15;
+                break;
+              case 40: case 41: case 42: case 43: /* background color */
+              case 44: case 45: case 46: case 47:
+                bg = bg_color[code - 40];
+                break;
+              case 49:	/* default background */
+                bg = norm_attr & (15 << 4);
+                break;
+              default:
+                break;
+            }
+        }
     }
   if (inverse)
     {
@@ -395,12 +394,12 @@ pr_sgr_start (const char *sgr_seq, int cond)
   if (cond && *sgr_seq)
     {
       if (hstdout != INVALID_HANDLE_VALUE)
-	{
-	  SHORT attr = w32_sgr2attr (sgr_seq);
-	  SetConsoleTextAttribute (hstdout, attr);
-	}
+        {
+          SHORT attr = w32_sgr2attr (sgr_seq);
+          SetConsoleTextAttribute (hstdout, attr);
+        }
       else
-	printf (sgr_start, sgr_seq);
+        printf (sgr_start, sgr_seq);
     }
 }
 
@@ -424,7 +423,7 @@ w32_clreol (void)
   nchars = csbi.dwSize.X - start_pos.X;
 
   FillConsoleOutputAttribute (hstdout, norm_attr, nchars, start_pos,
-			      &written);
+                              &written);
   FillConsoleOutputCharacter (hstdout, ' ', nchars, start_pos, &written);
 }
 
@@ -435,12 +434,12 @@ pr_sgr_end (const char *sgr_seq, int cond)
   if (cond && *sgr_seq)
     {
       if (hstdout != INVALID_HANDLE_VALUE)
-	{
-	  SetConsoleTextAttribute (hstdout, norm_attr);
-	  w32_clreol ();
-	}
+        {
+          SetConsoleTextAttribute (hstdout, norm_attr);
+          w32_clreol ();
+        }
       else
-	printf ("%s", sgr_end);
+        printf ("%s", sgr_end);
     }
 }
 #else
@@ -1900,16 +1899,16 @@ parse_grep_colors (void)
             if (cap->var)
               {
                 if (val)
-		  *(cap->var) = val;
+                  *(cap->var) = val;
                 else
-		  error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+                  error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
                                 "needs a value (\"=...\"); skipped"), p, name);
-	      }
-	    else if (val)
-	      error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
-			    "is boolean and cannot take a value (\"=%s\"); skipped"),
-		    p, name, val);
-	  }
+              }
+            else if (val)
+              error(0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
+                            "is boolean and cannot take a value (\"=%s\"); skipped"),
+                    p, name, val);
+          }
         if (cap->fct)
           {
             const char *err_str = cap->fct();
@@ -1948,7 +1947,7 @@ should_colorize (int fd)
 {
   const char *t;
 
-#if defined(__MINGW32__) || defined(__DJGPP__)
+#if defined __MINGW32__ || defined __DJGPP__
   return
     isatty (fd)
 #ifdef __MINGW32__
