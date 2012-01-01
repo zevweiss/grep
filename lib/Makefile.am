@@ -21,7 +21,9 @@ INCLUDES = -I.. -I$(srcdir)
 AM_CFLAGS += $(GNULIB_WARN_CFLAGS) $(WERROR_CFLAGS)
 
 libgreputils_a_SOURCES += \
-  savedir.c savedir.h
+  colorize.c colorize.h savedir.c savedir.h
+
+EXTRA_DIST += colorize-impl.c ms/colorize.h ms/colorize-impl.c
 
 libgreputils_a_LIBADD += $(LIBOBJS) $(ALLOCA)
 libgreputils_a_DEPENDENCIES += $(LIBOBJS) $(ALLOCA)

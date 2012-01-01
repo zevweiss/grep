@@ -200,6 +200,12 @@ fi
 
 gl_FUNC_PCRE
 
+case $host_os in
+  mingw*) GREP_SRC_INCLUDES='-I$(top_srcdir)/lib/ms' ;;
+  *) GREP_SRC_INCLUDES= ;;
+esac
+AC_SUBST([GREP_SRC_INCLUDES])
+
 AC_CONFIG_FILES([
   Makefile
   lib/Makefile
