@@ -9,6 +9,10 @@ GNU grep NEWS                                    -*- outline -*-
   read error on most systems; formerly, it ignored the error.
   [bug introduced in grep-2.5]
 
+  On POSIX systems, commands like "grep PAT < FILE >> FILE"
+  now report an error instead of looping.
+  [bug present since "the beginning"]
+
   The --include, --exclude, and --exclude-dir options now handle
   command-line arguments more consistently.  --include and --exclude
   apply only to non-directories and --exclude-dir applies only to
