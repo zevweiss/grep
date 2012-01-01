@@ -214,28 +214,28 @@ static const char *sgr_end   = "\33[m\33[K";
 
 /* SGR utility functions.  */
 static void
-PR_SGR_START (char const *s)
+pr_sgr_start (char const *s)
 {
   if (*s)
     print_start_colorize (sgr_start, s);
 }
 static void
-PR_SGR_END (char const *s)
+pr_sgr_end (char const *s)
 {
   if (*s)
     print_end_colorize (sgr_end);
 }
 static void
-PR_SGR_START_IF (char const *s)
+pr_sgr_start_if (char const *s)
 {
   if (color_option)
-    PR_SGR_START (s);
+    pr_sgr_start (s);
 }
 static void
-PR_SGR_END_IF (char const *s)
+pr_sgr_end_if (char const *s)
 {
   if (color_option)
-    PR_SGR_END (s);
+    pr_sgr_end (s);
 }
 
 struct color_cap
@@ -663,18 +663,18 @@ nlscan (char const *lim)
 static void
 print_filename (void)
 {
-  PR_SGR_START_IF (filename_color);
+  pr_sgr_start_if (filename_color);
   fputs (filename, stdout);
-  PR_SGR_END_IF (filename_color);
+  pr_sgr_end_if (filename_color);
 }
 
 /* Print a character separator.  */
 static void
 print_sep (char sep)
 {
-  PR_SGR_START_IF (sep_color);
+  pr_sgr_start_if (sep_color);
   fputc (sep, stdout);
-  PR_SGR_END_IF (sep_color);
+  pr_sgr_end_if (sep_color);
 }
 
 /* Print a line number or a byte offset.  */
@@ -699,9 +699,9 @@ print_offset (uintmax_t pos, int min_width, const char *color)
     while (--min_width >= 0)
       *--p = ' ';
 
-  PR_SGR_START_IF (color);
+  pr_sgr_start_if (color);
   fwrite (p, 1, buf + sizeof buf - p, stdout);
-  PR_SGR_END_IF (color);
+  pr_sgr_end_if (color);
 }
 
 /* Print a whole line head (filename, line, byte).  */
@@ -795,7 +795,7 @@ print_line_middle (const char *beg, const char *lim,
                                       : SEP_CHAR_SELECTED));
           else
             {
-              PR_SGR_START (line_color);
+              pr_sgr_start (line_color);
               if (mid)
                 {
                   cur = mid;
@@ -804,9 +804,9 @@ print_line_middle (const char *beg, const char *lim,
               fwrite (cur, sizeof (char), b - cur, stdout);
             }
 
-          PR_SGR_START_IF (match_color);
+          pr_sgr_start_if (match_color);
           fwrite (b, sizeof (char), match_size, stdout);
-          PR_SGR_END_IF (match_color);
+          pr_sgr_end_if (match_color);
           if (only_matching)
             fputs ("\n", stdout);
         }
@@ -833,10 +833,10 @@ print_line_tail (const char *beg, const char *lim, const char *line_color)
 
   if (tail_size > 0)
     {
-      PR_SGR_START (line_color);
+      pr_sgr_start (line_color);
       fwrite (beg, 1, tail_size, stdout);
       beg += tail_size;
-      PR_SGR_END (line_color);
+      pr_sgr_end (line_color);
     }
 
   return beg;
@@ -941,9 +941,9 @@ prtext (char const *beg, char const *lim, int *nlinesp)
          discontiguous from the last output in the file. */
       if ((out_before || out_after) && used && p != lastout && group_separator)
         {
-          PR_SGR_START_IF (sep_color);
+          pr_sgr_start_if (sep_color);
           fputs (group_separator, stdout);
-          PR_SGR_END_IF (sep_color);
+          pr_sgr_end_if (sep_color);
           fputc ('\n', stdout);
         }
 
