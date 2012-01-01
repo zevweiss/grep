@@ -1423,8 +1423,8 @@ grepfile (char const *file, struct stats *stats)
          input==output, while there is no risk of infloop, there is a race
          condition that could result in "alternate" output.  */
       if (!out_quiet && list_files == 0 && 1 < max_count
-          && S_ISREG (stats->stat.st_mode) && out_stat.st_ino
-          && SAME_REGULAR_FILE (stats->stat, out_stat))
+          && S_ISREG (out_stat.st_mode) && out_stat.st_ino
+          && SAME_INODE (stats->stat, out_stat))
         {
           error (0, 0, _("input file %s is also the output"), quote (file));
           errseen = 1;
