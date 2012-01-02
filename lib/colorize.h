@@ -33,5 +33,5 @@ print_start_colorize (char const *sgr_start, char const *sgr_seq)
 static inline void
 print_end_colorize (char const *sgr_end)
 {
-  printf ("%s", sgr_end);
+  fputs (sgr_end, stdout);
 }

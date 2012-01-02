@@ -212,5 +212,5 @@ print_end_colorize (char const *sgr_end)
       w32_clreol ();
     }
   else
-    printf ("%s", sgr_end);
+    fputs (sgr_end, stdout);
 }

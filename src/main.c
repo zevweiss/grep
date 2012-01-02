@@ -1426,7 +1426,7 @@ usage (int status)
       printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), program_name);
       printf (_("\
 Search for PATTERN in each FILE or standard input.\n"));
-      printf ("%s", gettext (before_options));
+      fputs (_(before_options), stdout);
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
@@ -1507,7 +1507,7 @@ Context control:\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there\n\
                             (MSDOS/Windows)\n\
 \n"));
-      printf ("%s", _(after_options));
+      fputs (_(after_options), stdout);
       printf (_("\
 With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
 are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
