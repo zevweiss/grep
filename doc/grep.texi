@@ -669,7 +669,7 @@ Search only files whose base name matches @var{glob}
 @opindex --recursive
 @cindex recursive search
 @cindex searching directory trees
-For each directory mentioned on the command line,
+For each directory operand,
 read and process all files in that directory, recursively.
 This is the same as the @samp{--directories=recurse} option.
 
@@ -1010,10 +1010,12 @@ instead of strict equality with@ 2.
 @cindex variants of @command{gerp}
 
 @command{grep} searches the named input files
-(or standard input if no files are named,
-or the file name @file{-} is given)
 for lines containing a match to the given pattern.
 By default, @command{grep} prints the matching lines.
+A file named @file{-} stands for standard input.
+If no input is specified, a recursive @command{grep}
+searches the working directory @file{.}, and a
+nonrecursive @command{grep} searches standard input.
 There are four major variants of @command{grep},
 controlled by the following options.
 
@@ -1492,14 +1494,11 @@ find /home/gigi -name '*.c' -print0 | xargs -0r grep -H 'hello'
 This differs from the command:
 
 @example
-grep -rH 'hello' *.c
+grep -H 'hello' *.c
 @end example
 
 which merely looks for @samp{hello} in all files in the current
 directory whose names end in @samp{.c}.
-Here the @option{-r} is
-probably unnecessary, as recursion occurs only in the unlikely event
-that one of @samp{.c} files is a directory.
 The @samp{find ...} command line above is more similar to the command:
 
 @example

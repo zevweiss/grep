@@ -73,6 +73,7 @@ TESTS =						\
   pcre-abort					\
   pcre-z					\
   prefix-of-multibyte				\
+  r-dot						\
   reversed-range-endpoints			\
   sjis-mb					\
   spencer1					\

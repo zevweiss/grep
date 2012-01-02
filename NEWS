@@ -35,6 +35,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** New features
 
+  If no file operand is given, grep -r now searches the working directory.
+  Formerly it ignored the -r and searched standard input nonrecursively.
+
   grep now supports color highlighting of matches on MS-Windows.
 
 * Noteworthy changes in release 2.10 (2011-11-16) [stable]

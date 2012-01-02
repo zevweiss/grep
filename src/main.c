@@ -1348,6 +1348,7 @@ grepfile (char const *file, struct stats *stats)
 static int
 grepdir (char const *dir, struct stats const *stats)
 {
+  char const *dir_or_dot = (dir ? dir : ".");
   struct stats const *ancestor;
   char *name_space;
   int status = 1;
@@ -1372,38 +1373,50 @@ grepdir (char const *dir, struct stats const *stats)
         }
     }
 
-  name_space = savedir (dir, stats->stat.st_size, included_patterns,
+  name_space = savedir (dir_or_dot, stats->stat.st_size, included_patterns,
                         excluded_patterns, excluded_directory_patterns);
 
   if (! name_space)
     {
       if (errno)
-        suppressible_error (dir, errno);
+        suppressible_error (dir_or_dot, errno);
       else
         xalloc_die ();
     }
   else
     {
-      size_t dirlen = strlen (dir);
-      int needs_slash = ! (dirlen == FILE_SYSTEM_PREFIX_LEN (dir)
-                           || ISSLASH (dir[dirlen - 1]));
-      char *file = NULL;
+      size_t dirlen = 0;
+      int needs_slash = 0;
+      char *file_space = NULL;
       char const *namep = name_space;
       struct stats child;
+      if (dir)
+        {
+          dirlen = strlen (dir);
+          needs_slash = ! (dirlen == FILE_SYSTEM_PREFIX_LEN (dir)
+                           || ISSLASH (dir[dirlen - 1]));
+        }
       child.parent = stats;
       out_file += !no_filenames;
       while (*namep)
         {
           size_t namelen = strlen (namep);
-          file = xrealloc (file, dirlen + 1 + namelen + 1);
-          strcpy (file, dir);
-          file[dirlen] = '/';
-          strcpy (file + dirlen + needs_slash, namep);
+          char const *file;
+          if (! dir)
+            file = namep;
+          else
+            {
+              file_space = xrealloc (file_space, dirlen + 1 + namelen + 1);
+              strcpy (file_space, dir);
+              file_space[dirlen] = '/';
+              strcpy (file_space + dirlen + needs_slash, namep);
+              file = file_space;
+            }
           namep += namelen + 1;
           status &= grepfile (file, &child);
         }
       out_file -= !no_filenames;
-      free (file);
+      free (file_space);
       free (name_space);
     }
 
@@ -1509,9 +1522,10 @@ Context control:\n\
 \n"));
       fputs (_(after_options), stdout);
       printf (_("\
-With no FILE, or when FILE is -, read standard input.  If less than two FILEs\n\
-are given, assume -h.  Exit status is 0 if any line was selected, 1 otherwise;\n\
-if any error occurs and -q was not given, the exit status is 2.\n"));
+When FILE is -, read standard input.  With no FILE, read '.' if recursive,\n\
+standard input if not.  If fewer than two FILEs are given, assume -h.\n\
+Exit status is 0 if any line is selected, 1 otherwise;\n\
+if any error occurs and -q is not given, the exit status is 2.\n"));
       printf (_("\nReport bugs to: %s\n"), PACKAGE_BUGREPORT);
       printf (_("GNU Grep home page: <%s>\n"),
               "http://www.gnu.org/software/grep/");
@@ -2232,6 +2246,14 @@ main (int argc, char **argv)
                               &stats_base);
         }
       while (++optind < argc);
+    }
+  else if (directories == RECURSE_DIRECTORIES)
+    {
+      status = 1;
+      if (stat (".", &stats_base.stat) == 0)
+        status = grepdir (NULL, &stats_base);
+      else
+        suppressible_error (".", errno);
     }
   else
     status = grepfile ((char *) NULL, &stats_base);
