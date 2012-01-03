@@ -1522,8 +1522,8 @@ Context control:\n\
 \n"));
       fputs (_(after_options), stdout);
       printf (_("\
-When FILE is -, read standard input.  With no FILE, read '.' if recursive,\n\
-standard input if not.  If fewer than two FILEs are given, assume -h.\n\
+When FILE is -, read standard input.  With no FILE, read . if a command-line\n\
+-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n\
 Exit status is 0 if any line is selected, 1 otherwise;\n\
 if any error occurs and -q is not given, the exit status is 2.\n"));
       printf (_("\nReport bugs to: %s\n"), PACKAGE_BUGREPORT);
@@ -1646,8 +1646,8 @@ prepend_args (char const *options, char *buf, char **argv)
 
 /* Prepend the whitespace-separated options in OPTIONS to the argument
    vector of a main program with argument count *PARGC and argument
-   vector *PARGV.  */
-static void
+   vector *PARGV.  Return the number of options prepended.  */
+static int
 prepend_default_options (char const *options, int *pargc, char ***pargv)
 {
   if (options && *options)
@@ -1663,7 +1663,10 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
       pp += prepend_args (options, buf, pp);
       while ((*pp++ = *argv++))
         continue;
+      return prepended;
     }
+
+  return 0;
 }
 
 /* Get the next non-digit option from ARGC and ARGV.
@@ -1807,7 +1810,8 @@ main (int argc, char **argv)
   char *keys;
   size_t keycc, oldcc, keyalloc;
   int with_filenames;
-  int opt, cc, status;
+  int opt, cc, status, prepended;
+  int prev_optind, last_recursive;
   int default_context;
   FILE *fp;
 
@@ -1843,10 +1847,12 @@ main (int argc, char **argv)
   exit_failure = EXIT_TROUBLE;
   atexit (close_stdout);
 
-  prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
+  last_recursive = 0;
+  prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
   setmatcher (NULL);
 
-  while ((opt = get_nondigit_option (argc, argv, &default_context)) != -1)
+  while (prev_optind = optind,
+         (opt = get_nondigit_option (argc, argv, &default_context)) != -1)
     switch (opt)
       {
       case 'A':
@@ -1936,6 +1942,8 @@ main (int argc, char **argv)
       case 'd':
         directories = XARGMATCH ("--directories", optarg,
                                  directories_args, directories_types);
+        if (directories == RECURSE_DIRECTORIES)
+          last_recursive = prev_optind;
         break;
 
       case 'e':
@@ -2024,6 +2032,7 @@ main (int argc, char **argv)
       case 'R':
       case 'r':
         directories = RECURSE_DIRECTORIES;
+        last_recursive = prev_optind;
         break;
 
       case 's':
@@ -2250,7 +2259,7 @@ main (int argc, char **argv)
         }
       while (++optind < argc);
     }
-  else if (directories == RECURSE_DIRECTORIES)
+  else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
       status = 1;
       if (stat (".", &stats_base.stat) == 0)

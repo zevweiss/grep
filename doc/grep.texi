@@ -801,6 +801,13 @@ whitespace.
 A backslash escapes the next character, so it can be used to
 specify an option containing whitespace or a backslash.
 
+The @code{GREP_OPTIONS} value does not affect whether @command{grep}
+without file operands searches standard input or the working
+directory; that is affected only by command-line options.  For
+example, the command @samp{grep PAT} searches standard input and the
+command @samp{grep -r PAT} searches the working directory, regardless
+of whether @code{GREP_OPTIONS} contains @option{-r}.
+
 @item GREP_COLOR
 @vindex GREP_COLOR @r{environment variable}
 @cindex highlight markers
@@ -1014,9 +1021,9 @@ instead of strict equality with@ 2.
 for lines containing a match to the given pattern.
 By default, @command{grep} prints the matching lines.
 A file named @file{-} stands for standard input.
-If no input is specified, a recursive @command{grep}
-searches the working directory @file{.}, and a
-nonrecursive @command{grep} searches standard input.
+If no input is specified, @command{grep} searches the working
+directory @file{.} if given a command-line option specifying
+recursion; otherwise, @command{grep} searches standard input.
 There are four major variants of @command{grep},
 controlled by the following options.
 
