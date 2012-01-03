@@ -1964,8 +1964,7 @@ state_index (struct dfa *d, position_set const *s, int newline, int letter)
         constraint = s->elems[j].constraint;
         if (SUCCEEDS_IN_CONTEXT(constraint, newline, 0, letter, 0)
             || SUCCEEDS_IN_CONTEXT(constraint, newline, 0, letter, 1)
-            || SUCCEEDS_IN_CONTEXT(constraint, newline, 1, letter, 0)
-            || SUCCEEDS_IN_CONTEXT(constraint, newline, 1, letter, 1))
+            || SUCCEEDS_IN_CONTEXT(constraint, newline, 1, letter, 0))
           d->states[i].constraint |= constraint;
         if (! d->states[i].first_end)
           d->states[i].first_end = d->tokens[s->elems[j].index];
