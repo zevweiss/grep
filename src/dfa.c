@@ -2242,7 +2242,7 @@ dfaanalyze (struct dfa *d, int searchflag)
         firstpos->constraint = lastpos->constraint = NO_CONSTRAINT;
 
         /* Allocate the follow set for this position. */
-        alloc_position_set(&d->follows[i], nalloc[i]);
+        alloc_position_set(&d->follows[i], 1);
         break;
       }
 #ifdef DEBUG
