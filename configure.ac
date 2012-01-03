@@ -201,10 +201,10 @@ fi
 gl_FUNC_PCRE
 
 case $host_os in
-  mingw*) GREP_SRC_INCLUDES='-I$(top_srcdir)/lib/ms' ;;
-  *) GREP_SRC_INCLUDES= ;;
+  mingw*) suffix=w32 ;;
+  *) suffix=posix ;;
 esac
-AC_SUBST([GREP_SRC_INCLUDES])
+AC_CONFIG_LINKS([lib/colorize.c:lib/colorize-$suffix.c])
 
 AC_CONFIG_FILES([
   Makefile
