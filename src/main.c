@@ -1465,7 +1465,7 @@ Miscellaneous:\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
       --help                display this help and exit\n\
-      --mmap                ignored for backwards compatibility\n"));
+      --mmap                deprecated no-op; evokes a warning\n"));
       printf (_("\
 \n\
 Output control:\n\
@@ -2121,6 +2121,9 @@ main (int argc, char **argv)
         break;
 
       case MMAP_OPTION:
+        error (0, 0, _("the --mmap option has been a no-op since 2010"));
+        break;
+
       case 0:
         /* long options */
         break;

@@ -40,6 +40,12 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep now supports color highlighting of matches on MS-Windows.
 
+** Changes in behavior
+
+  Use of the --mmap option now elicits a warning.  It has been a no-op
+  since March of 2010.
+
+
 * Noteworthy changes in release 2.10 (2011-11-16) [stable]
 
 ** Bug fixes
