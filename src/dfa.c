@@ -2364,7 +2364,7 @@ dfastate (int s, struct dfa *d, int trans[])
   charclass leftovers;		/* Stuff in the label that didn't match. */
   int leftoversf;		/* True if leftovers is nonempty. */
   static charclass letters;	/* Set of characters considered letters. */
-  static charclass newline;	/* Set of characters that aren't newline. */
+  static charclass newline;	/* Set of characters that are newline. */
   position_set follows;		/* Union of the follows of some group. */
   position_set tmp;		/* Temporary space for merging sets. */
   int state;			/* New state. */
