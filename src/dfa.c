@@ -91,6 +91,13 @@ typedef int charclass[CHARCLASS_INTS];
    errors that the cast doesn't.  */
 static inline unsigned char to_uchar (char ch) { return ch; }
 
+/* Contexts tell us whether a character is a newline or a word constituent.
+   Word-constituent characters are those that satisfy iswalnum(), plus '_'.  */
+
+#define CTX_NONE	1
+#define CTX_LETTER	2
+#define CTX_NEWLINE	4
+
 /* Sometimes characters can only be matched depending on the surrounding
    context.  Such context decisions depend on what the previous character
    was, and the value of the current (lookahead) character.  Context
@@ -106,8 +113,6 @@ static inline unsigned char to_uchar (char ch) { return ch; }
    bit 2 - previous was word-constituent, current isn't
    bit 1 - previous wasn't word-constituent, current is
    bit 0 - neither previous nor current is word-constituent
-
-   Word-constituent characters are those that satisfy isalnum().
 
    The macro SUCCEEDS_IN_CONTEXT determines whether a given constraint
    succeeds in a particular context.  Prevn is true if the previous character
@@ -553,14 +558,62 @@ static int case_fold;
 /* End-of-line byte in data.  */
 static unsigned char eolbyte;
 
+/* Cache of char-context values.  */
+static int sbit[NOTCHAR];
+
+/* Set of characters considered letters. */
+static charclass letters;
+
+/* Set of characters that are newline. */
+static charclass newline;
+
+/* Add this to the test for whether a byte is word-constituent, since on
+   BSD-based systems, many values in the 128..255 range are classified as
+   alphabetic, while on glibc-based systems, they are not.  */
+#ifdef __GLIBC__
+# define is_valid_unibyte_character(c) 1
+#else
+# define is_valid_unibyte_character(c) (! (MBS_SUPPORT && btowc (c) == WEOF))
+#endif
+
+/* Return non-zero if C is a 'word-constituent' byte; zero otherwise.  */
+#define IS_WORD_CONSTITUENT(C) \
+  (is_valid_unibyte_character (C) && (isalnum (C) || (C) == '_'))
+
+static int
+char_context (unsigned char c)
+{
+  if (c == eolbyte || c == 0)
+    return CTX_NEWLINE;
+  if (IS_WORD_CONSTITUENT (c))
+    return CTX_LETTER;
+  return CTX_NONE;
+}
+
 /* Entry point to set syntax options. */
 void
 dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
 {
+  unsigned int i;
+
   syntax_bits_set = 1;
   syntax_bits = bits;
   case_fold = fold;
   eolbyte = eol;
+
+  for (i = 0; i < NOTCHAR; ++i)
+    {
+      sbit[i] = char_context (i);
+      switch (sbit[i])
+        {
+        case CTX_LETTER:
+          setbit (i, letters);
+          break;
+        case CTX_NEWLINE:
+          setbit (i, newline);
+          break;
+        }
+    }
 }
 
 /* Set a bit in the charclass for the given wchar_t.  Do nothing if WC
@@ -1072,19 +1125,6 @@ parse_bracket_exp (void)
 
   return CSET + charclass_index(ccl);
 }
-
-/* Add this to the test for whether a byte is word-constituent, since on
-   BSD-based systems, many values in the 128..255 range are classified as
-   alphabetic, while on glibc-based systems, they are not.  */
-#ifdef __GLIBC__
-# define is_valid_unibyte_character(c) 1
-#else
-# define is_valid_unibyte_character(c) (! (MBS_SUPPORT && btowc (c) == WEOF))
-#endif
-
-/* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
-#define IS_WORD_CONSTITUENT(C) \
-  (is_valid_unibyte_character(C) && (isalnum(C) || (C) == '_'))
 
 static token
 lex (void)
@@ -2362,8 +2402,6 @@ dfastate (int s, struct dfa *d, int trans[])
   int intersectf;		/* True if intersect is nonempty. */
   charclass leftovers;		/* Stuff in the label that didn't match. */
   int leftoversf;		/* True if leftovers is nonempty. */
-  static charclass letters;	/* Set of characters considered letters. */
-  static charclass newline;	/* Set of characters that are newline. */
   position_set follows;		/* Union of the follows of some group. */
   position_set tmp;		/* Temporary space for merging sets. */
   int state;			/* New state. */
@@ -2371,22 +2409,11 @@ dfastate (int s, struct dfa *d, int trans[])
   int state_newline;		/* New state on a newline transition. */
   int wants_letter;		/* New state wants to know letter context. */
   int state_letter;		/* New state on a letter transition. */
-  static int initialized;	/* Flag for static initialization. */
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
   int i, j, k;
 
   MALLOC (grps, NOTCHAR);
   MALLOC (labels, NOTCHAR);
-
-  /* Initialize the set of letters, if necessary. */
-  if (! initialized)
-    {
-      initialized = 1;
-      for (i = 0; i < NOTCHAR; ++i)
-        if (IS_WORD_CONSTITUENT(i))
-          setbit(i, letters);
-      setbit(eolbyte, newline);
-    }
 
   zeroset(matches);
 
@@ -2672,13 +2699,13 @@ build_state (int s, struct dfa *d)
   d->success[s] = 0;
   if (ACCEPTS_IN_CONTEXT(d->states[s].newline, 1, d->states[s].letter, 0,
       s, *d))
-    d->success[s] |= 4;
+    d->success[s] |= CTX_NEWLINE;
   if (ACCEPTS_IN_CONTEXT(d->states[s].newline, 0, d->states[s].letter, 1,
       s, *d))
-    d->success[s] |= 2;
+    d->success[s] |= CTX_LETTER;
   if (ACCEPTS_IN_CONTEXT(d->states[s].newline, 0, d->states[s].letter, 0,
       s, *d))
-    d->success[s] |= 1;
+    d->success[s] |= CTX_NONE;
 
   MALLOC(trans, NOTCHAR);
   dfastate(s, d, trans);
@@ -3226,18 +3253,6 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                                    into a register. */
   unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
   unsigned char saved_end;
-  static int sbit[NOTCHAR];	/* Table for anding with d->success. */
-  static int sbit_init;
-
-  if (! sbit_init)
-    {
-      unsigned int i;
-
-      sbit_init = 1;
-      for (i = 0; i < NOTCHAR; ++i)
-        sbit[i] = (IS_WORD_CONSTITUENT(i)) ? 2 : 1;
-      sbit[eol] = 4;
-    }
 
   if (! d->tralloc)
     build_state_zero(d);
