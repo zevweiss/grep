@@ -16,6 +16,12 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
+/* Without this pragma, gcc 4.7.0 20120102 suggests that the
+   init_colorize function might be candidate for attribute 'const'  */
+#if (__GNUC__ == 4 && 6 <= __GNUC_MINOR__) || 4 < __GNUC__
+# pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
+#endif
+
 #include <config.h>
 
 #include "colorize.h"
