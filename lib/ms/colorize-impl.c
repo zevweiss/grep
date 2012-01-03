@@ -49,22 +49,14 @@ init_colorize (void)
 
 /* Return non-zero if we should highlight matches in output.  */
 int
-should_colorize (int fd)
+should_colorize (void)
 {
-  if (! isatty (fd))
-    return 0;
-  /* Windows isatty returns non-zero for the null device too.  */
-  else if (lseek (fd, SEEK_CUR, 0) != -1)
-    return 0;
-  else
-    {
-      /* $TERM is not normally defined on DOS/Windows, so don't require
-         it for highlighting.  But some programs, like Emacs, do define
-         it when running Grep as a subprocess, so make sure they don't
-         set TERM=dumb.  */
-      char const *t = getenv ("TERM");
-      return ! (t && strcmp (t, "dumb") == 0);
-    }
+  /* $TERM is not normally defined on DOS/Windows, so don't require
+     it for highlighting.  But some programs, like Emacs, do define
+     it when running Grep as a subprocess, so make sure they don't
+     set TERM=dumb.  */
+  char const *t = getenv ("TERM");
+  return ! (t && strcmp (t, "dumb") == 0);
 }
 
 /* Convert a color spec, a semi-colon separated list of the form

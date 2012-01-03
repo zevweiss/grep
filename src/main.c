@@ -2132,7 +2132,7 @@ main (int argc, char **argv)
       }
 
   if (color_option == 2)
-    color_option = should_colorize (STDOUT_FILENO);
+    color_option = isatty (STDOUT_FILENO) && should_colorize ();
   init_colorize ();
 
   /* POSIX.2 says that -q overrides -l, which in turn overrides the

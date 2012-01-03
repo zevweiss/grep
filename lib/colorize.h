@@ -19,7 +19,7 @@
 #include <stdio.h>
 
 static inline void init_colorize (void) { }
-extern int should_colorize (int);
+extern int should_colorize (void);
 
 /* Start a colorized text attribute on stdout using the SGR_START
    format; the attribute is specified by SGR_SEQ.  */

@@ -27,13 +27,8 @@
 /* Return non-zero if we should highlight matches in output to file
    descriptor FD.  */
 int
-should_colorize (int fd)
+should_colorize (void)
 {
-  if (! isatty (fd))
-    return 0;
-  else
-    {
-      char const *t = getenv ("TERM");
-      return t && strcmp (t, "dumb") != 0;
-    }
+  char const *t = getenv ("TERM");
+  return t && strcmp (t, "dumb") != 0;
 }
