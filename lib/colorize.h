@@ -16,22 +16,7 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-#include <stdio.h>
-
-static inline void init_colorize (void) { }
 extern int should_colorize (void);
-
-/* Start a colorized text attribute on stdout using the SGR_START
-   format; the attribute is specified by SGR_SEQ.  */
-static inline void
-print_start_colorize (char const *sgr_start, char const *sgr_seq)
-{
-  printf (sgr_start, sgr_seq);
-}
-
-/* Restore the normal text attribute using the SGR_END string.  */
-static inline void
-print_end_colorize (char const *sgr_end)
-{
-  fputs (sgr_end, stdout);
-}
+extern void init_colorize (void);
+extern void print_start_colorize (char const *sgr_start, char const *sgr_seq);
+extern void print_end_colorize (char const *sgr_end);

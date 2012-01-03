@@ -42,7 +42,6 @@ LDADD = \
 
 grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
-DEFAULT_INCLUDES = $(GREP_SRC_INCLUDES) -I.@am__isrc@ -I$(top_builddir)
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 
 EXTRA_DIST = dosbuf.c

@@ -20,6 +20,7 @@
 
 #include "colorize.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -31,4 +32,21 @@ should_colorize (void)
 {
   char const *t = getenv ("TERM");
   return t && strcmp (t, "dumb") != 0;
+}
+
+void init_colorize (void) { }
+
+/* Start a colorized text attribute on stdout using the SGR_START
+   format; the attribute is specified by SGR_SEQ.  */
+void
+print_start_colorize (char const *sgr_start, char const *sgr_seq)
+{
+  printf (sgr_start, sgr_seq);
+}
+
+/* Restore the normal text attribute using the SGR_END string.  */
+void
+print_end_colorize (char const *sgr_end)
+{
+  fputs (sgr_end, stdout);
 }
