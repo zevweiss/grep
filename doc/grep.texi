@@ -50,7 +50,7 @@ Texts.  A copy of the license is included in the section entitled
 @node Top
 @top grep
 
-@command{grep} prints lines that match a pattern.
+@command{grep} prints lines that contain a match for a pattern.
 
 This manual is for version @value{VERSION} of GNU Grep.
 
@@ -1170,6 +1170,7 @@ The preceding item is matched at least @var{n} times, but not more than
 
 @end table
 
+The empty regular expression matches the empty string.
 Two regular expressions may be concatenated;
 the resulting regular expression
 matches any string formed by concatenating two substrings
@@ -1627,6 +1628,19 @@ grep 'paul' /etc/motd | grep 'franc,ois'
 
 @noindent
 finds all lines that contain both @samp{paul} and @samp{franc,ois}.
+
+@item
+Why does the empty pattern match every input line?
+
+The @command{grep} command searches for lines that contain strings
+that match a pattern.  Every line contains the empty string, so an
+empty pattern causes @command{grep} to find a match on each line.  It
+is not the only such pattern: @samp{^}, @samp{$}, @samp{.*}, and many
+other patterns cause @command{grep} to match every line.
+
+To match empty lines, use the pattern @samp{^$}.  To match blank
+lines, use the pattern @samp{^[[:blank:]]*$}.  To match no lines at
+all, use the command @samp{grep -f /dev/null}.
 
 @item
 How can I search in both standard input and in files?
