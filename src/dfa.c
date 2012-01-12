@@ -1079,7 +1079,7 @@ parse_bracket_exp (void)
 #ifdef __GLIBC__
 # define is_valid_unibyte_character(c) 1
 #else
-# define is_valid_unibyte_character(c) (MBS_SUPPORT && btowc (c) != WEOF)
+# define is_valid_unibyte_character(c) (! (MBS_SUPPORT && btowc (c) == WEOF))
 #endif
 
 /* Return non-zero if C is a `word-constituent' byte; zero otherwise.  */
