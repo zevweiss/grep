@@ -502,7 +502,7 @@ reset (int fd, char const *file, struct stats *stats)
           bufoffset = lseek (fd, 0, SEEK_CUR);
           if (bufoffset < 0)
             {
-              error (0, errno, _("lseek failed"));
+              suppressible_error (_("lseek failed"), errno);
               return 0;
             }
         }
@@ -1109,7 +1109,7 @@ grep (int fd, char const *file, struct stats *stats)
       /* Close fd now, so that we don't open a lot of file descriptors
          when we recurse deeply.  */
       if (close (fd) != 0)
-        error (0, errno, "%s", file);
+        suppressible_error (file, errno);
       return grepdir (file, stats) - 2;
     }
 
@@ -1289,7 +1289,8 @@ grepfile (char const *file, struct stats *stats)
       && S_ISREG (out_stat.st_mode) && out_stat.st_ino
       && SAME_INODE (stats->stat, out_stat))
     {
-      error (0, 0, _("input file %s is also the output"), quote (filename));
+      if (! suppress_errors)
+        error (0, 0, _("input file %s is also the output"), quote (filename));
       errseen = 1;
       if (file)
         close (desc);
@@ -1344,13 +1345,13 @@ grepfile (char const *file, struct stats *stats)
           if (required_offset != bufoffset
               && lseek (desc, required_offset, SEEK_SET) < 0
               && S_ISREG (stats->stat.st_mode))
-            error (0, errno, "%s", filename);
+            suppressible_error (filename, errno);
         }
       else
         while (close (desc) != 0)
           if (errno != EINTR)
             {
-              error (0, errno, "%s", file);
+              suppressible_error (file, errno);
               break;
             }
     }
