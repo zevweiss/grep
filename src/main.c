@@ -379,6 +379,7 @@ unsigned char eolbyte;
 /* The input file name, or (if standard input) "-" or a --label argument.  */
 static char const *filename;
 static int errseen;
+static int write_error_seen;
 
 enum directories_type
   {
@@ -423,6 +424,15 @@ suppressible_error (char const *mesg, int errnum)
   if (! suppress_errors)
     error (0, errnum, "%s", mesg);
   errseen = 1;
+}
+
+/* If there has already been a write error, don't bother closing
+   standard output, as that might elicit a duplicate diagnostic.  */
+static void
+clean_up_stdout (void)
+{
+  if (! write_error_seen)
+    close_stdout ();
 }
 
 /* Convert STR to a positive integer, storing the result in *OUT.
@@ -881,7 +891,10 @@ prline (char const *beg, char const *lim, int sep)
     fwrite (beg, 1, lim - beg, stdout);
 
   if (ferror (stdout))
-    error (0, errno, _("writing output"));
+    {
+      write_error_seen = 1;
+      error (EXIT_TROUBLE, 0, _("write error"));
+    }
 
   lastout = lim;
 
@@ -1845,7 +1858,7 @@ main (int argc, char **argv)
 #endif
 
   exit_failure = EXIT_TROUBLE;
-  atexit (close_stdout);
+  atexit (clean_up_stdout);
 
   last_recursive = 0;
   prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);

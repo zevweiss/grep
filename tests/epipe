@@ -1,0 +1,20 @@
+#!/bin/sh
+# Check that a write failure with errno == EPIPE
+# doesn't cause grep to issue multiple "write error" diagnostics.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+if
+   (
+     while :; do echo x; done |
+     (trap '' PIPE; exec grep x 2>&3) |
+     :
+   ) 3>&1 | (
+     read line1 && echo >&2 "$line1" &&
+     read line2 && echo >&2 "$line2"
+   )
+then fail=1
+else fail=0
+fi
+
+Exit $fail
