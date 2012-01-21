@@ -242,34 +242,28 @@ struct color_cap
   {
     const char *name;
     const char **var;
-    const char *(*fct) (void);
+    void (*fct) (void);
   };
 
-static const char *
+static void
 color_cap_mt_fct (void)
 {
   /* Our caller just set selected_match_color.  */
   context_match_color = selected_match_color;
-
-  return NULL;
 }
 
-static const char *
+static void
 color_cap_rv_fct (void)
 {
   /* By this point, it was 1 (or already -1).  */
   color_option = -1;  /* That's still != 0.  */
-
-  return NULL;
 }
 
-static const char *
+static void
 color_cap_ne_fct (void)
 {
   sgr_start = "\33[%sm";
   sgr_end   = "\33[m";
-
-  return NULL;
 }
 
 /* For GREP_COLORS.  */
@@ -1773,28 +1767,10 @@ parse_grep_colors (void)
           if (STREQ (cap->name, name))
             break;
         /* If name unknown, go on for forward compatibility.  */
-        if (cap->name)
-          {
-            if (cap->var)
-              {
-                if (val)
-                  *(cap->var) = val;
-                else
-                  error (0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
-                                 "needs a value (\"=...\"); skipped"), p, name);
-              }
-            else if (val)
-              error (0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity "
-                             "is boolean and cannot take a value (\"=%s\");"
-                             " skipped"), p, name, val);
-          }
+        if (cap->var && val)
+          *(cap->var) = val;
         if (cap->fct)
-          {
-            const char *err_str = cap->fct ();
-            if (err_str)
-              error (0, 0, _("in GREP_COLORS=\"%s\", the \"%s\" capacity %s"),
-                     p, name, err_str);
-          }
+          cap->fct ();
         if (c == '\0')
           return;
         name = q;
@@ -1803,7 +1779,7 @@ parse_grep_colors (void)
     else if (*q == '=')
       {
         if (q == name || val)
-          goto ill_formed;
+          return;
         *q++ = '\0'; /* Terminate name.  */
         val = q; /* Can be the empty string.  */
       }
@@ -1812,11 +1788,7 @@ parse_grep_colors (void)
     else if (*q == ';' || (*q >= '0' && *q <= '9'))
       q++; /* Accumulate val.  Protect the terminal from being sent crap.  */
     else
-      goto ill_formed;
-
- ill_formed:
-  error (0, 0, _("stopped processing of ill-formed GREP_COLORS=\"%s\" "
-                 "at remaining substring \"%s\""), p, q);
+      return;
 }
 
 int
