@@ -1382,6 +1382,7 @@ grepdir (char const *dir, struct stats const *stats)
               if (!suppress_errors)
                 error (0, 0, _("warning: %s: %s"), dir,
                        _("recursive directory loop"));
+              errseen = 1;
               return 1;
             }
         }
