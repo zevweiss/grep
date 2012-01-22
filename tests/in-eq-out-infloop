@@ -16,8 +16,8 @@ echo "$v" > out || framework_failure_
 
 for arg in out - ''; do
   case $arg in
-    out) echo 'grep: input file `out'\'' is also the output';;
-    *)   echo 'grep: input file `(standard input)'\'' is also the output';;
+    out) echo "grep: input file 'out' is also the output";;
+    *)   echo "grep: input file '(standard input)' is also the output";;
   esac > err.exp || framework_failure_
 
   # Require an exit status of 2.
