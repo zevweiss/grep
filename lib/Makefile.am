@@ -14,6 +14,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+AM_CFLAGS =
+AM_CPPFLAGS =
+BUILT_SOURCES =
+CLEANFILES =
+EXTRA_DIST =
+MAINTAINERCLEANFILES =
+MOSTLYCLEANDIRS =
+MOSTLYCLEANFILES =
+SUFFIXES =
+noinst_LIBRARIES =
+
 include gnulib.mk
 
 INCLUDES = -I.. -I$(srcdir)
