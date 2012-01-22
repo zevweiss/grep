@@ -1440,7 +1440,7 @@ usage (int status)
     {
       fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
                program_name);
-      fprintf (stderr, _("Try `%s --help' for more information.\n"),
+      fprintf (stderr, _("Try '%s --help' for more information.\n"),
                program_name);
     }
   else
