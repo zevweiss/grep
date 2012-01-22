@@ -9,6 +9,15 @@ GNU grep NEWS                                    -*- outline -*-
   read error on most systems; formerly, it ignored the error.
   [bug introduced in grep-2.5]
 
+  grep now exits with status 2 if a directory loop is found,
+  instead of possibly exiting with status 0 or 1.
+  [bug introduced in grep-2.3]
+
+  The -s option now suppresses certain input error diagnostics that it
+  formerly failed to suppress.  These include errors when closing the
+  input, when lseeking the input, and when the input is also the output.
+  [bug introduced in grep-2.4]
+
   On POSIX systems, commands like "grep PAT < FILE >> FILE"
   now report an error instead of looping.
   [bug present since "the beginning"]
@@ -47,6 +56,13 @@ GNU grep NEWS                                    -*- outline -*-
   Use of the --mmap option now elicits a warning.  It has been a no-op
   since March of 2010.
 
+  grep no longer diagnoses write errors repeatedly; it exits after
+  diagnosing the first write error.  This is better behavior when
+  writing to a dangling pipe.
+
+  Syntax errors in GREP_COLORS are now ignored, instead of sometimes
+  eliciting warnings.  This is more consistent with programs that
+  (e.g.) ignore errors in termcap entries.
 
 * Noteworthy changes in release 2.10 (2011-11-16) [stable]
 
