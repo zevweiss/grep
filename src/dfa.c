@@ -2503,23 +2503,20 @@ dfastate (int s, struct dfa *d, int trans[])
 
       /* Some characters may need to be eliminated from matches because
          they fail in the current context. */
-      if (pos.constraint != 0xFF)
+      if (pos.constraint != NO_CONSTRAINT)
         {
-          if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
-                                        d->states[s].context, CTX_NEWLINE))
-            clrbit(eolbyte, matches);
-          if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
-                                        d->states[s].context, ~CTX_NEWLINE))
+          if (! SUCCEEDS_IN_CONTEXT(pos.constraint,
+                                    d->states[s].context, CTX_NEWLINE))
             for (j = 0; j < CHARCLASS_INTS; ++j)
-              matches[j] &= newline[j];
-          if (! MATCHES_LETTER_CONTEXT(pos.constraint,
-                                       d->states[s].context, CTX_LETTER))
+              matches[j] &= ~newline[j];
+          if (! SUCCEEDS_IN_CONTEXT(pos.constraint,
+                                    d->states[s].context, CTX_LETTER))
             for (j = 0; j < CHARCLASS_INTS; ++j)
               matches[j] &= ~letters[j];
-          if (! MATCHES_LETTER_CONTEXT(pos.constraint,
-                                       d->states[s].context, ~CTX_LETTER))
+          if (! SUCCEEDS_IN_CONTEXT(pos.constraint,
+                                    d->states[s].context, CTX_NONE))
             for (j = 0; j < CHARCLASS_INTS; ++j)
-              matches[j] &= letters[j];
+              matches[j] &= letters[j] | newline[j];
 
           /* If there are no characters left, there's no point in going on. */
           for (j = 0; j < CHARCLASS_INTS && !matches[j]; ++j)
