@@ -2127,8 +2127,8 @@ charclass_context(charclass c)
    also different from the follow set of the complement set.  However,
    all contexts in the complement set will have the same follow set.  */
 
-static int
-state_separate_contexts(position_set *s, int possible_contexts)
+static int _GL_ATTRIBUTE_PURE
+state_separate_contexts (position_set *s, int possible_contexts)
 {
   int separate_context = 0;
   unsigned int j;
@@ -3266,14 +3266,14 @@ prepare_wc_buf (const char *begin, const char *end)
    points to the beginning of the buffer, and END points to the first byte
    after its end.  Note however that we store a sentinel byte (usually
    newline) in *END, so the actual buffer must be one byte longer.
-   When NEWLINE is nonzero, newlines may appear in the matching string.
+   When ALLOW_NL is nonzero, newlines may appear in the matching string.
    If COUNT is non-NULL, increment *COUNT once for each newline processed.
    Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
    encountered a back-reference (1) or not (0).  The caller may use this
    to decide whether to fall back on a backtracking matcher. */
 char *
 dfaexec (struct dfa *d, char const *begin, char *end,
-         int newline, int *count, int *backref)
+         int allow_nl, int *count, int *backref)
 {
   int s, s1;		/* Current state. */
   unsigned char const *p; /* Current input character. */
@@ -3404,7 +3404,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           continue;
         }
 
-      if (p[-1] == eol && newline)
+      if (p[-1] == eol && allow_nl)
         {
           s = d->newlines[s1];
           continue;
