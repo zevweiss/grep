@@ -93,11 +93,15 @@ static inline unsigned char to_uchar (char ch) { return ch; }
 
 /* Contexts tell us whether a character is a newline or a word constituent.
    Word-constituent characters are those that satisfy iswalnum(), plus '_'.
+   Each character has a single CTX_* value; bitmasks of CTX_* values denote
+   a particular character class.
 
-   A state also stores a context value, which is nonzero if its
-   predecessors always matches a newline or a word constituent.
-   The definition of a state's context is a bit unclear, but will be
-   modified soon anyway.  */
+   A state also stores a context value, which is a bitmask of CTX_* values.
+   A state's context represents a set of characters that the state's
+   predecessors must match.  For example, a state whose context does not
+   include CTX_LETTER will never have transitions where the previous
+   character is a word constituent.  A state whose context is CTX_ANY
+   might have transitions from any character.  */
 
 #define CTX_NONE	1
 #define CTX_LETTER	2
@@ -121,15 +125,15 @@ static inline unsigned char to_uchar (char ch) { return ch; }
    bit 0 - neither previous nor current is word-constituent
 
    The macro SUCCEEDS_IN_CONTEXT determines whether a given constraint
-   succeeds in a particular context.  Prev is the context value for
-   the previous character, curr is the context value for the lookahead
-   character. */
+   succeeds in a particular context.  Prev is a bitmask of possible
+   context values for the previous character, curr is the bitmask of
+   possible context values for the lookahead character. */
 #define MATCHES_NEWLINE_CONTEXT(constraint, prev, curr) \
   ((constraint) & \
-   1 << (((prev & CTX_NEWLINE) ? 2 : 0) + ((curr & CTX_NEWLINE) ? 1 : 0) + 4))
+   1 << (((prev & ~CTX_NEWLINE) ? 0 : 2) + ((curr & ~CTX_NEWLINE) ? 0 : 1) + 4))
 #define MATCHES_LETTER_CONTEXT(constraint, prev, curr) \
   ((constraint) & \
-   1 << (((prev & CTX_LETTER) ? 2 : 0) + ((curr & CTX_LETTER) ? 1 : 0)))
+   1 << (((prev & ~CTX_LETTER) ? 0 : 2) + ((curr & ~CTX_LETTER) ? 0 : 1)))
 #define SUCCEEDS_IN_CONTEXT(constraint, prev, curr) \
   (MATCHES_NEWLINE_CONTEXT(constraint, prev, curr)		     \
    && MATCHES_LETTER_CONTEXT(constraint, prev, curr))
@@ -1976,7 +1980,6 @@ state_index (struct dfa *d, position_set const *s, int context)
   int constraint;
   int i, j;
 
-  context &= ~CTX_NONE;
   for (i = 0; i < s->nelem; ++i)
     hash ^= s->elems[i].index + s->elems[i].constraint;
 
@@ -2121,29 +2124,27 @@ charclass_context(charclass c)
   return context;
 }
 
-/* Returns the subset of POSSIBLE_CONTEXTS on which the position set S
-   depends.  Each context in the set of returned contexts (let's call it
-   SC) may have a different follow set than other contexts in SC, and
-   also different from the follow set of the complement set.  However,
-   all contexts in the complement set will have the same follow set.  */
+/* Returns the contexts on which the position set S depends.  Each context
+   in the set of returned contexts (let's call it SC) may have a different
+   follow set than other contexts in SC, and also different from the
+   follow set of the complement set (sc ^ CTX_ANY).  However, all contexts
+   in the complement set will have the same follow set.  */
 
 static int _GL_ATTRIBUTE_PURE
-state_separate_contexts (position_set *s, int possible_contexts)
+state_separate_contexts (position_set const *s)
 {
-  int separate_context = 0;
+  int separate_contexts = 0;
   unsigned int j;
 
   for (j = 0; j < s->nelem; ++j)
     {
-      if ((possible_contexts & CTX_NEWLINE)
-          && PREV_NEWLINE_DEPENDENT(s->elems[j].constraint))
-        separate_context |= CTX_NEWLINE;
-      if ((possible_contexts & CTX_LETTER)
-          && PREV_LETTER_DEPENDENT(s->elems[j].constraint))
-        separate_context |= CTX_LETTER;
+      if (PREV_NEWLINE_DEPENDENT (s->elems[j].constraint))
+        separate_contexts |= CTX_NEWLINE;
+      if (PREV_LETTER_DEPENDENT (s->elems[j].constraint))
+        separate_contexts |= CTX_LETTER;
     }
 
-  return separate_context;
+  return separate_contexts;
 }
 
 
@@ -2404,8 +2405,11 @@ dfaanalyze (struct dfa *d, int searchflag)
   d->sindex = 0;
   MALLOC(d->states, d->salloc);
 
-  separate_contexts = state_separate_contexts(&merged, CTX_NEWLINE);
-  state_index(d, &merged, separate_contexts);
+  separate_contexts = state_separate_contexts (&merged);
+  state_index(d, &merged,
+              (separate_contexts & CTX_NEWLINE
+               ? CTX_NEWLINE
+               : separate_contexts ^ CTX_ANY));
 
   free(o_nullable);
   free(o_nfirst);
@@ -2502,20 +2506,18 @@ dfastate (int s, struct dfa *d, int trans[])
       if (pos.constraint != 0xFF)
         {
           if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
-                                        d->states[s].context & CTX_NEWLINE,
-                                        CTX_NEWLINE))
+                                        d->states[s].context, CTX_NEWLINE))
             clrbit(eolbyte, matches);
           if (! MATCHES_NEWLINE_CONTEXT(pos.constraint,
-                                        d->states[s].context & CTX_NEWLINE, 0))
+                                        d->states[s].context, ~CTX_NEWLINE))
             for (j = 0; j < CHARCLASS_INTS; ++j)
               matches[j] &= newline[j];
           if (! MATCHES_LETTER_CONTEXT(pos.constraint,
-                                       d->states[s].context & CTX_LETTER,
-                                       CTX_LETTER))
+                                       d->states[s].context, CTX_LETTER))
             for (j = 0; j < CHARCLASS_INTS; ++j)
               matches[j] &= ~letters[j];
           if (! MATCHES_LETTER_CONTEXT(pos.constraint,
-                                       d->states[s].context & CTX_LETTER, 0))
+                                       d->states[s].context, ~CTX_LETTER))
             for (j = 0; j < CHARCLASS_INTS; ++j)
               matches[j] &= letters[j];
 
@@ -2599,8 +2601,8 @@ dfastate (int s, struct dfa *d, int trans[])
     {
       /* Find the state(s) corresponding to the positions of state 0. */
       copy(&d->states[0].elems, &follows);
-      separate_contexts = state_separate_contexts(&follows, CTX_ANY);
-      state = state_index(d, &follows, 0);
+      separate_contexts = state_separate_contexts (&follows);
+      state = state_index (d, &follows, separate_contexts ^ CTX_ANY);
       if (separate_contexts & CTX_NEWLINE)
         state_newline = state_index(d, &follows, CTX_NEWLINE);
       else
@@ -2669,15 +2671,18 @@ dfastate (int s, struct dfa *d, int trans[])
 
       /* Find out if the new state will want any context information. */
       possible_contexts = charclass_context(labels[i]);
-      separate_contexts = state_separate_contexts(&follows, possible_contexts);
+      separate_contexts = state_separate_contexts (&follows);
 
       /* Find the state(s) corresponding to the union of the follows. */
-      state = state_index(d, &follows, 0);
-      if (separate_contexts & CTX_NEWLINE)
-        state_newline = state_index(d, &follows, CTX_NEWLINE);
+      if ((separate_contexts & possible_contexts) != possible_contexts)
+        state = state_index (d, &follows, separate_contexts ^ CTX_ANY);
+      else
+        state = -1;
+      if (separate_contexts & possible_contexts & CTX_NEWLINE)
+        state_newline = state_index (d, &follows, CTX_NEWLINE);
       else
         state_newline = state;
-      if (separate_contexts & CTX_LETTER)
+      if (separate_contexts & possible_contexts & CTX_LETTER)
         state_letter = state_index(d, &follows, CTX_LETTER);
       else
         state_letter = state;
