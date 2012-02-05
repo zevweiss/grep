@@ -2014,9 +2014,7 @@ state_index (struct dfa *d, position_set const *s, int context)
     if (d->tokens[s->elems[j].index] < 0)
       {
         constraint = s->elems[j].constraint;
-        if (SUCCEEDS_IN_CONTEXT(constraint, context, CTX_NONE)
-            || SUCCEEDS_IN_CONTEXT(constraint, context, CTX_NEWLINE)
-            || SUCCEEDS_IN_CONTEXT(constraint, context, CTX_LETTER))
+        if (SUCCEEDS_IN_CONTEXT (constraint, context, CTX_ANY))
           d->states[i].constraint |= constraint;
         if (! d->states[i].first_end)
           d->states[i].first_end = d->tokens[s->elems[j].index];
