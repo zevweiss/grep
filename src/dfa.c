@@ -115,46 +115,44 @@ static inline unsigned char to_uchar (char ch) { return ch; }
    is set indicates that the constraint succeeds in the corresponding
    context.
 
-   bit 7 - previous and current are newlines
-   bit 6 - previous was newline, current isn't
-   bit 5 - previous wasn't newline, current is
-   bit 4 - neither previous nor current is a newline
-   bit 3 - previous and current are word-constituents
-   bit 2 - previous was word-constituent, current isn't
-   bit 1 - previous wasn't word-constituent, current is
-   bit 0 - neither previous nor current is word-constituent
+   bit 8-11 - valid contexts when next character is CTX_NEWLINE
+   bit 4-7  - valid contexts when next character is CTX_LETTER
+   bit 0-3  - valid contexts when next character is CTX_NONE
 
    The macro SUCCEEDS_IN_CONTEXT determines whether a given constraint
    succeeds in a particular context.  Prev is a bitmask of possible
-   context values for the previous character, curr is the bitmask of
-   possible context values for the lookahead character. */
-#define MATCHES_NEWLINE_CONTEXT(constraint, prev, curr) \
-  ((constraint) & \
-   1 << (((prev & ~CTX_NEWLINE) ? 0 : 2) + ((curr & ~CTX_NEWLINE) ? 0 : 1) + 4))
-#define MATCHES_LETTER_CONTEXT(constraint, prev, curr) \
-  ((constraint) & \
-   1 << (((prev & ~CTX_LETTER) ? 0 : 2) + ((curr & ~CTX_LETTER) ? 0 : 1)))
+   context values for the previous character, curr is the (single-bit)
+   context value for the lookahead character. */
+#define NEWLINE_CONSTRAINT(constraint) (((constraint) >> 8) & 0xf)
+#define LETTER_CONSTRAINT(constraint)  (((constraint) >> 4) & 0xf)
+#define OTHER_CONSTRAINT(constraint)    ((constraint)       & 0xf)
+
 #define SUCCEEDS_IN_CONTEXT(constraint, prev, curr) \
-  (MATCHES_NEWLINE_CONTEXT(constraint, prev, curr)		     \
-   && MATCHES_LETTER_CONTEXT(constraint, prev, curr))
+  ((((curr) & CTX_NONE      ? OTHER_CONSTRAINT(constraint) : 0) \
+    | ((curr) & CTX_LETTER  ? LETTER_CONSTRAINT(constraint) : 0) \
+    | ((curr) & CTX_NEWLINE ? NEWLINE_CONSTRAINT(constraint) : 0)) & (prev))
 
 /* The following macros give information about what a constraint depends on. */
+#define PREV_NEWLINE_CONSTRAINT(constraint) (((constraint) >> 2) & 0x111)
+#define PREV_LETTER_CONSTRAINT(constraint)  (((constraint) >> 1) & 0x111)
+#define PREV_OTHER_CONSTRAINT(constraint)    ((constraint)       & 0x111)
+
 #define PREV_NEWLINE_DEPENDENT(constraint) \
-  (((constraint) & 0xc0) >> 2 != ((constraint) & 0x30))
+  (PREV_NEWLINE_CONSTRAINT (constraint) != PREV_OTHER_CONSTRAINT (constraint))
 #define PREV_LETTER_DEPENDENT(constraint) \
-  (((constraint) & 0x0c) >> 2 != ((constraint) & 0x03))
+  (PREV_LETTER_CONSTRAINT (constraint) != PREV_OTHER_CONSTRAINT (constraint))
 
 /* Tokens that match the empty string subject to some constraint actually
    work by applying that constraint to determine what may follow them,
    taking into account what has gone before.  The following values are
    the constraints corresponding to the special tokens previously defined. */
-#define NO_CONSTRAINT 0xff
-#define BEGLINE_CONSTRAINT 0xcf
-#define ENDLINE_CONSTRAINT 0xaf
-#define BEGWORD_CONSTRAINT 0xf2
-#define ENDWORD_CONSTRAINT 0xf4
-#define LIMWORD_CONSTRAINT 0xf6
-#define NOTLIMWORD_CONSTRAINT 0xf9
+#define NO_CONSTRAINT         0x777
+#define BEGLINE_CONSTRAINT    0x444
+#define ENDLINE_CONSTRAINT    0x700
+#define BEGWORD_CONSTRAINT    0x050
+#define ENDWORD_CONSTRAINT    0x202
+#define LIMWORD_CONSTRAINT    0x252
+#define NOTLIMWORD_CONSTRAINT 0x525
 
 /* The regexp is parsed into an array of tokens in postfix form.  Some tokens
    are operators and others are terminal symbols.  Most (but not all) of these
@@ -282,7 +280,7 @@ typedef struct
   position_set elems;		/* Positions this state could match. */
   unsigned char context;	/* Context from previous state. */
   char backref;			/* True if this state matches a \<digit>.  */
-  unsigned char constraint;	/* Constraint for this state to accept. */
+  unsigned short constraint;	/* Constraint for this state to accept. */
   int first_end;		/* Token value of the first END in elems. */
   position_set mbps;           /* Positions which can match multibyte
                                   characters.  e.g. period.

@@ -42,6 +42,11 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer emits an error message and quits on MS-Windows when
   invoked with the -r option.
 
+  grep no longer misinterprets some alternations involving anchors
+  (^, $, \<  \>  \B, \b).  For example, grep -E "(^|\B)a" no
+  longer reports a match for the string "x a".
+  [bug present since "the beginning"]
+
 ** New features
 
   If no file operand is given, and a command-line -r or equivalent
