@@ -6,7 +6,7 @@
 
 if
    (
-     while :; do echo x; done |
+     (trap - PIPE; while echo x; do :; done) 3>&- |
      (trap '' PIPE; exec grep x 2>&3) |
      :
    ) 3>&1 | (
