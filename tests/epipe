@@ -6,8 +6,8 @@
 
 if
    (
-     (trap - PIPE; while echo x; do :; done) 3>&- |
-     (trap '' PIPE; exec grep x 2>&3) |
+     while ls -al; do :; done 3>&- |
+     (trap '' PIPE; exec grep . 2>&3 3>&-) |
      :
    ) 3>&1 | (
      read line1 && echo >&2 "$line1" &&
