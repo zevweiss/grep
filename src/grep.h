@@ -20,10 +20,6 @@
 #ifndef GREP_GREP_H
 #define GREP_GREP_H 1
 
-#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 6) || __STRICT_ANSI__
-# define __attribute__(x)
-#endif
-
 /* Function pointer types.  */
 typedef void (*compile_fp_t) (char const *, size_t);
 typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);

@@ -1432,7 +1432,7 @@ grepdir (char const *dir, struct stats const *stats)
   return status;
 }
 
-void usage (int status) __attribute__ ((noreturn));
+_Noreturn void usage (int);
 void
 usage (int status)
 {
