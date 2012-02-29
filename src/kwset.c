@@ -62,7 +62,7 @@ struct tree
 /* Node of a trie representing a set of reversed keywords. */
 struct trie
 {
-  unsigned int accepting;	/* Word index of accepted word, or zero. */
+  size_t accepting;		/* Word index of accepted word, or zero. */
   struct tree *links;		/* Tree of edges leaving this node. */
   struct trie *parent;		/* Parent of this node. */
   struct trie *next;		/* List of all trie nodes in level order. */
@@ -76,7 +76,7 @@ struct trie
 struct kwset
 {
   struct obstack obstack;	/* Obstack for node allocation. */
-  int words;			/* Number of words in the trie. */
+  ptrdiff_t words;		/* Number of words in the trie. */
   struct trie *trie;		/* The trie itself. */
   int mind;			/* Minimum depth of an accepting node. */
   int maxd;			/* Maximum depth of any node. */

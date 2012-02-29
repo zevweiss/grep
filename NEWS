@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep no longer dumps core on lines whose lengths do not fit in 'int'.
+  (e.g., lines longer than 2 GiB on a typical 64-bit host).
+  Instead, grep either works as expected, or reports an error.
+  An error can occur if not enough main memory is available, or if the
+  GNU C library's regular expression functions cannot handle such long lines.
+  [bug present since "the beginning"]
+
   grep no longer silently suppresses errors when reading a directory
   as if it were a text file.  For example, "grep x ." now reports a
   read error on most systems; formerly, it ignored the error.

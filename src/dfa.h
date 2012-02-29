@@ -63,7 +63,7 @@ extern void dfacomp (char const *, size_t, struct dfa *, int);
    encountered a back-reference (1) or not (0).  The caller may use this
    to decide whether to fall back on a backtracking matcher. */
 extern char *dfaexec (struct dfa *d, char const *begin, char *end,
-                      int newline, int *count, int *backref);
+                      int newline, size_t *count, int *backref);
 
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree (struct dfa *);
@@ -82,7 +82,7 @@ extern void dfaanalyze (struct dfa *, int);
 
 /* Compute, for each possible character, the transitions out of a given
    state, storing them in an array of integers. */
-extern void dfastate (int, struct dfa *, int []);
+extern void dfastate (ptrdiff_t, struct dfa *, ptrdiff_t []);
 
 /* Error handling. */
 

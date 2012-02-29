@@ -157,7 +157,11 @@ static inline unsigned char to_uchar (char ch) { return ch; }
 /* The regexp is parsed into an array of tokens in postfix form.  Some tokens
    are operators and others are terminal symbols.  Most (but not all) of these
    codes are returned by the lexical analyzer. */
-typedef enum
+
+typedef ptrdiff_t token;
+
+/* Predefined token values.  */
+enum
 {
   END = -1,			/* END is a terminal symbol that matches the
                                    end of input; any value of END or less in
@@ -243,7 +247,7 @@ typedef enum
   CSET				/* CSET and (and any value greater) is a
                                    terminal symbol that matches any of a
                                    class of characters. */
-} token;
+};
 
 
 /* States of the recognizer correspond to sets of positions in the parse
@@ -252,7 +256,7 @@ typedef enum
    a constraint. */
 typedef struct
 {
-  unsigned int index;		/* Index into the parse array. */
+  size_t index;			/* Index into the parse array. */
   unsigned int constraint;	/* Constraint for matching this position. */
 } position;
 
@@ -267,7 +271,7 @@ typedef struct
 /* Sets of leaves are also stored as arrays. */
 typedef struct
 {
-  unsigned int *elems;		/* Elements of this position set. */
+  size_t *elems;		/* Elements of this position set. */
   size_t nelem;			/* Number of elements in this set. */
 } leaf_set;
 
@@ -276,35 +280,39 @@ typedef struct
    contains an END token. */
 typedef struct
 {
-  int hash;			/* Hash of the positions of this state. */
+  size_t hash;			/* Hash of the positions of this state. */
   position_set elems;		/* Positions this state could match. */
   unsigned char context;	/* Context from previous state. */
   char backref;			/* True if this state matches a \<digit>.  */
   unsigned short constraint;	/* Constraint for this state to accept. */
-  int first_end;		/* Token value of the first END in elems. */
+  token first_end;		/* Token value of the first END in elems. */
   position_set mbps;           /* Positions which can match multibyte
                                   characters.  e.g. period.
                                   These staff are used only if
                                   MB_CUR_MAX > 1.  */
 } dfa_state;
 
+/* States are indexed by state_num values.  These are normally
+   nonnegative but -1 is used as a special value.  */
+typedef ptrdiff_t state_num;
+
 /* A bracket operator.
    e.g. [a-c], [[:alpha:]], etc.  */
 struct mb_char_classes
 {
-  int cset;
+  ptrdiff_t cset;
   int invert;
   wchar_t *chars;		/* Normal characters.  */
-  int nchars;
+  size_t nchars;
   wctype_t *ch_classes;		/* Character classes.  */
-  int nch_classes;
+  size_t nch_classes;
   wchar_t *range_sts;		/* Range characters (start of the range).  */
   wchar_t *range_ends;		/* Range characters (end of the range).  */
-  int nranges;
+  size_t nranges;
   char **equivs;		/* Equivalent classes.  */
-  int nequivs;
+  size_t nequivs;
   char **coll_elems;
-  int ncoll_elems;		/* Collating elements.  */
+  size_t ncoll_elems;		/* Collating elements.  */
 };
 
 /* A compiled regular expression. */
@@ -312,21 +320,21 @@ struct dfa
 {
   /* Fields filled by the scanner. */
   charclass *charclasses;	/* Array of character sets for CSET tokens. */
-  int cindex;			/* Index for adding new charclasses. */
-  int calloc;			/* Number of charclasses currently allocated. */
+  size_t cindex;		/* Index for adding new charclasses. */
+  size_t calloc;		/* Number of charclasses currently allocated. */
 
   /* Fields filled by the parser. */
   token *tokens;		/* Postfix parse array. */
-  int tindex;			/* Index for adding new tokens. */
-  int talloc;			/* Number of tokens currently allocated. */
-  int depth;			/* Depth required of an evaluation stack
+  size_t tindex;		/* Index for adding new tokens. */
+  size_t talloc;		/* Number of tokens currently allocated. */
+  size_t depth;			/* Depth required of an evaluation stack
                                    used for depth-first traversal of the
                                    parse tree. */
-  int nleaves;			/* Number of leaves on the parse tree. */
-  int nregexps;			/* Count of parallel regexps being built
+  size_t nleaves;		/* Number of leaves on the parse tree. */
+  size_t nregexps;		/* Count of parallel regexps being built
                                    with dfaparse(). */
   unsigned int mb_cur_max;	/* Cached value of MB_CUR_MAX.  */
-  int utf8_anychar_classes[5];	/* To lower ANYCHAR in UTF-8 locales.  */
+  token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
 
   /* The following are used only if MB_CUR_MAX > 1.  */
 
@@ -347,18 +355,18 @@ struct dfa
      multibyte_prop
         = 3     , 1               ,  0              ,  2              , 3
   */
-  int nmultibyte_prop;
+  size_t nmultibyte_prop;
   int *multibyte_prop;
 
   /* Array of the bracket expression in the DFA.  */
   struct mb_char_classes *mbcsets;
-  int nmbcsets;
-  int mbcsets_alloc;
+  size_t nmbcsets;
+  size_t mbcsets_alloc;
 
   /* Fields filled by the state builder. */
   dfa_state *states;		/* States of the dfa. */
-  int sindex;			/* Index for adding new states. */
-  int salloc;			/* Number of states currently allocated. */
+  state_num sindex;		/* Index for adding new states. */
+  state_num salloc;		/* Number of states currently allocated. */
 
   /* Fields filled by the parse tree->NFA conversion. */
   position_set *follows;	/* Array of follow sets, indexed by position
@@ -377,22 +385,22 @@ struct dfa
                                    beginning of the buffer. */
 
   /* Fields filled by dfaexec. */
-  int tralloc;			/* Number of transition tables that have
+  state_num tralloc;		/* Number of transition tables that have
                                    slots so far. */
   int trcount;			/* Number of transition tables that have
                                    actually been built. */
-  int **trans;			/* Transition tables for states that can
+  state_num **trans;		/* Transition tables for states that can
                                    never accept.  If the transitions for a
                                    state have not yet been computed, or the
                                    state could possibly accept, its entry in
                                    this table is NULL. */
-  int **realtrans;		/* Trans always points to realtrans + 1; this
+  state_num **realtrans;	/* Trans always points to realtrans + 1; this
                                    is so trans[-1] can contain NULL. */
-  int **fails;			/* Transition tables after failing to accept
+  state_num **fails;		/* Transition tables after failing to accept
                                    on a state that potentially could do so. */
   int *success;			/* Table of acceptance conditions used in
                                    dfaexec and computed in build_state. */
-  int *newlines;		/* Transitions on newlines.  The entry for a
+  state_num *newlines;		/* Transitions on newlines.  The entry for a
                                    newline in any transition table is always
                                    -1 so we can count lines without wasting
                                    too many cycles.  The transition for a
@@ -462,7 +470,10 @@ prtok (token t)
   if (t < 0)
     fprintf(stderr, "END");
   else if (t < NOTCHAR)
-    fprintf(stderr, "%c", t);
+    {
+      int ch = t;
+      fprintf(stderr, "%c", ch);
+    }
   else
     {
       switch (t)
@@ -542,10 +553,10 @@ equal (charclass const s1, charclass const s2)
 static struct dfa *dfa;
 
 /* Find the index of charclass s in dfa->charclasses, or allocate a new charclass. */
-static int
+static size_t
 charclass_index (charclass const s)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < dfa->cindex; ++i)
     if (equal(s, dfa->charclasses[i]))
@@ -721,11 +732,11 @@ using_utf8 (void)
    meaning of the @#%!@#%^!@ syntax bits. */
 
 static char const *lexptr;	/* Pointer to next input character. */
-static int lexleft;		/* Number of characters remaining. */
+static size_t lexleft;		/* Number of characters remaining. */
 static token lasttok;		/* Previous token returned; initially END. */
 static int laststart;		/* True if we're separated from beginning or (, |
                                    only by zero-width characters. */
-static int parens;		/* Count of outstanding left parens. */
+static size_t parens;		/* Count of outstanding left parens. */
 static int minrep, maxrep;	/* Repeat counts for {m,n}. */
 static int hard_LC_COLLATE;	/* Nonzero if LC_COLLATE is hard.  */
 
@@ -872,7 +883,7 @@ parse_bracket_exp (void)
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
-  int chars_al, range_sts_al, range_ends_al, ch_classes_al,
+  size_t chars_al, range_sts_al, range_ends_al, ch_classes_al,
     equivs_al, coll_elems_al;
 
   chars_al = 0;
@@ -1291,14 +1302,32 @@ lex (void)
               char const *p = lexptr;
               char const *lim = p + lexleft;
               for (;  p != lim && ISASCIIDIGIT (*p);  p++)
-                lo = (lo < 0 ? 0 : lo * 10) + *p - '0';
+                {
+                  if (lo < 0)
+                    lo = *p - '0';
+                  else
+                    {
+                      lo = lo * 10 + *p - '0';
+                      if (RE_DUP_MAX < lo)
+                        goto normal_char;
+                    }
+                }
               if (p != lim && *p == ',')
                 while (++p != lim && ISASCIIDIGIT (*p))
-                  hi = (hi < 0 ? 0 : hi * 10) + *p - '0';
+                  {
+                    if (hi < 0)
+                      hi = *p - '0';
+                    else
+                      {
+                        hi = hi * 10 + *p - '0';
+                        if (RE_DUP_MAX < hi)
+                          goto normal_char;
+                      }
+                  }
               else
                 hi = lo;
               if (p == lim || *p != '}'
-                  || lo < 0 || RE_DUP_MAX < hi || (0 <= hi && hi < lo))
+                  || lo < 0 || (0 <= hi && hi < lo))
                 goto normal_char;
             }
 
@@ -1464,7 +1493,7 @@ lex (void)
 /* Recursive descent parser for regular expressions. */
 
 static token tok;		/* Lookahead token. */
-static int depth;		/* Current depth of a hypothetical stack
+static size_t depth;		/* Current depth of a hypothetical stack
                                    holding deferred productions.  This is
                                    used to determine the depth that will be
                                    required of the real stack later on in
@@ -1521,7 +1550,7 @@ addtok (token t)
          This does not require UTF-8.  */
       if (!work_mbc->invert)
         {
-          int i;
+          size_t i;
           for (i = 0; i < work_mbc->nchars; i++)
             {
               addtok_wc (work_mbc->chars[i]);
@@ -1738,10 +1767,10 @@ atom (void)
 }
 
 /* Return the number of tokens in the given subexpression. */
-static int _GL_ATTRIBUTE_PURE
-nsubtoks (int tindex)
+static size_t _GL_ATTRIBUTE_PURE
+nsubtoks (size_t tindex)
 {
-  int ntoks1;
+  size_t ntoks1;
 
   switch (dfa->tokens[tindex - 1])
     {
@@ -1760,9 +1789,9 @@ nsubtoks (int tindex)
 
 /* Copy the given subexpression to the top of the tree. */
 static void
-copytoks (int tindex, int ntokens)
+copytoks (size_t tindex, size_t ntokens)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < ntokens; ++i)
     {
@@ -1776,7 +1805,8 @@ copytoks (int tindex, int ntokens)
 static void
 closure (void)
 {
-  int tindex, ntokens, i;
+  int i;
+  size_t tindex, ntokens;
 
   atom();
   while (tok == QMARK || tok == STAR || tok == PLUS || tok == REPMN)
@@ -1904,12 +1934,12 @@ alloc_position_set (position_set *s, size_t size)
 static void
 insert (position p, position_set *s)
 {
-  int count = s->nelem;
-  int lo = 0, hi = count;
-  int i;
+  size_t count = s->nelem;
+  size_t lo = 0, hi = count;
+  size_t i;
   while (lo < hi)
     {
-      int mid = ((unsigned) lo + (unsigned) hi) >> 1;
+      size_t mid = (lo + hi) >> 1;
       if (s->elems[mid].index > p.index)
         lo = mid + 1;
       else
@@ -1934,7 +1964,7 @@ insert (position p, position_set *s)
 static void
 merge (position_set const *s1, position_set const *s2, position_set *m)
 {
-  int i = 0, j = 0;
+  size_t i = 0, j = 0;
 
   REALLOC_IF_NECESSARY(m->elems, m->alloc, s1->nelem + s2->nelem);
   m->nelem = 0;
@@ -1958,7 +1988,7 @@ merge (position_set const *s1, position_set const *s2, position_set *m)
 static void
 delete (position p, position_set *s)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < s->nelem; ++i)
     if (p.index == s->elems[i].index)
@@ -1971,12 +2001,12 @@ delete (position p, position_set *s)
 /* Find the index of the state corresponding to the given position set with
    the given preceding context, or create a new state if there is no such
    state.  Context tells whether we got here on a newline or letter. */
-static int
+static state_num
 state_index (struct dfa *d, position_set const *s, int context)
 {
-  int hash = 0;
+  size_t hash = 0;
   int constraint;
-  int i, j;
+  state_num i, j;
 
   for (i = 0; i < s->nelem; ++i)
     hash ^= s->elems[i].index + s->elems[i].constraint;
@@ -2038,7 +2068,7 @@ state_index (struct dfa *d, position_set const *s, int context)
 static void
 epsclosure (position_set *s, struct dfa const *d)
 {
-  int i, j;
+  size_t i, j;
   char *visited;	/* array of booleans, enough to use char, not int */
   position p, old;
 
@@ -2130,7 +2160,7 @@ static int _GL_ATTRIBUTE_PURE
 state_separate_contexts (position_set const *s)
 {
   int separate_contexts = 0;
-  unsigned int j;
+  size_t j;
 
   for (j = 0; j < s->nelem; ++j)
     {
@@ -2200,24 +2230,24 @@ void
 dfaanalyze (struct dfa *d, int searchflag)
 {
   int *nullable;		/* Nullable stack. */
-  int *nfirstpos;		/* Element count stack for firstpos sets. */
+  size_t *nfirstpos;		/* Element count stack for firstpos sets. */
   position *firstpos;		/* Array where firstpos elements are stored. */
-  int *nlastpos;		/* Element count stack for lastpos sets. */
+  size_t *nlastpos;		/* Element count stack for lastpos sets. */
   position *lastpos;		/* Array where lastpos elements are stored. */
   position_set tmp;		/* Temporary set for merging sets. */
   position_set merged;		/* Result of merging sets. */
   int separate_contexts;	/* Context wanted by some position. */
   int *o_nullable;
-  int *o_nfirst, *o_nlast;
+  size_t *o_nfirst, *o_nlast;
   position *o_firstpos, *o_lastpos;
-  int i, j;
+  size_t i, j;
   position *pos;
 
 #ifdef DEBUG
   fprintf(stderr, "dfaanalyze:\n");
   for (i = 0; i < d->tindex; ++i)
     {
-      fprintf(stderr, " %d:", i);
+      fprintf(stderr, " %zd:", i);
       prtok(d->tokens[i]);
     }
   putc('\n', stderr);
@@ -2297,7 +2327,7 @@ dfaanalyze (struct dfa *d, int searchflag)
         else
           {
             pos = lastpos + nlastpos[-2];
-            for (j = nlastpos[-1] - 1; j >= 0; --j)
+            for (j = nlastpos[-1]; j-- > 0; )
               pos[j] = lastpos[j];
             lastpos += nlastpos[-2];
             nlastpos[-2] = nlastpos[-1];
@@ -2343,20 +2373,20 @@ dfaanalyze (struct dfa *d, int searchflag)
       }
 #ifdef DEBUG
     /* ... balance the above nonsyntactic #ifdef goo... */
-      fprintf(stderr, "node %d:", i);
+      fprintf(stderr, "node %zd:", i);
       prtok(d->tokens[i]);
       putc('\n', stderr);
       fprintf(stderr, nullable[-1] ? " nullable: yes\n" : " nullable: no\n");
       fprintf(stderr, " firstpos:");
-      for (j = nfirstpos[-1] - 1; j >= 0; --j)
+      for (j = nfirstpos[-1]; j-- > 0; )
         {
-          fprintf(stderr, " %d:", firstpos[j].index);
+          fprintf(stderr, " %zd:", firstpos[j].index);
           prtok(d->tokens[firstpos[j].index]);
         }
       fprintf(stderr, "\n lastpos:");
-      for (j = nlastpos[-1] - 1; j >= 0; --j)
+      for (j = nlastpos[-1]; j-- > 0; )
         {
-          fprintf(stderr, " %d:", lastpos[j].index);
+          fprintf(stderr, " %zd:", lastpos[j].index);
           prtok(d->tokens[lastpos[j].index]);
         }
       putc('\n', stderr);
@@ -2374,12 +2404,12 @@ dfaanalyze (struct dfa *d, int searchflag)
         || d->tokens[i] >= CSET)
       {
 #ifdef DEBUG
-        fprintf(stderr, "follows(%d:", i);
+        fprintf(stderr, "follows(%zd:", i);
         prtok(d->tokens[i]);
         fprintf(stderr, "):");
-        for (j = d->follows[i].nelem - 1; j >= 0; --j)
+        for (j = d->follows[i].nelem; j-- > 0; )
           {
-            fprintf(stderr, " %d:", d->follows[i].elems[j].index);
+            fprintf(stderr, " %zd:", d->follows[i].elems[j].index);
             prtok(d->tokens[d->follows[i].elems[j].index]);
           }
         putc('\n', stderr);
@@ -2447,11 +2477,11 @@ dfaanalyze (struct dfa *d, int searchflag)
    create a new group labeled with the characters of C and insert this
    position in that group. */
 void
-dfastate (int s, struct dfa *d, int trans[])
+dfastate (state_num s, struct dfa *d, state_num trans[])
 {
   leaf_set *grps;		/* As many as will ever be needed. */
   charclass *labels;		/* Labels corresponding to the groups. */
-  int ngrps = 0;		/* Number of groups actually used. */
+  size_t ngrps = 0;		/* Number of groups actually used. */
   position pos;			/* Current position being considered. */
   charclass matches;		/* Set of matching characters. */
   int matchesf;			/* True if matches is nonempty. */
@@ -2463,11 +2493,11 @@ dfastate (int s, struct dfa *d, int trans[])
   position_set tmp;		/* Temporary space for merging sets. */
   int possible_contexts;	/* Contexts that this group can match. */
   int separate_contexts;	/* Context that new state wants to know. */
-  int state;			/* New state. */
-  int state_newline;		/* New state on a newline transition. */
-  int state_letter;		/* New state on a letter transition. */
+  state_num state;		/* New state. */
+  state_num state_newline;	/* New state on a newline transition. */
+  state_num state_letter;	/* New state on a letter transition. */
   int next_isnt_1st_byte = 0;	/* Flag if we can't add state0.  */
-  int i, j, k;
+  size_t i, j, k;
 
   MALLOC (grps, NOTCHAR);
   MALLOC (labels, NOTCHAR);
@@ -2712,10 +2742,10 @@ dfastate (int s, struct dfa *d, int trans[])
    TODO: Improve this comment, get rid of the unnecessary redundancy. */
 
 static void
-build_state (int s, struct dfa *d)
+build_state (state_num s, struct dfa *d)
 {
-  int *trans;			/* The new transition table. */
-  int i;
+  state_num *trans;		/* The new transition table. */
+  state_num i;
 
   /* Set an upper limit on the number of transition tables that will ever
      exist at once.  1024 is arbitrary.  The idea is that the frequently
@@ -2752,7 +2782,7 @@ build_state (int s, struct dfa *d)
   for (i = 0; i < NOTCHAR; ++i)
     if (trans[i] >= d->tralloc)
       {
-        int oldalloc = d->tralloc;
+        state_num oldalloc = d->tralloc;
 
         while (trans[i] >= d->tralloc)
           d->tralloc *= 2;
@@ -2818,13 +2848,13 @@ build_state_zero (struct dfa *d)
     }
 
 static void
-realloc_trans_if_necessary(struct dfa *d, int new_state)
+realloc_trans_if_necessary(struct dfa *d, state_num new_state)
 {
   /* Make sure that the trans and fail arrays are allocated large enough
      to hold a pointer for the new state. */
   if (new_state >= d->tralloc)
     {
-      int oldalloc = d->tralloc;
+      state_num oldalloc = d->tralloc;
 
       while (new_state >= d->tralloc)
         d->tralloc *= 2;
@@ -2855,11 +2885,11 @@ typedef enum
    But state transition is done just once, otherwise matching succeed or
    reach the end of the buffer.  */
 static status_transit_state
-transit_state_singlebyte (struct dfa *d, int s, unsigned char const *p,
-                                  int *next_state)
+transit_state_singlebyte (struct dfa *d, state_num s, unsigned char const *p,
+                          state_num *next_state)
 {
-  int *t;
-  int works = s;
+  state_num *t;
+  state_num works = s;
 
   status_transit_state rval = TRANSIT_STATE_IN_PROGRESS;
 
@@ -2899,7 +2929,7 @@ transit_state_singlebyte (struct dfa *d, int s, unsigned char const *p,
    current position.  Return the length of the match, in bytes.
    POS is the position of the ".".  */
 static int
-match_anychar (struct dfa *d, int s, position pos, int idx)
+match_anychar (struct dfa *d, state_num s, position pos, size_t idx)
 {
   int context;
   wchar_t wc;
@@ -2932,9 +2962,9 @@ match_anychar (struct dfa *d, int s, position pos, int idx)
    Return the length of the match, in bytes.
    POS is the position of the bracket expression.  */
 static int
-match_mb_charset (struct dfa *d, int s, position pos, int idx)
+match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
 {
-  int i;
+  size_t i;
   int match;		/* Flag which represent that matching succeed.  */
   int match_len;	/* Length of the character (or collating element)
                            with which this operator match.  */
@@ -3048,9 +3078,9 @@ match_mb_charset (struct dfa *d, int s, position pos, int idx)
    in the buffer.
    Caller MUST free the array which this function return.  */
 static int*
-check_matching_with_multibyte_ops (struct dfa *d, int s, int idx)
+check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
 {
-  int i;
+  size_t i;
   int* rarray;
 
   MALLOC(rarray, d->states[s].mbps.nelem);
@@ -3079,11 +3109,13 @@ check_matching_with_multibyte_ops (struct dfa *d, int s, int idx)
    `mbclen' and `pps' are the output.  `mbclen' is the length of the
    character consumed, and `pps' is the set this function enumerate.  */
 static status_transit_state
-transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
+transit_state_consume_1char (struct dfa *d, state_num s,
+                             unsigned char const **pp,
                              int *match_lens, int *mbclen, position_set *pps)
 {
-  int i, j;
-  int s1, s2;
+  size_t i, j;
+  int k;
+  state_num s1, s2;
   int* work_mbls;
   status_transit_state rs = TRANSIT_STATE_DONE;
 
@@ -3095,7 +3127,7 @@ transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
   /* Calculate the state which can be reached from the state `s' by
      consuming `*mbclen' single bytes from the buffer.  */
   s1 = s;
-  for (i = 0; i < *mbclen; i++)
+  for (k = 0; k < *mbclen; k++)
     {
       s2 = s1;
       rs = transit_state_singlebyte(d, s2, (*pp)++, &s1);
@@ -3128,15 +3160,15 @@ transit_state_consume_1char (struct dfa *d, int s, unsigned char const **pp,
 /* Transit state from s, then return new state and update the pointer of the
    buffer.  This function is for some operator which can match with a multi-
    byte character or a collating element (which may be multi characters).  */
-static int
-transit_state (struct dfa *d, int s, unsigned char const **pp)
+static state_num
+transit_state (struct dfa *d, state_num s, unsigned char const **pp)
 {
-  int s1;
+  state_num s1;
   int mbclen;		/* The length of current input multibyte character. */
   int maxlen = 0;
-  int i, j;
+  size_t i, j;
   int *match_lens = NULL;
-  int nelem = d->states[s].mbps.nelem; /* Just a alias.  */
+  size_t nelem = d->states[s].mbps.nelem; /* Just a alias.  */
   position_set follows;
   unsigned char const *p1 = *pp;
   wchar_t wc;
@@ -3271,11 +3303,11 @@ prepare_wc_buf (const char *begin, const char *end)
    to decide whether to fall back on a backtracking matcher. */
 char *
 dfaexec (struct dfa *d, char const *begin, char *end,
-         int allow_nl, int *count, int *backref)
+         int allow_nl, size_t *count, int *backref)
 {
-  int s, s1;		/* Current state. */
+  state_num s, s1;		/* Current state. */
   unsigned char const *p; /* Current input character. */
-  int **trans, *t;	/* Copy of d->trans so it can be optimized
+  state_num **trans, *t;	/* Copy of d->trans so it can be optimized
                                    into a register. */
   unsigned char eol = eolbyte;	/* Likewise for eolbyte.  */
   unsigned char saved_end;
@@ -3338,7 +3370,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
               s1 = t[*p++];
               if ((t = trans[s1]) == NULL)
                 {
-                  int tmp = s; s = s1; s1 = tmp; /* swap */
+                  state_num tmp = s; s = s1; s1 = tmp; /* swap */
                   break;
                 }
               s = t[*p++];
@@ -3415,14 +3447,14 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 static void
 free_mbdata (struct dfa *d)
 {
-  unsigned int i;
+  size_t i;
 
   free(d->multibyte_prop);
   d->multibyte_prop = NULL;
 
   for (i = 0; i < d->nmbcsets; ++i)
     {
-      unsigned int j;
+      size_t j;
       struct mb_char_classes *p = &(d->mbcsets[i]);
       free(p->chars);
       free(p->ch_classes);
@@ -3470,7 +3502,7 @@ dfainit (struct dfa *d)
 static void
 dfaoptimize (struct dfa *d)
 {
-  unsigned int i;
+  size_t i;
 
   if (!MBS_SUPPORT || !using_utf8())
     return;
@@ -3509,7 +3541,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 void
 dfafree (struct dfa *d)
 {
-  int i;
+  size_t i;
   struct dfamust *dm, *ndm;
 
   free(d->charclasses);
@@ -3663,7 +3695,7 @@ istrstr (char const *lookin, char const *lookfor)
 static void
 freelist (char **cpp)
 {
-  int i;
+  size_t i;
 
   if (cpp == NULL)
     return;
@@ -3677,7 +3709,7 @@ freelist (char **cpp)
 static char **
 enlist (char **cpp, char *new, size_t len)
 {
-  int i, j;
+  size_t i, j;
 
   if (cpp == NULL)
     return NULL;
@@ -3762,7 +3794,7 @@ comsubs (char *left, char const *right)
 static char **
 addlists (char **old, char **new)
 {
-  int i;
+  size_t i;
 
   if (old == NULL || new == NULL)
     return NULL;
@@ -3782,7 +3814,7 @@ inboth (char **left, char **right)
 {
   char **both;
   char **temp;
-  int lnum, rnum;
+  size_t lnum, rnum;
 
   if (left == NULL || right == NULL)
     return NULL;
@@ -3831,8 +3863,8 @@ dfamust (struct dfa *d)
   must *musts;
   must *mp;
   char *result;
-  int ri;
-  int i;
+  size_t ri;
+  size_t i;
   int exact;
   token t;
   static must must0;
@@ -3858,7 +3890,7 @@ dfamust (struct dfa *d)
   fprintf(stderr, "dfamust:\n");
   for (i = 0; i < d->tindex; ++i)
     {
-      fprintf(stderr, " %d:", i);
+      fprintf(stderr, " %zd:", i);
       prtok(d->tokens[i]);
     }
   putc('\n', stderr);
@@ -3892,7 +3924,7 @@ dfamust (struct dfa *d)
             char **new;
             must *lmp;
             must *rmp;
-            int j, ln, rn, n;
+            size_t j, ln, rn, n;
 
             rmp = --mp;
             lmp = --mp;
@@ -4020,7 +4052,7 @@ dfamust (struct dfa *d)
           break;
         }
 #ifdef DEBUG
-      fprintf(stderr, " node: %d:", ri);
+      fprintf(stderr, " node: %zd:", ri);
       prtok(d->tokens[ri]);
       fprintf(stderr, "\n  in:");
       for (i = 0; mp->in[i]; ++i)
