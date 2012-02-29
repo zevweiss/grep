@@ -134,6 +134,9 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       if (start_ptr && start_ptr >= line_end)
         continue;
 
+      if (INT_MAX < line_end - line_buf)
+        error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
+
       e = pcre_exec (cre, extra, line_buf, line_end - line_buf,
                      start_ofs < 0 ? 0 : start_ofs, 0,
                      sub, sizeof sub / sizeof *sub);
