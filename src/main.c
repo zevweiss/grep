@@ -25,6 +25,7 @@
 #include <wchar.h>
 #include <wctype.h>
 #include <fcntl.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include "system.h"
 
@@ -425,17 +426,21 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-/* Convert STR to a positive integer, storing the result in *OUT.
+/* Convert STR to a nonnegative integer, storing the result in *OUT.
    STR must be a valid context length argument; report an error if it
-   isn't.  */
+   isn't.  Silently ceiling *OUT at the maximum value, as that is
+   practically equivalent to infinity for grep's purposes.  */
 static void
-context_length_arg (char const *str, int *out)
+context_length_arg (char const *str, intmax_t *out)
 {
-  uintmax_t value;
-  if (! (xstrtoumax (str, 0, 10, &value, "") == LONGINT_OK
-         && 0 <= (*out = value)
-         && *out == value))
+  switch (xstrtoimax (str, 0, 10, out, ""))
     {
+    case LONGINT_OK:
+    case LONGINT_OVERFLOW:
+      if (0 <= *out)
+        break;
+      /* Fall through.  */
+    default:
       error (EXIT_TROUBLE, 0, "%s: %s", str,
              _("invalid context length argument"));
     }
@@ -603,12 +608,12 @@ static int out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
 static int out_line;		/* Print line numbers. */
 static int out_byte;		/* Print byte offsets. */
-static int out_before;		/* Lines of leading context. */
-static int out_after;		/* Lines of trailing context. */
+static intmax_t out_before;	/* Lines of leading context. */
+static intmax_t out_after;	/* Lines of trailing context. */
 static int count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
 static int no_filenames;	/* Suppress file names.  */
-static off_t max_count;		/* Stop after outputting this many
+static intmax_t max_count;	/* Stop after outputting this many
                                    lines from an input file.  */
 static int line_buffered;       /* If nonzero, use line buffering, i.e.
                                    fflush everyline out.  */
@@ -622,8 +627,8 @@ static char const *lastout;	/* Pointer after last character output;
                                    NULL if no character has been output
                                    or if it's conceptually before bufbeg. */
 static uintmax_t totalnl;	/* Total newline count before lastnl. */
-static off_t outleft;		/* Maximum number of lines to be output.  */
-static int pending;		/* Pending lines of output.
+static intmax_t outleft;	/* Maximum number of lines to be output.  */
+static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
 static int done_on_match;	/* Stop scanning file on first match.  */
 static int exit_on_match;	/* Exit on first match.  */
@@ -917,12 +922,12 @@ prpending (char const *lim)
 /* Print the lines between BEG and LIM.  Deal with context crap.
    If NLINESP is non-null, store a count of lines between BEG and LIM.  */
 static void
-prtext (char const *beg, char const *lim, int *nlinesp)
+prtext (char const *beg, char const *lim, intmax_t *nlinesp)
 {
   static int used;	/* avoid printing SEP_STR_GROUP before any output */
   char const *bp, *p;
   char eol = eolbyte;
-  int i, n;
+  intmax_t i, n;
 
   if (!out_quiet && pending > 0)
     prpending (beg);
@@ -1026,10 +1031,10 @@ do_execute (char const *buf, size_t size, size_t *match_size, char const *start_
 /* Scan the specified portion of the buffer, matching lines (or
    between matching lines if OUT_INVERT is true).  Return a count of
    lines printed. */
-static int
+static intmax_t
 grepbuf (char const *beg, char const *lim)
 {
-  int nlines, n;
+  intmax_t nlines, n;
   char const *p;
   size_t match_offset;
   size_t match_size;
@@ -1046,7 +1051,7 @@ grepbuf (char const *beg, char const *lim)
         break;
       if (!out_invert)
         {
-          prtext (b, endp, (int *) 0);
+          prtext (b, endp, NULL);
           nlines++;
           outleft--;
           if (!outleft || done_on_match)
@@ -1079,10 +1084,10 @@ grepbuf (char const *beg, char const *lim)
 /* Search a given file.  Normally, return a count of lines printed;
    but if the file is a directory and we search it recursively, then
    return -2 if there was a match, and -1 otherwise.  */
-static int
+static intmax_t
 grep (int fd, char const *file, struct stats *stats)
 {
-  int nlines, i;
+  intmax_t nlines, i;
   int not_text;
   size_t residue, save;
   char oldc;
@@ -1212,7 +1217,7 @@ static int
 grepfile (char const *file, struct stats *stats)
 {
   int desc;
-  int count;
+  intmax_t count;
   int status;
 
   filename = (file ? file : label ? label : _("(standard input)"));
@@ -1319,7 +1324,7 @@ grepfile (char const *file, struct stats *stats)
               else
                 fputc (0, stdout);
             }
-          printf ("%d\n", count);
+          printf ("%" PRIdMAX "\n", count);
         }
 
       status = !count;
@@ -1590,12 +1595,12 @@ setmatcher (char const *m)
    etc. to the option copies.  Return the number N of options found.
    Do not set ARGV[N] to NULL.  If ARGV is NULL, do not store ARGV[0]
    etc.  Backslash can be used to escape whitespace (and backslashes).  */
-static int
+static size_t
 prepend_args (char const *options, char *buf, char **argv)
 {
   char const *o = options;
   char *b = buf;
-  int n = 0;
+  size_t n = 0;
 
   for (;;)
     {
@@ -1625,10 +1630,14 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
   if (options && *options)
     {
       char *buf = xmalloc (strlen (options) + 1);
-      int prepended = prepend_args (options, buf, (char **) NULL);
+      size_t prepended = prepend_args (options, buf, NULL);
       int argc = *pargc;
       char *const *argv = *pargv;
-      char **pp = xmalloc ((prepended + argc + 1) * sizeof *pp);
+      char **pp;
+      enum { MAX_ARGS = MIN (INT_MAX, SIZE_MAX / sizeof *pp - 1) };
+      if (MAX_ARGS - argc < prepended)
+        xalloc_die ();
+      pp = xmalloc ((prepended + argc + 1) * sizeof *pp);
       *pargc = prepended + argc;
       *pargv = pp;
       *pp++ = *argv++;
@@ -1646,11 +1655,11 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
    Process any digit options that were encountered on the way,
    and store the resulting integer into *DEFAULT_CONTEXT.  */
 static int
-get_nondigit_option (int argc, char *const *argv, int *default_context)
+get_nondigit_option (int argc, char *const *argv, intmax_t *default_context)
 {
   static int prev_digit_optind = -1;
   int opt, this_digit_optind, was_digit;
-  char buf[sizeof (uintmax_t) * CHAR_BIT + 4];
+  char buf[INT_BUFSIZE_BOUND (intmax_t) + 4];
   char *p = buf;
 
   was_digit = 0;
@@ -1760,11 +1769,11 @@ main (int argc, char **argv)
   char *keys;
   size_t keycc, oldcc, keyalloc;
   int with_filenames;
-  int opt, cc, status, prepended;
+  size_t cc;
+  int opt, status, prepended;
   int prev_optind, last_recursive;
-  int default_context;
+  intmax_t default_context;
   FILE *fp;
-
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -1776,7 +1785,7 @@ main (int argc, char **argv)
   eolbyte = '\n';
   filename_mask = ~0;
 
-  max_count = TYPE_MAXIMUM (off_t);
+  max_count = INTMAX_MAX;
 
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
@@ -1947,23 +1956,15 @@ main (int argc, char **argv)
         break;
 
       case 'm':
-        {
-          uintmax_t value;
-          switch (xstrtoumax (optarg, 0, 10, &value, ""))
-            {
-            case LONGINT_OK:
-              max_count = value;
-              if (0 <= max_count && max_count == value)
-                break;
-              /* Fall through.  */
-            case LONGINT_OVERFLOW:
-              max_count = TYPE_MAXIMUM (off_t);
-              break;
+        switch (xstrtoimax (optarg, 0, 10, &max_count, ""))
+          {
+          case LONGINT_OK:
+          case LONGINT_OVERFLOW:
+            break;
 
-            default:
-              error (EXIT_TROUBLE, 0, _("invalid max count"));
-            }
-        }
+          default:
+            error (EXIT_TROUBLE, 0, _("invalid max count"));
+          }
         break;
 
       case 'n':
