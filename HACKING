@@ -415,6 +415,12 @@ as possible. Note to run tests/new-test in isolation you can do:
 
   (cd tests && make check TESTS=new-test VERBOSE=yes)
 
+Variables that are significant for tests with their default values are:
+
+  VERBOSE=yes
+  RUN_EXPENSIVE_TESTS=no
+  SHELL=/bin/sh
+
 There are many tests in the tests/ directories.  Use one of the
 init.sh-using scripts as a template.
 

@@ -38,6 +38,7 @@ TESTS =						\
   backref					\
   backref-multibyte-slow			\
   backref-word					\
+  big-match					\
   bogus-wctob					\
   bre						\
   case-fold-backref				\
