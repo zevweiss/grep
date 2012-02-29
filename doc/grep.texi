@@ -1377,10 +1377,10 @@ Match the empty string at the beginning of word.
 Match the empty string at the end of word.
 
 @item \w
-Match word constituent, it is a synonym for @samp{[[:alnum:]_]}.
+Match word constituent, it is a synonym for @samp{[_[:alnum:]]}.
 
 @item \W
-Match non-word constituent, it is a synonym for @samp{[^[:alnum:]_]}.
+Match non-word constituent, it is a synonym for @samp{[^_[:alnum:]]}.
 
 @item \s
 Match whitespace, it is a synonym for @samp{[[:space:]]}.
