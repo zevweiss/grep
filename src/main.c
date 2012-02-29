@@ -21,10 +21,6 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined HAVE_SETRLIMIT
-# include <sys/time.h>
-# include <sys/resource.h>
-#endif
 #include "mbsupport.h"
 #include <wchar.h>
 #include <wctype.h>
@@ -1589,39 +1585,6 @@ setmatcher (char const *m)
     }
 }
 
-static void
-set_limits (void)
-{
-#if defined HAVE_SETRLIMIT && defined RLIMIT_STACK
-  struct rlimit rlim;
-
-  /* I think every platform needs to do this, so that regex.c
-     doesn't oveflow the stack.  The default value of
-     `re_max_failures' is too large for some platforms: it needs
-     more than 3MB-large stack.
-
-     The test for HAVE_SETRLIMIT should go into `configure'.  */
-  if (!getrlimit (RLIMIT_STACK, &rlim))
-    {
-      long newlim;
-      extern long int re_max_failures; /* from regex.c */
-
-      /* Approximate the amount regex.c needs, plus some more.  */
-      newlim = re_max_failures * 2 * 20 * sizeof (char *);
-      if (newlim > rlim.rlim_max)
-        {
-          newlim = rlim.rlim_max;
-          re_max_failures = newlim / (2 * 20 * sizeof (char *));
-        }
-      if (rlim.rlim_cur < newlim)
-        {
-          rlim.rlim_cur = newlim;
-          setrlimit (RLIMIT_STACK, &rlim);
-        }
-    }
-#endif
-}
-
 /* Find the white-space-separated options specified by OPTIONS, and
    using BUF to store copies of these options, set ARGV[0], ARGV[1],
    etc. to the option copies.  Return the number N of options found.
@@ -2197,7 +2160,6 @@ main (int argc, char **argv)
   else
     usage (EXIT_TROUBLE);
 
-  set_limits ();
   compile (keys, keycc);
   free (keys);
 
