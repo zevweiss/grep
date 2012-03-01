@@ -424,7 +424,7 @@ struct dfa
 /* ACCEPTS_IN_CONTEXT returns true if the given state accepts in the
    specified context. */
 #define ACCEPTS_IN_CONTEXT(prev, curr, state, dfa) \
-  SUCCEEDS_IN_CONTEXT((dfa).states[state].constraint, prev, curr)
+  SUCCEEDS_IN_CONTEXT ((dfa).states[state].constraint, prev, curr)
 
 static void dfamust (struct dfa *dfa);
 static void regexp (void);
@@ -819,7 +819,7 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec().  */
     else					\
       {						\
         wchar_t _wc;				\
-        cur_mb_len = mbrtowc(&_wc, lexptr, lexleft, &mbs); \
+        cur_mb_len = mbrtowc (&_wc, lexptr, lexleft, &mbs); \
         if (cur_mb_len <= 0)			\
           {					\
             cur_mb_len = 1;			\
@@ -831,7 +831,7 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec().  */
             lexptr += cur_mb_len;		\
             lexleft -= cur_mb_len;		\
             (wc) = _wc;				\
-            (c) = wctob(wc);			\
+            (c) = wctob (wc);			\
           }					\
       }						\
   } while(0)
@@ -839,8 +839,8 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec().  */
 # define FETCH(c, eoferr)			\
   do {						\
     wint_t wc;					\
-    FETCH_WC(c, wc, eoferr);			\
-  } while(0)
+    FETCH_WC (c, wc, eoferr);			\
+  } while (0)
 
 #else
 /* Note that characters become unsigned here. */
@@ -2871,8 +2871,8 @@ build_state_zero (struct dfa *d)
         ++p;						\
       if ((char *) p >= end)				\
         {						\
-          free(mblen_buf);				\
-          free(inputwcs);				\
+          free (mblen_buf);				\
+          free (inputwcs);				\
           *end = saved_end;				\
           return NULL;					\
         }						\
