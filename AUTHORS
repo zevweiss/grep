@@ -41,7 +41,7 @@ for complete details and credits.
 Arnold Robbins contributed to improve dfa.[ch]. In fact
 it came straight from gawk-3.0.3 with small editing and fixes.
 
-Many folks contributed see THANKS, if I omited someone please
+Many folks contributed.  See THANKS; if I omitted someone please
 send me email.
 
 Alain Magloire maintained GNU grep until version 2.5e.

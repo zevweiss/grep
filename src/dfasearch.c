@@ -332,7 +332,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 }
               /* If -w, check if the match aligns with word boundaries.
                  We do this iteratively because:
-                 (a) the line may contain more than one occurence of the
+                 (a) the line may contain more than one occurrence of the
                  pattern, and
                  (b) Several alternatives in the pattern might be valid at a
                  given point, and we may need to consider a shorter one to

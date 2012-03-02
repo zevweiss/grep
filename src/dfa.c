@@ -206,7 +206,7 @@ enum
                                    the beginning or end of a word. */
 
   QMARK,			/* QMARK is an operator of one argument that
-                                   matches zero or one occurences of its
+                                   matches zero or one occurrences of its
                                    argument. */
 
   STAR,				/* STAR is an operator of one argument that
@@ -346,7 +346,7 @@ struct dfa
                  single-byte characters.
 
        if tokens[i] = MBCSET
-         ("the index of mbcsets correspnd to this operator" << 2) + 3
+         ("the index of mbcsets corresponding to this operator" << 2) + 3
 
      e.g.
      tokens
@@ -751,7 +751,7 @@ static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec().
                                    byte of corresponding multibyte character
                                    in the input string.  A element's value
                                    is 0 if corresponding character is a
-                                   single byte chracter.
+                                   single byte character.
                                    e.g. input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
                                     mblen_buf :   0,       3,       2,       1
                                 */
@@ -2972,11 +2972,11 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   char buffer[128];
   wchar_t wcbuf[6];
 
-  /* Pointer to the structure to which we are currently refering.  */
+  /* Pointer to the structure to which we are currently referring.  */
   struct mb_char_classes *work_mbc;
 
   int context;
-  wchar_t wc;		/* Current refering character.  */
+  wchar_t wc;		/* Current referring character.  */
 
   wc = inputwcs[idx];
 
@@ -2996,7 +2996,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   if (!SUCCEEDS_IN_CONTEXT(pos.constraint, d->states[s].context, context))
     return 0;
 
-  /* Assign the current refering operator to work_mbc.  */
+  /* Assign the current referring operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
   match_len = (mblen_buf[idx] == 0)? 1 : mblen_buf[idx];
@@ -3135,7 +3135,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
   /* Copy the positions contained by `s1' to the set `pps'.  */
   copy(&(d->states[s1].elems), pps);
 
-  /* Check (inputed)match_lens, and initialize if it is NULL.  */
+  /* Check (input) match_lens, and initialize if it is NULL.  */
   if (match_lens == NULL && d->states[s].mbps.nelem != 0)
     work_mbls = check_matching_with_multibyte_ops(d, s, *pp - buf_begin);
   else
@@ -3978,7 +3978,7 @@ dfamust (struct dfa *d)
             rmp = --mp;
             lmp = --mp;
             /* In.  Everything in left, plus everything in
-               right, plus catenation of
+               right, plus concatenation of
                left's right and right's left. */
             lmp->in = addlists(lmp->in, rmp->in);
             if (lmp->in == NULL)

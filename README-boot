@@ -5,7 +5,7 @@
   notice and this notice are preserved.
 
 If your system is lacking the necessary tools to build the configuration,
-Makefile.boot is provided for bootstraping.  Invoke it with the following
+Makefile.boot is provided for bootstrapping.  Invoke it with the following
 command:
 
   (cd src && make -f ../Makefile.boot)

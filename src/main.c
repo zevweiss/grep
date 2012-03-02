@@ -1789,7 +1789,7 @@ main (int argc, char **argv)
 
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
-  /* Default before/after context: chaged by -C/-NUM options */
+  /* Default before/after context: changed by -C/-NUM options */
   default_context = 0;
   /* Changed by -o option */
   only_matching = 0;

@@ -1015,7 +1015,7 @@ instead of strict equality with@ 2.
 @node grep Programs
 @section @command{grep} Programs
 @cindex @command{grep} programs
-@cindex variants of @command{gerp}
+@cindex variants of @command{grep}
 
 @command{grep} searches the named input files
 for lines containing a match to the given pattern.
@@ -1178,7 +1178,7 @@ that respectively match the concatenated expressions.
 
 Two regular expressions may be joined by the infix operator @samp{|};
 the resulting regular expression
-matches any string matching either alternalte expression.
+matches any string matching either alternate expression.
 
 Repetition takes precedence over concatenation,
 which in turn takes precedence over alternation.

@@ -108,7 +108,7 @@ DEFS_ansi_c = -DPROTOTYPES
 # DEFS_wchar =  -Dwchar_t=int -Dmbstate_t=int
 DEFS_wchar =  -DHAVE_WCHAR_H
 
-# Is strtol() and strtoul()  declarared ?
+# Are strtol() and strtoul() declared?
 #DEFS_strtol = -DHAVE_DECL_STRTOULL=0 -DHAVE_DECL_STRTOUL=0
 DEFS_strtol = -DHAVE_DECL_STRTOULL=1 -DHAVE_DECL_STRTOUL=1
 

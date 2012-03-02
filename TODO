@@ -79,7 +79,7 @@ but POSIX does not standardize any method for accessing this information!
 For Unicode, interesting things to check include the Unicode Standard
 <http://www.unicode.org/standard/standard.html> and the Unicode Technical
 Standard #18 (<http://www.unicode.org/reports/tr18/> “Unicode Regular
-Expressions”).  Talk to Bruno Haible who's mantaining GNU libunistring.
+Expressions”).  Talk to Bruno Haible who's maintaining GNU libunistring.
 See also Unicode Standard Annex #15 (<http://www.unicode.org/reports/tr15/>
 “Unicode Normalization Forms”), already implemented by GNU libunistring.
 

@@ -344,7 +344,7 @@ Version 2.5
     consistency, and partly because POSIX.2 recommends against
     optional arguments.
 
-  - The new -P or --perl-regexp option tells grep to interpert the pattern as
+  - The new -P or --perl-regexp option tells grep to interpret the pattern as
     a Perl regular expression.
 
   - The new option --max-count=num makes grep stop reading a file after num
@@ -469,7 +469,7 @@ This is a bug fix release(see Changelog) i.e. no new features.
 
   - More compliance to GNU standard.
   - Long options.
-  - Internationalisation.
+  - Internationalization.
   - Use automake/autoconf.
   - Directory hierarchy change.
   - Sigvec with -e on Linux corrected.
