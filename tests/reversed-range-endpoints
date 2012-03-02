@@ -10,8 +10,8 @@ for prog in grep egrep 'grep -E'; do
   # exit status must be 2, not 1
   test $? = 2 || fail=1
 
-  # Remove "program_name: " prefix from actual output.
-  sed 's/^\([A-Za-z]:\)\{0,1\}[^: ]*: //' out > k && mv k out
+  # Remove "$prog: " prefix from actual output.
+  sed 's/^[grep]*: //' out > k && mv k out
 
   compare exp out || fail=1
 done
