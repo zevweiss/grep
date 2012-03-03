@@ -31,6 +31,26 @@ bootstrap-tools = autoconf,automake,gnulib
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
+# Comparing tarball sizes compressed using different xz presets, we see
+# that -6e adds only 60 bytes to the size of the tarball, yet reduces
+# (from -9) the decompression memory requirement from 64 MiB to 9 MiB.
+# Don't be tempted by -5e, since -6 and -5 use the same dictionary size.
+# $ for i in {4,5,6,7,8,9}{e,}; do \
+#     (n=$(xz -$i < grep-2.11.tar|wc -c);echo $n $i) & done |sort -nr
+# 1236632 4
+# 1162564 5
+# 1140988 4e
+# 1139620 6
+# 1139480 7
+# 1139480 8
+# 1139480 9
+# 1129552 5e
+# 1127616 6e
+# 1127556 7e
+# 1127556 8e
+# 1127556 9e
+export XZ_OPT = -6e
+
 old_NEWS_hash = 347e90ee0ec0489707df139ca3539934
 
 # Many m4 macros names once began with `jm_'.
