@@ -76,6 +76,7 @@ TESTS =						\
   pcre-z					\
   prefix-of-multibyte				\
   r-dot						\
+  repetition-overflow				\
   reversed-range-endpoints			\
   sjis-mb					\
   spencer1					\
