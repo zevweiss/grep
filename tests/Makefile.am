@@ -82,6 +82,7 @@ TESTS =						\
   spencer1					\
   spencer1-locale				\
   status					\
+  symlink					\
   turkish-I					\
   warn-char-classes				\
   word-delim-multibyte				\

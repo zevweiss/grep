@@ -36,14 +36,14 @@
 #include "error.h"
 #include "exclude.h"
 #include "exitfail.h"
+#include "fcntl-safer.h"
+#include "fts_.h"
 #include "getopt.h"
 #include "grep.h"
 #include "intprops.h"
-#include "isdir.h"
 #include "progname.h"
 #include "propername.h"
 #include "quote.h"
-#include "savedir.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
@@ -62,15 +62,6 @@
    information here, so that we can automatically skip it, thus
    avoiding a potential (racy) infinite loop.  */
 static struct stat out_stat;
-
-struct stats
-{
-  struct stats const *parent;
-  struct stat stat;
-};
-
-/* base of chain of stat buffers, used to detect directory loops */
-static struct stats stats_base;
 
 /* if non-zero, display usage information and exit */
 static int show_help;
@@ -347,7 +338,7 @@ static struct option const long_options[] =
   {"only-matching", no_argument, NULL, 'o'},
   {"quiet", no_argument, NULL, 'q'},
   {"recursive", no_argument, NULL, 'r'},
-  {"recursive", no_argument, NULL, 'R'},
+  {"dereference-recursive", no_argument, NULL, 'R'},
   {"regexp", required_argument, NULL, 'e'},
   {"invert-match", no_argument, NULL, 'v'},
   {"silent", no_argument, NULL, 'q'},
@@ -369,6 +360,7 @@ unsigned char eolbyte;
 /* For error messages. */
 /* The input file name, or (if standard input) "-" or a --label argument.  */
 static char const *filename;
+static size_t filename_prefix_len;
 static int errseen;
 static int write_error_seen;
 
@@ -392,17 +384,28 @@ ARGMATCH_VERIFY (directories_args, directories_types);
 
 static enum directories_type directories = READ_DIRECTORIES;
 
+enum { basic_fts_options = FTS_CWDFD | FTS_NOSTAT | FTS_TIGHT_CYCLE_CHECK };
+static int fts_options = basic_fts_options | FTS_COMFOLLOW | FTS_PHYSICAL;
+
 /* How to handle devices. */
 static enum
   {
+    READ_COMMAND_LINE_DEVICES,
     READ_DEVICES,
     SKIP_DEVICES
-  } devices = READ_DEVICES;
+  } devices = READ_COMMAND_LINE_DEVICES;
 
-static int grepdir (char const *, struct stats const *);
+static int grepfile (int, char const *, int, int);
+static int grepdesc (int, int);
 #if defined HAVE_DOS_FILE_CONTENTS
 static inline int undossify_input (char *, size_t);
 #endif
+
+static int
+is_device_mode (mode_t m)
+{
+  return S_ISCHR (m) || S_ISBLK (m) || S_ISSOCK (m) || S_ISFIFO (m);
+}
 
 /* Functions we'll use to search. */
 static compile_fp_t compile;
@@ -473,7 +476,7 @@ static off_t after_last_match;	/* Pointer after last matching line that
 /* Reset the buffer for a new file, returning zero if we should skip it.
    Initialize on the first time through. */
 static int
-reset (int fd, char const *file, struct stats *stats)
+reset (int fd, struct stat const *st)
 {
   if (! pagesize)
     {
@@ -488,9 +491,9 @@ reset (int fd, char const *file, struct stats *stats)
   bufbeg[-1] = eolbyte;
   bufdesc = fd;
 
-  if (S_ISREG (stats->stat.st_mode))
+  if (S_ISREG (st->st_mode))
     {
-      if (file)
+      if (fd != STDIN_FILENO)
         bufoffset = 0;
       else
         {
@@ -510,7 +513,7 @@ reset (int fd, char const *file, struct stats *stats)
    to the beginning of the buffer contents, and 'buflim'
    points just after the end.  Return zero if there's an error.  */
 static int
-fillbuf (size_t save, struct stats const *stats)
+fillbuf (size_t save, struct stat const *st)
 {
   size_t fillsize = 0;
   int cc = 1;
@@ -543,9 +546,9 @@ fillbuf (size_t save, struct stats const *stats)
          is large.  However, do not use the original file size as a
          heuristic if we've already read past the file end, as most
          likely the file is growing.  */
-      if (S_ISREG (stats->stat.st_mode))
+      if (S_ISREG (st->st_mode))
         {
-          off_t to_be_read = stats->stat.st_size - bufoffset;
+          off_t to_be_read = st->st_size - bufoffset;
           off_t maxsize_off = save + to_be_read;
           if (0 <= to_be_read && to_be_read <= maxsize_off
               && maxsize_off == (size_t) maxsize_off
@@ -1085,7 +1088,7 @@ grepbuf (char const *beg, char const *lim)
    but if the file is a directory and we search it recursively, then
    return -2 if there was a match, and -1 otherwise.  */
 static intmax_t
-grep (int fd, char const *file, struct stats *stats)
+grep (int fd, struct stat const *st)
 {
   intmax_t nlines, i;
   int not_text;
@@ -1095,18 +1098,8 @@ grep (int fd, char const *file, struct stats *stats)
   char *lim;
   char eol = eolbyte;
 
-  if (!reset (fd, file, stats))
+  if (! reset (fd, st))
     return 0;
-
-  if (file && directories == RECURSE_DIRECTORIES
-      && S_ISDIR (stats->stat.st_mode))
-    {
-      /* Close fd now, so that we don't open a lot of file descriptors
-         when we recurse deeply.  */
-      if (close (fd) != 0)
-        suppressible_error (file, errno);
-      return grepdir (file, stats) - 2;
-    }
 
   totalcc = 0;
   lastout = 0;
@@ -1119,7 +1112,7 @@ grep (int fd, char const *file, struct stats *stats)
   residue = 0;
   save = 0;
 
-  if (! fillbuf (save, stats))
+  if (! fillbuf (save, st))
     {
       suppressible_error (filename, errno);
       return 0;
@@ -1190,7 +1183,7 @@ grep (int fd, char const *file, struct stats *stats)
         totalcc = add_count (totalcc, buflim - bufbeg - save);
       if (out_line)
         nlscan (beg);
-      if (! fillbuf (save, stats))
+      if (! fillbuf (save, st))
         {
           suppressible_error (filename, errno);
           goto finish_grep;
@@ -1214,53 +1207,171 @@ grep (int fd, char const *file, struct stats *stats)
 }
 
 static int
-grepfile (char const *file, struct stats *stats)
+grepdirent (FTS *fts, FTSENT *ent)
 {
-  int desc;
-  intmax_t count;
-  int status;
+  int follow, dirdesc;
+  int command_line = ent->fts_level == FTS_ROOTLEVEL;
+  struct stat *st = ent->fts_statp;
 
-  filename = (file ? file : label ? label : _("(standard input)"));
-
-  if (! file)
-    desc = STDIN_FILENO;
-  else if (devices == SKIP_DEVICES)
+  if (ent->fts_info == FTS_DP)
     {
-      /* Don't open yet, since that might have side effects on a device.  */
-      desc = -1;
+      if (directories == RECURSE_DIRECTORIES && command_line)
+        out_file &= ~ (2 * !no_filenames);
+      return 1;
     }
-  else
+
+  if ((ent->fts_info == FTS_D || ent->fts_info == FTS_DC
+       || ent->fts_info == FTS_DNR)
+      ? (directories == SKIP_DIRECTORIES
+         || (! (command_line && filename_prefix_len != 0)
+             && excluded_directory_patterns
+             && excluded_file_name (excluded_directory_patterns,
+                                    ent->fts_name)))
+      : ((included_patterns
+          && excluded_file_name (included_patterns, ent->fts_name))
+         || (excluded_patterns
+             && excluded_file_name (excluded_patterns, ent->fts_name))))
     {
-      /* When skipping directories, don't worry about directories
-         that can't be opened.  */
-      desc = open (file, O_RDONLY);
-      if (desc < 0 && directories != SKIP_DIRECTORIES)
+      fts_set (fts, ent, FTS_SKIP);
+      return 1;
+    }
+
+  filename = ent->fts_path + filename_prefix_len;
+  follow = (fts->fts_options & FTS_LOGICAL
+            || (fts->fts_options & FTS_COMFOLLOW && command_line));
+
+  switch (ent->fts_info)
+    {
+    case FTS_D:
+      if (directories == RECURSE_DIRECTORIES)
         {
-          suppressible_error (file, errno);
+          out_file |= 2 * !no_filenames;
           return 1;
         }
+      fts_set (fts, ent, FTS_SKIP);
+      break;
+
+    case FTS_DC:
+      if (!suppress_errors)
+        error (0, 0, _("warning: %s: %s"), filename,
+               _("recursive directory loop"));
+      return 1;
+
+    case FTS_DNR:
+    case FTS_ERR:
+    case FTS_NS:
+      suppressible_error (filename, ent->fts_errno);
+      return 1;
+
+    case FTS_DEFAULT:
+    case FTS_NSOK:
+      if (devices == SKIP_DEVICES
+          || (devices == READ_COMMAND_LINE_DEVICES && !command_line))
+        {
+          struct stat st1;
+          if (! st->st_mode)
+            {
+              /* The file type is not already known.  Get the file status
+                 before opening, since opening might have side effects
+                 on a device.  */
+              int flag = follow ? 0 : AT_SYMLINK_NOFOLLOW;
+              if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
+                {
+                  suppressible_error (filename, errno);
+                  return 1;
+                }
+              st = &st1;
+            }
+          if (is_device_mode (st->st_mode))
+            return 1;
+        }
+      break;
+
+    case FTS_F:
+    case FTS_SLNONE:
+      break;
+
+    case FTS_SL:
+    case FTS_W:
+      return 1;
+
+    default:
+      abort ();
     }
 
-  if (desc < 0
-      ? stat (file, &stats->stat) != 0
-      : fstat (desc, &stats->stat) != 0)
+  dirdesc = ((fts->fts_options & (FTS_NOCHDIR | FTS_CWDFD)) == FTS_CWDFD
+             ? fts->fts_cwd_fd
+             : AT_FDCWD);
+  return grepfile (dirdesc, ent->fts_accpath, follow, command_line);
+}
+
+static int
+grepfile (int dirdesc, char const *name, int follow, int command_line)
+{
+  int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
+  if (desc < 0)
+    {
+      if (follow || errno != ELOOP)
+        suppressible_error (filename, errno);
+      return 1;
+    }
+  return grepdesc (desc, command_line);
+}
+
+static int
+grepdesc (int desc, int command_line)
+{
+  intmax_t count;
+  int status = 1;
+  struct stat st;
+
+  /* Get the file status, possibly for the second time.  This catches
+     a race condition if the directory entry changes after the
+     directory entry is read and before the file is opened.  For
+     example, normally DESC is a directory only at the top level, but
+     there is an exception if some other process substitutes a
+     directory for a non-directory while 'grep' is running.  */
+  if (fstat (desc, &st) != 0)
     {
       suppressible_error (filename, errno);
-      if (file)
-        close (desc);
-      return 1;
+      goto closeout;
     }
-
-  if ((directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))
-      || (devices == SKIP_DEVICES && (S_ISCHR (stats->stat.st_mode)
-                                      || S_ISBLK (stats->stat.st_mode)
-                                      || S_ISSOCK (stats->stat.st_mode)
-                                      || S_ISFIFO (stats->stat.st_mode))))
+  if (desc != STDIN_FILENO
+      && directories == RECURSE_DIRECTORIES && S_ISDIR (st.st_mode))
     {
-      if (file)
-        close (desc);
-      return 1;
+      /* Traverse the directory starting with its full name, because
+         unfortunately fts provides no way to traverse the directory
+         starting from its file descriptor.  */
+
+      FTS *fts;
+      FTSENT *ent;
+      int opts = fts_options & ~(command_line ? 0 : FTS_COMFOLLOW);
+      char *fts_arg[2];
+
+      /* Close DESC now, to conserve file descriptors if the race
+         condition occurs many times in a deep recursion.  */
+      if (close (desc) != 0)
+        suppressible_error (filename, errno);
+
+      fts_arg[0] = (char *) filename;
+      fts_arg[1] = NULL;
+      fts = fts_open (fts_arg, opts, NULL);
+
+      if (!fts)
+        xalloc_die ();
+      while ((ent = fts_read (fts)))
+        status &= grepdirent (fts, ent);
+      if (errno)
+        suppressible_error (filename, errno);
+      if (fts_close (fts) != 0)
+        suppressible_error (filename, errno);
+      return status;
     }
+  if ((directories == SKIP_DIRECTORIES && S_ISDIR (st.st_mode))
+      || ((devices == SKIP_DEVICES
+           || (devices == READ_COMMAND_LINE_DEVICES && !command_line))
+          && is_device_mode (st.st_mode)))
+    goto closeout;
 
   /* If there is a regular file on stdout and the current file refers
      to the same i-node, we have to report the problem and skip it.
@@ -1282,24 +1393,12 @@ grepfile (char const *file, struct stats *stats)
      condition that could result in "alternate" output.  */
   if (!out_quiet && list_files == 0 && 1 < max_count
       && S_ISREG (out_stat.st_mode) && out_stat.st_ino
-      && SAME_INODE (stats->stat, out_stat))
+      && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
         error (0, 0, _("input file %s is also the output"), quote (filename));
       errseen = 1;
-      if (file)
-        close (desc);
-      return 1;
-    }
-
-  if (desc < 0)
-    {
-      desc = open (file, O_RDONLY);
-      if (desc < 0)
-        {
-          suppressible_error (file, errno);
-          return 1;
-        }
+      goto closeout;
     }
 
 #if defined SET_BINARY
@@ -1309,7 +1408,7 @@ grepfile (char const *file, struct stats *stats)
     SET_BINARY (desc);
 #endif
 
-  count = grep (desc, file, stats);
+  count = grep (desc, &st);
   if (count < 0)
     status = count + 2;
   else
@@ -1334,103 +1433,35 @@ grepfile (char const *file, struct stats *stats)
           fputc ('\n' & filename_mask, stdout);
         }
 
-      if (! file)
+      if (desc == STDIN_FILENO)
         {
           off_t required_offset = outleft ? bufoffset : after_last_match;
           if (required_offset != bufoffset
               && lseek (desc, required_offset, SEEK_SET) < 0
-              && S_ISREG (stats->stat.st_mode))
+              && S_ISREG (st.st_mode))
             suppressible_error (filename, errno);
         }
-      else
-        while (close (desc) != 0)
-          if (errno != EINTR)
-            {
-              suppressible_error (file, errno);
-              break;
-            }
     }
 
+ closeout:
+  if (desc != STDIN_FILENO && close (desc) != 0)
+    suppressible_error (filename, errno);
   return status;
 }
 
 static int
-grepdir (char const *dir, struct stats const *stats)
+grep_command_line_arg (char const *arg)
 {
-  char const *dir_or_dot = (dir ? dir : ".");
-  struct stats const *ancestor;
-  char *name_space;
-  int status = 1;
-  if (dir && excluded_directory_patterns
-      && excluded_file_name (excluded_directory_patterns, dir))
-    return 1;
-
-  /* Mingw32 does not support st_ino.  No known working hosts use zero
-     for st_ino, so assume that the Mingw32 bug applies if it's zero.  */
-  if (stats->stat.st_ino)
+  if (STREQ (arg, "-"))
     {
-      for (ancestor = stats; (ancestor = ancestor->parent) != 0;  )
-        {
-          if (ancestor->stat.st_ino == stats->stat.st_ino
-              && ancestor->stat.st_dev == stats->stat.st_dev)
-            {
-              if (!suppress_errors)
-                error (0, 0, _("warning: %s: %s"), dir,
-                       _("recursive directory loop"));
-              errseen = 1;
-              return 1;
-            }
-        }
-    }
-
-  name_space = savedir (dir_or_dot, stats->stat.st_size, included_patterns,
-                        excluded_patterns, excluded_directory_patterns);
-
-  if (! name_space)
-    {
-      if (errno)
-        suppressible_error (dir_or_dot, errno);
-      else
-        xalloc_die ();
+      filename = label ? label : _("(standard input)");
+      return grepdesc (STDIN_FILENO, 1);
     }
   else
     {
-      size_t dirlen = 0;
-      int needs_slash = 0;
-      char *file_space = NULL;
-      char const *namep = name_space;
-      struct stats child;
-      if (dir)
-        {
-          dirlen = strlen (dir);
-          needs_slash = ! (dirlen == FILE_SYSTEM_PREFIX_LEN (dir)
-                           || ISSLASH (dir[dirlen - 1]));
-        }
-      child.parent = stats;
-      out_file += !no_filenames;
-      while (*namep)
-        {
-          size_t namelen = strlen (namep);
-          char const *file;
-          if (! dir)
-            file = namep;
-          else
-            {
-              file_space = xrealloc (file_space, dirlen + 1 + namelen + 1);
-              strcpy (file_space, dir);
-              file_space[dirlen] = '/';
-              strcpy (file_space + dirlen + needs_slash, namep);
-              file = file_space;
-            }
-          namep += namelen + 1;
-          status &= grepfile (file, &child);
-        }
-      out_file -= !no_filenames;
-      free (file_space);
-      free (name_space);
+      filename = arg;
+      return grepfile (AT_FDCWD, arg, 1, 1);
     }
-
-  return status;
 }
 
 _Noreturn void usage (int);
@@ -1500,7 +1531,8 @@ Output control:\n\
                             ACTION is `read', `recurse', or `skip'\n\
   -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n\
                             ACTION is `read' or `skip'\n\
-  -R, -r, --recursive       equivalent to --directories=recurse\n\
+  -r, --recursive           like --directories=recurse\n\
+  -R, --dereference-recursive  likewise, but follow all symlinks\n\
 "));
       printf (_("\
       --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
@@ -1981,6 +2013,8 @@ main (int argc, char **argv)
         break;
 
       case 'R':
+        fts_options = basic_fts_options | FTS_LOGICAL;
+        /* Fall through.  */
       case 'r':
         directories = RECURSE_DIRECTORIES;
         last_recursive = prev_optind;
@@ -2177,48 +2211,24 @@ main (int argc, char **argv)
   if (max_count == 0)
     exit (EXIT_FAILURE);
 
+  if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
+    devices = READ_DEVICES;
+
   if (optind < argc)
     {
       status = 1;
       do
-        {
-          char *file = argv[optind];
-          if (!STREQ (file, "-")
-              && (included_patterns || excluded_patterns
-                  || excluded_directory_patterns))
-            {
-              if (isdir (file))
-                {
-                  if (excluded_directory_patterns
-                      && excluded_file_name (excluded_directory_patterns,
-                                             file))
-                    continue;
-                }
-              else
-                {
-                  if (included_patterns
-                      && excluded_file_name (included_patterns, file))
-                    continue;
-                  if (excluded_patterns
-                      && excluded_file_name (excluded_patterns, file))
-                    continue;
-                }
-            }
-          status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
-                              &stats_base);
-        }
+        status &= grep_command_line_arg (argv[optind]);
       while (++optind < argc);
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
-      status = 1;
-      if (stat (".", &stats_base.stat) == 0)
-        status = grepdir (NULL, &stats_base);
-      else
-        suppressible_error (".", errno);
+      /* Grep through ".", omitting leading "./" from diagnostics.  */
+      filename_prefix_len = 2;
+      status = grep_command_line_arg (".");
     }
   else
-    status = grepfile ((char *) NULL, &stats_base);
+    status = grep_command_line_arg ("-");
 
   /* We register via atexit() to test stdout.  */
   exit (errseen ? EXIT_TROUBLE : status);

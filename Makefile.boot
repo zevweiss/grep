@@ -41,10 +41,8 @@ LIB_OBJS_core =  \
       $(libdir)/error.$(OBJEXT) \
       $(libdir)/exclude.$(OBJEXT) \
       $(libdir)/hard-locale.$(OBJEXT) \
-      $(libdir)/isdir.$(OBJEXT) \
       $(libdir)/quotearg.$(OBJEXT) \
       $(libdir)/regex.$(OBJEXT) \
-      $(libdir)/savedir.$(OBJEXT) \
       $(libdir)/strtoumax.$(OBJEXT) \
       $(libdir)/xmalloc.$(OBJEXT) \
       $(libdir)/xstrtol.$(OBJEXT) \

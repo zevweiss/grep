@@ -64,5 +64,3 @@ TAGS
 !/lib/colorize-posix.c
 !/lib/colorize-w32.c
 !/lib/colorize.h
-!/lib/savedir.c
-!/lib/savedir.h
