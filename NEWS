@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+   grep no longer segfaults with -r --exclude-dir and no file operand.
+   I.e., ":|grep -r --exclude-dir=D PAT" would segfault.
+
 
 * Noteworthy changes in release 2.11 (2012-03-02) [stable]
 

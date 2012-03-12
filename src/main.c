@@ -1361,7 +1361,7 @@ grepdir (char const *dir, struct stats const *stats)
   struct stats const *ancestor;
   char *name_space;
   int status = 1;
-  if (excluded_directory_patterns
+  if (dir && excluded_directory_patterns
       && excluded_file_name (excluded_directory_patterns, dir))
     return 1;
 
