@@ -5,7 +5,7 @@
 expensive_
 
 # Create a one-line file containing slightly more than 2 GiB.
-echo x | dd bs=1M seek=2048 >2G-plus-2 || framework_failure_
+echo x | dd bs=1024k seek=2048 >2G-plus-2 || framework_failure_
 
 skip_diagnostic=
 
