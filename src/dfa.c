@@ -861,6 +861,10 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec().  */
 
 #endif /* MBS_SUPPORT */
 
+#ifndef MIN
+# define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 typedef int predicate (int);
 
 /* The following list maps the names of the Posix named character classes
@@ -1328,90 +1332,53 @@ lex (void)
           if (!(syntax_bits & RE_CONTEXT_INDEP_OPS) && laststart)
             goto normal_char;
 
-          if (syntax_bits & RE_NO_BK_BRACES)
-            {
-              /* Scan ahead for a valid interval; if it's not valid,
-                 treat it as a literal '{'.  */
-              int lo = -1, hi = -1;
-              char const *p = lexptr;
-              char const *lim = p + lexleft;
-              for (; p != lim && ISASCIIDIGIT (*p); p++)
-                {
-                  if (lo < 0)
-                    lo = *p - '0';
-                  else
-                    {
-                      lo = lo * 10 + *p - '0';
-                      if (RE_DUP_MAX < lo)
-                        goto normal_char;
-                    }
-                }
-              if (p != lim && *p == ',')
-                while (++p != lim && ISASCIIDIGIT (*p))
-                  {
-                    if (hi < 0)
-                      hi = *p - '0';
-                    else
-                      {
-                        hi = hi * 10 + *p - '0';
-                        if (RE_DUP_MAX < hi)
-                          goto normal_char;
-                      }
-                  }
-              else
-                hi = lo;
-              if (p == lim || *p != '}' || lo < 0 || (0 <= hi && hi < lo))
-                goto normal_char;
-            }
-
-          minrep = 0;
           /* Cases:
              {M} - exact count
              {M,} - minimum count, maximum is infinity
+             {,N} - 0 through N
+             {,} - 0 to infinity (same as '*')
              {M,N} - M through N */
-          FETCH (c, _("unfinished repeat count"));
-          if (ISASCIIDIGIT (c))
-            {
-              minrep = c - '0';
-              for (;;)
-                {
-                  FETCH (c, _("unfinished repeat count"));
-                  if (!ISASCIIDIGIT (c))
-                    break;
-                  minrep = 10 * minrep + c - '0';
-                }
-            }
-          else
-            dfaerror (_("malformed repeat count"));
-          if (c == ',')
-            {
-              FETCH (c, _("unfinished repeat count"));
-              if (!ISASCIIDIGIT (c))
-                maxrep = -1;
-              else
-                {
-                  maxrep = c - '0';
-                  for (;;)
-                    {
-                      FETCH (c, _("unfinished repeat count"));
-                      if (!ISASCIIDIGIT (c))
-                        break;
-                      maxrep = 10 * maxrep + c - '0';
-                    }
-                  if (0 <= maxrep && maxrep < minrep)
-                    dfaerror (_("malformed repeat count"));
-                }
-            }
-          else
-            maxrep = minrep;
-          if (!(syntax_bits & RE_NO_BK_BRACES))
-            {
-              if (c != '\\')
-                dfaerror (_("malformed repeat count"));
-              FETCH (c, _("unfinished repeat count"));
-            }
-          if (c != '}')
-            dfaerror (_("malformed repeat count"));
+          {
+            char const *p = lexptr;
+            char const *lim = p + lexleft;
+            minrep = maxrep = -1;
+            for (; p != lim && ISASCIIDIGIT (*p); p++)
+              {
+                if (minrep < 0)
+                  minrep = *p - '0';
+                else
+                  minrep = MIN (RE_DUP_MAX + 1, minrep * 10 + *p - '0');
+              }
+            if (p != lim)
+              {
+                if (*p != ',')
+                  maxrep = minrep;
+                else
+                  {
+                    if (minrep < 0)
+                      minrep = 0;
+                    while (++p != lim && ISASCIIDIGIT (*p))
+                      {
+                        if (maxrep < 0)
+                          maxrep = *p - '0';
+                        else
+                          maxrep = MIN (RE_DUP_MAX + 1, maxrep * 10 + *p - '0');
+                      }
+                  }
+              }
+            if (! ((! backslash || (p != lim && *p++ == '\\'))
+                   && p != lim && *p++ == '}'
+                   && 0 <= minrep && (maxrep < 0 || minrep <= maxrep)))
+              {
+                if (syntax_bits & RE_INVALID_INTERVAL_ORD)
+                  goto normal_char;
+                dfaerror (_("Invalid content of \\{\\}"));
+              }
+            if (RE_DUP_MAX < maxrep)
+              dfaerror (_("Regular expression too big"));
+            lexptr = p;
+            lexleft = lim - p;
+          }
           laststart = 0;
           return lasttok = REPMN;
 

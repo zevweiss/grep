@@ -76,6 +76,7 @@
 0@a{1a}@a{1a}
 0@a{,2}@a{,2}
 0@a{,}@a{,}
+2@a{}@BADBR
 0@a{1,*}@a{1,,,}
 2@a{1,x@EBRACE@TO CORRECT
 2@a{300}@BADBR@TO CORRECT
@@ -213,3 +214,4 @@
 0@abcdefghijklmnopqrstuv@abcdefghijklmnopqrstuv
 0@CC[13]1|a{21}[23][EO][123][Es][12]a{15}aa[34][EW]aaaaaaa[X]a@CC11
 0@a?b@ab
+2@b{1000000000}@ESIZE

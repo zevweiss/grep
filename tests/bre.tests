@@ -42,8 +42,9 @@
 2@a\{1@EBRACE
 2@a\{1a@EBRACE
 2@a\{1a\}@BADBR
-2@a\{,2\}@BADBR
-2@a\{,\}@BADBR
+0@a\{,2\}@a\{,2\}
+0@a\{,\}@a\{,\}
+2@a\{\}@BADBR
 2@a\{1,x\}@BADBR
 2@a\{1,x@EBRACE
 2@a\{32768\}@BADBR
@@ -60,3 +61,4 @@
 2@a\{1\}*@BADRPT@TO CORRECT
 1@a\(b\)?c\1d@acd
 0@-\{0,1\}[0-9]*$@-5
+2@b\{1000000000\}@ESIZE

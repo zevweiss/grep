@@ -12,6 +12,9 @@ GNU grep NEWS                                    -*- outline -*-
   name too long", and it can run much faster when dealing with large
   directory hierarchies.
 
+  grep -E 'a{1000000000}' now reports an overflow error rather than
+  silently acting like grep -E 'a\{1000000000}'.
+
 ** New features
 
   The -R option now has a long-option alias --dereference-recursive.

@@ -88,3 +88,4 @@ exclude_file_name_regexp--sc_prohibit_xalloc_without_use = ^src/kwset\.c$$
 exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
   (Makefile|\.(am|mk)$$|^gl/lib/.*\.c\.diff$$)
 exclude_file_name_regexp--sc_space_tab = ^gl/lib/.*\.c\.diff$$
+exclude_file_name_regexp--sc_error_message_uppercase = ^src/dfa\.c$$
