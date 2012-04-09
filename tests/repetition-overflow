@@ -12,8 +12,8 @@ fail=0
 # would be treated just like "1", and both of these would mistakenly match.
 
 echo abc  | grep -E "b{$xp1}"   > out 2> /dev/null; test $? = 2 || fail=1
-compare out /dev/null || fail=1
+compare /dev/null out || fail=1
 echo abbc | grep -E "b{1,$xp2}" > out 2> /dev/null; test $? = 2 || fail=1
-compare out /dev/null || fail=1
+compare /dev/null out || fail=1
 
 Exit $fail
