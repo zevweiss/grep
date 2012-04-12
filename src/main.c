@@ -1311,7 +1311,7 @@ grepfile (int dirdesc, char const *name, int follow, int command_line)
   int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
   if (desc < 0)
     {
-      if (follow || errno != ELOOP)
+      if (follow || (errno != ELOOP && errno != EMLINK))
         suppressible_error (filename, errno);
       return 1;
     }
