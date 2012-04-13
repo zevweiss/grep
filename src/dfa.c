@@ -3193,7 +3193,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
 
       /* We must update the pointer if state transition succeeded.  */
       if (rs == TRANSIT_STATE_DONE)
-        ++ * pp;
+        ++*pp;
 
       free (match_lens);
       return s1;
@@ -3406,7 +3406,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       if ((char *) p <= end && p[-1] == eol)
         {
           if (count)
-            ++ * count;
+            ++*count;
 
           if (d->mb_cur_max > 1)
             prepare_wc_buf ((const char *) p, end);
