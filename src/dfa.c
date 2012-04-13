@@ -1024,9 +1024,7 @@ parse_bracket_exp (void)
 
               else if (MBS_SUPPORT && (c1 == '=' || c1 == '.'))
                 {
-                  char *elem;
-                  MALLOC (elem, len + 1);
-                  strncpy (elem, str, len + 1);
+                  char *elem = xmemdup (str, len + 1);
 
                   if (c1 == '=')
                     /* build equivalent class.  */
@@ -3667,7 +3665,7 @@ icatalloc (char *old, char const *new)
   if (newsize == 0)
     return old;
   result = xrealloc (old, oldsize + newsize + 1);
-  strcpy (result + oldsize, new);
+  memcpy (result + oldsize, new, newsize + 1);
   return result;
 }
 
@@ -4060,8 +4058,7 @@ done:
     {
       MALLOC (dm, 1);
       dm->exact = exact;
-      MALLOC (dm->must, strlen (result) + 1);
-      strcpy (dm->must, result);
+      dm->must = xmemdup (result, strlen (result) + 1);
       dm->next = d->musts;
       d->musts = dm;
     }
