@@ -313,7 +313,7 @@ struct mb_char_classes
   wchar_t *range_sts;           /* Range characters (start of the range).  */
   wchar_t *range_ends;          /* Range characters (end of the range).  */
   size_t nranges;
-  char **equivs;                /* Equivalent classes.  */
+  char **equivs;                /* Equivalence classes.  */
   size_t nequivs;
   char **coll_elems;
   size_t ncoll_elems;           /* Collating elements.  */
@@ -1027,7 +1027,7 @@ parse_bracket_exp (void)
                   char *elem = xmemdup (str, len + 1);
 
                   if (c1 == '=')
-                    /* build equivalent class.  */
+                    /* build equivalence class.  */
                     {
                       REALLOC_IF_NECESSARY (work_mbc->equivs,
                                             equivs_al, work_mbc->nequivs + 1);
@@ -3012,7 +3012,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   strncpy (buffer, (char const *) buf_begin + idx, match_len);
   buffer[match_len] = '\0';
 
-  /* match with an equivalent class?  */
+  /* match with an equivalence class?  */
   for (i = 0; i < work_mbc->nequivs; i++)
     {
       op_len = strlen (work_mbc->equivs[i]);
@@ -3147,6 +3147,8 @@ transit_state_consume_1char (struct dfa *d, state_num s,
 
   if (match_lens == NULL && work_mbls != NULL)
     free (work_mbls);
+
+  /* FIXME: this return value is always ignored.  */
   return rs;
 }
 
