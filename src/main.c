@@ -1367,10 +1367,11 @@ grepdesc (int desc, int command_line)
         suppressible_error (filename, errno);
       return status;
     }
-  if ((directories == SKIP_DIRECTORIES && S_ISDIR (st.st_mode))
-      || ((devices == SKIP_DEVICES
-           || (devices == READ_COMMAND_LINE_DEVICES && !command_line))
-          && is_device_mode (st.st_mode)))
+  if (desc != STDIN_FILENO
+      && ((directories == SKIP_DIRECTORIES && S_ISDIR (st.st_mode))
+          || ((devices == SKIP_DEVICES
+               || (devices == READ_COMMAND_LINE_DEVICES && !command_line))
+              && is_device_mode (st.st_mode))))
     goto closeout;
 
   /* If there is a regular file on stdout and the current file refers

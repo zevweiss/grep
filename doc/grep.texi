@@ -614,6 +614,7 @@ By default, devices are read if they are on the command line or if the
 @option{-R} (@option{--dereference-recursive}) option is used, and are
 skipped if they are encountered recursively and the @option{-r}
 (@option{--recursive}) option is used.
+This option has no effect on a file that is read via standard input.
 
 @item -d @var{action}
 @itemx --directories=@var{action}

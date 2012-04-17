@@ -4,13 +4,17 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  "echo P|grep --devices=skip P" once again prints P, as it did in 2.10
+  [bug introduced in grep-2.11]
+
   grep no longer segfaults with -r --exclude-dir and no file operand.
   I.e., ":|grep -r --exclude-dir=D PAT" would segfault.
+  [bug introduced in grep-2.11]
 
   Recursive grep now uses fts for directory traversal, so it can
   handle much-larger directories without reporting things like "File
   name too long", and it can run much faster when dealing with large
-  directory hierarchies.
+  directory hierarchies. [bug present since the beginning]
 
   grep -E 'a{1000000000}' now reports an overflow error rather than
   silently acting like grep -E 'a\{1000000000}'.
@@ -26,6 +30,7 @@ GNU grep NEWS                                    -*- outline -*-
   line; this can be overridden with --devices.  -R acts as before, so
   use -R if you prefer the old behavior of following all symlinks and
   defaulting to reading all devices.
+
 
 * Noteworthy changes in release 2.11 (2012-03-02) [stable]
 

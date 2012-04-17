@@ -78,6 +78,7 @@ TESTS =						\
   r-dot						\
   repetition-overflow				\
   reversed-range-endpoints			\
+  skip-device					\
   sjis-mb					\
   spencer1					\
   spencer1-locale				\
