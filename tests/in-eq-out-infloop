@@ -15,16 +15,15 @@ done
 echo "$v" > out || framework_failure_
 
 for arg in out - ''; do
-  case $arg in
-    out) echo "grep: input file 'out' is also the output";;
-    *)   echo "grep: input file '(standard input)' is also the output";;
-  esac > err.exp || framework_failure_
+  # Accommodate both 'out' and '(standard input)', as well as
+  # the multi-byte quoting we see on OS/X-based systems.
+  echo grep: input file ... is also the output > err.exp || framework_failure_
 
   # Require an exit status of 2.
   # grep-2.8 and earlier would infloop with $arg = out.
   # grep-2.10 and earlier would infloop with $arg = - or $arg = ''.
-  timeout 10 grep 0 $arg < out >> out 2> err; st=$?
-  test $st = 2 || fail=1
+  timeout 10 grep 0 $arg < out >> out 2> err; st=$?; test $st = 2 || fail=1
+  sed 's/file .* is/file ... is/' err > k && mv k err
   compare err.exp err || fail=1
 
   # But with each of the following options it must not exit-2.
