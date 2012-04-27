@@ -10,8 +10,7 @@ The development source code is available via Git from Savannah: see
 
 The source code in the Git uses autotools to generate some files. Before
 following the instructions in the INSTALL file for compiling grep, you
-need to run the bootstrap script. If you don't have the autotools
-installed on your system, see README-boot.
+need to run the bootstrap script.
 
 Test releases are available at <http://alpha.gnu.org/gnu/grep/>.
 

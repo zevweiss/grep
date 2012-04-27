@@ -22,10 +22,8 @@ SUBDIRS = po lib doc src tests gnulib-tests
 
 EXTRA_DIST =		\
   ChangeLog-2009	\
-  Makefile.boot		\
   README		\
   README-alpha		\
-  README-boot		\
   TODO			\
   cfg.mk
 
