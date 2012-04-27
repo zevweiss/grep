@@ -57,7 +57,6 @@
 
 #include "regex.h"
 #include "dfa.h"
-#include "hard-locale.h"
 #include "xalloc.h"
 
 /* HPUX, define those as macros in sys/param.h */
@@ -778,7 +777,6 @@ static int laststart;           /* True if we're separated from beginning or (, 
                                    only by zero-width characters. */
 static size_t parens;           /* Count of outstanding left parens. */
 static int minrep, maxrep;      /* Repeat counts for {m,n}. */
-static int hard_LC_COLLATE;     /* Nonzero if LC_COLLATE is hard.  */
 
 static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
@@ -1112,26 +1110,21 @@ parse_bracket_exp (void)
                   c1 = tolower (c1);
                   c2 = tolower (c2);
                 }
-              if (!hard_LC_COLLATE)
-                for (c = c1; c <= c2; c++)
-                  setbit_case_fold_c (c, ccl);
-              else
+
+              /* Defer to the system regex library about the meaning
+                 of range expressions.  */
+              regex_t re;
+              char pattern[6] = { '[', c1, '-', c2, ']', 0 };
+              char subject[2] = { 0, 0 };
+              regcomp (&re, pattern, REG_NOSUB);
+              for (c = 0; c < NOTCHAR; ++c)
                 {
-                  /* Defer to the system regex library about the meaning
-                     of range expressions.  */
-                  regex_t re;
-                  char pattern[6] = { '[', c1, '-', c2, ']', 0 };
-                  char subject[2] = { 0, 0 };
-                  regcomp (&re, pattern, REG_NOSUB);
-                  for (c = 0; c < NOTCHAR; ++c)
-                    {
-                      subject[0] = c;
-                      if (!(case_fold && isupper (c))
-                          && regexec (&re, subject, 0, NULL, 0) != REG_NOMATCH)
-                        setbit_case_fold_c (c, ccl);
-                    }
-                  regfree (&re);
+                  subject[0] = c;
+                  if (!(case_fold && isupper (c))
+                      && regexec (&re, subject, 0, NULL, 0) != REG_NOMATCH)
+                    setbit_case_fold_c (c, ccl);
                 }
+              regfree (&re);
             }
 
           colon_warning_state |= 8;
@@ -1879,9 +1872,6 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   lasttok = END;
   laststart = 1;
   parens = 0;
-#ifdef LC_COLLATE
-  hard_LC_COLLATE = hard_locale (LC_COLLATE);
-#endif
   if (MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
