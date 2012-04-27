@@ -2967,7 +2967,6 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
                                    with which this operator match.  */
   int op_len;                   /* Length of the operator.  */
   char buffer[128];
-  wchar_t wcbuf[6];
 
   /* Pointer to the structure to which we are currently referring.  */
   struct mb_char_classes *work_mbc;
@@ -3040,16 +3039,11 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
         }
     }
 
-  wcbuf[0] = wc;
-  wcbuf[1] = wcbuf[3] = wcbuf[5] = '\0';
-
   /* match with a range?  */
   for (i = 0; i < work_mbc->nranges; i++)
     {
-      wcbuf[2] = work_mbc->range_sts[i];
-      wcbuf[4] = work_mbc->range_ends[i];
-
-      if (wcscoll (wcbuf, wcbuf + 2) >= 0 && wcscoll (wcbuf + 4, wcbuf) >= 0)
+      if (work_mbc->range_sts[i] <= wc &&
+          wc <= work_mbc->range_ends[i])
         goto charset_matched;
     }
 
