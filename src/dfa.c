@@ -29,6 +29,7 @@
 #include <limits.h>
 #include <string.h>
 #include <locale.h>
+#include <stdbool.h>
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
