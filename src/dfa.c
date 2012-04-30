@@ -1121,8 +1121,8 @@ parse_bracket_exp (void)
               regcomp (&re, pattern, REG_NOSUB);
               for (c = 0; c < NOTCHAR; ++c)
                 {
-                  if ((case_fold && isupper (c)) ||
-                      (MB_CUR_MAX > 1 && btowc (c) == WEOF))
+                  if ((case_fold && isupper (c))
+                      || (MB_CUR_MAX > 1 && btowc (c) == WEOF))
                     continue;
                   subject[0] = c;
                   if (regexec (&re, subject, 0, NULL, 0) != REG_NOMATCH)
@@ -3036,8 +3036,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   /* match with a range?  */
   for (i = 0; i < work_mbc->nranges; i++)
     {
-      if (work_mbc->range_sts[i] <= wc &&
-          wc <= work_mbc->range_ends[i])
+      if (work_mbc->range_sts[i] <= wc && wc <= work_mbc->range_ends[i])
         goto charset_matched;
     }
 

@@ -184,8 +184,8 @@ dossified_pos (off_t byteno)
   if (byteno >= pos_hi)
     {
       out_map_idx++;
-      while (out_map_idx < dos_pos_map_used &&
-             byteno >= dos_pos_map[out_map_idx].pos)
+      while (out_map_idx < dos_pos_map_used
+             && byteno >= dos_pos_map[out_map_idx].pos)
         out_map_idx++;
     }
 
