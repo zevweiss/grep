@@ -994,7 +994,7 @@
 
 2005-01-07  Stepan Kasal  <kasal@ucw.cz>
 
-        * tests/status.sh: Added two tests--option `-s' should have no
+        * tests/status.sh: Added two tests--option '-s' should have no
           influence on the exit status.
 
 2004-12-16  Stepan Kasal  <kasal@ucw.cz>
@@ -1028,8 +1028,8 @@
 
 2004-12-01  Stepan Kasal  <kasal@ucw.cz>
 
-        * src/grep.c (usage): Use ``FILE_PATTERN'' for --include and --exclude,
-          change ``only print'' to ``print only''.
+        * src/grep.c (usage): Use "FILE_PATTERN" for --include and --exclude,
+          change "only print" to "print only".
         * doc/grep.1: Likewise; state that wildcard matching is used.
           Move some options so that they are sorted alphabetically.
         * dfa.c, NEWS: Fix typos.
@@ -1052,9 +1052,9 @@
 
 2004-11-23  Stepan Kasal  <kasal@ucw.cz>
 
-        * src/grep.c (usage): Make sure both copies of the ``usage''
-          strings match.  Add ``(C)'' to the copyright notice.
-        * src/dfa.c: Changed ``out of memory'' to ``memory exhausted'' to
+        * src/grep.c (usage): Make sure both copies of the "usage"
+          strings match.  Add "(C)" to the copyright notice.
+        * src/dfa.c: Changed "out of memory" to "memory exhausted" to
           match messages elsewhere in the source.
 
 2004-11-22  Stepan Kasal  <kasal@ucw.cz>
@@ -1081,7 +1081,7 @@
 2004-11-20  Stepan Kasal  <kasal@ucw.cz>
 
         * configure.in: Added a copyright notice (using gawk as a template).
-        (AC_INIT, AM_INIT_AUTOMAKE): Changed to the ``new'' form so that
+        (AC_INIT, AM_INIT_AUTOMAKE): Changed to the "new" form so that
           the PACKAGE_* symbols get defined correctly in config.h.
 
 2004-11-20  Stepan Kasal  <kasal@ucw.cz>
@@ -1108,7 +1108,7 @@
 
         * tests/spencer1.awk: Use only lines with 3 fields.
         * tests/spencer1.tests: Disable #55 for now.
-        * tests/ere.tests, tests/bre.tests: Add ``TO CORRECT'' to disabled
+        * tests/ere.tests, tests/bre.tests: Add "TO CORRECT" to disabled
           tests which had empty $4.
         * tests/backref.sh: Modify #2 so that current glibc regex can
           handle it in finite time.
@@ -1116,7 +1116,7 @@
 2004-11-12  Stepan Kasal  <kasal@ucw.cz>
 
         Change bug-gnu-utils address to bug-grep, on many places; there
-        is no need to have the word ``grep'' in subject then.
+        is no need to have the word "grep" in subject then.
         Thanks to Tony Abou-Assaleh and Benno Schulenberg for pointing
         out this.
 
@@ -1129,7 +1129,7 @@
 
         * src/search.c (check_multibyte_string, Gcompile, Ecompile): Replace
           malloc with xmalloc.
-        * src/dfa.c (dfamust): Replace two calls to ``malloc'' by MALLOC.
+        * src/dfa.c (dfamust): Replace two calls to 'malloc' by MALLOC.
 
 2003-07-23  Stepan Kasal  <kasal@ucw.cz>
 
@@ -1142,7 +1142,7 @@
         * src/dfa.c: remove non-constant initializers from dfa.c
 
 2003-06-16  Stepan Kasal  <kasal@ucw.cz>
-        * doc/grep.1: two typos ``--line-buffered [...] penalty''
+        * doc/grep.1: two typos "--line-buffered [...] penalty"
         * doc/grep.texi: a typo
 
 2003-06-12  Bernhard Rosenkraenzer <bero@arklinux.org>
@@ -1515,11 +1515,11 @@
 2001-03-01  Isamu Hasegawa
 
         Implement the mechanism to match with multibyte characters,
-        and use it for `period' in multibyte environments.
+        and use it for 'period' in multibyte environments.
 
         * dfa.h (mbps): new variable.
         * dfa.c (prtok): handle ANYCHAR.
-        (lex): use ANYCHAR for `period' in multibyte environments.
+        (lex): use ANYCHAR for 'period' in multibyte environments.
         (atom): handle ANYCHAR.
         (state_index): initialize mbps in multibyte environments.
         (epsclosure): handle ANYCHAR.
@@ -2166,7 +2166,7 @@
 
 2000-03-03  Jim Meyering
 
-        * regex.m4: Make sure re_compile_pattern accepts patterns like `{1'.
+        * regex.m4: Make sure re_compile_pattern accepts patterns like '{1'.
 
 2000-03-02  Alain Magloire
 
@@ -2474,13 +2474,13 @@
 
 1999-10-02  Paul Eggert
 
-        * NEWS: egrep is now equivalent to `grep -E'.
+        * NEWS: egrep is now equivalent to 'grep -E'.
         The lower bound of an interval is not optional.
         You can specify a matcher multiple types without error.
         -u and -U are now allowed on non-DOS hosts, and have no effect.
         * doc/grep.texi: Likewise.
         * doc/grep.1: Likewise.
-        Fix some troff bugs that prevented `groff' from rendering the page.
+        Fix some troff bugs that prevented 'groff' from rendering the page.
 
         * src/egrepmat.c, src/fgrepmat.c, src/grepmat.c (default_matcher):
         Remove.
@@ -2545,9 +2545,9 @@
         allocate only for regular files, since we don't know the sizes of
         other files.
         Don't bother to check whether the file offset is a multiple of the page
-        size, since we now do that just once in `reset'.
+        size, since we now do that just once in 'reset'.
         When an mmapped area would fall past the end of the file, trim it to
-        just before instead of giving up immediately and doing a `read';
+        just before instead of giving up immediately and doing a 'read';
         that avoids a worst-case behavior that could read half an mmapped file.
         Fix bug when computing offsets on hosts that don't have mmap.
 
@@ -2570,7 +2570,7 @@
         Don't assume that st_ino and st_dev must be integers;
         POSIX.1 allows them to be floating-point (!).
 
-        * src/vms_fab.h (arr_ptr): `:' -> `;' to fix typo.
+        * src/vms_fab.h (arr_ptr): ':' -> ';' to fix typo.
 
 1999-08-18  Alain Magloire
 
@@ -2616,15 +2616,15 @@
 
 1999-07-26  Paul Eggert
 
-Several GNU tools have options to process arbitrary file names, even
-file names that contain newline characters.  These include `find
--print0', `perl -0', `sort -z', and `xargs -0'.  It'd be handy if GNU
-grep also processed such file names.  Here's a proposed patch to do
-this, relative to grep 2.3c.  This patch introduces two options, one
-for the data, and one for the file names.  (Sometimes one wants
-null-terminated file names in the output, and sometimes one wants to
-process lists of null-terminated strings, and these are orthogonal
-axes.)
+	Several GNU tools have options to process arbitrary file names, even
+	file names that contain newline characters.  These include 'find
+	-print0', 'perl -0', 'sort -z', and 'xargs -0'.  It'd be handy if GNU
+	grep also processed such file names.  Here's a proposed patch to do
+	this, relative to grep 2.3c.  This patch introduces two options, one
+	for the data, and one for the file names.  (Sometimes one wants
+	null-terminated file names in the output, and sometimes one wants to
+	process lists of null-terminated strings, and these are orthogonal
+	axes.)
 
         * NEWS, doc/grep.texi: New -z or --null-data and -Z or --null options.
         * src/grep.c (long_options, usage, main): Likewise.
@@ -2807,7 +2807,7 @@ axes.)
 
         * intl/Makefile.in: Replace .o with .${ac_objext} where necessary.
         Work around a limitation of Visual C++ on Cygwin32.
-        * acconfig.h configure.in: Define `alloca' as `_alloca' when CC=cl.
+        * acconfig.h configure.in: Define 'alloca' as '_alloca' when CC=cl.
         This little hack was suggested by Ian Roxborough <irox@cygnus.com>.
         Patch forwarded by Ben Elliston.
 
@@ -2925,10 +2925,10 @@ axes.)
 
         * doc/grep.texi: I found and corrected several typos.
         I believe the GNU standards require the section that describes the
-        options to the programs to be called ``Invoking'' or ``Invoking
-        <program-name>''.  This is so users and programs can easily find
+        options to the programs to be called "Invoking" or "Invoking
+        <program-name>".  This is so users and programs can easily find
         that node in any Info file.  So I changed the name of the
-        `Options' chapter to `Invoking', and corrected the
+        "Options" chapter to "Invoking", and corrected the
         cross-references accordingly.
         I added some markup to things like file names and options.
         I added some additional index entries where that seemed useful.
@@ -3005,8 +3005,8 @@ axes.)
         the console device.
         (is_EISDIR): Don't define if already defined.  Accept a second
         argument, the file name; all callers changed.
-        (grepdir): Don't free `file', inside the loop.  Use IS_SLASH to
-        check whether `dir' needs a slash.
+        (grepdir): Don't free 'file', inside the loop.  Use IS_SLASH to
+        check whether 'dir' needs a slash.
         (grepfile): If file is a directory, set e to EISDIR.
 
 1998-11-10  Alain Magloire
@@ -3024,7 +3024,7 @@ axes.)
 
 1998-11-09  Paul Eggert
 
-        * src/grep.1: Fix `Last Change' of output by generating the date
+        * src/grep.1: Fix "Last Change" of output by generating the date
         from the RCS Id.
 
         * src/grep.c (is_EISDIR): New macro.
@@ -3059,7 +3059,7 @@ axes.)
 
 1998-11-08 Alain Magloire
 
-        * src/grep.1: `prep.ai.mit.edu' should be replaced with `gnu.org'.
+        * src/grep.1: 'prep.ai.mit.edu' should be replaced with 'gnu.org'.
         Nit from Paul Eggert.
 
 1998-11-06 Alain Magloire
@@ -3127,7 +3127,7 @@ axes.)
         (reset): Initialize it.
         (fillbuf): Use it.
         (count_matches, list_files, no_filenames, suppress_errors): New static
-        vars; formerly were local to `main'.
+        vars; formerly were local to 'main'.
         (grep): Recurse through directories if the user asks for this.
         (usage, main): Add new options.
         (main): Change some local vars to be static, as described above.
@@ -3156,14 +3156,14 @@ axes.)
         (reset): Now returns value specifying whether to skip this file.
         Stat the file if either mmap or directory-skipping is possible.
         Skip the file if it's a directory and we're skipping directories.
-        (grep): Skip the file if `reset' tells us to.
+        (grep): Skip the file if 'reset' tells us to.
         (main): If open fails because the file is a directory, and if we're
         skipping directories, don't report an error.
         Remove special case for DOS and Windows.
 
         * src/dosbuf.c (guess_type): Use the same method for guessing whether a
         file is binary as grep.c's grep does.
-        There's no longer any need to declare `bp' to be unsigned.
+        There's no longer any need to declare 'bp' to be unsigned.
 
 1998-04-26 Alain Magloire
 
@@ -3184,7 +3184,7 @@ axes.)
 
 1998-04-17 Kaveh R. Ghazi
 
-        * src/dfa.h: Don't define `const', trust autoconf to handle it.
+        * src/dfa.h: Don't define 'const', trust autoconf to handle it.
 
 1998-04-16 Alain Magloire
 
@@ -3332,7 +3332,7 @@ axes.)
         Remove the "matching a single character".
         Suggested by Harald Hanche-Olsen.
 
-        * src/grep.c (main): `-f /dev/null' now specifies no patterns
+        * src/grep.c (main): '-f /dev/null' now specifies no patterns
         and therfore matches nothing.
         Reported by Jorge Stolfi.
         Patched by Paul Eggert.
@@ -3507,7 +3507,7 @@ axes.)
 
 1997-07-17 Alain Magloire <alainm@rcsm.ee.mcgill.ca>
 
-        * src/grep.c: Cause grep to fail if `fclose (stdout)' fails.
+        * src/grep.c: Cause grep to fail if 'fclose (stdout)' fails.
         From Jim Meyering <meyering@eng.ascend.com>.
 
         * grep.c:usage() more consistency in the --help.

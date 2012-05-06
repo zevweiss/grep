@@ -19,8 +19,8 @@
 # no match for that one.  In both the fourth and fifth fields, a (sub)field
 # starting with @ indicates that the (sub)expression is expected to match
 # a null string followed by the stuff after the @; this provides a way to
-# test where null strings match.  The character `N' in REs and strings
-# is newline, `S' is space, `T' is tab, `Z' is NUL.
+# test where null strings match.  The character 'N' in REs and strings
+# is newline, 'S' is space, 'T' is tab, 'Z' is NUL.
 #
 # The full list of flags:
 #	-	placeholder, does nothing

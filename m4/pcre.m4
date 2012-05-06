@@ -43,5 +43,6 @@ AC_DEFUN([gl_FUNC_PCRE],
   fi
 
   AC_DEFINE_UNQUOTED([HAVE_LIBPCRE], [`test $use_pcre != yes; echo $?`],
-    [Define to 1 if you have the `pcre' library (-lpcre).])
+    [Define to 1 if you have the Perl Compatible Regular Expressions
+     library (-lpcre).])
 ])

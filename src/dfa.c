@@ -39,7 +39,7 @@
    - It's typically faster.
    Posix 1003.2-1992 section 2.5.2.1 page 50 lines 1556-1558 says that
    only '0' through '9' are digits.  Prefer ISASCIIDIGIT to isdigit unless
-   it's important to use the locale's definition of `digit' even when the
+   it's important to use the locale's definition of "digit" even when the
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
@@ -634,7 +634,7 @@ static charclass newline;
 # define is_valid_unibyte_character(c) (! (MBS_SUPPORT && btowc (c) == WEOF))
 #endif
 
-/* Return non-zero if C is a 'word-constituent' byte; zero otherwise.  */
+/* Return non-zero if C is a "word-constituent" byte; zero otherwise.  */
 #define IS_WORD_CONSTITUENT(C) \
   (is_valid_unibyte_character (C) && (isalnum (C) || (C) == '_'))
 
@@ -974,9 +974,9 @@ parse_bracket_exp (void)
           char str[BRACKET_BUFFER_SIZE];
           FETCH_WC (c1, wc1, _("unbalanced ["));
 
-          /* If pattern contains `[[:', `[[.', or `[[='.  */
+          /* If pattern contains '[[:', '[[.', or '[[='.  */
           if (c1 == ':'
-              /* TODO: handle `[[.' and `[[=' also for MB_CUR_MAX == 1.  */
+              /* TODO: handle '[[.' and '[[=' also for MB_CUR_MAX == 1.  */
               || (MB_CUR_MAX > 1 && (c1 == '.' || c1 == '=')))
             {
               size_t len = 0;
@@ -3053,11 +3053,11 @@ charset_matched:
   return match ? match_len : 0;
 }
 
-/* Check each of `d->states[s].mbps.elem' can match or not. Then return the
-   array which corresponds to `d->states[s].mbps.elem' and each element of
+/* Check each of 'd->states[s].mbps.elem' can match or not. Then return the
+   array which corresponds to 'd->states[s].mbps.elem' and each element of
    the array contains the amount of the bytes with which the element can
    match.
-   `idx' is the index from the buf_begin, and it is the current position
+   'idx' is the index from the buf_begin, and it is the current position
    in the buffer.
    Caller MUST free the array which this function return.  */
 static int *
@@ -3086,11 +3086,11 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
 }
 
 /* Consume a single character and enumerate all of the positions which can
-   be next position from the state `s'.
-   `match_lens' is the input. It can be NULL, but it can also be the output
+   be next position from the state 's'.
+   'match_lens' is the input. It can be NULL, but it can also be the output
    of check_matching_with_multibyte_ops() for optimization.
-   `mbclen' and `pps' are the output.  `mbclen' is the length of the
-   character consumed, and `pps' is the set this function enumerate.  */
+   'mbclen' and 'pps' are the output.  'mbclen' is the length of the
+   character consumed, and 'pps' is the set this function enumerate.  */
 static status_transit_state
 transit_state_consume_1char (struct dfa *d, state_num s,
                              unsigned char const **pp,
@@ -3106,15 +3106,15 @@ transit_state_consume_1char (struct dfa *d, state_num s,
      to which p points.  */
   *mbclen = (mblen_buf[*pp - buf_begin] == 0) ? 1 : mblen_buf[*pp - buf_begin];
 
-  /* Calculate the state which can be reached from the state `s' by
-     consuming `*mbclen' single bytes from the buffer.  */
+  /* Calculate the state which can be reached from the state 's' by
+     consuming '*mbclen' single bytes from the buffer.  */
   s1 = s;
   for (k = 0; k < *mbclen; k++)
     {
       s2 = s1;
       rs = transit_state_singlebyte (d, s2, (*pp)++, &s1);
     }
-  /* Copy the positions contained by `s1' to the set `pps'.  */
+  /* Copy the positions contained by 's1' to the set 'pps'.  */
   copy (&(d->states[s1].elems), pps);
 
   /* Check (input) match_lens, and initialize if it is NULL.  */
@@ -3123,7 +3123,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
   else
     work_mbls = match_lens;
 
-  /* Add all of the positions which can be reached from `s' by consuming
+  /* Add all of the positions which can be reached from 's' by consuming
      a single character.  */
   for (i = 0; i < d->states[s].mbps.nelem; i++)
     {
@@ -3190,10 +3190,10 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
   /* This state has some operators which can match a multibyte character.  */
   alloc_position_set (&follows, d->nleaves);
 
-  /* `maxlen' may be longer than the length of a character, because it may
+  /* 'maxlen' may be longer than the length of a character, because it may
      not be a character but a (multi character) collating element.
-     We enumerate all of the positions which `s' can reach by consuming
-     `maxlen' bytes.  */
+     We enumerate all of the positions which 's' can reach by consuming
+     'maxlen' bytes.  */
   transit_state_consume_1char (d, s, pp, match_lens, &mbclen, &follows);
 
   wc = inputwcs[*pp - mbclen - buf_begin];

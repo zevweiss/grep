@@ -175,7 +175,7 @@ dossified_pos (off_t byteno)
 
   /* Optimization: usually the file will be scanned sequentially.
      So in most cases, this byte position will be found in the
-     table near the previous one, as recorded in `out_map_idx'.  */
+     table near the previous one, as recorded in 'out_map_idx'.  */
   pos_lo = dos_pos_map[out_map_idx-1].pos;
   pos_hi = dos_pos_map[out_map_idx].pos;
 

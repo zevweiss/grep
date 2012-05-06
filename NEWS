@@ -420,13 +420,13 @@ Version 2.4.1
 
 Version 2.4:
 
-  - egrep is now equivalent to `grep -E' as required by POSIX,
+  - egrep is now equivalent to 'grep -E' as required by POSIX,
     removing a longstanding source of confusion and incompatibility.
-    `grep' is now more forgiving about stray `{'s, for backward
+    'grep' is now more forgiving about stray '{'s, for backward
     compatibility with traditional egrep.
 
   - The lower bound of an interval is not optional.
-    You must use an explicit zero, e.g. `x{0,10}' instead of `x{,10}'.
+    You must use an explicit zero, e.g. 'x{0,10}' instead of 'x{,10}'.
     (The old documentation incorrectly claimed that it was optional.)
 
   - The --revert-match option has been renamed to --invert-match.
@@ -438,15 +438,15 @@ Version 2.4:
   - New option --mmap.  By default, GNU grep now uses read instead of mmap.
     This is faster on some hosts, and is safer on all.
 
-  - The new option -z or --null-data causes `grep' to treat a zero byte
+  - The new option -z or --null-data causes 'grep' to treat a zero byte
     (the ASCII NUL character) as a line terminator in input data, and
     to treat newlines as ordinary data.
 
-  - The new option -Z or --null causes `grep' to output a zero byte
+  - The new option -Z or --null causes 'grep' to output a zero byte
     instead of the normal separator after a file name.
 
-  - These two options can be used with commands like `find -print0',
-    `perl -0', `sort -z', and `xargs -0' to process arbitrary file names,
+  - These two options can be used with commands like 'find -print0',
+    'perl -0', 'sort -z', and 'xargs -0' to process arbitrary file names,
     even those that contain newlines.
 
   - The environment variable GREP_OPTIONS specifies default options;
@@ -454,7 +454,7 @@ Version 2.4:
     behavior of silently skipping directories.
 
   - You can specify a matcher multiple times without error, e.g.
-    `grep -E -E' or `fgrep -F'.  It is still an error to specify
+    'grep -E -E' or 'fgrep -F'.  It is still an error to specify
     conflicting matchers.
 
   - -u and -U are now allowed on non-DOS hosts, and have no effect.
@@ -471,26 +471,26 @@ Version 2.4:
 Version 2.3:
 
   - When searching a binary file FOO, grep now just reports
-    `Binary file FOO matches' instead of outputting binary data.
+    "Binary file FOO matches" instead of outputting binary data.
     This is typically more useful than the old behavior,
-    and it is also more consistent with other utilities like `diff'.
+    and it is also more consistent with other utilities like 'diff'.
     A file is considered to be binary if it contains a NUL (i.e. zero) byte.
 
-    The new -a or --text option causes `grep' to assume that all
-    input is text.  (This option has the same meaning as with `diff'.)
+    The new -a or --text option causes 'grep' to assume that all
+    input is text.  (This option has the same meaning as with 'diff'.)
     Use it if you want binary data in your output.
 
-  - `grep' now searches directories just like ordinary files; it no longer
+  - 'grep' now searches directories just like ordinary files; it no longer
     silently skips directories.  This is the traditional behavior of
-    Unix text utilities (in particular, of traditional `grep').
-    Hence `grep PATTERN DIRECTORY' should report
-    `grep: DIRECTORY: Is a directory' on hosts where the operating system
+    Unix text utilities (in particular, of traditional 'grep').
+    Hence 'grep PATTERN DIRECTORY' should report
+    "grep: DIRECTORY: Is a directory" on hosts where the operating system
     does not permit programs to read directories directly, and
-    `grep: DIRECTORY: Binary file matches' (or nothing) otherwise.
+    "grep: DIRECTORY: Binary file matches" (or nothing) otherwise.
 
     The new -d ACTION or --directories=ACTION option affects directory handling.
-    `-d skip' causes `grep' to silently skip directories, as in grep 2.1;
-    `-d read' (the default) causes `grep' to read directories if possible,
+    '-d skip' causes 'grep' to silently skip directories, as in grep 2.1;
+    '-d read' (the default) causes 'grep' to read directories if possible,
     as in earlier versions of grep.
 
   - The MS-DOS and Microsoft Windows ports now behave identically to the
@@ -579,5 +579,5 @@ Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.  A copy of the license is included in the ``GNU Free
-Documentation License'' file as part of this distribution.
+Texts.  A copy of the license is included in the "GNU Free
+Documentation License" file as part of this distribution.

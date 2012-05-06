@@ -261,7 +261,7 @@ for bold red matched text, magenta file names, green line numbers,
 green byte offsets, cyan separators, and default terminal colors otherwise.
 The deprecated environment variable @env{GREP_COLOR} is still supported,
 but its setting does not have priority;
-it defaults to `01;31' (bold red)
+it defaults to @samp{01;31} (bold red)
 which only covers the color for matched text.
 @var{WHEN} is @samp{never}, @samp{always}, or @samp{auto}.
 

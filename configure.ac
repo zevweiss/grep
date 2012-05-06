@@ -1,5 +1,5 @@
 dnl
-dnl autoconf input file for ``GNU grep''
+dnl autoconf input file for GNU grep
 dnl
 dnl Copyright (C) 1997-2006, 2009-2012 Free Software Foundation, Inc.
 dnl

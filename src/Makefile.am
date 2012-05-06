@@ -32,7 +32,7 @@ libgrep_a_SOURCES = kwset.c dfa.c searchutils.c dfasearch.c kwsearch.c \
 	pcresearch.c main.c
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
-# include modules defining variables like `optind', so libgreputils.a
+# include modules defining variables like 'optind', so libgreputils.a
 # must precede $(LIBINTL) in order to ensure we use GNU getopt.
 # But libgreputils.a must also follow $(LIBINTL), since libintl uses
 # replacement functions defined in libgreputils.a.

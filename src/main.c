@@ -1533,15 +1533,15 @@ Output control:\n\
   -o, --only-matching       show only the part of a line matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE;\n\
-                            TYPE is `binary', `text', or `without-match'\n\
+                            TYPE is 'binary', 'text', or 'without-match'\n\
   -a, --text                equivalent to --binary-files=text\n\
 "));
       printf (_("\
   -I                        equivalent to --binary-files=without-match\n\
   -d, --directories=ACTION  how to handle directories;\n\
-                            ACTION is `read', `recurse', or `skip'\n\
+                            ACTION is 'read', 'recurse', or 'skip'\n\
   -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n\
-                            ACTION is `read' or `skip'\n\
+                            ACTION is 'read' or 'skip'\n\
   -r, --recursive           like --directories=recurse\n\
   -R, --dereference-recursive  likewise, but follow all symlinks\n\
 "));
@@ -1568,7 +1568,7 @@ Context control:\n\
   -NUM                      same as --context=NUM\n\
       --color[=WHEN],\n\
       --colour[=WHEN]       use markers to highlight the matching strings;\n\
-                            WHEN is `always', `never', or `auto'\n\
+                            WHEN is 'always', 'never', or 'auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)\n\
   -u, --unix-byte-offsets   report offsets as if CRs were not there\n\
                             (MSDOS/Windows)\n\

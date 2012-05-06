@@ -51,9 +51,9 @@ export VERBOSE = yes
 # 1127556 9e
 export XZ_OPT = -6e
 
-old_NEWS_hash = f36c60cbfbb397ed4ebd24ea0ef93261
+old_NEWS_hash = 4161c68bdef85693cf836ee31ba9a3f9
 
-# Many m4 macros names once began with `jm_'.
+# Many m4 macros names once began with 'jm_'.
 # Make sure that none are inadvertently reintroduced.
 sc_prohibit_jm_in_m4:
 	@grep -nE 'jm_[A-Z]'						\
