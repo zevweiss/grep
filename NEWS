@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  --include and --exclude can again be combined, and again apply to
+  the command line, e.g., "grep --include='*.[ch]' --exclude='system.h'
+  PATTERN *" again reads all *.c and *.h files except for system.h.
+  [bug introduced in grep-2.6]
+
 ** Dropped features
 
   Bootstrapping with Makefile.boot has been broken since grep 2.6,

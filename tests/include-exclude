@@ -19,6 +19,11 @@ grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
 compare exp-not-a out || fail=1
 
+grep -r --exclude='Rumpelstiltskin' --include='a*' --exclude='a*' . x > out ||
+  fail=1
+sort out > k && mv k out
+compare exp-not-a out || fail=1
+
 grep -r --exclude='[ab]'  . x > out || fail=1
 sort out > k && mv k out
 compare exp-not-ab out || fail=1

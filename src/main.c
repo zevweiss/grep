@@ -272,7 +272,6 @@ static const struct color_cap color_dict[] =
   };
 
 static struct exclude *excluded_patterns;
-static struct exclude *included_patterns;
 static struct exclude *excluded_directory_patterns;
 /* Short options.  */
 static char const short_options[] =
@@ -449,6 +448,20 @@ context_length_arg (char const *str, intmax_t *out)
     }
 }
 
+/* Return nonzero if the file with NAME should be skipped.
+   If COMMAND_LINE is nonzero, it is a command-line argument.
+   If IS_DIR is nonzero, it is a directory.  */
+static int
+skipped_file (char const *name, int command_line, int is_dir)
+{
+  return (is_dir
+          ? (directories == SKIP_DIRECTORIES
+             || (! (command_line && filename_prefix_len != 0)
+                 && excluded_directory_patterns
+                 && excluded_file_name (excluded_directory_patterns, name)))
+          : (excluded_patterns
+             && excluded_file_name (excluded_patterns, name)));
+}
 
 /* Hairy buffering mechanism for grep.  The intent is to keep
    all reads aligned on a page boundary and multiples of the
@@ -1207,11 +1220,11 @@ grep (int fd, struct stat const *st)
 }
 
 static int
-grepdirent (FTS *fts, FTSENT *ent)
+grepdirent (FTS *fts, FTSENT *ent, int command_line)
 {
   int follow, dirdesc;
-  int command_line = ent->fts_level == FTS_ROOTLEVEL;
   struct stat *st = ent->fts_statp;
+  command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
   if (ent->fts_info == FTS_DP)
     {
@@ -1220,17 +1233,9 @@ grepdirent (FTS *fts, FTSENT *ent)
       return 1;
     }
 
-  if ((ent->fts_info == FTS_D || ent->fts_info == FTS_DC
-       || ent->fts_info == FTS_DNR)
-      ? (directories == SKIP_DIRECTORIES
-         || (! (command_line && filename_prefix_len != 0)
-             && excluded_directory_patterns
-             && excluded_file_name (excluded_directory_patterns,
-                                    ent->fts_name)))
-      : ((included_patterns
-          && excluded_file_name (included_patterns, ent->fts_name))
-         || (excluded_patterns
-             && excluded_file_name (excluded_patterns, ent->fts_name))))
+  if (skipped_file (ent->fts_name, command_line,
+                    (ent->fts_info == FTS_D || ent->fts_info == FTS_DC
+                     || ent->fts_info == FTS_DNR)))
     {
       fts_set (fts, ent, FTS_SKIP);
       return 1;
@@ -1336,6 +1341,11 @@ grepdesc (int desc, int command_line)
       suppressible_error (filename, errno);
       goto closeout;
     }
+
+  if (desc != STDIN_FILENO && command_line
+      && skipped_file (filename, 1, S_ISDIR (st.st_mode)))
+    goto closeout;
+
   if (desc != STDIN_FILENO
       && directories == RECURSE_DIRECTORIES && S_ISDIR (st.st_mode))
     {
@@ -1360,7 +1370,7 @@ grepdesc (int desc, int command_line)
       if (!fts)
         xalloc_die ();
       while ((ent = fts_read (fts)))
-        status &= grepdirent (fts, ent);
+        status &= grepdirent (fts, ent, command_line);
       if (errno)
         suppressible_error (filename, errno);
       if (fts_close (fts) != 0)
@@ -2076,9 +2086,12 @@ main (int argc, char **argv)
         break;
 
       case EXCLUDE_OPTION:
+      case INCLUDE_OPTION:
         if (!excluded_patterns)
           excluded_patterns = new_exclude ();
-        add_exclude (excluded_patterns, optarg, EXCLUDE_WILDCARDS);
+        add_exclude (excluded_patterns, optarg,
+                     (EXCLUDE_WILDCARDS
+                      | (opt == INCLUDE_OPTION ? EXCLUDE_INCLUDE : 0)));
         break;
       case EXCLUDE_FROM_OPTION:
         if (!excluded_patterns)
@@ -2094,13 +2107,6 @@ main (int argc, char **argv)
         if (!excluded_directory_patterns)
           excluded_directory_patterns = new_exclude ();
         add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
-        break;
-
-      case INCLUDE_OPTION:
-        if (!included_patterns)
-          included_patterns = new_exclude ();
-        add_exclude (included_patterns, optarg,
-                     EXCLUDE_WILDCARDS | EXCLUDE_INCLUDE);
         break;
 
       case GROUP_SEPARATOR_OPTION:
