@@ -1,0 +1,31 @@
+#!/bin/sh
+# Check that grep --binary-file=without-match quickly skips files with holes.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+expensive_
+
+# Try to make this test not THAT expensive, on typical hosts.
+virtual_memory_KiB=10240
+if echo x | (ulimit -v $virtual_memory_KiB && grep x) >/dev/null 2>&1; then
+  ulimit -v $virtual_memory_KiB
+fi
+
+# Create a file that starts with at least a buffer's worth of text,
+# but has a big hole later.
+ten='1 2 3 4 5 6 7 8 9 10'
+x='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+(for i in $ten; do
+   for j in $ten; do
+     for k in $ten; do
+       echo $x
+     done
+   done
+ done
+ echo x | dd bs=1024k seek=8000000
+) >8T-or-so || skip_ 'cannot create big sparse file'
+
+grep --binary-file=without-match x 8T-or-so >/dev/null
+test $? -eq 1 || fail=1
+
+Exit $fail

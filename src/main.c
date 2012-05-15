@@ -44,6 +44,7 @@
 #include "progname.h"
 #include "propername.h"
 #include "quote.h"
+#include "stat-size.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
@@ -406,6 +407,14 @@ is_device_mode (mode_t m)
   return S_ISCHR (m) || S_ISBLK (m) || S_ISSOCK (m) || S_ISFIFO (m);
 }
 
+/* Return nonzero if ST->st_size is defined.  Assume the file is not a
+   symbolic link.  */
+static int
+usable_st_size (struct stat const *st)
+{
+  return S_ISREG (st->st_mode) || S_TYPEISSHM (st) || S_TYPEISTMO (st);
+}
+
 /* Functions we'll use to search. */
 static compile_fp_t compile;
 static execute_fp_t execute;
@@ -426,6 +435,70 @@ clean_up_stdout (void)
 {
   if (! write_error_seen)
     close_stdout ();
+}
+
+/* Return 1 if a file is known to be binary for the purpose of 'grep'.
+   BUF, of size BUFSIZE, is the initial buffer read from the file with
+   descriptor FD and status ST.  */
+static int
+file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
+{
+  #ifndef HAVE_STRUCT_STAT_ST_BLOCKS
+  enum { HAVE_STRUCT_STAT_ST_BLOCKS = 0 };
+  #endif
+  #ifndef SEEK_HOLE
+  enum { SEEK_HOLE = SEEK_END };
+  #endif
+
+  /* If -z, test only whether the initial buffer contains '\200';
+     knowing about holes won't help.  */
+  if (! eolbyte)
+    return memchr (buf, '\200', bufsize) != 0;
+
+  /* If the initial buffer contains a null byte, guess that the file
+     is binary.  */
+  if (memchr (buf, '\0', bufsize))
+    return 1;
+
+  /* If the file has holes, it must contain a null byte somewhere.  */
+  if ((HAVE_STRUCT_STAT_ST_BLOCKS || SEEK_HOLE != SEEK_END)
+      && usable_st_size (st))
+    {
+      off_t cur = bufsize;
+      if (O_BINARY || fd == STDIN_FILENO)
+        {
+          cur = lseek (fd, 0, SEEK_CUR);
+          if (cur < 0)
+            return 0;
+        }
+
+      /* If the file has fewer blocks than would be needed to
+         represent its data, then it must have at least one hole.  */
+      if (HAVE_STRUCT_STAT_ST_BLOCKS)
+        {
+          off_t nonzeros_needed = st->st_size - cur + bufsize;
+          off_t full_blocks = nonzeros_needed / ST_NBLOCKSIZE;
+          int partial_block = 0 < nonzeros_needed % ST_NBLOCKSIZE;
+          if (ST_NBLOCKS (*st) < full_blocks + partial_block)
+            return 1;
+        }
+
+      /* Look for a hole after the current location.  */
+      if (SEEK_HOLE != SEEK_END)
+        {
+          off_t hole_start = lseek (fd, cur, SEEK_HOLE);
+          if (0 <= hole_start)
+            {
+              if (lseek (fd, cur, SEEK_SET) < 0)
+                suppressible_error (filename, errno);
+              if (hole_start < st->st_size)
+                return 1;
+            }
+        }
+    }
+
+  /* Guess that the file does not contain binary data.  */
+  return 0;
 }
 
 /* Convert STR to a nonnegative integer, storing the result in *OUT.
@@ -559,7 +632,7 @@ fillbuf (size_t save, struct stat const *st)
          is large.  However, do not use the original file size as a
          heuristic if we've already read past the file end, as most
          likely the file is growing.  */
-      if (S_ISREG (st->st_mode))
+      if (usable_st_size (st))
         {
           off_t to_be_read = st->st_size - bufoffset;
           off_t maxsize_off = save + to_be_read;
@@ -1133,7 +1206,7 @@ grep (int fd, struct stat const *st)
 
   not_text = (((binary_files == BINARY_BINARY_FILES && !out_quiet)
                || binary_files == WITHOUT_MATCH_BINARY_FILES)
-              && memchr (bufbeg, eol ? '\0' : '\200', buflim - bufbeg));
+              && file_is_binary (bufbeg, buflim - bufbeg, fd, st));
   if (not_text && binary_files == WITHOUT_MATCH_BINARY_FILES)
     return 0;
   done_on_match += not_text;

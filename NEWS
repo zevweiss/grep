@@ -9,6 +9,11 @@ GNU grep NEWS                                    -*- outline -*-
   PATTERN *" again reads all *.c and *.h files except for system.h.
   [bug introduced in grep-2.6]
 
+** New features
+
+  'grep' without -z now treats a sparse file as binary, if it can
+  easily determine that the file is sparse.
+
 ** Dropped features
 
   Bootstrapping with Makefile.boot has been broken since grep 2.6,
@@ -44,7 +49,6 @@ GNU grep NEWS                                    -*- outline -*-
   line; this can be overridden with --devices.  -R acts as before, so
   use -R if you prefer the old behavior of following all symlinks and
   defaulting to reading all devices.
-
 
 * Noteworthy changes in release 2.11 (2012-03-02) [stable]
 
