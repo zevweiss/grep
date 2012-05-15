@@ -13,16 +13,8 @@ fi
 
 # Create a file that starts with at least a buffer's worth of text,
 # but has a big hole later.
-ten='1 2 3 4 5 6 7 8 9 10'
-x='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-(for i in $ten; do
-   for j in $ten; do
-     for k in $ten; do
-       echo $x
-     done
-   done
- done
- echo x | dd bs=1024k seek=8000000
+(${AWK-awk} 'BEGIN{ for (i=0;i<1000;i++) printf "%080d\n", 0 }' < /dev/null
+  echo x | dd bs=1024k seek=8000000
 ) >8T-or-so || skip_ 'cannot create big sparse file'
 
 grep --binary-file=without-match x 8T-or-so >/dev/null

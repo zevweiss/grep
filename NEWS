@@ -19,6 +19,7 @@ GNU grep NEWS                                    -*- outline -*-
   Bootstrapping with Makefile.boot has been broken since grep 2.6,
   and was removed.
 
+
 * Noteworthy changes in release 2.12 (2012-04-23) [stable]
 
 ** Bug fixes
@@ -49,6 +50,7 @@ GNU grep NEWS                                    -*- outline -*-
   line; this can be overridden with --devices.  -R acts as before, so
   use -R if you prefer the old behavior of following all symlinks and
   defaulting to reading all devices.
+
 
 * Noteworthy changes in release 2.11 (2012-03-02) [stable]
 
