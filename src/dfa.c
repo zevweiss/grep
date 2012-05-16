@@ -1630,7 +1630,7 @@ add_utf8_anychar (void)
   static const charclass utf8_classes[5] = {
     {0, 0, 0, 0, ~0, ~0, 0, 0}, /* 80-bf: non-lead bytes */
     {~0, ~0, ~0, ~0, 0, 0, 0, 0},       /* 00-7f: 1-byte sequence */
-    {0, 0, 0, 0, 0, 0, 0xfffffffcU, 0}, /* c2-df: 2-byte sequence */
+    {0, 0, 0, 0, 0, 0, ~3, 0},          /* c2-df: 2-byte sequence */
     {0, 0, 0, 0, 0, 0, 0, 0xffff},      /* e0-ef: 3-byte sequence */
     {0, 0, 0, 0, 0, 0, 0, 0xff0000}     /* f0-f7: 4-byte sequence */
   };
