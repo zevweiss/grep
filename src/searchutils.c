@@ -53,25 +53,38 @@ kwsinit (kwset_t *kwset)
    Note that while this function returns a pointer to malloc'd storage,
    the caller must not free it, since this function retains a pointer
    to the buffer and reuses it on any subsequent call.  As a consequence,
-   this function is not thread-safe.  */
+   this function is not thread-safe.
+
+   When the lowercase result string has the same length as the input string,
+   set *LEN_MAP_P to NULL.  Otherwise, set it to a malloc'd buffer (like the
+   returned buffer, this must not be freed by caller) of the same length as
+   the result string.  (*LEN_MAP_P)[J] is one less than the length-in-bytes
+   of the character in BEG that formed byte J of the result.  This map is
+   used by the caller to convert offset,length pairs that reference the
+   lowercase result to numbers that refer to the corresponding parts of
+   the original buffer.  */
 char *
-mbtolower (const char *beg, size_t *n)
+mbtolower (const char *beg, size_t *n, unsigned char **len_map_p)
 {
   static char *out;
+  static unsigned char *len_map;
   static size_t outalloc;
   size_t outlen, mb_cur_max;
   mbstate_t is, os;
   const char *end;
   char *p;
+  unsigned char *m;
 
   if (*n > outalloc || outalloc == 0)
     {
       outalloc = MAX(1, *n);
       out = xrealloc (out, outalloc);
+      len_map = xrealloc (len_map, outalloc);
     }
 
   /* appease clang-2.6 */
   assert (out);
+  assert (len_map);
   if (*n == 0)
     return out;
 
@@ -81,6 +94,7 @@ mbtolower (const char *beg, size_t *n)
 
   mb_cur_max = MB_CUR_MAX;
   p = out;
+  m = len_map;
   outlen = 0;
   while (beg < end)
     {
@@ -88,14 +102,18 @@ mbtolower (const char *beg, size_t *n)
       size_t mbclen = mbrtowc(&wc, beg, end - beg, &is);
       if (outlen + mb_cur_max >= outalloc)
         {
+          size_t dm = m - len_map;
           out = x2nrealloc (out, &outalloc, 1);
+          len_map = xrealloc (len_map, outalloc);
           p = out + outlen;
+          m = len_map + dm;
         }
 
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
         {
           /* An invalid sequence, or a truncated multi-octet character.
              We treat it as a single-octet character.  */
+          *m++ = 0;
           *p++ = *beg++;
           outlen++;
           memset (&is, 0, sizeof (is));
@@ -103,6 +121,7 @@ mbtolower (const char *beg, size_t *n)
         }
       else
         {
+          *m++ = mbclen - 1;
           beg += mbclen;
           mbclen = wcrtomb (p, towlower ((wint_t) wc), &os);
           p += mbclen;
@@ -110,6 +129,8 @@ mbtolower (const char *beg, size_t *n)
         }
     }
 
+  /* If the new length differs from the original, give caller the map.  */
+  *len_map_p = p - out == *n ? NULL : len_map;
   *n = p - out;
   *p = 0;
   return out;

@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -i, in a multi-byte locale, when matching a line containing a character
+  like the UTF-8 Turkish I-with-dot (U+0130) (whose lower-case representation
+  occupies fewer bytes), would print an incomplete output line.
+  [bug introduced in grep-2.6]
+
   --include and --exclude can again be combined, and again apply to
   the command line, e.g., "grep --include='*.[ch]' --exclude='system.h'
   PATTERN *" again reads all *.c and *.h files except for system.h.

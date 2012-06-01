@@ -32,7 +32,6 @@ XFAIL_TESTS = \
 if USE_INCLUDED_REGEX
 XFAIL_TESTS += equiv-classes
 endif
-XFAIL_TESTS += turkish-I
 
 TESTS =						\
   backref					\

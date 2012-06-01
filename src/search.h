@@ -38,7 +38,7 @@
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
 
-extern char *mbtolower (const char *, size_t *);
+extern char *mbtolower (const char *, size_t *, unsigned char **);
 extern bool is_mb_middle (const char **, const char *, const char *, size_t);
 
 /* dfasearch.c */
@@ -52,5 +52,24 @@ extern size_t Fexecute (char const *, size_t, size_t *, char const *);
 /* pcresearch.c */
 extern void Pcompile (char const *, size_t);
 extern size_t Pexecute (char const *, size_t, size_t *, char const *);
+
+/* Apply a non-NULL MAP from mbtolower to the lowercase-buffer-relative
+   *OFF and *LEN, converting them to be relative to the original buffer.  */
+static inline void
+mb_case_map_apply (unsigned char const *map, size_t *off, size_t *len)
+{
+  if (map)
+    {
+      size_t off_incr = 0;
+      size_t len_incr = 0;
+      size_t k;
+      for (k = 0; k < *off; k++)
+        off_incr += map[k];
+      for (k = *off; k < *off + *len; k++)
+        len_incr += map[k];
+      *off += off_incr;
+      *len += len_incr;
+    }
+}
 
 #endif /* GREP_SEARCH_H */

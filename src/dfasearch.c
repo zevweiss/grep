@@ -78,8 +78,9 @@ static char const *
 kwsincr_case (const char *must)
 {
   size_t n = strlen (must);
+  unsigned char *map = NULL;
   const char *buf = (match_icase && MB_CUR_MAX > 1
-                     ? mbtolower (must, &n)
+                     ? mbtolower (must, &n, &map)
                      : must);
   return kwsincr (kwset, buf, n);
 }
@@ -217,13 +218,15 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   ptrdiff_t len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
+  unsigned char *map = NULL;
+
   if (MB_CUR_MAX > 1)
     {
       if (match_icase)
         {
           /* mbtolower adds a NUL byte at the end.  That will provide
              space for the sentinel byte dfaexec may add.  */
-          char *case_buf = mbtolower (buf, &size);
+          char *case_buf = mbtolower (buf, &size, &map);
           if (start_ptr)
             start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;
@@ -408,9 +411,11 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 
  success:
   len = end - beg;
- success_in_len:
+ success_in_len:;
+  size_t off = beg - buf;
+  mb_case_map_apply (map, &off, &len);
   *match_size = len;
-  ret_val = beg - buf;
+  ret_val = off;
  out:
   return ret_val;
 }
