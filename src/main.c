@@ -601,7 +601,7 @@ reset (int fd, struct stat const *st)
 static int
 fillbuf (size_t save, struct stat const *st)
 {
-  size_t fillsize = 0;
+  ssize_t fillsize;
   int cc = 1;
   char *readbuf;
   size_t readsize;
@@ -662,18 +662,9 @@ fillbuf (size_t save, struct stat const *st)
   readsize = buffer + bufalloc - readbuf;
   readsize -= readsize % pagesize;
 
-  if (! fillsize)
-    {
-      ssize_t bytesread;
-      while ((bytesread = read (bufdesc, readbuf, readsize)) < 0
-             && errno == EINTR)
-        continue;
-      if (bytesread < 0)
-        cc = 0;
-      else
-        fillsize = bytesread;
-    }
-
+  fillsize = read (bufdesc, readbuf, readsize);
+  if (fillsize < 0)
+    fillsize = cc = 0;
   bufoffset += fillsize;
 #if defined HAVE_DOS_FILE_CONTENTS
   if (fillsize)
