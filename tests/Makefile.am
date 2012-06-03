@@ -47,6 +47,7 @@ TESTS =						\
   case-fold-char-range				\
   case-fold-char-type				\
   char-class-multibyte				\
+  dfa-coverage					\
   dfa-heap-overrun				\
   dfaexec-multibyte				\
   empty						\
