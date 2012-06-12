@@ -55,7 +55,8 @@ kwsinit (kwset_t *kwset)
    to the buffer and reuses it on any subsequent call.  As a consequence,
    this function is not thread-safe.
 
-   When the lowercase result string has the same length as the input string,
+   When all the characters in the lowercase result string have the
+   same length as corresponding characters in the input string,
    set *LEN_MAP_P to NULL.  Otherwise, set it to a malloc'd buffer (like the
    returned buffer, this must not be freed by caller) of the same length as
    the result string.  (*LEN_MAP_P)[J] is one less than the length-in-bytes
@@ -74,6 +75,7 @@ mbtolower (const char *beg, size_t *n, unsigned char **len_map_p)
   const char *end;
   char *p;
   unsigned char *m;
+  bool lengths_differ = false;
 
   if (*n > outalloc || outalloc == 0)
     {
@@ -99,7 +101,7 @@ mbtolower (const char *beg, size_t *n, unsigned char **len_map_p)
   while (beg < end)
     {
       wchar_t wc;
-      size_t mbclen = mbrtowc(&wc, beg, end - beg, &is);
+      size_t mbclen = mbrtowc (&wc, beg, end - beg, &is);
       if (outlen + mb_cur_max >= outalloc)
         {
           size_t dm = m - len_map;
@@ -123,14 +125,14 @@ mbtolower (const char *beg, size_t *n, unsigned char **len_map_p)
         {
           *m++ = mbclen - 1;
           beg += mbclen;
-          mbclen = wcrtomb (p, towlower ((wint_t) wc), &os);
-          p += mbclen;
-          outlen += mbclen;
+          size_t ombclen = wcrtomb (p, towlower ((wint_t) wc), &os);
+          p += ombclen;
+          outlen += ombclen;
+          lengths_differ |= (mbclen != ombclen);
         }
     }
 
-  /* If the new length differs from the original, give caller the map.  */
-  *len_map_p = p - out == *n ? NULL : len_map;
+  *len_map_p = lengths_differ ? len_map : NULL;
   *n = p - out;
   *p = 0;
   return out;
