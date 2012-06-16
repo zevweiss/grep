@@ -78,7 +78,7 @@ static char const *
 kwsincr_case (const char *must)
 {
   size_t n = strlen (must);
-  unsigned char *map = NULL;
+  mb_len_map_t *map = NULL;
   const char *buf = (match_icase && MB_CUR_MAX > 1
                      ? mbtolower (must, &n, &map)
                      : must);
@@ -218,7 +218,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   ptrdiff_t len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
-  unsigned char *map = NULL;
+  mb_len_map_t *map = NULL;
 
   if (MB_CUR_MAX > 1)
     {

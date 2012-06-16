@@ -86,6 +86,7 @@ TESTS =						\
   status					\
   symlink					\
   turkish-I					\
+  turkish-I-without-dot				\
   warn-char-classes				\
   word-delim-multibyte				\
   word-multi-file				\

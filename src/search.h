@@ -22,6 +22,7 @@
 #include <config.h>
 
 #include <sys/types.h>
+#include <stdint.h>
 
 #include "mbsupport.h"
 
@@ -35,10 +36,16 @@
 #include "kwset.h"
 #include "xalloc.h"
 
+/* This must be a signed type.  Each value is the difference in the size
+   of a character (in bytes) induced by converting to lower case.
+   The vast majority of values are 0, but a few are 1 or -1, so
+   technically, two bits may be sufficient.  */
+typedef signed char mb_len_map_t;
+
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
 
-extern char *mbtolower (const char *, size_t *, unsigned char **);
+extern char *mbtolower (const char *, size_t *, mb_len_map_t **);
 extern bool is_mb_middle (const char **, const char *, const char *, size_t);
 
 /* dfasearch.c */
@@ -53,15 +60,15 @@ extern size_t Fexecute (char const *, size_t, size_t *, char const *);
 extern void Pcompile (char const *, size_t);
 extern size_t Pexecute (char const *, size_t, size_t *, char const *);
 
-/* Apply a non-NULL MAP from mbtolower to the lowercase-buffer-relative
+/* Apply the MAP (created by mbtolower) to the lowercase-buffer-relative
    *OFF and *LEN, converting them to be relative to the original buffer.  */
 static inline void
-mb_case_map_apply (unsigned char const *map, size_t *off, size_t *len)
+mb_case_map_apply (mb_len_map_t const *map, size_t *off, size_t *len)
 {
   if (map)
     {
-      size_t off_incr = 0;
-      size_t len_incr = 0;
+      intmax_t off_incr = 0;
+      intmax_t len_incr = 0;
       size_t k;
       for (k = 0; k < *off; k++)
         off_incr += map[k];

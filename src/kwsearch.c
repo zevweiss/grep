@@ -34,7 +34,7 @@ Fcompile (char const *pattern, size_t size)
 {
   char const *err;
   size_t psize = size;
-  unsigned char *map = NULL;
+  mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
                      ? mbtolower (pattern, &psize, &map)
                      : pattern);
@@ -84,7 +84,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
-  unsigned char *map = NULL;
+  mb_len_map_t *map = NULL;
 
   if (MB_CUR_MAX > 1)
     {

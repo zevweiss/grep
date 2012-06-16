@@ -7,6 +7,9 @@ GNU grep NEWS                                    -*- outline -*-
   grep -i, in a multi-byte locale, when matching a line containing a character
   like the UTF-8 Turkish I-with-dot (U+0130) (whose lower-case representation
   occupies fewer bytes), would print an incomplete output line.
+  Similarly, with a matched line containing a character (e.g., the Latin
+  capital I in a Turkish UTF-8 locale), where the lower-case representation
+  occupies more bytes, grep could print garbage.
   [bug introduced in grep-2.6]
 
   --include and --exclude can again be combined, and again apply to
