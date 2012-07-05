@@ -1,0 +1,7 @@
+# This file is expected to be used via gitlog-to-changelog's --amend=FILE
+# option.  It specifies what changes to make to each given SHA1's commit
+# log and metadata, using Perl-eval'able expressions.
+
+074842d3e3054714a495252e582886f0e4ace4e4
+# Correct spelling of name:
+s/Mercer/Meixner/
