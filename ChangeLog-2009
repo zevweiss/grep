@@ -1840,7 +1840,7 @@
 2000-05-16  Paul Eggert
 
         Problem reported by Bob Proulx <rwp@hprwp.fc.hp.com>, this patch
-        is base on his finding, with appropiate corrections.
+        is base on his finding, with appropriate corrections.
 
         * src/grep.c (main): Fix bug: -x and -w matched even when no
         patterns were specified.
@@ -2785,7 +2785,7 @@
 
         * djgpp/config.bat: Make building from another directory work
 
-        * djgpp/config.sed: Remove redundant command wich edited path
+        * djgpp/config.sed: Remove redundant command that edited path
         separator: now done by configure.
 
         * src/grep.c [O_BINARY]: Add prototype for undossify_input.
