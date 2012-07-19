@@ -215,7 +215,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   int backref;
   regoff_t start;
-  ptrdiff_t len, best_len;
+  size_t len, best_len;
   struct kwsmatch kwsm;
   size_t i, ret_val;
   mb_len_map_t *map = NULL;
@@ -343,6 +343,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               if (match_words)
                 while (match <= best_match)
                   {
+                    regoff_t shorter_len = 0;
                     if ((match == buf || !WCHAR ((unsigned char) match[-1]))
                         && (start + len == end - buf - 1
                             || !WCHAR ((unsigned char) match[len])))
@@ -352,13 +353,16 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                         /* Try a shorter length anchored at the same place. */
                         --len;
                         patterns[i].regexbuf.not_eol = 1;
-                        len = re_match (&(patterns[i].regexbuf),
-                                        buf, match + len - beg, match - buf,
-                                        &(patterns[i].regs));
-                        if (len < -1)
+                        shorter_len = re_match (&(patterns[i].regexbuf),
+                                                buf, match + len - beg,
+                                                match - buf,
+                                                &(patterns[i].regs));
+                        if (shorter_len < -1)
                           xalloc_die ();
                       }
-                    if (len <= 0)
+                    if (0 < shorter_len)
+                      len = shorter_len;
+                    else
                       {
                         /* Try looking further on. */
                         if (match == end - 1)
