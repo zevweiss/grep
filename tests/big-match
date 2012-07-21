@@ -19,7 +19,8 @@ for pattern in '^.*' '^.*x\(\)\1'; do
     0,*) ;;
     2,*': line too long for re_search')
        skip_diagnostic='regular expression library cannot handle the test' ;;
-    2,*': memory exhausted')
+    137,''|2,*': memory exhausted')
+       # The 137/no-diagnostic arises when the kernel OOM-kills grep.
        skip_diagnostic='not enough main memory to run the test' ;;
     *) fail=1 ;;
   esac
