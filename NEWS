@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  'grep' no longer falsely reports tiny text files as being binary
+  on file systems that store tiny files' contents in metadata.
+
 
 * Noteworthy changes in release 2.13 (2012-07-04) [stable]
 

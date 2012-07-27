@@ -476,11 +476,18 @@ file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
          represent its data, then it must have at least one hole.  */
       if (HAVE_STRUCT_STAT_ST_BLOCKS)
         {
-          off_t nonzeros_needed = st->st_size - cur + bufsize;
-          off_t full_blocks = nonzeros_needed / ST_NBLOCKSIZE;
-          int partial_block = 0 < nonzeros_needed % ST_NBLOCKSIZE;
-          if (ST_NBLOCKS (*st) < full_blocks + partial_block)
-            return 1;
+          /* Some servers store tiny files using zero blocks, so skip
+             this check at apparent EOF, to avoid falsely reporting
+             that a tiny zero-block file is binary.  */
+          off_t not_yet_read = st->st_size - cur;
+          if (0 < not_yet_read)
+            {
+              off_t nonzeros_needed = not_yet_read + bufsize;
+              off_t full_blocks = nonzeros_needed / ST_NBLOCKSIZE;
+              int partial_block = 0 < nonzeros_needed % ST_NBLOCKSIZE;
+              if (ST_NBLOCKS (*st) < full_blocks + partial_block)
+                return 1;
+            }
         }
 
       /* Look for a hole after the current location.  */
