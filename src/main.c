@@ -44,7 +44,6 @@
 #include "progname.h"
 #include "propername.h"
 #include "quote.h"
-#include "stat-size.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
