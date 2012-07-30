@@ -1200,8 +1200,10 @@ grep (int fd, struct stat const *st)
          the buffer, 0 means there is no incomplete last line).  */
       oldc = beg[-1];
       beg[-1] = eol;
-      for (lim = buflim; lim[-1] != eol; lim--)
-        continue;
+      /* FIXME: use rawmemrchr if/when it exists, since we have ensured
+         that this use of memrchr is guaranteed never to return NULL.  */
+      lim = memrchr (beg - 1, eol, buflim - beg + 1);
+      ++lim;
       beg[-1] = oldc;
       if (lim == beg)
         lim = beg - residue;
