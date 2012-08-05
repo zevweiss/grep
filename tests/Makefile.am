@@ -69,6 +69,7 @@ TESTS =						\
   inconsistent-range                            \
   khadafy					\
   max-count-vs-context				\
+  empty-line-mb					\
   unibyte-bracket-expr				\
   high-bit-range				\
   options					\
