@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -i '^$' could exit 0 (i.e., report a match) in a multi-byte locale,
+  even though there was no match, and the command generated no output.
+  E.g., seq 2 | LC_ALL=en_US.utf8 grep -il '^$' would mistakenly print
+  "(standard input)".  Related, seq 9 | LC_ALL=en_US.utf8 grep -in '^$'
+  would print "2:4:6:8:10:12:14:16" and exit 0.  Now it prints nothing
+  and exits with status of 1.  [bug introduced in grep-2.6]
+
   'grep' no longer falsely reports text files as being binary on file
   systems that compress contents or that store tiny contents in metadata.
 

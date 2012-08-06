@@ -277,7 +277,9 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               /* No good fixed strings; start with DFA. */
               char const *next_beg = dfaexec (dfa, beg, (char *) buflim,
                                               0, NULL, &backref);
-              if (next_beg == NULL)
+              /* If there's no match, or if we've matched the sentinel,
+                 we're done.  */
+              if (next_beg == NULL || next_beg == buflim)
                 break;
               /* Narrow down to the line we've found. */
               beg = next_beg;
