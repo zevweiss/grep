@@ -412,8 +412,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
     } /* for (beg = end ..) */
 
  failure:
-  ret_val = -1;
-  goto out;
+  return -1;
 
  success:
   len = end - beg;
@@ -422,6 +421,5 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   mb_case_map_apply (map, &off, &len);
   *match_size = len;
   ret_val = off;
- out:
   return ret_val;
 }

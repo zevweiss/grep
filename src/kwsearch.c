@@ -154,8 +154,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
     } /* for (beg in buf) */
 
  failure:
-  ret_val = -1;
-  goto out;
+  return -1;
 
  success:
   if ((end = memchr (beg + len, eol, (buf + size) - (beg + len))) != NULL)
@@ -171,6 +170,5 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
 
   *match_size = len;
   ret_val = off;
- out:
   return ret_val;
 }
