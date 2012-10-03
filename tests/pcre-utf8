@@ -1,7 +1,7 @@
 #! /bin/sh
 # Ensure that, with -P, Unicode \p{} symbols are correctly matched.
 #
-# Copyright (C) 2001, 2006, 2009-2012 Free Software Foundation, Inc.
+# Copyright (C) 2012 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -13,21 +13,22 @@ require_en_utf8_locale_
 
 fail=0
 
-echo '$' | LC_ALL=en_US.UTF-8 grep -qP '\p{S}' || exit 77
+echo '$' | LC_ALL=en_US.UTF-8 grep -qP '\p{S}' \
+  || skip_ 'PCRE support is compiled out, or it does not support properties'
 
 euro='\xe2\x82\xac euro'
 printf "$euro\\n" > in || framework_failure_
 
 LC_ALL=en_US.UTF-8 grep -P '^\p{S}' in > out || fail=1
-compare out in || fail=1
+compare in out || fail=1
 
 LC_ALL=en_US.UTF-8 grep -P '^. euro$' in > out2 || fail=1
-compare out2 in || fail=1
+compare in out2 || fail=1
 
 LC_ALL=en_US.UTF-8 grep -oP '. euro' in > out3 || fail=1
-compare out3 in || fail=1
+compare in out3 || fail=1
 
 LC_ALL=en_US.UTF-8 grep -P '^\P{S}' in > out4
-compare out4 /dev/null || fail=1
+compare /dev/null out4 || fail=1
 
 Exit $fail

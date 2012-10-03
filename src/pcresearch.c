@@ -29,6 +29,8 @@
 # include <langinfo.h>
 #endif
 
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 #if HAVE_LIBPCRE
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;
@@ -55,7 +57,7 @@ Pcompile (char const *pattern, size_t size)
   char const *pnul;
 
 #if defined HAVE_LANGINFO_CODESET
-  if (!strcmp(nl_langinfo(CODESET), "UTF-8"))
+  if (STREQ (nl_langinfo (CODESET), "UTF-8"))
     flags |= PCRE_UTF8;
 #endif
 
