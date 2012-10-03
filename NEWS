@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  While multi-byte mode is only supported by PCRE with UTF-8 locales,
+  grep did not activate it.  This can cause failures to match multibyte
+  characters against some regular expressions, especially those including
+  the '.' or '\p' metacharacters.
 
 * Noteworthy changes in release 2.14 (2012-08-20) [stable]
 

@@ -25,6 +25,9 @@
 #elif HAVE_PCRE_PCRE_H
 # include <pcre/pcre.h>
 #endif
+#if HAVE_LANGINFO_CODESET
+# include <langinfo.h>
+#endif
 
 #if HAVE_LIBPCRE
 /* Compiled internal form of a Perl regular expression.  */
@@ -50,6 +53,11 @@ Pcompile (char const *pattern, size_t size)
   char *n = re;
   char const *p;
   char const *pnul;
+
+#if defined HAVE_LANGINFO_CODESET
+  if (!strcmp(nl_langinfo(CODESET), "UTF-8"))
+    flags |= PCRE_UTF8;
+#endif
 
   /* FIXME: Remove these restrictions.  */
   if (memchr(pattern, '\n', size))
