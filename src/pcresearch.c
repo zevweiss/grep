@@ -29,8 +29,6 @@
 # include <langinfo.h>
 #endif
 
-#define STREQ(a, b) (strcmp (a, b) == 0)
-
 #if HAVE_LIBPCRE
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;

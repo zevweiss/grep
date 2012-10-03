@@ -52,4 +52,7 @@ enum { EXIT_TROUBLE = 2 };
 #endif
 
 #include "unlocked-io.h"
+
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 #endif

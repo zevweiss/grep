@@ -52,8 +52,6 @@
 #define SEP_CHAR_REJECTED '-'
 #define SEP_STR_GROUP    "--"
 
-#define STREQ(a, b) (strcmp (a, b) == 0)
-
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
   _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
