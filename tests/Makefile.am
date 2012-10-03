@@ -75,6 +75,7 @@ TESTS =						\
   options					\
   pcre						\
   pcre-abort					\
+  pcre-utf8					\
   pcre-z					\
   prefix-of-multibyte				\
   r-dot						\
