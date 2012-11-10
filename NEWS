@@ -9,6 +9,13 @@ GNU grep NEWS                                    -*- outline -*-
   to match multibyte characters against some regular expressions, especially
   those including the '.' or '\p' metacharacters.
 
+** New features
+
+  grep -P can now use a just-in-time compiler to greatly speed up matches,
+  This feature is transparent to the user; no flag is required to enable
+  it.  It is only available if the corresponding support in the PCRE
+  library is detected when grep is compiled.
+
 
 * Noteworthy changes in release 2.14 (2012-08-20) [stable]
 
