@@ -66,7 +66,7 @@ Pcompile (char const *pattern, size_t size)
 #endif
 
   /* FIXME: Remove these restrictions.  */
-  if (memchr(pattern, '\n', size))
+  if (memchr (pattern, '\n', size))
     error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
 
   *n = '\0';
@@ -112,18 +112,18 @@ Pcompile (char const *pattern, size_t size)
     error (EXIT_TROUBLE, 0, "%s", ep);
 
 #if PCRE_STUDY_JIT_COMPILE
-  if (pcre_fullinfo(cre, extra, PCRE_INFO_JIT, &e))
-    error (EXIT_TROUBLE, 0, "Internal error (should never happen).");
+  if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
+    error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
   if (e)
     {
       /* A 32K stack is allocated for the machine code by default, which
          can grow to 512K if necessary. Since JIT uses far less memory
-         than the interpreter, this should be enough in practice. */
+         than the interpreter, this should be enough in practice.  */
       jit_stack = pcre_jit_stack_alloc (32 * 1024, 512 * 1024);
       if (!jit_stack)
-        error (EXIT_TROUBLE, 0, "Cannot allocate memory for the JIT stack.");
-      pcre_assign_jit_stack(extra, NULL, jit_stack);
+        error (EXIT_TROUBLE, 0, _("cannot allocate memory for the JIT stack"));
+      pcre_assign_jit_stack (extra, NULL, jit_stack);
     }
   free (re);
 #endif
