@@ -1860,6 +1860,7 @@ main (int argc, char **argv)
   size_t cc;
   int opt, status, prepended;
   int prev_optind, last_recursive;
+  int fread_errno;
   intmax_t default_context;
   FILE *fp;
   exit_failure = EXIT_TROUBLE;
@@ -2009,13 +2010,15 @@ main (int argc, char **argv)
           ;
         keys = xrealloc (keys, keyalloc);
         oldcc = keycc;
-        while (!feof (fp)
-               && (cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) > 0)
+        while ((cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) != 0)
           {
             keycc += cc;
             if (keycc == keyalloc - 1)
               keys = x2nrealloc (keys, &keyalloc, sizeof *keys);
           }
+        fread_errno = errno;
+        if (ferror (fp))
+          error (EXIT_TROUBLE, fread_errno, "%s", optarg);
         if (fp != stdin)
           fclose (fp);
         /* Append final newline if file ended in non-newline. */

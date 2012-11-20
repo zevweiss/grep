@@ -24,8 +24,7 @@ LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
 # Remove this definition once the failing test passes.
 XFAIL_TESTS = \
-  word-delim-multibyte \
-  grep-dir
+  word-delim-multibyte
 
 # Equivalence classes are only supported when using the system
 # matcher (which means only with glibc).
