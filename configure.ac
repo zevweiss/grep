@@ -195,7 +195,7 @@ AC_FUNC_CLOSEDIR_VOID
 AC_CHECK_FUNCS_ONCE(isascii setlocale)
 
 dnl I18N feature
-AM_GNU_GETTEXT_VERSION([0.18])
+AM_GNU_GETTEXT_VERSION([0.18.2])
 AM_GNU_GETTEXT([external])
 
 dnl Some installers want to be informed if we do not use our regex.
