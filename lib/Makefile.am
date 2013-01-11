@@ -27,8 +27,6 @@ noinst_LIBRARIES =
 
 include gnulib.mk
 
-INCLUDES = -I.. -I$(srcdir)
-
 AM_CFLAGS += $(GNULIB_WARN_CFLAGS) $(WERROR_CFLAGS)
 
 libgreputils_a_SOURCES += \
