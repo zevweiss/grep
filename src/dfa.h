@@ -18,6 +18,9 @@
 
 /* Written June, 1988 by Mike Haertel */
 
+#include <regex.h>
+#include <stddef.h>
+
 /* Element of a list of strings, at least one of which is known to
    appear in any R.E. matching the DFA. */
 struct dfamust

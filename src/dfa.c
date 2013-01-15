@@ -21,6 +21,9 @@
    Modified July, 1988 by Arthur David Olson to assist BMG speedups  */
 
 #include <config.h>
+
+#include "dfa.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -55,8 +58,6 @@
 # include <langinfo.h>
 #endif
 
-#include "regex.h"
-#include "dfa.h"
 #include "xalloc.h"
 
 /* HPUX, define those as macros in sys/param.h */
