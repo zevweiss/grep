@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <sys/types.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
@@ -50,9 +50,12 @@
 #include "gettext.h"
 #define _(str) gettext (str)
 
-#include "mbsupport.h"          /* defines MBS_SUPPORT if appropriate */
-#include <wchar.h>
-#include <wctype.h>
+#include "mbsupport.h"          /* defines MBS_SUPPORT to 1 or 0, as appropriate */
+#if MBS_SUPPORT
+/* We can handle multibyte strings. */
+# include <wchar.h>
+# include <wctype.h>
+#endif
 
 #if HAVE_LANGINFO_CODESET
 # include <langinfo.h>
