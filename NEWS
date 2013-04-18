@@ -79,6 +79,8 @@ GNU grep NEWS                                    -*- outline -*-
   grep -E 'a{1000000000}' now reports an overflow error rather than
   silently acting like grep -E 'a\{1000000000}'.
 
+  grep -E 'a{,10}' was not treated equivalently to grep -E 'a{0,10}'.
+
 ** New features
 
   The -R option now has a long-option alias --dereference-recursive.

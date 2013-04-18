@@ -1180,6 +1180,7 @@ The preceding item is matched @var{n} or more times.
 @cindex braces, first argument omitted
 @cindex match expression at most @var{m} times
 The preceding item is matched at most @var{m} times.
+This is a GNU extension.
 
 @item @{@var{n},@var{m}@}
 @opindex @{@var{n},@var{m}@}
