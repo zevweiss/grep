@@ -111,11 +111,9 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
           mbstate_t s;
           memset (&s, 0, sizeof s);
           size_t mb_len = mbrlen (mb_start, (buf + size) - (beg + offset), &s);
-          if (mb_len == (size_t) -2)
+          if (mb_len == (size_t) -2 || mb_len == (size_t) -1)
             goto failure;
-          beg = mb_start;
-          if (mb_len != (size_t) -1)
-            beg += mb_len - 1;
+          beg = mb_start + mb_len - 1;
           continue;
         }
       beg += offset;

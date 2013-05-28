@@ -66,6 +66,7 @@ TESTS =						\
   in-eq-out-infloop                             \
   include-exclude				\
   inconsistent-range                            \
+  invalid-multibyte-infloop                     \
   khadafy					\
   max-count-vs-context				\
   empty-line-mb					\

@@ -1,0 +1,20 @@
+#!/bin/sh
+# Ensure that we don't trigger a grep -F infloop.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+require_en_utf8_locale_
+require_compiled_in_MB_support
+require_timeout_
+
+printf '\202' > search-str || framework_failure_
+cat search-str search-str > input || framework_failure_
+
+fail=0
+
+# Before 2.15, this would infloop.
+LC_ALL=en_US.UTF-8 timeout 3 grep -F -f search-str input > out
+test $? = 1 || fail=1
+test -s out && fail=1
+
+Exit $fail

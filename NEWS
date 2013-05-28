@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -F would get stuck in an infinite loop when given a search string
+  that is an invalid byte sequence in the current locale and that matches
+  the bytes of the input twice on a line.  Now grep fails with exit status 1.
+
   grep -P could misbehave.  While multi-byte mode is only supported by PCRE
   with UTF-8 locales, grep did not activate it.  This would cause failures
   to match multibyte characters against some regular expressions, especially
