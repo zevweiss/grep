@@ -51,7 +51,7 @@ TESTS =						\
   dfaexec-multibyte				\
   empty						\
   epipe						\
-  equiv-classes                                 \
+  equiv-classes					\
   ere						\
   euc-mb					\
   fedora					\
@@ -63,10 +63,10 @@ TESTS =						\
   grep-dir					\
   help-version					\
   ignore-mmap					\
-  in-eq-out-infloop                             \
+  in-eq-out-infloop				\
   include-exclude				\
-  inconsistent-range                            \
-  invalid-multibyte-infloop                     \
+  inconsistent-range				\
+  invalid-multibyte-infloop			\
   khadafy					\
   max-count-vs-context				\
   empty-line-mb					\
@@ -133,9 +133,9 @@ TESTS_ENVIRONMENT =				\
   fi;							\
 						\
   export_with_values				\
-  VERSION='$(VERSION)'                          \
-  LOCALE_FR='$(LOCALE_FR)'                      \
-  LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'            \
+  VERSION='$(VERSION)'				\
+  LOCALE_FR='$(LOCALE_FR)'			\
+  LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'		\
   AWK=$(AWK)					\
   GREP_OPTIONS=''				\
   LC_ALL=C					\
