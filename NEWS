@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -E would segfault when given a regexp like '([^.]*[M]){1,2}'
+  for any multibyte character M. [bug introduced in grep-2.6, which would
+  segfault, but 2.7 and 2.8 had no problem, and 2.9 through 2.14 would
+  hit a failed assertion. ]
+
   grep -F would get stuck in an infinite loop when given a search string
   that is an invalid byte sequence in the current locale and that matches
   the bytes of the input twice on a line.  Now grep fails with exit status 1.
