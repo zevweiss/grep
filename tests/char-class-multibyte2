@@ -5,13 +5,15 @@
 require_en_utf8_locale_
 require_compiled_in_MB_support
 
-printf 'é\n'      > exp1 || framework_failure_
+e_acute=$(printf '\303\251')
+printf "$e_acute\n" > exp || framework_failure_
 fail=0
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
-  out=out4-$LOC
-  printf 'á\nç\né\n' | LC_ALL=$LOC grep -E '([^.]*[é]){1,2}' > $out || fail=1
-  compare exp1 $out || fail=1
+  out=out-$LOC
+  printf "á\nç\n$e_acute\n" | LC_ALL=$LOC grep -E "([^.]*[$e_acute]){1,2}" \
+      > $out || fail=1
+  compare exp $out || fail=1
 done
 
 Exit $fail
