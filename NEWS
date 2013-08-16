@@ -4,6 +4,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -i would segfault on systems using UTF-16-based wchar_t (Cygwin)
+  when converting an input string containing certain 4-byte UTF-8
+  sequences to lower case.  The conversions to wchar_t and back to
+  a UTF-8 multibyte string did not take surrogate pairs into account.
+  [bug present since at least grep-2.6, though the segfault is new with 2.13]
+
   grep -E would segfault when given a regexp like '([^.]*[M]){1,2}'
   for any multibyte character M. [bug introduced in grep-2.6, which would
   segfault, but 2.7 and 2.8 had no problem, and 2.9 through 2.14 would

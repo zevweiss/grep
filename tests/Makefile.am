@@ -87,6 +87,7 @@ TESTS =						\
   spencer1					\
   spencer1-locale				\
   status					\
+  surrogate-pair				\
   symlink					\
   turkish-I					\
   turkish-I-without-dot				\

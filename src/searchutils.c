@@ -111,6 +111,37 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
     {
       wchar_t wc;
       size_t mbclen = mbrtowc (&wc, beg, end - beg, &is);
+#ifdef __CYGWIN__
+      /* Handle a UTF-8 sequence for a character beyond the base plane.
+         Cygwin's wchar_t is UTF-16, as in the underlying OS.  This
+         results in surrogate pairs which need some extra attention.  */
+      wint_t wci = 0;
+      if (mbclen == 3 && (wc & 0xdc00) == 0xd800)
+        {
+          /* We got the start of a 4 byte UTF-8 sequence.  This is returned
+             as a UTF-16 surrogate pair.  The first call to mbrtowc returned 3
+             and wc has been set to a high surrogate value, now we're going
+             to fetch the matching low surrogate.  This second call to mbrtowc
+             is supposed to return 1 to complete the 4 byte UTF-8 sequence.  */
+          wchar_t wc_2;
+          size_t mbclen_2 = mbrtowc (&wc_2, beg + mbclen, end - beg - mbclen,
+                                     &is);
+          if (mbclen_2 == 1 && (wc_2 & 0xdc00) == 0xdc00)
+            {
+              /* Match.  Convert this to a 4 byte wint_t which constitutes
+                 a 32-bit UTF-32 value.  */
+              wci = ( (((wint_t) (wc - 0xd800)) << 10)
+                     | ((wint_t) (wc_2 - 0xdc00)))
+                    + 0x10000;
+              ++mbclen;
+            }
+          else
+            {
+              /* Invalid UTF-8 sequence.  */
+              mbclen = (size_t) -1;
+            }
+        }
+#endif
       if (outlen + mb_cur_max >= outalloc)
         {
           size_t dm = m - len_map;
@@ -132,8 +163,35 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
         }
       else
         {
+          size_t ombclen;
           beg += mbclen;
-          size_t ombclen = wcrtomb (p, towlower ((wint_t) wc), &os);
+#ifdef __CYGWIN__
+          /* Handle Unicode characters beyond the base plane.  */
+          if (mbclen == 4)
+            {
+              /* towlower, taking wint_t (4 bytes), handles UCS-4 values.  */
+              wci = towlower (wci);
+              if (wci >= 0x10000)
+                {
+                  wci -= 0x10000;
+                  wc = (wci >> 10) | 0xd800;
+                  /* No need to check the return value.  When reading the
+                     high surrogate, the return value will be 0 and only the
+                     mbstate indicates that we're in the middle of reading a
+                     surrogate pair.  The next wcrtomb call reading the low
+                     surrogate will then return 4 and reset the mbstate.  */
+                  wcrtomb (p, wc, &os);
+                  wc = (wci & 0x3ff) | 0xdc00;
+                }
+              else
+                {
+                  wc = (wchar_t) wci;
+                }
+              ombclen = wcrtomb (p, wc, &os);
+            }
+          else
+#endif
+          ombclen = wcrtomb (p, towlower ((wint_t) wc), &os);
           *m = mbclen - ombclen;
           memset (m + 1, 0, ombclen - 1);
           m += ombclen;
