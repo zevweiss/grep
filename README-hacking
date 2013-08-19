@@ -38,6 +38,12 @@ which are extracted from other source packages:
 
         $ ./bootstrap
 
+To use the most-recent gnulib (as opposed to the gnulib version that
+the package last synchronized to), do this next:
+
+        $ git submodule foreach git pull origin master
+        $ git commit -m 'build: update gnulib submodule to latest' gnulib
+
 And there you are!  Just
 
         $ ./configure --quiet #[--enable-gcc-warnings] [*]
