@@ -1125,8 +1125,7 @@ parse_bracket_exp (void)
               regcomp (&re, pattern, REG_NOSUB);
               for (c = 0; c < NOTCHAR; ++c)
                 {
-                  if ((case_fold && isupper (c))
-                      || (MB_CUR_MAX > 1 && btowc (c) == WEOF))
+                  if ((case_fold && isupper (c)))
                     continue;
                   subject[0] = c;
                   if (regexec (&re, subject, 0, NULL, 0) != REG_NOMATCH)
