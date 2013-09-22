@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep's \s and \S failed to work with multi-byte white space characters.
+  For example, \s would fail to match a non-breaking space, and this
+  would print nothing: LC_ALL=en_US.utf8 printf '\xc2\xa0' | grep '\s'
+  A related bug is that \S would mistakenly match an invalid multibyte
+  character.  E.g. this would match: printf '\x82\n' | src/grep '^\S$'
+  [bug present since 2.6]
+
   grep -i would segfault on systems using UTF-16-based wchar_t (Cygwin)
   when converting an input string containing certain 4-byte UTF-8
   sequences to lower case.  The conversions to wchar_t and back to

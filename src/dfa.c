@@ -1435,14 +1435,45 @@ lex (void)
         case 'S':
           if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
             goto normal_char;
-          zeroset (ccl);
-          for (c2 = 0; c2 < NOTCHAR; ++c2)
-            if (isspace (c2))
-              setbit (c2, ccl);
-          if (c == 'S')
-            notset (ccl);
-          laststart = 0;
-          return lasttok = CSET + charclass_index (ccl);
+          if (MB_CUR_MAX == 1)
+            {
+              zeroset (ccl);
+              for (c2 = 0; c2 < NOTCHAR; ++c2)
+                if (isspace (c2))
+                  setbit (c2, ccl);
+              if (c == 'S')
+                notset (ccl);
+              laststart = 0;
+              return lasttok = CSET + charclass_index (ccl);
+            }
+
+#define PUSH_LEX_STATE(s)			\
+  do						\
+    {						\
+      char const *lexptr_saved = lexptr;	\
+      size_t lexleft_saved = lexleft;		\
+      lexptr = (s);				\
+      lexleft = strlen (lexptr)
+
+#define POP_LEX_STATE()				\
+      lexptr = lexptr_saved;			\
+      lexleft = lexleft_saved;			\
+    }						\
+  while (0)
+
+          /* FIXME: see if optimizing this, as is done with ANYCHAR and
+             add_utf8_anychar, makes sense.  */
+
+          /* \s and \S are documented to be equivalent to [[:space:]] and
+             [^[:space:]] respectively, so tell the lexer to process those
+             strings, each minus its "already processed" '['.  */
+          PUSH_LEX_STATE (c == 's' ? "[:space:]]" : "^[:space:]]");
+
+          lasttok = parse_bracket_exp ();
+
+          POP_LEX_STATE ();
+
+          return lasttok;
 
         case 'w':
         case 'W':

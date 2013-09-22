@@ -70,6 +70,7 @@ TESTS =						\
   invalid-multibyte-infloop			\
   khadafy					\
   max-count-vs-context				\
+  multibyte-white-space				\
   empty-line-mb					\
   unibyte-bracket-expr				\
   high-bit-range				\
