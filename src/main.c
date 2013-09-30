@@ -2187,7 +2187,7 @@ main (int argc, char **argv)
     color_option = isatty (STDOUT_FILENO) && should_colorize ();
   init_colorize ();
 
-  /* POSIX.2 says that -q overrides -l, which in turn overrides the
+  /* POSIX says that -q overrides -l, which in turn overrides the
      other output options.  */
   if (exit_on_match)
     list_files = 0;

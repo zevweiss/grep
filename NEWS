@@ -433,7 +433,7 @@ Version 2.5
     --color takes an optional argument specifying when to colorize a line:
       --color=always, --color=tty, --color=never
 
-  - The following changes are for POSIX.2 conformance:
+  - The following changes are for POSIX conformance:
 
     . The -q or --quiet or --silent option now causes grep to exit
       with zero status when a input line is selected, even if an error
@@ -450,7 +450,7 @@ Version 2.5
       environment variable to the value "C".
 
   - The -C or --context option now requires an argument, partly for
-    consistency, and partly because POSIX.2 recommends against
+    consistency, and partly because POSIX recommends against
     optional arguments.
 
   - The new -P or --perl-regexp option tells grep to interpret the pattern as

@@ -1,5 +1,5 @@
 #! /bin/sh
-# Test for POSIX.2 options for grep:
+# Test for POSIX options for grep:
 # grep -E -f pattern_file file
 # grep -F -f pattern_file file
 # grep -G -f pattern_file file

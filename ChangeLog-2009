@@ -1794,7 +1794,7 @@
 
         Problen noted by Gerald Stoller <gerald_stoller@hotmail.com>
 
-        * src/grep.c (main): POSIX.2 says that -q overrides -l, which
+        * src/grep.c (main): POSIX says that -q overrides -l, which
         in turn overrides the other output options.  Fix grep to
         behave that way.
 
@@ -1848,7 +1848,7 @@
 
 2000-04-24  Paul Eggert
 
-        POSIX.2 conformance fixes: grep -q now exits with status zero
+        POSIX conformance fixes: grep -q now exits with status zero
         if an input line is selected, even if an error also occurs.
         grep -s no longer affects exit status.
 
@@ -1862,10 +1862,10 @@
         (main): -q sets exit_on_match.
 
         * doc/grep.1, doc/grep.texi, NEWS:
-        Document -q's behavior as required by POSIX.2.
+        Document -q's behavior as required by POSIX.
 
         * tests/status.sh:
-        Test for -q and -s behavior as conforming to POSIX.2.
+        Test for -q and -s behavior as conforming to POSIX.
 
 2000-04-20  Paul Eggert
 
@@ -2435,7 +2435,7 @@
 
 1999-10-11  Paul Eggert
 
-        * doc/grep.texi: Fix texinfo glitches.  POSIX -> POSIX.2 where
+        * doc/grep.texi: Fix texinfo glitches.  POSIX -> POSIX where
         appropriate.
 
 1999-10-11  Paul Eggert
@@ -2568,7 +2568,7 @@
 
         * src/grep.c (grepdir):
         Don't assume that st_ino and st_dev must be integers;
-        POSIX.1 allows them to be floating-point (!).
+        POSIX allows them to be floating-point (!).
 
         * src/vms_fab.h (arr_ptr): ':' -> ';' to fix typo.
 
@@ -3095,7 +3095,7 @@
         #undef if defined.
         Fixed by Andreas Ley and Philippe Defert.
 
-        * src/grep.1 : mention that -s follows POSIX.2 behavior.
+        * src/grep.1 : mention that -s follows POSIX behavior.
         Noted by Paul Eggert and others.
 
         * tests/khadafy.sh: a typo in failure(s).

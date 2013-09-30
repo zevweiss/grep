@@ -1,5 +1,5 @@
 #! /bin/sh
-# Test for POSIX.2 options for grep
+# Test for POSIX options for grep
 #
 # Copyright (C) 2001, 2006, 2009-2013 Free Software Foundation, Inc.
 #
