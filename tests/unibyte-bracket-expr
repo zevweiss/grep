@@ -27,14 +27,17 @@ export LC_ALL
 
 fail=0
 
-for i in 8 9 a b c d e f; do
-  for j in 0 1 2 3 4 5 6 7 8 9 a b c d e f; do
-    in=in-$i$j
-    b=$(printf "\\x$i$j")
-    echo "$b" > $in || framework_failure_
-    grep "[$b]" $in > out || fail=1
-    compare out $in || fail=1
-  done
+i=128
+while :; do
+  in=in-$i
+  octal=$(printf '%03o' $i)
+  b=$(printf "\\$octal")
+  echo "$b" > $in || framework_failure_
+  grep "[$b]" $in > out || fail=1
+  compare out $in || fail=1
+
+  test $i = 255 && break
+  i=$(expr $i + 1)
 done
 
 Exit $fail

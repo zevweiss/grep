@@ -24,7 +24,7 @@ done
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out3-$LOC
-  printf '\xc3\n' | LC_ALL=$LOC grep '[é]' > $out
+  printf '\303\n' | LC_ALL=$LOC grep '[é]' > $out
   test $? = 1 || fail=1
 done
 
