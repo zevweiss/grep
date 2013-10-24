@@ -23,7 +23,7 @@ require_compiled_in_MB_support
 
 fail=0
 
-i='\xC4\xB0'
+i='\304\260'
 printf "$i$i$i$i$i$i$i\n" > in || framework_failure_
 
 LC_ALL=en_US.UTF-8 grep -i .... in > out || fail=1
