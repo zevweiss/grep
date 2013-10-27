@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-AUTOMAKE_OPTIONS = gnu 1.10
-ACLOCAL_AMFLAGS = -I m4
+AUTOMAKE_OPTIONS = gnu 1.12
 
 SUBDIRS = po lib doc src tests gnulib-tests
 
