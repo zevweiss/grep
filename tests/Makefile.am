@@ -36,6 +36,7 @@ TESTS =						\
   backref					\
   backref-multibyte-slow			\
   backref-word					\
+  backslash-s-and-repetition-operators		\
   backslash-s-vs-invalid-multitype		\
   big-hole					\
   big-match					\

@@ -1473,6 +1473,7 @@ lex (void)
 
           POP_LEX_STATE ();
 
+          laststart = 0;
           return lasttok;
 
         case 'w':

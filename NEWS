@@ -9,6 +9,11 @@ GNU grep NEWS                                    -*- outline -*-
   procedure resulted in a grep-2.15 tarball that would lead to a grep
   binary whose --version-reported version number was 2.14.51...
 
+  The fix to make \s and \S work with multi-byte white space broke
+  the use of each shortcut whenever followed by a repetition operator.
+  For example, \s*, \s+, \s? and \s{3} would all malfunction in a
+  multi-byte locale.  [bug introduced in grep-2.15]
+
 
 * Noteworthy changes in release 2.15 (2013-10-26) [stable]
 
