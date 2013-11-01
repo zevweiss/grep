@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Fix gnulib-provided maint.mk so that the release procedure described
+  in README-release actually does what we want.  Before that fix, that
+  procedure resulted in a grep-2.15 tarball that would lead to a grep
+  binary whose --version-reported version number was 2.14.51...
+
 
 * Noteworthy changes in release 2.15 (2013-10-26) [stable]
 
