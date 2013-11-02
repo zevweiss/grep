@@ -185,9 +185,20 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           error (EXIT_TROUBLE, 0,
                  _("exceeded PCRE's backtracking limit"));
 
+        case PCRE_ERROR_BADUTF8:
+          error (EXIT_TROUBLE, 0,
+                 _("invalid UTF-8 byte sequence in input"));
+
         default:
-          abort ();
+          /* For now, we lump all remaining PCRE failures into this basket.
+             If anyone cares to provide sample grep usage that can trigger
+             particular PCRE errors, we can add to the list (above) of more
+             detailed diagnostics.  */
+          error (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
         }
+
+      /* NOTREACHED */
+      return -1;
     }
   else
     {

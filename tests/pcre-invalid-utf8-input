@@ -1,0 +1,25 @@
+#! /bin/sh
+# Ensure that grep -P doesn't abort for invalid multi-byte input
+#
+# Copyright (C) 2013 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+require_pcre_
+require_en_utf8_locale_
+
+fail=0
+
+printf '\202\n' > in || framework_failure_
+printf 'grep: invalid UTF-8 byte sequence in input\n' \
+   > exp-err || framework_failure_
+
+LC_ALL=en_US.UTF-8 grep -P anything in > out 2> err
+test $? = 2 || fail=1
+compare /dev/null out || fail=1
+compare exp-err err || fail=1
+
+Exit $fail

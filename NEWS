@@ -14,6 +14,12 @@ GNU grep NEWS                                    -*- outline -*-
   For example, \s*, \s+, \s? and \s{3} would all malfunction in a
   multi-byte locale.  [bug introduced in grep-2.15]
 
+  The fix to make grep -P work better with UTF-8 made it possible for
+  grep to evoke a larger set of PCRE errors, some of which could trigger
+  an abort.  E.g., this would abort:
+    printf '\x82'|LC_ALL=en_US.UTF-8 grep -P y
+  Now grep handles arbitrary PCRE errors.  [bug introduced in grep-2.15]
+
 
 * Noteworthy changes in release 2.15 (2013-10-26) [stable]
 
