@@ -2248,8 +2248,7 @@ main (int argc, char **argv)
     {
       /* A copy must be made in case of an xrealloc() or free() later.  */
       keycc = strlen (argv[optind]);
-      keys = xmalloc (keycc + 1);
-      strcpy (keys, argv[optind++]);
+      keys = xmemdup (argv[optind++], keycc + 1);
     }
   else
     usage (EXIT_TROUBLE);
