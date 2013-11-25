@@ -33,7 +33,7 @@ U+000A Line feed:                 0a
 U+0085 Next line:                 85
 '
 
-utf8_space_characters=$(sed 's/.*://;s/ *\</\\x/g' <<\EOF
+utf8_space_characters=$(sed 's/.*://;s/  */\\x/g' <<\EOF
 U+0009 Horizontal Tab:            09
 U+000B Vertical Tab:              0b
 U+000C Form feed:                 0c
