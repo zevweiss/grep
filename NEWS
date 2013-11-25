@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Improvements
+
+  grep -i in a multibyte locale is now typically 10 times faster
+  for patterns that do not contain \ or [.
+
 
 * Noteworthy changes in release 2.16 (2014-01-01) [stable]
 

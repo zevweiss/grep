@@ -94,6 +94,7 @@ TESTS =						\
   status					\
   surrogate-pair				\
   symlink					\
+  turkish-eyes					\
   turkish-I					\
   turkish-I-without-dot				\
   warn-char-classes				\
