@@ -62,7 +62,11 @@ Pcompile (char const *pattern, size_t size)
 
 # if defined HAVE_LANGINFO_CODESET
   if (STREQ (nl_langinfo (CODESET), "UTF-8"))
-    flags |= PCRE_UTF8;
+    {
+      /* Enable PCRE's UTF-8 matching, but disable the check that would
+         make an invalid byte seqence *in the input* trigger a failure.   */
+      flags |= PCRE_UTF8 | PCRE_NO_UTF8_CHECK;
+    }
 # endif
 
   /* FIXME: Remove these restrictions.  */
