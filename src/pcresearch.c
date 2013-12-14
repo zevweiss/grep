@@ -126,8 +126,8 @@ Pcompile (char const *pattern, size_t size)
                _("failed to allocate memory for the PCRE JIT stack"));
       pcre_assign_jit_stack (extra, NULL, jit_stack);
     }
-  free (re);
 # endif
+  free (re);
 #endif /* HAVE_LIBPCRE */
 }
 
