@@ -71,6 +71,7 @@ TESTS =						\
   inconsistent-range				\
   invalid-multibyte-infloop			\
   khadafy					\
+  long-line-vs-2GiB-read			\
   max-count-vs-context				\
   multibyte-white-space				\
   empty-line-mb					\

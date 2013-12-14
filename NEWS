@@ -20,6 +20,8 @@ GNU grep NEWS                                    -*- outline -*-
     printf '\x82'|LC_ALL=en_US.UTF-8 grep -P y
   Now grep handles arbitrary PCRE errors.  [bug introduced in grep-2.15]
 
+  Handle very long lines (2GiB and longer) on systems with a deficient
+  read system call.
 
 * Noteworthy changes in release 2.15 (2013-10-26) [stable]
 

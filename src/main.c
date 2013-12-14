@@ -44,6 +44,7 @@
 #include "progname.h"
 #include "propername.h"
 #include "quote.h"
+#include "safe-read.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
@@ -641,7 +642,7 @@ fillbuf (size_t save, struct stat const *st)
   readsize = buffer + bufalloc - readbuf;
   readsize -= readsize % pagesize;
 
-  fillsize = read (bufdesc, readbuf, readsize);
+  fillsize = safe_read (bufdesc, readbuf, readsize);
   if (fillsize < 0)
     fillsize = cc = 0;
   bufoffset += fillsize;
