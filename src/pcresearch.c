@@ -36,11 +36,11 @@ static pcre *cre;
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
-#ifdef PCRE_STUDY_JIT_COMPILE
+# ifdef PCRE_STUDY_JIT_COMPILE
 static pcre_jit_stack *jit_stack;
-#else
-#define PCRE_STUDY_JIT_COMPILE 0
-#endif
+# else
+#  define PCRE_STUDY_JIT_COMPILE 0
+# endif
 #endif
 
 void
@@ -60,10 +60,10 @@ Pcompile (char const *pattern, size_t size)
   char const *p;
   char const *pnul;
 
-#if defined HAVE_LANGINFO_CODESET
+# if defined HAVE_LANGINFO_CODESET
   if (STREQ (nl_langinfo (CODESET), "UTF-8"))
     flags |= PCRE_UTF8;
-#endif
+# endif
 
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))
@@ -111,7 +111,7 @@ Pcompile (char const *pattern, size_t size)
   if (ep)
     error (EXIT_TROUBLE, 0, "%s", ep);
 
-#if PCRE_STUDY_JIT_COMPILE
+# if PCRE_STUDY_JIT_COMPILE
   if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
     error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
@@ -122,12 +122,13 @@ Pcompile (char const *pattern, size_t size)
          than the interpreter, this should be enough in practice.  */
       jit_stack = pcre_jit_stack_alloc (32 * 1024, 512 * 1024);
       if (!jit_stack)
-        error (EXIT_TROUBLE, 0, _("cannot allocate memory for the JIT stack"));
+        error (EXIT_TROUBLE, 0,
+               _("failed to allocate memory for the PCRE JIT stack"));
       pcre_assign_jit_stack (extra, NULL, jit_stack);
     }
   free (re);
-#endif
-#endif
+# endif
+#endif /* HAVE_LIBPCRE */
 }
 
 size_t
