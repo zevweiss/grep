@@ -933,7 +933,7 @@ prline (char const *beg, char const *lim, int sep)
   if ((only_matching && matching)
       || (color_option  && (*line_color || *match_color)))
     {
-      /* We already know that non-matching lines have no match (to colorize).  */
+      /* We already know that non-matching lines have no match (to colorize). */
       if (matching && (only_matching || *match_color))
         beg = print_line_middle (beg, lim, line_color, match_color);
 
@@ -1047,8 +1047,12 @@ prtext (char const *beg, char const *lim, intmax_t *nlinesp)
   used = 1;
 }
 
+/* Invoke the matcher, EXECUTE, on buffer BUF of SIZE bytes.  If there
+   is no match, return (size_t) -1.  Otherwise, set *MATCH_SIZE to the
+   length of the match and return the offset of the start of the match.  */
 static size_t
-do_execute (char const *buf, size_t size, size_t *match_size, char const *start_ptr)
+do_execute (char const *buf, size_t size, size_t *match_size,
+            char const *start_ptr)
 {
   size_t result;
   const char *line_next;
@@ -1071,7 +1075,8 @@ do_execute (char const *buf, size_t size, size_t *match_size, char const *start_
   for (line_next = buf; line_next < buf + size; )
     {
       const char *line_buf = line_next;
-      const char *line_end = memchr (line_buf, eolbyte, (buf + size) - line_buf);
+      const char *line_end = memchr (line_buf, eolbyte,
+                                     (buf + size) - line_buf);
       if (line_end == NULL)
         line_next = line_end = buf + size;
       else
@@ -1215,7 +1220,8 @@ grep (int fd, struct stat const *st)
             nlines += grepbuf (beg, lim);
           if (pending)
             prpending (lim);
-          if ((!outleft && !pending) || (nlines && done_on_match && !out_invert))
+          if ((!outleft && !pending)
+              || (nlines && done_on_match && !out_invert))
             goto finish_grep;
         }
 
