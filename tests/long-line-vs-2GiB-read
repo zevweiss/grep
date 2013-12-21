@@ -16,6 +16,9 @@ dd bs=$MiB seek=2048 of=big < /dev/null || framework_failure_
 echo x >> big || framework_failure_
 grep -l x big > out 2> err || fail=1
 
+# Not everyone has 2GB of memory free.
+grep '^grep: memory exhausted$' err && skip_ 'memory exhausted'
+
 compare exp out || fail=1
 compare /dev/null err || fail=1
 
