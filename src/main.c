@@ -937,9 +937,12 @@ prline (char const *beg, char const *lim, int sep)
       if (matching && (only_matching || *match_color))
         beg = print_line_middle (beg, lim, line_color, match_color);
 
-      /* FIXME: this test may be removable.  */
       if (!only_matching && *line_color)
-        beg = print_line_tail (beg, lim, line_color);
+        {
+          /* This code is exercised at least when grep is invoked like this:
+             echo k| GREP_COLORS='sl=01;32' src/grep k --color=always  */
+          beg = print_line_tail (beg, lim, line_color);
+        }
     }
 
   if (!only_matching && lim > beg)
