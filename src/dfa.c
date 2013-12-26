@@ -433,7 +433,7 @@ static void dfamust (struct dfa *dfa);
 static void regexp (void);
 
 /* These two macros are identical to the ones in gnulib's xalloc.h,
-   except that they not to case the result to "(t *)", and thus may
+   except that they do not cast the result to "(t *)", and thus may
    be used via type-free CALLOC and MALLOC macros.  */
 #undef XNMALLOC
 #undef XCALLOC
