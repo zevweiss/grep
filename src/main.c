@@ -931,7 +931,7 @@ prline (char const *beg, char const *lim, int sep)
     line_color = match_color = NULL; /* Shouldn't be used.  */
 
   if ((only_matching && matching)
-      || (color_option  && (*line_color || *match_color)))
+      || (color_option && (*line_color || *match_color)))
     {
       /* We already know that non-matching lines have no match (to colorize). */
       if (matching && (only_matching || *match_color))
