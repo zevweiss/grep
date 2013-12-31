@@ -63,9 +63,9 @@ Pcompile (char const *pattern, size_t size)
 # if defined HAVE_LANGINFO_CODESET
   if (STREQ (nl_langinfo (CODESET), "UTF-8"))
     {
-      /* Enable PCRE's UTF-8 matching, but disable the check that would
-         make an invalid byte seqence *in the input* trigger a failure.   */
-      flags |= PCRE_UTF8 | PCRE_NO_UTF8_CHECK;
+      /* Enable PCRE's UTF-8 matching.  Note also the use of
+         PCRE_NO_UTF8_CHECK when calling pcre_extra, below.   */
+      flags |= PCRE_UTF8;
     }
 # endif
 
@@ -158,6 +158,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
        e == PCRE_ERROR_NOMATCH && line_next < buf + size;
        start_ofs -= line_next - line_buf)
     {
+      /* Disable the check that would make an invalid byte
+         seqence *in the input* trigger a failure.   */
+      int options = PCRE_NO_UTF8_CHECK;
+
       line_buf = line_next;
       line_end = memchr (line_buf, eolbyte, (buf + size) - line_buf);
       if (line_end == NULL)
@@ -172,7 +176,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
       e = pcre_exec (cre, extra, line_buf, line_end - line_buf,
-                     start_ofs < 0 ? 0 : start_ofs, 0,
+                     start_ofs < 0 ? 0 : start_ofs, options,
                      sub, sizeof sub / sizeof *sub);
     }
 
