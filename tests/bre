@@ -16,6 +16,6 @@ fail=0
 ${AWK-awk} -f $abs_top_srcdir/tests/bre.awk $abs_top_srcdir/tests/bre.tests \
     > bre.script || fail=1
 
-. ./bre.script || fail=1
+${re_shell_-${SHELL-sh}} ./bre.script || fail=1
 
 Exit $fail
