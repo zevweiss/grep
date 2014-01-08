@@ -16,6 +16,6 @@ fail=0
 ${AWK-awk} -f $abs_top_srcdir/tests/ere.awk $abs_top_srcdir/tests/ere.tests \
   > ere.script || fail=1
 
-${re_shell_-${SHELL-sh}} ere.script || fail=1
+${re_shell-${SHELL-sh}} ere.script || fail=1
 
 Exit $fail

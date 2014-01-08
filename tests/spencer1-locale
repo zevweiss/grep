@@ -18,6 +18,6 @@ ${AWK-awk} -v extra_locale=$LOCALE_FR_UTF8 \
     -f "$abs_srcdir/spencer1-locale.awk" "$abs_srcdir/spencer1.tests" \
   > spencer1-locale.script || fail=1
 
-${re_shell_-${SHELL-sh}} spencer1-locale.script || fail=1
+${re_shell-${SHELL-sh}} spencer1-locale.script || fail=1
 
 Exit $fail
