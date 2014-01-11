@@ -34,8 +34,8 @@ echo I | LC_ALL=$L grep -i i > /dev/null \
 I=$(printf '\304\260') # capital I with dot
 i=$(printf '\304\261') # lowercase dotless i
 
-data=$(      printf "I:$I $i:i")
-search_str=$(printf "$i:i I:$I")
+      data="I:$I $i:i"
+search_str="$i:i I:$I"
 printf "$data\n" > in || framework_failure_
 
 LC_ALL=$L grep -i "^$search_str\$" in > out || fail=1
