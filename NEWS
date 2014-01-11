@@ -16,6 +16,12 @@ GNU grep NEWS                                    -*- outline -*-
   are not yet guaranteed to use the rational range interpretation even
   in GNU systems.
 
+** Maintenance
+
+  grep's --mmap option was disabled in March of 2010, and began to
+  elicit a warning in January of 2012.  Now it is completely gone.
+
+
 * Noteworthy changes in release 2.16 (2014-01-01) [stable]
 
 ** Bug fixes

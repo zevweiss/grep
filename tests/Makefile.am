@@ -65,7 +65,6 @@ TESTS =						\
   grep-dev-null					\
   grep-dir					\
   help-version					\
-  ignore-mmap					\
   in-eq-out-infloop				\
   include-exclude				\
   inconsistent-range				\

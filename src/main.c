@@ -288,8 +288,7 @@ enum
   LINE_BUFFERED_OPTION,
   LABEL_OPTION,
   EXCLUDE_DIRECTORY_OPTION,
-  GROUP_SEPARATOR_OPTION,
-  MMAP_OPTION
+  GROUP_SEPARATOR_OPTION
 };
 
 /* Long options equivalences. */
@@ -327,8 +326,6 @@ static struct option const long_options[] =
   {"line-regexp", no_argument, NULL, 'x'},
   {"max-count", required_argument, NULL, 'm'},
 
-  /* FIXME: disabled in Mar 2010; warn towards end of 2011; remove in 2013.  */
-  {"mmap", no_argument, NULL, MMAP_OPTION},
   {"no-filename", no_argument, NULL, 'h'},
   {"no-group-separator", no_argument, NULL, GROUP_SEPARATOR_OPTION},
   {"no-messages", no_argument, NULL, 's'},
@@ -1572,8 +1569,7 @@ Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             print version information and exit\n\
-      --help                display this help and exit\n\
-      --mmap                deprecated no-op; evokes a warning\n"));
+      --help                display this help and exit\nn"));
       printf (_("\
 \n\
 Output control:\n\
@@ -2261,10 +2257,6 @@ main (int argc, char **argv)
 
       case LABEL_OPTION:
         label = optarg;
-        break;
-
-      case MMAP_OPTION:
-        error (0, 0, _("the --mmap option has been a no-op since 2010"));
         break;
 
       case 0:

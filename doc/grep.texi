@@ -706,15 +706,6 @@ directory, recursively, following all symbolic links.
 Use line buffering on output.
 This can cause a performance penalty.
 
-@item --mmap
-@opindex --mmap
-@cindex memory mapped input
-This option is deprecated and now elicits a warning, but is otherwise a no-op.
-It used to make @command{grep} read
-input with the @code{mmap} system call, instead of the default @code{read}
-system call.  On modern systems, @code{mmap} would rarely if ever yield
-better performance.
-
 @item -U
 @itemx --binary
 @opindex -U

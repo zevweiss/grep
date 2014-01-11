@@ -544,23 +544,6 @@ Follow all symbolic links, unlike
 Use line buffering on output.
 This can cause a performance penalty.
 .TP
-.B \-\^\-mmap
-If possible, use the
-.BR mmap (2)
-system call to read input, instead of
-the default
-.BR read (2)
-system call.
-In some situations,
-.B \-\^\-mmap
-yields better performance.
-However,
-.B \-\^\-mmap
-can cause undefined behavior (including core dumps)
-if an input file shrinks while
-.B grep
-is operating, or if an I/O error occurs.
-.TP
 .BR \-U ", " \-\^\-binary
 Treat the file(s) as binary.
 By default, under \s-1MS-DOS\s0 and \s-1MS\s0-Windows,
@@ -1219,7 +1202,7 @@ Back-references are very slow, and may require exponential time.
 .SS "Regular Manual Pages"
 awk(1), cmp(1), diff(1), find(1), gzip(1),
 perl(1), sed(1), sort(1), xargs(1), zgrep(1),
-mmap(2), read(2),
+read(2),
 pcre(3), pcresyntax(3), pcrepattern(3),
 terminfo(5),
 glob(7), regex(7).
