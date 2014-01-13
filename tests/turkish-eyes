@@ -38,7 +38,9 @@ i=$(printf '\304\261') # lowercase dotless i
 search_str="$i:i I:$I"
 printf "$data\n" > in || framework_failure_
 
-LC_ALL=$L grep -i "^$search_str\$" in > out || fail=1
-compare out in || fail=1
+for opt in -E -F -G; do
+  LC_ALL=$L grep $opt -i "$search_str" in > out || fail=1
+  compare out in || fail=1
+done
 
 Exit $fail
