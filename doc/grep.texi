@@ -960,8 +960,8 @@ They are omitted (i.e., false) by default and become true when specified.
 @cindex national language support
 @cindex NLS
 These variables specify the locale for the @code{LC_COLLATE} category,
-which determines the collating sequence
-used to interpret range expressions like @samp{[a-z]}.
+which might affect how range expressions like @samp{[a-z]} are
+interpreted.
 
 @item LC_ALL
 @itemx LC_CTYPE
@@ -1223,14 +1223,13 @@ For example, the regular expression
 Within a bracket expression, a @dfn{range expression} consists of two
 characters separated by a hyphen.
 It matches any single character that
-sorts between the two characters, inclusive, using the locale's
-collating sequence and character set.
-For example, in the default C
-locale, @samp{[a-d]} is equivalent to @samp{[abcd]}.
-Many locales sort
-characters in dictionary order, and in these locales @samp{[a-d]} is
-typically not equivalent to @samp{[abcd]};
-it might be equivalent to @samp{[aBbCcDd]}, for example.
+sorts between the two characters, inclusive.
+In the default C locale, the sorting sequence is the native character
+order; for example, @samp{[a-d]} is equivalent to @samp{[abcd]}.
+In other locales, the sorting sequence is not specified, and
+@samp{[a-d]} might be equivalent to @samp{[abcd]} or to
+@samp{[aBbCcDd]}, or it might fail to match any character, or the set of
+characters that it matches might even be erratic.
 To obtain the traditional interpretation
 of bracket expressions, you can use the @samp{C} locale by setting the
 @env{LC_ALL} environment variable to the value @samp{C}.
