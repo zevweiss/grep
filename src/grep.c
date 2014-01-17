@@ -19,10 +19,24 @@ Acompile (char const *pattern, size_t size)
   GEAcompile (pattern, size, RE_SYNTAX_AWK);
 }
 
+static void
+GAcompile (char const *pattern, size_t size)
+{
+  GEAcompile (pattern, size, RE_SYNTAX_GNU_AWK);
+}
+
+static void
+PAcompile (char const *pattern, size_t size)
+{
+  GEAcompile (pattern, size, RE_SYNTAX_POSIX_AWK);
+}
+
 struct matcher const matchers[] = {
   { "grep",    Gcompile, EGexecute },
   { "egrep",   Ecompile, EGexecute },
   { "awk",     Acompile, EGexecute },
+  { "gawk",    GAcompile, EGexecute },
+  { "posixawk", PAcompile, EGexecute },
   { "fgrep",   Fcompile, Fexecute },
   { "perl",    Pcompile, Pexecute },
   { NULL, NULL, NULL },
