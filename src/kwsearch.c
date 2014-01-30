@@ -130,9 +130,9 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       else if (match_words)
         for (try = beg; ; )
           {
-            if (try > buf && WCHAR((unsigned char) try[-1]))
+            if (try > buf && WCHAR(to_uchar (try[-1])))
               break;
-            if (try + len < buf + size && WCHAR((unsigned char) try[len]))
+            if (try + len < buf + size && WCHAR(to_uchar (try[len])))
               {
                 if (!len)
                   break;

@@ -1700,7 +1700,7 @@ prepend_args (char const *options, char *buf, char **argv)
 
   for (;;)
     {
-      while (c_isspace ((unsigned char) *o))
+      while (c_isspace (to_uchar (*o)))
         o++;
       if (!*o)
         return n;
@@ -1711,7 +1711,7 @@ prepend_args (char const *options, char *buf, char **argv)
       do
         if ((*b++ = *o++) == '\\' && *o)
           b[-1] = *o++;
-      while (*o && ! c_isspace ((unsigned char) *o));
+      while (*o && ! c_isspace (to_uchar (*o)));
 
       *b++ = '\0';
     }

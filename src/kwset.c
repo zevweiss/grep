@@ -47,7 +47,7 @@
 #define obstack_chunk_alloc malloc
 #define obstack_chunk_free free
 
-#define U(c) ((unsigned char) (c))
+#define U(c) (to_uchar (c))
 
 /* Balanced tree of edges and labels leaving a given trie node. */
 struct tree

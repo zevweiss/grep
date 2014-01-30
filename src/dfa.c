@@ -3003,7 +3003,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
 
   /* Match in range 0-255?  */
   if (wc < NOTCHAR && work_mbc->cset != -1
-      && tstbit ((unsigned char) wc, d->charclasses[work_mbc->cset]))
+      && tstbit (to_uchar (wc), d->charclasses[work_mbc->cset]))
     goto charset_matched;
 
   /* match with a character class?  */
