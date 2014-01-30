@@ -46,6 +46,7 @@
 #include "propername.h"
 #include "quote.h"
 #include "safe-read.h"
+#include "search.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xstrtol.h"
@@ -2363,6 +2364,11 @@ main (int argc, char **argv)
           keycc = new_keycc;
         }
     }
+
+#if MBS_SUPPORT
+  if (MB_CUR_MAX > 1)
+    build_mbclen_cache ();
+#endif
 
   compile (keys, keycc);
   free (keys);

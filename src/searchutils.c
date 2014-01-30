@@ -19,8 +19,13 @@
 #include <config.h>
 #include <assert.h>
 #include "search.h"
+#if HAVE_LANGINFO_CODESET
+# include <langinfo.h>
+#endif
 
 #define NCHAR (UCHAR_MAX + 1)
+
+static size_t mbclen_cache[NCHAR];
 
 void
 kwsinit (kwset_t *kwset)
@@ -207,6 +212,20 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
   return out;
 }
 
+/* Initialize a cache of mbrlen values for each of its 1-byte inputs.  */
+void
+build_mbclen_cache (void)
+{
+  int i;
+
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
+    {
+      char c = i;
+      unsigned char uc = i;
+      mbstate_t mbs = { 0 };
+      mbclen_cache[uc] = mbrlen (&c, 1, &mbs);
+    }
+}
 
 bool
 is_mb_middle (const char **good, const char *buf, const char *end,
@@ -215,12 +234,31 @@ is_mb_middle (const char **good, const char *buf, const char *end,
   const char *p = *good;
   const char *prev = p;
   mbstate_t cur_state;
+#if HAVE_LANGINFO_CODESET
+  static int is_utf8 = -1;
 
-  /* TODO: can be optimized for UTF-8.  */
-  memset(&cur_state, 0, sizeof(mbstate_t));
+  if (is_utf8 == -1)
+    is_utf8 = STREQ (nl_langinfo (CODESET), "UTF-8");
+
+  if (is_utf8 && buf - p > MB_CUR_MAX)
+    {
+      for (p = buf; buf - p > MB_CUR_MAX; p--)
+        if (mbclen_cache[to_uchar (*p)] != (size_t) -1)
+          break;
+
+      if (buf - p == MB_CUR_MAX)
+        p = buf;
+    }
+#endif
+
+  memset (&cur_state, 0, sizeof cur_state);
+
   while (p < buf)
     {
-      size_t mbclen = mbrlen(p, end - p, &cur_state);
+      size_t mbclen = mbclen_cache[to_uchar (*p)];
+
+      if (mbclen == (size_t) -2)
+        mbclen = mbrlen (p, end - p, &cur_state);
 
       /* Store the beginning of the previous complete multibyte character.  */
       if (mbclen != (size_t) -2)
@@ -231,7 +269,7 @@ is_mb_middle (const char **good, const char *buf, const char *end,
           /* An invalid sequence, or a truncated multibyte character.
              We treat it as a single byte character.  */
           mbclen = 1;
-          memset(&cur_state, 0, sizeof cur_state);
+          memset (&cur_state, 0, sizeof cur_state);
         }
       p += mbclen;
     }
