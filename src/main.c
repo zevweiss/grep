@@ -1569,8 +1569,8 @@ Regexp selection and interpretation:\n"), program_name);
 Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --invert-match        select non-matching lines\n\
-  -V, --version             print version information and exit\n\
-      --help                display this help and exit\nn"));
+  -V, --version             display version information and exit\n\
+      --help                display this help text and exit\n\n"));
       printf (_("\
 \n\
 Output control:\n\
