@@ -1570,7 +1570,7 @@ Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --invert-match        select non-matching lines\n\
   -V, --version             display version information and exit\n\
-      --help                display this help text and exit\n\n"));
+      --help                display this help text and exit\n"));
       printf (_("\
 \n\
 Output control:\n\
