@@ -10,15 +10,6 @@ GNU grep NEWS                                    -*- outline -*-
   grep (without -i) in a multibyte locale is now up to 7 times faster
   when processing many matched lines.
 
-  Range expressions in unibyte locales now ordinarily use the rational
-  range interpretation, in which [a-z] matches only lower-case ASCII
-  letters regardless of locale, and similarly for other ranges.  (This
-  was already true for multibyte locales.)  Portable programs should
-  continue to specify the C locale when using range expressions, since
-  these expressions have unspecified behavior in non-GNU systems and
-  are not yet guaranteed to use the rational range interpretation even
-  in GNU systems.
-
 ** Maintenance
 
   grep's --mmap option was disabled in March of 2010, and began to
