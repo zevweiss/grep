@@ -19,6 +19,7 @@
 #include <config.h>
 #include <assert.h>
 #include "search.h"
+#include "dfa.h"
 #if HAVE_LANGINFO_CODESET
 # include <langinfo.h>
 #endif
@@ -234,13 +235,8 @@ is_mb_middle (const char **good, const char *buf, const char *end,
   const char *p = *good;
   const char *prev = p;
   mbstate_t cur_state;
-#if HAVE_LANGINFO_CODESET
-  static int is_utf8 = -1;
 
-  if (is_utf8 == -1)
-    is_utf8 = STREQ (nl_langinfo (CODESET), "UTF-8");
-
-  if (is_utf8 && buf - p > MB_CUR_MAX)
+  if (using_utf8 () && buf - p > MB_CUR_MAX)
     {
       for (p = buf; buf - p > MB_CUR_MAX; p--)
         if (mbclen_cache[to_uchar (*p)] != (size_t) -1)
@@ -249,7 +245,6 @@ is_mb_middle (const char **good, const char *buf, const char *end,
       if (buf - p == MB_CUR_MAX)
         p = buf;
     }
-#endif
 
   memset (&cur_state, 0, sizeof cur_state);
 

@@ -753,7 +753,7 @@ setbit_case_fold_c (int b, charclass c)
 
 /* UTF-8 encoding allows some optimizations that we can't otherwise
    assume in a multibyte encoding.  */
-static inline int
+int
 using_utf8 (void)
 {
   static int utf8 = -1;
