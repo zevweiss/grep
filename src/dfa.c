@@ -1108,28 +1108,31 @@ parse_bracket_exp (void)
             {
               /* Defer to the system regex library about the meaning
                  of range expressions.  */
-              regex_t re;
-              char pattern[6] = { '[', 0, '-', 0, ']', 0 };
-              char subject[2] = { 0, 0 };
-              c1 = c;
-              if (case_fold)
+              struct re_pattern_buffer re = { 0 };
+              char const *compile_msg;
+#if 199901 <= __STDC_VERSION__
+              char pattern[] = { '[', '\\', c, '-', '\\', c2, ']' };
+#else
+              char pattern[] = { '[', '\\', 0, '-', '\\', 0, ']' };
+              pattern[2] = c;
+              pattern[5] = c2;
+#endif
+              re_set_syntax (syntax_bits | RE_BACKSLASH_ESCAPE_IN_LISTS);
+              compile_msg = re_compile_pattern (pattern, sizeof pattern, &re);
+              if (compile_msg)
+                dfaerror (compile_msg);
+              for (c = 0; c < NOTCHAR; c++)
                 {
-                  c1 = tolower (c1);
-                  c2 = tolower (c2);
-                }
-
-              pattern[1] = c1;
-              pattern[3] = c2;
-              regcomp (&re, pattern, REG_NOSUB);
-              for (c = 0; c < NOTCHAR; ++c)
-                {
-                  if ((case_fold && isupper (c)))
-                    continue;
-                  subject[0] = c;
-                  if (regexec (&re, subject, 0, NULL, 0) != REG_NOMATCH)
-                    setbit_case_fold_c (c, ccl);
+                  char subject = c;
+                  switch (re_match (&re, &subject, 1, 0, NULL))
+                    {
+                    case 1: setbit (c, ccl); break;
+                    case -1: break;
+                    default: xalloc_die ();
+                    }
                 }
               regfree (&re);
+              re_set_syntax (syntax_bits);
             }
 
           colon_warning_state |= 8;
