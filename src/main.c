@@ -34,6 +34,7 @@
 #include "c-ctype.h"
 #include "closeout.h"
 #include "colorize.h"
+#include "dfa.h"
 #include "error.h"
 #include "exclude.h"
 #include "exitfail.h"
@@ -1883,6 +1884,11 @@ static bool
 trivial_case_ignore (size_t len, char const *keys,
                      size_t *new_len, char **new_keys)
 {
+  /* Perform this translation only for UTF-8.  Otherwise, this would induce
+     a 100-200x performance penalty for non-UTF8 multibyte locales.  */
+  if ( ! using_utf8 ())
+    return false;
+
   /* FIXME: consider removing the following restriction:
      Reject if KEYS contain ASCII '\\' or '['.  */
   if (memchr (keys, '\\', len) || memchr (keys, '[', len))

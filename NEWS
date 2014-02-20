@@ -7,6 +7,9 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer mishandles patterns like [^^-~] in unibyte locales.
   [bug introduced in grep-2.8]
 
+  grep -i in a multibyte, non-UTF8 locale could be up to 200 times slower
+  than in 2.16.  [bug introduced in grep-2.17]
+
 
 * Noteworthy changes in release 2.17 (2014-02-17) [stable]
 
