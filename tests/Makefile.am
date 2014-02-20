@@ -75,6 +75,7 @@ TESTS =						\
   multibyte-white-space				\
   empty-line-mb					\
   unibyte-bracket-expr				\
+  unibyte-negated-circumflex			\
   high-bit-range				\
   options					\
   pcre						\
