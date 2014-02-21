@@ -72,6 +72,7 @@ TESTS =						\
   khadafy					\
   long-line-vs-2GiB-read			\
   max-count-vs-context				\
+  mb-non-UTF8-performance			\
   multibyte-white-space				\
   empty-line-mb					\
   unibyte-bracket-expr				\
