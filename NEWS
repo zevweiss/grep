@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep -P now works with -w and -x and backreferences. Before,
+  echo aa|grep -Pw '(.)\1' would fail to match, yet
+  echo aa|grep -Pw '(.)\2' would match.
+
 
 * Noteworthy changes in release 2.18 (2014-02-20) [stable]
 

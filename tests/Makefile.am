@@ -83,6 +83,7 @@ TESTS =						\
   pcre-abort					\
   pcre-invalid-utf8-input			\
   pcre-utf8					\
+  pcre-wx-backref				\
   pcre-z					\
   prefix-of-multibyte				\
   r-dot						\
