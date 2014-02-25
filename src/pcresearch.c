@@ -77,7 +77,7 @@ Pcompile (char const *pattern, size_t size)
   if (match_lines)
     strcpy (n, "^(?:");
   if (match_words)
-    strcpy (n, "\\b(?:");
+    strcpy (n, "(?<!\\w)(?:");
   n += strlen (n);
 
   /* The PCRE interface doesn't allow NUL bytes in the pattern, so
@@ -103,7 +103,7 @@ Pcompile (char const *pattern, size_t size)
   n += patlim - p;
   *n = '\0';
   if (match_words)
-    strcpy (n, ")\\b");
+    strcpy (n, ")(?!\\w)");
   if (match_lines)
     strcpy (n, ")$");
 

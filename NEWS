@@ -8,6 +8,13 @@ GNU grep NEWS                                    -*- outline -*-
   echo aa|grep -Pw '(.)\1' would fail to match, yet
   echo aa|grep -Pw '(.)\2' would match.
 
+  grep -Pw now works like grep -w in that the matched string has to be
+  preceded and followed by non-word components or the beginning and end
+  of the line (as opposed to word boundaries before).  Before, this
+  echo a@@a| grep -Pw @@ would match, yet this
+  echo a@@a| grep -w @@ would not.  Now, they both fail to match,
+  per the documentation on how grep's -w works.
+
 
 * Noteworthy changes in release 2.18 (2014-02-20) [stable]
 
