@@ -926,7 +926,7 @@ static const struct dfa_ctype prednames[] = {
   {"upper", isupper, false},
   {"lower", islower, false},
   {"digit", isdigit, true},
-  {"xdigit", isxdigit, true},
+  {"xdigit", isxdigit, false},
   {"space", isspace, false},
   {"punct", ispunct, false},
   {"alnum", isalnum, false},
