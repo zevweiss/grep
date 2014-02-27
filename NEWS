@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep no longer mishandles patterns like [a-[.z.]], and no longer
+  mishandles patterns like [^a] in locales that have multicharacter
+  collating sequences so that [^a] can match a string of two characters.
+
   grep -P now works with -w and -x and backreferences. Before,
   echo aa|grep -Pw '(.)\1' would fail to match, yet
   echo aa|grep -Pw '(.)\2' would match.

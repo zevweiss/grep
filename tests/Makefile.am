@@ -86,6 +86,7 @@ TESTS =						\
   pcre-w					\
   pcre-wx-backref				\
   pcre-z					\
+  posix-bracket					\
   prefix-of-multibyte				\
   r-dot						\
   repetition-overflow				\
