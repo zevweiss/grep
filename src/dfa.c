@@ -1023,7 +1023,7 @@ parse_bracket_exp (void)
           char str[MAX_BRACKET_STRING_LEN + 1];
           FETCH_WC (c1, wc1, _("unbalanced ["));
 
-          if ((c1 == ':' && syntax_bits & RE_CHAR_CLASSES)
+          if ((c1 == ':' && (syntax_bits & RE_CHAR_CLASSES))
               || c1 == '.' || c1 == '=')
             {
               size_t len = 0;
