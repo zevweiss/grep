@@ -801,7 +801,7 @@ using_simple_locale (void)
       static int unibyte_c = -1;
       if (unibyte_c < 0)
         {
-          char *locale = setlocale (LC_ALL, 0);
+          char *locale = setlocale (LC_ALL, NULL);
           unibyte_c = (locale && (STREQ (locale, "C")
                                   || STREQ (locale, "POSIX")));
         }
