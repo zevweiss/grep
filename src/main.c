@@ -355,6 +355,8 @@ int match_words;
 int match_lines;
 unsigned char eolbyte;
 
+static char const *matcher;
+
 /* For error messages. */
 /* The input file name, or (if standard input) "-" or a --label argument.  */
 static char const *filename;
@@ -1072,7 +1074,9 @@ do_execute (char const *buf, size_t size, size_t *match_size,
      to struct matcher to split the buffer passed to execute.  It would
      perform the memchr if line-by-line matching is necessary, or just
      return buf + size otherwise.  */
-  if (MB_CUR_MAX == 1 || !match_icase)
+  if (MB_CUR_MAX == 1 || !match_icase
+      || ! (matcher
+            && (STREQ (matcher, "fgrep") || STREQ (matcher, "pcre"))))
     return execute (buf, size, match_size, start_ptr);
 
   for (line_next = buf; line_next < buf + size; )
@@ -1642,8 +1646,6 @@ if any error occurs and -q is not given, the exit status is 2.\n"));
     }
   exit (status);
 }
-
-static char const *matcher;
 
 /* If M is NULL, initialize the matcher to the default.  Otherwise set the
    matcher to M if available.  Exit in case of conflicts or if M is not
