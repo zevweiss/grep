@@ -1877,79 +1877,6 @@ parse_grep_colors (void)
    (*(s) = wctob ((wint_t) (wc)), 1) : \
    wcrtomb ((s), (wc), (ps)))
 
-/* If the newline-separated regular expressions, KEYS (with length, LEN
-   and no trailing NUL byte), are amenable to transformation into
-   otherwise equivalent case-ignoring ones, perform the transformation,
-   put the result into malloc'd memory, *NEW_KEYS with length *NEW_LEN,
-   and return true.  Otherwise, return false.  */
-static bool
-trivial_case_ignore (size_t len, char const *keys,
-                     size_t *new_len, char **new_keys)
-{
-  /* Perform this translation only for UTF-8.  Otherwise, this would induce
-     a 100-200x performance penalty for non-UTF8 multibyte locales.  */
-  if ( ! using_utf8 ())
-    return false;
-
-  /* FIXME: consider removing the following restriction:
-     Reject if KEYS contain ASCII '\\' or '['.  */
-  if (memchr (keys, '\\', len) || memchr (keys, '[', len))
-    return false;
-
-  /* Worst case is that each byte B of KEYS is ASCII alphabetic and each
-     other_case(B) character, C, occupies MB_CUR_MAX bytes, so each B
-     maps to [BC], which requires MB_CUR_MAX + 3 bytes.   */
-  *new_keys = xnmalloc (MB_CUR_MAX + 3, len + 1);
-  char *p = *new_keys;
-
-  mbstate_t mb_state;
-  memset (&mb_state, 0, sizeof mb_state);
-  while (len)
-    {
-      wchar_t wc;
-      int n = MBRTOWC (&wc, keys, len, &mb_state);
-
-      /* For an invalid, incomplete or L'\0', skip this optimization.  */
-      if (n <= 0)
-        {
-        skip_case_ignore_optimization:
-          free (*new_keys);
-          return false;
-        }
-
-      char const *orig = keys;
-      keys += n;
-      len -= n;
-
-      if (!iswalpha (wc))
-        {
-          memcpy (p, orig, n);
-          p += n;
-        }
-      else
-        {
-          *p++ = '[';
-          memcpy (p, orig, n);
-          p += n;
-
-          wchar_t wc2 = iswupper (wc) ? towlower (wc) : towupper (wc);
-          char buf[MB_CUR_MAX];
-          int n2 = WCRTOMB (buf, wc2, &mb_state);
-          if (n2 <= 0)
-            goto skip_case_ignore_optimization;
-          assert (n2 <= MB_CUR_MAX);
-          memcpy (p, buf, n2);
-          p += n2;
-
-          *p++ = ']';
-        }
-    }
-
-  *new_len = p - *new_keys;
-
-  return true;
-}
-
 int
 main (int argc, char **argv)
 {
@@ -2343,35 +2270,6 @@ main (int argc, char **argv)
     }
   else
     usage (EXIT_TROUBLE);
-
-  /* As currently implemented, case-insensitive matching is expensive in
-     multi-byte locales because of a few outlier locales in which some
-     characters change size when converted to upper or lower case.  To
-     accommodate those, we revert to searching the input one line at a
-     time, rather than using the much more efficient buffer search.
-     However, if we have a regular expression, /foo/i, we can convert
-     it to an equivalent case-insensitive /[fF][oO][oO]/, and thus
-     avoid the expensive read-and-process-a-line-at-a-time requirement.
-     Optimize-away the "-i" option, when possible, converting each
-     candidate alpha, C, in the regexp to [Cc].  */
-  if (match_icase)
-    {
-      size_t new_keycc;
-      char *new_keys;
-      /* It is not possible with -F, not useful with -P (pcre) and there is no
-         point when there is no regexp.  It also depends on which constructs
-         appear in the regexp.  See trivial_case_ignore for those details.  */
-      if (keycc
-          && ! (matcher
-                && (STREQ (matcher, "fgrep") || STREQ (matcher, "pcre")))
-          && trivial_case_ignore (keycc, keys, &new_keycc, &new_keys))
-        {
-          match_icase = 0;
-          free (keys);
-          keys = new_keys;
-          keycc = new_keycc;
-        }
-    }
 
 #if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
