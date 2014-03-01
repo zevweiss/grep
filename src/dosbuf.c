@@ -50,7 +50,7 @@ static int       dos_pos_map_used  = 0;
 static int       inp_map_idx = 0, out_map_idx = 1;
 
 /* Guess DOS file type by looking at its contents.  */
-static inline File_type
+static File_type
 guess_type (char *buf, size_t buflen)
 {
   int crlf_seen = 0;
@@ -76,7 +76,7 @@ guess_type (char *buf, size_t buflen)
 /* Convert external DOS file representation to internal.
    Return the count of characters left in the buffer.
    Build table to map character positions when reporting byte counts.  */
-static inline int
+static int
 undossify_input (char *buf, size_t buflen)
 {
   int chars_left = 0;
@@ -164,7 +164,7 @@ undossify_input (char *buf, size_t buflen)
 }
 
 /* Convert internal byte count into external.  */
-static inline off_t
+static off_t
 dossified_pos (off_t byteno)
 {
   off_t pos_lo;

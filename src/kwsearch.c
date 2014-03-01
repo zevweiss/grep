@@ -75,6 +75,26 @@ Fcompile (char const *pattern, size_t size)
     error (EXIT_TROUBLE, 0, "%s", err);
 }
 
+/* Apply the MAP (created by mbtolower) to the lowercase-buffer-relative
+   *OFF and *LEN, converting them to be relative to the original buffer.  */
+
+static void
+mb_case_map_apply (mb_len_map_t const *map, size_t *off, size_t *len)
+{
+  if (map)
+    {
+      intmax_t off_incr = 0;
+      intmax_t len_incr = 0;
+      size_t k;
+      for (k = 0; k < *off; k++)
+        off_incr += map[k];
+      for (k = *off; k < *off + *len; k++)
+        len_incr += map[k];
+      *off += off_incr;
+      *len += len_incr;
+    }
+}
+
 size_t
 Fexecute (char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)

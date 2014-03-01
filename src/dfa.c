@@ -93,7 +93,7 @@ typedef unsigned int charclass[CHARCLASS_INTS];
 /* Convert a possibly-signed character to an unsigned character.  This is
    a bit safer than casting to unsigned char, since it catches some type
    errors that the cast doesn't.  */
-static inline unsigned char
+static unsigned char
 to_uchar (char ch)
 {
   return ch;

@@ -398,7 +398,7 @@ static enum
 static int grepfile (int, char const *, int, int);
 static int grepdesc (int, int);
 #if defined HAVE_DOS_FILE_CONTENTS
-static inline int undossify_input (char *, size_t);
+static int undossify_input (char *, size_t);
 #endif
 
 static int
