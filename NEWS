@@ -20,9 +20,12 @@ GNU grep NEWS                                    -*- outline -*-
   per the documentation on how grep's -w works.
 
   grep -i no longer mishandles patterns containing titlecase characters.
+  A pattern character now matches its lowercase and uppercase
+  counterparts, even when they both differ from the pattern.
   For example, in a locale containing the titlecase character
   'ǈ' (U+01C8 LATIN CAPITAL LETTER L WITH SMALL LETTER J),
-  'grep -i ǈ' now matches 'Ǉ' (U+01C7 LATIN CAPITAL LETTER LJ).
+  'grep -i ǈ' now matches both 'Ǉ' (U+01C7 LATIN CAPITAL LETTER LJ)
+  and 'ǉ' (U+01C9 LATIN SMALL LETTER LJ).
 
 
 * Noteworthy changes in release 2.18 (2014-02-20) [stable]

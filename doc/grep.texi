@@ -193,7 +193,8 @@ The empty file contains zero patterns, and therefore matches nothing.
 @opindex -y
 @opindex --ignore-case
 @cindex case insensitive search
-Ignore case distinctions in both the pattern and the input files.
+Ignore case distinctions, so that a pattern character matches not only
+itself in the text, but also its lowercase and uppercase counterparts, if any.
 @option{-y} is an obsolete synonym that is provided for compatibility.
 (@option{-i} is specified by POSIX.)
 
