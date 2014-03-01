@@ -1867,16 +1867,6 @@ parse_grep_colors (void)
       return;
 }
 
-#define MBRTOWC(pwc, s, n, ps) \
-  (MB_CUR_MAX == 1 ? \
-   (*(pwc) = btowc (*(unsigned char *) (s)), 1) : \
-   mbrtowc ((pwc), (s), (n), (ps)))
-
-#define WCRTOMB(s, wc, ps) \
-  (MB_CUR_MAX == 1 ? \
-   (*(s) = wctob ((wint_t) (wc)), 1) : \
-   wcrtomb ((s), (wc), (ps)))
-
 int
 main (int argc, char **argv)
 {
