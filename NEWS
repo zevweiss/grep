@@ -19,6 +19,11 @@ GNU grep NEWS                                    -*- outline -*-
   echo a@@a| grep -w @@ would not.  Now, they both fail to match,
   per the documentation on how grep's -w works.
 
+  grep -i no longer mishandles patterns containing titlecase characters.
+  For example, in a locale containing the titlecase character
+  'ǈ' (U+01C8 LATIN CAPITAL LETTER L WITH SMALL LETTER J),
+  'grep -i ǈ' now matches 'Ǉ' (U+01C7 LATIN CAPITAL LETTER LJ).
+
 
 * Noteworthy changes in release 2.18 (2014-02-20) [stable]
 

@@ -1,0 +1,41 @@
+#!/bin/sh
+# Check that case folding works even with titlecase characters.
+
+# Copyright 2014 Free Software Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+require_en_utf8_locale_
+require_compiled_in_MB_support
+LC_ALL=en_US.UTF-8
+export LC_ALL
+
+fail=0
+
+LJ='\307\207' # U+01C7 LATIN CAPITAL LETTER LJ
+Lj='\307\210' # U+01C8 LATIN CAPITAL LETTER L WITH SMALL LETTER J
+lj='\307\211' # U+01C9 LATIN SMALL LETTER LJ
+pattern=$(printf "$Lj\n") || framework_failure_
+printf "$lj$lj\n$Lj$Lj\n$LJ$LJ\n" >in || framework_failure_
+
+grep -i "$pattern" in >out || fail=1
+compare in out || fail=1
+
+pattern="($pattern)\\1"
+grep -Ei "$pattern" in >out || fail=1
+compare in out || fail=1
+
+Exit $fail

@@ -694,42 +694,27 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
    this may happen when folding case in weird Turkish locales where
    dotless i/dotted I are not included in the chosen character set.
    Return whether a bit was set in the charclass.  */
-#if MBS_SUPPORT
 static bool
 setbit_wc (wint_t wc, charclass c)
 {
+#if MBS_SUPPORT
   int b = wctob (wc);
   if (b == EOF)
     return false;
 
   setbit (b, c);
   return true;
-}
-
-/* Set a bit in the charclass for the given single byte character,
-   if it is valid in the current character set.  */
-static void
-setbit_c (int b, charclass c)
-{
-  /* Do nothing if b is invalid in this character set.  */
-  if (MB_CUR_MAX > 1 && btowc (b) == WEOF)
-    return;
-  setbit (b, c);
-}
 #else
-# define setbit_c setbit
-static inline bool
-setbit_wc (wint_t wc, charclass c)
-{
   abort ();
    /*NOTREACHED*/ return false;
-}
 #endif
+}
 
-/* Like setbit_c, but if case is folded, set both cases of a letter.  For
-   MB_CUR_MAX > 1, the resulting charset is only used as an optimization,
-   and the caller takes care of setting the appropriate field of struct
-   mb_char_classes.  */
+/* Set a bit for B in the charclass C, if B is a valid single byte
+   character in the current character set.  If case is folded, set B's
+   lower and upper case variants similarly.  If MB_CUR_MAX > 1, the
+   resulting charset is used only as an optimization, and the caller
+   should set the appropriate field of struct mb_char_classes.  */
 static void
 setbit_case_fold_c (int b, charclass c)
 {
@@ -738,16 +723,21 @@ setbit_case_fold_c (int b, charclass c)
       wint_t wc = btowc (b);
       if (wc == WEOF)
         return;
-      setbit (b, c);
-      if (case_fold && iswalpha (wc))
-        setbit_wc (iswupper (wc) ? towlower (wc) : towupper (wc), c);
+      if (case_fold)
+        {
+          setbit_wc (towlower (wc), c);
+          setbit_wc (towupper (wc), c);
+        }
     }
   else
     {
-      setbit (b, c);
-      if (case_fold && isalpha (b))
-        setbit_c (isupper (b) ? tolower (b) : toupper (b), c);
+      if (case_fold)
+        {
+          setbit (tolower (b), c);
+          setbit (toupper (b), c);
+        }
     }
+  setbit (b, c);
 }
 
 
@@ -1104,52 +1094,51 @@ parse_bracket_exp (void)
               c2 = ']';
             }
 
-          if (c2 == ']')
+          if (c2 != ']')
             {
-              /* In the case [x-], the - is an ordinary hyphen,
-                 which is left in c1, the lookahead character.  */
-              lexptr -= cur_mb_len;
-              lexleft += cur_mb_len;
-            }
-        }
+              if (c2 == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
+                FETCH_WC (c2, wc2, _("unbalanced ["));
 
-      if (c1 == '-' && c2 != ']')
-        {
-          if (c2 == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
-            FETCH_WC (c2, wc2, _("unbalanced ["));
-
-          if (MB_CUR_MAX > 1)
-            {
-              /* When case folding map a range, say [m-z] (or even [M-z])
-                 to the pair of ranges, [m-z] [M-Z].  */
-              REALLOC_IF_NECESSARY (work_mbc->range_sts,
-                                    range_sts_al, work_mbc->nranges + 1);
-              REALLOC_IF_NECESSARY (work_mbc->range_ends,
-                                    range_ends_al, work_mbc->nranges + 1);
-              work_mbc->range_sts[work_mbc->nranges] =
-                case_fold ? towlower (wc) : (wchar_t) wc;
-              work_mbc->range_ends[work_mbc->nranges++] =
-                case_fold ? towlower (wc2) : (wchar_t) wc2;
-
-              if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
+              if (MB_CUR_MAX > 1)
                 {
+                  /* When case folding map a range, say [m-z] (or even [M-z])
+                     to the pair of ranges, [m-z] [M-Z].  Although this code
+                     is wrong in multiple ways, it's never used in practice.
+                     FIXME: Remove this (and related) unused code.  */
                   REALLOC_IF_NECESSARY (work_mbc->range_sts,
                                         range_sts_al, work_mbc->nranges + 1);
-                  work_mbc->range_sts[work_mbc->nranges] = towupper (wc);
                   REALLOC_IF_NECESSARY (work_mbc->range_ends,
                                         range_ends_al, work_mbc->nranges + 1);
-                  work_mbc->range_ends[work_mbc->nranges++] = towupper (wc2);
-                }
-            }
-          else if (using_simple_locale ())
-            for (; c <= c2; c++)
-              setbit_case_fold_c (c, ccl);
-          else
-            known_bracket_exp = false;
+                  work_mbc->range_sts[work_mbc->nranges] =
+                    case_fold ? towlower (wc) : (wchar_t) wc;
+                  work_mbc->range_ends[work_mbc->nranges++] =
+                    case_fold ? towlower (wc2) : (wchar_t) wc2;
 
-          colon_warning_state |= 8;
-          FETCH_WC (c1, wc1, _("unbalanced ["));
-          continue;
+                  if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
+                    {
+                      REALLOC_IF_NECESSARY (work_mbc->range_sts,
+                                            range_sts_al, work_mbc->nranges + 1);
+                      work_mbc->range_sts[work_mbc->nranges] = towupper (wc);
+                      REALLOC_IF_NECESSARY (work_mbc->range_ends,
+                                            range_ends_al, work_mbc->nranges + 1);
+                      work_mbc->range_ends[work_mbc->nranges++] = towupper (wc2);
+                    }
+                }
+              else if (using_simple_locale ())
+                for (; c <= c2; c++)
+                  setbit_case_fold_c (c, ccl);
+              else
+                known_bracket_exp = false;
+
+              colon_warning_state |= 8;
+              FETCH_WC (c1, wc1, _("unbalanced ["));
+              continue;
+            }
+
+          /* In the case [x-], the - is an ordinary hyphen,
+             which is left in c1, the lookahead character.  */
+          lexptr -= cur_mb_len;
+          lexleft += cur_mb_len;
         }
 
       colon_warning_state |= (c == ':') ? 2 : 4;
@@ -1160,16 +1149,22 @@ parse_bracket_exp (void)
           continue;
         }
 
-      if (case_fold && iswalpha (wc))
+      if (case_fold)
         {
-          wc = towlower (wc);
-          if (!setbit_wc (wc, ccl))
+          wint_t folded = towlower (wc);
+          if (folded != wc && !setbit_wc (folded, ccl))
             {
               REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
                                     work_mbc->nchars + 1);
-              work_mbc->chars[work_mbc->nchars++] = wc;
+              work_mbc->chars[work_mbc->nchars++] = folded;
             }
-          wc = towupper (wc);
+          folded = towupper (wc);
+          if (folded != wc && !setbit_wc (folded, ccl))
+            {
+              REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
+                                    work_mbc->nchars + 1);
+              work_mbc->chars[work_mbc->nchars++] = folded;
+            }
         }
       if (!setbit_wc (wc, ccl))
         {
@@ -1515,7 +1510,7 @@ lex (void)
           if (MB_CUR_MAX > 1)
             return lasttok = WCHAR;
 
-          if (case_fold && isalpha (c))
+          if (case_fold && (tolower (c) != c || toupper (c) != c))
             {
               zeroset (ccl);
               setbit_case_fold_c (c, ccl);
@@ -1759,17 +1754,23 @@ add_utf8_anychar (void)
 static void
 atom (void)
 {
-  if (0)
+  if (MBS_SUPPORT && tok == WCHAR)
     {
-      /* empty */
-    }
-  else if (MBS_SUPPORT && tok == WCHAR)
-    {
-      addtok_wc (case_fold ? towlower (wctok) : wctok);
-      if (case_fold && iswalpha (wctok))
+      addtok_wc (wctok);
+      if (case_fold)
         {
-          addtok_wc (towupper (wctok));
-          addtok (OR);
+          wint_t folded = towlower (wctok);
+          if (folded != wctok)
+            {
+              addtok_wc (folded);
+              addtok (OR);
+            }
+          folded = towupper (wctok);
+          if (folded != wctok)
+            {
+              addtok_wc (folded);
+              addtok (OR);
+            }
         }
 
       tok = lex ();
