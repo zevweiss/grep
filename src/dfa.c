@@ -1598,10 +1598,11 @@ addtok (token t)
           work_mbc->nchars = 0;
         }
 
-      /* UTF-8 allows treating a simple, non-inverted MBCSET like a CSET.  */
+      /* If the MBCSET is non-inverted and doesn't include neither
+         character classes including multibyte characters, range
+         expressions, equivalence classes nor collating elements,
+         it can be replaced to a simple CSET. */
       if (work_mbc->invert
-          || (!using_utf8 () && work_mbc->cset != -1)
-          || work_mbc->nchars != 0
           || work_mbc->nch_classes != 0
           || work_mbc->nranges != 0
           || work_mbc->nequivs != 0 || work_mbc->ncoll_elems != 0)
@@ -1616,7 +1617,6 @@ addtok (token t)
              that the mbcset is empty now.  Do nothing in that case.  */
           if (work_mbc->cset != -1)
             {
-              assert (using_utf8 ());
               addtok (CSET + work_mbc->cset);
               if (need_or)
                 addtok (OR);
