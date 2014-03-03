@@ -1933,15 +1933,20 @@ trivial_case_ignore (size_t len, char const *keys,
           memcpy (p, orig, n);
           p += n;
 
-          size_t lcbytes = WCRTOMB (p, lc, &mb_state);
-          if (lcbytes == (size_t) -1)
-            goto skip_case_ignore_optimization;
-          p += lcbytes;
-
-          size_t ucbytes = WCRTOMB (p, uc, &mb_state);
-          if (ucbytes == (size_t) -1 || ! mbsinit (&mb_state))
-            goto skip_case_ignore_optimization;
-          p += ucbytes;
+          if (lc != wc)
+            {
+              size_t lcbytes = WCRTOMB (p, lc, &mb_state);
+              if (lcbytes == (size_t) -1)
+                goto skip_case_ignore_optimization;
+              p += lcbytes;
+            }
+          if (uc != wc)
+            {
+              size_t ucbytes = WCRTOMB (p, uc, &mb_state);
+              if (ucbytes == (size_t) -1 || ! mbsinit (&mb_state))
+                goto skip_case_ignore_optimization;
+              p += ucbytes;
+            }
 
           *p++ = ']';
         }
