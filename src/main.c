@@ -1867,19 +1867,20 @@ parse_grep_colors (void)
       return;
 }
 
+#define MBRTOWC(pwc, s, n, ps) \
+  (MB_CUR_MAX == 1 \
+   ? (*(pwc) = btowc (*(unsigned char *) (s)), 1) \
+   : mbrtowc (pwc, s, n, ps))
+#define WCRTOMB(s, wc, ps) \
+  (MB_CUR_MAX == 1 \
+   ? (*(s) = wctob ((wint_t) (wc)), 1) \
+   : wcrtomb (s, wc, ps))
+
 /* If the newline-separated regular expressions, KEYS (with length, LEN
    and no trailing NUL byte), are amenable to transformation into
    otherwise equivalent case-ignoring ones, perform the transformation,
    put the result into malloc'd memory, *NEW_KEYS with length *NEW_LEN,
    and return true.  Otherwise, return false.  */
-#define MBRTOWC(pwc, s, n, ps) \
-  (MB_CUR_MAX == 1 ? \
-   (*(pwc) = btowc (*(unsigned char *) (s)), 1) : \
-   mbrtowc ((pwc), (s), (n), (ps)))
-#define WCRTOMB(s, wc, ps) \
-  (MB_CUR_MAX == 1 ? \
-   (*(s) = wctob ((wint_t) (wc)), 1) : \
-   wcrtomb ((s), (wc), (ps)))
 
 static bool
 trivial_case_ignore (size_t len, char const *keys,
@@ -1890,21 +1891,23 @@ trivial_case_ignore (size_t len, char const *keys,
   if (memchr (keys, '\\', len) || memchr (keys, '[', len))
     return false;
 
-  /* Worst case is that each byte B of KEYS is ASCII alphabetic and each
-     other_case(B) character, C, occupies MB_CUR_MAX bytes, so each B
-     maps to [BC], which requires MB_CUR_MAX + 3 bytes.   */
-  *new_keys = xnmalloc (MB_CUR_MAX + 3, len + 1);
+  /* Worst case is that each byte B of KEYS is ASCII alphabetic and
+     the two two other_case(B) characters, C and D, each occupies
+     MB_CUR_MAX bytes, so each B maps to [BCD], which requires 2 *
+     MB_CUR_MAX + 3 bytes; this is bounded above by the constant
+     expression 2 * MB_LEN_MAX + 3.  */
+  *new_keys = xnmalloc (len + 1, 2 * MB_LEN_MAX + 3);
   char *p = *new_keys;
 
-  mbstate_t mb_state;
-  memset (&mb_state, 0, sizeof mb_state);
+  mbstate_t mb_state = { 0 };
   while (len)
     {
+      bool initial_state = mbsinit (&mb_state) != 0;
       wchar_t wc;
-      int n = MBRTOWC (&wc, keys, len, &mb_state);
+      size_t n = MBRTOWC (&wc, keys, len, &mb_state);
 
       /* For an invalid, incomplete or L'\0', skip this optimization.  */
-      if (n <= 0)
+      if ((size_t) -2 <= n)
         {
         skip_case_ignore_optimization:
           free (*new_keys);
@@ -1915,39 +1918,30 @@ trivial_case_ignore (size_t len, char const *keys,
       keys += n;
       len -= n;
 
-      if (!iswalpha (wc))
+      wint_t lc = towlower (wc);
+      wint_t uc = towupper (wc);
+      if (lc == wc && uc == wc)
         {
           memcpy (p, orig, n);
           p += n;
         }
+      else if (! initial_state)
+        goto skip_case_ignore_optimization;
       else
         {
           *p++ = '[';
           memcpy (p, orig, n);
           p += n;
 
-          wint_t folded = towlower (wc);
-          if (folded != wc)
-            {
-              char buf[MB_CUR_MAX];
-              int n2 = WCRTOMB (buf, folded, &mb_state);
-              if (n2 <= 0)
-                goto skip_case_ignore_optimization;
-              assert (n2 <= MB_CUR_MAX);
-              memcpy (p, buf, n2);
-              p += n2;
-            }
-          folded = towupper (wc);
-          if (folded != wc)
-            {
-              char buf[MB_CUR_MAX];
-              int n2 = WCRTOMB (buf, folded, &mb_state);
-              if (n2 <= 0)
-                goto skip_case_ignore_optimization;
-              assert (n2 <= MB_CUR_MAX);
-              memcpy (p, buf, n2);
-              p += n2;
-            }
+          size_t lcbytes = WCRTOMB (p, lc, &mb_state);
+          if (lcbytes == (size_t) -1)
+            goto skip_case_ignore_optimization;
+          p += lcbytes;
+
+          size_t ucbytes = WCRTOMB (p, uc, &mb_state);
+          if (ucbytes == (size_t) -1 || ! mbsinit (&mb_state))
+            goto skip_case_ignore_optimization;
+          p += ucbytes;
 
           *p++ = ']';
         }
