@@ -1892,7 +1892,7 @@ trivial_case_ignore (size_t len, char const *keys,
     return false;
 
   /* Worst case is that each byte B of KEYS is ASCII alphabetic and
-     the two two other_case(B) characters, C and D, each occupies
+     the two other_case(B) characters, C and D, each occupies
      MB_CUR_MAX bytes, so each B maps to [BCD], which requires 2 *
      MB_CUR_MAX + 3 bytes; this is bounded above by the constant
      expression 2 * MB_LEN_MAX + 3.  */
