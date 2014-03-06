@@ -13,10 +13,12 @@
 @syncodeindex vr cp
 @c %**end of header
 
+@documentencoding UTF-8
+
 @copying
 This manual is for @command{grep}, a pattern matching engine.
 
-Copyright @copyright{} 1999-2002, 2005, 2008-2014 Free Software Foundation,
+Copyright @copyright{} 1999--2002, 2005, 2008--2014 Free Software Foundation,
 Inc.
 
 @quotation
@@ -193,8 +195,19 @@ The empty file contains zero patterns, and therefore matches nothing.
 @opindex -y
 @opindex --ignore-case
 @cindex case insensitive search
-Ignore case distinctions, so that a pattern character matches not only
-itself in the text, but also its lowercase and uppercase counterparts, if any.
+Ignore case distinctions, so that characters that differ only in case
+match each other.  Although this is straightforward when letters
+differ in case only via lowercase-uppercase pairs, the behavior is
+unspecified in other situations.  For example, uppercase ``S'' has an
+unusual lowercase counterpart ``ſ'' (Unicode character U+017F, LATIN
+SMALL LETTER LONG S) in many locales, and it is unspecified whether
+this unusual character matches ``S'' or ``s'' even though uppercasing
+it yields ``S''.  Another example: the lowercase German letter ``ß''
+(U+00DF, LATIN SMALL LETTER SHARP S) is normally capitalized as the
+two-character string ``SS'' but it does not match ``SS'', and it might
+not match the uppercase letter ``ẞ'' (U+1E9E, LATIN CAPITAL LETTER
+SHARP S) even though lowercasing the latter yields the former.
+
 @option{-y} is an obsolete synonym that is provided for compatibility.
 (@option{-i} is specified by POSIX.)
 
