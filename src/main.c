@@ -1892,11 +1892,12 @@ trivial_case_ignore (size_t len, char const *keys,
     return false;
 
   /* Worst case is that each byte B of KEYS is ASCII alphabetic and
-     the two other_case(B) characters, C and D, each occupies
-     MB_CUR_MAX bytes, so each B maps to [BCD], which requires 2 *
-     MB_CUR_MAX + 3 bytes; this is bounded above by the constant
-     expression 2 * MB_LEN_MAX + 3.  */
-  *new_keys = xnmalloc (len + 1, 2 * MB_LEN_MAX + 3);
+     CASE_FOLDED_BUFSIZE other_case(B) characters, C through Z, each
+     occupying MB_CUR_MAX bytes, so each B maps to [BC...Z], which
+     requires CASE_FOLDED_BUFSIZE * MB_CUR_MAX + 3 bytes; this is
+     bounded above by the constant expression CASE_FOLDED_BUFSIZE *
+     MB_LEN_MAX + 3.  */
+  *new_keys = xnmalloc (len + 1, CASE_FOLDED_BUFSIZE * MB_LEN_MAX + 3);
   char *p = *new_keys;
 
   mbstate_t mb_state = { 0 };
@@ -1918,9 +1919,9 @@ trivial_case_ignore (size_t len, char const *keys,
       keys += n;
       len -= n;
 
-      wint_t lc = towlower (wc);
-      wint_t uc = towupper (wc);
-      if (lc == wc && uc == wc)
+      wchar_t folded[CASE_FOLDED_BUFSIZE];
+      int nfolded = case_folded_counterparts (wc, folded);
+      if (nfolded <= 0)
         {
           memcpy (p, orig, n);
           p += n;
@@ -1933,20 +1934,18 @@ trivial_case_ignore (size_t len, char const *keys,
           memcpy (p, orig, n);
           p += n;
 
-          if (lc != wc)
+          int i = 0;
+          do
             {
-              size_t lcbytes = WCRTOMB (p, lc, &mb_state);
-              if (lcbytes == (size_t) -1)
+              size_t nbytes = WCRTOMB (p, folded[i], &mb_state);
+              if (nbytes == (size_t) -1)
                 goto skip_case_ignore_optimization;
-              p += lcbytes;
+              p += nbytes;
             }
-          if (uc != wc)
-            {
-              size_t ucbytes = WCRTOMB (p, uc, &mb_state);
-              if (ucbytes == (size_t) -1 || ! mbsinit (&mb_state))
-                goto skip_case_ignore_optimization;
-              p += ucbytes;
-            }
+          while (++i < nfolded);
+
+          if (! mbsinit (&mb_state))
+            goto skip_case_ignore_optimization;
 
           *p++ = ']';
         }
@@ -2351,16 +2350,16 @@ main (int argc, char **argv)
   else
     usage (EXIT_TROUBLE);
 
-  /* As currently implemented, case-insensitive matching is expensive in
-     multi-byte locales because of a few outlier locales in which some
-     characters change size when converted to upper or lower case.  To
-     accommodate those, we revert to searching the input one line at a
-     time, rather than using the much more efficient buffer search.
-     However, if we have a regular expression, /foo/i, we can convert
-     it to an equivalent case-insensitive /[fF][oO][oO]/, and thus
-     avoid the expensive read-and-process-a-line-at-a-time requirement.
-     Optimize-away the "-i" option, when possible, converting each
-     candidate alpha, C, in the regexp to [Cc].  */
+  /* Case-insensitive matching is expensive in multibyte locales
+     because a few characters may change size when converted to upper
+     or lower case.  To accommodate those, search the input one line
+     at a time, rather than using the much more efficient buffer search.
+
+     Try to convert a regular expression 'foo' (ignoring case) to an
+     equivalent regular expression '[fF][oO][oO]' (where case matters).
+     Not only does this avoid the expensive requirement to read and
+     process a line at a time, it also allows use of the kwset engine,
+     a win in non-UTF-8 multibyte locales.  */
   if (match_icase)
     {
       size_t new_keycc;

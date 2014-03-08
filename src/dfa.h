@@ -101,3 +101,11 @@ extern void dfawarn (const char *);
 extern _Noreturn void dfaerror (const char *);
 
 extern int using_utf8 (void);
+
+/* Maximum number of characters that can be the case-folded
+   counterparts of a single character, not counting the character
+   itself.  This is 1 for towupper, 1 for towlower, and 1 for each
+   entry in LONESOME_LOWER; see dfa.c.  */
+enum { CASE_FOLDED_BUFSIZE = 1 + 1 + 19 };
+
+int case_folded_counterparts (wchar_t, wchar_t[CASE_FOLDED_BUFSIZE]);

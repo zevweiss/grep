@@ -34,6 +34,12 @@
 #include <locale.h>
 #include <stdbool.h>
 
+/* Gawk doesn't use Gnulib, so don't assume static_assert is present.  */
+#ifndef static_assert
+# define static_assert(cond, diagnostic) \
+    extern int (*foo (void)) [!!sizeof (struct { int foo: (cond) ? 8 : -1; })]
+#endif
+
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* ISASCIIDIGIT differs from isdigit, as follows:
@@ -710,34 +716,16 @@ setbit_wc (wint_t wc, charclass c)
 #endif
 }
 
-/* Set a bit for B in the charclass C, if B is a valid single byte
-   character in the current character set.  If case is folded, set B's
-   lower and upper case variants similarly.  If MB_CUR_MAX > 1, the
-   resulting charset is used only as an optimization, and the caller
-   should set the appropriate field of struct mb_char_classes.  */
+/* Set a bit for B and its case variants in the charclass C.
+   MB_CUR_MAX must be 1.  */
 static void
 setbit_case_fold_c (int b, charclass c)
 {
-  if (MB_CUR_MAX > 1)
-    {
-      wint_t wc = btowc (b);
-      if (wc == WEOF)
-        return;
-      if (case_fold)
-        {
-          setbit_wc (towlower (wc), c);
-          setbit_wc (towupper (wc), c);
-        }
-    }
-  else
-    {
-      if (case_fold)
-        {
-          setbit (tolower (b), c);
-          setbit (toupper (b), c);
-        }
-    }
-  setbit (b, c);
+  int ub = toupper (b);
+  int i;
+  for (i = 0; i < NOTCHAR; i++)
+    if (toupper (i) == ub)
+      setbit (i, c);
 }
 
 
@@ -897,6 +885,50 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
 #ifndef MIN
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
+
+/* The set of wchar_t values C such that there's a useful locale
+   somewhere where C != towupper (C) && C != towlower (towupper (C)).
+   For example, 0x00B5 (U+00B5 MICRO SIGN) is in this table, because
+   towupper (0x00B5) == 0x039C (U+039C GREEK CAPITAL LETTER MU), and
+   towlower (0x039C) == 0x03BC (U+03BC GREEK SMALL LETTER MU).  */
+static short const lonesome_lower[] =
+  {
+    0x00B5, 0x0131, 0x017F, 0x01C5, 0x01C8, 0x01CB, 0x01F2, 0x0345,
+    0x03C2, 0x03D0, 0x03D1, 0x03D5, 0x03D6, 0x03F0, 0x03F1,
+
+    /* U+03F2 GREEK LUNATE SIGMA SYMBOL lacks a specific uppercase
+       counterpart in locales predating Unicode 4.0.0 (April 2003).  */
+    0x03F2,
+
+    0x03F5, 0x1E9B, 0x1FBE,
+  };
+
+static_assert ((sizeof lonesome_lower / sizeof *lonesome_lower + 2
+                == CASE_FOLDED_BUFSIZE),
+               "CASE_FOLDED_BUFSIZE is wrong");
+
+/* Find the characters equal to C after case-folding, other than C
+   itself, and store them into FOLDED.  Return the number of characters
+   stored.  */
+int
+case_folded_counterparts (wchar_t c, wchar_t folded[CASE_FOLDED_BUFSIZE])
+{
+  int i;
+  int n = 0;
+  wint_t uc = towupper (c);
+  wint_t lc = towlower (uc);
+  if (uc != c)
+    folded[n++] = uc;
+  if (lc != uc && lc != c && towupper (lc) == uc)
+    folded[n++] = lc;
+  for (i = 0; i < sizeof lonesome_lower / sizeof *lonesome_lower; i++)
+    {
+      wint_t li = lonesome_lower[i];
+      if (li != lc && li != uc && li != c && towupper (li) == uc)
+        folded[n++] = li;
+    }
+  return n;
+}
 
 typedef int predicate (int);
 
@@ -1058,7 +1090,7 @@ parse_bracket_exp (void)
 
                   for (c2 = 0; c2 < NOTCHAR; ++c2)
                     if (pred->func (c2))
-                      setbit_case_fold_c (c2, ccl);
+                      setbit (c2, ccl);
                 }
               else
                 known_bracket_exp = false;
@@ -1125,8 +1157,21 @@ parse_bracket_exp (void)
                     }
                 }
               else if (using_simple_locale ())
-                for (; c <= c2; c++)
-                  setbit_case_fold_c (c, ccl);
+		{
+                  for (c1 = c; c1 <= c2; c1++)
+                    setbit (c1, ccl);
+                  if (case_fold)
+                    {
+                      int uc = toupper (c);
+                      int uc2 = toupper (c2);
+                      for (c1 = 0; c1 < NOTCHAR; c1++)
+                        {
+                          int uc1 = toupper (c1);
+                          if (uc <= uc1 && uc1 <= uc2)
+                            setbit (c1, ccl);
+                        }
+                    }
+                }
               else
                 known_bracket_exp = false;
 
@@ -1145,26 +1190,22 @@ parse_bracket_exp (void)
 
       if (MB_CUR_MAX == 1)
         {
-          setbit_case_fold_c (c, ccl);
+          if (case_fold)
+            setbit_case_fold_c (c, ccl);
+          else
+            setbit (c, ccl);
           continue;
         }
 
       if (case_fold)
         {
-          wint_t folded = towlower (wc);
-          if (folded != wc && !setbit_wc (folded, ccl))
-            {
-              REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
-                                    work_mbc->nchars + 1);
-              work_mbc->chars[work_mbc->nchars++] = folded;
-            }
-          folded = towupper (wc);
-          if (folded != wc && !setbit_wc (folded, ccl))
-            {
-              REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
-                                    work_mbc->nchars + 1);
-              work_mbc->chars[work_mbc->nchars++] = folded;
-            }
+          wchar_t folded[CASE_FOLDED_BUFSIZE];
+          int i, n = case_folded_counterparts (wc, folded);
+          REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
+                                work_mbc->nchars + n);
+          for (i = 0; i < n; i++)
+            if (!setbit_wc (folded[i], ccl))
+              work_mbc->chars[work_mbc->nchars++] = folded[i];
         }
       if (!setbit_wc (wc, ccl))
         {
@@ -1510,7 +1551,7 @@ lex (void)
           if (MB_CUR_MAX > 1)
             return lasttok = WCHAR;
 
-          if (case_fold && (tolower (c) != c || toupper (c) != c))
+          if (case_fold && isalpha (c))
             {
               zeroset (ccl);
               setbit_case_fold_c (c, ccl);
@@ -1757,18 +1798,14 @@ atom (void)
   if (MBS_SUPPORT && tok == WCHAR)
     {
       addtok_wc (wctok);
+
       if (case_fold)
         {
-          wint_t folded = towlower (wctok);
-          if (folded != wctok)
+          wchar_t folded[CASE_FOLDED_BUFSIZE];
+          int i, n = case_folded_counterparts (wctok, folded);
+          for (i = 0; i < n; i++)
             {
-              addtok_wc (folded);
-              addtok (OR);
-            }
-          folded = towupper (wctok);
-          if (folded != wctok)
-            {
-              addtok_wc (folded);
+              addtok_wc (folded[i]);
               addtok (OR);
             }
         }
