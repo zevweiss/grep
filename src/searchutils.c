@@ -37,7 +37,7 @@ kwsinit (kwset_t *kwset)
   if (match_icase && MB_CUR_MAX == 1)
     {
       for (i = 0; i < NCHAR; ++i)
-        trans[i] = tolower (i);
+        trans[i] = toupper (i);
 
       *kwset = kwsalloc (trans);
     }
@@ -49,38 +49,37 @@ kwsinit (kwset_t *kwset)
 }
 
 #if MBS_SUPPORT
-/* Convert the *N-byte string, BEG, to lower-case, and write the
+/* Convert BEG, an *N-byte string, to uppercase, and write the
    NUL-terminated result into malloc'd storage.  Upon success, set *N
    to the length (in bytes) of the resulting string (not including the
-   trailing NUL byte), and return a pointer to the lower-case string.
-   Upon memory allocation failure, this function exits.
-   Note that on input, *N must be larger than zero.
+   trailing NUL byte), and return a pointer to the uppercase string.
+   Upon memory allocation failure, exit.  *N must be positive.
 
-   Note that while this function returns a pointer to malloc'd storage,
+   Although this function returns a pointer to malloc'd storage,
    the caller must not free it, since this function retains a pointer
    to the buffer and reuses it on any subsequent call.  As a consequence,
    this function is not thread-safe.
 
-   When each character in the lower-case result string has the same length
+   When each character in the uppercase result string has the same length
    as the corresponding character in the input string, set *LEN_MAP_P
    to NULL.  Otherwise, set it to a malloc'd buffer (like the returned
    buffer, this must not be freed by caller) of the same length as the
    result string.  (*LEN_MAP_P)[J] is the change in byte-length of the
    character in BEG that formed byte J of the result as it was converted to
-   lower-case.  It is usually zero.  For the upper-case Turkish I-with-dot
-   it is -1, since the upper-case character occupies two bytes, while the
-   lower-case one occupies only one byte.  For the Turkish-I-without-dot
-   in the tr_TR.utf8 locale, it is 1 because the lower-case representation
+   uppercase.  It is usually zero.  For lowercase Turkish dotless I it
+   is -1, since the lowercase input occupies two bytes, while the
+   uppercase output occupies only one byte.  For lowercase I in the
+   tr_TR.utf8 locale, it is 1 because the uppercase Turkish dotted I
    is one byte longer than the original.  When that happens, we have two
    or more slots in *LEN_MAP_P for each such character.  We store the
    difference in the first one and 0's in any remaining slots.
 
    This map is used by the caller to convert offset,length pairs that
-   reference the lower-case result to numbers that refer to the matched
+   reference the uppercase result to numbers that refer to the matched
    part of the original buffer.  */
 
 char *
-mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
+mbtoupper (const char *beg, size_t *n, mb_len_map_t **len_map_p)
 {
   static char *out;
   static mb_len_map_t *len_map;
@@ -94,7 +93,7 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
 
   if (*n > outalloc || outalloc == 0)
     {
-      outalloc = MAX(1, *n);
+      outalloc = MAX (1, *n);
       out = xrealloc (out, outalloc);
       len_map = xrealloc (len_map, outalloc);
     }
@@ -175,8 +174,8 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
           /* Handle Unicode characters beyond the base plane.  */
           if (mbclen == 4)
             {
-              /* towlower, taking wint_t (4 bytes), handles UCS-4 values.  */
-              wci = towlower (wci);
+              /* towupper, taking wint_t (4 bytes), handles UCS-4 values.  */
+              wci = towupper (wci);
               if (wci >= 0x10000)
                 {
                   wci -= 0x10000;
@@ -197,7 +196,7 @@ mbtolower (const char *beg, size_t *n, mb_len_map_t **len_map_p)
             }
           else
 #endif
-          ombclen = wcrtomb (p, towlower ((wint_t) wc), &os);
+          ombclen = wcrtomb (p, towupper (wc), &os);
           *m = mbclen - ombclen;
           memset (m + 1, 0, ombclen - 1);
           m += ombclen;

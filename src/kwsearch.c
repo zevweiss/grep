@@ -36,7 +36,7 @@ Fcompile (char const *pattern, size_t size)
   size_t psize = size;
   mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
-                     ? mbtolower (pattern, &psize, &map)
+                     ? mbtoupper (pattern, &psize, &map)
                      : pattern);
 
   kwsinit (&kwset);
@@ -75,7 +75,7 @@ Fcompile (char const *pattern, size_t size)
     error (EXIT_TROUBLE, 0, "%s", err);
 }
 
-/* Apply the MAP (created by mbtolower) to the lowercase-buffer-relative
+/* Apply the MAP (created by mbtoupper) to the uppercase-buffer-relative
    *OFF and *LEN, converting them to be relative to the original buffer.  */
 
 static void
@@ -110,7 +110,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
     {
       if (match_icase)
         {
-          char *case_buf = mbtolower (buf, &size, &map);
+          char *case_buf = mbtoupper (buf, &size, &map);
           if (start_ptr)
             start_ptr = case_buf + (start_ptr - buf);
           buf = case_buf;

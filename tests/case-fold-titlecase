@@ -162,6 +162,8 @@ do
      grep -i "\\(\\)\\1$pat" in >out-regex || fail=1
      grep -i "$pat" in >out-dfa || fail=1
      compare_ out-regex out-dfa || fail=1
+     grep -iF "$pat" in >out-fixed || fail=1
+     compare_ out-regex out-fixed || fail=1
   done
 done
 
@@ -180,6 +182,8 @@ if test "$(get-mb-cur-max el_GR.iso88597)" -eq 1; then
      grep -i "\\(\\)\\1$pat" in >out-regex || fail=1
      grep -i "$pat" in >out-dfa || fail=1
      compare_ out-regex out-dfa || fail=1
+     grep -iF "$pat" in >out-fixed || fail=1
+     compare_ out-regex out-fixed || fail=1
   done
 fi
 

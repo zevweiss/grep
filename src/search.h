@@ -45,7 +45,7 @@ typedef signed char mb_len_map_t;
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
 
-extern char *mbtolower (const char *, size_t *, mb_len_map_t **);
+extern char *mbtoupper (const char *, size_t *, mb_len_map_t **);
 extern void build_mbclen_cache (void);
 extern bool is_mb_middle (const char **, const char *, const char *, size_t);
 
