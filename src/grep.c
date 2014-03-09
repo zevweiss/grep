@@ -1904,6 +1904,79 @@ parse_grep_colors (void)
    ? (*(s) = wctob ((wint_t) (wc)), 1) \
    : wcrtomb (s, wc, ps))
 
+/* Check wether a string has any alphabets.  */
+static bool
+check_any_alphabets (size_t len, char const *keys)
+{
+  while (len)
+    {
+      mbstate_t mb_state = { 0 };
+      wchar_t wc;
+      size_t n = MBRTOWC (&wc, keys, len, &mb_state);
+
+      if ((size_t) -2 <= n)
+        {
+          keys++;
+          len--;
+          continue;
+        }
+
+      wchar_t folded[CASE_FOLDED_BUFSIZE];
+      int nfolded = case_folded_counterparts (wc, folded);
+      if (nfolded > 0)
+        return true;
+      keys += n;
+      len -= n;
+    }
+
+  return false;
+}
+
+/* Change a pattern for fgrep into grep.  */
+static void
+fgrep_to_grep_pattern (size_t len, char const *keys,
+                       size_t *new_len, char **new_keys)
+{
+  *new_keys = xnmalloc (len + 1, 2);
+  char *p = *new_keys;
+
+  while (len)
+    {
+      mbstate_t mb_state = { 0 };
+      wchar_t wc;
+      size_t n = MBRTOWC (&wc, keys, len, &mb_state);
+
+      if ((size_t) -2 <= n)
+        *p++ = *keys++;
+      else if (n == 1)
+        {
+          switch (*keys)
+            {
+              case '\\':
+              case '[':
+              case ']':
+              case '^':
+              case '$':
+              case '.':
+              case '*':
+                *p++ = '\\';
+              default:
+                *p++ = *keys;
+            }
+        }
+      else
+        {
+          memcpy (p, keys, n);
+          p += n;
+        }
+
+      keys += n;
+      len -= n;
+    }
+
+  *new_len = p - *new_keys;
+}
+
 /* If the newline-separated regular expressions, KEYS (with length, LEN
    and no trailing NUL byte), are amenable to transformation into
    otherwise equivalent case-ignoring ones, perform the transformation,
@@ -2378,6 +2451,27 @@ main (int argc, char **argv)
     }
   else
     usage (EXIT_TROUBLE);
+
+  /* If the matcher is fgrep and case-insensitive and keys including any
+     alphabets, change it into grep matcher by escape of keys.  If keys
+     include no alphabet, can turn off match_icase flag.  */
+  if (match_icase && MB_CUR_MAX > 1 && keycc
+      && compile == Fcompile)
+    {
+      if (check_any_alphabets (keycc, keys))
+        {
+          size_t new_keycc;
+          char *new_keys;
+          fgrep_to_grep_pattern (keycc, keys, &new_keycc, &new_keys);
+          free (keys);
+          keys = new_keys;
+          keycc = new_keycc;
+          matcher = NULL;
+          setmatcher ("grep");
+        }
+      else
+        match_icase = 0;
+    }
 
   /* Case-insensitive matching is expensive in multibyte locales
      because a few characters may change size when converted to upper
