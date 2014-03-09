@@ -108,4 +108,4 @@ extern int using_utf8 (void);
    entry in LONESOME_LOWER; see dfa.c.  */
 enum { CASE_FOLDED_BUFSIZE = 1 + 1 + 19 };
 
-int case_folded_counterparts (wchar_t, wchar_t[CASE_FOLDED_BUFSIZE]);
+extern int case_folded_counterparts (wchar_t, wchar_t[CASE_FOLDED_BUFSIZE]);

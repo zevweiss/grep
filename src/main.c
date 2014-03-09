@@ -27,7 +27,6 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include <assert.h>
 #include "system.h"
 
 #include "argmatch.h"

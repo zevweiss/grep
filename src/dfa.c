@@ -1157,7 +1157,7 @@ parse_bracket_exp (void)
                     }
                 }
               else if (using_simple_locale ())
-		{
+                {
                   for (c1 = c; c1 <= c2; c1++)
                     setbit (c1, ccl);
                   if (case_fold)
