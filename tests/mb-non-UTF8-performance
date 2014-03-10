@@ -18,15 +18,26 @@
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 require_timeout_
+require_hi_res_time_
 
 fail=0
 
-require_JP_EUC_locale_
-
 yes $(printf '%078d' 0) | head -50000 > in || framework_failure_
 
+start=$(hi_res_time_)
+LC_ALL=C grep -i foobar in; st=$?
+stop=$(hi_res_time_)
+
+# Use a multiple of the LC_ALL=C duration as the timeout for the JP/EUC test.
+# Typically, a multiple of 3 seems to be enough.
+timeout=$($AWK 'BEGIN { print 8 * ('$stop' - '$start')}' < /dev/null)
+
+test $st = 1 || fail=1
+
+require_JP_EUC_locale_
+
 # Expect no match, i.e., exit status of 1.  Anything else is an error.
-timeout 4 grep -i foobar in; st=$?
+timeout $timeout grep -i foobar in; st=$?
 test $st = 1 || fail=1
 
 Exit $fail
