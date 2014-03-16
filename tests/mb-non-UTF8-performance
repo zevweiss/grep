@@ -1,5 +1,7 @@
 #!/bin/sh
 # grep-2.17 would take nearly 200x longer to run the command below.
+# The 200x is on an Intel i7-based system.
+# On an AMD FX-4100, it would take up to 2500x longer.
 
 # Copyright 2014 Free Software Foundation, Inc.
 
@@ -29,8 +31,8 @@ LC_ALL=C grep -i foobar in; st=$?
 stop=$(hi_res_time_)
 
 # Use a multiple of the LC_ALL=C duration as the timeout for the JP/EUC test.
-# Typically, a multiple of 3 seems to be enough.
-timeout=$($AWK 'BEGIN { print 8 * ('$stop' - '$start')}' < /dev/null)
+# A multiple of 3 seems to be enough for i5,i7, but AMD needs >25.
+timeout=$($AWK 'BEGIN { print 30 * ('$stop' - '$start')}' < /dev/null)
 
 test $st = 1 || fail=1
 
