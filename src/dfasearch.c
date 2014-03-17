@@ -204,7 +204,7 @@ size_t
 EGexecute (char const *buf, size_t size, size_t *match_size,
            char const *start_ptr)
 {
-  char const *buflim, *beg, *end, *match, *best_match, *mb_start;
+  char const *buflim, *beg, *end, *ptr, *match, *best_match, *mb_start;
   char eol = eolbyte;
   int backref;
   regoff_t start;
@@ -275,18 +275,20 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           /* Successful, no backreferences encountered! */
           if (!backref)
             goto success;
+          ptr = beg;
         }
       else
         {
           /* We are looking for the leftmost (then longest) exact match.
              We will go through the outer loop only once.  */
-          beg = start_ptr;
+          beg = buf;
           end = buflim;
+          ptr = start_ptr;
         }
 
       /* If the "line" is longer than the maximum regexp offset,
          die as if we've run out of memory.  */
-      if (TYPE_MAXIMUM (regoff_t) < end - buf - 1)
+      if (TYPE_MAXIMUM (regoff_t) < end - beg - 1)
         xalloc_die ();
 
       /* If we've made it to this point, this means DFA has seen
@@ -297,24 +299,24 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
         {
           patterns[i].regexbuf.not_eol = 0;
           start = re_search (&(patterns[i].regexbuf),
-                             buf, end - buf - 1,
-                             beg - buf, end - beg - 1,
+                             beg, end - beg - 1,
+                             ptr - beg, end - ptr - 1,
                              &(patterns[i].regs));
           if (start < -1)
             xalloc_die ();
           else if (0 <= start)
             {
               len = patterns[i].regs.end[0] - start;
-              match = buf + start;
+              match = beg + start;
               if (match > best_match)
                 continue;
               if (start_ptr && !match_words)
                 goto assess_pattern_match;
               if ((!match_lines && !match_words)
-                  || (match_lines && len == end - beg - 1))
+                  || (match_lines && len == end - ptr - 1))
                 {
-                  match = beg;
-                  len = end - beg;
+                  match = ptr;
+                  len = end - ptr;
                   goto assess_pattern_match;
                 }
               /* If -w, check if the match aligns with word boundaries.
@@ -328,8 +330,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 while (match <= best_match)
                   {
                     regoff_t shorter_len = 0;
-                    if ((match == buf || !WCHAR (to_uchar (match[-1])))
-                        && (start + len == end - buf - 1
+                    if ((match == beg || !WCHAR (to_uchar (match[-1])))
+                        && (start + len == end - beg - 1
                             || !WCHAR (to_uchar (match[len]))))
                       goto assess_pattern_match;
                     if (len > 0)
@@ -338,8 +340,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                         --len;
                         patterns[i].regexbuf.not_eol = 1;
                         shorter_len = re_match (&(patterns[i].regexbuf),
-                                                buf, match + len - beg,
-                                                match - buf,
+                                                beg, match + len - ptr,
+                                                match - beg,
                                                 &(patterns[i].regs));
                         if (shorter_len < -1)
                           xalloc_die ();
@@ -354,8 +356,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                         match++;
                         patterns[i].regexbuf.not_eol = 0;
                         start = re_search (&(patterns[i].regexbuf),
-                                           buf, end - buf - 1,
-                                           match - buf, end - match - 1,
+                                           beg, end - beg - 1,
+                                           match - beg, end - match - 1,
                                            &(patterns[i].regs));
                         if (start < 0)
                           {
@@ -364,7 +366,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                             break;
                           }
                         len = patterns[i].regs.end[0] - start;
-                        match = buf + start;
+                        match = beg + start;
                       }
                   } /* while (match <= best_match) */
               continue;
