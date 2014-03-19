@@ -434,7 +434,7 @@ kwsprep (kwset_t kwset)
 
   /* Check if we can use the simple boyer-moore algorithm, instead
      of the hairy commentz-walter algorithm. */
-  if (!trans && kwset->words == 1)
+  if (kwset->words == 1)
     {
       /* Looking for just one string.  Extract it from the trie. */
       kwset->target = obstack_alloc (&kwset->obstack, kwset->mind);
@@ -464,6 +464,76 @@ kwsprep (kwset_t kwset)
       kwset->delta[i] = delta[U(trans[i])];
 }
 
+#define BM_DELTA2_SEARCH 				\
+  if (TRANS(tp[-2]) == gc2)				\
+    {							\
+      for (i = 3; i <= len; ++i)			\
+        if (TRANS(tp[-i]) != TRANS(sp[-i]))		\
+          break;					\
+      if (i > len)					\
+        return tp - len - text;				\
+      d = kwset->shift[i - 2]; tp += d;			\
+      if (tp > ep)					\
+        break;						\
+      if (TRANS(tp[-1]) != gc1)				\
+        {						\
+          d = d1[U(tp[-1])]; LAST_SHIFT;		\
+          continue;					\
+        }						\
+      skip = i - 1;					\
+    }							\
+  else							\
+    {							\
+      d = kwset->shift[0]; tp += d;			\
+      if (tp > ep)					\
+        break;						\
+      if (TRANS(tp[-1]) != gc1)				\
+        {						\
+          d = d1[U(tp[-1])]; LAST_SHIFT;		\
+          continue;					\
+        }						\
+      skip = 1;						\
+    }							\
+  while (true)						\
+    {							\
+      if (TRANS(tp[-2]) == gc2)				\
+        {						\
+          for (i = 3; i <= d; ++i)			\
+            if (TRANS(tp[-i]) != TRANS(sp[-i]))		\
+              break;					\
+          if (i > d)					\
+            {						\
+              for (i = d + skip + 1; i <= len; ++i)	\
+                if (TRANS(tp[-i]) != TRANS(sp[-i]))	\
+                  break;				\
+              if (i > len)				\
+                return tp - len - text;			\
+            }						\
+          d = kwset->shift[i - 2]; tp += d;		\
+          if (tp > ep)					\
+            break;					\
+          if (TRANS(tp[-1]) != gc1)			\
+            {						\
+              d = d1[U(tp[-1])]; LAST_SHIFT;		\
+              break;					\
+            }						\
+          skip = i - 1;					\
+        }						\
+      else						\
+        {						\
+          d = kwset->shift[0]; tp += d;			\
+          if (tp > ep)					\
+            break;					\
+          if (TRANS(tp[-1]) != gc1)			\
+            {						\
+              d = d1[U(tp[-1])]; LAST_SHIFT;		\
+              break;					\
+            }						\
+          skip = 1;					\
+        }						\
+    }
+
+
 /* Fast boyer-moore search. */
 static size_t _GL_ATTRIBUTE_PURE
 bmexec (kwset_t kwset, char const *text, size_t size)
@@ -473,6 +543,7 @@ bmexec (kwset_t kwset, char const *text, size_t size)
   int d, i, skip;
   char gc1, gc2;
   int len = kwset->mind;
+  char const *trans = kwset->trans;
 
   if (len == 0)
     return 0;
@@ -480,15 +551,33 @@ bmexec (kwset_t kwset, char const *text, size_t size)
     return -1;
   if (len == 1)
     {
-      tp = memchr (text, kwset->target[0], size);
-      return tp ? tp - text : -1;
+      if (trans)
+        {
+          for (tp = text; tp < text + size; tp++)
+            if (trans[U(*tp)] == kwset->target[0])
+              return tp - text;
+          return -1;
+        }
+      else
+        {
+          tp = memchr (text, kwset->target[0], size);
+          return tp ? tp - text : -1;
+        }
     }
 
   d1 = kwset->delta;
   sp = kwset->target + len;
-  gc1 = sp[-1];
-  gc2 = sp[-2];
   tp = text + len;
+  if (trans)
+    {
+      gc1 = trans[U(sp[-1])];
+      gc2 = trans[U(sp[-2])];
+    }
+  else
+    {
+      gc1 = sp[-1];
+      gc2 = sp[-2];
+    }
   skip = 0;
 
   /* Significance of 12: 1 (initial offset) + 10 (skip loop) + 1 (md2). */
@@ -517,32 +606,19 @@ bmexec (kwset_t kwset, char const *text, size_t size)
           }
         break;
       found:
-        d = len;
-        while (true)
+#undef LAST_SHIFT
+#define LAST_SHIFT tp += d
+        if (trans)
           {
-            if (tp[-2] == gc2)
-              {
-                for (i = 3; i <= d && tp[-i] == sp[-i]; ++i)
-                  continue;
-                if (i > d)
-                  {
-                    for (i = d + skip + 1; i <= len && tp[-i] == sp[-i]; ++i)
-                      continue;
-                    if (i > len)
-                      return tp - len - text;
-                  }
-                d = kwset->shift[i - 2]; tp += d;
-                if (tp > ep || tp[-1] != gc1)
-                  break;
-                skip = i - 1;
-              }
-            else
-              {
-                d = kwset->shift[0]; tp += d;
-                if (tp > ep || tp[-1] != gc1)
-                  break;
-                skip = 1;
-              }
+#undef TRANS
+#define TRANS(ch) trans[U(ch)]
+            BM_DELTA2_SEARCH;
+          }
+        else
+          {
+#undef TRANS
+#define TRANS(ch) ch
+            BM_DELTA2_SEARCH;
           }
       }
 
@@ -555,32 +631,19 @@ bmexec (kwset_t kwset, char const *text, size_t size)
       d = d1[U((tp += d)[-1])];
       if (d != 0)
         continue;
-      d = len;
-      while (true)
+#undef LAST_SHIFT
+#define LAST_SHIFT
+      if (trans)
         {
-          if (tp[-2] == gc2)
-            {
-              for (i = 3; i <= d && tp[-i] == sp[-i]; ++i)
-                continue;
-              if (i > d)
-                {
-                  for (i = d + skip + 1; i <= len && tp[-i] == sp[-i]; ++i)
-                    continue;
-                  if (i > len)
-                    return tp - len - text;
-                }
-              d = kwset->shift[i - 2]; tp += d;
-              if (tp > ep || tp[-1] != gc1)
-                break;
-              skip = i - 1;
-            }
-          else
-            {
-              d = kwset->shift[0]; tp += d;
-              if (tp > ep || tp[-1] != gc1)
-                break;
-              skip = 1;
-            }
+#undef TRANS
+#define TRANS(ch) trans[U(ch)]
+          BM_DELTA2_SEARCH;
+        }
+      else
+        {
+#undef TRANS
+#define TRANS(ch) ch
+          BM_DELTA2_SEARCH;
         }
     }
 
@@ -752,7 +815,7 @@ size_t
 kwsexec (kwset_t kwset, char const *text, size_t size,
          struct kwsmatch *kwsmatch)
 {
-  if (kwset->words == 1 && kwset->trans == NULL)
+  if (kwset->words == 1)
     {
       size_t ret = bmexec (kwset, text, size);
       if (ret != (size_t) -1)
