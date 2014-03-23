@@ -34,7 +34,11 @@
 #include <locale.h>
 #include <stdbool.h>
 
-/* Gawk doesn't use Gnulib, so don't assume static_assert is present.  */
+/* Gawk doesn't use Gnulib, so don't assume that setlocale and
+   static_assert are present.  */
+#ifndef LC_ALL
+# define setlocale(category, locale) NULL
+#endif
 #ifndef static_assert
 # define static_assert(cond, diagnostic) \
     extern int (*foo (void)) [!!sizeof (struct { int foo: (cond) ? 8 : -1; })]
