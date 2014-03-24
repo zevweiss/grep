@@ -807,7 +807,7 @@ static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
 static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
 /* These variables are used only if (MB_CUR_MAX > 1).  */
-static mbstate_t mbs;           /* Mbstate for mbrlen.  */
+static mbstate_t mbs;           /* mbstate for mbrtowc.  */
 static wchar_t wctok;           /* Wide character representation of the current
                                    multibyte character.  */
 static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec.
@@ -844,15 +844,18 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
     else					\
       {						\
         wchar_t _wc;				\
-        cur_mb_len = mbrtowc (&_wc, lexptr, lexleft, &mbs); \
-        if (cur_mb_len <= 0)			\
+        size_t nbytes = mbrtowc (&_wc, lexptr, lexleft, &mbs); \
+        bool valid_char = 1 <= nbytes && nbytes < (size_t) -2; \
+        if (! valid_char)			\
           {					\
+            memset (&mbs, 0, sizeof mbs);	\
             cur_mb_len = 1;			\
             --lexleft;				\
             (wc) = (c) = to_uchar (*lexptr++);  \
           }					\
         else					\
           {					\
+            cur_mb_len = nbytes;		\
             lexptr += cur_mb_len;		\
             lexleft -= cur_mb_len;		\
             (wc) = _wc;				\
@@ -1685,16 +1688,19 @@ static void
 addtok_wc (wint_t wc)
 {
   unsigned char buf[MB_LEN_MAX];
-  mbstate_t s;
+  mbstate_t s = { 0 };
   int i;
-  memset (&s, 0, sizeof s);
-  cur_mb_len = wcrtomb ((char *) buf, wc, &s);
+  size_t stored_bytes = wcrtomb ((char *) buf, wc, &s);
 
-  /* This is merely stop-gap.  When cur_mb_len is 0 or negative,
-     buf[0] is undefined, yet skipping the addtok_mb call altogether
-     can result in heap corruption.  */
-  if (cur_mb_len <= 0)
-    buf[0] = 0;
+  if (stored_bytes != (size_t) -1)
+    cur_mb_len = stored_bytes;
+  else
+    {
+      /* This is merely stop-gap.  buf[0] is undefined, yet skipping
+         the addtok_mb call altogether can corrupt the heap.  */
+      cur_mb_len = 1;
+      buf[0] = 0;
+    }
 
   addtok_mb (buf[0], cur_mb_len == 1 ? 3 : 1);
   for (i = 1; i < cur_mb_len; i++)
@@ -3328,13 +3334,13 @@ prepare_wc_buf (const char *begin, const char *end)
     {
       if (remain_bytes == 0)
         {
-          remain_bytes
+          size_t nbytes
             = mbrtowc (inputwcs + i, begin + i, end - begin - i + 1, &mbs);
-          if (remain_bytes < 1
-              || remain_bytes == (size_t) -1
-              || remain_bytes == (size_t) -2
-              || (remain_bytes == 1 && inputwcs[i] == (wchar_t) begin[i]))
+          if (! (1 <= nbytes && nbytes < (size_t) -2)
+              || (nbytes == 1 && inputwcs[i] == (wchar_t) begin[i]))
             {
+              if ((size_t) -2 <= nbytes)
+                memset (&mbs, 0, sizeof mbs);
               remain_bytes = 0;
               inputwcs[i] = (wchar_t) begin[i];
               mblen_buf[i] = 0;
@@ -3343,8 +3349,8 @@ prepare_wc_buf (const char *begin, const char *end)
             }
           else
             {
-              mblen_buf[i] = remain_bytes;
-              remain_bytes--;
+              mblen_buf[i] = nbytes;
+              remain_bytes = nbytes - 1;
             }
         }
       else
