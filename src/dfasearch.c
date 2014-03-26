@@ -236,6 +236,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               match = beg;
               while (beg > buf && beg[-1] != eol)
                 --beg;
+              char const *dfa_start = beg;
               if (kwsm.index < kwset_exact_matches)
                 {
                   if (!MBS_SUPPORT)
@@ -247,8 +248,13 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                       || !is_mb_middle (&mb_start, match, buflim,
                                         kwsm.size[0]))
                     goto success;
+                  /* The matched line starts in the middle of a multibyte
+                     character.  Perform the DFA search starting from the
+                     beginning of the next character.  */
+                  dfa_start = mb_start;
                 }
-              if (dfaexec (dfa, beg, (char *) end, 0, NULL, &backref) == NULL)
+              if (dfaexec (dfa, dfa_start, (char *) end, 0, NULL,
+                           &backref) == NULL)
                 continue;
             }
           else
