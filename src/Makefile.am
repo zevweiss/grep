@@ -42,19 +42,14 @@ grep_LDADD = $(LDADD) $(LIB_PCRE)
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 
-EXTRA_DIST = dosbuf.c
+EXTRA_DIST = dosbuf.c egrep.sh
 
-egrep fgrep:
+egrep fgrep: egrep.sh Makefile
 	$(AM_V_GEN)grep=`echo grep | sed -e '$(transform)'`	&& \
 	case $@ in egrep) option=-E;; fgrep) option=-F;; esac	&& \
-	(echo '#!$(SHELL)'					&& \
-	 echo 'grep=grep'					&& \
-	 echo 'case $$0 in */*)'				&& \
-	 echo '  g=$${0%/*}/'"'$$grep'"				&& \
-	 echo '  test -x "$$g" && grep=$$g'			&& \
-	 echo 'esac'						&& \
-	 echo 'exec "$$grep" '"$$option"' "$$@"'	\
-	) >$@-t
+	sed -e 's|[@]SHELL@|$(SHELL)|g' \
+	    -e "s|[@]grep@|$$grep|g" \
+	    -e "s|[@]option@|$$option|g" <egrep.sh >$@-t
 	$(AM_V_at)chmod +x $@-t
 	$(AM_V_at)mv $@-t $@
 
