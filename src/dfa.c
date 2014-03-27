@@ -37,7 +37,7 @@
 /* Gawk doesn't use Gnulib, so don't assume that setlocale and
    static_assert are present.  */
 #ifndef LC_ALL
-# define setlocale(category, locale) NULL
+# define setlocale(category, locale) "C"
 #endif
 #ifndef static_assert
 # define static_assert(cond, diagnostic) \
@@ -783,7 +783,7 @@ using_simple_locale (void)
       static int unibyte_c = -1;
       if (unibyte_c < 0)
         {
-          char *locale = setlocale (LC_ALL, NULL);
+          char const *locale = setlocale (LC_ALL, NULL);
           unibyte_c = (locale && (STREQ (locale, "C")
                                   || STREQ (locale, "POSIX")));
         }
