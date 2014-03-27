@@ -49,7 +49,7 @@ egrep fgrep: egrep.sh Makefile
 	case $@ in egrep) option=-E;; fgrep) option=-F;; esac	&& \
 	sed -e 's|[@]SHELL@|$(SHELL)|g' \
 	    -e "s|[@]grep@|$$grep|g" \
-	    -e "s|[@]option@|$$option|g" <egrep.sh >$@-t
+	    -e "s|[@]option@|$$option|g" <$(srcdir)/egrep.sh >$@-t
 	$(AM_V_at)chmod +x $@-t
 	$(AM_V_at)mv $@-t $@
 
