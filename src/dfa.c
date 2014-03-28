@@ -376,6 +376,14 @@ struct dfa
   size_t nmultibyte_prop;
   int *multibyte_prop;
 
+#if MBS_SUPPORT
+  /* A table indexed by byte values that contains the corresponding wide
+     character (if any) for that byte.  WEOF means the byte is the
+     leading byte of a multibyte character.  Invalid and null bytes are
+     mapped to themselves.  */
+  wint_t *mbrtowc_cache;
+#endif
+
   /* Array of the bracket expression in the DFA.  */
   struct mb_char_classes *mbcsets;
   size_t nmbcsets;
@@ -430,62 +438,6 @@ struct dfa
                                    the dfa.  */
 };
 
-/* A table indexed by byte values that contains the corresponding wide
-   character (if any) for that byte.  WEOF means the byte is the
-   leading byte of a multibyte character.  Invalid and null bytes are
-   mapped to themselves.  */
-static wint_t mbrtowc_cache[NOTCHAR];
-
-static void
-build_mbrtowc_cache (void)
-{
-  int i;
-  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
-    {
-      char c = i;
-      unsigned char uc = i;
-      mbstate_t s = { 0 };
-      switch (mbrtowc (&mbrtowc_cache[uc], &c, 1, &s))
-        {
-        case (size_t) -2: mbrtowc_cache[uc] = WEOF; break;
-        case (size_t) -1: mbrtowc_cache[uc] = uc; break;
-        }
-    }
-}
-
-/* Store into *PWC the result of converting the leading bytes of the
-   multibyte buffer S of length N bytes, updating the conversion state
-   in *MBS.  On conversion error, convert just a single byte as-is.
-   Return the number of bytes converted.
-
-   This differs from mbrtowc (PWC, S, N, MBS) as follows:
-
-   * N must be at least 1.
-   * S[N - 1] must be a sentinel byte.
-   * Shift encodings are not supported.
-   * The return value is always in the range 1..N.
-   * *MBS is always valid afterwards.
-   * *PWC is always set to something.
-   * This uses mbrtowc_cache for speed in the typical case.  */
-static size_t
-mbs_to_wchar (wchar_t *pwc, char const *s, size_t n, mbstate_t *mbs)
-{
-  unsigned char uc = s[0];
-  wint_t wc = mbrtowc_cache[uc];
-
-  if (wc == WEOF)
-    {
-      size_t nbytes = mbrtowc (pwc, s, n, mbs);
-      if (0 < nbytes && nbytes < (size_t) -2)
-        return nbytes;
-      memset (mbs, 0, sizeof *mbs);
-      wc = uc;
-    }
-
-  *pwc = wc;
-  return 1;
-}
-
 /* Some macros for user access to dfa internals.  */
 
 /* ACCEPTING returns true if s could possibly be an accepting state of r.  */
@@ -533,6 +485,60 @@ static void regexp (void);
     }								\
   while (false)
 
+static void
+dfambcache (struct dfa *d)
+{
+#if MBS_SUPPORT
+  int i;
+  MALLOC (d->mbrtowc_cache, NOTCHAR);
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
+    {
+      char c = i;
+      unsigned char uc = i;
+      mbstate_t s = { 0 };
+      switch (mbrtowc ((wchar_t *) &d->mbrtowc_cache[uc], &c, 1, &s))
+        {
+        case (size_t) -2: d->mbrtowc_cache[uc] = WEOF; break;
+        case (size_t) -1: d->mbrtowc_cache[uc] = uc; break;
+        }
+    }
+#endif
+}
+
+#if MBS_SUPPORT
+/* Store into *PWC the result of converting the leading bytes of the
+   multibyte buffer S of length N bytes, updating the conversion state
+   in *MBS.  On conversion error, convert just a single byte as-is.
+   Return the number of bytes converted.
+
+   This differs from mbrtowc (PWC, S, N, MBS) as follows:
+
+   * N must be at least 1.
+   * S[N - 1] must be a sentinel byte.
+   * Shift encodings are not supported.
+   * The return value is always in the range 1..N.
+   * *MBS is always valid afterwards.
+   * *PWC is always set to something.
+   * This uses mbrtowc_cache for speed in the typical case.  */
+static size_t
+mbs_to_wchar (struct dfa *d, wchar_t *pwc, char const *s, size_t n, mbstate_t *mbs)
+{
+  unsigned char uc = s[0];
+  wint_t wc = d->mbrtowc_cache[uc];
+
+  if (wc == WEOF)
+    {
+      size_t nbytes = mbrtowc (pwc, s, n, mbs);
+      if (0 < nbytes && nbytes < (size_t) -2)
+        return nbytes;
+      memset (mbs, 0, sizeof *mbs);
+      wc = uc;
+    }
+
+  *pwc = wc;
+  return 1;
+}
+#endif
 
 #ifdef DEBUG
 
@@ -900,7 +906,7 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
     else					\
       {						\
         wchar_t _wc;				\
-        size_t nbytes = mbs_to_wchar (&_wc, lexptr, lexleft, &mbs); \
+        size_t nbytes = mbs_to_wchar (dfa, &_wc, lexptr, lexleft, &mbs); \
         cur_mb_len = nbytes;			\
         (wc) = _wc;				\
         (c) = nbytes == 1 ? to_uchar (*lexptr) : EOF;    \
@@ -3353,7 +3359,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
 /* Initialize mblen_buf and inputwcs with data from the next line.  */
 
 static void
-prepare_wc_buf (const char *begin, const char *end)
+prepare_wc_buf (struct dfa *d, const char *begin, const char *end)
 {
 #if MBS_SUPPORT
   unsigned char eol = eolbyte;
@@ -3364,7 +3370,7 @@ prepare_wc_buf (const char *begin, const char *end)
 
   for (i = 0; i < ilim; i++)
     {
-      size_t nbytes = mbs_to_wchar (inputwcs + i, begin + i, ilim - i, &mbs);
+      size_t nbytes = mbs_to_wchar (d, inputwcs + i, begin + i, ilim - i, &mbs);
       mblen_buf[i] = nbytes - (nbytes == 1);
       if (begin[i] == eol)
         break;
@@ -3419,7 +3425,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       MALLOC (mblen_buf, end - begin + 2);
       MALLOC (inputwcs, end - begin + 2);
       memset (&mbs, 0, sizeof (mbstate_t));
-      prepare_wc_buf ((const char *) p, end);
+      prepare_wc_buf (d, (const char *) p, end);
     }
 
   for (;;)
@@ -3509,7 +3515,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             ++*count;
 
           if (d->mb_cur_max > 1)
-            prepare_wc_buf ((const char *) p, end);
+            prepare_wc_buf (d, (const char *) p, end);
         }
 
       /* Check if we've run off the end of the buffer.  */
@@ -3628,7 +3634,7 @@ void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
   dfainit (d);
-  build_mbrtowc_cache ();
+  dfambcache (d);
   dfaparse (s, len, d);
   dfamust (d);
   dfaoptimize (d);
@@ -3647,6 +3653,9 @@ dfafree (struct dfa *d)
 
   if (d->mb_cur_max > 1)
     free_mbdata (d);
+#if MBS_SUPPORT
+  free (d->mbrtowc_cache);
+#endif
 
   for (i = 0; i < d->sindex; ++i)
     {
