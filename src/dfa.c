@@ -430,6 +430,62 @@ struct dfa
                                    the dfa.  */
 };
 
+/* A table indexed by byte values that contains the corresponding wide
+   character (if any) for that byte.  WEOF means the byte is the
+   leading byte of a multibyte character.  Invalid and null bytes are
+   mapped to themselves.  */
+static wint_t mbrtowc_cache[NOTCHAR];
+
+static void
+build_mbrtowc_cache (void)
+{
+  int i;
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
+    {
+      char c = i;
+      unsigned char uc = i;
+      mbstate_t s = { 0 };
+      switch (mbrtowc (&mbrtowc_cache[uc], &c, 1, &s))
+        {
+        case (size_t) -2: mbrtowc_cache[uc] = WEOF; break;
+        case (size_t) -1: mbrtowc_cache[uc] = uc; break;
+        }
+    }
+}
+
+/* Store into *PWC the result of converting the leading bytes of the
+   multibyte buffer S of length N bytes, updating the conversion state
+   in *MBS.  On conversion error, convert just a single byte as-is.
+   Return the number of bytes converted.
+
+   This differs from mbrtowc (PWC, S, N, MBS) as follows:
+
+   * N must be at least 1.
+   * S[N - 1] must be a sentinel byte.
+   * Shift encodings are not supported.
+   * The return value is always in the range 1..N.
+   * *MBS is always valid afterwards.
+   * *PWC is always set to something.
+   * This uses mbrtowc_cache for speed in the typical case.  */
+static size_t
+mbs_to_wchar (wchar_t *pwc, char const *s, size_t n, mbstate_t *mbs)
+{
+  unsigned char uc = s[0];
+  wint_t wc = mbrtowc_cache[uc];
+
+  if (wc == WEOF)
+    {
+      size_t nbytes = mbrtowc (pwc, s, n, mbs);
+      if (0 < nbytes && nbytes < (size_t) -2)
+        return nbytes;
+      memset (mbs, 0, sizeof *mbs);
+      wc = uc;
+    }
+
+  *pwc = wc;
+  return 1;
+}
+
 /* Some macros for user access to dfa internals.  */
 
 /* ACCEPTING returns true if s could possibly be an accepting state of r.  */
@@ -844,35 +900,18 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
     else					\
       {						\
         wchar_t _wc;				\
-        size_t nbytes = mbrtowc (&_wc, lexptr, lexleft, &mbs); \
-        bool valid_char = 1 <= nbytes && nbytes < (size_t) -2; \
-        if (! valid_char)			\
-          {					\
-            memset (&mbs, 0, sizeof mbs);	\
-            cur_mb_len = 1;			\
-            --lexleft;				\
-            (wc) = (c) = to_uchar (*lexptr++);  \
-          }					\
-        else					\
-          {					\
-            cur_mb_len = nbytes;		\
-            lexptr += cur_mb_len;		\
-            lexleft -= cur_mb_len;		\
-            (wc) = _wc;				\
-            (c) = wctob (wc);			\
-          }					\
+        size_t nbytes = mbs_to_wchar (&_wc, lexptr, lexleft, &mbs); \
+        cur_mb_len = nbytes;			\
+        (wc) = _wc;				\
+        (c) = nbytes == 1 ? to_uchar (*lexptr) : EOF;    \
+        lexptr += nbytes;			\
+        lexleft -= nbytes;			\
       }						\
-  } while (0)
-
-# define FETCH(c, eoferr)			\
-  do {						\
-    wint_t wc;					\
-    FETCH_WC (c, wc, eoferr);			\
   } while (0)
 
 #else
 /* Note that characters become unsigned here.  */
-# define FETCH(c, eoferr)	      \
+# define FETCH_WC(c, unused, eoferr)  \
   do {				      \
     if (! lexleft)		      \
       {				      \
@@ -884,8 +923,6 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
     (c) = to_uchar (*lexptr++);       \
     --lexleft;			      \
   } while (0)
-
-# define FETCH_WC(c, unused, eoferr) FETCH (c, eoferr)
 
 #endif /* MBS_SUPPORT */
 
@@ -1264,14 +1301,9 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-      if (MB_CUR_MAX > 1)
-        {
-          FETCH_WC (c, wctok, NULL);
-          if ((int) c == EOF)
-            goto normal_char;
-        }
-      else
-        FETCH (c, NULL);
+      FETCH_WC (c, wctok, NULL);
+      if (c == (unsigned int) EOF)
+        goto normal_char;
 
       switch (c)
         {
@@ -3325,39 +3357,22 @@ prepare_wc_buf (const char *begin, const char *end)
 {
 #if MBS_SUPPORT
   unsigned char eol = eolbyte;
-  size_t remain_bytes, i;
+  size_t i;
+  size_t ilim = end - begin + 1;
 
   buf_begin = (unsigned char *) begin;
 
-  remain_bytes = 0;
-  for (i = 0; i < end - begin + 1; i++)
+  for (i = 0; i < ilim; i++)
     {
-      if (remain_bytes == 0)
+      size_t nbytes = mbs_to_wchar (inputwcs + i, begin + i, ilim - i, &mbs);
+      mblen_buf[i] = nbytes - (nbytes == 1);
+      if (begin[i] == eol)
+        break;
+      while (--nbytes != 0)
         {
-          size_t nbytes
-            = mbrtowc (inputwcs + i, begin + i, end - begin - i + 1, &mbs);
-          if (! (1 <= nbytes && nbytes < (size_t) -2)
-              || (nbytes == 1 && inputwcs[i] == (wchar_t) begin[i]))
-            {
-              if ((size_t) -2 <= nbytes)
-                memset (&mbs, 0, sizeof mbs);
-              remain_bytes = 0;
-              inputwcs[i] = (wchar_t) begin[i];
-              mblen_buf[i] = 0;
-              if (begin[i] == eol)
-                break;
-            }
-          else
-            {
-              mblen_buf[i] = nbytes;
-              remain_bytes = nbytes - 1;
-            }
-        }
-      else
-        {
-          mblen_buf[i] = remain_bytes;
+          i++;
+          mblen_buf[i] = nbytes;
           inputwcs[i] = 0;
-          remain_bytes--;
         }
     }
 
@@ -3613,6 +3628,7 @@ void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
   dfainit (d);
+  build_mbrtowc_cache ();
   dfaparse (s, len, d);
   dfamust (d);
   dfaoptimize (d);
