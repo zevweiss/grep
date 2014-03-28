@@ -381,7 +381,7 @@ struct dfa
      character (if any) for that byte.  WEOF means the byte is the
      leading byte of a multibyte character.  Invalid and null bytes are
      mapped to themselves.  */
-  wint_t *mbrtowc_cache;
+  wint_t mbrtowc_cache[NOTCHAR];
 #endif
 
   /* Array of the bracket expression in the DFA.  */
@@ -490,38 +490,42 @@ dfambcache (struct dfa *d)
 {
 #if MBS_SUPPORT
   int i;
-  MALLOC (d->mbrtowc_cache, NOTCHAR);
   for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
     {
       char c = i;
       unsigned char uc = i;
       mbstate_t s = { 0 };
-      switch (mbrtowc ((wchar_t *) &d->mbrtowc_cache[uc], &c, 1, &s))
+      wchar_t wc;
+      wint_t wi;
+      switch (mbrtowc (&wc, &c, 1, &s))
         {
-        case (size_t) -2: d->mbrtowc_cache[uc] = WEOF; break;
-        case (size_t) -1: d->mbrtowc_cache[uc] = uc; break;
+        default: wi = wc; break;
+        case (size_t) -2: wi = WEOF; break;
+        case (size_t) -1: wi = uc; break;
         }
+      d->mbrtowc_cache[uc] = wi;
     }
 #endif
 }
 
 #if MBS_SUPPORT
-/* Store into *PWC the result of converting the leading bytes of the
-   multibyte buffer S of length N bytes, updating the conversion state
-   in *MBS.  On conversion error, convert just a single byte as-is.
-   Return the number of bytes converted.
+/* Given the dfa D, store into *PWC the result of converting the
+   leading bytes of the multibyte buffer S of length N bytes, updating
+   the conversion state in *MBS.  On conversion error, convert just a
+   single byte as-is.  Return the number of bytes converted.
 
    This differs from mbrtowc (PWC, S, N, MBS) as follows:
 
+   * Extra arg D, containing an mbrtowc_cache for speed.
    * N must be at least 1.
    * S[N - 1] must be a sentinel byte.
    * Shift encodings are not supported.
    * The return value is always in the range 1..N.
    * *MBS is always valid afterwards.
-   * *PWC is always set to something.
-   * This uses mbrtowc_cache for speed in the typical case.  */
+   * *PWC is always set to something.  */
 static size_t
-mbs_to_wchar (struct dfa *d, wchar_t *pwc, char const *s, size_t n, mbstate_t *mbs)
+mbs_to_wchar (struct dfa *d, wchar_t *pwc, char const *s, size_t n,
+              mbstate_t *mbs)
 {
   unsigned char uc = s[0];
   wint_t wc = d->mbrtowc_cache[uc];
@@ -3653,9 +3657,6 @@ dfafree (struct dfa *d)
 
   if (d->mb_cur_max > 1)
     free_mbdata (d);
-#if MBS_SUPPORT
-  free (d->mbrtowc_cache);
-#endif
 
   for (i = 0; i < d->sindex; ++i)
     {
