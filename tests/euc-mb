@@ -37,7 +37,7 @@ make_input BABA |euc_grep AB && fail=1
 # determines there is no match after all.
 make_input BABAAB |euc_grep AB > out || fail=1
 make_input BABAAB > exp || framework_failure_
-compare out exp || fail=1
+compare exp out || fail=1
 make_input BABABA |euc_grep AB; test $? = 1 || fail=1
 
 Exit $fail
