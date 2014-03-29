@@ -422,24 +422,6 @@ struct dfa
   struct dfamust *musts;        /* List of strings, at least one of which
                                    is known to appear in any r.e. matching
                                    the dfa.  */
-  unsigned char *mblen_buf;     /* Correspond to the input buffer in dfaexec.
-                                   Each element stores the number of remaining
-                                   bytes of the corresponding multibyte
-                                   character in the input string.  A element's
-                                   value is 0 if the corresponding character is
-                                   single-byte.
-                                   e.g., input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
-                                   mblen_buf   :  0,       3,       2,       1
-                                 */
-  size_t nmblen_buf;            /* Allocated size of mblen_buf.  */
-  wchar_t *inputwcs;            /* Wide character representation of the input
-                                   string in dfaexec.
-                                   The length of this array is the same as
-                                   the length of input string (char array).
-                                   inputstring[i] is a single-byte char,
-                                   or the first byte of a multibyte char;
-                                   inputwcs[i] is the codepoint.  */
-  size_t ninputwcs;             /* Allocated number of inputwcs elements.  */
   position_set *mb_follows;     /* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
   int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
@@ -859,8 +841,6 @@ static int cur_mb_len = 1;      /* Length of the multibyte representation of
 static mbstate_t mbs;           /* mbstate for mbrtowc.  */
 static wchar_t wctok;           /* Wide character representation of the current
                                    multibyte character.  */
-static unsigned char const *buf_begin;  /* reference to begin in dfaexec.  */
-static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
 
 
 /* Note that characters become unsigned here.  */
@@ -2900,27 +2880,6 @@ build_state_zero (struct dfa *d)
 
 /* Multibyte character handling sub-routines for dfaexec.  */
 
-/* The initial state may encounter a byte which is not a single byte character
-   nor the first byte of a multibyte character.  But it is incorrect for the
-   initial state to accept such a byte.  For example, in Shift JIS the regular
-   expression "\\" accepts the codepoint 0x5c, but should not accept the second
-   byte of the codepoint 0x815c.  Then the initial state must skip the bytes
-   that are not a single byte character nor the first byte of a multibyte
-   character.  */
-#define SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p)		\
-  if (s == 0)						\
-    {							\
-      while (d->inputwcs[p - buf_begin] == 0		\
-             && d->mblen_buf[p - buf_begin] != 0	\
-             && (unsigned char const *) p < buf_end)	\
-        ++p;						\
-      if ((char *) p >= end)				\
-        {						\
-          *end = saved_end;				\
-          return NULL;					\
-        }						\
-    }
-
 /* Return values of transit_state_singlebyte, and
    transit_state_consume_1char.  */
 typedef enum
@@ -2953,14 +2912,7 @@ transit_state_singlebyte (struct dfa *d, state_num s, unsigned char const *p,
             works = 0;
         }
       else if (works < 0)
-        {
-          if (p == buf_end)
-            {
-              /* At the moment, it must not happen.  */
-              abort ();
-            }
-          works = 0;
-        }
+        works = 0;
       else if (d->fails[works])
         {
           works = d->fails[works][*p];
@@ -2975,18 +2927,13 @@ transit_state_singlebyte (struct dfa *d, state_num s, unsigned char const *p,
   return rval;
 }
 
-/* Match a "." against the current context.  buf_begin[IDX] is the
-   current position.  Return the length of the match, in bytes.
-   POS is the position of the ".".  */
+/* Match a "." against the current context.  Return the length of the
+   match, in bytes.  POS is the position of the ".".  */
 static int
-match_anychar (struct dfa *d, state_num s, position pos, size_t idx)
+match_anychar (struct dfa *d, state_num s, position pos,
+               wchar_t wc, size_t mbclen)
 {
   int context;
-  wchar_t wc;
-  int mbclen;
-
-  wc = d->inputwcs[idx];
-  mbclen = MAX (1, d->mblen_buf[idx]);
 
   /* Check syntax bits.  */
   if (wc == (wchar_t) eolbyte)
@@ -3008,16 +2955,14 @@ match_anychar (struct dfa *d, state_num s, position pos, size_t idx)
 }
 
 /* Match a bracket expression against the current context.
-   buf_begin[IDX] is the current position.
    Return the length of the match, in bytes.
    POS is the position of the bracket expression.  */
 static int
-match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
+match_mb_charset (struct dfa *d, state_num s, position pos,
+                  char const *p, wchar_t wc, size_t match_len)
 {
   size_t i;
   bool match;              /* Matching succeeded.  */
-  int match_len;           /* Length of the character (or collating element)
-                              with which this operator matches.  */
   int op_len;              /* Length of the operator.  */
   char buffer[128];
 
@@ -3025,9 +2970,6 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   struct mb_char_classes *work_mbc;
 
   int context;
-  wchar_t wc;                   /* Current referring character.  */
-
-  wc = d->inputwcs[idx];
 
   /* Check syntax bits.  */
   if (wc == (wchar_t) eolbyte)
@@ -3048,7 +2990,6 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   /* Assign the current referring operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
-  match_len = MAX (1, d->mblen_buf[idx]);
 
   /* Match in range 0-255?  */
   if (wc < NOTCHAR && work_mbc->cset != -1
@@ -3062,14 +3003,14 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
         goto charset_matched;
     }
 
-  strncpy (buffer, (char const *) buf_begin + idx, match_len);
+  strncpy (buffer, p, match_len);
   buffer[match_len] = '\0';
 
   /* match with an equivalence class?  */
   for (i = 0; i < work_mbc->nequivs; i++)
     {
       op_len = strlen (work_mbc->equivs[i]);
-      strncpy (buffer, (char const *) buf_begin + idx, op_len);
+      strncpy (buffer, p, op_len);
       buffer[op_len] = '\0';
       if (strcoll (work_mbc->equivs[i], buffer) == 0)
         {
@@ -3082,7 +3023,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   for (i = 0; i < work_mbc->ncoll_elems; i++)
     {
       op_len = strlen (work_mbc->coll_elems[i]);
-      strncpy (buffer, (char const *) buf_begin + idx, op_len);
+      strncpy (buffer, p, op_len);
       buffer[op_len] = '\0';
 
       if (strcoll (work_mbc->coll_elems[i], buffer) == 0)
@@ -3116,12 +3057,10 @@ charset_matched:
    array which corresponds to 'd->states[s].mbps.elem'; each element of the
    array contains the number of bytes with which the element can match.
 
-   'idx' is the index from buf_begin, and it is the current position
-   in the buffer.
-
    The caller MUST free the array which this function return.  */
 static int *
-check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
+check_matching_with_multibyte_ops (struct dfa *d, state_num s,
+                                   char const *p, wchar_t wc, size_t mbclen)
 {
   size_t i;
   int *rarray;
@@ -3133,10 +3072,10 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
       switch (d->tokens[pos.index])
         {
         case ANYCHAR:
-          rarray[i] = match_anychar (d, s, pos, idx);
+          rarray[i] = match_anychar (d, s, pos, wc, mbclen);
           break;
         case MBCSET:
-          rarray[i] = match_mb_charset (d, s, pos, idx);
+          rarray[i] = match_mb_charset (d, s, pos, p, wc, mbclen);
           break;
         default:
           break;                /* cannot happen.  */
@@ -3156,22 +3095,22 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
 static status_transit_state
 transit_state_consume_1char (struct dfa *d, state_num s,
                              unsigned char const **pp,
-                             int *match_lens, int *mbclen)
+                             wchar_t wc, size_t mbclen,
+                             int *match_lens)
 {
   size_t i, j;
   int k;
   state_num s1, s2;
-  int *work_mbls;
   status_transit_state rs = TRANSIT_STATE_DONE;
 
-  /* Calculate the length of the (single/multi byte) character
-     to which p points.  */
-  *mbclen = MAX (1, d->mblen_buf[*pp - buf_begin]);
+  /* Check (input) match_lens, and initialize if it is NULL.  */
+  if (match_lens == NULL && d->states[s].mbps.nelem != 0)
+    match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp, wc, mbclen);
 
   /* Calculate the state which can be reached from the state 's' by
-     consuming '*mbclen' single bytes from the buffer.  */
+     consuming 'mbclen' single bytes from the buffer.  */
   s1 = s;
-  for (k = 0; k < *mbclen; k++)
+  for (k = 0; k < mbclen; k++)
     {
       s2 = s1;
       rs = transit_state_singlebyte (d, s2, (*pp)++, &s1);
@@ -3179,17 +3118,11 @@ transit_state_consume_1char (struct dfa *d, state_num s,
   /* Copy the positions contained by 's1' to the set 'd->mb_follows'.  */
   copy (&(d->states[s1].elems), d->mb_follows);
 
-  /* Check (input) match_lens, and initialize if it is NULL.  */
-  if (match_lens == NULL && d->states[s].mbps.nelem != 0)
-    work_mbls = check_matching_with_multibyte_ops (d, s, *pp - buf_begin);
-  else
-    work_mbls = match_lens;
-
   /* Add all of the positions which can be reached from 's' by consuming
      a single character.  */
   for (i = 0; i < d->states[s].mbps.nelem; i++)
     {
-      if (work_mbls[i] == *mbclen)
+      if (match_lens[i] == mbclen)
         for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem;
              j++)
           insert (d->follows[d->states[s].mbps.elems[i].index].elems[j],
@@ -3204,7 +3137,8 @@ transit_state_consume_1char (struct dfa *d, state_num s,
    buffer.  This function is for some operator which can match with a multi-
    byte character or a collating element (which may be multi characters).  */
 static state_num
-transit_state (struct dfa *d, state_num s, unsigned char const **pp)
+transit_state (struct dfa *d, state_num s, unsigned char const **pp,
+               unsigned char const *end)
 {
   state_num s1;
   int mbclen;  /* The length of current input multibyte character.  */
@@ -3220,7 +3154,8 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
        We check whether each of them can match or not.  */
     {
       /* Note: caller must free the return value of this function.  */
-      match_lens = check_matching_with_multibyte_ops (d, s, *pp - buf_begin);
+      mbclen = mbs_to_wchar (d, &wc, (char const *) *pp, end - *pp, &mbs);
+      match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp, wc, mbclen);
 
       for (i = 0; i < nelem; i++)
         /* Search the operator which match the longest string,
@@ -3252,15 +3187,15 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
      not be a character but a (multi character) collating element.
      We enumerate all of the positions which 's' can reach by consuming
      'maxlen' bytes.  */
-  transit_state_consume_1char (d, s, pp, match_lens, &mbclen);
+  transit_state_consume_1char (d, s, pp, wc, mbclen, match_lens);
 
-  wc = d->inputwcs[*pp - mbclen - buf_begin];
   s1 = state_index (d, d->mb_follows, wchar_context (wc));
   realloc_trans_if_necessary (d, s1);
 
   while (*pp - p1 < maxlen)
     {
-      transit_state_consume_1char (d, s1, pp, NULL, &mbclen);
+      mbclen = mbs_to_wchar (d, &wc, (char const *) *pp, end - *pp, &mbs);
+      transit_state_consume_1char (d, s1, pp, wc, mbclen, NULL);
 
       for (i = 0; i < nelem; i++)
         {
@@ -3271,43 +3206,10 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
                       d->mb_follows);
         }
 
-      wc = d->inputwcs[*pp - mbclen - buf_begin];
       s1 = state_index (d, d->mb_follows, wchar_context (wc));
       realloc_trans_if_necessary (d, s1);
     }
   return s1;
-}
-
-
-/* Initialize mblen_buf and inputwcs with data from the next line.  */
-
-static void
-prepare_wc_buf (struct dfa *d, const char *begin, const char *end)
-{
-  unsigned char eol = eolbyte;
-  size_t i;
-  size_t ilim = end - begin + 1;
-
-  buf_begin = (unsigned char *) begin;
-
-  for (i = 0; i < ilim; i++)
-    {
-      size_t nbytes = mbs_to_wchar (d, d->inputwcs + i, begin + i, ilim - i,
-                                    &mbs);
-      d->mblen_buf[i] = nbytes - (nbytes == 1);
-      if (begin[i] == eol)
-        break;
-      while (--nbytes != 0)
-        {
-          i++;
-          d->mblen_buf[i] = nbytes;
-          d->inputwcs[i] = 0;
-        }
-    }
-
-  buf_end = (unsigned char *) (begin + i);
-  d->mblen_buf[i] = 0;
-  d->inputwcs[i] = 0;              /* sentinel */
 }
 
 /* Search through a buffer looking for a match to the given struct dfa.
@@ -3327,7 +3229,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
          int allow_nl, size_t *count, int *backref)
 {
   state_num s, s1;              /* Current state.  */
-  unsigned char const *p;       /* Current input character.  */
+  unsigned char const *p, *mbp; /* Current input character.  */
   state_num **trans, *t;        /* Copy of d->trans so it can be optimized
                                    into a register.  */
   unsigned char eol = eolbyte;  /* Likewise for eolbyte.  */
@@ -3337,7 +3239,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     build_state_zero (d);
 
   s = s1 = 0;
-  p = (unsigned char const *) begin;
+  p = mbp = (unsigned char const *) begin;
   trans = d->trans;
   saved_end = *(unsigned char *) end;
   *end = eol;
@@ -3345,12 +3247,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   if (d->mb_cur_max > 1)
     {
       static bool mb_alloc = false;
-      d->mblen_buf = maybe_realloc (d->mblen_buf, end - begin + 2,
-                                    &d->nmblen_buf, sizeof *d->mblen_buf);
-      d->inputwcs = maybe_realloc (d->inputwcs, end - begin + 2,
-                                   &d->ninputwcs, sizeof *d->inputwcs);
       memset (&mbs, 0, sizeof (mbstate_t));
-      prepare_wc_buf (d, (const char *) p, end);
       if (!mb_alloc)
         {
           d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
@@ -3366,10 +3263,32 @@ dfaexec (struct dfa *d, char const *begin, char *end,
         {
           while ((t = trans[s]) != NULL)
             {
-              if (p > buf_end)
-                break;
               s1 = s;
-              SKIP_REMAINS_MB_IF_INITIAL_STATE (s, p);
+
+              if (s == 0)
+                {
+                  /* The initial state may encounter a byte which is not
+                     a single byte character nor the first byte of a
+                     multibyte character.  But it is incorrect for the
+                     initial state to accept such a byte.  For example,
+                     in Shift JIS the regular expression "\\" accepts
+                     the codepoint 0x5c, but should not accept the second
+                     byte of the codepoint 0x815c.  Then the initial
+                     state must skip the bytes that are not a single
+                     byte character nor the first byte of a multibyte
+                     character.  */
+                  wchar_t wc;
+                  while (mbp < p)
+                    mbp += mbs_to_wchar (d, &wc, (char const *) mbp,
+                                         end - (char const *) mbp, &mbs);
+                  p = mbp;
+
+                  if ((char *) p >= end)
+                    {
+                      *end = saved_end;
+                      return NULL;
+                    }
+                }
 
               if (d->states[s].mbps.nelem == 0)
                 {
@@ -3390,7 +3309,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
               /* Can match with a multibyte character (and multi character
                  collating element).  Transition table might be updated.  */
-              s = transit_state (d, s, &p);
+              s = transit_state (d, s, &p, (unsigned char *) end);
+              mbp = p;
               trans = d->trans;
             }
         }
@@ -3425,7 +3345,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
-              s = transit_state (d, s, &p);
+              s = transit_state (d, s, &p, (unsigned char *) end);
+              mbp = p;
               trans = d->trans;
             }
           else
@@ -3434,14 +3355,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
         }
 
       /* If the previous character was a newline, count it.  */
-      if ((char *) p <= end && p[-1] == eol)
-        {
-          if (count)
-            ++*count;
-
-          if (d->mb_cur_max > 1)
-            prepare_wc_buf (d, (const char *) p, end);
-        }
+      if ((char *) p <= end && p[-1] == eol && count)
+        ++*count;
 
       /* Check if we've run off the end of the buffer.  */
       if ((char *) p > end)
@@ -3517,8 +3432,6 @@ free_mbdata (struct dfa *d)
   d->mbcsets = NULL;
   d->nmbcsets = 0;
 
-  free (d->mblen_buf);
-  free (d->inputwcs);
   if (d->mb_follows)
     {
       free (d->mb_follows->elems);
