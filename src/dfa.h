@@ -26,6 +26,8 @@
 struct dfamust
 {
   int exact;
+  int begline;
+  int endline;
   char *must;
   struct dfamust *next;
 };

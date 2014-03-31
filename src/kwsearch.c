@@ -57,7 +57,16 @@ Fcompile (char const *pattern, size_t size)
           total = 0;
         }
 
-      kwsincr (kwset, p, len);
+      if (match_lines)
+        {
+          char *buf = xmalloc (len + 2);
+          memcpy (&buf[1], p, len);
+          buf[0] = buf[len + 1] = eolbyte;
+          kwsincr (kwset, buf, len + 2);
+          free (buf);
+        }
+      else
+        kwsincr (kwset, p, len);
       p = sep;
     }
   while (p);
@@ -109,11 +118,12 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
-      size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
+      size_t offset = kwsexec (kwset, beg - match_lines,
+                               buf + size - beg + match_lines, &kwsmatch);
       if (offset == (size_t) -1)
         goto failure;
-      len = kwsmatch.size[0];
-      if (MB_CUR_MAX > 1
+      len = kwsmatch.size[0] - match_lines;
+      if (MB_CUR_MAX > 1 && !match_lines
           && is_mb_middle (&mb_start, beg + offset, buf + size, len))
         {
           /* The match was a part of multibyte character, advance at least
@@ -130,14 +140,8 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (start_ptr && !match_words)
         goto success_in_beg_and_len;
       if (match_lines)
-        {
-          if (beg > buf && beg[-1] != eol)
-            continue;
-          if (beg + len < buf + size && beg[len] != eol)
-            continue;
-          goto success;
-        }
-      else if (match_words)
+        goto success_in_beg_and_len;
+      if (match_words)
         for (try = beg; ; )
           {
             if (try > buf && WCHAR(to_uchar (try[-1])))

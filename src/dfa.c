@@ -3827,6 +3827,8 @@ typedef struct
   char *left;
   char *right;
   char *is;
+  bool begline;
+  bool endline;
 } must;
 
 static void
@@ -3846,6 +3848,8 @@ dfamust (struct dfa *d)
   size_t ri;
   size_t i;
   bool exact = false;
+  bool begline = false;
+  bool endline = false;
   struct dfamust *dm;
 
   for (i = 0; i <= d->tindex; ++i)
@@ -3854,6 +3858,8 @@ dfamust (struct dfa *d)
       mp[i].left = xzalloc (2);
       mp[i].right = xzalloc (2);
       mp[i].is = xzalloc (2);
+      mp[i].begline = false;
+      mp[i].endline = false;
     }
 #ifdef DEBUG
   fprintf (stderr, "dfamust:\n");
@@ -3869,6 +3875,14 @@ dfamust (struct dfa *d)
       token t = d->tokens[ri];
       switch (t)
         {
+        case BEGLINE:
+          resetmust (mp);
+          mp->begline = true;
+          break;
+        case ENDLINE:
+          resetmust (mp);
+          mp->endline = true;
+          break;
         case LPAREN:
         case RPAREN:
           assert (!"neither LPAREN nor RPAREN may appear here");
@@ -3879,8 +3893,6 @@ dfamust (struct dfa *d)
           --mp;
           /* Fall through.  */
         case EMPTY:
-        case BEGLINE:
-        case ENDLINE:
         case BEGWORD:
         case ENDWORD:
         case LIMWORD:
@@ -3904,6 +3916,10 @@ dfamust (struct dfa *d)
             /* Guaranteed to be.  Unlikely, but ...  */
             if (!STREQ (lmp->is, rmp->is))
               lmp->is[0] = '\0';
+            if (lmp->begline)
+              lmp->begline = rmp->begline;
+            if (lmp->endline)
+              lmp->endline = rmp->endline;
             /* Left side--easy */
             i = 0;
             while (lmp->left[i] != '\0' && lmp->left[i] == rmp->left[i])
@@ -3940,7 +3956,11 @@ dfamust (struct dfa *d)
             if (strlen (musts[0].in[i]) > strlen (result))
               result = musts[0].in[i];
           if (STREQ (result, musts[0].is))
-            exact = true;
+            {
+              exact = true;
+              begline = musts[0].begline;
+              endline = musts[0].endline;
+            }
           goto done;
 
         case CAT:
@@ -3973,10 +3993,18 @@ dfamust (struct dfa *d)
               lmp->right[0] = '\0';
             lmp->right = icatalloc (lmp->right, rmp->right);
             /* Guaranteed to be */
-            if (lmp->is[0] != '\0' && rmp->is[0] != '\0')
-              lmp->is = icatalloc (lmp->is, rmp->is);
+            if ((lmp->is[0] != '\0' || lmp->begline)
+                && (rmp->is[0] != '\0' || rmp->endline))
+              {
+                lmp->is = icatalloc (lmp->is, rmp->is);
+                lmp->endline = rmp->endline;
+              }
             else
-              lmp->is[0] = '\0';
+              {
+                lmp->is[0] = '\0';
+                lmp->begline = false;
+                lmp->endline = false;
+              }
           }
           break;
 
@@ -4031,6 +4059,8 @@ done:
     {
       dm = xmalloc (sizeof *dm);
       dm->exact = exact;
+      dm->begline = begline;
+      dm->endline = endline;
       dm->must = xstrdup (result);
       dm->next = d->musts;
       d->musts = dm;

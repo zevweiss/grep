@@ -51,6 +51,8 @@ static size_t pcount;
    call the regexp matcher at all. */
 static size_t kwset_exact_matches;
 
+static int begline;
+
 void
 dfaerror (char const *mesg)
 {
@@ -85,15 +87,30 @@ kwsmusts (void)
   if (dm)
     {
       kwsinit (&kwset);
+      begline = 0;
       /* First, we compile in the substrings known to be exact
          matches.  The kwset matcher will return the index
          of the matching string that it chooses. */
       for (; dm; dm = dm->next)
         {
+          char *must, *mp;
+          size_t old_len, new_len;
           if (!dm->exact)
             continue;
           ++kwset_exact_matches;
-          kwsincr (kwset, dm->must, strlen (dm->must));
+          old_len = strlen (dm->must);
+          new_len = old_len + dm->begline + dm->endline;
+          must = mp = xmalloc (new_len);
+          if (dm->begline)
+            {
+              (mp++)[0] = eolbyte;
+              begline = 1;
+            }
+          memcpy (mp, dm->must, old_len);
+          if (dm->endline)
+            mp[old_len] = eolbyte;
+          kwsincr (kwset, must, new_len);
+          free (must);
         }
       /* Now, we compile the substrings that will require
          the use of the regexp matcher.  */
@@ -212,7 +229,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           if (kwset)
             {
               /* Find a possible match using the KWset matcher. */
-              size_t offset = kwsexec (kwset, beg, buflim - beg, &kwsm);
+              size_t offset = kwsexec (kwset, beg - begline,
+                                       buflim - beg + begline, &kwsm);
               if (offset == (size_t) -1)
                 goto failure;
               beg += offset;
@@ -225,11 +243,12 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               beg = beg ? beg + 1 : buf;
               if (kwsm.index < kwset_exact_matches)
                 {
+                  if (MB_CUR_MAX == 1)
+                    goto success;
                   if (mb_start < beg)
                     mb_start = beg;
-                  if (MB_CUR_MAX == 1
-                      || !is_mb_middle (&mb_start, match, buflim,
-                                        kwsm.size[0]))
+                  if (!is_mb_middle (&mb_start, match, buflim,
+                                     kwsm.size[0] - begline))
                     goto success;
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the
