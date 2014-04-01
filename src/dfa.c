@@ -3537,7 +3537,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
       if (s >= 0)
         {
-          build_state (s, d);
+          if (!d->trans[s])
+            build_state (s, d);
           trans = d->trans;
           continue;
         }
