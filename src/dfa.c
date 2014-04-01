@@ -288,7 +288,8 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  char backref;                 /* True if this state matches a \<digit>.  */
+  bool has_backref;             /* True if this state matches a \<digit>.  */
+  bool has_mbcset;              /* True if this state matches a MBCSET.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
@@ -2128,7 +2129,8 @@ state_index (struct dfa *d, position_set const *s, int context)
   alloc_position_set (&d->states[i].elems, s->nelem);
   copy (s, &d->states[i].elems);
   d->states[i].context = context;
-  d->states[i].backref = 0;
+  d->states[i].has_backref = false;
+  d->states[i].has_mbcset = false;
   d->states[i].constraint = 0;
   d->states[i].first_end = 0;
   d->states[i].mbps.nelem = 0;
@@ -2146,7 +2148,7 @@ state_index (struct dfa *d, position_set const *s, int context)
     else if (d->tokens[s->elems[j].index] == BACKREF)
       {
         d->states[i].constraint = NO_CONSTRAINT;
-        d->states[i].backref = 1;
+        d->states[i].has_backref = true;
       }
 
   ++d->sindex;
@@ -2609,6 +2611,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
           if (d->states[s].mbps.nelem == 0)
             alloc_position_set (&d->states[s].mbps, 1);
           insert (pos, &(d->states[s].mbps));
+          d->states[s].has_mbcset |= (d->tokens[pos.index] == MBCSET);
           continue;
         }
       else
@@ -3413,7 +3416,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                  better performance (up to 25% better on [a-z], for
                  example) and enables support for collating symbols and
                  equivalence classes.  */
-              if (backref)
+              if (d->states[s].has_mbcset && backref)
                 {
                   *backref = 1;
                   *end = saved_end;
@@ -3447,7 +3450,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           if (d->success[s] & sbit[*p])
             {
               if (backref)
-                *backref = (d->states[s].backref != 0);
+                *backref = d->states[s].has_backref;
               *end = saved_end;
               return (char *) p;
             }
