@@ -582,8 +582,27 @@ bmexec (kwset_t kwset, char const *text, size_t size)
             d = d1[U(tp[-1])], tp += d;
             if (d == 0)
               goto found;
-            d = d1[U(tp[-1])], tp += d;
-            d = d1[U(tp[-1])], tp += d;
+            /* memchar() of glibc is faster than seeking by delta1 on
+               some platforms.  When there is no chance to match for a
+               while, use it on them.  */
+#if defined(__GLIBC__) && (defined(__i386__) || defined(__x86_64__))
+            if (!trans)
+              {
+                tp = memchr (tp - 1, gc1, size + text - tp + 1);
+                if (tp)
+                  {
+                    ++tp;
+                    goto found;
+                  }
+                else
+                  return -1;
+              }
+            else
+#endif
+              {
+                d = d1[U(tp[-1])], tp += d;
+                d = d1[U(tp[-1])], tp += d;
+              }
           }
         break;
       found:
