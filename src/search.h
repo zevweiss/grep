@@ -23,9 +23,6 @@
 
 #include <sys/types.h>
 #include <stdint.h>
-
-#include "mbsupport.h"
-
 #include <wchar.h>
 #include <wctype.h>
 #include <regex.h>

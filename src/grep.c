@@ -21,7 +21,6 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "mbsupport.h"
 #include <wchar.h>
 #include <wctype.h>
 #include <fcntl.h>
@@ -2461,10 +2460,8 @@ main (int argc, char **argv)
         }
     }
 
-#if MBS_SUPPORT
   if (MB_CUR_MAX > 1)
     build_mbclen_cache ();
-#endif
 
   compile (keys, keycc);
   free (keys);

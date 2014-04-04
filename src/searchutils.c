@@ -48,7 +48,6 @@ kwsinit (kwset_t *kwset)
     xalloc_die ();
 }
 
-#if MBS_SUPPORT
 /* Convert BEG, an *N-byte string, to uppercase, and write the
    NUL-terminated result into malloc'd storage.  Upon success, set *N
    to the length (in bytes) of the resulting string (not including the
@@ -276,4 +275,3 @@ is_mb_middle (const char **good, const char *buf, const char *end,
   /* P == BUF here.  */
   return 0 < match_len && match_len < mbrlen (p, end - p, &cur_state);
 }
-#endif /* MBS_SUPPORT */

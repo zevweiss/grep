@@ -239,9 +239,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               char const *dfa_start = beg;
               if (kwsm.index < kwset_exact_matches)
                 {
-                  if (!MBS_SUPPORT)
-                    goto success;
-
                   if (mb_start < beg)
                     mb_start = beg;
                   if (MB_CUR_MAX == 1
