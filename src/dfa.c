@@ -429,8 +429,7 @@ struct dfa
                                    e.g., input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
                                    mblen_buf   :  0,       3,       2,       1
                                  */
-  size_t nmblen_buf;            /* Length of the mblen buffer currently
-                                   allocated.  */
+  size_t nmblen_buf;            /* Allocated size of mblen_buf.  */
   wchar_t *inputwcs;            /* Wide character representation of the input
                                    string in dfaexec.
                                    The length of this array is the same as
@@ -438,8 +437,7 @@ struct dfa
                                    inputstring[i] is a single-byte char,
                                    or the first byte of a multibyte char;
                                    inputwcs[i] is the codepoint.  */
-  size_t ninputwcs;             /* Length of the input wide characters
-                                   currently allocated.  */
+  size_t ninputwcs;             /* Allocated number of inputwcs elements.  */
   position_set *mb_follows;     /* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
   int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
@@ -904,6 +902,9 @@ static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
 
 #ifndef MIN
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+#ifndef MAX
+# define MAX(a,b) ((a) < (b) ? (b) : (a))
 #endif
 
 /* The set of wchar_t values C such that there's a useful locale
@@ -2908,8 +2909,8 @@ build_state_zero (struct dfa *d)
   if (s == 0)						\
     {							\
       while (d->inputwcs[p - buf_begin] == 0		\
-            && d->mblen_buf[p - buf_begin] > 0		\
-            && (unsigned char const *) p < buf_end)	\
+             && d->mblen_buf[p - buf_begin] != 0	\
+             && (unsigned char const *) p < buf_end)	\
         ++p;						\
       if ((char *) p >= end)				\
         {						\
@@ -3007,7 +3008,7 @@ match_anychar (struct dfa *d, state_num s, position pos, size_t idx)
   int mbclen;
 
   wc = d->inputwcs[idx];
-  mbclen = (d->mblen_buf[idx] == 0) ? 1 : d->mblen_buf[idx];
+  mbclen = MAX (1, d->mblen_buf[idx]);
 
   /* Check syntax bits.  */
   if (wc == (wchar_t) eolbyte)
@@ -3069,7 +3070,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   /* Assign the current referring operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
-  match_len = (d->mblen_buf[idx] == 0) ? 1 : d->mblen_buf[idx];
+  match_len = MAX (1, d->mblen_buf[idx]);
 
   /* Match in range 0-255?  */
   if (wc < NOTCHAR && work_mbc->cset != -1
@@ -3187,7 +3188,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
 
   /* Calculate the length of the (single/multi byte) character
      to which p points.  */
-  *mbclen = (d->mblen_buf[*pp - buf_begin] == 0) ? 1 : d->mblen_buf[*pp - buf_begin];
+  *mbclen = MAX (1, d->mblen_buf[*pp - buf_begin]);
 
   /* Calculate the state which can be reached from the state 's' by
      consuming '*mbclen' single bytes from the buffer.  */
@@ -3214,7 +3215,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
         for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem;
              j++)
           insert (d->follows[d->states[s].mbps.elems[i].index].elems[j],
-            d->mb_follows);
+                  d->mb_follows);
     }
 
   /* FIXME: this return value is always ignored.  */
@@ -3519,9 +3520,11 @@ free_mbdata (struct dfa *d)
 
   free (d->mblen_buf);
   free (d->inputwcs);
-  if (d->mb_follows != NULL)
-    free (d->mb_follows->elems);
-  free (d->mb_follows);
+  if (d->mb_follows)
+    {
+      free (d->mb_follows->elems);
+      free (d->mb_follows);
+    }
   free (d->mb_match_lens);
 }
 
