@@ -236,7 +236,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               match = beg;
               while (beg > buf && beg[-1] != eol)
                 --beg;
-              char const *dfa_start = beg;
               if (kwsm.index < kwset_exact_matches)
                 {
                   if (mb_start < beg)
@@ -248,29 +247,65 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the
                      beginning of the next character.  */
-                  dfa_start = mb_start;
+                  if (dfaexec (dfa, mb_start, (char *) end, 0, NULL,
+                               &backref) == NULL)
+                    continue;
                 }
-              if (dfaexec (dfa, dfa_start, (char *) end, 0, NULL,
-                           &backref) == NULL)
-                continue;
+              else
+                {
+                  if (dfahint (dfa, beg, (char *) end, NULL) ==
+                               (size_t) -1)
+                    continue;
+                  if (dfaexec (dfa, beg, (char *) end, 0, NULL,
+                               &backref) == NULL)
+                    continue;
+                }
             }
           else
             {
               /* No good fixed strings; start with DFA. */
-              char const *next_beg = dfaexec (dfa, beg, (char *) buflim,
-                                              0, NULL, &backref);
-              /* If there's no match, or if we've matched the sentinel,
-                 we're done.  */
-              if (next_beg == NULL || next_beg == buflim)
-                break;
+              size_t offset, count;
+              char const *next_beg;
+              count = 0;
+              offset = dfahint (dfa, beg, (char *) buflim, &count);
+              if (offset == (size_t) -1)
+                goto failure;
+              if (offset == (size_t) -2)
+                {
+                  /* No use hint. */
+                  next_beg = dfaexec (dfa, beg, (char *) buflim, 0,
+                                      NULL, &backref);
+                  /* If there's no match, or if we've matched the sentinel,
+                     we're done.  */
+                  if (next_beg == NULL || next_beg == buflim)
+                    goto failure;
+                }
+              else
+                next_beg = beg + offset;
               /* Narrow down to the line we've found. */
               beg = next_beg;
-              if ((end = memchr(beg, eol, buflim - beg)) != NULL)
+              while (beg > buf && beg[-1] != eol)
+                --beg;
+              if (count > 0)
+                {
+                  /* dfahint() may match in multiple lines.  If that is
+                     the case, try to match in one line.  */
+                  end = beg;
+                  continue;
+                }
+              if ((end = memchr(next_beg, eol, buflim - beg)) != NULL)
                 end++;
               else
                 end = buflim;
-              while (beg > buf && beg[-1] != eol)
-                --beg;
+              if (offset != (size_t) -2)
+                {
+                  next_beg = dfaexec (dfa, beg, (char *) end, 0, NULL,
+                                      &backref);
+                  /* If there's no match, or if we've matched the sentinel,
+                     we're done.  */
+                  if (next_beg == NULL || next_beg == end)
+                    continue;
+                }
             }
           /* Successful, no backreferences encountered! */
           if (!backref)

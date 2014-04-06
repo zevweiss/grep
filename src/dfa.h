@@ -67,6 +67,9 @@ extern void dfacomp (char const *, size_t, struct dfa *, int);
    to decide whether to fall back on a backtracking matcher. */
 extern char *dfaexec (struct dfa *d, char const *begin, char *end,
                       int newline, size_t *count, int *backref);
+extern size_t dfahint (struct dfa *d, char const *begin, char *end,
+                       size_t *count);
+
 
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree (struct dfa *);
