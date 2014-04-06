@@ -420,6 +420,30 @@ struct dfa
   struct dfamust *musts;        /* List of strings, at least one of which
                                    is known to appear in any r.e. matching
                                    the dfa.  */
+  unsigned char *mblen_buf;     /* Correspond to the input buffer in dfaexec.
+                                   Each element stores the number of remaining
+                                   bytes of the corresponding multibyte
+                                   character in the input string.  A element's
+                                   value is 0 if the corresponding character is
+                                   single-byte.
+                                   e.g., input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
+                                   mblen_buf   :  0,       3,       2,       1
+                                 */
+  size_t nmblen_buf;            /* Length of the mblen buffer currently
+                                   allocated.  */
+  wchar_t *inputwcs;            /* Wide character representation of the input
+                                   string in dfaexec.
+                                   The length of this array is the same as
+                                   the length of input string (char array).
+                                   inputstring[i] is a single-byte char,
+                                   or the first byte of a multibyte char;
+                                   inputwcs[i] is the codepoint.  */
+  size_t ninputwcs;             /* Length of the input wide characters
+                                   currently allocated.  */
+  position_set *mb_follows;     /* Follow set added by ANYCHAR and/or MBCSET
+                                   on demand.  */
+  int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
+                                   MBCSET.  */
 };
 
 /* Some macros for user access to dfa internals.  */
@@ -852,22 +876,6 @@ static int cur_mb_len = 1;      /* Length of the multibyte representation of
 static mbstate_t mbs;           /* mbstate for mbrtowc.  */
 static wchar_t wctok;           /* Wide character representation of the current
                                    multibyte character.  */
-static unsigned char *mblen_buf;/* Correspond to the input buffer in dfaexec.
-                                   Each element stores the number of remaining
-                                   bytes of the corresponding multibyte
-                                   character in the input string.  A element's
-                                   value is 0 if the corresponding character is
-                                   single-byte.
-                                   e.g., input : 'a', <mb(0)>, <mb(1)>, <mb(2)>
-                                   mblen_buf   :  0,       3,       2,       1
-                                 */
-static wchar_t *inputwcs;       /* Wide character representation of the input
-                                   string in dfaexec.
-                                   The length of this array is the same as
-                                   the length of input string (char array).
-                                   inputstring[i] is a single-byte char,
-                                   or the first byte of a multibyte char;
-                                   inputwcs[i] is the codepoint.  */
 static unsigned char const *buf_begin;  /* reference to begin in dfaexec.  */
 static unsigned char const *buf_end;    /* reference to end in dfaexec.  */
 
@@ -2899,14 +2907,12 @@ build_state_zero (struct dfa *d)
 #define SKIP_REMAINS_MB_IF_INITIAL_STATE(s, p)		\
   if (s == 0)						\
     {							\
-      while (inputwcs[p - buf_begin] == 0		\
-            && mblen_buf[p - buf_begin] > 0		\
+      while (d->inputwcs[p - buf_begin] == 0		\
+            && d->mblen_buf[p - buf_begin] > 0		\
             && (unsigned char const *) p < buf_end)	\
         ++p;						\
       if ((char *) p >= end)				\
         {						\
-          free (mblen_buf);				\
-          free (inputwcs);				\
           *end = saved_end;				\
           return NULL;					\
         }						\
@@ -3000,8 +3006,8 @@ match_anychar (struct dfa *d, state_num s, position pos, size_t idx)
   wchar_t wc;
   int mbclen;
 
-  wc = inputwcs[idx];
-  mbclen = (mblen_buf[idx] == 0) ? 1 : mblen_buf[idx];
+  wc = d->inputwcs[idx];
+  mbclen = (d->mblen_buf[idx] == 0) ? 1 : d->mblen_buf[idx];
 
   /* Check syntax bits.  */
   if (wc == (wchar_t) eolbyte)
@@ -3042,7 +3048,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   int context;
   wchar_t wc;                   /* Current referring character.  */
 
-  wc = inputwcs[idx];
+  wc = d->inputwcs[idx];
 
   /* Check syntax bits.  */
   if (wc == (wchar_t) eolbyte)
@@ -3063,7 +3069,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   /* Assign the current referring operator to work_mbc.  */
   work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
   match = !work_mbc->invert;
-  match_len = (mblen_buf[idx] == 0) ? 1 : mblen_buf[idx];
+  match_len = (d->mblen_buf[idx] == 0) ? 1 : d->mblen_buf[idx];
 
   /* Match in range 0-255?  */
   if (wc < NOTCHAR && work_mbc->cset != -1
@@ -3141,7 +3147,7 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
   size_t i;
   int *rarray;
 
-  MALLOC (rarray, d->states[s].mbps.nelem);
+  rarray = d->mb_match_lens;
   for (i = 0; i < d->states[s].mbps.nelem; ++i)
     {
       position pos = d->states[s].mbps.elems[i];
@@ -3171,7 +3177,7 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s, size_t idx)
 static status_transit_state
 transit_state_consume_1char (struct dfa *d, state_num s,
                              unsigned char const **pp,
-                             int *match_lens, int *mbclen, position_set * pps)
+                             int *match_lens, int *mbclen)
 {
   size_t i, j;
   int k;
@@ -3181,7 +3187,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
 
   /* Calculate the length of the (single/multi byte) character
      to which p points.  */
-  *mbclen = (mblen_buf[*pp - buf_begin] == 0) ? 1 : mblen_buf[*pp - buf_begin];
+  *mbclen = (d->mblen_buf[*pp - buf_begin] == 0) ? 1 : d->mblen_buf[*pp - buf_begin];
 
   /* Calculate the state which can be reached from the state 's' by
      consuming '*mbclen' single bytes from the buffer.  */
@@ -3191,8 +3197,8 @@ transit_state_consume_1char (struct dfa *d, state_num s,
       s2 = s1;
       rs = transit_state_singlebyte (d, s2, (*pp)++, &s1);
     }
-  /* Copy the positions contained by 's1' to the set 'pps'.  */
-  copy (&(d->states[s1].elems), pps);
+  /* Copy the positions contained by 's1' to the set 'd->mb_follows'.  */
+  copy (&(d->states[s1].elems), d->mb_follows);
 
   /* Check (input) match_lens, and initialize if it is NULL.  */
   if (match_lens == NULL && d->states[s].mbps.nelem != 0)
@@ -3207,11 +3213,9 @@ transit_state_consume_1char (struct dfa *d, state_num s,
       if (work_mbls[i] == *mbclen)
         for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem;
              j++)
-          insert (d->follows[d->states[s].mbps.elems[i].index].elems[j], pps);
+          insert (d->follows[d->states[s].mbps.elems[i].index].elems[j],
+            d->mb_follows);
     }
-
-  if (match_lens == NULL && work_mbls != NULL)
-    free (work_mbls);
 
   /* FIXME: this return value is always ignored.  */
   return rs;
@@ -3229,7 +3233,6 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
   size_t i, j;
   int *match_lens = NULL;
   size_t nelem = d->states[s].mbps.nelem;       /* Just a alias.  */
-  position_set follows;
   unsigned char const *p1 = *pp;
   wchar_t wc;
 
@@ -3260,26 +3263,25 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
       if (rs == TRANSIT_STATE_DONE)
         ++*pp;
 
-      free (match_lens);
       return s1;
     }
 
   /* This state has some operators which can match a multibyte character.  */
-  alloc_position_set (&follows, d->nleaves);
+  d->mb_follows->nelem = 0;
 
   /* 'maxlen' may be longer than the length of a character, because it may
      not be a character but a (multi character) collating element.
      We enumerate all of the positions which 's' can reach by consuming
      'maxlen' bytes.  */
-  transit_state_consume_1char (d, s, pp, match_lens, &mbclen, &follows);
+  transit_state_consume_1char (d, s, pp, match_lens, &mbclen);
 
-  wc = inputwcs[*pp - mbclen - buf_begin];
-  s1 = state_index (d, &follows, wchar_context (wc));
+  wc = d->inputwcs[*pp - mbclen - buf_begin];
+  s1 = state_index (d, d->mb_follows, wchar_context (wc));
   realloc_trans_if_necessary (d, s1);
 
   while (*pp - p1 < maxlen)
     {
-      transit_state_consume_1char (d, s1, pp, NULL, &mbclen, &follows);
+      transit_state_consume_1char (d, s1, pp, NULL, &mbclen);
 
       for (i = 0; i < nelem; i++)
         {
@@ -3287,15 +3289,13 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp)
             for (j = 0;
                  j < d->follows[d->states[s1].mbps.elems[i].index].nelem; j++)
               insert (d->follows[d->states[s1].mbps.elems[i].index].elems[j],
-                      &follows);
+                      d->mb_follows);
         }
 
-      wc = inputwcs[*pp - mbclen - buf_begin];
-      s1 = state_index (d, &follows, wchar_context (wc));
+      wc = d->inputwcs[*pp - mbclen - buf_begin];
+      s1 = state_index (d, d->mb_follows, wchar_context (wc));
       realloc_trans_if_necessary (d, s1);
     }
-  free (match_lens);
-  free (follows.elems);
   return s1;
 }
 
@@ -3313,21 +3313,22 @@ prepare_wc_buf (struct dfa *d, const char *begin, const char *end)
 
   for (i = 0; i < ilim; i++)
     {
-      size_t nbytes = mbs_to_wchar (d, inputwcs + i, begin + i, ilim - i, &mbs);
-      mblen_buf[i] = nbytes - (nbytes == 1);
+      size_t nbytes = mbs_to_wchar (d, d->inputwcs + i, begin + i, ilim - i,
+                                    &mbs);
+      d->mblen_buf[i] = nbytes - (nbytes == 1);
       if (begin[i] == eol)
         break;
       while (--nbytes != 0)
         {
           i++;
-          mblen_buf[i] = nbytes;
-          inputwcs[i] = 0;
+          d->mblen_buf[i] = nbytes;
+          d->inputwcs[i] = 0;
         }
     }
 
   buf_end = (unsigned char *) (begin + i);
-  mblen_buf[i] = 0;
-  inputwcs[i] = 0;              /* sentinel */
+  d->mblen_buf[i] = 0;
+  d->inputwcs[i] = 0;              /* sentinel */
 }
 
 /* Search through a buffer looking for a match to the given struct dfa.
@@ -3364,10 +3365,18 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   if (d->mb_cur_max > 1)
     {
-      MALLOC (mblen_buf, end - begin + 2);
-      MALLOC (inputwcs, end - begin + 2);
+      static bool mb_alloc = false;
+      REALLOC_IF_NECESSARY (d->mblen_buf, d->nmblen_buf, end - begin + 2);
+      REALLOC_IF_NECESSARY (d->inputwcs, d->ninputwcs, end - begin + 2);
       memset (&mbs, 0, sizeof (mbstate_t));
       prepare_wc_buf (d, (const char *) p, end);
+      if (!mb_alloc)
+        {
+          MALLOC (d->mb_match_lens, d->nleaves);
+          MALLOC (d->mb_follows, 1);
+          alloc_position_set (d->mb_follows, d->nleaves);
+          mb_alloc = true;
+        }
     }
 
   for (;;)
@@ -3394,8 +3403,6 @@ dfaexec (struct dfa *d, char const *begin, char *end,
               if (backref)
                 {
                   *backref = 1;
-                  free (mblen_buf);
-                  free (inputwcs);
                   *end = saved_end;
                   return (char *) p;
                 }
@@ -3428,11 +3435,6 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             {
               if (backref)
                 *backref = (d->states[s].backref != 0);
-              if (d->mb_cur_max > 1)
-                {
-                  free (mblen_buf);
-                  free (inputwcs);
-                }
               *end = saved_end;
               return (char *) p;
             }
@@ -3463,11 +3465,6 @@ dfaexec (struct dfa *d, char const *begin, char *end,
       /* Check if we've run off the end of the buffer.  */
       if ((char *) p > end)
         {
-          if (d->mb_cur_max > 1)
-            {
-              free (mblen_buf);
-              free (inputwcs);
-            }
           *end = saved_end;
           return NULL;
         }
@@ -3519,6 +3516,13 @@ free_mbdata (struct dfa *d)
   free (d->mbcsets);
   d->mbcsets = NULL;
   d->nmbcsets = 0;
+
+  free (d->mblen_buf);
+  free (d->inputwcs);
+  if (d->mb_follows != NULL)
+    free (d->mb_follows->elems);
+  free (d->mb_follows);
+  free (d->mb_match_lens);
 }
 
 /* Initialize the components of a dfa that the other routines don't
