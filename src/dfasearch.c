@@ -229,13 +229,11 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               beg += offset;
               /* Narrow down to the line containing the candidate, and
                  run it through DFA. */
-              if ((end = memchr(beg, eol, buflim - beg)) != NULL)
-                end++;
-              else
-                end = buflim;
+              end = memchr (beg, eol, buflim - beg);
+              end = end ? end + 1 : buflim;
               match = beg;
-              while (beg > buf && beg[-1] != eol)
-                --beg;
+              beg = memrchr (buf, eol, beg - buf);
+              beg = beg ? beg + 1 : buf;
               if (kwsm.index < kwset_exact_matches)
                 {
                   if (mb_start < beg)
@@ -247,17 +245,15 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the
                      beginning of the next character.  */
-                  if (dfaexec (dfa, mb_start, (char *) end, 0, NULL,
-                               &backref) == NULL)
+                  if (! dfaexec (dfa, mb_start, (char *) end, 0, NULL,
+                                 &backref))
                     continue;
                 }
               else
                 {
-                  if (dfahint (dfa, beg, (char *) end, NULL) ==
-                               (size_t) -1)
+                  if (dfahint (dfa, beg, (char *) end, NULL) == (size_t) -1)
                     continue;
-                  if (dfaexec (dfa, beg, (char *) end, 0, NULL,
-                               &backref) == NULL)
+                  if (! dfaexec (dfa, beg, (char *) end, 0, NULL, &backref))
                     continue;
                 }
             }
@@ -283,20 +279,17 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               else
                 next_beg = beg + offset;
               /* Narrow down to the line we've found. */
-              beg = next_beg;
-              while (beg > buf && beg[-1] != eol)
-                --beg;
-              if (count > 0)
+              beg = memrchr (buf, eol, next_beg - buf);
+              beg = beg ? beg + 1 : buf;
+              if (count != 0)
                 {
-                  /* dfahint() may match in multiple lines.  If that is
-                     the case, try to match in one line.  */
+                  /* If dfahint may match in multiple lines, try to
+                     match in one line.  */
                   end = beg;
                   continue;
                 }
-              if ((end = memchr(next_beg, eol, buflim - beg)) != NULL)
-                end++;
-              else
-                end = buflim;
+              end = memchr (next_beg, eol, buflim - next_beg);
+              end = end ? end + 1 : buflim;
               if (offset != (size_t) -2)
                 {
                   next_beg = dfaexec (dfa, beg, (char *) end, 0, NULL,

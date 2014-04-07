@@ -674,23 +674,29 @@ equal (charclass const s1, charclass const s2)
   return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
 
-/* A pointer to the current dfa is kept here during parsing.  */
-static struct dfa *dfa;
-
-/* Find the index of charclass s in dfa->charclasses, or allocate a
-   new charclass.  */
+/* In DFA D, find the index of charclass S, or allocate a new one.  */
 static size_t
-charclass_index (charclass const s)
+dfa_charclass_index (struct dfa *d, charclass const s)
 {
   size_t i;
 
-  for (i = 0; i < dfa->cindex; ++i)
-    if (equal (s, dfa->charclasses[i]))
+  for (i = 0; i < d->cindex; ++i)
+    if (equal (s, d->charclasses[i]))
       return i;
-  REALLOC_IF_NECESSARY (dfa->charclasses, dfa->calloc, dfa->cindex + 1);
-  ++dfa->cindex;
-  copyset (s, dfa->charclasses[i]);
+  REALLOC_IF_NECESSARY (d->charclasses, d->calloc, d->cindex + 1);
+  ++d->cindex;
+  copyset (s, d->charclasses[i]);
   return i;
+}
+
+/* A pointer to the current dfa is kept here during parsing.  */
+static struct dfa *dfa;
+
+/* Find the index of charclass S in the current DFA, or allocate a new one.  */
+static size_t
+charclass_index (charclass const s)
+{
+  return dfa_charclass_index (dfa, s);
 }
 
 /* Syntax bits controlling the behavior of the lexical analyzer.  */
@@ -3491,19 +3497,24 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     }
 }
 
+/* Search through a buffer looking for a potential match for D.
+   Return the offset of the byte after the first potential match.
+   If there is no match, return (size_t) -1.  If D lacks a superset
+   so it's not known whether there is a match, return (size_t) -2.
+   BEGIN points to the beginning of the buffer, and END points to the
+   first byte after its end.  Store a sentinel byte (usually newline)
+   in *END, so the actual buffer must be one byte longer.  If COUNT is
+   non-NULL, increment *COUNT once for each newline processed.  */
 size_t
 dfahint (struct dfa *d, char const *begin, char *end, size_t *count)
 {
-  char const *match;
-
-  if (d->superset == NULL)
-    return (size_t) -2;
-
-  match = dfaexec (d->superset, begin, end, 1, count, NULL);
-  if (match == NULL)
-    return (size_t) -1;
-
-  return match - begin;
+  if (! d->superset)
+    return -2;
+  else
+    {
+      char const *match = dfaexec (d->superset, begin, end, 1, count, NULL);
+      return match ? match - begin : -1;
+    }
 }
 
 static void
@@ -3604,28 +3615,29 @@ dfasuperset (struct dfa *d)
   charclass ccl;
   bool have_achar = false;
   bool have_nchar = false;
+  struct dfa *sup = dfaalloc ();
 
-  dfa = d->superset = dfaalloc ();
-  *d->superset = *d;
-  d->superset->mb_cur_max = 1;
-  d->superset->multibyte_prop = NULL;
-  d->superset->mbcsets = NULL;
-  d->superset->superset = NULL;
-  d->superset->states = NULL;
-  d->superset->follows = NULL;
-  d->superset->trans = NULL;
-  d->superset->realtrans = NULL;
-  d->superset->fails = NULL;
-  d->superset->success = NULL;
-  d->superset->newlines = NULL;
-  d->superset->musts = NULL;
+  *sup = *d;
+  sup->mb_cur_max = 1;
+  sup->multibyte_prop = NULL;
+  sup->mbcsets = NULL;
+  sup->superset = NULL;
+  sup->states = NULL;
+  sup->sindex = 0;
+  sup->follows = NULL;
+  sup->tralloc = 0;
+  sup->realtrans = NULL;
+  sup->fails = NULL;
+  sup->success = NULL;
+  sup->newlines = NULL;
+  sup->musts = NULL;
 
-  MALLOC (d->superset->charclasses, d->superset->calloc);
-  for (i = 0; i < d->cindex; i++)
-    copyset (d->charclasses[i], d->superset->charclasses[i]);
+  MALLOC (sup->charclasses, sup->calloc);
+  memcpy (sup->charclasses, d->charclasses,
+          d->cindex * sizeof *sup->charclasses);
 
-  d->superset->talloc = d->tindex * 2;
-  MALLOC (d->superset->tokens, d->superset->talloc);
+  sup->talloc = d->tindex * 2;
+  MALLOC (sup->tokens, sup->talloc);
 
   for (i = j = 0; i < d->tindex; i++)
     {
@@ -3636,8 +3648,8 @@ dfasuperset (struct dfa *d)
         case BACKREF:
           zeroset (ccl);
           notset (ccl);
-          d->superset->tokens[j++] = CSET + charclass_index (ccl);
-          d->superset->tokens[j++] = STAR;
+          sup->tokens[j++] = CSET + dfa_charclass_index (sup, ccl);
+          sup->tokens[j++] = STAR;
           if (d->tokens[i + 1] == QMARK || d->tokens[i + 1] == STAR
               || d->tokens[i + 1] == PLUS)
             i++;
@@ -3650,26 +3662,23 @@ dfasuperset (struct dfa *d)
           if (MB_CUR_MAX > 1)
             {
               /* Ignore these constraints.  */
-              d->superset->tokens[j++] = EMPTY;
+              sup->tokens[j++] = EMPTY;
               break;
             }
         default:
-          d->superset->tokens[j++] = d->tokens[i];
-          if ((d->tokens[i] >= 0 && d->tokens[i] < NOTCHAR)
-               || d->tokens[i] >= CSET)
+          sup->tokens[j++] = d->tokens[i];
+          if ((0 <= d->tokens[i] && d->tokens[i] < NOTCHAR)
+              || d->tokens[i] >= CSET)
             have_nchar = true;
           break;
         }
     }
+  sup->tindex = j;
 
   if ((d->mb_cur_max == 1 && !have_achar) || !have_nchar)
-    {
-      dfafree (d->superset);
-      d->superset = NULL;
-      return;
-    }
-
-  d->superset->tindex = j;
+    dfafree (sup);
+  else
+    d->superset = sup;
 }
 
 /* Parse and analyze a single string of the given length.  */
@@ -3683,7 +3692,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfaoptimize (d);
   dfasuperset (d);
   dfaanalyze (d, searchflag);
-  if (d->superset != NULL)
+  if (d->superset)
     dfaanalyze (d->superset, searchflag);
 }
 
@@ -3700,27 +3709,25 @@ dfafree (struct dfa *d)
   if (d->mb_cur_max > 1)
     free_mbdata (d);
 
-  if (d->states != NULL)
+  for (i = 0; i < d->sindex; ++i)
     {
-      for (i = 0; i < d->sindex; ++i)
-        {
-          free (d->states[i].elems.elems);
-          free (d->states[i].mbps.elems);
-        }
-      free (d->states);
+      free (d->states[i].elems.elems);
+      free (d->states[i].mbps.elems);
     }
-  if (d->follows != NULL)
+  free (d->states);
+
+  if (d->follows)
     {
       for (i = 0; i < d->tindex; ++i)
         free (d->follows[i].elems);
       free (d->follows);
     }
-  if (d->trans != NULL)
-    for (i = 0; i < d->tralloc; ++i)
-      {
-        free (d->trans[i]);
-        free (d->fails[i]);
-      }
+
+  for (i = 0; i < d->tralloc; ++i)
+    {
+      free (d->trans[i]);
+      free (d->fails[i]);
+    }
 
   free (d->realtrans);
   free (d->fails);
@@ -3734,7 +3741,7 @@ dfafree (struct dfa *d)
       free (dm);
     }
 
-  if (d->superset != NULL)
+  if (d->superset)
     dfafree (d->superset);
 }
 
@@ -4243,9 +4250,7 @@ done:
 struct dfa *
 dfaalloc (void)
 {
-  struct dfa *d = xmalloc (sizeof (struct dfa));
-  d->superset = NULL;
-  return d;
+  return xmalloc (sizeof (struct dfa));
 }
 
 struct dfamust *_GL_ATTRIBUTE_PURE
