@@ -23,13 +23,16 @@
 
 /* The algorithm implemented by these routines bears a startling resemblance
    to one discovered by Beate Commentz-Walter, although it is not identical.
-   See "A String Matching Algorithm Fast on the Average," Technical Report,
-   IBM-Germany, Scientific Center Heidelberg, Tiergartenstrasse 15, D-6900
-   Heidelberg, Germany.  See also Aho, A.V., and M. Corasick, "Efficient
-   String Matching:  An Aid to Bibliographic Search," CACM June 1975,
-   Vol. 18, No. 6, which describes the failure function used below. */
+   See: Commentz-Walter B. A string matching algorithm fast on the average.
+   Lecture Notes in Computer Science 71 (1979), 118-32
+   <http://dx.doi.org/10.1007/3-540-09510-1_10>.
+   See also: Aho AV, Corasick MJ. Efficient string matching: an aid to
+   bibliographic search. CACM 18, 6 (1975), 333-40
+   <http://dx.doi.org/10.1145/360825.360855>, which describes the
+   failure function used below. */
 
 #include <config.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include "system.h"
 #include "kwset.h"
@@ -131,32 +134,28 @@ kwsalloc (char const *trans)
 const char *
 kwsincr (kwset_t kws, char const *text, size_t len)
 {
-  struct kwset *kwset;
-  struct trie *trie;
-  unsigned char label;
-  struct tree *link;
-  int depth;
-  struct tree *links[DEPTH_SIZE];
-  enum { L, R } dirs[DEPTH_SIZE];
-  struct tree *t, *r, *l, *rl, *lr;
+  struct kwset *kwset = kws;
+  struct trie *trie = kwset->trie;
+  char const *trans = kwset->trans;
 
-  kwset = (struct kwset *) kws;
-  trie = kwset->trie;
   text += len;
 
   /* Descend the trie (built of reversed keywords) character-by-character,
      installing new nodes when necessary. */
   while (len--)
     {
-      label = kwset->trans ? kwset->trans[U(*--text)] : *--text;
+      unsigned char uc = *--text;
+      unsigned char label = trans ? trans[uc] : uc;
 
       /* Descend the tree of outgoing links for this trie node,
          looking for the current character and keeping track
          of the path followed. */
-      link = trie->links;
+      struct tree *link = trie->links;
+      struct tree *links[DEPTH_SIZE];
+      enum { L, R } dirs[DEPTH_SIZE];
       links[0] = (struct tree *) &trie->links;
       dirs[0] = L;
-      depth = 1;
+      int depth = 1;
 
       while (link && label != link->label)
         {
@@ -215,6 +214,8 @@ kwsincr (kwset_t kws, char const *text, size_t len)
           if (depth && ((dirs[depth] == L && --links[depth]->balance)
                         || (dirs[depth] == R && ++links[depth]->balance)))
             {
+              struct tree *t, *r, *l, *rl, *lr;
+
               switch (links[depth]->balance)
                 {
                 case (char) -2:
@@ -384,59 +385,56 @@ treenext (struct tree const *tree, struct trie *next[])
 const char *
 kwsprep (kwset_t kws)
 {
-  struct kwset *kwset;
+  struct kwset *kwset = kws;
+  char const *trans = kwset->trans;
   int i;
-  struct trie *curr;
-  char const *trans;
-  unsigned char delta[NCHAR];
-
-  kwset = (struct kwset *) kws;
+  unsigned char deltabuf[NCHAR];
+  unsigned char *delta = trans ? deltabuf : kwset->delta;
 
   /* Initial values for the delta table; will be changed later.  The
      delta entry for a given character is the smallest depth of any
      node at which an outgoing edge is labeled by that character. */
-  memset(delta, kwset->mind < UCHAR_MAX ? kwset->mind : UCHAR_MAX, NCHAR);
-
-  struct trie *fail;
-  struct trie *last, *next[NCHAR];
+  memset (delta, MIN (kwset->mind, UCHAR_MAX), sizeof deltabuf);
 
   /* Traverse the nodes of the trie in level order, simultaneously
-     computing the delta table, failure function, and shift function. */
+     computing the delta table, failure function, and shift function.  */
+  struct trie *curr, *last;
   for (curr = last = kwset->trie; curr; curr = curr->next)
     {
-      /* Enqueue the immediate descendants in the level order queue. */
-      enqueue(curr->links, &last);
+      /* Enqueue the immediate descendants in the level order queue.  */
+      enqueue (curr->links, &last);
 
       curr->shift = kwset->mind;
       curr->maxshift = kwset->mind;
 
-      /* Update the delta table for the descendants of this node. */
-      treedelta(curr->links, curr->depth, delta);
+      /* Update the delta table for the descendants of this node.  */
+      treedelta (curr->links, curr->depth, delta);
 
       /* Compute the failure function for the descendants of this node.  */
-      treefails(curr->links, curr->fail, kwset->trie);
+      treefails (curr->links, curr->fail, kwset->trie);
 
       /* Update the shifts at each node in the current node's chain
-         of fails back to the root. */
+         of fails back to the root.  */
+      struct trie *fail;
       for (fail = curr->fail; fail; fail = fail->fail)
         {
           /* If the current node has some outgoing edge that the fail
              doesn't, then the shift at the fail should be no larger
-             than the difference of their depths. */
-          if (!hasevery(fail->links, curr->links))
+             than the difference of their depths.  */
+          if (!hasevery (fail->links, curr->links))
             if (curr->depth - fail->depth < fail->shift)
               fail->shift = curr->depth - fail->depth;
 
           /* If the current node is accepting then the shift at the
              fail and its descendants should be no larger than the
-             difference of their depths. */
+             difference of their depths.  */
           if (curr->accepting && fail->maxshift > curr->depth - fail->depth)
             fail->maxshift = curr->depth - fail->depth;
         }
     }
 
   /* Traverse the trie in level order again, fixing up all nodes whose
-     shift exceeds their inherited maxshift. */
+     shift exceeds their inherited maxshift.  */
   for (curr = kwset->trie->next; curr; curr = curr->next)
     {
       if (curr->maxshift > curr->parent->maxshift)
@@ -446,20 +444,18 @@ kwsprep (kwset_t kws)
     }
 
   /* Create a vector, indexed by character code, of the outgoing links
-     from the root node. */
-  for (i = 0; i < NCHAR; ++i)
-    next[i] = NULL;
-  treenext(kwset->trie->links, next);
-
-  if ((trans = kwset->trans) != NULL)
+     from the root node.  */
+  struct trie *nextbuf[NCHAR];
+  struct trie **next = trans ? nextbuf : kwset->next;
+  memset (next, 0, sizeof nextbuf);
+  treenext (kwset->trie->links, next);
+  if (trans)
     for (i = 0; i < NCHAR; ++i)
       kwset->next[i] = next[U(trans[i])];
-  else
-    memcpy(kwset->next, next, NCHAR * sizeof(struct trie *));
 
   /* Check if we can use the simple boyer-moore algorithm, instead
      of the hairy commentz-walter algorithm. */
-  if (kwset->words == 1 && kwset->trans == NULL)
+  if (!trans && kwset->words == 1)
     {
       /* Looking for just one string.  Extract it from the trie. */
       kwset->target = obstack_alloc(&kwset->obstack, kwset->mind);
@@ -471,11 +467,12 @@ kwsprep (kwset_t kws)
           curr = curr->next;
         }
       /* Looking for the delta2 shift that we might make after a
-         backwards match has failed.  Extract it from the trie. */
+         backwards match has failed.  Extract it from the trie.  */
       if (kwset->mind > 1)
         {
-          kwset->shift = obstack_alloc(&kwset->obstack,
-                                       sizeof (*kwset->shift) * (kwset->mind - 1));
+          kwset->shift
+            = obstack_alloc (&kwset->obstack,
+                             sizeof *kwset->shift * (kwset->mind - 1));
           if (!kwset->shift)
             return _("memory exhausted");
           for (i = 0, curr = kwset->trie->next; i < kwset->mind - 1; ++i)
@@ -487,11 +484,9 @@ kwsprep (kwset_t kws)
     }
 
   /* Fix things up for any translation table. */
-  if ((trans = kwset->trans) != NULL)
+  if (trans)
     for (i = 0; i < NCHAR; ++i)
       kwset->delta[i] = delta[U(trans[i])];
-  else
-    memcpy(kwset->delta, delta, NCHAR);
 
   return NULL;
 }
@@ -553,16 +548,16 @@ bmexec (kwset_t kws, char const *text, size_t size)
         break;
       found:
         d = len;
-        while (1)
+        while (true)
           {
             if (tp[-2] == gc2)
               {
                 for (i = 3; i <= d && tp[-i] == sp[-i]; ++i)
-                  ;
+                  continue;
                 if (i > d)
                   {
                     for (i = d + skip + 1; i <= len && tp[-i] == sp[-i]; ++i)
-                      ;
+                      continue;
                     if (i > len)
                       return tp - len - text;
                   }
@@ -591,16 +586,16 @@ bmexec (kwset_t kws, char const *text, size_t size)
       if (d != 0)
         continue;
       d = len;
-      while (1)
+      while (true)
         {
           if (tp[-2] == gc2)
             {
               for (i = 3; i <= d && tp[-i] == sp[-i]; ++i)
-                ;
+                continue;
               if (i > d)
                 {
                   for (i = d + skip + 1; i <= len && tp[-i] == sp[-i]; ++i)
-                    ;
+                    continue;
                   if (i > len)
                     return tp - len - text;
                 }
@@ -691,7 +686,8 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
       d = trie->shift;
       while (beg > text)
         {
-          c = trans ? trans[U(*--beg)] : *--beg;
+          unsigned char uc = *--beg;
+          c = trans ? trans[uc] : uc;
           tree = trie->links;
           while (tree && c != tree->label)
             if (c < tree->label)
@@ -742,7 +738,8 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
       d = trie->shift;
       while (beg > text)
         {
-          c = trans ? trans[U(*--beg)] : *--beg;
+          unsigned char uc = *--beg;
+          c = trans ? trans[uc] : uc;
           tree = trie->links;
           while (tree && c != tree->label)
             if (c < tree->label)
