@@ -1894,15 +1894,6 @@ parse_grep_colors (void)
       return;
 }
 
-#define MBRTOWC(pwc, s, n, ps) \
-  (MB_CUR_MAX == 1 \
-   ? (*(pwc) = btowc (*(unsigned char *) (s)), 1) \
-   : mbrtowc (pwc, s, n, ps))
-#define WCRTOMB(s, wc, ps) \
-  (MB_CUR_MAX == 1 \
-   ? (*(s) = wctob ((wint_t) (wc)), 1) \
-   : wcrtomb (s, wc, ps))
-
 /* Change a pattern for fgrep into grep.  */
 static void
 fgrep_to_grep_pattern (size_t len, char const *keys,
@@ -1915,7 +1906,7 @@ fgrep_to_grep_pattern (size_t len, char const *keys,
   for (; len; keys += n, len -= n)
     {
       wchar_t wc;
-      n = MBRTOWC (&wc, keys, len, &mb_state);
+      n = mbrtowc (&wc, keys, len, &mb_state);
       switch (n)
         {
         case (size_t) -2:
@@ -1940,86 +1931,6 @@ fgrep_to_grep_pattern (size_t len, char const *keys,
     }
 
   *new_len = p - *new_keys;
-}
-
-/* If the newline-separated regular expressions, KEYS (with length, LEN
-   and no trailing NUL byte), are amenable to transformation into
-   otherwise equivalent case-ignoring ones, perform the transformation,
-   put the result into malloc'd memory, *NEW_KEYS with length *NEW_LEN,
-   and return true.  Otherwise, return false.  */
-
-static bool
-trivial_case_ignore (size_t len, char const *keys,
-                     size_t *new_len, char **new_keys)
-{
-  /* FIXME: consider removing the following restriction:
-     Reject if KEYS contain ASCII '\\' or '['.  */
-  if (memchr (keys, '\\', len) || memchr (keys, '[', len))
-    return false;
-
-  /* Worst case is that each byte B of KEYS is ASCII alphabetic and
-     CASE_FOLDED_BUFSIZE other_case(B) characters, C through Z, each
-     occupying MB_CUR_MAX bytes, so each B maps to [BC...Z], which
-     requires CASE_FOLDED_BUFSIZE * MB_CUR_MAX + 3 bytes; this is
-     bounded above by the constant expression CASE_FOLDED_BUFSIZE *
-     MB_LEN_MAX + 3.  */
-  *new_keys = xnmalloc (len + 1, CASE_FOLDED_BUFSIZE * MB_LEN_MAX + 3);
-  char *p = *new_keys;
-
-  mbstate_t mb_state = { 0 };
-  while (len)
-    {
-      bool initial_state = mbsinit (&mb_state) != 0;
-      wchar_t wc;
-      size_t n = MBRTOWC (&wc, keys, len, &mb_state);
-
-      /* For an invalid, incomplete or L'\0', skip this optimization.  */
-      if ((size_t) -2 <= n)
-        {
-        skip_case_ignore_optimization:
-          free (*new_keys);
-          return false;
-        }
-
-      char const *orig = keys;
-      keys += n;
-      len -= n;
-
-      wchar_t folded[CASE_FOLDED_BUFSIZE];
-      int nfolded = case_folded_counterparts (wc, folded);
-      if (nfolded <= 0)
-        {
-          memcpy (p, orig, n);
-          p += n;
-        }
-      else if (! initial_state)
-        goto skip_case_ignore_optimization;
-      else
-        {
-          *p++ = '[';
-          memcpy (p, orig, n);
-          p += n;
-
-          int i = 0;
-          do
-            {
-              size_t nbytes = WCRTOMB (p, folded[i], &mb_state);
-              if (nbytes == (size_t) -1)
-                goto skip_case_ignore_optimization;
-              p += nbytes;
-            }
-          while (++i < nfolded);
-
-          if (! mbsinit (&mb_state))
-            goto skip_case_ignore_optimization;
-
-          *p++ = ']';
-        }
-    }
-
-  *new_len = p - *new_keys;
-
-  return true;
 }
 
 int
@@ -2430,34 +2341,6 @@ main (int argc, char **argv)
       matcher = "grep";
       compile = Gcompile;
       execute = EGexecute;
-    }
-
-  /* Case-insensitive matching is expensive in multibyte locales
-     because a few characters may change size when converted to upper
-     or lower case.  To accommodate those, search the input one line
-     at a time, rather than using the much more efficient buffer search.
-
-     Try to convert a regular expression 'foo' (ignoring case) to an
-     equivalent regular expression '[fF][oO][oO]' (where case matters).
-     Not only does this avoid the expensive requirement to read and
-     process a line at a time, it also allows use of the kwset engine,
-     a win in non-UTF-8 multibyte locales.  */
-  if (match_icase)
-    {
-      size_t new_keycc;
-      char *new_keys;
-      /* It is not possible with -F, not useful with -P (pcre) and there is no
-         point when there is no regexp.  It also depends on which constructs
-         appear in the regexp.  See trivial_case_ignore for those details.  */
-      if (keycc
-          && ! (compile == Fcompile || compile == Pcompile)
-          && trivial_case_ignore (keycc, keys, &new_keycc, &new_keys))
-        {
-          match_icase = 0;
-          free (keys);
-          keys = new_keys;
-          keycc = new_keycc;
-        }
     }
 
   if (MB_CUR_MAX > 1)

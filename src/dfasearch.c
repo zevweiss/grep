@@ -81,12 +81,6 @@ dfawarn (char const *mesg)
 static void
 kwsmusts (void)
 {
-  /* With case-insensitive matching in a multi-byte locale, do not
-     use kwsearch, because in that case, it would be too expensive,
-     requiring that we case-convert all searched input.  */
-  if (MB_CUR_MAX > 1 && match_icase)
-    return;
-
   struct dfamust const *dm = dfamusts (dfa);
   if (dm)
     {

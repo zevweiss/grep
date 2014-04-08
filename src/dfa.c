@@ -933,14 +933,17 @@ static short const lonesome_lower[] =
     0x03F5, 0x1E9B, 0x1FBE,
   };
 
-static_assert ((sizeof lonesome_lower / sizeof *lonesome_lower + 2
-                == CASE_FOLDED_BUFSIZE),
-               "CASE_FOLDED_BUFSIZE is wrong");
+/* Maximum number of characters that can be the case-folded
+   counterparts of a single character, not counting the character
+   itself.  This is 1 for towupper, 1 for towlower, and 1 for each
+   entry in LONESOME_LOWER.  */
+enum
+{ CASE_FOLDED_BUFSIZE = 2 + sizeof lonesome_lower / sizeof *lonesome_lower };
 
 /* Find the characters equal to C after case-folding, other than C
    itself, and store them into FOLDED.  Return the number of characters
    stored.  */
-int
+static int
 case_folded_counterparts (wchar_t c, wchar_t folded[CASE_FOLDED_BUFSIZE])
 {
   int i;
