@@ -28,5 +28,4 @@ lib/xalloc-die.c
 lib/xstrtol-error.c
 src/dfa.c
 src/grep.c
-src/kwset.c
 src/pcresearch.c
