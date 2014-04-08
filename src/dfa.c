@@ -34,6 +34,13 @@
 #include <locale.h>
 #include <stdbool.h>
 
+/* The pre-C99 <stdbool.h> emulation doesn't work for bool bitfields.  */
+#if __STDC_VERSION__ < 199901
+typedef unsigned int bool_bf;
+#else
+typedef bool bool_bf;
+#endif
+
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* ISASCIIDIGIT differs from isdigit, as follows:
@@ -288,8 +295,8 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  bool has_backref;             /* True if this state matches a \<digit>.  */
-  bool has_mbcset;              /* True if this state matches a MBCSET.  */
+  bool_bf has_backref : 1;      /* True if this state matches a \<digit>.  */
+  bool_bf has_mbcset : 1;       /* True if this state matches a MBCSET.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
@@ -306,7 +313,7 @@ typedef ptrdiff_t state_num;
 struct mb_char_classes
 {
   ptrdiff_t cset;
-  int invert;
+  bool invert;
   wchar_t *chars;               /* Normal characters.  */
   size_t nchars;
   wctype_t *ch_classes;         /* Character classes.  */
@@ -390,7 +397,7 @@ struct dfa
                                    matching the given position in a string
                                    matching the regexp.  Allocated to the
                                    maximum possible position index.  */
-  int searchflag;               /* True if we are supposed to build a searching
+  bool searchflag;              /* True if we are supposed to build a searching
                                    as opposed to an exact matcher.  A searching
                                    matcher finds the first and shortest string
                                    matching a regexp anywhere in the buffer,
@@ -669,7 +676,7 @@ notset (charclass s)
     s[i] = ~s[i];
 }
 
-static int
+static bool
 equal (charclass const s1, charclass const s2)
 {
   return memcmp (s1, s2, sizeof (charclass)) == 0;
@@ -704,7 +711,7 @@ charclass_index (charclass const s)
 static reg_syntax_t syntax_bits, syntax_bits_set;
 
 /* Flag for case-folding letters into sets.  */
-static int case_fold;
+static bool case_fold;
 
 /* End-of-line byte in data.  */
 static unsigned char eolbyte;
@@ -759,7 +766,7 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
 
   syntax_bits_set = 1;
   syntax_bits = bits;
-  case_fold = fold;
+  case_fold = fold != 0;
   eolbyte = eol;
 
   for (i = 0; i < NOTCHAR; ++i)
@@ -812,17 +819,14 @@ setbit_case_fold_c (int b, charclass c)
 int
 using_utf8 (void)
 {
+#ifdef HAVE_LANGINFO_CODESET
   static int utf8 = -1;
-  if (utf8 == -1)
-    {
-#if defined HAVE_LANGINFO_CODESET
-      utf8 = (STREQ (nl_langinfo (CODESET), "UTF-8"));
-#else
-      utf8 = 0;
-#endif
-    }
-
+  if (utf8 < 0)
+    utf8 = STREQ (nl_langinfo (CODESET), "UTF-8");
   return utf8;
+#else
+  return 0;
+#endif
 }
 
 /* Return true if the current locale is known to be a unibyte locale
@@ -873,7 +877,7 @@ using_simple_locale (void)
 static char const *lexptr;      /* Pointer to next input character.  */
 static size_t lexleft;          /* Number of characters remaining.  */
 static token lasttok;           /* Previous token returned; initially END.  */
-static int laststart;           /* True if we're separated from beginning or (,
+static bool laststart;          /* True if we're separated from beginning or (,
                                    | only by zero-width characters.  */
 static size_t parens;           /* Count of outstanding left parens.  */
 static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
@@ -1009,7 +1013,7 @@ find_pred (const char *str)
 static token
 parse_bracket_exp (void)
 {
-  int invert;
+  bool invert;
   int c, c1, c2;
   charclass ccl;
 
@@ -1057,11 +1061,11 @@ parse_bracket_exp (void)
   if (c == '^')
     {
       FETCH_WC (c, wc, _("unbalanced ["));
-      invert = 1;
+      invert = true;
       known_bracket_exp = using_simple_locale ();
     }
   else
-    invert = 0;
+    invert = false;
 
   colon_warning_state = (c == ':');
   do
@@ -1279,7 +1283,7 @@ static token
 lex (void)
 {
   unsigned int c, c2;
-  int backslash = 0;
+  bool backslash = false;
   charclass ccl;
   int i;
 
@@ -1302,7 +1306,7 @@ lex (void)
             goto normal_char;
           if (lexleft == 0)
             dfaerror (_("unfinished \\ escape"));
-          backslash = 1;
+          backslash = true;
           break;
 
         case '^':
@@ -1340,7 +1344,7 @@ lex (void)
         case '9':
           if (backslash && !(syntax_bits & RE_NO_BK_REFS))
             {
-              laststart = 0;
+              laststart = false;
               return lasttok = BACKREF;
             }
           goto normal_char;
@@ -1455,7 +1459,7 @@ lex (void)
             lexptr = p;
             lexleft = lim - p;
           }
-          laststart = 0;
+          laststart = false;
           return lasttok = REPMN;
 
         case '|':
@@ -1463,21 +1467,21 @@ lex (void)
             goto normal_char;
           if (backslash != ((syntax_bits & RE_NO_BK_VBAR) == 0))
             goto normal_char;
-          laststart = 1;
+          laststart = true;
           return lasttok = OR;
 
         case '\n':
           if (syntax_bits & RE_LIMITED_OPS
               || backslash || !(syntax_bits & RE_NEWLINE_ALT))
             goto normal_char;
-          laststart = 1;
+          laststart = true;
           return lasttok = OR;
 
         case '(':
           if (backslash != ((syntax_bits & RE_NO_BK_PARENS) == 0))
             goto normal_char;
           ++parens;
-          laststart = 1;
+          laststart = true;
           return lasttok = LPAREN;
 
         case ')':
@@ -1486,7 +1490,7 @@ lex (void)
           if (parens == 0 && syntax_bits & RE_UNMATCHED_RIGHT_PAREN_ORD)
             goto normal_char;
           --parens;
-          laststart = 0;
+          laststart = false;
           return lasttok = RPAREN;
 
         case '.':
@@ -1496,7 +1500,7 @@ lex (void)
             {
               /* In multibyte environment period must match with a single
                  character not a byte.  So we use ANYCHAR.  */
-              laststart = 0;
+              laststart = false;
               return lasttok = ANYCHAR;
             }
           zeroset (ccl);
@@ -1505,7 +1509,7 @@ lex (void)
             clrbit (eolbyte, ccl);
           if (syntax_bits & RE_DOT_NOT_NULL)
             clrbit ('\0', ccl);
-          laststart = 0;
+          laststart = false;
           return lasttok = CSET + charclass_index (ccl);
 
         case 's':
@@ -1520,7 +1524,7 @@ lex (void)
                   setbit (c2, ccl);
               if (c == 'S')
                 notset (ccl);
-              laststart = 0;
+              laststart = false;
               return lasttok = CSET + charclass_index (ccl);
             }
 
@@ -1550,7 +1554,7 @@ lex (void)
 
           POP_LEX_STATE ();
 
-          laststart = 0;
+          laststart = false;
           return lasttok;
 
         case 'w':
@@ -1563,18 +1567,18 @@ lex (void)
               setbit (c2, ccl);
           if (c == 'W')
             notset (ccl);
-          laststart = 0;
+          laststart = false;
           return lasttok = CSET + charclass_index (ccl);
 
         case '[':
           if (backslash)
             goto normal_char;
-          laststart = 0;
+          laststart = false;
           return lasttok = parse_bracket_exp ();
 
         default:
         normal_char:
-          laststart = 0;
+          laststart = false;
           /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
           if (MB_CUR_MAX > 1)
@@ -1977,7 +1981,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   lexptr = s;
   lexleft = len;
   lasttok = END;
-  laststart = 1;
+  laststart = true;
   parens = 0;
   if (MB_CUR_MAX > 1)
     {
@@ -2323,7 +2327,7 @@ state_separate_contexts (position_set const *s)
 void
 dfaanalyze (struct dfa *d, int searchflag)
 {
-  int *nullable;                /* Nullable stack.  */
+  bool *nullable;               /* Nullable stack.  */
   size_t *nfirstpos;            /* Element count stack for firstpos sets.  */
   position *firstpos;           /* Array where firstpos elements are stored.  */
   size_t *nlastpos;             /* Element count stack for lastpos sets.  */
@@ -2331,7 +2335,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   position_set tmp;             /* Temporary set for merging sets.  */
   position_set merged;          /* Result of merging sets.  */
   int separate_contexts;        /* Context wanted by some position.  */
-  int *o_nullable;
+  bool *o_nullable;
   size_t *o_nfirst, *o_nlast;
   position *o_firstpos, *o_lastpos;
   size_t i, j;
@@ -2347,7 +2351,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   putc ('\n', stderr);
 #endif
 
-  d->searchflag = searchflag;
+  d->searchflag = searchflag != 0;
 
   MALLOC (nullable, d->depth);
   o_nullable = nullable;
@@ -2369,7 +2373,7 @@ dfaanalyze (struct dfa *d, int searchflag)
         {
         case EMPTY:
           /* The empty set is nullable.  */
-          *nullable++ = 1;
+          *nullable++ = true;
 
           /* The firstpos and lastpos of the empty leaf are both empty.  */
           *nfirstpos++ = *nlastpos++ = 0;
@@ -2391,7 +2395,7 @@ dfaanalyze (struct dfa *d, int searchflag)
         case QMARK:
           /* A QMARK or STAR node is automatically nullable.  */
           if (d->tokens[i] != PLUS)
-            nullable[-1] = 1;
+            nullable[-1] = true;
           break;
 
         case CAT:
@@ -2429,7 +2433,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           --nlastpos;
 
           /* A CAT node is nullable if both arguments are nullable.  */
-          nullable[-2] = nullable[-1] && nullable[-2];
+          nullable[-2] &= nullable[-1];
           --nullable;
           break;
 
@@ -2443,7 +2447,7 @@ dfaanalyze (struct dfa *d, int searchflag)
           --nlastpos;
 
           /* An OR node is nullable if either argument is nullable.  */
-          nullable[-2] = nullable[-1] || nullable[-2];
+          nullable[-2] |= nullable[-1];
           --nullable;
           break;
 
@@ -2574,11 +2578,11 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   size_t ngrps = 0;             /* Number of groups actually used.  */
   position pos;                 /* Current position being considered.  */
   charclass matches;            /* Set of matching characters.  */
-  int matchesf;                 /* True if matches is nonempty.  */
+  unsigned int matchesf;        /* Nonzero if matches is nonempty.  */
   charclass intersect;          /* Intersection with some label set.  */
-  int intersectf;               /* True if intersect is nonempty.  */
+  unsigned int intersectf;      /* Nonzero if intersect is nonempty.  */
   charclass leftovers;          /* Stuff in the label that didn't match.  */
-  int leftoversf;               /* True if leftovers is nonempty.  */
+  unsigned int leftoversf;      /* Nonzero if leftovers is nonempty.  */
   position_set follows;         /* Union of the follows of some group.  */
   position_set tmp;             /* Temporary space for merging sets.  */
   int possible_contexts;        /* Contexts that this group can match.  */
@@ -2586,7 +2590,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   state_num state;              /* New state.  */
   state_num state_newline;      /* New state on a newline transition.  */
   state_num state_letter;       /* New state on a letter transition.  */
-  int next_isnt_1st_byte = 0;   /* Flag if we can't add state0.  */
+  bool next_isnt_1st_byte = false; /* Flag if we can't add state0.  */
   size_t i, j, k;
 
   MALLOC (grps, NOTCHAR);
@@ -2601,21 +2605,23 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         setbit (d->tokens[pos.index], matches);
       else if (d->tokens[pos.index] >= CSET)
         copyset (d->charclasses[d->tokens[pos.index] - CSET], matches);
-      else if (d->tokens[pos.index] == ANYCHAR
-               || d->tokens[pos.index] == MBCSET)
-        /* MB_CUR_MAX > 1  */
+      else
         {
-          /* ANYCHAR and MBCSET must match with a single character, so we
-             must put it to d->states[s].mbps, which contains the positions
-             which can match with a single character not a byte.  */
-          if (d->states[s].mbps.nelem == 0)
-            alloc_position_set (&d->states[s].mbps, 1);
-          insert (pos, &(d->states[s].mbps));
-          d->states[s].has_mbcset |= (d->tokens[pos.index] == MBCSET);
+          if (d->tokens[pos.index] == MBCSET
+              || d->tokens[pos.index] == ANYCHAR)
+            {
+              /* MB_CUR_MAX > 1 */
+              if (d->tokens[pos.index] == MBCSET)
+                d->states[s].has_mbcset = true;
+              /* ANYCHAR and MBCSET must match with a single character, so we
+                 must put it to d->states[s].mbps, which contains the positions
+                 which can match with a single character not a byte.  */
+              if (d->states[s].mbps.nelem == 0)
+                alloc_position_set (&d->states[s].mbps, 1);
+              insert (pos, &(d->states[s].mbps));
+            }
           continue;
         }
-      else
-        continue;
 
       /* Some characters may need to be eliminated from matches because
          they fail in the current context.  */
@@ -2654,7 +2660,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
              matches.  */
           intersectf = 0;
           for (k = 0; k < CHARCLASS_INTS; ++k)
-            (intersect[k] = matches[k] & labels[j][k]) ? (intersectf = 1) : 0;
+            intersectf |= intersect[k] = matches[k] & labels[j][k];
           if (!intersectf)
             continue;
 
@@ -2665,8 +2671,8 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
               /* Even an optimizing compiler can't know this for sure.  */
               int match = matches[k], label = labels[j][k];
 
-              (leftovers[k] = ~match & label) ? (leftoversf = 1) : 0;
-              (matches[k] = match & ~label) ? (matchesf = 1) : 0;
+              leftoversf |= leftovers[k] = ~match & label;
+              matchesf |= matches[k] = match & ~label;
             }
 
           /* If there were leftovers, create a new group labeled with them.  */
@@ -2763,12 +2769,12 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
              codepoint of <sb a>, it must not be <sb a> but 2nd byte of
              <mb A>, so we cannot add state[0].  */
 
-          next_isnt_1st_byte = 0;
+          next_isnt_1st_byte = false;
           for (j = 0; j < follows.nelem; ++j)
             {
               if (!(d->multibyte_prop[follows.elems[j].index] & 1))
                 {
-                  next_isnt_1st_byte = 1;
+                  next_isnt_1st_byte = true;
                   break;
                 }
             }
@@ -3052,7 +3058,7 @@ static int
 match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
 {
   size_t i;
-  int match;               /* Matching succeeded.  */
+  bool match;              /* Matching succeeded.  */
   int match_len;           /* Length of the character (or collating element)
                               with which this operator matches.  */
   int op_len;              /* Length of the operator.  */
@@ -4040,14 +4046,14 @@ dfamust (struct dfa *d)
   char *result;
   size_t ri;
   size_t i;
-  int exact;
+  bool exact;
   token t;
   static must must0;
   struct dfamust *dm;
   static char empty_string[] = "";
 
   result = empty_string;
-  exact = 0;
+  exact = false;
   MALLOC (musts, d->tindex + 1);
   mp = musts;
   for (i = 0; i <= d->tindex; ++i)
@@ -4142,7 +4148,7 @@ dfamust (struct dfa *d)
             if (strlen (musts[0].in[i]) > strlen (result))
               result = musts[0].in[i];
           if (STREQ (result, musts[0].is))
-            exact = 1;
+            exact = true;
           goto done;
         case CAT:
           assert (&musts[2] <= mp);
