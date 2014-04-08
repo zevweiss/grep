@@ -34,13 +34,6 @@
 #include <locale.h>
 #include <stdbool.h>
 
-/* The pre-C99 <stdbool.h> emulation doesn't work for bool bitfields.  */
-#if __STDC_VERSION__ < 199901
-typedef unsigned int bool_bf;
-#else
-typedef bool bool_bf;
-#endif
-
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* ISASCIIDIGIT differs from isdigit, as follows:
@@ -291,8 +284,8 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  bool_bf has_backref : 1;      /* True if this state matches a \<digit>.  */
-  bool_bf has_mbcset : 1;       /* True if this state matches a MBCSET.  */
+  bool has_backref;             /* True if this state matches a \<digit>.  */
+  bool has_mbcset;              /* True if this state matches a MBCSET.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
