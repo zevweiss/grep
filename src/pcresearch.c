@@ -20,13 +20,11 @@
 
 #include <config.h>
 #include "search.h"
+#include "dfa.h"
 #if HAVE_PCRE_H
 # include <pcre.h>
 #elif HAVE_PCRE_PCRE_H
 # include <pcre/pcre.h>
-#endif
-#if HAVE_LANGINFO_CODESET
-# include <langinfo.h>
 #endif
 
 #if HAVE_LIBPCRE
@@ -60,14 +58,12 @@ Pcompile (char const *pattern, size_t size)
   char const *p;
   char const *pnul;
 
-# if defined HAVE_LANGINFO_CODESET
-  if (STREQ (nl_langinfo (CODESET), "UTF-8"))
+  if (using_utf8 ())
     {
       /* Enable PCRE's UTF-8 matching.  Note also the use of
          PCRE_NO_UTF8_CHECK when calling pcre_extra, below.   */
       flags |= PCRE_UTF8;
     }
-# endif
 
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))

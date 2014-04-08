@@ -20,9 +20,6 @@
 #include <assert.h>
 #include "search.h"
 #include "dfa.h"
-#if HAVE_LANGINFO_CODESET
-# include <langinfo.h>
-#endif
 
 #define NCHAR (UCHAR_MAX + 1)
 

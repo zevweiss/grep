@@ -60,10 +60,6 @@ typedef bool bool_bf;
 #include <wchar.h>
 #include <wctype.h>
 
-#if HAVE_LANGINFO_CODESET
-# include <langinfo.h>
-#endif
-
 #include "xalloc.h"
 
 /* HPUX defines these as macros in sys/param.h.  */
@@ -819,14 +815,14 @@ setbit_case_fold_c (int b, charclass c)
 int
 using_utf8 (void)
 {
-#ifdef HAVE_LANGINFO_CODESET
   static int utf8 = -1;
   if (utf8 < 0)
-    utf8 = STREQ (nl_langinfo (CODESET), "UTF-8");
+    {
+      wchar_t wc;
+      mbstate_t mbs = { 0 };
+      utf8 = mbrtowc (&wc, "\xc4\x80", 2, &mbs) == 2 && wc == 0x100;
+    }
   return utf8;
-#else
-  return 0;
-#endif
 }
 
 /* Return true if the current locale is known to be a unibyte locale
