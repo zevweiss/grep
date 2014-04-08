@@ -32,11 +32,14 @@
    failure function used below. */
 
 #include <config.h>
+
+#include "kwset.h"
+
 #include <stdbool.h>
 #include <sys/types.h>
 #include "system.h"
-#include "kwset.h"
 #include "obstack.h"
+#include "xalloc.h"
 
 #define link kwset_link
 
@@ -91,25 +94,15 @@ struct kwset
 };
 
 /* Allocate and initialize a keyword set object, returning an opaque
-   pointer to it.  Return NULL if memory is not available. */
+   pointer to it.  */
 kwset_t
 kwsalloc (char const *trans)
 {
-  struct kwset *kwset;
+  struct kwset *kwset = xmalloc (sizeof *kwset);
 
-  kwset = (struct kwset *) malloc(sizeof (struct kwset));
-  if (!kwset)
-    return NULL;
-
-  obstack_init(&kwset->obstack);
+  obstack_init (&kwset->obstack);
   kwset->words = 0;
-  kwset->trie
-    = (struct trie *) obstack_alloc(&kwset->obstack, sizeof (struct trie));
-  if (!kwset->trie)
-    {
-      kwsfree((kwset_t) kwset);
-      return NULL;
-    }
+  kwset->trie = obstack_alloc (&kwset->obstack, sizeof *kwset->trie);
   kwset->trie->accepting = 0;
   kwset->trie->links = NULL;
   kwset->trie->parent = NULL;
@@ -122,19 +115,17 @@ kwsalloc (char const *trans)
   kwset->target = NULL;
   kwset->trans = trans;
 
-  return (kwset_t) kwset;
+  return kwset;
 }
 
 /* This upper bound is valid for CHAR_BIT >= 4 and
    exact for CHAR_BIT in { 4..11, 13, 15, 17, 19 }. */
 #define DEPTH_SIZE (CHAR_BIT + CHAR_BIT/2)
 
-/* Add the given string to the contents of the keyword set.  Return NULL
-   for success, an error message otherwise. */
-const char *
-kwsincr (kwset_t kws, char const *text, size_t len)
+/* Add the given string to the contents of the keyword set.  */
+void
+kwsincr (kwset_t kwset, char const *text, size_t len)
 {
-  struct kwset *kwset = kws;
   struct trie *trie = kwset->trie;
   char const *trans = kwset->trans;
 
@@ -171,19 +162,10 @@ kwsincr (kwset_t kws, char const *text, size_t len)
          a link in the current trie node's tree. */
       if (!link)
         {
-          link = (struct tree *) obstack_alloc(&kwset->obstack,
-                                               sizeof (struct tree));
-          if (!link)
-            return _("memory exhausted");
+          link = obstack_alloc (&kwset->obstack, sizeof *link);
           link->llink = NULL;
           link->rlink = NULL;
-          link->trie = (struct trie *) obstack_alloc(&kwset->obstack,
-                                                     sizeof (struct trie));
-          if (!link->trie)
-            {
-              obstack_free(&kwset->obstack, link);
-              return _("memory exhausted");
-            }
+          link->trie = obstack_alloc (&kwset->obstack, sizeof *link->trie);
           link->trie->accepting = 0;
           link->trie->links = NULL;
           link->trie->parent = trie;
@@ -283,8 +265,6 @@ kwsincr (kwset_t kws, char const *text, size_t len)
     kwset->mind = trie->depth;
   if (trie->depth > kwset->maxd)
     kwset->maxd = trie->depth;
-
-  return NULL;
 }
 
 /* Enqueue the trie nodes referenced from the given tree in the
@@ -382,10 +362,9 @@ treenext (struct tree const *tree, struct trie *next[])
 
 /* Compute the shift for each trie node, as well as the delta
    table and next cache for the given keyword set. */
-const char *
-kwsprep (kwset_t kws)
+void
+kwsprep (kwset_t kwset)
 {
-  struct kwset *kwset = kws;
   char const *trans = kwset->trans;
   int i;
   unsigned char deltabuf[NCHAR];
@@ -458,9 +437,7 @@ kwsprep (kwset_t kws)
   if (!trans && kwset->words == 1)
     {
       /* Looking for just one string.  Extract it from the trie. */
-      kwset->target = obstack_alloc(&kwset->obstack, kwset->mind);
-      if (!kwset->target)
-        return _("memory exhausted");
+      kwset->target = obstack_alloc (&kwset->obstack, kwset->mind);
       for (i = kwset->mind - 1, curr = kwset->trie; i >= 0; --i)
         {
           kwset->target[i] = curr->links->label;
@@ -473,8 +450,6 @@ kwsprep (kwset_t kws)
           kwset->shift
             = obstack_alloc (&kwset->obstack,
                              sizeof *kwset->shift * (kwset->mind - 1));
-          if (!kwset->shift)
-            return _("memory exhausted");
           for (i = 0, curr = kwset->trie->next; i < kwset->mind - 1; ++i)
             {
               kwset->shift[i] = curr->shift;
@@ -487,22 +462,17 @@ kwsprep (kwset_t kws)
   if (trans)
     for (i = 0; i < NCHAR; ++i)
       kwset->delta[i] = delta[U(trans[i])];
-
-  return NULL;
 }
 
 /* Fast boyer-moore search. */
 static size_t _GL_ATTRIBUTE_PURE
-bmexec (kwset_t kws, char const *text, size_t size)
+bmexec (kwset_t kwset, char const *text, size_t size)
 {
-  struct kwset const *kwset;
   unsigned char const *d1;
   char const *ep, *sp, *tp;
-  int d, i, len, skip;
+  int d, i, skip;
   char gc1, gc2;
-
-  kwset = (struct kwset const *) kws;
-  len = kwset->mind;
+  int len = kwset->mind;
 
   if (len == 0)
     return 0;
@@ -619,9 +589,8 @@ bmexec (kwset_t kws, char const *text, size_t size)
 
 /* Hairy multiple string search. */
 static size_t _GL_ARG_NONNULL ((4))
-cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
+cwexec (kwset_t kwset, char const *text, size_t len, struct kwsmatch *kwsmatch)
 {
-  struct kwset const *kwset;
   struct trie * const *next;
   struct trie const *trie;
   struct trie const *accept;
@@ -638,7 +607,6 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
 #endif
 
   /* Initialize register copies and look for easy ways out. */
-  kwset = (struct kwset *) kws;
   if (len < kwset->mind)
     return -1;
   next = kwset->next;
@@ -775,18 +743,18 @@ cwexec (kwset_t kws, char const *text, size_t len, struct kwsmatch *kwsmatch)
   return mch - text;
 }
 
-/* Search TEXT for a match of any member of the keyword set, KWS.
+/* Search TEXT for a match of any member of KWSET.
    Return the offset (into TEXT) of the first byte of the matching substring,
    or (size_t) -1 if no match is found.  Upon a match, store details in
    *KWSMATCH: index of matched keyword, start offset (same as the return
    value), and length.  */
 size_t
-kwsexec (kwset_t kws, char const *text, size_t size, struct kwsmatch *kwsmatch)
+kwsexec (kwset_t kwset, char const *text, size_t size,
+         struct kwsmatch *kwsmatch)
 {
-  struct kwset const *kwset = (struct kwset *) kws;
   if (kwset->words == 1 && kwset->trans == NULL)
     {
-      size_t ret = bmexec (kws, text, size);
+      size_t ret = bmexec (kwset, text, size);
       if (ret != (size_t) -1)
         {
           kwsmatch->index = 0;
@@ -796,16 +764,13 @@ kwsexec (kwset_t kws, char const *text, size_t size, struct kwsmatch *kwsmatch)
       return ret;
     }
   else
-    return cwexec(kws, text, size, kwsmatch);
+    return cwexec (kwset, text, size, kwsmatch);
 }
 
 /* Free the components of the given keyword set. */
 void
-kwsfree (kwset_t kws)
+kwsfree (kwset_t kwset)
 {
-  struct kwset *kwset;
-
-  kwset = (struct kwset *) kws;
-  obstack_free(&kwset->obstack, NULL);
-  free(kws);
+  obstack_free (&kwset->obstack, NULL);
+  free (kwset);
 }

@@ -32,7 +32,6 @@ static kwset_t kwset;
 void
 Fcompile (char const *pattern, size_t size)
 {
-  char const *err;
   size_t psize = size;
   mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
@@ -65,14 +64,12 @@ Fcompile (char const *pattern, size_t size)
 #endif
         }
 
-      if ((err = kwsincr (kwset, beg, end - beg)) != NULL)
-        error (EXIT_TROUBLE, 0, "%s", err);
+      kwsincr (kwset, beg, end - beg);
       beg = lim;
     }
   while (beg < pat + psize);
 
-  if ((err = kwsprep (kwset)) != NULL)
-    error (EXIT_TROUBLE, 0, "%s", err);
+  kwsprep (kwset);
 }
 
 /* Apply the MAP (created by mbtoupper) to the uppercase-buffer-relative

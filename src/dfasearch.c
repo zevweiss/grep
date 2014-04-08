@@ -90,7 +90,6 @@ kwsmusts (void)
   struct dfamust const *dm = dfamusts (dfa);
   if (dm)
     {
-      char const *err;
       kwsinit (&kwset);
       /* First, we compile in the substrings known to be exact
          matches.  The kwset matcher will return the index
@@ -100,8 +99,7 @@ kwsmusts (void)
           if (!dm->exact)
             continue;
           ++kwset_exact_matches;
-          if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
-            error (EXIT_TROUBLE, 0, "%s", err);
+          kwsincr (kwset, dm->must, strlen (dm->must));
         }
       /* Now, we compile the substrings that will require
          the use of the regexp matcher.  */
@@ -109,11 +107,9 @@ kwsmusts (void)
         {
           if (dm->exact)
             continue;
-          if ((err = kwsincr (kwset, dm->must, strlen (dm->must))) != NULL)
-            error (EXIT_TROUBLE, 0, "%s", err);
+          kwsincr (kwset, dm->must, strlen (dm->must));
         }
-      if ((err = kwsprep (kwset)) != NULL)
-        error (EXIT_TROUBLE, 0, "%s", err);
+      kwsprep (kwset);
     }
 }
 
