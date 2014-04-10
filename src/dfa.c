@@ -4198,7 +4198,37 @@ dfamust (struct dfa *d)
               /* not on *my* shift */
               goto done;
             }
-          else if (t >= CSET || t == ANYCHAR || t == MBCSET)
+          else if (t >= CSET)
+            {
+              charclass ccl;
+              int j;
+              copyset (d->charclasses[t - CSET], ccl);
+              for (j = 0; j < NOTCHAR; ++j)
+                if (tstbit (j, ccl))
+                  break;
+              if (j < NOTCHAR)
+                {
+                  int c = (case_fold && MB_CUR_MAX == 1) ? toupper (j) : j;
+                  for (; j < NOTCHAR; j++)
+                    if (tstbit (j, ccl)
+                        && (!(case_fold && MB_CUR_MAX == 1) || c != toupper (j)))
+                      break;
+                  if (j < NOTCHAR)
+                    resetmust (mp);
+                  else
+                    {
+                      resetmust (mp);
+                      mp->is[0] = mp->left[0] = mp->right[0] = c;
+                      mp->is[1] = mp->left[1] = mp->right[1] = '\0';
+                      mp->in = enlist (mp->in, mp->is, (size_t) 1);
+                      if (mp->in == NULL)
+                        goto done;
+                    }
+                }
+              else
+                resetmust (mp);
+            }
+          else if (t == ANYCHAR || t == MBCSET)
             {
               /* easy enough */
               resetmust (mp);
@@ -4207,7 +4237,8 @@ dfamust (struct dfa *d)
             {
               /* plain character */
               resetmust (mp);
-              mp->is[0] = mp->left[0] = mp->right[0] = t;
+              mp->is[0] = mp->left[0] = mp->right[0] =
+                (case_fold && MB_CUR_MAX == 1) ? toupper (t) : t;
               mp->is[1] = mp->left[1] = mp->right[1] = '\0';
               mp->in = enlist (mp->in, mp->is, (size_t) 1);
               if (mp->in == NULL)
