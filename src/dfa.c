@@ -4036,7 +4036,6 @@ dfamust (struct dfa *d)
   size_t ri;
   size_t i;
   bool exact;
-  token t;
   static must must0;
   struct dfamust *dm;
   static char empty_string[] = "";
@@ -4067,11 +4066,18 @@ dfamust (struct dfa *d)
 #endif
   for (ri = 0; ri < d->tindex; ++ri)
     {
-      switch (t = d->tokens[ri])
+      token t = d->tokens[ri];
+      switch (t)
         {
         case LPAREN:
         case RPAREN:
           assert (!"neither LPAREN nor RPAREN may appear here");
+
+        case STAR:
+        case QMARK:
+          assert (musts < mp);
+          --mp;
+          /* Fall through.  */
         case EMPTY:
         case BEGLINE:
         case ENDLINE:
@@ -4080,14 +4086,11 @@ dfamust (struct dfa *d)
         case LIMWORD:
         case NOTLIMWORD:
         case BACKREF:
+        case ANYCHAR:
+        case MBCSET:
           resetmust (mp);
           break;
-        case STAR:
-        case QMARK:
-          assert (musts < mp);
-          --mp;
-          resetmust (mp);
-          break;
+
         case OR:
           assert (&musts[2] <= mp);
           {
@@ -4126,11 +4129,13 @@ dfamust (struct dfa *d)
             lmp->in = new;
           }
           break;
+
         case PLUS:
           assert (musts < mp);
           --mp;
           mp->is[0] = '\0';
           break;
+
         case END:
           assert (mp == &musts[1]);
           for (i = 0; musts[0].in[i] != NULL; ++i)
@@ -4139,6 +4144,7 @@ dfamust (struct dfa *d)
           if (STREQ (result, musts[0].is))
             exact = true;
           goto done;
+
         case CAT:
           assert (&musts[2] <= mp);
           {
@@ -4188,62 +4194,41 @@ dfamust (struct dfa *d)
               lmp->is[0] = '\0';
           }
           break;
+
+        case '\0':
+          /* Not on *my* shift.  */
+          goto done;
+
         default:
-          if (t < END)
+          resetmust (mp);
+          if (CSET <= t)
             {
-              assert (!"oops! t >= END");
-            }
-          else if (t == '\0')
-            {
-              /* not on *my* shift */
-              goto done;
-            }
-          else if (t >= CSET)
-            {
-              charclass ccl;
+              /* If T is a singleton, or if case-folding in a unibyte
+                 locale and T's members all case-fold to the same char,
+                 convert T to one of its members.  Otherwise, do
+                 nothing further with T.  */
+              charclass *ccl = &d->charclasses[t - CSET];
               int j;
-              copyset (d->charclasses[t - CSET], ccl);
-              for (j = 0; j < NOTCHAR; ++j)
-                if (tstbit (j, ccl))
+              for (j = 0; j < NOTCHAR; j++)
+                if (tstbit (j, *ccl))
+                  break;
+              if (! (j < NOTCHAR))
+                break;
+              t = j;
+              while (++j < NOTCHAR)
+                if (tstbit (j, *ccl)
+                    && ! (case_fold && MB_CUR_MAX == 1
+                          && toupper (j) == toupper (t)))
                   break;
               if (j < NOTCHAR)
-                {
-                  int c = (case_fold && MB_CUR_MAX == 1) ? toupper (j) : j;
-                  for (; j < NOTCHAR; j++)
-                    if (tstbit (j, ccl)
-                        && (!(case_fold && MB_CUR_MAX == 1) || c != toupper (j)))
-                      break;
-                  if (j < NOTCHAR)
-                    resetmust (mp);
-                  else
-                    {
-                      resetmust (mp);
-                      mp->is[0] = mp->left[0] = mp->right[0] = c;
-                      mp->is[1] = mp->left[1] = mp->right[1] = '\0';
-                      mp->in = enlist (mp->in, mp->is, (size_t) 1);
-                      if (mp->in == NULL)
-                        goto done;
-                    }
-                }
-              else
-                resetmust (mp);
+                break;
             }
-          else if (t == ANYCHAR || t == MBCSET)
-            {
-              /* easy enough */
-              resetmust (mp);
-            }
-          else
-            {
-              /* plain character */
-              resetmust (mp);
-              mp->is[0] = mp->left[0] = mp->right[0] =
-                (case_fold && MB_CUR_MAX == 1) ? toupper (t) : t;
-              mp->is[1] = mp->left[1] = mp->right[1] = '\0';
-              mp->in = enlist (mp->in, mp->is, (size_t) 1);
-              if (mp->in == NULL)
-                goto done;
-            }
+          mp->is[0] = mp->left[0] = mp->right[0]
+            = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
+          mp->is[1] = mp->left[1] = mp->right[1] = '\0';
+          mp->in = enlist (mp->in, mp->is, 1);
+          if (mp->in == NULL)
+            goto done;
           break;
         }
 #ifdef DEBUG
