@@ -395,9 +395,10 @@ static enum
 
 static int grepfile (int, char const *, int, int);
 static int grepdesc (int, int);
-#if defined HAVE_DOS_FILE_CONTENTS
+
+static void dos_binary (void);
+static void dos_unix_byte_offsets (void);
 static int undossify_input (char *, size_t);
-#endif
 
 static int
 is_device_mode (mode_t m)
@@ -648,10 +649,7 @@ fillbuf (size_t save, struct stat const *st)
   if (fillsize < 0)
     fillsize = cc = 0;
   bufoffset += fillsize;
-#if defined HAVE_DOS_FILE_CONTENTS
-  if (fillsize)
-    fillsize = undossify_input (readbuf, fillsize);
-#endif
+  fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
   return cc;
 }
@@ -695,9 +693,7 @@ static intmax_t pending;	/* Pending lines of output.
 static int done_on_match;	/* Stop scanning file on first match.  */
 static int exit_on_match;	/* Exit on first match.  */
 
-#if defined HAVE_DOS_FILE_CONTENTS
-# include "dosbuf.c"
-#endif
+#include "dosbuf.c"
 
 /* Add two numbers that count input bytes or lines, and report an
    error if the addition overflows.  */
@@ -803,9 +799,7 @@ print_line_head (char const *beg, char const *lim, int sep)
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
-#if defined HAVE_DOS_FILE_CONTENTS
       pos = dossified_pos (pos);
-#endif
       if (pending_sep)
         print_sep (sep);
       print_offset (pos, 6, byte_num_color);
@@ -2043,15 +2037,11 @@ main (int argc, char **argv)
         break;
 
       case 'U':
-#if defined HAVE_DOS_FILE_CONTENTS
-        dos_use_file_type = DOS_BINARY;
-#endif
+        dos_binary ();
         break;
 
       case 'u':
-#if defined HAVE_DOS_FILE_CONTENTS
-        dos_report_unix_offset = 1;
-#endif
+        dos_unix_byte_offsets ();
         break;
 
       case 'V':
@@ -2086,7 +2076,7 @@ main (int argc, char **argv)
         break;
 
       case 'f':
-        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
+        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
         if (!fp)
           error (EXIT_TROUBLE, errno, "%s", optarg);
         for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)

@@ -50,10 +50,6 @@ Fcompile (char const *pattern, size_t size)
           len = sep - p;
           sep++;
           total -= (len + 1);
-#if HAVE_DOS_FILE_CONTENTS
-         if (sep[-1] == '\r')
-           --len;
-#endif
         }
       else
         {

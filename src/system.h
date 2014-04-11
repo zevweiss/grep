@@ -29,10 +29,6 @@
 #include "minmax.h"
 #include "same-inode.h"
 
-#if O_BINARY
-# define HAVE_DOS_FILE_CONTENTS 1
-#endif
-
 #include <stdlib.h>
 #include <stddef.h>
 #include <limits.h>
