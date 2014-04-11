@@ -110,8 +110,6 @@ kwsmusts (void)
 void
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
-  const char *err;
-  const char *p, *sep;
   size_t total = size;
   char *motif;
 
@@ -120,15 +118,15 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   re_set_syntax (syntax_bits);
   dfasyntax (syntax_bits, match_icase, eolbyte);
 
-  /* For GNU regex compiler we have to pass the patterns separately to detect
-     errors like "[\nallo\n]\n".  The patterns here are "[", "allo" and "]"
-     GNU regex should have raise a syntax error.  The same for backref, where
-     the backref should have been local to each pattern.  */
-  p = pattern;
+  /* For GNU regex, pass the patterns separately to detect errors like
+     "[\nallo\n]\n", where the patterns are "[", "allo" and "]", and
+     this should be a syntax error.  The same for backref, where the
+     backref should be local to each pattern.  */
+  char const *p = pattern;
   do
     {
       size_t len;
-      sep = memchr (p, '\n', total);
+      char const *sep = memchr (p, '\n', total);
       if (sep)
         {
           len = sep - p;
@@ -144,24 +142,14 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
       patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
       patterns[pcount] = patterns0;
 
-      if ((err = re_compile_pattern (p, len,
-                                    &(patterns[pcount].regexbuf))) != NULL)
+      char const *err = re_compile_pattern (p, len,
+                                            &(patterns[pcount].regexbuf));
+      if (err)
         error (EXIT_TROUBLE, 0, "%s", err);
       pcount++;
-
       p = sep;
-    } while (sep && total != 0);
-
-  if (sep)
-    {
-      patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
-      patterns[pcount] = patterns0;
-
-      if ((err = re_compile_pattern ("", 0,
-                                    &(patterns[pcount].regexbuf))) != NULL)
-        error (EXIT_TROUBLE, 0, "%s", err);
-      pcount++;
     }
+  while (p);
 
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.

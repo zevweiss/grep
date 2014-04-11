@@ -32,7 +32,6 @@ static kwset_t kwset;
 void
 Fcompile (char const *pattern, size_t size)
 {
-  char const *p, *sep;
   size_t total = size;
   mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
@@ -41,11 +40,11 @@ Fcompile (char const *pattern, size_t size)
 
   kwsinit (&kwset);
 
-  p = pat;
+  char const *p = pat;
   do
     {
       size_t len;
-      sep = memchr (p, '\n', total);
+      char const *sep = memchr (p, '\n', total);
       if (sep)
         {
           len = sep - p;
@@ -63,12 +62,9 @@ Fcompile (char const *pattern, size_t size)
         }
 
       kwsincr (kwset, p, len);
-
       p = sep;
-    } while (sep && total != 0);
-
-  if (sep)
-    kwsincr (kwset, "", 0);
+    }
+  while (p);
 
   kwsprep (kwset);
 }
