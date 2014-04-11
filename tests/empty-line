@@ -1,0 +1,17 @@
+#! /bin/sh
+# This would fail for grep-2.18
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+fail=0
+printf 'abc\n' >in || framework_failure_
+
+printf 'foo\n\n' >pat || framework_failure_
+grep -F -f pat in >out || fail=1
+compare in out || fail=1
+
+printf '\(\)\\1foo\n\n' >pat || framework_failure_
+grep -f pat in >out || fail=1
+compare in out || fail=1
+
+Exit $fail

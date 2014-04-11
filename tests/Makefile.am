@@ -54,6 +54,7 @@ TESTS =						\
   dfa-heap-overrun				\
   dfaexec-multibyte				\
   empty						\
+  empty-line					\
   epipe						\
   equiv-classes					\
   ere						\

@@ -32,42 +32,43 @@ static kwset_t kwset;
 void
 Fcompile (char const *pattern, size_t size)
 {
-  size_t psize = size;
+  char const *p, *sep;
+  size_t total = size;
   mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
-                     ? mbtoupper (pattern, &psize, &map)
+                     ? mbtoupper (pattern, &total, &map)
                      : pattern);
 
   kwsinit (&kwset);
 
-  char const *beg = pat;
+  p = pat;
   do
     {
-      char const *lim;
-      char const *end;
-      for (lim = beg;; ++lim)
+      size_t len;
+      sep = memchr (p, '\n', total);
+      if (sep)
         {
-          end = lim;
-          if (lim >= pat + psize)
-            break;
-         if (*lim == '\n')
-           {
-             lim++;
-             break;
-           }
+          len = sep - p;
+          sep++;
+          total -= (len + 1);
 #if HAVE_DOS_FILE_CONTENTS
-         if (*lim == '\r' && lim + 1 < pat + psize && lim[1] == '\n')
-           {
-             lim += 2;
-             break;
-           }
+         if (sep[-1] == '\r')
+           --len;
 #endif
         }
+      else
+        {
+          len = total;
+          total = 0;
+        }
 
-      kwsincr (kwset, beg, end - beg);
-      beg = lim;
-    }
-  while (beg < pat + psize);
+      kwsincr (kwset, p, len);
+
+      p = sep;
+    } while (sep && total != 0);
+
+  if (sep)
+    kwsincr (kwset, "", 0);
 
   kwsprep (kwset);
 }
