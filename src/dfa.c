@@ -3812,7 +3812,9 @@ inboth (char **left, char **right)
   return both;
 }
 
-typedef struct
+typedef struct must must;
+
+struct must
 {
   char **in;
   char *left;
@@ -3820,21 +3822,46 @@ typedef struct
   char *is;
   bool begline;
   bool endline;
-} must;
+  must *prev;
+};
+
+static must *
+allocmust (must *mp)
+{
+  must *new_mp = xzalloc (sizeof *new_mp);
+  new_mp->in = xzalloc (sizeof *new_mp->in);
+  new_mp->left = xzalloc (2);
+  new_mp->right = xzalloc (2);
+  new_mp->is = xzalloc (2);
+  new_mp->prev = mp;
+  return new_mp;
+}
 
 static void
-resetmust (must * mp)
+resetmust (must *mp)
 {
   freelist (mp->in);
   mp->in[0] = NULL;
   mp->left[0] = mp->right[0] = mp->is[0] = '\0';
+  mp->begline = false;
+  mp->endline = false;
+}
+
+static void
+freemust (must *mp)
+{
+  freelist (mp->in);
+  free (mp->in);
+  free (mp->left);
+  free (mp->right);
+  free (mp->is);
+  free (mp);
 }
 
 static void
 dfamust (struct dfa *d)
 {
-  must *musts = xnmalloc (d->tindex + 1, sizeof *musts);
-  must *mp = musts;
+  must *mp = NULL;
   char const *result = "";
   size_t ri;
   size_t i;
@@ -3843,34 +3870,18 @@ dfamust (struct dfa *d)
   bool endline = false;
   struct dfamust *dm;
 
-  for (i = 0; i <= d->tindex; ++i)
-    {
-      mp[i].in = xzalloc (sizeof *mp[i].in);
-      mp[i].left = xzalloc (2);
-      mp[i].right = xzalloc (2);
-      mp[i].is = xzalloc (2);
-      mp[i].begline = false;
-      mp[i].endline = false;
-    }
-#ifdef DEBUG
-  fprintf (stderr, "dfamust:\n");
-  for (i = 0; i < d->tindex; ++i)
-    {
-      fprintf (stderr, " %zd:", i);
-      prtok (d->tokens[i]);
-    }
-  putc ('\n', stderr);
-#endif
   for (ri = 0; ri < d->tindex; ++ri)
     {
       token t = d->tokens[ri];
       switch (t)
         {
         case BEGLINE:
+          mp = allocmust (mp);
           resetmust (mp);
           mp->begline = true;
           break;
         case ENDLINE:
+          mp = allocmust (mp);
           resetmust (mp);
           mp->endline = true;
           break;
@@ -3878,11 +3889,6 @@ dfamust (struct dfa *d)
         case RPAREN:
           assert (!"neither LPAREN nor RPAREN may appear here");
 
-        case STAR:
-        case QMARK:
-          assert (musts < mp);
-          --mp;
-          /* Fall through.  */
         case EMPTY:
         case BEGWORD:
         case ENDWORD:
@@ -3891,19 +3897,24 @@ dfamust (struct dfa *d)
         case BACKREF:
         case ANYCHAR:
         case MBCSET:
+          mp = allocmust (mp);
+          /* Fall through.  */
+        case STAR:
+        case QMARK:
+          assert (mp != NULL);
           resetmust (mp);
           break;
 
         case OR:
-          assert (&musts[2] <= mp);
+          assert (mp && mp->prev);
           {
             char **new;
             must *lmp;
             must *rmp;
             size_t j, ln, rn, n;
 
-            rmp = --mp;
-            lmp = --mp;
+            rmp = mp;
+            lmp = mp = mp->prev;
             /* Guaranteed to be.  Unlikely, but ...  */
             if (!STREQ (lmp->is, rmp->is))
               lmp->is[0] = '\0';
@@ -3930,36 +3941,39 @@ dfamust (struct dfa *d)
             freelist (lmp->in);
             free (lmp->in);
             lmp->in = new;
+            freemust (rmp);
           }
           break;
 
         case PLUS:
-          assert (musts < mp);
-          --mp;
+          assert (mp != NULL);
           mp->is[0] = '\0';
           break;
 
         case END:
-          assert (mp == &musts[1]);
-          for (i = 0; musts[0].in[i] != NULL; ++i)
-            if (strlen (musts[0].in[i]) > strlen (result))
-              result = musts[0].in[i];
-          if (STREQ (result, musts[0].is))
+          assert (!mp || !mp->prev);
+          if (mp)
             {
-              exact = true;
-              begline = musts[0].begline;
-              endline = musts[0].endline;
+              for (i = 0; mp->in[i] != NULL; ++i)
+                if (strlen (mp->in[i]) > strlen (result))
+                  result = mp->in[i];
+              if (STREQ (result, mp->is))
+                {
+                  exact = true;
+                  begline = mp->begline;
+                  endline = mp->endline;
+                }
             }
           goto done;
 
         case CAT:
-          assert (&musts[2] <= mp);
+          assert (mp && mp->prev);
           {
             must *lmp;
             must *rmp;
 
-            rmp = --mp;
-            lmp = --mp;
+            rmp = mp;
+            lmp = mp = mp->prev;
             /* In.  Everything in left, plus everything in
                right, plus concatenation of
                left's right and right's left.  */
@@ -3994,6 +4008,7 @@ dfamust (struct dfa *d)
                 lmp->begline = false;
                 lmp->endline = false;
               }
+            freemust (rmp);
           }
           break;
 
@@ -4002,6 +4017,7 @@ dfamust (struct dfa *d)
           goto done;
 
         default:
+          mp = allocmust (mp);
           resetmust (mp);
           if (CSET <= t)
             {
@@ -4031,17 +4047,6 @@ dfamust (struct dfa *d)
           mp->in = enlist (mp->in, mp->is, 1);
           break;
         }
-#ifdef DEBUG
-      fprintf (stderr, " node: %zd:", ri);
-      prtok (d->tokens[ri]);
-      fprintf (stderr, "\n  in:");
-      for (i = 0; mp->in[i]; ++i)
-        fprintf (stderr, " \"%s\"", mp->in[i]);
-      fprintf (stderr, "\n  is: \"%s\"\n", mp->is);
-      fprintf (stderr, "  left: \"%s\"\n", mp->left);
-      fprintf (stderr, "  right: \"%s\"\n", mp->right);
-#endif
-      ++mp;
     }
 done:
   if (*result)
@@ -4054,16 +4059,8 @@ done:
       dm->next = d->musts;
       d->musts = dm;
     }
-  mp = musts;
-  for (i = 0; i <= d->tindex; ++i)
-    {
-      freelist (mp[i].in);
-      free (mp[i].in);
-      free (mp[i].left);
-      free (mp[i].right);
-      free (mp[i].is);
-    }
-  free (mp);
+  if (mp)
+    freemust (mp);
 }
 
 struct dfa *
