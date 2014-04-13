@@ -83,6 +83,7 @@ TESTS =						\
   options					\
   pcre						\
   pcre-abort					\
+  pcre-infloop					\
   pcre-invalid-utf8-input			\
   pcre-utf8					\
   pcre-w					\
