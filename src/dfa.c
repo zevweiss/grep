@@ -3354,15 +3354,21 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           continue;
         }
 
-      /* If the previous character was a newline, count it.  */
-      if ((char *) p <= end && p[-1] == eol && count)
-        ++*count;
-
       /* Check if we've run off the end of the buffer.  */
       if ((char *) p > end)
         {
           *end = saved_end;
           return NULL;
+        }
+
+      /* If the previous character was a newline, count it, and skip
+         checking of multibyte character boundary until here.  */
+      if (p[-1] == eol)
+        {
+          if (count)
+            ++*count;
+          if (d->mb_cur_max > 1)
+            mbp = p;
         }
 
       if (s >= 0)
