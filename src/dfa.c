@@ -2515,10 +2515,6 @@ dfaanalyze (struct dfa *d, int searchflag)
   epsclosure (&merged, d);
 
   /* Build the initial state.  */
-  d->salloc = 1;
-  d->sindex = 0;
-  d->states = xmalloc (sizeof *d->states);
-
   separate_contexts = state_separate_contexts (&merged);
   state_index (d, &merged,
                (separate_contexts & CTX_NEWLINE
@@ -2566,8 +2562,8 @@ dfaanalyze (struct dfa *d, int searchflag)
 void
 dfastate (state_num s, struct dfa *d, state_num trans[])
 {
-  leaf_set *grps;               /* As many as will ever be needed.  */
-  charclass *labels;            /* Labels corresponding to the groups.  */
+  leaf_set grps[NOTCHAR];       /* As many as will ever be needed.  */
+  charclass labels[NOTCHAR];    /* Labels corresponding to the groups.  */
   size_t ngrps = 0;             /* Number of groups actually used.  */
   position pos;                 /* Current position being considered.  */
   charclass matches;            /* Set of matching characters.  */
@@ -2585,9 +2581,6 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   state_num state_letter;       /* New state on a letter transition.  */
   bool next_isnt_1st_byte = false; /* Flag if we can't add state0.  */
   size_t i, j, k;
-
-  grps = xnmalloc (NOTCHAR, sizeof *grps);
-  labels = xnmalloc (NOTCHAR, sizeof *labels);
 
   zeroset (matches);
 
@@ -2819,8 +2812,6 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
     free (grps[i].elems);
   free (follows.elems);
   free (tmp.elems);
-  free (grps);
-  free (labels);
 }
 
 /* Some routines for manipulating a compiled dfa's transition tables.
@@ -2862,7 +2853,7 @@ build_state (state_num s, struct dfa *d)
   if (ACCEPTS_IN_CONTEXT (d->states[s].context, CTX_NONE, s, *d))
     d->success[s] |= CTX_NONE;
 
-  trans = xnmalloc (NOTCHAR, sizeof *trans);
+  trans = xmalloc (NOTCHAR * sizeof *trans);
   dfastate (s, d, trans);
 
   /* Now go through the new transition table, and make sure that the trans
@@ -3573,22 +3564,7 @@ void
 dfainit (struct dfa *d)
 {
   memset (d, 0, sizeof *d);
-
-  d->calloc = 1;
-  d->charclasses = xmalloc (sizeof *d->charclasses);
-
-  d->talloc = 1;
-  d->tokens = xmalloc (sizeof *d->tokens);
-
   d->mb_cur_max = MB_CUR_MAX;
-
-  if (d->mb_cur_max > 1)
-    {
-      d->nmultibyte_prop = 1;
-      d->multibyte_prop = xmalloc (sizeof *d->multibyte_prop);
-      d->mbcsets_alloc = 1;
-      d->mbcsets = xmalloc (sizeof *d->mbcsets);
-    }
 }
 
 static void
