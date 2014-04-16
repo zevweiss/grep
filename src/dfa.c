@@ -457,40 +457,6 @@ struct dfa
 static void dfamust (struct dfa *dfa);
 static void regexp (void);
 
-/* These two macros are identical to the ones in gnulib's xalloc.h,
-   except that they do not cast the result to "(t *)", and thus may
-   be used via type-free CALLOC and MALLOC macros.  */
-#undef XNMALLOC
-#undef XCALLOC
-
-/* Allocate memory for N elements of type T, with error checking.  */
-/* extern t *XNMALLOC (size_t n, typename t); */
-# define XNMALLOC(n, t) \
-    (sizeof (t) == 1 ? xmalloc (n) : xnmalloc (n, sizeof (t)))
-
-/* Allocate memory for N elements of type T, with error checking,
-   and zero it.  */
-/* extern t *XCALLOC (size_t n, typename t); */
-# define XCALLOC(n, t) \
-    (sizeof (t) == 1 ? xzalloc (n) : xcalloc (n, sizeof (t)))
-
-#define CALLOC(p, n) do { (p) = XCALLOC (n, *(p)); } while (0)
-#define MALLOC(p, n) do { (p) = XNMALLOC (n, *(p)); } while (0)
-#define REALLOC(p, n) do {(p) = xnrealloc (p, n, sizeof (*(p))); } while (0)
-
-/* Reallocate an array of type *P if N_ALLOC is <= N_REQUIRED.  */
-#define REALLOC_IF_NECESSARY(p, n_alloc, n_required)		\
-  do								\
-    {								\
-      if ((n_alloc) <= (n_required))				\
-        {							\
-          size_t new_n_alloc = (n_required) + !(p);		\
-          (p) = x2nrealloc (p, &new_n_alloc, sizeof (*(p)));	\
-          (n_alloc) = new_n_alloc;				\
-        }							\
-    }								\
-  while (false)
-
 static void
 dfambcache (struct dfa *d)
 {
@@ -671,6 +637,19 @@ equal (charclass const s1, charclass const s2)
   return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
 
+/* If needed, reallocate *PTR so that it holds at least NITEMS items.
+   The array holds *NALLOC items; *NALLOC is updated on reallocation.
+   ITEMSIZE is the size of one item.  Avoid O(N**2) behavior on arrays
+   growing linearly.  */
+static void *
+maybe_realloc (void *ptr, size_t nitems, size_t *nalloc, size_t itemsize)
+{
+  if (nitems < *nalloc)
+    return ptr;
+  *nalloc = nitems;
+  return x2nrealloc (ptr, nalloc, itemsize);
+}
+
 /* In DFA D, find the index of charclass S, or allocate a new one.  */
 static size_t
 dfa_charclass_index (struct dfa *d, charclass const s)
@@ -680,7 +659,8 @@ dfa_charclass_index (struct dfa *d, charclass const s)
   for (i = 0; i < d->cindex; ++i)
     if (equal (s, d->charclasses[i]))
       return i;
-  REALLOC_IF_NECESSARY (d->charclasses, d->calloc, d->cindex + 1);
+  d->charclasses = maybe_realloc (d->charclasses, d->cindex, &d->calloc,
+                                  sizeof *d->charclasses);
   ++d->cindex;
   copyset (s, d->charclasses[i]);
   return i;
@@ -1031,8 +1011,9 @@ parse_bracket_exp (void)
   ch_classes_al = equivs_al = coll_elems_al = 0;
   if (MB_CUR_MAX > 1)
     {
-      REALLOC_IF_NECESSARY (dfa->mbcsets, dfa->mbcsets_alloc,
-                            dfa->nmbcsets + 1);
+      dfa->mbcsets = maybe_realloc (dfa->mbcsets, dfa->nmbcsets,
+                                    &dfa->mbcsets_alloc,
+                                    sizeof *dfa->mbcsets);
 
       /* dfa->multibyte_prop[] hold the index of dfa->mbcsets.
          We will update dfa->multibyte_prop[] in addtok, because we can't
@@ -1109,9 +1090,10 @@ parse_bracket_exp (void)
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
 
-                      REALLOC_IF_NECESSARY (work_mbc->ch_classes,
-                                            ch_classes_al,
-                                            work_mbc->nch_classes + 1);
+                      work_mbc->ch_classes
+                        = maybe_realloc (work_mbc->ch_classes,
+                                         work_mbc->nch_classes, &ch_classes_al,
+                                         sizeof *work_mbc->ch_classes);
                       work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
                     }
 
@@ -1164,10 +1146,14 @@ parse_bracket_exp (void)
                      to the pair of ranges, [m-z] [M-Z].  Although this code
                      is wrong in multiple ways, it's never used in practice.
                      FIXME: Remove this (and related) unused code.  */
-                  REALLOC_IF_NECESSARY (work_mbc->range_sts,
-                                        range_sts_al, work_mbc->nranges + 1);
-                  REALLOC_IF_NECESSARY (work_mbc->range_ends,
-                                        range_ends_al, work_mbc->nranges + 1);
+                  work_mbc->range_sts
+                    = maybe_realloc (work_mbc->range_sts,
+                                     work_mbc->nranges, &range_sts_al,
+                                     sizeof *work_mbc->range_sts);
+                  work_mbc->range_ends
+                    = maybe_realloc (work_mbc->range_ends,
+                                     work_mbc->nranges, &range_ends_al,
+                                     sizeof *work_mbc->range_ends);
                   work_mbc->range_sts[work_mbc->nranges] =
                     case_fold ? towlower (wc) : (wchar_t) wc;
                   work_mbc->range_ends[work_mbc->nranges++] =
@@ -1175,11 +1161,15 @@ parse_bracket_exp (void)
 
                   if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
                     {
-                      REALLOC_IF_NECESSARY (work_mbc->range_sts,
-                                            range_sts_al, work_mbc->nranges + 1);
+                      work_mbc->range_sts
+                        = maybe_realloc (work_mbc->range_sts,
+                                         work_mbc->nranges, &range_sts_al,
+                                         sizeof *work_mbc->range_sts);
                       work_mbc->range_sts[work_mbc->nranges] = towupper (wc);
-                      REALLOC_IF_NECESSARY (work_mbc->range_ends,
-                                            range_ends_al, work_mbc->nranges + 1);
+                      work_mbc->range_ends
+                        = maybe_realloc (work_mbc->range_ends,
+                                         work_mbc->nranges, &range_ends_al,
+                                         sizeof *work_mbc->range_ends);
                       work_mbc->range_ends[work_mbc->nranges++] = towupper (wc2);
                     }
                 }
@@ -1228,16 +1218,17 @@ parse_bracket_exp (void)
         {
           wchar_t folded[CASE_FOLDED_BUFSIZE];
           int i, n = case_folded_counterparts (wc, folded);
-          REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
-                                work_mbc->nchars + n);
+          work_mbc->chars = maybe_realloc (work_mbc->chars,
+                                           work_mbc->nchars + n, &chars_al,
+                                           sizeof *work_mbc->chars);
           for (i = 0; i < n; i++)
             if (!setbit_wc (folded[i], ccl))
               work_mbc->chars[work_mbc->nchars++] = folded[i];
         }
       if (!setbit_wc (wc, ccl))
         {
-          REALLOC_IF_NECESSARY (work_mbc->chars, chars_al,
-                                work_mbc->nchars + 1);
+          work_mbc->chars = maybe_realloc (work_mbc->chars, work_mbc->nchars,
+                                           &chars_al, sizeof *work_mbc->chars);
           work_mbc->chars[work_mbc->nchars++] = wc;
         }
     }
@@ -1604,12 +1595,14 @@ addtok_mb (token t, int mbprop)
 {
   if (MB_CUR_MAX > 1)
     {
-      REALLOC_IF_NECESSARY (dfa->multibyte_prop, dfa->nmultibyte_prop,
-                            dfa->tindex + 1);
+      dfa->multibyte_prop = maybe_realloc (dfa->multibyte_prop, dfa->tindex,
+                                           &dfa->nmultibyte_prop,
+                                           sizeof *dfa->multibyte_prop);
       dfa->multibyte_prop[dfa->tindex] = mbprop;
     }
 
-  REALLOC_IF_NECESSARY (dfa->tokens, dfa->talloc, dfa->tindex + 1);
+  dfa->tokens = maybe_realloc (dfa->tokens, dfa->tindex, &dfa->talloc,
+                               sizeof *dfa->tokens);
   dfa->tokens[dfa->tindex++] = t;
 
   switch (t)
@@ -2000,19 +1993,24 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 
 /* Some primitives for operating on sets of positions.  */
 
-/* Copy one set to another; the destination must be large enough.  */
+/* Copy one set to another.  */
 static void
 copy (position_set const *src, position_set * dst)
 {
-  REALLOC_IF_NECESSARY (dst->elems, dst->alloc, src->nelem);
-  memcpy (dst->elems, src->elems, sizeof (dst->elems[0]) * src->nelem);
+  if (dst->alloc < src->nelem)
+    {
+      free (dst->elems);
+      dst->alloc = src->nelem;
+      dst->elems = x2nrealloc (NULL, &dst->alloc, sizeof *dst->elems);
+    }
+  memcpy (dst->elems, src->elems, src->nelem * sizeof *dst->elems);
   dst->nelem = src->nelem;
 }
 
 static void
 alloc_position_set (position_set * s, size_t size)
 {
-  MALLOC (s->elems, size);
+  s->elems = xnmalloc (size, sizeof *s->elems);
   s->alloc = size;
   s->nelem = 0;
 }
@@ -2042,7 +2040,7 @@ insert (position p, position_set * s)
       return;
     }
 
-  REALLOC_IF_NECESSARY (s->elems, s->alloc, count + 1);
+  s->elems = maybe_realloc (s->elems, count, &s->alloc, sizeof *s->elems);
   for (i = count; i > lo; i--)
     s->elems[i] = s->elems[i - 1];
   s->elems[lo] = p;
@@ -2056,7 +2054,12 @@ merge (position_set const *s1, position_set const *s2, position_set * m)
 {
   size_t i = 0, j = 0;
 
-  REALLOC_IF_NECESSARY (m->elems, m->alloc, s1->nelem + s2->nelem);
+  if (m->alloc < s1->nelem + s2->nelem)
+    {
+      free (m->elems);
+      m->elems = maybe_realloc (NULL, s1->nelem + s2->nelem, &m->alloc,
+                                sizeof *m->elems);
+    }
   m->nelem = 0;
   while (i < s1->nelem && j < s2->nelem)
     if (s1->elems[i].index > s2->elems[j].index)
@@ -2117,7 +2120,8 @@ state_index (struct dfa *d, position_set const *s, int context)
     }
 
   /* We'll have to create a new state.  */
-  REALLOC_IF_NECESSARY (d->states, d->salloc, d->sindex + 1);
+  d->states = maybe_realloc (d->states, d->sindex, &d->salloc,
+                             sizeof *d->states);
   d->states[i].hash = hash;
   alloc_position_set (&d->states[i].elems, s->nelem);
   copy (s, &d->states[i].elems);
@@ -2158,10 +2162,10 @@ static void
 epsclosure (position_set * s, struct dfa const *d)
 {
   size_t i, j;
-  char *visited;  /* Array of booleans, enough to use char, not int.  */
   position p, old;
 
-  CALLOC (visited, d->tindex);
+  /* Array of booleans, large enough to use char, not int.  */
+  char *visited = xzalloc (d->tindex);
 
   for (i = 0; i < s->nelem; ++i)
     if (d->tokens[s->elems[i].index] >= NOTCHAR
@@ -2342,19 +2346,19 @@ dfaanalyze (struct dfa *d, int searchflag)
 
   d->searchflag = searchflag != 0;
 
-  MALLOC (nullable, d->depth);
+  nullable = xnmalloc (d->depth, sizeof *nullable);
   o_nullable = nullable;
-  MALLOC (nfirstpos, d->depth);
+  nfirstpos = xnmalloc (d->depth, sizeof *nfirstpos);
   o_nfirst = nfirstpos;
-  MALLOC (firstpos, d->nleaves);
+  firstpos = xnmalloc (d->nleaves, sizeof *firstpos);
   o_firstpos = firstpos, firstpos += d->nleaves;
-  MALLOC (nlastpos, d->depth);
+  nlastpos = xnmalloc (d->depth, sizeof *nlastpos);
   o_nlast = nlastpos;
-  MALLOC (lastpos, d->nleaves);
+  lastpos = xnmalloc (d->nleaves, sizeof *lastpos);
   o_lastpos = lastpos, lastpos += d->nleaves;
   alloc_position_set (&merged, d->nleaves);
 
-  CALLOC (d->follows, d->tindex);
+  d->follows = xcalloc (d->tindex, sizeof *d->follows);
 
   for (i = 0; i < d->tindex; ++i)
     {
@@ -2513,7 +2517,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   /* Build the initial state.  */
   d->salloc = 1;
   d->sindex = 0;
-  MALLOC (d->states, d->salloc);
+  d->states = xmalloc (sizeof *d->states);
 
   separate_contexts = state_separate_contexts (&merged);
   state_index (d, &merged,
@@ -2582,8 +2586,8 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   bool next_isnt_1st_byte = false; /* Flag if we can't add state0.  */
   size_t i, j, k;
 
-  MALLOC (grps, NOTCHAR);
-  MALLOC (labels, NOTCHAR);
+  grps = xnmalloc (NOTCHAR, sizeof *grps);
+  labels = xnmalloc (NOTCHAR, sizeof *labels);
 
   zeroset (matches);
 
@@ -2669,7 +2673,8 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
             {
               copyset (leftovers, labels[ngrps]);
               copyset (intersect, labels[j]);
-              MALLOC (grps[ngrps].elems, d->nleaves);
+              grps[ngrps].elems = xnmalloc (d->nleaves,
+                                            sizeof *grps[ngrps].elems);
               memcpy (grps[ngrps].elems, grps[j].elems,
                       sizeof (grps[j].elems[0]) * grps[j].nelem);
               grps[ngrps].nelem = grps[j].nelem;
@@ -2692,7 +2697,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         {
           copyset (matches, labels[ngrps]);
           zeroset (matches);
-          MALLOC (grps[ngrps].elems, d->nleaves);
+          grps[ngrps].elems = xnmalloc (d->nleaves, sizeof *grps[ngrps].elems);
           grps[ngrps].nelem = 1;
           grps[ngrps].elems[0] = pos.index;
           ++ngrps;
@@ -2857,7 +2862,7 @@ build_state (state_num s, struct dfa *d)
   if (ACCEPTS_IN_CONTEXT (d->states[s].context, CTX_NONE, s, *d))
     d->success[s] |= CTX_NONE;
 
-  MALLOC (trans, NOTCHAR);
+  trans = xnmalloc (NOTCHAR, sizeof *trans);
   dfastate (s, d, trans);
 
   /* Now go through the new transition table, and make sure that the trans
@@ -2870,11 +2875,12 @@ build_state (state_num s, struct dfa *d)
 
         while (trans[i] >= d->tralloc)
           d->tralloc *= 2;
-        REALLOC (d->realtrans, d->tralloc + 1);
+        d->realtrans = xnrealloc (d->realtrans, d->tralloc + 1,
+                                  sizeof *d->realtrans);
         d->trans = d->realtrans + 1;
-        REALLOC (d->fails, d->tralloc);
-        REALLOC (d->success, d->tralloc);
-        REALLOC (d->newlines, d->tralloc);
+        d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
+        d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
+        d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
         while (oldalloc < d->tralloc)
           {
             d->trans[oldalloc] = NULL;
@@ -2898,11 +2904,11 @@ build_state_zero (struct dfa *d)
 {
   d->tralloc = 1;
   d->trcount = 0;
-  CALLOC (d->realtrans, d->tralloc + 1);
+  d->realtrans = xcalloc (d->tralloc + 1, sizeof *d->realtrans);
   d->trans = d->realtrans + 1;
-  CALLOC (d->fails, d->tralloc);
-  MALLOC (d->success, d->tralloc);
-  MALLOC (d->newlines, d->tralloc);
+  d->fails = xcalloc (d->tralloc, sizeof *d->fails);
+  d->success = xnmalloc (d->tralloc, sizeof *d->success);
+  d->newlines = xnmalloc (d->tralloc, sizeof *d->newlines);
   build_state (0, d);
 }
 
@@ -2940,11 +2946,12 @@ realloc_trans_if_necessary (struct dfa *d, state_num new_state)
 
       while (new_state >= d->tralloc)
         d->tralloc *= 2;
-      REALLOC (d->realtrans, d->tralloc + 1);
+      d->realtrans = xnrealloc (d->realtrans, d->tralloc + 1,
+                                sizeof *d->realtrans);
       d->trans = d->realtrans + 1;
-      REALLOC (d->fails, d->tralloc);
-      REALLOC (d->success, d->tralloc);
-      REALLOC (d->newlines, d->tralloc);
+      d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
+      d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
+      d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
       while (oldalloc < d->tralloc)
         {
           d->trans[oldalloc] = NULL;
@@ -3377,14 +3384,16 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   if (d->mb_cur_max > 1)
     {
       static bool mb_alloc = false;
-      REALLOC_IF_NECESSARY (d->mblen_buf, d->nmblen_buf, end - begin + 2);
-      REALLOC_IF_NECESSARY (d->inputwcs, d->ninputwcs, end - begin + 2);
+      d->mblen_buf = maybe_realloc (d->mblen_buf, end - begin + 2,
+                                    &d->nmblen_buf, sizeof *d->mblen_buf);
+      d->inputwcs = maybe_realloc (d->inputwcs, end - begin + 2,
+                                   &d->ninputwcs, sizeof *d->inputwcs);
       memset (&mbs, 0, sizeof (mbstate_t));
       prepare_wc_buf (d, (const char *) p, end);
       if (!mb_alloc)
         {
-          MALLOC (d->mb_match_lens, d->nleaves);
-          MALLOC (d->mb_follows, 1);
+          d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
+          d->mb_follows = xmalloc (sizeof *d->mb_follows);
           alloc_position_set (d->mb_follows, d->nleaves);
           mb_alloc = true;
         }
@@ -3566,19 +3575,19 @@ dfainit (struct dfa *d)
   memset (d, 0, sizeof *d);
 
   d->calloc = 1;
-  MALLOC (d->charclasses, d->calloc);
+  d->charclasses = xmalloc (sizeof *d->charclasses);
 
   d->talloc = 1;
-  MALLOC (d->tokens, d->talloc);
+  d->tokens = xmalloc (sizeof *d->tokens);
 
   d->mb_cur_max = MB_CUR_MAX;
 
   if (d->mb_cur_max > 1)
     {
       d->nmultibyte_prop = 1;
-      MALLOC (d->multibyte_prop, d->nmultibyte_prop);
+      d->multibyte_prop = xmalloc (sizeof *d->multibyte_prop);
       d->mbcsets_alloc = 1;
-      MALLOC (d->mbcsets, d->mbcsets_alloc);
+      d->mbcsets = xmalloc (sizeof *d->mbcsets);
     }
 }
 
@@ -3633,12 +3642,12 @@ dfasuperset (struct dfa *d)
   sup->newlines = NULL;
   sup->musts = NULL;
 
-  MALLOC (sup->charclasses, sup->calloc);
+  sup->charclasses = xnmalloc (sup->calloc, sizeof *sup->charclasses);
   memcpy (sup->charclasses, d->charclasses,
           d->cindex * sizeof *sup->charclasses);
 
   sup->talloc = d->tindex * 2;
-  MALLOC (sup->tokens, sup->talloc);
+  sup->tokens = xnmalloc (sup->talloc, sizeof *sup->tokens);
 
   for (i = j = 0; i < d->tindex; i++)
     {
@@ -3910,7 +3919,7 @@ enlist (char **cpp, char *new, size_t len)
         cpp[i] = NULL;
       }
   /* Add the new string.  */
-  REALLOC (cpp, i + 2);
+  cpp = xnrealloc (cpp, i + 2, sizeof *cpp);
   cpp[i] = new;
   cpp[i + 1] = NULL;
   return cpp;
@@ -4042,7 +4051,7 @@ dfamust (struct dfa *d)
 
   result = empty_string;
   exact = false;
-  MALLOC (musts, d->tindex + 1);
+  musts = xnmalloc (d->tindex + 1, sizeof *musts);
   mp = musts;
   for (i = 0; i <= d->tindex; ++i)
     mp[i] = must0;
@@ -4246,7 +4255,7 @@ dfamust (struct dfa *d)
 done:
   if (strlen (result))
     {
-      MALLOC (dm, 1);
+      dm = xmalloc (sizeof *dm);
       dm->exact = exact;
       dm->must = xmemdup (result, strlen (result) + 1);
       dm->next = d->musts;
