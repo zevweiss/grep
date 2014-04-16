@@ -396,16 +396,16 @@ struct dfa
 
   /* Fields filled by dfaexec.  */
   state_num tralloc;            /* Number of transition tables that have
-                                   slots so far.  */
+                                   slots so far, not counting trans[-1].  */
   int trcount;                  /* Number of transition tables that have
                                    actually been built.  */
   state_num **trans;            /* Transition tables for states that can
                                    never accept.  If the transitions for a
                                    state have not yet been computed, or the
                                    state could possibly accept, its entry in
-                                   this table is NULL.  */
-  state_num **realtrans;        /* Trans always points to realtrans + 1; this
-                                   is so trans[-1] can contain NULL.  */
+                                   this table is NULL.  This points to one
+                                   past the start of the allocated array,
+                                   and trans[-1] is always NULL.  */
   state_num **fails;            /* Transition tables after failing to accept
                                    on a state that potentially could do so.  */
   int *success;                 /* Table of acceptance conditions used in
@@ -2814,6 +2814,30 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   free (tmp.elems);
 }
 
+/* Make sure D's state arrays are large enough to hold NEW_STATE.  */
+static void
+realloc_trans_if_necessary (struct dfa *d, state_num new_state)
+{
+  if (d->tralloc <= new_state)
+    {
+      state_num **realtrans = d->trans ? d->trans - 1 : NULL;
+      state_num oldalloc = d->tralloc;
+      d->tralloc = new_state + 1;
+      realtrans = x2nrealloc (realtrans, &d->tralloc, sizeof *realtrans);
+      realtrans[0] = NULL;
+      d->trans = realtrans + 1;
+      d->tralloc--;
+      d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
+      d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
+      d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
+      for (; oldalloc < d->tralloc; oldalloc++)
+        {
+          d->trans[oldalloc] = NULL;
+          d->fails[oldalloc] = NULL;
+        }
+    }
+}
+
 /* Some routines for manipulating a compiled dfa's transition tables.
    Each state may or may not have a transition table; if it does, and it
    is a non-accepting state, then d->trans[state] points to its table.
@@ -2825,7 +2849,7 @@ static void
 build_state (state_num s, struct dfa *d)
 {
   state_num *trans;             /* The new transition table.  */
-  state_num i;
+  state_num i, maxstate;
 
   /* Set an upper limit on the number of transition tables that will ever
      exist at once.  1024 is arbitrary.  The idea is that the frequently
@@ -2859,25 +2883,11 @@ build_state (state_num s, struct dfa *d)
   /* Now go through the new transition table, and make sure that the trans
      and fail arrays are allocated large enough to hold a pointer for the
      largest state mentioned in the table.  */
+  maxstate = -1;
   for (i = 0; i < NOTCHAR; ++i)
-    if (trans[i] >= d->tralloc)
-      {
-        state_num oldalloc = d->tralloc;
-
-        while (trans[i] >= d->tralloc)
-          d->tralloc *= 2;
-        d->realtrans = xnrealloc (d->realtrans, d->tralloc + 1,
-                                  sizeof *d->realtrans);
-        d->trans = d->realtrans + 1;
-        d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
-        d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
-        d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
-        while (oldalloc < d->tralloc)
-          {
-            d->trans[oldalloc] = NULL;
-            d->fails[oldalloc++] = NULL;
-          }
-      }
+    if (maxstate < trans[i])
+      maxstate = trans[i];
+  realloc_trans_if_necessary (d, maxstate);
 
   /* Keep the newline transition in a special place so we can use it as
      a sentinel.  */
@@ -2893,13 +2903,16 @@ build_state (state_num s, struct dfa *d)
 static void
 build_state_zero (struct dfa *d)
 {
-  d->tralloc = 1;
+  /* Initial size of the transition tables; must be positive.  */
+  int initial_tab_size = 1;
+
+  d->tralloc = 0;
   d->trcount = 0;
-  d->realtrans = xcalloc (d->tralloc + 1, sizeof *d->realtrans);
-  d->trans = d->realtrans + 1;
-  d->fails = xcalloc (d->tralloc, sizeof *d->fails);
-  d->success = xnmalloc (d->tralloc, sizeof *d->success);
-  d->newlines = xnmalloc (d->tralloc, sizeof *d->newlines);
+  d->trans = NULL;
+  d->fails = NULL;
+  d->success = NULL;
+  d->newlines = NULL;
+  realloc_trans_if_necessary (d, initial_tab_size);
   build_state (0, d);
 }
 
@@ -2925,31 +2938,6 @@ build_state_zero (struct dfa *d)
           return NULL;					\
         }						\
     }
-
-static void
-realloc_trans_if_necessary (struct dfa *d, state_num new_state)
-{
-  /* Make sure that the trans and fail arrays are allocated large enough
-     to hold a pointer for the new state.  */
-  if (new_state >= d->tralloc)
-    {
-      state_num oldalloc = d->tralloc;
-
-      while (new_state >= d->tralloc)
-        d->tralloc *= 2;
-      d->realtrans = xnrealloc (d->realtrans, d->tralloc + 1,
-                                sizeof *d->realtrans);
-      d->trans = d->realtrans + 1;
-      d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
-      d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
-      d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
-      while (oldalloc < d->tralloc)
-        {
-          d->trans[oldalloc] = NULL;
-          d->fails[oldalloc++] = NULL;
-        }
-    }
-}
 
 /* Return values of transit_state_singlebyte, and
    transit_state_consume_1char.  */
@@ -3612,7 +3600,7 @@ dfasuperset (struct dfa *d)
   sup->sindex = 0;
   sup->follows = NULL;
   sup->tralloc = 0;
-  sup->realtrans = NULL;
+  sup->trans = NULL;
   sup->fails = NULL;
   sup->success = NULL;
   sup->newlines = NULL;
@@ -3709,16 +3697,19 @@ dfafree (struct dfa *d)
       free (d->follows);
     }
 
-  for (i = 0; i < d->tralloc; ++i)
+  if (d->trans)
     {
-      free (d->trans[i]);
-      free (d->fails[i]);
-    }
+      for (i = 0; i < d->tralloc; ++i)
+        {
+          free (d->trans[i]);
+          free (d->fails[i]);
+        }
 
-  free (d->realtrans);
-  free (d->fails);
-  free (d->newlines);
-  free (d->success);
+      free (d->trans - 1);
+      free (d->fails);
+      free (d->newlines);
+      free (d->success);
+    }
 
   for (dm = d->musts; dm; dm = ndm)
     {
