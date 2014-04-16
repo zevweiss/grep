@@ -359,7 +359,6 @@ struct dfa
      multibyte_prop
      = 3     , 1               ,  0              ,  2              , 3
    */
-  size_t nmultibyte_prop;
   int *multibyte_prop;
 
   /* A table indexed by byte values that contains the corresponding wide
@@ -1581,16 +1580,16 @@ static size_t depth;            /* Current depth of a hypothetical stack
 static void
 addtok_mb (token t, int mbprop)
 {
-  if (MB_CUR_MAX > 1)
+  if (dfa->talloc == dfa->tindex)
     {
-      dfa->multibyte_prop = maybe_realloc (dfa->multibyte_prop, dfa->tindex,
-                                           &dfa->nmultibyte_prop,
-                                           sizeof *dfa->multibyte_prop);
-      dfa->multibyte_prop[dfa->tindex] = mbprop;
+      dfa->tokens = x2nrealloc (dfa->tokens, &dfa->talloc,
+                                sizeof *dfa->tokens);
+      if (MB_CUR_MAX > 1)
+        dfa->multibyte_prop = xnrealloc (dfa->multibyte_prop, dfa->talloc,
+                                         sizeof *dfa->multibyte_prop);
     }
-
-  dfa->tokens = maybe_realloc (dfa->tokens, dfa->tindex, &dfa->talloc,
-                               sizeof *dfa->tokens);
+  if (MB_CUR_MAX > 1)
+    dfa->multibyte_prop[dfa->tindex] = mbprop;
   dfa->tokens[dfa->tindex++] = t;
 
   switch (t)
