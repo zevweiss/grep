@@ -307,8 +307,11 @@ struct mb_char_classes
   size_t nchars;
   wctype_t *ch_classes;         /* Character classes.  */
   size_t nch_classes;
-  wchar_t *range_sts;           /* Range characters (start of the range).  */
-  wchar_t *range_ends;          /* Range characters (end of the range).  */
+  struct			/* Range characters.  */
+  {
+    wchar_t beg;		/* Range start.  */
+    wchar_t end;		/* Range end.  */
+  } *ranges;
   size_t nranges;
   char **equivs;                /* Equivalence classes.  */
   size_t nequivs;
@@ -1003,12 +1006,9 @@ parse_bracket_exp (void)
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
-  size_t chars_al, range_sts_al, range_ends_al, ch_classes_al,
-    equivs_al, coll_elems_al;
+  size_t chars_al, ranges_al, ch_classes_al, equivs_al, coll_elems_al;
 
-  chars_al = 0;
-  range_sts_al = range_ends_al = 0;
-  ch_classes_al = equivs_al = coll_elems_al = 0;
+  chars_al = ranges_al = ch_classes_al = equivs_al = coll_elems_al = 0;
   if (MB_CUR_MAX > 1)
     {
       dfa->mbcsets = maybe_realloc (dfa->mbcsets, dfa->nmbcsets,
@@ -1146,31 +1146,19 @@ parse_bracket_exp (void)
                      to the pair of ranges, [m-z] [M-Z].  Although this code
                      is wrong in multiple ways, it's never used in practice.
                      FIXME: Remove this (and related) unused code.  */
-                  work_mbc->range_sts
-                    = maybe_realloc (work_mbc->range_sts,
-                                     work_mbc->nranges, &range_sts_al,
-                                     sizeof *work_mbc->range_sts);
-                  work_mbc->range_ends
-                    = maybe_realloc (work_mbc->range_ends,
-                                     work_mbc->nranges, &range_ends_al,
-                                     sizeof *work_mbc->range_ends);
-                  work_mbc->range_sts[work_mbc->nranges] =
-                    case_fold ? towlower (wc) : (wchar_t) wc;
-                  work_mbc->range_ends[work_mbc->nranges++] =
-                    case_fold ? towlower (wc2) : (wchar_t) wc2;
+                  work_mbc->ranges
+                    = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 1,
+                                     &ranges_al, sizeof *work_mbc->ranges);
+                  work_mbc->ranges[work_mbc->nranges].beg
+                    = case_fold ? towlower (wc) : wc;
+                  work_mbc->ranges[work_mbc->nranges++].end
+                    = case_fold ? towlower (wc2) : wc2;
 
                   if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
                     {
-                      work_mbc->range_sts
-                        = maybe_realloc (work_mbc->range_sts,
-                                         work_mbc->nranges, &range_sts_al,
-                                         sizeof *work_mbc->range_sts);
-                      work_mbc->range_sts[work_mbc->nranges] = towupper (wc);
-                      work_mbc->range_ends
-                        = maybe_realloc (work_mbc->range_ends,
-                                         work_mbc->nranges, &range_ends_al,
-                                         sizeof *work_mbc->range_ends);
-                      work_mbc->range_ends[work_mbc->nranges++] = towupper (wc2);
+                      work_mbc->ranges[work_mbc->nranges].beg = towupper (wc);
+                      work_mbc->ranges[work_mbc->nranges++].end
+                        = towupper (wc2);
                     }
                 }
               else if (using_simple_locale ())
@@ -3113,7 +3101,7 @@ match_mb_charset (struct dfa *d, state_num s, position pos, size_t idx)
   /* match with a range?  */
   for (i = 0; i < work_mbc->nranges; i++)
     {
-      if (work_mbc->range_sts[i] <= wc && wc <= work_mbc->range_ends[i])
+      if (work_mbc->ranges[i].beg <= wc && wc <= work_mbc->ranges[i].end)
         goto charset_matched;
     }
 
@@ -3520,8 +3508,7 @@ free_mbdata (struct dfa *d)
       struct mb_char_classes *p = &(d->mbcsets[i]);
       free (p->chars);
       free (p->ch_classes);
-      free (p->range_sts);
-      free (p->range_ends);
+      free (p->ranges);
 
       for (j = 0; j < p->nequivs; ++j)
         free (p->equivs[j]);
