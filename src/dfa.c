@@ -3622,8 +3622,8 @@ dfasuperset (struct dfa *d)
   memcpy (sup->charclasses, d->charclasses,
           d->cindex * sizeof *sup->charclasses);
 
+  sup->tokens = xnmalloc (d->tindex, 2 * sizeof *sup->tokens);
   sup->talloc = d->tindex * 2;
-  sup->tokens = xnmalloc (sup->talloc, sizeof *sup->tokens);
 
   for (i = j = 0; i < d->tindex; i++)
     {
