@@ -3928,30 +3928,20 @@ resetmust (must * mp)
 static void
 dfamust (struct dfa *d)
 {
-  must *musts;
-  must *mp;
-  char *result;
+  must *musts = xnmalloc (d->tindex + 1, sizeof *musts);
+  must *mp = musts;
+  char const *result = "";
   size_t ri;
   size_t i;
-  bool exact;
-  static must must0;
+  bool exact = false;
   struct dfamust *dm;
-  static char empty_string[] = "";
 
-  result = empty_string;
-  exact = false;
-  musts = xnmalloc (d->tindex + 1, sizeof *musts);
-  mp = musts;
-  for (i = 0; i <= d->tindex; ++i)
-    mp[i] = must0;
   for (i = 0; i <= d->tindex; ++i)
     {
-      mp[i].in = xmalloc (sizeof *mp[i].in);
-      mp[i].left = xmalloc (2);
-      mp[i].right = xmalloc (2);
-      mp[i].is = xmalloc (2);
-      mp[i].left[0] = mp[i].right[0] = mp[i].is[0] = '\0';
-      mp[i].in[0] = NULL;
+      mp[i].in = xzalloc (sizeof *mp[i].in);
+      mp[i].left = xzalloc (2);
+      mp[i].right = xzalloc (2);
+      mp[i].is = xzalloc (2);
     }
 #ifdef DEBUG
   fprintf (stderr, "dfamust:\n");
