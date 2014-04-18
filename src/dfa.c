@@ -4061,9 +4061,9 @@ dfamust (struct dfa *d)
               {
                 size_t lrlen = strlen (lmp->right);
                 size_t rllen = strlen (rmp->left);
-                char *tp = xmalloc (lrlen + rllen + 1);
+                char *tp = xmalloc (lrlen + rllen);
                 memcpy (tp, lmp->right, lrlen);
-                memcpy (tp + lrlen, rmp->left, rllen + 1);
+                memcpy (tp + lrlen, rmp->left, rllen);
                 lmp->in = enlist (lmp->in, tp, lrlen + rllen);
                 free (tp);
               }
@@ -4129,11 +4129,11 @@ dfamust (struct dfa *d)
       ++mp;
     }
 done:
-  if (strlen (result))
+  if (*result)
     {
       dm = xmalloc (sizeof *dm);
       dm->exact = exact;
-      dm->must = xmemdup (result, strlen (result) + 1);
+      dm->must = xstrdup (result);
       dm->next = d->musts;
       d->musts = dm;
     }
