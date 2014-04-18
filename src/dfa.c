@@ -643,7 +643,7 @@ dfa_charclass_index (struct dfa *d, charclass const s)
   for (i = 0; i < d->cindex; ++i)
     if (equal (s, d->charclasses[i]))
       return i;
-  d->charclasses = maybe_realloc (d->charclasses, d->cindex, &d->calloc,
+  d->charclasses = maybe_realloc (d->charclasses, d->cindex + 1, &d->calloc,
                                   sizeof *d->charclasses);
   ++d->cindex;
   copyset (s, d->charclasses[i]);
