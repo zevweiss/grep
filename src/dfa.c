@@ -868,9 +868,6 @@ static wchar_t wctok;           /* Wide character representation of the current
 #ifndef MIN
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
-#ifndef MAX
-# define MAX(a,b) ((a) < (b) ? (b) : (a))
-#endif
 
 /* The set of wchar_t values C such that there's a useful locale
    somewhere where C != towupper (C) && C != towlower (towupper (C)).
@@ -3103,9 +3100,9 @@ transit_state_consume_1char (struct dfa *d, state_num s,
   state_num s1, s2;
   status_transit_state rs = TRANSIT_STATE_DONE;
 
-  /* Check (input) match_lens, and initialize if it is NULL.  */
-  if (match_lens == NULL && d->states[s].mbps.nelem != 0)
-    match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp, wc, mbclen);
+  if (! match_lens && d->states[s].mbps.nelem != 0)
+    match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp,
+                                                    wc, mbclen);
 
   /* Calculate the state which can be reached from the state 's' by
      consuming 'mbclen' single bytes from the buffer.  */
@@ -3155,7 +3152,8 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
     {
       /* Note: caller must free the return value of this function.  */
       mbclen = mbs_to_wchar (d, &wc, (char const *) *pp, end - *pp, &mbs);
-      match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp, wc, mbclen);
+      match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp,
+                                                      wc, mbclen);
 
       for (i = 0; i < nelem; i++)
         /* Search the operator which match the longest string,
