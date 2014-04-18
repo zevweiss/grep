@@ -2307,17 +2307,26 @@ state_separate_contexts (position_set const *s)
 void
 dfaanalyze (struct dfa *d, int searchflag)
 {
-  bool *nullable;               /* Nullable stack.  */
-  size_t *nfirstpos;            /* Element count stack for firstpos sets.  */
-  position *firstpos;           /* Array where firstpos elements are stored.  */
-  size_t *nlastpos;             /* Element count stack for lastpos sets.  */
-  position *lastpos;            /* Array where lastpos elements are stored.  */
+  /* Array allocated to hold position sets.  */
+  position *posalloc = xnmalloc (d->nleaves, 2 * sizeof *posalloc);
+  /* Firstpos and lastpos elements.  */
+  position *firstpos = posalloc + d->nleaves;
+  position *lastpos = firstpos + d->nleaves;
+
+  /* Stack for element counts and nullable flags.  */
+  struct
+  {
+    /* Whether the entry is nullable.  */
+    bool nullable;
+
+    /* Counts of firstpos and lastpos sets.  */
+    size_t nfirstpos;
+    size_t nlastpos;
+  } *stkalloc = xnmalloc (d->depth, sizeof *stkalloc), *stk = stkalloc;
+
   position_set tmp;             /* Temporary set for merging sets.  */
   position_set merged;          /* Result of merging sets.  */
   int separate_contexts;        /* Context wanted by some position.  */
-  bool *o_nullable;
-  size_t *o_nfirst, *o_nlast;
-  position *o_firstpos, *o_lastpos;
   size_t i, j;
   position *pos;
 
@@ -2332,19 +2341,7 @@ dfaanalyze (struct dfa *d, int searchflag)
 #endif
 
   d->searchflag = searchflag != 0;
-
-  nullable = xnmalloc (d->depth, sizeof *nullable);
-  o_nullable = nullable;
-  nfirstpos = xnmalloc (d->depth, sizeof *nfirstpos);
-  o_nfirst = nfirstpos;
-  firstpos = xnmalloc (d->nleaves, sizeof *firstpos);
-  o_firstpos = firstpos, firstpos += d->nleaves;
-  nlastpos = xnmalloc (d->depth, sizeof *nlastpos);
-  o_nlast = nlastpos;
-  lastpos = xnmalloc (d->nleaves, sizeof *lastpos);
-  o_lastpos = lastpos, lastpos += d->nleaves;
   alloc_position_set (&merged, d->nleaves);
-
   d->follows = xcalloc (d->tindex, sizeof *d->follows);
 
   for (i = 0; i < d->tindex; ++i)
@@ -2353,20 +2350,21 @@ dfaanalyze (struct dfa *d, int searchflag)
         {
         case EMPTY:
           /* The empty set is nullable.  */
-          *nullable++ = true;
+          stk->nullable = true;
 
           /* The firstpos and lastpos of the empty leaf are both empty.  */
-          *nfirstpos++ = *nlastpos++ = 0;
+          stk->nfirstpos = stk->nlastpos = 0;
+          stk++;
           break;
 
         case STAR:
         case PLUS:
           /* Every element in the firstpos of the argument is in the follow
              of every element in the lastpos.  */
-          tmp.nelem = nfirstpos[-1];
+          tmp.nelem = stk[-1].nfirstpos;
           tmp.elems = firstpos;
           pos = lastpos;
-          for (j = 0; j < nlastpos[-1]; ++j)
+          for (j = 0; j < stk[-1].nlastpos; ++j)
             {
               merge (&tmp, &d->follows[pos[j].index], &merged);
               copy (&merged, &d->follows[pos[j].index]);
@@ -2375,16 +2373,16 @@ dfaanalyze (struct dfa *d, int searchflag)
         case QMARK:
           /* A QMARK or STAR node is automatically nullable.  */
           if (d->tokens[i] != PLUS)
-            nullable[-1] = true;
+            stk[-1].nullable = true;
           break;
 
         case CAT:
           /* Every element in the firstpos of the second argument is in the
              follow of every element in the lastpos of the first argument.  */
-          tmp.nelem = nfirstpos[-1];
+          tmp.nelem = stk[-1].nfirstpos;
           tmp.elems = firstpos;
-          pos = lastpos + nlastpos[-1];
-          for (j = 0; j < nlastpos[-2]; ++j)
+          pos = lastpos + stk[-1].nlastpos;
+          for (j = 0; j < stk[-2].nlastpos; ++j)
             {
               merge (&tmp, &d->follows[pos[j].index], &merged);
               copy (&merged, &d->follows[pos[j].index]);
@@ -2392,43 +2390,39 @@ dfaanalyze (struct dfa *d, int searchflag)
 
           /* The firstpos of a CAT node is the firstpos of the first argument,
              union that of the second argument if the first is nullable.  */
-          if (nullable[-2])
-            nfirstpos[-2] += nfirstpos[-1];
+          if (stk[-2].nullable)
+            stk[-2].nfirstpos += stk[-1].nfirstpos;
           else
-            firstpos += nfirstpos[-1];
-          --nfirstpos;
+            firstpos += stk[-1].nfirstpos;
 
           /* The lastpos of a CAT node is the lastpos of the second argument,
              union that of the first argument if the second is nullable.  */
-          if (nullable[-1])
-            nlastpos[-2] += nlastpos[-1];
+          if (stk[-1].nullable)
+            stk[-2].nlastpos += stk[-1].nlastpos;
           else
             {
-              pos = lastpos + nlastpos[-2];
-              for (j = nlastpos[-1]; j-- > 0;)
+              pos = lastpos + stk[-2].nlastpos;
+              for (j = stk[-1].nlastpos; j-- > 0;)
                 pos[j] = lastpos[j];
-              lastpos += nlastpos[-2];
-              nlastpos[-2] = nlastpos[-1];
+              lastpos += stk[-2].nlastpos;
+              stk[-2].nlastpos = stk[-1].nlastpos;
             }
-          --nlastpos;
 
           /* A CAT node is nullable if both arguments are nullable.  */
-          nullable[-2] &= nullable[-1];
-          --nullable;
+          stk[-2].nullable &= stk[-1].nullable;
+          stk--;
           break;
 
         case OR:
           /* The firstpos is the union of the firstpos of each argument.  */
-          nfirstpos[-2] += nfirstpos[-1];
-          --nfirstpos;
+          stk[-2].nfirstpos += stk[-1].nfirstpos;
 
           /* The lastpos is the union of the lastpos of each argument.  */
-          nlastpos[-2] += nlastpos[-1];
-          --nlastpos;
+          stk[-2].nlastpos += stk[-1].nlastpos;
 
           /* An OR node is nullable if either argument is nullable.  */
-          nullable[-2] |= nullable[-1];
-          --nullable;
+          stk[-2].nullable |= stk[-1].nullable;
+          stk--;
           break;
 
         default:
@@ -2437,10 +2431,12 @@ dfaanalyze (struct dfa *d, int searchflag)
              an "epsilon closure" effectively makes them nullable later.
              Backreferences have to get a real position so we can detect
              transitions on them later.  But they are nullable.  */
-          *nullable++ = d->tokens[i] == BACKREF;
+          stk->nullable = d->tokens[i] == BACKREF;
 
           /* This position is in its own firstpos and lastpos.  */
-          *nfirstpos++ = *nlastpos++ = 1;
+          stk->nfirstpos = stk->nlastpos = 1;
+          stk++;
+
           --firstpos, --lastpos;
           firstpos->index = lastpos->index = i;
           firstpos->constraint = lastpos->constraint = NO_CONSTRAINT;
@@ -2454,15 +2450,16 @@ dfaanalyze (struct dfa *d, int searchflag)
       fprintf (stderr, "node %zd:", i);
       prtok (d->tokens[i]);
       putc ('\n', stderr);
-      fprintf (stderr, nullable[-1] ? " nullable: yes\n" : " nullable: no\n");
+      fprintf (stderr,
+               stk[-1].nullable ? " nullable: yes\n" : " nullable: no\n");
       fprintf (stderr, " firstpos:");
-      for (j = nfirstpos[-1]; j-- > 0;)
+      for (j = stk[-1].nfirstpos; j-- > 0;)
         {
           fprintf (stderr, " %zd:", firstpos[j].index);
           prtok (d->tokens[firstpos[j].index]);
         }
       fprintf (stderr, "\n lastpos:");
-      for (j = nlastpos[-1]; j-- > 0;)
+      for (j = stk[-1].nlastpos; j-- > 0;)
         {
           fprintf (stderr, " %zd:", lastpos[j].index);
           prtok (d->tokens[lastpos[j].index]);
@@ -2497,7 +2494,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   /* Get the epsilon closure of the firstpos of the regexp.  The result will
      be the set of positions of state 0.  */
   merged.nelem = 0;
-  for (i = 0; i < nfirstpos[-1]; ++i)
+  for (i = 0; i < stk[-1].nfirstpos; ++i)
     insert (firstpos[i], &merged);
   epsclosure (&merged, d);
 
@@ -2507,11 +2504,8 @@ dfaanalyze (struct dfa *d, int searchflag)
                (separate_contexts & CTX_NEWLINE
                 ? CTX_NEWLINE : separate_contexts ^ CTX_ANY));
 
-  free (o_nullable);
-  free (o_nfirst);
-  free (o_firstpos);
-  free (o_nlast);
-  free (o_lastpos);
+  free (posalloc);
+  free (stkalloc);
   free (merged.elems);
 }
 
