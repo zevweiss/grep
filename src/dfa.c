@@ -3816,13 +3816,8 @@ istrstr (char const *lookin, char const *lookfor)
 static void
 freelist (char **cpp)
 {
-  size_t i;
-
-  for (i = 0; cpp[i] != NULL; ++i)
-    {
-      free (cpp[i]);
-      cpp[i] = NULL;
-    }
+  while (*cpp)
+    free (*cpp++);
 }
 
 static char **
@@ -3925,8 +3920,9 @@ typedef struct
 static void
 resetmust (must * mp)
 {
-  mp->left[0] = mp->right[0] = mp->is[0] = '\0';
   freelist (mp->in);
+  mp->in[0] = NULL;
+  mp->left[0] = mp->right[0] = mp->is[0] = '\0';
 }
 
 static void
