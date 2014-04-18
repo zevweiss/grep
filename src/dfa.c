@@ -2799,19 +2799,20 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
 static void
 realloc_trans_if_necessary (struct dfa *d, state_num new_state)
 {
-  if (d->tralloc <= new_state)
+  state_num oldalloc = d->tralloc;
+  if (oldalloc <= new_state)
     {
       state_num **realtrans = d->trans ? d->trans - 1 : NULL;
-      state_num oldalloc = d->tralloc;
+      size_t newalloc;
       d->tralloc = new_state + 1;
       realtrans = x2nrealloc (realtrans, &d->tralloc, sizeof *realtrans);
       realtrans[0] = NULL;
       d->trans = realtrans + 1;
-      d->tralloc--;
-      d->fails = xnrealloc (d->fails, d->tralloc, sizeof *d->fails);
-      d->success = xnrealloc (d->success, d->tralloc, sizeof *d->success);
-      d->newlines = xnrealloc (d->newlines, d->tralloc, sizeof *d->newlines);
-      for (; oldalloc < d->tralloc; oldalloc++)
+      newalloc = --d->tralloc;
+      d->fails = xnrealloc (d->fails, newalloc, sizeof *d->fails);
+      d->success = xnrealloc (d->success, newalloc, sizeof *d->success);
+      d->newlines = xnrealloc (d->newlines, newalloc, sizeof *d->newlines);
+      for (; oldalloc < newalloc; oldalloc++)
         {
           d->trans[oldalloc] = NULL;
           d->fails[oldalloc] = NULL;
