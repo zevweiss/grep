@@ -3790,19 +3790,14 @@ static char *
 icatalloc (char *old, char const *new)
 {
   char *result;
-  size_t oldsize = old == NULL ? 0 : strlen (old);
-  size_t newsize = new == NULL ? 0 : strlen (new);
+  size_t oldsize;
+  size_t newsize = strlen (new);
   if (newsize == 0)
     return old;
+  oldsize = strlen (old);
   result = xrealloc (old, oldsize + newsize + 1);
   memcpy (result + oldsize, new, newsize + 1);
   return result;
-}
-
-static char *
-icpyalloc (char const *string)
-{
-  return icatalloc (NULL, string);
 }
 
 static char *_GL_ATTRIBUTE_PURE
@@ -3823,8 +3818,6 @@ freelist (char **cpp)
 {
   size_t i;
 
-  if (cpp == NULL)
-    return;
   for (i = 0; cpp[i] != NULL; ++i)
     {
       free (cpp[i]);
@@ -3836,14 +3829,7 @@ static char **
 enlist (char **cpp, char *new, size_t len)
 {
   size_t i, j;
-
-  if (cpp == NULL)
-    return NULL;
-  if ((new = icpyalloc (new)) == NULL)
-    {
-      freelist (cpp);
-      return NULL;
-    }
+  new = memcpy (xmalloc (len + 1), new, len);
   new[len] = '\0';
   /* Is there already something in the list that's new (or longer)?  */
   for (i = 0; cpp[i] != NULL; ++i)
@@ -3873,46 +3859,28 @@ enlist (char **cpp, char *new, size_t len)
 }
 
 /* Given pointers to two strings, return a pointer to an allocated
-   list of their distinct common substrings.  Return NULL if something
-   seems wild.  */
+   list of their distinct common substrings.  */
 static char **
 comsubs (char *left, char const *right)
 {
-  char **cpp;
+  char **cpp = xzalloc (sizeof *cpp);
   char *lcp;
-  char *rcp;
-  size_t i, len;
 
-  if (left == NULL || right == NULL)
-    return NULL;
-  cpp = malloc (sizeof *cpp);
-  if (cpp == NULL)
-    return NULL;
-  cpp[0] = NULL;
   for (lcp = left; *lcp != '\0'; ++lcp)
     {
-      len = 0;
-      rcp = strchr (right, *lcp);
+      size_t len = 0;
+      char *rcp = strchr (right, *lcp);
       while (rcp != NULL)
         {
+          size_t i;
           for (i = 1; lcp[i] != '\0' && lcp[i] == rcp[i]; ++i)
             continue;
           if (i > len)
             len = i;
           rcp = strchr (rcp + 1, *lcp);
         }
-      if (len == 0)
-        continue;
-      {
-        char **p = enlist (cpp, lcp, len);
-        if (p == NULL)
-          {
-            freelist (cpp);
-            cpp = NULL;
-            break;
-          }
-        cpp = p;
-      }
+      if (len != 0)
+        cpp = enlist (cpp, lcp, len);
     }
   return cpp;
 }
@@ -3920,16 +3888,8 @@ comsubs (char *left, char const *right)
 static char **
 addlists (char **old, char **new)
 {
-  size_t i;
-
-  if (old == NULL || new == NULL)
-    return NULL;
-  for (i = 0; new[i] != NULL; ++i)
-    {
-      old = enlist (old, new[i], strlen (new[i]));
-      if (old == NULL)
-        break;
-    }
+  for (; *new; new++)
+    old = enlist (old, *new, strlen (*new));
   return old;
 }
 
@@ -3938,31 +3898,17 @@ addlists (char **old, char **new)
 static char **
 inboth (char **left, char **right)
 {
-  char **both;
-  char **temp;
+  char **both = xzalloc (sizeof *both);
   size_t lnum, rnum;
 
-  if (left == NULL || right == NULL)
-    return NULL;
-  both = malloc (sizeof *both);
-  if (both == NULL)
-    return NULL;
-  both[0] = NULL;
   for (lnum = 0; left[lnum] != NULL; ++lnum)
     {
       for (rnum = 0; right[rnum] != NULL; ++rnum)
         {
-          temp = comsubs (left[lnum], right[rnum]);
-          if (temp == NULL)
-            {
-              freelist (both);
-              return NULL;
-            }
+          char **temp = comsubs (left[lnum], right[rnum]);
           both = addlists (both, temp);
           freelist (temp);
           free (temp);
-          if (both == NULL)
-            return NULL;
         }
     }
   return both;
@@ -4078,8 +4024,6 @@ dfamust (struct dfa *d)
               lmp->right[j] = lmp->right[(ln - i) + j];
             lmp->right[j] = '\0';
             new = inboth (lmp->in, rmp->in);
-            if (new == NULL)
-              goto done;
             freelist (lmp->in);
             free (lmp->in);
             lmp->in = new;
@@ -4113,39 +4057,26 @@ dfamust (struct dfa *d)
                right, plus concatenation of
                left's right and right's left.  */
             lmp->in = addlists (lmp->in, rmp->in);
-            if (lmp->in == NULL)
-              goto done;
             if (lmp->right[0] != '\0' && rmp->left[0] != '\0')
               {
-                char *tp;
-
-                tp = icpyalloc (lmp->right);
-                tp = icatalloc (tp, rmp->left);
-                lmp->in = enlist (lmp->in, tp, strlen (tp));
+                size_t lrlen = strlen (lmp->right);
+                size_t rllen = strlen (rmp->left);
+                char *tp = xmalloc (lrlen + rllen + 1);
+                memcpy (tp, lmp->right, lrlen);
+                memcpy (tp + lrlen, rmp->left, rllen + 1);
+                lmp->in = enlist (lmp->in, tp, lrlen + rllen);
                 free (tp);
-                if (lmp->in == NULL)
-                  goto done;
               }
             /* Left-hand */
             if (lmp->is[0] != '\0')
-              {
-                lmp->left = icatalloc (lmp->left, rmp->left);
-                if (lmp->left == NULL)
-                  goto done;
-              }
+              lmp->left = icatalloc (lmp->left, rmp->left);
             /* Right-hand */
             if (rmp->is[0] == '\0')
               lmp->right[0] = '\0';
             lmp->right = icatalloc (lmp->right, rmp->right);
-            if (lmp->right == NULL)
-              goto done;
             /* Guaranteed to be */
             if (lmp->is[0] != '\0' && rmp->is[0] != '\0')
-              {
-                lmp->is = icatalloc (lmp->is, rmp->is);
-                if (lmp->is == NULL)
-                  goto done;
-              }
+              lmp->is = icatalloc (lmp->is, rmp->is);
             else
               lmp->is[0] = '\0';
           }
@@ -4183,8 +4114,6 @@ dfamust (struct dfa *d)
             = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
           mp->is[1] = mp->left[1] = mp->right[1] = '\0';
           mp->in = enlist (mp->in, mp->is, 1);
-          if (mp->in == NULL)
-            goto done;
           break;
         }
 #ifdef DEBUG
