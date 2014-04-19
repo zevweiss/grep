@@ -378,7 +378,7 @@ struct dfa
   /* Fields filled by the state builder.  */
   dfa_state *states;            /* States of the dfa.  */
   state_num sindex;             /* Index for adding new states.  */
-  state_num salloc;             /* Number of states currently allocated.  */
+  size_t salloc;		/* Number of states currently allocated.  */
 
   /* Fields filled by the parse tree->NFA conversion.  */
   position_set *follows;        /* Array of follow sets, indexed by position
@@ -2780,12 +2780,12 @@ realloc_trans_if_necessary (struct dfa *d, state_num new_state)
   if (oldalloc <= new_state)
     {
       state_num **realtrans = d->trans ? d->trans - 1 : NULL;
-      size_t newalloc;
-      d->tralloc = new_state + 1;
-      realtrans = x2nrealloc (realtrans, &d->tralloc, sizeof *realtrans);
+      size_t newalloc, newalloc1;
+      newalloc1 = new_state + 1;
+      realtrans = x2nrealloc (realtrans, &newalloc1, sizeof *realtrans);
       realtrans[0] = NULL;
       d->trans = realtrans + 1;
-      newalloc = --d->tralloc;
+      d->tralloc = newalloc = newalloc1 - 1;
       d->fails = xnrealloc (d->fails, newalloc, sizeof *d->fails);
       d->success = xnrealloc (d->success, newalloc, sizeof *d->success);
       d->newlines = xnrealloc (d->newlines, newalloc, sizeof *d->newlines);
