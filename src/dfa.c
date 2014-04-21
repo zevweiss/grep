@@ -694,7 +694,7 @@ static charclass newline;
 static int
 char_context (unsigned char c)
 {
-  if (c == eolbyte || c == 0)
+  if (c == eolbyte)
     return CTX_NEWLINE;
   if (IS_WORD_CONSTITUENT (c))
     return CTX_LETTER;

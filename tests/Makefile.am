@@ -76,6 +76,7 @@ TESTS =						\
   max-count-vs-context				\
   mb-non-UTF8-performance			\
   multibyte-white-space				\
+  null-byte					\
   empty-line-mb					\
   unibyte-bracket-expr				\
   unibyte-negated-circumflex			\

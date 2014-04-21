@@ -11,6 +11,9 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer mishandles an empty pattern at the end of a pattern list.
   [bug introduced in grep-2.5]
 
+  grep -f no longer mishandles patterns containing NUL bytes.
+  [bug introduced in grep-2.11]
+
   grep -P now works with -w and -x and backreferences. Before,
   echo aa|grep -Pw '(.)\1' would fail to match, yet
   echo aa|grep -Pw '(.)\2' would match.
