@@ -51,7 +51,7 @@ static size_t pcount;
    call the regexp matcher at all. */
 static size_t kwset_exact_matches;
 
-static int begline;
+static bool begline;
 
 void
 dfaerror (char const *mesg)
@@ -87,25 +87,21 @@ kwsmusts (void)
   if (dm)
     {
       kwsinit (&kwset);
-      begline = 0;
       /* First, we compile in the substrings known to be exact
          matches.  The kwset matcher will return the index
          of the matching string that it chooses. */
       for (; dm; dm = dm->next)
         {
-          char *must, *mp;
-          size_t old_len, new_len;
           if (!dm->exact)
             continue;
           ++kwset_exact_matches;
-          old_len = strlen (dm->must);
-          new_len = old_len + dm->begline + dm->endline;
-          must = mp = xmalloc (new_len);
-          if (dm->begline)
-            {
-              (mp++)[0] = eolbyte;
-              begline = 1;
-            }
+          size_t old_len = strlen (dm->must);
+          size_t new_len = old_len + dm->begline + dm->endline;
+          char *must = xmalloc (new_len);
+          char *mp = must;
+          *mp = eolbyte;
+          mp += dm->begline;
+          begline |= dm->begline;
           memcpy (mp, dm->must, old_len);
           if (dm->endline)
             mp[old_len] = eolbyte;

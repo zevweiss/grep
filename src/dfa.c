@@ -3916,10 +3916,8 @@ dfamust (struct dfa *d)
             /* Guaranteed to be.  Unlikely, but ...  */
             if (!STREQ (lmp->is, rmp->is))
               lmp->is[0] = '\0';
-            if (lmp->begline)
-              lmp->begline = rmp->begline;
-            if (lmp->endline)
-              lmp->endline = rmp->endline;
+            lmp->begline &= rmp->begline;
+            lmp->endline &= rmp->endline;
             /* Left side--easy */
             i = 0;
             while (lmp->left[i] != '\0' && lmp->left[i] == rmp->left[i])

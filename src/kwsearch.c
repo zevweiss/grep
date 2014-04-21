@@ -57,16 +57,19 @@ Fcompile (char const *pattern, size_t size)
           total = 0;
         }
 
+      char *buf = NULL;
       if (match_lines)
         {
-          char *buf = xmalloc (len + 2);
-          memcpy (&buf[1], p, len);
-          buf[0] = buf[len + 1] = eolbyte;
-          kwsincr (kwset, buf, len + 2);
-          free (buf);
+          buf = xmalloc (len + 2);
+          buf[0] = eolbyte;
+          memcpy (buf + 1, p, len);
+          buf[len + 1] = eolbyte;
+          p = buf;
+          len += 2;
         }
-      else
-        kwsincr (kwset, p, len);
+      kwsincr (kwset, p, len);
+      free (buf);
+
       p = sep;
     }
   while (p);
