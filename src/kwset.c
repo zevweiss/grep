@@ -464,74 +464,65 @@ kwsprep (kwset_t kwset)
       kwset->delta[i] = delta[U(trans[i])];
 }
 
-#define BM_DELTA2_SEARCH 				\
-  if (TRANS(tp[-2]) == gc2)				\
-    {							\
-      for (i = 3; i <= len; ++i)			\
-        if (TRANS(tp[-i]) != TRANS(sp[-i]))		\
-          break;					\
-      if (i > len)					\
-        return tp - len - text;				\
-      d = kwset->shift[i - 2]; tp += d;			\
-      if (tp > ep)					\
-        break;						\
-      if (TRANS(tp[-1]) != gc1)				\
-        {						\
-          d = d1[U(tp[-1])]; LAST_SHIFT;		\
-          continue;					\
-        }						\
-      skip = i - 1;					\
-    }							\
-  else							\
-    {							\
-      d = kwset->shift[0]; tp += d;			\
-      if (tp > ep)					\
-        break;						\
-      if (TRANS(tp[-1]) != gc1)				\
-        {						\
-          d = d1[U(tp[-1])]; LAST_SHIFT;		\
-          continue;					\
-        }						\
-      skip = 1;						\
-    }							\
-  while (true)						\
-    {							\
-      if (TRANS(tp[-2]) == gc2)				\
-        {						\
-          for (i = 3; i <= d; ++i)			\
-            if (TRANS(tp[-i]) != TRANS(sp[-i]))		\
-              break;					\
-          if (i > d)					\
-            {						\
-              for (i = d + skip + 1; i <= len; ++i)	\
-                if (TRANS(tp[-i]) != TRANS(sp[-i]))	\
-                  break;				\
-              if (i > len)				\
-                return tp - len - text;			\
-            }						\
-          d = kwset->shift[i - 2]; tp += d;		\
-          if (tp > ep)					\
-            break;					\
-          if (TRANS(tp[-1]) != gc1)			\
-            {						\
-              d = d1[U(tp[-1])]; LAST_SHIFT;		\
-              break;					\
-            }						\
-          skip = i - 1;					\
-        }						\
-      else						\
-        {						\
-          d = kwset->shift[0]; tp += d;			\
-          if (tp > ep)					\
-            break;					\
-          if (TRANS(tp[-1]) != gc1)			\
-            {						\
-              d = d1[U(tp[-1])]; LAST_SHIFT;		\
-              break;					\
-            }						\
-          skip = 1;					\
-        }						\
+/* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
+static char
+tr (char const *trans, char c)
+{
+  return trans ? trans[U(c)] : c;
+}
+
+/* Delta2 portion of a Boyer-Moore search.  *TP is the string text
+   pointer; it is updated in place.  EP is the end of the string text,
+   and SP the end of the pattern.  LEN is the pattern length; it must
+   be at least 2.  TRANS, if nonnull, is the input translation table.
+   GC1 and GC2 are the last and second-from last bytes of the pattern,
+   transliterated by TRANS; the caller precomputes them for
+   efficiency.  If D1 is nonnull, it is a delta1 table for shifting *TP
+   when failing.  KWSET->shift says how much to shift.  */
+static inline bool
+bm_delta2_search (char const **tpp, char const *ep, char const *sp, int len,
+                  char const *trans, char gc1, char gc2,
+                  unsigned char const *d1, kwset_t kwset)
+{
+  char const *tp = *tpp;
+  int d = len, skip = 0;
+
+  while (true)
+    {
+      int i = 2;
+      if (tr (trans, tp[-2]) == gc2)
+        {
+          while (++i <= d)
+            if (tr (trans, tp[-i]) != tr (trans, sp[-i]))
+              break;
+          if (i > d)
+            {
+              for (i = d + skip + 1; i <= len; ++i)
+                if (tr (trans, tp[-i]) != tr (trans, sp[-i]))
+                  break;
+              if (i > len)
+                {
+                  *tpp = tp - len;
+                  return true;
+                }
+            }
+        }
+
+      tp += d = kwset->shift[i - 2];
+      if (tp > ep)
+        break;
+      if (tr (trans, tp[-1]) != gc1)
+        {
+          if (d1)
+            tp += d1[U(tp[-1])];
+          break;
+        }
+      skip = i - 1;
     }
+
+  *tpp = tp;
+  return false;
+}
 
 
 /* Fast boyer-moore search. */
@@ -540,8 +531,7 @@ bmexec (kwset_t kwset, char const *text, size_t size)
 {
   unsigned char const *d1;
   char const *ep, *sp, *tp;
-  int d, i, skip;
-  char gc1, gc2;
+  int d;
   int len = kwset->mind;
   char const *trans = kwset->trans;
 
@@ -568,17 +558,8 @@ bmexec (kwset_t kwset, char const *text, size_t size)
   d1 = kwset->delta;
   sp = kwset->target + len;
   tp = text + len;
-  if (trans)
-    {
-      gc1 = trans[U(sp[-1])];
-      gc2 = trans[U(sp[-2])];
-    }
-  else
-    {
-      gc1 = sp[-1];
-      gc2 = sp[-2];
-    }
-  skip = 0;
+  char gc1 = tr (trans, sp[-1]);
+  char gc2 = tr (trans, sp[-2]);
 
   /* Significance of 12: 1 (initial offset) + 10 (skip loop) + 1 (md2). */
   if (size > 12 * len)
@@ -606,20 +587,8 @@ bmexec (kwset_t kwset, char const *text, size_t size)
           }
         break;
       found:
-#undef LAST_SHIFT
-#define LAST_SHIFT tp += d
-        if (trans)
-          {
-#undef TRANS
-#define TRANS(ch) trans[U(ch)]
-            BM_DELTA2_SEARCH;
-          }
-        else
-          {
-#undef TRANS
-#define TRANS(ch) ch
-            BM_DELTA2_SEARCH;
-          }
+        if (bm_delta2_search (&tp, ep, sp, len, trans, gc1, gc2, d1, kwset))
+          return tp - text;
       }
 
   /* Now we have only a few characters left to search.  We
@@ -631,20 +600,8 @@ bmexec (kwset_t kwset, char const *text, size_t size)
       d = d1[U((tp += d)[-1])];
       if (d != 0)
         continue;
-#undef LAST_SHIFT
-#define LAST_SHIFT
-      if (trans)
-        {
-#undef TRANS
-#define TRANS(ch) trans[U(ch)]
-          BM_DELTA2_SEARCH;
-        }
-      else
-        {
-#undef TRANS
-#define TRANS(ch) ch
-          BM_DELTA2_SEARCH;
-        }
+      if (bm_delta2_search (&tp, ep, sp, len, trans, gc1, gc2, NULL, kwset))
+        return tp - text;
     }
 
   return -1;
