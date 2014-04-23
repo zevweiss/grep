@@ -339,8 +339,9 @@ struct dfa
                                    with dfaparse.  */
   unsigned int mb_cur_max;      /* Cached value of MB_CUR_MAX.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
+  mbstate_t mbs;		/* Multibyte conversion state.  */
 
-  /* The following are used only if MB_CUR_MAX > 1.  */
+  /* The following are valid only if mb_cur_max > 1.  */
 
   /* The value of multibyte_prop[i] is defined by following rule.
      if tokens[i] < NOTCHAR
@@ -422,7 +423,7 @@ struct dfa
   struct dfamust *musts;        /* List of strings, at least one of which
                                    is known to appear in any r.e. matching
                                    the dfa.  */
-  position_set *mb_follows;     /* Follow set added by ANYCHAR and/or MBCSET
+  position_set mb_follows;	/* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
   int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
                                    MBCSET.  */
@@ -462,33 +463,34 @@ dfambcache (struct dfa *d)
     }
 }
 
-/* Given the dfa D, store into *PWC the result of converting the
-   leading bytes of the multibyte buffer S of length N bytes, updating
-   the conversion state in *MBS.  On conversion error, convert just a
-   single byte as-is.  Return the number of bytes converted.
+/* Store into *PWC the result of converting the leading bytes of the
+   multibyte buffer S of length N bytes, using the mbrtowc_cache in *D
+   and updating the conversion state in *D.  On conversion error,
+   convert just a single byte as-is.  Return the number of bytes
+   converted.
 
-   This differs from mbrtowc (PWC, S, N, MBS) as follows:
+   This differs from mbrtowc (PWC, S, N, &D->mbs) as follows:
 
-   * Extra arg D, containing an mbrtowc_cache for speed.
+   * The last arg is a dfa *D instead of merely a multibyte conversion
+     state D->mbs.  D also contains an mbrtowc_cache for speed.
    * N must be at least 1.
    * S[N - 1] must be a sentinel byte.
    * Shift encodings are not supported.
    * The return value is always in the range 1..N.
-   * *MBS is always valid afterwards.
+   * D->mbs is always valid afterwards.
    * *PWC is always set to something.  */
 static size_t
-mbs_to_wchar (struct dfa *d, wchar_t *pwc, char const *s, size_t n,
-              mbstate_t *mbs)
+mbs_to_wchar (wchar_t *pwc, char const *s, size_t n, struct dfa *d)
 {
   unsigned char uc = s[0];
   wint_t wc = d->mbrtowc_cache[uc];
 
   if (wc == WEOF)
     {
-      size_t nbytes = mbrtowc (pwc, s, n, mbs);
+      size_t nbytes = mbrtowc (pwc, s, n, &d->mbs);
       if (0 < nbytes && nbytes < (size_t) -2)
         return nbytes;
-      memset (mbs, 0, sizeof *mbs);
+      memset (&d->mbs, 0, sizeof d->mbs);
       wc = uc;
     }
 
@@ -838,7 +840,6 @@ static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
 static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
 /* These variables are used only if (MB_CUR_MAX > 1).  */
-static mbstate_t mbs;           /* mbstate for mbrtowc.  */
 static wchar_t wctok;           /* Wide character representation of the current
                                    multibyte character.  */
 
@@ -856,7 +857,7 @@ static wchar_t wctok;           /* Wide character representation of the current
     else					\
       {						\
         wchar_t _wc;				\
-        size_t nbytes = mbs_to_wchar (dfa, &_wc, lexptr, lexleft, &mbs); \
+        size_t nbytes = mbs_to_wchar (&_wc, lexptr, lexleft, dfa); \
         cur_mb_len = nbytes;			\
         (wc) = _wc;				\
         (c) = nbytes == 1 ? to_uchar (*lexptr) : EOF;    \
@@ -1932,7 +1933,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   if (MB_CUR_MAX > 1)
     {
       cur_mb_len = 0;
-      memset (&mbs, 0, sizeof mbs);
+      memset (&d->mbs, 0, sizeof d->mbs);
     }
 
   if (!syntax_bits_set)
@@ -3112,8 +3113,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
       s2 = s1;
       rs = transit_state_singlebyte (d, s2, (*pp)++, &s1);
     }
-  /* Copy the positions contained by 's1' to the set 'd->mb_follows'.  */
-  copy (&(d->states[s1].elems), d->mb_follows);
+  copy (&d->states[s1].elems, &d->mb_follows);
 
   /* Add all of the positions which can be reached from 's' by consuming
      a single character.  */
@@ -3123,7 +3123,7 @@ transit_state_consume_1char (struct dfa *d, state_num s,
         for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem;
              j++)
           insert (d->follows[d->states[s].mbps.elems[i].index].elems[j],
-                  d->mb_follows);
+                  &d->mb_follows);
     }
 
   /* FIXME: this return value is always ignored.  */
@@ -3151,7 +3151,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
        We check whether each of them can match or not.  */
     {
       /* Note: caller must free the return value of this function.  */
-      mbclen = mbs_to_wchar (d, &wc, (char const *) *pp, end - *pp, &mbs);
+      mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
       match_lens = check_matching_with_multibyte_ops (d, s, (char const *) *pp,
                                                       wc, mbclen);
 
@@ -3179,7 +3179,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
     }
 
   /* This state has some operators which can match a multibyte character.  */
-  d->mb_follows->nelem = 0;
+  d->mb_follows.nelem = 0;
 
   /* 'maxlen' may be longer than the length of a character, because it may
      not be a character but a (multi character) collating element.
@@ -3187,12 +3187,12 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
      'maxlen' bytes.  */
   transit_state_consume_1char (d, s, pp, wc, mbclen, match_lens);
 
-  s1 = state_index (d, d->mb_follows, wchar_context (wc));
+  s1 = state_index (d, &d->mb_follows, wchar_context (wc));
   realloc_trans_if_necessary (d, s1);
 
   while (*pp - p1 < maxlen)
     {
-      mbclen = mbs_to_wchar (d, &wc, (char const *) *pp, end - *pp, &mbs);
+      mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
       transit_state_consume_1char (d, s1, pp, wc, mbclen, NULL);
 
       for (i = 0; i < nelem; i++)
@@ -3201,10 +3201,10 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
             for (j = 0;
                  j < d->follows[d->states[s1].mbps.elems[i].index].nelem; j++)
               insert (d->follows[d->states[s1].mbps.elems[i].index].elems[j],
-                      d->mb_follows);
+                      &d->mb_follows);
         }
 
-      s1 = state_index (d, d->mb_follows, wchar_context (wc));
+      s1 = state_index (d, &d->mb_follows, wchar_context (wc));
       realloc_trans_if_necessary (d, s1);
     }
   return s1;
@@ -3244,15 +3244,9 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   if (d->mb_cur_max > 1)
     {
-      static bool mb_alloc = false;
-      memset (&mbs, 0, sizeof (mbstate_t));
-      if (!mb_alloc)
-        {
-          d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
-          d->mb_follows = xmalloc (sizeof *d->mb_follows);
-          alloc_position_set (d->mb_follows, d->nleaves);
-          mb_alloc = true;
-        }
+      memset (&d->mbs, 0, sizeof d->mbs);
+      d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
+      alloc_position_set (&d->mb_follows, d->nleaves);
     }
 
   for (;;)
@@ -3277,8 +3271,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                      character.  */
                   wchar_t wc;
                   while (mbp < p)
-                    mbp += mbs_to_wchar (d, &wc, (char const *) mbp,
-                                         end - (char const *) mbp, &mbs);
+                    mbp += mbs_to_wchar (&wc, (char const *) mbp,
+                                         end - (char const *) mbp, d);
                   p = mbp;
 
                   if ((char *) p >= end)
@@ -3407,7 +3401,6 @@ free_mbdata (struct dfa *d)
   size_t i;
 
   free (d->multibyte_prop);
-  d->multibyte_prop = NULL;
 
   for (i = 0; i < d->nmbcsets; ++i)
     {
@@ -3427,14 +3420,7 @@ free_mbdata (struct dfa *d)
     }
 
   free (d->mbcsets);
-  d->mbcsets = NULL;
-  d->nmbcsets = 0;
-
-  if (d->mb_follows)
-    {
-      free (d->mb_follows->elems);
-      free (d->mb_follows);
-    }
+  free (d->mb_follows.elems);
   free (d->mb_match_lens);
 }
 
