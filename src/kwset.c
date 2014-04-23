@@ -524,6 +524,20 @@ bm_delta2_search (char const **tpp, char const *ep, char const *sp, int len,
   return false;
 }
 
+/* Return the address of the first byte in the buffer S that equals C.
+   S contains N bytes.  If TRANS is nonnull, use it to transliterate
+   S's bytes before comparing them.  */
+static char const *
+memchr_trans (char const *s, char c, size_t n, char const *trans)
+{
+  if (! trans)
+    return memchr (s, c, n);
+  char const *slim = s + n;
+  for (; s < slim; s++)
+    if (trans[U(*s)] == c)
+      return s;
+  return NULL;
+}
 
 /* Fast boyer-moore search. */
 static size_t _GL_ATTRIBUTE_PURE
@@ -541,18 +555,8 @@ bmexec (kwset_t kwset, char const *text, size_t size)
     return -1;
   if (len == 1)
     {
-      if (trans)
-        {
-          for (tp = text; tp < text + size; tp++)
-            if (trans[U(*tp)] == kwset->target[0])
-              return tp - text;
-          return -1;
-        }
-      else
-        {
-          tp = memchr (text, kwset->target[0], size);
-          return tp ? tp - text : -1;
-        }
+      tp = memchr_trans (text, kwset->target[0], size, trans);
+      return tp ? tp - text : -1;
     }
 
   d1 = kwset->delta;
@@ -564,48 +568,33 @@ bmexec (kwset_t kwset, char const *text, size_t size)
   /* Significance of 12: 1 (initial offset) + 10 (skip loop) + 1 (md2). */
   if (size > 12 * len)
     /* 11 is not a bug, the initial offset happens only once. */
-    for (ep = text + size - 11 * len;;)
+    for (ep = text + size - 11 * len; tp <= ep; )
       {
-        while (tp <= ep)
+        d = d1[U(tp[-1])], tp += d;
+        d = d1[U(tp[-1])], tp += d;
+        if (d != 0)
           {
             d = d1[U(tp[-1])], tp += d;
             d = d1[U(tp[-1])], tp += d;
-            if (d == 0)
-              goto found;
             d = d1[U(tp[-1])], tp += d;
-            d = d1[U(tp[-1])], tp += d;
-            d = d1[U(tp[-1])], tp += d;
-            if (d == 0)
-              goto found;
-            d = d1[U(tp[-1])], tp += d;
-            d = d1[U(tp[-1])], tp += d;
-            d = d1[U(tp[-1])], tp += d;
-            if (d == 0)
-              goto found;
-            /* memchar() of glibc is faster than seeking by delta1 on
-               some platforms.  When there is no chance to match for a
-               while, use it on them.  */
-#if defined(__GLIBC__) && (defined(__i386__) || defined(__x86_64__))
-            if (!trans)
+            if (d != 0)
               {
-                tp = memchr (tp - 1, gc1, size + text - tp + 1);
-                if (tp)
+                d = d1[U(tp[-1])], tp += d;
+                d = d1[U(tp[-1])], tp += d;
+                d = d1[U(tp[-1])], tp += d;
+                if (d != 0)
                   {
-                    ++tp;
-                    goto found;
+                    /* Typically memchr is faster than seeking by
+                       delta1 when there is no chance to match for
+                       a while.  */
+                    tp--;
+                    tp = memchr_trans (tp, gc1, text + size - tp, trans);
+                    if (! tp)
+                      return -1;
+                    tp++;
                   }
-                else
-                  return -1;
-              }
-            else
-#endif
-              {
-                d = d1[U(tp[-1])], tp += d;
-                d = d1[U(tp[-1])], tp += d;
               }
           }
-        break;
-      found:
         if (bm_delta2_search (&tp, ep, sp, len, trans, gc1, gc2, d1, kwset))
           return tp - text;
       }
