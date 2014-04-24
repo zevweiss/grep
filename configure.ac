@@ -118,6 +118,7 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wpadded"                 # Our structs are not padded
   nw="$nw -Wvla"                    # warnings in gettext.h
   nw="$nw -Wswitch-default"         # Too many warnings for now
+  nw="$nw -Wunsafe-loop-optimizations" # OK to suppress unsafe optimizations
   nw="$nw -Winline"                 # streq.h's streq4, streq6 and strcaseeq6
   nw="$nw -Wstrict-overflow"        # regexec.c
 
