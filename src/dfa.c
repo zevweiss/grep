@@ -337,11 +337,11 @@ struct dfa
   size_t nleaves;               /* Number of leaves on the parse tree.  */
   size_t nregexps;              /* Count of parallel regexps being built
                                    with dfaparse.  */
-  unsigned int mb_cur_max;      /* Cached value of MB_CUR_MAX.  */
+  bool multibyte;		/* True iff MB_CUR_MAX > 1.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
 
-  /* The following are valid only if mb_cur_max > 1.  */
+  /* The following are valid only if MB_CUR_MAX > 1.  */
 
   /* The value of multibyte_prop[i] is defined by following rule.
      if tokens[i] < NOTCHAR
@@ -813,7 +813,7 @@ using_simple_locale (void)
      && '}' == 125 && '~' == 126)
   };
 
-  if (! native_c_charset || MB_CUR_MAX > 1)
+  if (! native_c_charset || dfa->multibyte)
     return false;
   else
     {
@@ -991,7 +991,7 @@ parse_bracket_exp (void)
   size_t chars_al, ranges_al, ch_classes_al, equivs_al, coll_elems_al;
 
   chars_al = ranges_al = ch_classes_al = equivs_al = coll_elems_al = 0;
-  if (MB_CUR_MAX > 1)
+  if (dfa->multibyte)
     {
       dfa->mbcsets = maybe_realloc (dfa->mbcsets, dfa->nmbcsets,
                                     &dfa->mbcsets_alloc,
@@ -1067,7 +1067,7 @@ parse_bracket_exp (void)
                   if (!pred)
                     dfaerror (_("invalid character class"));
 
-                  if (MB_CUR_MAX > 1 && !pred->single_byte_only)
+                  if (dfa->multibyte && !pred->single_byte_only)
                     {
                       /* Store the character class as wctype_t.  */
                       wctype_t wt = wctype (class);
@@ -1122,7 +1122,7 @@ parse_bracket_exp (void)
               if (c2 == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
                 FETCH_WC (c2, wc2, _("unbalanced ["));
 
-              if (MB_CUR_MAX > 1)
+              if (dfa->multibyte)
                 {
                   /* When case folding map a range, say [m-z] (or even [M-z])
                      to the pair of ranges, [m-z] [M-Z].  Although this code
@@ -1175,7 +1175,7 @@ parse_bracket_exp (void)
 
       colon_warning_state |= (c == ':') ? 2 : 4;
 
-      if (MB_CUR_MAX == 1)
+      if (!dfa->multibyte)
         {
           if (case_fold)
             setbit_case_fold_c (c, ccl);
@@ -1210,7 +1210,7 @@ parse_bracket_exp (void)
   if (! known_bracket_exp)
     return BACKREF;
 
-  if (MB_CUR_MAX > 1)
+  if (dfa->multibyte)
     {
       static charclass zeroclass;
       work_mbc->invert = invert;
@@ -1220,7 +1220,7 @@ parse_bracket_exp (void)
 
   if (invert)
     {
-      assert (MB_CUR_MAX == 1);
+      assert (!dfa->multibyte);
       notset (ccl);
       if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
         clrbit (eolbyte, ccl);
@@ -1446,7 +1446,7 @@ lex (void)
         case '.':
           if (backslash)
             goto normal_char;
-          if (MB_CUR_MAX > 1)
+          if (dfa->multibyte)
             {
               /* In multibyte environment period must match with a single
                  character not a byte.  So we use ANYCHAR.  */
@@ -1466,7 +1466,7 @@ lex (void)
         case 'S':
           if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
             goto normal_char;
-          if (MB_CUR_MAX == 1)
+          if (!dfa->multibyte)
             {
               zeroset (ccl);
               for (c2 = 0; c2 < NOTCHAR; ++c2)
@@ -1531,7 +1531,7 @@ lex (void)
           laststart = false;
           /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
-          if (MB_CUR_MAX > 1)
+          if (dfa->multibyte)
             return lasttok = WCHAR;
 
           if (case_fold && isalpha (c))
@@ -1567,11 +1567,11 @@ addtok_mb (token t, int mbprop)
     {
       dfa->tokens = x2nrealloc (dfa->tokens, &dfa->talloc,
                                 sizeof *dfa->tokens);
-      if (MB_CUR_MAX > 1)
+      if (dfa->multibyte)
         dfa->multibyte_prop = xnrealloc (dfa->multibyte_prop, dfa->talloc,
                                          sizeof *dfa->multibyte_prop);
     }
-  if (MB_CUR_MAX > 1)
+  if (dfa->multibyte)
     dfa->multibyte_prop[dfa->tindex] = mbprop;
   dfa->tokens[dfa->tindex++] = t;
 
@@ -1604,7 +1604,7 @@ static void addtok_wc (wint_t wc);
 static void
 addtok (token t)
 {
-  if (MB_CUR_MAX > 1 && t == MBCSET)
+  if (dfa->multibyte && t == MBCSET)
     {
       bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
@@ -1850,7 +1850,7 @@ copytoks (size_t tindex, size_t ntokens)
 {
   size_t i;
 
-  if (MB_CUR_MAX > 1)
+  if (dfa->multibyte)
     for (i = 0; i < ntokens; ++i)
       addtok_mb (dfa->tokens[tindex + i], dfa->multibyte_prop[tindex + i]);
   else
@@ -1935,7 +1935,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   lasttok = END;
   laststart = true;
   parens = 0;
-  if (MB_CUR_MAX > 1)
+  if (dfa->multibyte)
     {
       cur_mb_len = 0;
       memset (&d->mbs, 0, sizeof d->mbs);
@@ -2700,7 +2700,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         for (k = 0; k < d->follows[grps[i].elems[j]].nelem; ++k)
           insert (d->follows[grps[i].elems[j]].elems[k], &follows);
 
-      if (d->mb_cur_max > 1)
+      if (d->multibyte)
         {
           /* If a token in follows.elems is not 1st byte of a multibyte
              character, or the states of follows must accept the bytes
@@ -2734,7 +2734,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
       /* If we are building a searching matcher, throw in the positions
          of state 0 as well.  */
       if (d->searchflag
-          && (d->mb_cur_max == 1 || !next_isnt_1st_byte))
+          && (!d->multibyte || !next_isnt_1st_byte))
         for (j = 0; j < d->states[0].elems.nelem; ++j)
           insert (d->states[0].elems.elems[j], &follows);
 
@@ -3247,7 +3247,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   saved_end = *(unsigned char *) end;
   *end = eol;
 
-  if (d->mb_cur_max > 1)
+  if (d->multibyte)
     {
       memset (&d->mbs, 0, sizeof d->mbs);
       if (! d->mb_match_lens)
@@ -3259,7 +3259,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   for (;;)
     {
-      if (d->mb_cur_max > 1)
+      if (d->multibyte)
         {
           while ((t = trans[s]) != NULL)
             {
@@ -3341,7 +3341,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             }
 
           s1 = s;
-          if (d->mb_cur_max > 1)
+          if (d->multibyte)
             {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
@@ -3367,7 +3367,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
         {
           if (count)
             ++*count;
-          if (d->mb_cur_max > 1)
+          if (d->multibyte)
             mbp = p;
         }
 
@@ -3445,7 +3445,7 @@ void
 dfainit (struct dfa *d)
 {
   memset (d, 0, sizeof *d);
-  d->mb_cur_max = MB_CUR_MAX;
+  d->multibyte = MB_CUR_MAX > 1;
 }
 
 static void
@@ -3472,7 +3472,7 @@ dfaoptimize (struct dfa *d)
     }
 
   free_mbdata (d);
-  d->mb_cur_max = 1;
+  d->multibyte = false;
 }
 
 static void
@@ -3485,7 +3485,7 @@ dfasuperset (struct dfa *d)
   struct dfa *sup = dfaalloc ();
 
   *sup = *d;
-  sup->mb_cur_max = 1;
+  sup->multibyte = false;
   sup->multibyte_prop = NULL;
   sup->mbcsets = NULL;
   sup->superset = NULL;
@@ -3526,7 +3526,7 @@ dfasuperset (struct dfa *d)
         case ENDWORD:
         case LIMWORD:
         case NOTLIMWORD:
-          if (MB_CUR_MAX > 1)
+          if (d->multibyte)
             {
               /* Ignore these constraints.  */
               sup->tokens[j++] = EMPTY;
@@ -3542,10 +3542,10 @@ dfasuperset (struct dfa *d)
     }
   sup->tindex = j;
 
-  if ((d->mb_cur_max == 1 && !have_achar) || !have_nchar)
-    dfafree (sup);
-  else
+  if (have_nchar && (have_achar || d->multibyte))
     d->superset = sup;
+  else
+    dfafree (sup);
 }
 
 /* Parse and analyze a single string of the given length.  */
@@ -3573,7 +3573,7 @@ dfafree (struct dfa *d)
   free (d->charclasses);
   free (d->tokens);
 
-  if (d->mb_cur_max > 1)
+  if (d->multibyte)
     free_mbdata (d);
 
   for (i = 0; i < d->sindex; ++i)
@@ -4034,14 +4034,14 @@ dfamust (struct dfa *d)
               t = j;
               while (++j < NOTCHAR)
                 if (tstbit (j, *ccl)
-                    && ! (case_fold && MB_CUR_MAX == 1
+                    && ! (case_fold && !d->multibyte
                           && toupper (j) == toupper (t)))
                   break;
               if (j < NOTCHAR)
                 break;
             }
           mp->is[0] = mp->left[0] = mp->right[0]
-            = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
+            = case_fold && !d->multibyte ? toupper (t) : t;
           mp->is[1] = mp->left[1] = mp->right[1] = '\0';
           mp->in = enlist (mp->in, mp->is, 1);
           break;
