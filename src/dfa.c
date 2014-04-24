@@ -1125,7 +1125,7 @@ parse_bracket_exp (void)
                      is wrong in multiple ways, it's never used in practice.
                      FIXME: Remove this (and related) unused code.  */
                   work_mbc->ranges
-                    = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 1,
+                    = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 2,
                                      &ranges_al, sizeof *work_mbc->ranges);
                   work_mbc->ranges[work_mbc->nranges].beg
                     = case_fold ? towlower (wc) : wc;
