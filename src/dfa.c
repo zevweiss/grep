@@ -624,10 +624,14 @@ equal (charclass const s1, charclass const s2)
   return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
 
-/* If needed, reallocate *PTR so that it holds at least NITEMS items.
-   The array holds *NALLOC items; *NALLOC is updated on reallocation.
-   ITEMSIZE is the size of one item.  Avoid O(N**2) behavior on arrays
-   growing linearly.  */
+/* Ensure that the array addressed by PTR holds at least NITEMS +
+   (PTR || !NITEMS) items.  Either return PTR, or reallocate the array
+   and return its new address.  Although PTR may be null, the returned
+   value is never null.
+
+   The array holds *NALLOC items; *NALLOC must be zero if PTR is null,
+   and is updated on reallocation.  ITEMSIZE is the size of one item.
+   Avoid O(N**2) behavior on arrays growing linearly.  */
 static void *
 maybe_realloc (void *ptr, size_t nitems, size_t *nalloc, size_t itemsize)
 {
