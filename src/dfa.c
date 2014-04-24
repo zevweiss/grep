@@ -426,7 +426,8 @@ struct dfa
   position_set mb_follows;	/* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
   int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
-                                   MBCSET.  */
+                                   MBCSET.  Null if mb_follows.elems has not
+                                   been allocated.  */
 };
 
 /* Some macros for user access to dfa internals.  */
@@ -3245,8 +3246,11 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   if (d->mb_cur_max > 1)
     {
       memset (&d->mbs, 0, sizeof d->mbs);
-      d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
-      alloc_position_set (&d->mb_follows, d->nleaves);
+      if (! d->mb_match_lens)
+        {
+          d->mb_match_lens = xnmalloc (d->nleaves, sizeof *d->mb_match_lens);
+          alloc_position_set (&d->mb_follows, d->nleaves);
+        }
     }
 
   for (;;)
@@ -3422,6 +3426,7 @@ free_mbdata (struct dfa *d)
   free (d->mbcsets);
   free (d->mb_follows.elems);
   free (d->mb_match_lens);
+  d->mb_match_lens = NULL;
 }
 
 /* Initialize the components of a dfa that the other routines don't
