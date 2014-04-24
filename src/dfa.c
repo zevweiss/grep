@@ -3828,11 +3828,13 @@ struct must
 static must *
 allocmust (must *mp)
 {
-  must *new_mp = xzalloc (sizeof *new_mp);
+  must *new_mp = xmalloc (sizeof *new_mp);
   new_mp->in = xzalloc (sizeof *new_mp->in);
   new_mp->left = xzalloc (2);
   new_mp->right = xzalloc (2);
   new_mp->is = xzalloc (2);
+  new_mp->begline = false;
+  new_mp->endline = false;
   new_mp->prev = mp;
   return new_mp;
 }
@@ -3877,12 +3879,10 @@ dfamust (struct dfa *d)
         {
         case BEGLINE:
           mp = allocmust (mp);
-          resetmust (mp);
           mp->begline = true;
           break;
         case ENDLINE:
           mp = allocmust (mp);
-          resetmust (mp);
           mp->endline = true;
           break;
         case LPAREN:
@@ -3898,23 +3898,20 @@ dfamust (struct dfa *d)
         case ANYCHAR:
         case MBCSET:
           mp = allocmust (mp);
-          /* Fall through.  */
+          break;
+
         case STAR:
         case QMARK:
-          assert (mp != NULL);
           resetmust (mp);
           break;
 
         case OR:
-          assert (mp && mp->prev);
           {
             char **new;
-            must *lmp;
-            must *rmp;
+            must *rmp = mp;
+            must *lmp = mp = mp->prev;
             size_t j, ln, rn, n;
 
-            rmp = mp;
-            lmp = mp = mp->prev;
             /* Guaranteed to be.  Unlikely, but ...  */
             if (!STREQ (lmp->is, rmp->is))
               lmp->is[0] = '\0';
@@ -3946,34 +3943,27 @@ dfamust (struct dfa *d)
           break;
 
         case PLUS:
-          assert (mp != NULL);
           mp->is[0] = '\0';
           break;
 
         case END:
-          assert (!mp || !mp->prev);
-          if (mp)
+          assert (!mp->prev);
+          for (i = 0; mp->in[i] != NULL; ++i)
+            if (strlen (mp->in[i]) > strlen (result))
+              result = mp->in[i];
+          if (STREQ (result, mp->is))
             {
-              for (i = 0; mp->in[i] != NULL; ++i)
-                if (strlen (mp->in[i]) > strlen (result))
-                  result = mp->in[i];
-              if (STREQ (result, mp->is))
-                {
-                  exact = true;
-                  begline = mp->begline;
-                  endline = mp->endline;
-                }
+              exact = true;
+              begline = mp->begline;
+              endline = mp->endline;
             }
           goto done;
 
         case CAT:
-          assert (mp && mp->prev);
           {
-            must *lmp;
-            must *rmp;
+            must *rmp = mp;
+            must *lmp = mp = mp->prev;
 
-            rmp = mp;
-            lmp = mp = mp->prev;
             /* In.  Everything in left, plus everything in
                right, plus concatenation of
                left's right and right's left.  */
@@ -4018,7 +4008,6 @@ dfamust (struct dfa *d)
 
         default:
           mp = allocmust (mp);
-          resetmust (mp);
           if (CSET <= t)
             {
               /* If T is a singleton, or if case-folding in a unibyte
@@ -4059,8 +4048,13 @@ done:
       dm->next = d->musts;
       d->musts = dm;
     }
-  if (mp)
-    freemust (mp);
+
+  while (mp)
+    {
+      must *prev = mp->prev;
+      freemust (mp);
+      mp = prev;
+    }
 }
 
 struct dfa *
