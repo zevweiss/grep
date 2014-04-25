@@ -3237,6 +3237,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                                    into a register.  */
   unsigned char eol = eolbyte;  /* Likewise for eolbyte.  */
   unsigned char saved_end;
+  size_t nlcount = 0;
 
   if (!d->tralloc)
     build_state_zero (d);
@@ -3285,8 +3286,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
                   if ((char *) p >= end)
                     {
-                      *end = saved_end;
-                      return NULL;
+                      p = NULL;
+                      goto done;
                     }
                 }
 
@@ -3303,8 +3304,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
               if (d->states[s].has_mbcset && backref)
                 {
                   *backref = 1;
-                  *end = saved_end;
-                  return (char *) p;
+                  goto done;
                 }
 
               /* Can match with a multibyte character (and multi character
@@ -3330,14 +3330,19 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             }
         }
 
-      if (s >= 0 && (char *) p <= end && d->fails[s])
+      if ((char *) p > end)
+        {
+          p = NULL;
+          goto done;
+        }
+
+      if (s >= 0 && d->fails[s])
         {
           if (d->success[s] & sbit[*p])
             {
               if (backref)
                 *backref = d->states[s].has_backref;
-              *end = saved_end;
-              return (char *) p;
+              goto done;
             }
 
           s1 = s;
@@ -3354,21 +3359,12 @@ dfaexec (struct dfa *d, char const *begin, char *end,
           continue;
         }
 
-      /* Check if we've run off the end of the buffer.  */
-      if ((char *) p > end)
-        {
-          *end = saved_end;
-          return NULL;
-        }
-
       /* If the previous character was a newline, count it, and skip
          checking of multibyte character boundary until here.  */
       if (p[-1] == eol)
         {
-          if (count)
-            ++*count;
-          if (d->multibyte)
-            mbp = p;
+          nlcount++;
+          mbp = p;
         }
 
       if (s >= 0)
@@ -3387,6 +3383,12 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
       s = 0;
     }
+
+ done:
+  if (count)
+    *count += nlcount;
+  *end = saved_end;
+  return (char *) p;
 }
 
 /* Search through a buffer looking for a potential match for D.
