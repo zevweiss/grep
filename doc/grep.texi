@@ -1719,25 +1719,19 @@ How can I match across lines?
 
 Standard grep cannot do this, as it is fundamentally line-based.
 Therefore, merely using the @code{[:space:]} character class does not
-match newlines in the way you might expect.  However, if your grep is
-compiled with Perl patterns enabled, the Perl @samp{s}
-modifier (which makes @code{.} match newlines) can be used:
-
-@example
-printf 'foo\nbar\n' | grep -P '(?s)foo.*?bar'
-@end example
+match newlines in the way you might expect.
 
 With the GNU @command{grep} option @code{-z} (@pxref{File and
 Directory Selection}), the input is terminated by null bytes.  Thus,
-you can match newlines in the input, but the output will be the whole
-file, so this is really only useful to determine if the pattern is
-present:
+you can match newlines in the input, but typically if there is a match
+the entire input is output, so this usage is often combined with
+output-suppressing options like @option{-q}, e.g.:
 
 @example
 printf 'foo\nbar\n' | grep -z -q 'foo[[:space:]]\+bar'
 @end example
 
-Failing either of those options, you need to transform the input
+If this does not suffice, you can transform the input
 before giving it to @command{grep}, or turn to @command{awk},
 @command{sed}, @command{perl}, or many other utilities that are
 designed to operate across lines.

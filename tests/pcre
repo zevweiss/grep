@@ -1,5 +1,5 @@
 #! /bin/sh
-# Ensure that with -P, \s*$ matches a newline.
+# Ensure that with -P, \s matches a newline.
 #
 # Copyright (C) 2001, 2006, 2009-2014 Free Software Foundation, Inc.
 #
@@ -12,7 +12,7 @@ require_pcre_
 
 fail=0
 
-# See CVS revision 1.32 of "src/search.c".
 echo | grep -P '\s*$' || fail=1
+echo | grep -zP '\s$' || fail=1
 
 Exit $fail
