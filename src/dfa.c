@@ -3547,7 +3547,10 @@ dfasuperset (struct dfa *d)
   if (have_nchar && (have_achar || d->multibyte))
     d->superset = sup;
   else
-    dfafree (sup);
+    {
+      dfafree (sup);
+      free (sup);
+    }
 }
 
 /* Parse and analyze a single string of the given length.  */
