@@ -213,6 +213,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   size_t len, best_len;
   struct kwsmatch kwsm;
   size_t i;
+  bool dfafast = dfaisfast (dfa);
 
   mb_start = buf;
   buflim = buf + size;
@@ -232,13 +233,13 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               beg += offset;
               /* Narrow down to the line containing the candidate, and
                  run it through DFA. */
-              end = memchr (beg, eol, buflim - beg);
-              end = end ? end + 1 : buflim;
               match = beg;
               beg = memrchr (buf, eol, beg - buf);
               beg = beg ? beg + 1 : buf;
               if (kwsm.index < kwset_exact_matches)
                 {
+                  end = memchr (beg, eol, buflim - beg);
+                  end = end ? end + 1 : buflim;
                   if (MB_CUR_MAX == 1)
                     goto success;
                   if (mb_start < beg)
@@ -253,17 +254,21 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                                  &backref))
                     continue;
                 }
-              else
+              else if (!dfafast)
                 {
+                  /* Narrow down to the line we've found if dfa isn't fast. */
+                  end = memchr (match, eol, buflim - beg);
+                  end = end ? end + 1 : buflim;
                   if (dfahint (dfa, beg, (char *) end, NULL) == (size_t) -1)
                     continue;
                   if (! dfaexec (dfa, beg, (char *) end, 0, NULL, &backref))
                     continue;
                 }
             }
-          else
+          if (!kwset || dfafast)
             {
-              /* No good fixed strings; start with DFA. */
+              /* No good fixed strings or DFA is fast; start with DFA
+                 broadly. */
               size_t offset, count;
               char const *next_beg;
               count = 0;

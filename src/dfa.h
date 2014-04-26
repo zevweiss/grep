@@ -82,6 +82,10 @@ extern char *dfaexec (struct dfa *d, char const *begin, char *end,
 extern size_t dfahint (struct dfa *d, char const *begin, char *end,
                        size_t *count);
 
+/* Return true, if `multibyte' attribute of struct dfa is false and the
+   pattern doesn't have BACKREF.  */
+extern bool dfaisfast (struct dfa *);
+
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree (struct dfa *);
 
