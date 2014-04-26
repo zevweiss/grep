@@ -570,6 +570,7 @@ bmexec (kwset_t kwset, char const *text, size_t size)
     /* 11 is not a bug, the initial offset happens only once. */
     for (ep = text + size - 11 * len; tp <= ep; )
       {
+        char const *tp0 = tp;
         d = d1[U(tp[-1])], tp += d;
         d = d1[U(tp[-1])], tp += d;
         if (d != 0)
@@ -584,9 +585,14 @@ bmexec (kwset_t kwset, char const *text, size_t size)
                 d = d1[U(tp[-1])], tp += d;
                 if (d != 0)
                   {
-                    /* Typically memchr is faster than seeking by
-                       delta1 when there is no chance to match for
-                       a while.  */
+                    d = d1[U(tp[-1])], tp += d;
+                    d = d1[U(tp[-1])], tp += d;
+
+                    /* As a heuristic, prefer memchr to seeking by
+                       delta1 when the latter doesn't advance much.  */
+                    int advance_heuristic = 4 * sizeof (long);
+                    if (advance_heuristic <= tp - tp0)
+                      goto big_advance;
                     tp--;
                     tp = memchr_trans (tp, gc1, text + size - tp, trans);
                     if (! tp)
@@ -597,6 +603,7 @@ bmexec (kwset_t kwset, char const *text, size_t size)
           }
         if (bm_delta2_search (&tp, ep, sp, len, trans, gc1, gc2, d1, kwset))
           return tp - text;
+      big_advance:;
       }
 
   /* Now we have only a few characters left to search.  We
