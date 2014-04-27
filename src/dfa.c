@@ -3412,25 +3412,20 @@ dfahint (struct dfa *d, char const *begin, char *end, size_t *count)
 }
 
 bool
-dfaisfast (struct dfa *d)
+dfaisfast (struct dfa const *d)
 {
-  size_t i;
   if (d->superset)
+    return true;
+  else if (d->multibyte)
+    return false;
+  else
     {
-      for (i = 0; i < d->superset->tindex; i++)
-        if (d->superset->tokens[i] == BACKREF)
-          return false;
-      return true;
-    }
-  else if (!d->multibyte)
-    {
+      size_t i;
       for (i = 0; i < d->tindex; i++)
         if (d->tokens[i] == BACKREF)
           return false;
       return true;
     }
-  else
-    return false;
 }
 
 static void

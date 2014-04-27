@@ -225,21 +225,21 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           /* We don't care about an exact match.  */
           if (kwset)
             {
-              /* Find a possible match using the KWset matcher. */
+              /* Find a possible match using the KWset matcher.  */
               size_t offset = kwsexec (kwset, beg - begline,
                                        buflim - beg + begline, &kwsm);
               if (offset == (size_t) -1)
                 goto failure;
-              beg += offset;
-              /* Narrow down to the line containing the candidate, and
-                 run it through DFA. */
-              match = beg;
-              beg = memrchr (buf, eol, beg - buf);
+              match = beg + offset;
+
+              /* Narrow down to the line containing the candidate.  */
+              beg = memrchr (buf, eol, match - buf);
               beg = beg ? beg + 1 : buf;
+              end = memchr (match, eol, buflim - match);
+              end = end ? end + 1 : buflim;
+
               if (kwsm.index < kwset_exact_matches)
                 {
-                  end = memchr (beg, eol, buflim - beg);
-                  end = end ? end + 1 : buflim;
                   if (MB_CUR_MAX == 1)
                     goto success;
                   if (mb_start < beg)
@@ -256,9 +256,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 }
               else if (!dfafast)
                 {
-                  /* Narrow down to the line we've found if dfa isn't fast. */
-                  end = memchr (match, eol, buflim - beg);
-                  end = end ? end + 1 : buflim;
                   if (dfahint (dfa, beg, (char *) end, NULL) == (size_t) -1)
                     continue;
                   if (! dfaexec (dfa, beg, (char *) end, 0, NULL, &backref))
@@ -267,8 +264,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
             }
           if (!kwset || dfafast)
             {
-              /* No good fixed strings or DFA is fast; start with DFA
-                 broadly. */
+              /* No good fixed strings or DFA is fast; use DFA.  */
               size_t offset, count;
               char const *next_beg;
               count = 0;
@@ -287,7 +283,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 }
               else
                 next_beg = beg + offset;
-              /* Narrow down to the line we've found. */
+              /* Narrow down to the line we've found.  */
               beg = memrchr (buf, eol, next_beg - buf);
               beg = beg ? beg + 1 : buf;
               if (count != 0)
