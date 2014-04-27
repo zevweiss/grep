@@ -36,8 +36,10 @@
 #include "kwset.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include "system.h"
+#include "memchr2.h"
 #include "obstack.h"
 #include "xalloc.h"
 
@@ -91,7 +93,32 @@ struct kwset
   char *target;			/* Target string if there's only one. */
   int *shift;			/* Used in Boyer-Moore search for one string. */
   char const *trans;		/* Character translation table. */
+
+  /* If there's only one string, this is the string's last byte,
+     translated via TRANS if TRANS is nonnull.  */
+  char gc1;
+
+  /* Likewise for the string's penultimate byte, if it has two or more
+     bytes.  */
+  char gc2;
+
+  /* If there's only one string, this helps to match the string's last byte.
+     If GC1HELP is negative, only GC1 matches the string's last byte;
+     otherwise at least two bytes match, and B matches if TRANS[B] == GC1.
+     If GC1HELP is in the range 0..(NCHAR - 1), there are exactly two
+     such matches, and GC1HELP is the other match after conversion to
+     unsigned char.  If GC1HELP is at least NCHAR, there are three or
+     more such matches; e.g., Greek has three sigma characters that
+     all match when case-folding.  */
+  int gc1help;
 };
+
+/* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
+static char
+tr (char const *trans, char c)
+{
+  return trans ? trans[U(c)] : c;
+}
 
 /* Allocate and initialize a keyword set object, returning an opaque
    pointer to it.  */
@@ -456,19 +483,33 @@ kwsprep (kwset_t kwset)
               curr = curr->next;
             }
         }
+
+      char gc1 = tr (trans, kwset->target[kwset->mind - 1]);
+
+      /* Set GC1HELP according to whether exactly one, exactly two, or
+         three-or-more characters match GC1.  */
+      int gc1help = -1;
+      if (trans)
+        {
+          char const *equiv1 = memchr (trans, gc1, NCHAR);
+          char const *equiv2 = memchr (equiv1 + 1, gc1,
+                                       trans + NCHAR - (equiv1 + 1));
+          if (equiv2)
+            gc1help = (memchr (equiv2 + 1, gc1, trans + NCHAR - (equiv2 + 1))
+                       ? NCHAR
+                       : U(gc1) ^ (equiv1 - trans) ^ (equiv2 - trans));
+        }
+
+      kwset->gc1 = gc1;
+      kwset->gc1help = gc1help;
+      if (kwset->mind > 1)
+        kwset->gc2 = tr (trans, kwset->target[kwset->mind - 2]);
     }
 
   /* Fix things up for any translation table. */
   if (trans)
     for (i = 0; i < NCHAR; ++i)
       kwset->delta[i] = delta[U(trans[i])];
-}
-
-/* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
-static char
-tr (char const *trans, char c)
-{
-  return trans ? trans[U(c)] : c;
 }
 
 /* Delta2 portion of a Boyer-Moore search.  *TP is the string text
@@ -524,19 +565,23 @@ bm_delta2_search (char const **tpp, char const *ep, char const *sp, int len,
   return false;
 }
 
-/* Return the address of the first byte in the buffer S that equals C.
-   S contains N bytes.  If TRANS is nonnull, use it to transliterate
-   S's bytes before comparing them.  */
+/* Return the address of the first byte in the buffer S (of size N)
+   that matches the last byte specified by KWSET, a singleton.  */
 static char const *
-memchr_trans (char const *s, char c, size_t n, char const *trans)
+memchr_kwset (char const *s, size_t n, kwset_t kwset)
 {
-  if (! trans)
-    return memchr (s, c, n);
-  char const *slim = s + n;
+  if (kwset->gc1help < 0)
+    return memchr (s, kwset->gc1, n);
+  int small_heuristic = 2;
+  int small = (- (uintptr_t) s % sizeof (long)
+               + small_heuristic * sizeof (long));
+  size_t ntrans = kwset->gc1help < NCHAR && small < n ? small : n;
+  char const *slim = s + ntrans;
   for (; s < slim; s++)
-    if (trans[U(*s)] == c)
+    if (kwset->trans[U(*s)] == kwset->gc1)
       return s;
-  return NULL;
+  n -= ntrans;
+  return n == 0 ? NULL : memchr2 (s, kwset->gc1, kwset->gc1help, n);
 }
 
 /* Fast boyer-moore search. */
@@ -555,15 +600,15 @@ bmexec (kwset_t kwset, char const *text, size_t size)
     return -1;
   if (len == 1)
     {
-      tp = memchr_trans (text, kwset->target[0], size, trans);
+      tp = memchr_kwset (text, size, kwset);
       return tp ? tp - text : -1;
     }
 
   d1 = kwset->delta;
   sp = kwset->target + len;
   tp = text + len;
-  char gc1 = tr (trans, sp[-1]);
-  char gc2 = tr (trans, sp[-2]);
+  char gc1 = kwset->gc1;
+  char gc2 = kwset->gc2;
 
   /* Significance of 12: 1 (initial offset) + 10 (skip loop) + 1 (md2). */
   if (size > 12 * len)
@@ -590,11 +635,11 @@ bmexec (kwset_t kwset, char const *text, size_t size)
 
                     /* As a heuristic, prefer memchr to seeking by
                        delta1 when the latter doesn't advance much.  */
-                    int advance_heuristic = 4 * sizeof (long);
+                    int advance_heuristic = 16 * sizeof (long);
                     if (advance_heuristic <= tp - tp0)
                       goto big_advance;
                     tp--;
-                    tp = memchr_trans (tp, gc1, text + size - tp, trans);
+                    tp = memchr_kwset (tp, text + size - tp, kwset);
                     if (! tp)
                       return -1;
                     tp++;
