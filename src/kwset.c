@@ -584,9 +584,9 @@ memchr_kwset (char const *s, size_t n, kwset_t kwset)
   return n == 0 ? NULL : memchr2 (s, kwset->gc1, kwset->gc1help, n);
 }
 
-/* Fast boyer-moore search. */
-static size_t _GL_ATTRIBUTE_PURE
-bmexec (kwset_t kwset, char const *text, size_t size)
+/* Fast Boyer-Moore search (inlinable version).  */
+static inline size_t _GL_ATTRIBUTE_PURE
+bmexec_trans (kwset_t kwset, char const *text, size_t size)
 {
   unsigned char const *d1;
   char const *ep, *sp, *tp;
@@ -665,6 +665,17 @@ bmexec (kwset_t kwset, char const *text, size_t size)
     }
 
   return -1;
+}
+
+/* Fast Boyer-Moore search.  */
+static size_t
+bmexec (kwset_t kwset, char const *text, size_t size)
+{
+  /* Help the compiler inline bmexec_trans in two ways, depending on
+     whether kwset->trans is null.  */
+  return (kwset->trans
+          ? bmexec_trans (kwset, text, size)
+          : bmexec_trans (kwset, text, size));
 }
 
 /* Hairy multiple string search. */
