@@ -114,7 +114,7 @@ struct kwset
 };
 
 /* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
-static char
+static inline char
 tr (char const *trans, char c)
 {
   return trans ? trans[U(c)] : c;
