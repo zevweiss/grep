@@ -265,7 +265,35 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                   dfa_beg = mb_start;
                   narrowed = true;
                 }
-              else if (!dfafast)
+              else if (dfafast)
+                {
+                  /* Determine the end pointer to start with DFA.  It's
+                     `match' by default.  If the offset from prev_beg is
+                     lesser than (match - beg) * 4 and/or 64, set it to
+                     greatest value in them.  A larger offset than the
+                     default means that DFA is preferred to KWset.  */
+                  offset = (match - beg) * 4;
+                  if (offset < 64)
+                    offset = 64;
+                  if (prev_beg + offset > match)
+                    {
+                      end = prev_beg + offset;
+                      if (end < buflim)
+                        {
+                          end = memchr (end, eol, buflim - end);
+                          end = end ? end + 1 : buflim;
+                        }
+                      else
+                        end = buflim;
+                    }
+                  else
+                    {
+                      end = memchr (match, eol, buflim - match);
+                      end = end ? end + 1 : buflim;
+                      narrowed = true;
+                    }
+                }
+              else
                 {
                   end = memchr (match, eol, buflim - match);
                   end = end ? end + 1 : buflim;
