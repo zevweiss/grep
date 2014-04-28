@@ -3395,24 +3395,12 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   return (char *) p;
 }
 
-/* Search through a buffer looking for a potential match for D.
-   Return the offset of the byte after the first potential match.
-   If there is no match, return (size_t) -1.  If D lacks a superset
-   so it's not known whether there is a match, return (size_t) -2.
-   BEGIN points to the beginning of the buffer, and END points to the
-   first byte after its end.  Store a sentinel byte (usually newline)
-   in *END, so the actual buffer must be one byte longer.  If COUNT is
-   non-NULL, increment *COUNT once for each newline processed.  */
-size_t
-dfahint (struct dfa *d, char const *begin, char *end, size_t *count)
+/* Return superset for D, which searchs through a buffer looking for a
+   potential match.  */
+struct dfa *
+dfasuperset (struct dfa *d)
 {
-  if (! d->superset)
-    return -2;
-  else
-    {
-      char const *match = dfaexec (d->superset, begin, end, 1, count, NULL);
-      return match ? match - begin : -1;
-    }
+  return d->superset;
 }
 
 bool
@@ -3499,7 +3487,7 @@ dfaoptimize (struct dfa *d)
 }
 
 static void
-dfasuperset (struct dfa *d)
+dfassbuild (struct dfa *d)
 {
   size_t i, j;
   charclass ccl;
@@ -3583,7 +3571,7 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfaparse (s, len, d);
   dfamust (d);
   dfaoptimize (d);
-  dfasuperset (d);
+  dfassbuild (d);
   dfaanalyze (d, searchflag);
   if (d->superset)
     dfaanalyze (d->superset, searchflag);

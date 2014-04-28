@@ -213,6 +213,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
   size_t len, best_len;
   struct kwsmatch kwsm;
   size_t i;
+  struct dfa *superset = dfasuperset (dfa);
   bool dfafast = dfaisfast (dfa);
 
   mb_start = buf;
@@ -220,26 +221,37 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 
   for (beg = end = buf; end < buflim; beg = end)
     {
+      end = buflim;
+
       if (!start_ptr)
         {
-          /* We don't care about an exact match.  */
+          char const *next_beg, *dfa_beg = beg;
+          size_t count = 0;
+          bool narrowed = false;
+
+          /* Try matching with KWset, if it's defined.  */
           if (kwset)
             {
+              char const *prev_beg;
+
               /* Find a possible match using the KWset matcher.  */
               size_t offset = kwsexec (kwset, beg - begline,
                                        buflim - beg + begline, &kwsm);
               if (offset == (size_t) -1)
                 goto failure;
               match = beg + offset;
-
-              /* Narrow down to the line containing the candidate.  */
+              prev_beg = beg;
+              
+              /* Narrow down to the line we've found.  */
               beg = memrchr (buf, eol, match - buf);
               beg = beg ? beg + 1 : buf;
-              end = memchr (match, eol, buflim - match);
-              end = end ? end + 1 : buflim;
+              dfa_beg = beg;
 
               if (kwsm.index < kwset_exact_matches)
                 {
+                  end = memchr (match, eol, buflim - match);
+                  end = end ? end + 1 : buflim;
+
                   if (MB_CUR_MAX == 1)
                     goto success;
                   if (mb_start < beg)
@@ -250,61 +262,63 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the
                      beginning of the next character.  */
-                  if (! dfaexec (dfa, mb_start, (char *) end, 0, NULL,
-                                 &backref))
-                    continue;
+                  dfa_beg = mb_start;
+                  narrowed = true;
                 }
               else if (!dfafast)
                 {
-                  if (dfahint (dfa, beg, (char *) end, NULL) == (size_t) -1)
-                    continue;
-                  if (! dfaexec (dfa, beg, (char *) end, 0, NULL, &backref))
-                    continue;
+                  end = memchr (match, eol, buflim - match);
+                  end = end ? end + 1 : buflim;
+                  narrowed = true;
                 }
             }
-          if (!kwset || dfafast)
+
+          /* Try matching with the superset of DFA, if it's defined.  */
+          if (superset && !(kwset && kwsm.index < kwset_exact_matches))
             {
-              /* No good fixed strings or DFA is fast; use DFA.  */
-              size_t offset, count;
-              char const *next_beg;
-              count = 0;
-              offset = dfahint (dfa, beg, (char *) buflim, &count);
-              if (offset == (size_t) -1)
-                goto failure;
-              if (offset == (size_t) -2)
+              next_beg = dfaexec (superset, dfa_beg, (char *) end, 1, &count, NULL);
+              /* If there's no match, or if we've matched the sentinel,
+                 we're done.  */
+              if (next_beg == NULL || next_beg == end)
+                continue;
+              if (!narrowed)
                 {
-                  /* No use hint. */
-                  next_beg = dfaexec (dfa, beg, (char *) buflim, 0,
-                                      NULL, &backref);
-                  /* If there's no match, or if we've matched the sentinel,
-                     we're done.  */
-                  if (next_beg == NULL || next_beg == buflim)
-                    goto failure;
+                  /* Narrow down to the line we've found.  */
+                  if (count != 0)
+                    {
+                      beg = memrchr (buf, eol, next_beg - buf);
+                      beg = beg ? beg + 1 : buf;
+
+                      /* If dfaexec may match in multiple lines, try to
+                         match in one line.  */
+                      end = beg;
+                      continue;
+                    }
+                  end = memchr (next_beg, eol, buflim - next_beg);
+                  end = end ? end + 1 : buflim;
+                  narrowed = true;
                 }
-              else
-                next_beg = beg + offset;
+            }
+
+          /* Try matching with DFA.  */
+          next_beg = dfaexec (dfa, dfa_beg, (char *) end, 0, &count, &backref);
+
+          /* If there's no match, or if we've matched the sentinel,
+             we're done.  */
+          if (next_beg == NULL || next_beg == end)
+            continue;
+          if (!narrowed)
+            {
               /* Narrow down to the line we've found.  */
-              beg = memrchr (buf, eol, next_beg - buf);
-              beg = beg ? beg + 1 : buf;
               if (count != 0)
                 {
-                  /* If dfahint may match in multiple lines, try to
-                     match in one line.  */
-                  end = beg;
-                  continue;
+                  beg = memrchr (buf, eol, next_beg - buf);
+                  beg = beg ? beg + 1 : buf;
                 }
               end = memchr (next_beg, eol, buflim - next_beg);
               end = end ? end + 1 : buflim;
-              if (offset != (size_t) -2)
-                {
-                  next_beg = dfaexec (dfa, beg, (char *) end, 0, NULL,
-                                      &backref);
-                  /* If there's no match, or if we've matched the sentinel,
-                     we're done.  */
-                  if (next_beg == NULL || next_beg == end)
-                    continue;
-                }
             }
+
           /* Successful, no backreferences encountered! */
           if (!backref)
             goto success;
@@ -314,8 +328,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
         {
           /* We are looking for the leftmost (then longest) exact match.
              We will go through the outer loop only once.  */
-          beg = buf;
-          end = buflim;
           ptr = start_ptr;
         }
 
