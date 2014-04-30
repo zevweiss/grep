@@ -456,9 +456,13 @@ dfambcache (struct dfa *d)
       wint_t wi;
       switch (mbrtowc (&wc, &c, 1, &s))
         {
-        default: wi = wc; break;
-        case (size_t) -2: wi = WEOF; break;
-        case (size_t) -1: wi = uc; break;
+        default:
+          wi = wc;
+          break;
+        case (size_t) -1:
+        case (size_t) -2:
+          wi = WEOF;
+          break;
         }
       d->mbrtowc_cache[uc] = wi;
     }
@@ -492,7 +496,6 @@ mbs_to_wchar (wchar_t *pwc, char const *s, size_t n, struct dfa *d)
       if (0 < nbytes && nbytes < (size_t) -2)
         return nbytes;
       memset (&d->mbs, 0, sizeof d->mbs);
-      wc = uc;
     }
 
   *pwc = wc;
@@ -847,6 +850,8 @@ static int cur_mb_len = 1;      /* Length of the multibyte representation of
 /* These variables are used only if (MB_CUR_MAX > 1).  */
 static wchar_t wctok;           /* Wide character representation of the current
                                    multibyte character.  */
+static unsigned int ctok;       /* Single character representation of the current
+                                   multibyte character.  */
 
 
 /* Note that characters become unsigned here.  */
@@ -1128,19 +1133,22 @@ parse_bracket_exp (void)
                      to the pair of ranges, [m-z] [M-Z].  Although this code
                      is wrong in multiple ways, it's never used in practice.
                      FIXME: Remove this (and related) unused code.  */
-                  work_mbc->ranges
-                    = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 2,
-                                     &ranges_al, sizeof *work_mbc->ranges);
-                  work_mbc->ranges[work_mbc->nranges].beg
-                    = case_fold ? towlower (wc) : wc;
-                  work_mbc->ranges[work_mbc->nranges++].end
-                    = case_fold ? towlower (wc2) : wc2;
-
-                  if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
+                  if (wc != WEOF && wc2 != WEOF)
                     {
-                      work_mbc->ranges[work_mbc->nranges].beg = towupper (wc);
+                      work_mbc->ranges
+                        = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 2,
+                                         &ranges_al, sizeof *work_mbc->ranges);
+                      work_mbc->ranges[work_mbc->nranges].beg
+                        = case_fold ? towlower (wc) : wc;
                       work_mbc->ranges[work_mbc->nranges++].end
-                        = towupper (wc2);
+                        = case_fold ? towlower (wc2) : wc2;
+
+                      if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
+                        {
+                          work_mbc->ranges[work_mbc->nranges].beg = towupper (wc);
+                          work_mbc->ranges[work_mbc->nranges++].end
+                            = towupper (wc2);
+                        }
                     }
                 }
               else if (using_simple_locale ())
@@ -1184,23 +1192,28 @@ parse_bracket_exp (void)
           continue;
         }
 
-      if (case_fold)
+      if (wc != WEOF)
         {
-          wchar_t folded[CASE_FOLDED_BUFSIZE];
-          int i, n = case_folded_counterparts (wc, folded);
-          work_mbc->chars = maybe_realloc (work_mbc->chars,
-                                           work_mbc->nchars + n, &chars_al,
-                                           sizeof *work_mbc->chars);
-          for (i = 0; i < n; i++)
-            if (!setbit_wc (folded[i], ccl))
-              work_mbc->chars[work_mbc->nchars++] = folded[i];
+          if (case_fold)
+            {
+              wchar_t folded[CASE_FOLDED_BUFSIZE];
+              int i, n = case_folded_counterparts (wc, folded);
+              work_mbc->chars = maybe_realloc (work_mbc->chars,
+                                               work_mbc->nchars + n, &chars_al,
+                                               sizeof *work_mbc->chars);
+              for (i = 0; i < n; i++)
+                if (!setbit_wc (folded[i], ccl))
+                  work_mbc->chars[work_mbc->nchars++] = folded[i];
+            }
+          else if (!setbit_wc (wc, ccl))
+            {
+              work_mbc->chars = maybe_realloc (work_mbc->chars, work_mbc->nchars,
+                                               &chars_al, sizeof *work_mbc->chars);
+              work_mbc->chars[work_mbc->nchars++] = wc;
+            }
         }
-      if (!setbit_wc (wc, ccl))
-        {
-          work_mbc->chars = maybe_realloc (work_mbc->chars, work_mbc->nchars,
-                                           &chars_al, sizeof *work_mbc->chars);
-          work_mbc->chars[work_mbc->nchars++] = wc;
-        }
+      else
+        setbit (c, ccl);
     }
   while ((wc = wc1, (c = c1) != ']'));
 
@@ -1245,7 +1258,8 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-      FETCH_WC (c, wctok, NULL);
+      FETCH_WC (ctok, wctok, NULL);
+      c = ctok;
       if (c == (unsigned int) EOF)
         goto normal_char;
 
@@ -1776,18 +1790,23 @@ atom (void)
 {
   if (tok == WCHAR)
     {
-      addtok_wc (wctok);
-
-      if (case_fold)
+      if (wctok != WEOF)
         {
-          wchar_t folded[CASE_FOLDED_BUFSIZE];
-          int i, n = case_folded_counterparts (wctok, folded);
-          for (i = 0; i < n; i++)
+          addtok_wc (wctok);
+
+          if (case_fold)
             {
-              addtok_wc (folded[i]);
-              addtok (OR);
+              wchar_t folded[CASE_FOLDED_BUFSIZE];
+              int i, n = case_folded_counterparts (wctok, folded);
+              for (i = 0; i < n; i++)
+                {
+                  addtok_wc (folded[i]);
+                  addtok (OR);
+                }
             }
         }
+      else
+        addtok_mb (ctok, 3);
 
       tok = lex ();
     }
@@ -2953,6 +2972,8 @@ match_anychar (struct dfa *d, state_num s, position pos,
       if (syntax_bits & RE_DOT_NOT_NULL)
         return 0;
     }
+  else if (wc == WEOF)
+    return 0;
 
   context = wchar_context (wc);
   if (!SUCCEEDS_IN_CONTEXT (pos.constraint, d->states[s].context, context))
@@ -2989,6 +3010,8 @@ match_mb_charset (struct dfa *d, state_num s, position pos,
       if (syntax_bits & RE_DOT_NOT_NULL)
         return 0;
     }
+  else if (wc == WEOF)
+    return 0;
 
   context = wchar_context (wc);
   if (!SUCCEEDS_IN_CONTEXT (pos.constraint, d->states[s].context, context))

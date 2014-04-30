@@ -131,12 +131,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
         {
           /* The match was a part of multibyte character, advance at least
              one byte to ensure no infinite loop happens.  */
-          mbstate_t s;
-          memset (&s, 0, sizeof s);
-          size_t mb_len = mbrlen (mb_start, (buf + size) - (beg + offset), &s);
-          if (mb_len == (size_t) -2 || mb_len == (size_t) -1)
-            goto failure;
-          beg = mb_start + mb_len - 1;
+          beg = mb_start;
           continue;
         }
       beg += offset;

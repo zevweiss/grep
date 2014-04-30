@@ -228,7 +228,6 @@ is_mb_middle (const char **good, const char *buf, const char *end,
               size_t match_len)
 {
   const char *p = *good;
-  const char *prev = p;
   mbstate_t cur_state;
 
   if (using_utf8 () && buf - p > MB_CUR_MAX)
@@ -250,10 +249,6 @@ is_mb_middle (const char **good, const char *buf, const char *end,
       if (mbclen == (size_t) -2)
         mbclen = mbrlen (p, end - p, &cur_state);
 
-      /* Store the beginning of the previous complete multibyte character.  */
-      if (mbclen != (size_t) -2)
-        prev = p;
-
       if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
         {
           /* An invalid sequence, or a truncated multibyte character.
@@ -264,11 +259,11 @@ is_mb_middle (const char **good, const char *buf, const char *end,
       p += mbclen;
     }
 
-  *good = prev;
+  *good = p;
 
   if (p > buf)
     return true;
 
   /* P == BUF here.  */
-  return 0 < match_len && match_len < mbrlen (p, end - p, &cur_state);
+  return false;
 }
