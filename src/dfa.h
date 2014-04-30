@@ -71,9 +71,11 @@ extern void dfacomp (char const *, size_t, struct dfa *, int);
 extern char *dfaexec (struct dfa *d, char const *begin, char *end,
                       int newline, size_t *count, int *backref);
 
-/* Return superset for D, which searchs through a buffer looking for a
-   potential match.  */
-extern struct dfa *dfasuperset (struct dfa *d);
+/* Return a superset for D.  The superset matches everything that D
+   matches, along with some other strings (though the latter should be
+   rare, for efficiency reasons).  Return a null pointer if no useful
+   superset is available.  */
+extern struct dfa *dfasuperset (struct dfa const *d) _GL_ATTRIBUTE_PURE;
 
 /* Return true if the DFA is likely to be fast.  */
 extern bool dfaisfast (struct dfa const *) _GL_ATTRIBUTE_PURE;

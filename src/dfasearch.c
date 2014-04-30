@@ -227,7 +227,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
         {
           char const *next_beg, *dfa_beg = beg;
           size_t count = 0;
-          bool narrowed = false;
+          bool exact_kwset_match = false;
 
           /* Try matching with KWset, if it's defined.  */
           if (kwset)
@@ -241,17 +241,30 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 goto failure;
               match = beg + offset;
               prev_beg = beg;
-              
-              /* Narrow down to the line we've found.  */
+
+              /* Narrow down to the line containing the possible match.  */
               beg = memrchr (buf, eol, match - buf);
               beg = beg ? beg + 1 : buf;
               dfa_beg = beg;
 
-              if (kwsm.index < kwset_exact_matches)
-                {
-                  end = memchr (match, eol, buflim - match);
-                  end = end ? end + 1 : buflim;
+              /* Determine the end pointer to give the DFA next.  Typically
+                 this is after the first newline after MATCH; but if the KWset
+                 match is not exact, the DFA is fast, and the offset from
+                 PREV_BEG is less than 64 or (MATCH - PREV_BEG), this is the
+                 greater of the latter two values; this temporarily prefers
+                 the DFA to KWset.  */
+              exact_kwset_match = kwsm.index < kwset_exact_matches;
+              end = ((exact_kwset_match || !dfafast
+                      || MAX (16, match - beg) < (match - prev_beg) >> 2)
+                     ? match
+                     : (buflim - prev_beg) >> 2 <= match - beg
+                     ? buflim
+                     : prev_beg + 4 * (match - beg));
+              end = memchr (end, eol, buflim - end);
+              end = end ? end + 1 : buflim;
 
+              if (exact_kwset_match)
+                {
                   if (MB_CUR_MAX == 1)
                     goto success;
                   if (mb_start < beg)
@@ -263,69 +276,30 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                      character.  Perform the DFA search starting from the
                      beginning of the next character.  */
                   dfa_beg = mb_start;
-                  narrowed = true;
-                }
-              else if (dfafast)
-                {
-                  /* Determine the end pointer to start with DFA.  It's
-                     `match' by default.  If the offset from prev_beg is
-                     lesser than (match - beg) * 4 and/or 64, set it to
-                     greatest value in them.  A larger offset than the
-                     default means that DFA is preferred to KWset.  */
-                  offset = (match - beg) * 4;
-                  if (offset < 64)
-                    offset = 64;
-                  if (prev_beg + offset > match)
-                    {
-                      end = prev_beg + offset;
-                      if (end < buflim)
-                        {
-                          end = memchr (end, eol, buflim - end);
-                          end = end ? end + 1 : buflim;
-                        }
-                      else
-                        end = buflim;
-                    }
-                  else
-                    {
-                      end = memchr (match, eol, buflim - match);
-                      end = end ? end + 1 : buflim;
-                      narrowed = true;
-                    }
-                }
-              else
-                {
-                  end = memchr (match, eol, buflim - match);
-                  end = end ? end + 1 : buflim;
-                  narrowed = true;
                 }
             }
 
           /* Try matching with the superset of DFA, if it's defined.  */
-          if (superset && !(kwset && kwsm.index < kwset_exact_matches))
+          if (superset && !exact_kwset_match)
             {
-              next_beg = dfaexec (superset, dfa_beg, (char *) end, 1, &count, NULL);
+              next_beg = dfaexec (superset, dfa_beg, (char *) end, 1,
+                                  &count, NULL);
               /* If there's no match, or if we've matched the sentinel,
                  we're done.  */
               if (next_beg == NULL || next_beg == end)
                 continue;
-              if (!narrowed)
-                {
-                  /* Narrow down to the line we've found.  */
-                  if (count != 0)
-                    {
-                      beg = memrchr (buf, eol, next_beg - buf);
-                      beg = beg ? beg + 1 : buf;
 
-                      /* If dfaexec may match in multiple lines, try to
-                         match in one line.  */
-                      end = beg;
-                      continue;
-                    }
-                  end = memchr (next_beg, eol, buflim - next_beg);
-                  end = end ? end + 1 : buflim;
-                  narrowed = true;
+              /* Narrow down to the line we've found.  */
+              if (count != 0)
+                {
+                  /* If dfaexec may match in multiple lines, try to
+                     match in one line.  */
+                  end = memrchr (buf, eol, next_beg - buf);
+                  end++;
+                  continue;
                 }
+              end = memchr (next_beg, eol, buflim - next_beg);
+              end = end ? end + 1 : buflim;
             }
 
           /* Try matching with DFA.  */
@@ -335,17 +309,15 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
              we're done.  */
           if (next_beg == NULL || next_beg == end)
             continue;
-          if (!narrowed)
+
+          /* Narrow down to the line we've found.  */
+          if (count != 0)
             {
-              /* Narrow down to the line we've found.  */
-              if (count != 0)
-                {
-                  beg = memrchr (buf, eol, next_beg - buf);
-                  beg = beg ? beg + 1 : buf;
-                }
-              end = memchr (next_beg, eol, buflim - next_beg);
-              end = end ? end + 1 : buflim;
+              beg = memrchr (buf, eol, next_beg - buf);
+              beg++;
             }
+          end = memchr (next_beg, eol, buflim - next_beg);
+          end = end ? end + 1 : buflim;
 
           /* Successful, no backreferences encountered! */
           if (!backref)
@@ -364,8 +336,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
       if (TYPE_MAXIMUM (regoff_t) < end - beg - 1)
         xalloc_die ();
 
-      /* If we've made it to this point, this means DFA has seen
-         a probable match, and we need to run it through Regex. */
+      /* Run the possible match through Regex.  */
       best_match = end;
       best_len = 0;
       for (i = 0; i < pcount; i++)

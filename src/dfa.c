@@ -3395,10 +3395,8 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   return (char *) p;
 }
 
-/* Return superset for D, which searchs through a buffer looking for a
-   potential match.  */
 struct dfa *
-dfasuperset (struct dfa *d)
+dfasuperset (struct dfa const *d)
 {
   return d->superset;
 }
