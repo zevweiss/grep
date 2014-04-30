@@ -2129,13 +2129,11 @@ state_index (struct dfa *d, position_set const *s, int context)
    constraint.  Repeat exhaustively until no funny positions are left.
    S->elems must be large enough to hold the result.  */
 static void
-epsclosure (position_set * s, struct dfa const *d)
+epsclosure (position_set *s, struct dfa const *d, char *visited)
 {
   size_t i, j;
   position p, old;
-
-  /* Array of booleans, large enough to use char, not int.  */
-  char *visited = xzalloc (d->tindex);
+  bool initialized = false;
 
   for (i = 0; i < s->nelem; ++i)
     if (d->tokens[s->elems[i].index] >= NOTCHAR
@@ -2144,6 +2142,11 @@ epsclosure (position_set * s, struct dfa const *d)
         && d->tokens[s->elems[i].index] != MBCSET
         && d->tokens[s->elems[i].index] < CSET)
       {
+        if (!initialized)
+          {
+            memset (visited, 0, d->tindex * sizeof (*visited));
+            initialized = true;
+          }
         old = s->elems[i];
         p.constraint = old.constraint;
         delete (s->elems[i], s);
@@ -2184,8 +2187,6 @@ epsclosure (position_set * s, struct dfa const *d)
         /* Force rescan to start at the beginning.  */
         i = -1;
       }
-
-  free (visited);
 }
 
 /* Returns the set of contexts for which there is at least one
@@ -2312,6 +2313,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   int separate_contexts;        /* Context wanted by some position.  */
   size_t i, j;
   position *pos;
+  char *visited = xnmalloc (d->tindex, sizeof *visited);
 
 #ifdef DEBUG
   fprintf (stderr, "dfaanalyze:\n");
@@ -2470,7 +2472,7 @@ dfaanalyze (struct dfa *d, int searchflag)
         putc ('\n', stderr);
 #endif
         copy (&d->follows[i], &merged);
-        epsclosure (&merged, d);
+        epsclosure (&merged, d, visited);
         copy (&merged, &d->follows[i]);
       }
 
@@ -2479,7 +2481,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   merged.nelem = 0;
   for (i = 0; i < stk[-1].nfirstpos; ++i)
     insert (firstpos[i], &merged);
-  epsclosure (&merged, d);
+  epsclosure (&merged, d, visited);
 
   /* Build the initial state.  */
   separate_contexts = state_separate_contexts (&merged);
@@ -2490,6 +2492,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   free (posalloc);
   free (stkalloc);
   free (merged.elems);
+  free (visited);
 }
 
 
@@ -2733,10 +2736,11 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
 
       /* If we are building a searching matcher, throw in the positions
          of state 0 as well.  */
-      if (d->searchflag
-          && (!d->multibyte || !next_isnt_1st_byte))
-        for (j = 0; j < d->states[0].elems.nelem; ++j)
-          insert (d->states[0].elems.elems[j], &follows);
+      if (d->searchflag && (!d->multibyte || !next_isnt_1st_byte))
+        {
+          merge (&d->states[0].elems, &follows, &tmp);
+          copy (&tmp, &follows);
+        }
 
       /* Find out if the new state will want any context information.  */
       possible_contexts = charclass_context (labels[i]);
