@@ -257,9 +257,9 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               end = ((exact_kwset_match || !dfafast
                       || MAX (16, match - beg) < (match - prev_beg) >> 2)
                      ? match
-                     : (buflim - prev_beg) >> 2 <= match - beg
+                     : (buflim - prev_beg) >> 2 <= MAX (16, match - beg)
                      ? buflim
-                     : prev_beg + 4 * (match - beg));
+                     : prev_beg + 4 * MAX (16, match - beg));
               end = memchr (end, eol, buflim - end);
               end = end ? end + 1 : buflim;
 
