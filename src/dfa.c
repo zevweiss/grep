@@ -337,6 +337,7 @@ struct dfa
   size_t nleaves;               /* Number of leaves on the parse tree.  */
   size_t nregexps;              /* Count of parallel regexps being built
                                    with dfaparse.  */
+  bool has_backref;             /* True if has BACKREF in tokens.  */
   bool multibyte;		/* True iff MB_CUR_MAX > 1.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
@@ -1593,6 +1594,8 @@ addtok_mb (token t, int mbprop)
       --depth;
       break;
 
+    case BACKREF:
+      dfa->has_backref = true;
     default:
       ++dfa->nleaves;
     case EMPTY:
@@ -3419,18 +3422,7 @@ dfasuperset (struct dfa const *d)
 bool
 dfaisfast (struct dfa const *d)
 {
-  if (d->superset)
-    return true;
-  else if (d->multibyte)
-    return false;
-  else
-    {
-      size_t i;
-      for (i = 0; i < d->tindex; i++)
-        if (d->tokens[i] == BACKREF)
-          return false;
-      return true;
-    }
+  return d->superset || (!d->multibyte && !d->has_backref);
 }
 
 static void
