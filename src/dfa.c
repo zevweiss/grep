@@ -363,9 +363,8 @@ struct dfa
   int *multibyte_prop;
 
   /* A table indexed by byte values that contains the corresponding wide
-     character (if any) for that byte.  WEOF means the byte is the
-     leading byte of a multibyte character.  Invalid and null bytes are
-     mapped to themselves.  */
+     character (if any) for that byte.  WEOF means the byte is not a
+     valid single-byte character.  */
   wint_t mbrtowc_cache[NOTCHAR];
 
   /* Array of the bracket expression in the DFA.  */
@@ -453,29 +452,19 @@ dfambcache (struct dfa *d)
       unsigned char uc = i;
       mbstate_t s = { 0 };
       wchar_t wc;
-      wint_t wi;
-      switch (mbrtowc (&wc, &c, 1, &s))
-        {
-        default:
-          wi = wc;
-          break;
-        case (size_t) -1:
-        case (size_t) -2:
-          wi = WEOF;
-          break;
-        }
-      d->mbrtowc_cache[uc] = wi;
+      d->mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
     }
 }
 
 /* Store into *PWC the result of converting the leading bytes of the
    multibyte buffer S of length N bytes, using the mbrtowc_cache in *D
    and updating the conversion state in *D.  On conversion error,
-   convert just a single byte as-is.  Return the number of bytes
+   convert just a single byte, to WEOF.  Return the number of bytes
    converted.
 
    This differs from mbrtowc (PWC, S, N, &D->mbs) as follows:
 
+   * PWC points to wint_t, not to wchar_t.
    * The last arg is a dfa *D instead of merely a multibyte conversion
      state D->mbs.  D also contains an mbrtowc_cache for speed.
    * N must be at least 1.
@@ -485,16 +474,20 @@ dfambcache (struct dfa *d)
    * D->mbs is always valid afterwards.
    * *PWC is always set to something.  */
 static size_t
-mbs_to_wchar (wchar_t *pwc, char const *s, size_t n, struct dfa *d)
+mbs_to_wchar (wint_t *pwc, char const *s, size_t n, struct dfa *d)
 {
   unsigned char uc = s[0];
   wint_t wc = d->mbrtowc_cache[uc];
 
   if (wc == WEOF)
     {
-      size_t nbytes = mbrtowc (pwc, s, n, &d->mbs);
+      wchar_t wch;
+      size_t nbytes = mbrtowc (&wch, s, n, &d->mbs);
       if (0 < nbytes && nbytes < (size_t) -2)
-        return nbytes;
+        {
+          *pwc = wch;
+          return nbytes;
+        }
       memset (&d->mbs, 0, sizeof d->mbs);
     }
 
@@ -848,13 +841,21 @@ static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
 static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
 /* These variables are used only if (MB_CUR_MAX > 1).  */
-static wchar_t wctok;           /* Wide character representation of the current
-                                   multibyte character.  */
-static unsigned int ctok;       /* Single character representation of the current
-                                   multibyte character.  */
+static wint_t wctok;		/* Wide character representation of the current
+				   multibyte character, or WEOF if there was
+                                   an encoding error.  */
+static int ctok;		/* Current input byte if it is an entire
+                                   character or is an encoding error,
+                                   EOF otherwise.  */
 
 
-/* Note that characters become unsigned here.  */
+/* Fetch the next lexical input character.  Set C (of type int) to the
+   next input byte, except set C to EOF if the input is a multibyte
+   character of length greater than 1.  Set WC (of type wint_t) to the
+   value of the input if it is a valid multibyte character (possibly
+   of length 1); otherwise set WC to WEOF.  If there is no more input,
+   report EOFERR if EOFERR is not null, and return lasttok = END
+   otherwise.  */
 # define FETCH_WC(c, wc, eoferr)		\
   do {						\
     if (! lexleft)				\
@@ -866,7 +867,7 @@ static unsigned int ctok;       /* Single character representation of the curren
       }						\
     else					\
       {						\
-        wchar_t _wc;				\
+        wint_t _wc;				\
         size_t nbytes = mbs_to_wchar (&_wc, lexptr, lexleft, dfa); \
         cur_mb_len = nbytes;			\
         (wc) = _wc;				\
@@ -1027,7 +1028,7 @@ parse_bracket_exp (void)
   colon_warning_state = (c == ':');
   do
     {
-      c1 = EOF;                 /* mark c1 is not initialized".  */
+      c1 = NOTCHAR;	/* Mark c1 as not initialized.  */
       colon_warning_state &= ~2;
 
       /* Note that if we're looking at some other [:...:] construct,
@@ -1105,7 +1106,7 @@ parse_bracket_exp (void)
       if (c == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
         FETCH_WC (c, wc, _("unbalanced ["));
 
-      if (c1 == EOF)
+      if (c1 == NOTCHAR)
         FETCH_WC (c1, wc1, _("unbalanced ["));
 
       if (c1 == '-')
@@ -1192,28 +1193,24 @@ parse_bracket_exp (void)
           continue;
         }
 
-      if (wc != WEOF)
-        {
-          if (case_fold)
-            {
-              wchar_t folded[CASE_FOLDED_BUFSIZE];
-              int i, n = case_folded_counterparts (wc, folded);
-              work_mbc->chars = maybe_realloc (work_mbc->chars,
-                                               work_mbc->nchars + n, &chars_al,
-                                               sizeof *work_mbc->chars);
-              for (i = 0; i < n; i++)
-                if (!setbit_wc (folded[i], ccl))
-                  work_mbc->chars[work_mbc->nchars++] = folded[i];
-            }
-          else if (!setbit_wc (wc, ccl))
-            {
-              work_mbc->chars = maybe_realloc (work_mbc->chars, work_mbc->nchars,
-                                               &chars_al, sizeof *work_mbc->chars);
-              work_mbc->chars[work_mbc->nchars++] = wc;
-            }
-        }
-      else
+      if (wc == WEOF)
         setbit (c, ccl);
+      else
+        {
+          wchar_t folded[CASE_FOLDED_BUFSIZE + 1];
+          int i;
+          int n = (case_fold ? case_folded_counterparts (wc, folded + 1) + 1
+                   : 1);
+          folded[0] = wc;
+          for (i = 0; i < n; i++)
+            if (!setbit_wc (folded[i], ccl))
+              {
+                work_mbc->chars
+                  = maybe_realloc (work_mbc->chars, work_mbc->nchars,
+                                   &chars_al, sizeof *work_mbc->chars);
+                work_mbc->chars[work_mbc->nchars++] = folded[i];
+              }
+        }
     }
   while ((wc = wc1, (c = c1) != ']'));
 
@@ -1245,7 +1242,7 @@ parse_bracket_exp (void)
 static token
 lex (void)
 {
-  unsigned int c, c2;
+  int c, c2;
   bool backslash = false;
   charclass ccl;
   int i;
@@ -1260,8 +1257,6 @@ lex (void)
     {
       FETCH_WC (ctok, wctok, NULL);
       c = ctok;
-      if (c == (unsigned int) EOF)
-        goto normal_char;
 
       switch (c)
         {
@@ -1790,7 +1785,9 @@ atom (void)
 {
   if (tok == WCHAR)
     {
-      if (wctok != WEOF)
+      if (wctok == WEOF)
+        addtok_mb (ctok, 3);
+      else
         {
           addtok_wc (wctok);
 
@@ -1805,8 +1802,6 @@ atom (void)
                 }
             }
         }
-      else
-        addtok_mb (ctok, 3);
 
       tok = lex ();
     }
@@ -2957,7 +2952,7 @@ transit_state_singlebyte (struct dfa *d, state_num s, unsigned char const *p,
    match, in bytes.  POS is the position of the ".".  */
 static int
 match_anychar (struct dfa *d, state_num s, position pos,
-               wchar_t wc, size_t mbclen)
+               wint_t wc, size_t mbclen)
 {
   int context;
 
@@ -2987,7 +2982,7 @@ match_anychar (struct dfa *d, state_num s, position pos,
    POS is the position of the bracket expression.  */
 static int
 match_mb_charset (struct dfa *d, state_num s, position pos,
-                  char const *p, wchar_t wc, size_t match_len)
+                  char const *p, wint_t wc, size_t match_len)
 {
   size_t i;
   bool match;              /* Matching succeeded.  */
@@ -3090,7 +3085,7 @@ charset_matched:
    The caller MUST free the array which this function return.  */
 static int *
 check_matching_with_multibyte_ops (struct dfa *d, state_num s,
-                                   char const *p, wchar_t wc, size_t mbclen)
+                                   char const *p, wint_t wc, size_t mbclen)
 {
   size_t i;
   int *rarray;
@@ -3125,7 +3120,7 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s,
 static status_transit_state
 transit_state_consume_1char (struct dfa *d, state_num s,
                              unsigned char const **pp,
-                             wchar_t wc, size_t mbclen,
+                             wint_t wc, size_t mbclen,
                              int *match_lens)
 {
   size_t i, j;
@@ -3176,7 +3171,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   int *match_lens = NULL;
   size_t nelem = d->states[s].mbps.nelem;       /* Just a alias.  */
   unsigned char const *p1 = *pp;
-  wchar_t wc;
+  wint_t wc;
 
   if (nelem > 0)
     /* This state has (a) multibyte operator(s).
@@ -3305,7 +3300,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                      state must skip the bytes that are not a single
                      byte character nor the first byte of a multibyte
                      character.  */
-                  wchar_t wc;
+                  wint_t wc;
                   while (mbp < p)
                     mbp += mbs_to_wchar (&wc, (char const *) mbp,
                                          end - (char const *) mbp, d);

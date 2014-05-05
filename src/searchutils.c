@@ -249,10 +249,10 @@ is_mb_middle (const char **good, const char *buf, const char *end,
       if (mbclen == (size_t) -2)
         mbclen = mbrlen (p, end - p, &cur_state);
 
-      if (mbclen == (size_t) -1 || mbclen == (size_t) -2 || mbclen == 0)
+      if (! (0 < mbclen && mbclen < (size_t) -2))
         {
-          /* An invalid sequence, or a truncated multibyte character.
-             We treat it as a single byte character.  */
+          /* An invalid sequence, or a truncated multibyte character, or
+             a null wide character.  Treat it as a single byte character.  */
           mbclen = 1;
           memset (&cur_state, 0, sizeof cur_state);
         }
@@ -261,9 +261,5 @@ is_mb_middle (const char **good, const char *buf, const char *end,
 
   *good = p;
 
-  if (p > buf)
-    return true;
-
-  /* P == BUF here.  */
-  return false;
+  return buf < p;
 }
