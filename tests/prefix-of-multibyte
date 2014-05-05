@@ -13,11 +13,16 @@ encode aABC >exp2
 fail=0
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
-  for opt in '' '-F'; do
-    out=out-$opt-$LOC
-    LC_ALL=$LOC grep $opt "$(encode A)" exp1 >$out || fail=1
+  for type in dfa fgrep regex; do
+    case $type in
+      dfa) opt= prefix= ;;
+      fgrep) opt=-F prefix= ;;
+      regex) opt= prefix='\(\)\1' ;;
+    esac
+    out=out-$type-$LOC
+    LC_ALL=$LOC grep $opt "$prefix$(encode A)" exp1 >$out || fail=1
     compare exp1 $out || fail=1
-    LC_ALL=$LOC grep $opt "$(encode aA)" exp2 >$out || fail=1
+    LC_ALL=$LOC grep $opt "$prefix$(encode aA)" exp2 >$out || fail=1
     compare exp2 $out || fail=1
   done
 done
