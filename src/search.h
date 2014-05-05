@@ -43,9 +43,9 @@ typedef signed char mb_len_map_t;
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
 
-extern char *mbtoupper (const char *, size_t *, mb_len_map_t **);
+extern char *mbtoupper (char const *, size_t *, mb_len_map_t **);
 extern void build_mbclen_cache (void);
-extern bool is_mb_middle (const char **, const char *, const char *, size_t);
+extern ptrdiff_t mb_goback (char const **, char const *, char const *);
 
 /* dfasearch.c */
 extern void GEAcompile (char const *, size_t, reg_syntax_t);

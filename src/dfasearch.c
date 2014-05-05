@@ -268,8 +268,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;
-                  if (!is_mb_middle (&mb_start, match, buflim,
-                                     kwsm.size[0] - begline))
+                  if (mb_goback (&mb_start, match, buflim) == 0)
                     goto success;
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the

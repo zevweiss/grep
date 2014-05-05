@@ -127,7 +127,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
         goto failure;
       len = kwsmatch.size[0] - match_lines;
       if (!match_lines && MB_CUR_MAX > 1 && !using_utf8 ()
-          && is_mb_middle (&mb_start, beg + offset, buf + size, len))
+          && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
           /* The match was a part of multibyte character, advance at least
              one byte to ensure no infinite loop happens.  */

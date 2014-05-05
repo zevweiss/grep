@@ -222,16 +222,27 @@ build_mbclen_cache (void)
     }
 }
 
-bool
-is_mb_middle (const char **good, const char *buf, const char *end,
-              size_t match_len)
+/* In the buffer *MB_START, return the number of bytes needed to go
+   back from CUR to the previous boundary, where a "boundary" is the
+   start of a multibyte character or is an error-encoding byte.  The
+   buffer ends at END (i.e., one past the address of the buffer's last
+   byte).  If CUR is already at a boundary, return 0.  If *MB_START is
+   greater than or equal to CUR, return the negative value CUR - *MB_START.
+
+   When returning zero, set *MB_START to CUR.  When returning a
+   positive value, set *MB_START to the next boundary after CUR, or to
+   END if there is no such boundary.  When returning a negative value,
+   leave *MB_START alone.  */
+ptrdiff_t
+mb_goback (char const **mb_start, char const *cur, char const *end)
 {
-  const char *p = *good;
+  const char *p = *mb_start;
+  const char *p0 = p;
   mbstate_t cur_state;
 
   memset (&cur_state, 0, sizeof cur_state);
 
-  while (p < buf)
+  while (p < cur)
     {
       size_t mbclen = mbclen_cache[to_uchar (*p)];
 
@@ -245,10 +256,10 @@ is_mb_middle (const char **good, const char *buf, const char *end,
           mbclen = 1;
           memset (&cur_state, 0, sizeof cur_state);
         }
+      p0 = p;
       p += mbclen;
     }
 
-  *good = p;
-
-  return buf < p;
+  *mb_start = p;
+  return p == cur ? 0 : cur - p0;
 }
