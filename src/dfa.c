@@ -1598,8 +1598,10 @@ addtok_mb (token t, int mbprop)
 
     case BACKREF:
       dfa->fast = false;
+      /* fallthrough */
     default:
       ++dfa->nleaves;
+      /* fallthrough */
     case EMPTY:
       ++depth;
       break;
@@ -2380,6 +2382,7 @@ dfaanalyze (struct dfa *d, int searchflag)
               merge (&tmp, &d->follows[pos[j].index], &merged);
               copy (&merged, &d->follows[pos[j].index]);
             }
+          /* fallthrough */
 
         case QMARK:
           /* A QMARK or STAR node is automatically nullable.  */
