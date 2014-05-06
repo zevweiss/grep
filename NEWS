@@ -19,6 +19,10 @@ GNU grep NEWS                                    -*- outline -*-
   to whether the errors can match parts of multibyte characters in data.
   [bug present since "the beginning"]
 
+  grep -w no longer mishandles a potential match adjacent to a letter that
+  takes up two or more bytes in a multibyte encoding.
+  [bug present since "the beginning"]
+
   grep -P now reports an error and exits when given invalid UTF-8 data.
   Previously it was unreliable, and sometimes crashed or looped.
   [bug introduced in grep-2.16]

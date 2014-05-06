@@ -21,8 +21,12 @@
 #include <config.h>
 #include "search.h"
 
-/* For -w, we also consider _ to be word constituent.  */
-#define WCHAR(C) (isalnum (C) || (C) == '_')
+/* Whether -w considers WC to be a word constituent.  */
+static bool
+wordchar (wint_t wc)
+{
+  return wc == L'_' || iswalnum (wc);
+}
 
 /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
    a list of strings, at least one of which is known to occur in
@@ -142,9 +146,9 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (match_words)
         for (try = beg; ; )
           {
-            if (try > buf && WCHAR(to_uchar (try[-1])))
+            if (wordchar (mb_prev_wc (buf, try, buf + size)))
               break;
-            if (try + len < buf + size && WCHAR(to_uchar (try[len])))
+            if (wordchar (mb_next_wc (try + len, buf + size)))
               {
                 if (!len)
                   break;

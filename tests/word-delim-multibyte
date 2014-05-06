@@ -11,8 +11,16 @@ LC_ALL=en_US.UTF-8
 export LC_ALL
 
 fail=0
-grep "\<$e_acute" in > out 2>err || fail=1
 
+grep "\\<$e_acute" in > out 2>err || fail=1
+compare out in || fail=1
+compare /dev/null err || fail=1
+
+grep "$e_acute\\>" in > out 2>err || fail=1
+compare out in || fail=1
+compare /dev/null err || fail=1
+
+grep -w "$e_acute" in > out 2>err || fail=1
 compare out in || fail=1
 compare /dev/null err || fail=1
 

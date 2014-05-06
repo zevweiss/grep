@@ -46,6 +46,8 @@ extern void kwsinit (kwset_t *);
 extern char *mbtoupper (char const *, size_t *, mb_len_map_t **);
 extern void build_mbclen_cache (void);
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);
+extern wint_t mb_prev_wc (char const *, char const *, char const *);
+extern wint_t mb_next_wc (char const *, char const *);
 
 /* dfasearch.c */
 extern void GEAcompile (char const *, size_t, reg_syntax_t);

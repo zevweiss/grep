@@ -263,3 +263,27 @@ mb_goback (char const **mb_start, char const *cur, char const *end)
   *mb_start = p;
   return p == cur ? 0 : cur - p0;
 }
+
+/* In the buffer BUF, return the wide character that is encoded just
+   before CUR.  The buffer ends at END.  Return WEOF if there is no
+   wide character just before CUR.  */
+wint_t
+mb_prev_wc (char const *buf, char const *cur, char const *end)
+{
+  if (cur == buf)
+    return WEOF;
+  char const *p = buf;
+  cur--;
+  cur -= mb_goback (&p, cur, end);
+  return mb_next_wc (cur, end);
+}
+
+/* Return the wide character that is encoded at CUR.  The buffer ends
+   at END.  Return WEOF if there is no wide character encoded at CUR.  */
+wint_t
+mb_next_wc (char const *cur, char const *end)
+{
+  wchar_t wc;
+  mbstate_t mbs = { 0 };
+  return mbrtowc (&wc, cur, end - cur, &mbs) < (size_t) -2 ? wc : WEOF;
+}
