@@ -77,7 +77,7 @@ extern char *dfaexec (struct dfa *d, char const *begin, char *end,
    superset is available.  */
 extern struct dfa *dfasuperset (struct dfa const *d) _GL_ATTRIBUTE_PURE;
 
-/* Return true if the DFA is likely to be fast.  */
+/* The DFA is likely to be fast.  */
 extern bool dfaisfast (struct dfa const *) _GL_ATTRIBUTE_PURE;
 
 /* Free the storage held by the components of a struct dfa. */

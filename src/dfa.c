@@ -46,7 +46,6 @@
    host does not conform to Posix.  */
 #define ISASCIIDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
-/* gettext.h ensures that we don't use gettext if ENABLE_NLS is not defined */
 #include "gettext.h"
 #define _(str) gettext (str)
 
@@ -183,27 +182,25 @@ enum
                                    a backtracking matcher.  */
 
   BEGLINE,                      /* BEGLINE is a terminal symbol that matches
-                                   the empty string if it is at the beginning
-                                   of a line.  */
+				   the empty string at the beginning of a
+				   line.  */
 
   ENDLINE,                      /* ENDLINE is a terminal symbol that matches
-                                   the empty string if it is at the end of
-                                   a line.  */
+				   the empty string at the end of a line.  */
 
   BEGWORD,                      /* BEGWORD is a terminal symbol that matches
-                                   the empty string if it is at the beginning
-                                   of a word.  */
+				   the empty string at the beginning of a
+				   word.  */
 
   ENDWORD,                      /* ENDWORD is a terminal symbol that matches
-                                   the empty string if it is at the end of
-                                   a word.  */
+				   the empty string at the end of a word.  */
 
   LIMWORD,                      /* LIMWORD is a terminal symbol that matches
-                                   the empty string if it is at the beginning
-                                   or the end of a word.  */
+				   the empty string at the beginning or the
+				   end of a word.  */
 
   NOTLIMWORD,                   /* NOTLIMWORD is a terminal symbol that
-                                   matches the empty string if it is not at
+				   matches the empty string not at
                                    the beginning or end of a word.  */
 
   QMARK,                        /* QMARK is an operator of one argument that
@@ -284,8 +281,8 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  bool has_backref;             /* True if this state matches a \<digit>.  */
-  bool has_mbcset;              /* True if this state matches a MBCSET.  */
+  bool has_backref;		/* This state matches a \<digit>.  */
+  bool has_mbcset;		/* This state matches a MBCSET.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
@@ -338,7 +335,7 @@ struct dfa
   size_t nregexps;              /* Count of parallel regexps being built
                                    with dfaparse.  */
   bool fast;			/* The DFA is fast.  */
-  bool multibyte;		/* True iff MB_CUR_MAX > 1.  */
+  bool multibyte;		/* MB_CUR_MAX > 1.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
 
@@ -389,7 +386,7 @@ struct dfa
                                    matching the given position in a string
                                    matching the regexp.  Allocated to the
                                    maximum possible position index.  */
-  bool searchflag;              /* True if we are supposed to build a searching
+  bool searchflag;		/* We are supposed to build a searching
                                    as opposed to an exact matcher.  A searching
                                    matcher finds the first and shortest string
                                    matching a regexp anywhere in the buffer,
@@ -432,11 +429,10 @@ struct dfa
 
 /* Some macros for user access to dfa internals.  */
 
-/* ACCEPTING returns true if s could possibly be an accepting state of r.  */
+/* S could possibly be an accepting state of R.  */
 #define ACCEPTING(s, r) ((r).states[s].constraint)
 
-/* ACCEPTS_IN_CONTEXT returns true if the given state accepts in the
-   specified context.  */
+/* STATE accepts in the specified context.  */
 #define ACCEPTS_IN_CONTEXT(prev, curr, state, dfa) \
   SUCCEEDS_IN_CONTEXT ((dfa).states[state].constraint, prev, curr)
 
@@ -626,9 +622,9 @@ equal (charclass const s1, charclass const s2)
    and return its new address.  Although PTR may be null, the returned
    value is never null.
 
-   The array holds *NALLOC items; *NALLOC must be zero if PTR is null,
-   and is updated on reallocation.  ITEMSIZE is the size of one item.
-   Avoid O(N**2) behavior on arrays growing linearly.  */
+   The array holds *NALLOC items; *NALLOC is updated on reallocation.
+   ITEMSIZE is the size of one item.  Avoid O(N**2) behavior on arrays
+   growing linearly.  */
 static void *
 maybe_realloc (void *ptr, size_t nitems, size_t *nalloc, size_t itemsize)
 {
@@ -691,7 +687,7 @@ static charclass newline;
 # define is_valid_unibyte_character(c) (btowc (c) != WEOF)
 #endif
 
-/* Return non-zero if C is a "word-constituent" byte; zero otherwise.  */
+/* C is a "word-constituent" byte.  */
 #define IS_WORD_CONSTITUENT(C) \
   (is_valid_unibyte_character (C) && (isalnum (C) || (C) == '_'))
 
@@ -786,7 +782,7 @@ using_utf8 (void)
   return utf8;
 }
 
-/* Return true if the current locale is known to be a unibyte locale
+/* The current locale is known to be a unibyte locale
    without multicharacter collating sequences and where range
    comparisons simply use the native encoding.  These locales can be
    processed more efficiently.  */
@@ -794,7 +790,7 @@ using_utf8 (void)
 static bool
 using_simple_locale (void)
 {
-  /* True if the native character set is known to be compatible with
+  /* The native character set is known to be compatible with
      the C locale.  The following test isn't perfect, but it's good
      enough in practice, as only ASCII and EBCDIC are in common use
      and this test correctly accepts ASCII and rejects EBCDIC.  */
@@ -834,7 +830,7 @@ using_simple_locale (void)
 static char const *lexptr;      /* Pointer to next input character.  */
 static size_t lexleft;          /* Number of characters remaining.  */
 static token lasttok;           /* Previous token returned; initially END.  */
-static bool laststart;          /* True if we're separated from beginning or (,
+static bool laststart;		/* We're separated from beginning or (,
                                    | only by zero-width characters.  */
 static size_t parens;           /* Count of outstanding left parens.  */
 static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
@@ -976,7 +972,7 @@ parse_bracket_exp (void)
   int c, c1, c2;
   charclass ccl;
 
-  /* True if this is a bracket expression that dfaexec is known to
+  /* This is a bracket expression that dfaexec is known to
      process correctly.  */
   bool known_bracket_exp = true;
 
@@ -2560,7 +2556,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   state_num state;              /* New state.  */
   state_num state_newline;      /* New state on a newline transition.  */
   state_num state_letter;       /* New state on a letter transition.  */
-  bool next_isnt_1st_byte = false; /* Flag if we can't add state0.  */
+  bool next_isnt_1st_byte = false; /* We can't add state0.  */
   size_t i, j, k;
 
   zeroset (matches);
