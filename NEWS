@@ -14,6 +14,11 @@ GNU grep NEWS                                    -*- outline -*-
   grep -f no longer mishandles patterns containing NUL bytes.
   [bug introduced in grep-2.11]
 
+  Plain grep, grep -E, and grep -F now treat encoding errors in patterns
+  the same way the GNU regular expression matcher treats them, with respect
+  to whether the errors can match parts of multibyte characters in data.
+  [bug present since "the beginning"]
+
   grep -P now reports an error and exits when given invalid UTF-8 data.
   Previously it was unreliable, and sometimes crashed or looped.
   [bug introduced in grep-2.16]

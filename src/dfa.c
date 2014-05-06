@@ -840,13 +840,11 @@ static int minrep, maxrep;      /* Repeat counts for {m,n}.  */
 
 static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
-/* These variables are used only if (MB_CUR_MAX > 1).  */
+
 static wint_t wctok;		/* Wide character representation of the current
 				   multibyte character, or WEOF if there was
-                                   an encoding error.  */
-static int ctok;		/* Current input byte if it is an entire
-                                   character or is an encoding error,
-                                   EOF otherwise.  */
+				   an encoding error.  Used only if
+				   MB_CUR_MAX > 1.  */
 
 
 /* Fetch the next lexical input character.  Set C (of type int) to the
@@ -1194,7 +1192,7 @@ parse_bracket_exp (void)
         }
 
       if (wc == WEOF)
-        setbit (c, ccl);
+        known_bracket_exp = false;
       else
         {
           wchar_t folded[CASE_FOLDED_BUFSIZE + 1];
@@ -1255,8 +1253,7 @@ lex (void)
      "if (backslash) ...".  */
   for (i = 0; i < 2; ++i)
     {
-      FETCH_WC (ctok, wctok, NULL);
-      c = ctok;
+      FETCH_WC (c, wctok, NULL);
 
       switch (c)
         {
@@ -1786,7 +1783,7 @@ atom (void)
   if (tok == WCHAR)
     {
       if (wctok == WEOF)
-        addtok_mb (ctok, 3);
+        addtok (BACKREF);
       else
         {
           addtok_wc (wctok);

@@ -21,7 +21,6 @@
 #include <config.h>
 #include "intprops.h"
 #include "search.h"
-#include "dfa.h"
 
 /* For -w, we also consider _ to be word constituent.  */
 #define WCHAR(C) (isalnum (C) || (C) == '_')
@@ -265,7 +264,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 
               if (exact_kwset_match)
                 {
-                  if (MB_CUR_MAX == 1)
+                  if (MB_CUR_MAX == 1 || using_utf8 ())
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;

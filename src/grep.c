@@ -32,7 +32,6 @@
 #include "c-ctype.h"
 #include "closeout.h"
 #include "colorize.h"
-#include "dfa.h"
 #include "error.h"
 #include "exclude.h"
 #include "exitfail.h"
@@ -1888,6 +1887,22 @@ parse_grep_colors (void)
       return;
 }
 
+/* Return true if PAT (of length PATLEN) contains an encoding error.  */
+static bool
+contains_encoding_error (char const *pat, size_t patlen)
+{
+  mbstate_t mbs = { 0 };
+  size_t i, charlen;
+
+  for (i = 0; i < patlen; i += charlen + (charlen == 0))
+    {
+      charlen = mbrlen (pat + i, patlen - i, &mbs);
+      if ((size_t) -2 <= charlen)
+        return true;
+    }
+  return false;
+}
+
 /* Change a pattern for fgrep into grep.  */
 static void
 fgrep_to_grep_pattern (size_t len, char const *keys,
@@ -2318,9 +2333,11 @@ main (int argc, char **argv)
   else
     usage (EXIT_TROUBLE);
 
-  /* If case-insensitive fgrep in a multibyte locale, improve
-     performance by using grep instead.  */
-  if (match_icase && compile == Fcompile && MB_CUR_MAX > 1)
+  /* If fgrep in a multibyte locale, then use grep if either
+     (1) case is ignored (where grep is typically faster), or
+     (2) the pattern has an encoding error (where fgrep might not work).  */
+  if (compile == Fcompile && MB_CUR_MAX > 1
+      && (match_icase || contains_encoding_error (keys, keycc)))
     {
       size_t new_keycc;
       char *new_keys;

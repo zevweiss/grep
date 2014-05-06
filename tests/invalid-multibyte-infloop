@@ -14,7 +14,14 @@ encode AA > input
 fail=0
 
 # Before 2.15, this would infloop.
-LC_ALL=en_US.UTF-8 timeout 3 grep -F $(encode A) input > out || fail=1
-compare input out || fail=1
+LC_ALL=en_US.UTF-8 timeout 3 grep -F $(encode A) input > out
+status=$?
+if test $status -eq 0; then
+  compare input out
+elif test $status -eq 1; then
+  compare_dev_null_ /dev/null out
+else
+  test $status -eq 2
+fi || fail=1
 
 Exit $fail

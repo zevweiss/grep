@@ -8,14 +8,20 @@ require_compiled_in_MB_support
 
 encode() { echo "$1" | tr ABC '\357\274\241'; }
 
+encode ABC > in || framework_failure_
 fail=0
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out1-$LOC
-  encode ABC \
-    | LC_ALL=$LOC timeout 10s grep -F "$(encode BC)" > $out 2>&1
-  test $? = 1 || fail=1
-  compare /dev/null $out || fail=1
+  LC_ALL=$LOC timeout 10s grep -F "$(encode BC)" in > $out
+  status=$?
+  if test $status -eq 0; then
+    compare in $out
+  elif test $status -eq 1; then
+    compare_dev_null_ /dev/null $out
+  else
+    test $status -eq 2
+  fi || fail=1
 done
 
 Exit $fail

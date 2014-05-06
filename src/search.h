@@ -30,6 +30,7 @@
 #include "system.h"
 #include "error.h"
 #include "grep.h"
+#include "dfa.h"
 #include "kwset.h"
 #include "xalloc.h"
 

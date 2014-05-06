@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include "search.h"
-#include "dfa.h"
 #if HAVE_PCRE_H
 # include <pcre.h>
 #elif HAVE_PCRE_PCRE_H

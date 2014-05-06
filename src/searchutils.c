@@ -19,7 +19,6 @@
 #include <config.h>
 #include <assert.h>
 #include "search.h"
-#include "dfa.h"
 
 #define NCHAR (UCHAR_MAX + 1)
 
@@ -229,16 +228,6 @@ is_mb_middle (const char **good, const char *buf, const char *end,
 {
   const char *p = *good;
   mbstate_t cur_state;
-
-  if (using_utf8 () && buf - p > MB_CUR_MAX)
-    {
-      for (p = buf; buf - p > MB_CUR_MAX; p--)
-        if (mbclen_cache[to_uchar (*p)] != (size_t) -1)
-          break;
-
-      if (buf - p == MB_CUR_MAX)
-        p = buf;
-    }
 
   memset (&cur_state, 0, sizeof cur_state);
 
