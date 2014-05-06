@@ -44,6 +44,12 @@ GNU grep NEWS                                    -*- outline -*-
   'grep -i ǈ' now matches both 'Ǉ' (U+01C7 LATIN CAPITAL LETTER LJ)
   and 'ǉ' (U+01C9 LATIN SMALL LETTER LJ).
 
+** Improvements
+
+  Performance has improved, typically by 10% and in some cases by a
+  factor of 200.  However, performance of grep -P in UTF-8 locales has
+  gotten worse as part of the fix for the abovementioned crashes.
+
 
 * Noteworthy changes in release 2.18 (2014-02-20) [stable]
 
