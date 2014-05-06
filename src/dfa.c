@@ -337,7 +337,7 @@ struct dfa
   size_t nleaves;               /* Number of leaves on the parse tree.  */
   size_t nregexps;              /* Count of parallel regexps being built
                                    with dfaparse.  */
-  bool has_backref;             /* True if has BACKREF in tokens.  */
+  bool fast;			/* The DFA is fast.  */
   bool multibyte;		/* True iff MB_CUR_MAX > 1.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
@@ -1595,7 +1595,7 @@ addtok_mb (token t, int mbprop)
       break;
 
     case BACKREF:
-      dfa->has_backref = true;
+      dfa->fast = false;
     default:
       ++dfa->nleaves;
     case EMPTY:
@@ -3422,7 +3422,7 @@ dfasuperset (struct dfa const *d)
 bool
 dfaisfast (struct dfa const *d)
 {
-  return d->superset || (!d->multibyte && !d->has_backref);
+  return d->fast;
 }
 
 static void
@@ -3462,6 +3462,7 @@ dfainit (struct dfa *d)
 {
   memset (d, 0, sizeof *d);
   d->multibyte = MB_CUR_MAX > 1;
+  d->fast = !d->multibyte;
 }
 
 static void
@@ -3579,7 +3580,10 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfassbuild (d);
   dfaanalyze (d, searchflag);
   if (d->superset)
-    dfaanalyze (d->superset, searchflag);
+    {
+      d->fast = true;
+      dfaanalyze (d->superset, searchflag);
+    }
 }
 
 /* Free the storage held by the components of a dfa.  */
