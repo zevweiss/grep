@@ -1131,8 +1131,12 @@ grepbuf (char const *beg, char const *lim)
           prtext (p, b, &n);
           nlines += n;
           outleft -= n;
-          if (!outleft)
-            return nlines;
+          if (!outleft || done_on_match)
+            {
+              if (exit_on_match)
+                exit (EXIT_SUCCESS);
+              return nlines;
+            }
         }
       p = endp;
     }
@@ -1141,6 +1145,8 @@ grepbuf (char const *beg, char const *lim)
       prtext (p, lim, &n);
       nlines += n;
       outleft -= n;
+      if (exit_on_match)
+        exit (EXIT_SUCCESS);
     }
   return nlines;
 }
@@ -1219,8 +1225,7 @@ grep (int fd, struct stat const *st)
             nlines += grepbuf (beg, lim);
           if (pending)
             prpending (lim);
-          if ((!outleft && !pending)
-              || (nlines && done_on_match && !out_invert))
+          if ((!outleft && !pending) || (nlines && done_on_match))
             goto finish_grep;
         }
 
