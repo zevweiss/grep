@@ -663,7 +663,7 @@ static enum
 
 static int filename_mask;	/* If zero, output nulls after filenames.  */
 static int out_quiet;		/* Suppress all normal output. */
-static int out_invert;		/* Print nonmatching stuff. */
+static bool out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
 static int out_line;		/* Print line numbers. */
 static int out_byte;		/* Print byte offsets. */
@@ -912,7 +912,7 @@ prline (char const *beg, char const *lim, int sep)
   if (!only_matching)
     print_line_head (beg, lim, sep);
 
-  matching = (sep == SEP_CHAR_SELECTED) ^ !!out_invert;
+  matching = (sep == SEP_CHAR_SELECTED) ^ out_invert;
 
   if (color_option)
     {
@@ -977,34 +977,31 @@ prpending (char const *lim)
     }
 }
 
-/* Print the lines between BEG and LIM.  Deal with context crap.
-   If NLINESP is non-null, store a count of lines between BEG and LIM.  */
+/* Output the lines between BEG and LIM.  Deal with context.  */
 static void
-prtext (char const *beg, char const *lim, intmax_t *nlinesp)
+prtext (char const *beg, char const *lim)
 {
-  static int used;	/* avoid printing SEP_STR_GROUP before any output */
-  char const *bp, *p;
+  static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
   char eol = eolbyte;
-  intmax_t i, n;
 
   if (!out_quiet && pending > 0)
     prpending (beg);
 
-  p = beg;
+  char const *p = beg;
 
   if (!out_quiet)
     {
-      /* Deal with leading context crap. */
-
-      bp = lastout ? lastout : bufbeg;
+      /* Deal with leading context.  */
+      char const *bp = lastout ? lastout : bufbeg;
+      intmax_t i;
       for (i = 0; i < out_before; ++i)
         if (p > bp)
           do
             --p;
           while (p[-1] != eol);
 
-      /* We print the SEP_STR_GROUP separator only if our output is
-         discontiguous from the last output in the file. */
+      /* Print the group separator unless the output is adjacent to
+         the previous output in the file.  */
       if ((out_before || out_after) && used && p != lastout && group_separator)
         {
           pr_sgr_start_if (sep_color);
@@ -1022,9 +1019,10 @@ prtext (char const *beg, char const *lim, intmax_t *nlinesp)
         }
     }
 
-  if (nlinesp)
+  intmax_t n;
+  if (out_invert)
     {
-      /* Caller wants a line count. */
+      /* One or more lines are output.  */
       for (n = 0; p < lim && n < outleft; n++)
         {
           char const *nl = memchr (p, eol, lim - p);
@@ -1033,16 +1031,20 @@ prtext (char const *beg, char const *lim, intmax_t *nlinesp)
             prline (p, nl, SEP_CHAR_SELECTED);
           p = nl;
         }
-      *nlinesp = n;
-
-      /* relying on it that this function is never called when outleft = 0.  */
-      after_last_match = bufoffset - (buflim - p);
     }
-  else if (!out_quiet)
-    prline (beg, lim, SEP_CHAR_SELECTED);
+  else
+    {
+      /* Just one line is output.  */
+      if (!out_quiet)
+        prline (beg, lim, SEP_CHAR_SELECTED);
+      n = 1;
+      p = lim;
+    }
 
+  after_last_match = bufoffset - (buflim - p);
   pending = out_quiet ? 0 : out_after;
-  used = 1;
+  used = true;
+  outleft -= n;
 }
 
 /* Invoke the matcher, EXECUTE, on buffer BUF of SIZE bytes.  If there
@@ -1098,57 +1100,41 @@ do_execute (char const *buf, size_t size, size_t *match_size,
 static intmax_t
 grepbuf (char const *beg, char const *lim)
 {
-  intmax_t nlines, n;
+  intmax_t outleft0 = outleft;
   char const *p;
-  size_t match_offset;
-  size_t match_size;
+  char const *endp;
 
-  nlines = 0;
-  p = beg;
-  while ((match_offset = do_execute (p, lim - p, &match_size,
-                                     NULL)) != (size_t) -1)
+  for (p = beg; p < lim; p = endp)
     {
+      size_t match_size;
+      size_t match_offset = do_execute (p, lim - p, &match_size, NULL);
+      if (match_offset == (size_t) -1)
+        {
+          if (!out_invert)
+            break;
+          match_offset = lim - p;
+          match_size = 0;
+        }
       char const *b = p + match_offset;
-      char const *endp = b + match_size;
+      endp = b + match_size;
       /* Avoid matching the empty line at the end of the buffer. */
-      if (b == lim)
+      if (!out_invert && b == lim)
         break;
-      if (!out_invert)
+      if (!out_invert || p < b)
         {
-          prtext (b, endp, NULL);
-          nlines++;
-          outleft--;
+          char const *prbeg = out_invert ? p : b;
+          char const *prend = out_invert ? b : endp;
+          prtext (prbeg, prend);
           if (!outleft || done_on_match)
             {
               if (exit_on_match)
                 exit (EXIT_SUCCESS);
-              after_last_match = bufoffset - (buflim - endp);
-              return nlines;
+              break;
             }
         }
-      else if (p < b)
-        {
-          prtext (p, b, &n);
-          nlines += n;
-          outleft -= n;
-          if (!outleft || done_on_match)
-            {
-              if (exit_on_match)
-                exit (EXIT_SUCCESS);
-              return nlines;
-            }
-        }
-      p = endp;
     }
-  if (out_invert && p < lim)
-    {
-      prtext (p, lim, &n);
-      nlines += n;
-      outleft -= n;
-      if (exit_on_match)
-        exit (EXIT_SUCCESS);
-    }
-  return nlines;
+
+  return outleft0 - outleft;
 }
 
 /* Search a given file.  Normally, return a count of lines printed;
@@ -1242,7 +1228,7 @@ grep (int fd, struct stat const *st)
           while (beg[-1] != eol);
         }
 
-      /* detect if leading context is discontinuous from last printed line.  */
+      /* Detect whether leading context is adjacent to previous output.  */
       if (beg != lastout)
         lastout = 0;
 
@@ -2177,7 +2163,7 @@ main (int argc, char **argv)
         break;
 
       case 'v':
-        out_invert = 1;
+        out_invert = true;
         break;
 
       case 'w':
@@ -2322,7 +2308,7 @@ main (int argc, char **argv)
       if (keycc == 0)
         {
           /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
-          out_invert ^= 1;
+          out_invert ^= true;
           match_lines = match_words = 0;
         }
       else
