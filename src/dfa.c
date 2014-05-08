@@ -182,25 +182,25 @@ enum
                                    a backtracking matcher.  */
 
   BEGLINE,                      /* BEGLINE is a terminal symbol that matches
-				   the empty string at the beginning of a
-				   line.  */
+                                   the empty string at the beginning of a
+                                   line.  */
 
   ENDLINE,                      /* ENDLINE is a terminal symbol that matches
-				   the empty string at the end of a line.  */
+                                   the empty string at the end of a line.  */
 
   BEGWORD,                      /* BEGWORD is a terminal symbol that matches
-				   the empty string at the beginning of a
-				   word.  */
+                                   the empty string at the beginning of a
+                                   word.  */
 
   ENDWORD,                      /* ENDWORD is a terminal symbol that matches
-				   the empty string at the end of a word.  */
+                                   the empty string at the end of a word.  */
 
   LIMWORD,                      /* LIMWORD is a terminal symbol that matches
-				   the empty string at the beginning or the
-				   end of a word.  */
+                                   the empty string at the beginning or the
+                                   end of a word.  */
 
   NOTLIMWORD,                   /* NOTLIMWORD is a terminal symbol that
-				   matches the empty string not at
+                                   matches the empty string not at
                                    the beginning or end of a word.  */
 
   QMARK,                        /* QMARK is an operator of one argument that
@@ -839,9 +839,9 @@ static int cur_mb_len = 1;      /* Length of the multibyte representation of
                                    wctok.  */
 
 static wint_t wctok;		/* Wide character representation of the current
-				   multibyte character, or WEOF if there was
-				   an encoding error.  Used only if
-				   MB_CUR_MAX > 1.  */
+                                   multibyte character, or WEOF if there was
+                                   an encoding error.  Used only if
+                                   MB_CUR_MAX > 1.  */
 
 
 /* Fetch the next lexical input character.  Set C (of type int) to the
