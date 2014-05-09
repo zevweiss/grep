@@ -62,13 +62,8 @@
 # undef clrbit
 #endif
 
-/* Number of bits in an unsigned char.  */
-#ifndef CHARBITS
-# define CHARBITS 8
-#endif
-
 /* First integer value that is greater than any character code.  */
-#define NOTCHAR (1 << CHARBITS)
+enum { NOTCHAR = 1 << CHAR_BIT };
 
 /* This represents part of a character class.  It must be unsigned and
    at least CHARCLASS_WORD_BITS wide.  Any excess bits are zero.  */
