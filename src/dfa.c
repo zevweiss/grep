@@ -70,16 +70,26 @@
 /* First integer value that is greater than any character code.  */
 #define NOTCHAR (1 << CHARBITS)
 
-/* INTBITS need not be exact, just a lower bound.  */
-#ifndef INTBITS
-# define INTBITS (CHARBITS * sizeof (int))
-#endif
+/* This represents part of a character class.  It must be unsigned and
+   at least CHARCLASS_WORD_BITS wide.  Any excess bits are zero.  */
+typedef unsigned int charclass_word;
 
-/* Number of ints required to hold a bit for every character.  */
-#define CHARCLASS_INTS ((NOTCHAR + INTBITS - 1) / INTBITS)
+/* The number of bits used in a charclass word.  utf8_classes assumes
+   this is exactly 32.  */
+enum { CHARCLASS_WORD_BITS = 32 };
+
+/* The maximum useful value of a charclass_word; all used bits are 1.  */
+#define CHARCLASS_WORD_MASK \
+  (((charclass_word) 1 << (CHARCLASS_WORD_BITS - 1) << 1) - 1)
+
+/* Number of words required to hold a bit for every character.  */
+enum
+{
+  CHARCLASS_WORDS = (NOTCHAR + CHARCLASS_WORD_BITS - 1) / CHARCLASS_WORD_BITS
+};
 
 /* Sets of unsigned characters are stored as bit vectors in arrays of ints.  */
-typedef unsigned int charclass[CHARCLASS_INTS];
+typedef charclass_word charclass[CHARCLASS_WORDS];
 
 /* Convert a possibly-signed character to an unsigned character.  This is
    a bit safer than casting to unsigned char, since it catches some type
@@ -575,19 +585,20 @@ prtok (token t)
 static bool
 tstbit (unsigned int b, charclass const c)
 {
-  return c[b / INTBITS] >> b % INTBITS & 1;
+  return c[b / CHARCLASS_WORD_BITS] >> b % CHARCLASS_WORD_BITS & 1;
 }
 
 static void
 setbit (unsigned int b, charclass c)
 {
-  c[b / INTBITS] |= 1U << b % INTBITS;
+  c[b / CHARCLASS_WORD_BITS] |= (charclass_word) 1 << b % CHARCLASS_WORD_BITS;
 }
 
 static void
 clrbit (unsigned int b, charclass c)
 {
-  c[b / INTBITS] &= ~(1U << b % INTBITS);
+  c[b / CHARCLASS_WORD_BITS] &= ~((charclass_word) 1
+                                  << b % CHARCLASS_WORD_BITS);
 }
 
 static void
@@ -607,8 +618,8 @@ notset (charclass s)
 {
   int i;
 
-  for (i = 0; i < CHARCLASS_INTS; ++i)
-    s[i] = ~s[i];
+  for (i = 0; i < CHARCLASS_WORDS; ++i)
+    s[i] = CHARCLASS_WORD_MASK & ~s[i];
 }
 
 static bool
@@ -1696,11 +1707,21 @@ static void
 add_utf8_anychar (void)
 {
   static const charclass utf8_classes[5] = {
-    {0, 0, 0, 0, ~0, ~0, 0, 0},		/* 80-bf: non-leading bytes */
-    {~0, ~0, ~0, ~0, 0, 0, 0, 0},       /* 00-7f: 1-byte sequence */
-    {0, 0, 0, 0, 0, 0, ~3, 0},          /* c2-df: 2-byte sequence */
-    {0, 0, 0, 0, 0, 0, 0, 0xffff},      /* e0-ef: 3-byte sequence */
-    {0, 0, 0, 0, 0, 0, 0, 0xff0000}     /* f0-f7: 4-byte sequence */
+    /* 80-bf: non-leading bytes.  */
+    {0, 0, 0, 0, CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK, 0, 0},
+
+    /* 00-7f: 1-byte sequence.  */
+    {CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK,
+     CHARCLASS_WORD_MASK, 0, 0, 0, 0},
+
+    /* c2-df: 2-byte sequence.  */
+    {0, 0, 0, 0, 0, 0, ~3 & CHARCLASS_WORD_MASK, 0},
+
+    /* e0-ef: 3-byte sequence.  */
+    {0, 0, 0, 0, 0, 0, 0, 0xffff},
+
+    /* f0-f7: 4-byte sequence.  */
+    {0, 0, 0, 0, 0, 0, 0, 0xff0000}
   };
   const unsigned int n = sizeof (utf8_classes) / sizeof (utf8_classes[0]);
   unsigned int i;
@@ -2211,7 +2232,7 @@ charclass_context (charclass c)
   if (tstbit (eolbyte, c))
     context |= CTX_NEWLINE;
 
-  for (j = 0; j < CHARCLASS_INTS; ++j)
+  for (j = 0; j < CHARCLASS_WORDS; ++j)
     {
       if (c[j] & letters[j])
         context |= CTX_LETTER;
@@ -2544,11 +2565,11 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
   size_t ngrps = 0;             /* Number of groups actually used.  */
   position pos;                 /* Current position being considered.  */
   charclass matches;            /* Set of matching characters.  */
-  unsigned int matchesf;        /* Nonzero if matches is nonempty.  */
+  charclass_word matchesf;	/* Nonzero if matches is nonempty.  */
   charclass intersect;          /* Intersection with some label set.  */
-  unsigned int intersectf;      /* Nonzero if intersect is nonempty.  */
+  charclass_word intersectf;	/* Nonzero if intersect is nonempty.  */
   charclass leftovers;          /* Stuff in the label that didn't match.  */
-  unsigned int leftoversf;      /* Nonzero if leftovers is nonempty.  */
+  charclass_word leftoversf;	/* Nonzero if leftovers is nonempty.  */
   position_set follows;         /* Union of the follows of some group.  */
   position_set tmp;             /* Temporary space for merging sets.  */
   int possible_contexts;        /* Contexts that this group can match.  */
@@ -2592,21 +2613,21 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         {
           if (!SUCCEEDS_IN_CONTEXT (pos.constraint,
                                     d->states[s].context, CTX_NEWLINE))
-            for (j = 0; j < CHARCLASS_INTS; ++j)
+            for (j = 0; j < CHARCLASS_WORDS; ++j)
               matches[j] &= ~newline[j];
           if (!SUCCEEDS_IN_CONTEXT (pos.constraint,
                                     d->states[s].context, CTX_LETTER))
-            for (j = 0; j < CHARCLASS_INTS; ++j)
+            for (j = 0; j < CHARCLASS_WORDS; ++j)
               matches[j] &= ~letters[j];
           if (!SUCCEEDS_IN_CONTEXT (pos.constraint,
                                     d->states[s].context, CTX_NONE))
-            for (j = 0; j < CHARCLASS_INTS; ++j)
+            for (j = 0; j < CHARCLASS_WORDS; ++j)
               matches[j] &= letters[j] | newline[j];
 
           /* If there are no characters left, there's no point in going on.  */
-          for (j = 0; j < CHARCLASS_INTS && !matches[j]; ++j)
+          for (j = 0; j < CHARCLASS_WORDS && !matches[j]; ++j)
             continue;
-          if (j == CHARCLASS_INTS)
+          if (j == CHARCLASS_WORDS)
             continue;
         }
 
@@ -2622,17 +2643,17 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
           /* Check if this group's label has a nonempty intersection with
              matches.  */
           intersectf = 0;
-          for (k = 0; k < CHARCLASS_INTS; ++k)
+          for (k = 0; k < CHARCLASS_WORDS; ++k)
             intersectf |= intersect[k] = matches[k] & labels[j][k];
           if (!intersectf)
             continue;
 
           /* It does; now find the set differences both ways.  */
           leftoversf = matchesf = 0;
-          for (k = 0; k < CHARCLASS_INTS; ++k)
+          for (k = 0; k < CHARCLASS_WORDS; ++k)
             {
               /* Even an optimizing compiler can't know this for sure.  */
-              int match = matches[k], label = labels[j][k];
+              charclass_word match = matches[k], label = labels[j][k];
 
               leftoversf |= leftovers[k] = ~match & label;
               matchesf |= matches[k] = match & ~label;
@@ -2771,11 +2792,11 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         state_letter = state;
 
       /* Set the transitions for each character in the current label.  */
-      for (j = 0; j < CHARCLASS_INTS; ++j)
-        for (k = 0; k < INTBITS; ++k)
-          if (labels[i][j] & 1U << k)
+      for (j = 0; j < CHARCLASS_WORDS; ++j)
+        for (k = 0; k < CHARCLASS_WORD_BITS; ++k)
+          if (labels[i][j] >> k & 1)
             {
-              int c = j * INTBITS + k;
+              int c = j * CHARCLASS_WORD_BITS + k;
 
               if (c == eolbyte)
                 trans[c] = state_newline;
