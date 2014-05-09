@@ -284,23 +284,18 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           /* Try matching with the superset of DFA, if it's defined.  */
           if (superset && !exact_kwset_match)
             {
-              while (true)
+              /* Keep using the superset while it reports multiline
+                 potential matches; this is more likely to be fast
+                 than falling back to KWset would be.  */
+              while ((next_beg = dfaexec (superset, dfa_beg, (char *) end, 1,
+                                          &count, NULL))
+                     && next_beg != end
+                     && count != 0)
                 {
-                  next_beg = dfaexec (superset, dfa_beg, (char *) end, 1,
-                                      &count, NULL);
-                  /* If there's no match, or if we've matched the sentinel,
-                     we're done.  */
-                  if (next_beg == NULL || next_beg == end)
-                    break;
-
-                  if (count == 0)
-                    break;
+                  /* Try to match in just one line.  */
                   count = 0;
-
-                  /* If dfaexec may match in multiple lines, try to
-                     match in one line.  */
                   beg = memrchr (buf, eol, next_beg - buf);
-                  beg = beg ? beg + 1 : buf;
+                  beg++;
                   dfa_beg = beg;
                 }
               if (next_beg == NULL || next_beg == end)
@@ -310,6 +305,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
               end = memchr (next_beg, eol, buflim - next_beg);
               end = end ? end + 1 : buflim;
             }
+
           /* Try matching with DFA.  */
           next_beg = dfaexec (dfa, dfa_beg, (char *) end, 0, &count, &backref);
 
