@@ -3321,7 +3321,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
                                          end - (char const *) mbp, d);
                   p = mbp;
 
-                  if ((char *) p >= end)
+                  if ((char *) p > end)
                     {
                       p = NULL;
                       goto done;
