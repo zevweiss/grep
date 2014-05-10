@@ -22,9 +22,7 @@ AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
-# Remove this definition once the failing test passes.
-XFAIL_TESTS = \
-  word-delim-multibyte
+XFAIL_TESTS =
 
 # Equivalence classes are only supported when using the system
 # matcher (which means only with glibc).

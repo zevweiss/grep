@@ -25,6 +25,8 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep -w no longer mishandles a potential match adjacent to a letter that
   takes up two or more bytes in a multibyte encoding.
+  Similarly, the patterns '\<', '\>', '\b', and '\B' no longer
+  mishandle word-boundary matches in multibyte locales.
   [bug present since "the beginning"]
 
   grep -P now reports an error and exits when given invalid UTF-8 data.

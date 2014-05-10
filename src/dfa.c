@@ -3484,6 +3484,7 @@ static void
 dfaoptimize (struct dfa *d)
 {
   size_t i;
+  bool have_backref = false;
 
   if (!using_utf8 ())
     return;
@@ -3495,12 +3496,23 @@ dfaoptimize (struct dfa *d)
         case ANYCHAR:
           /* Lowered.  */
           abort ();
+        case BACKREF:
+          have_backref = true;
+          break;
         case MBCSET:
           /* Requires multi-byte algorithm.  */
           return;
         default:
           break;
         }
+    }
+
+  if (!have_backref && d->superset)
+    {
+      /* The superset DFA is not likely to be much faster, so remove it.  */
+      dfafree (d->superset);
+      free (d->superset);
+      d->superset = NULL;
     }
 
   free_mbdata (d);
@@ -3560,8 +3572,11 @@ dfassbuild (struct dfa *d)
         case NOTLIMWORD:
           if (d->multibyte)
             {
-              /* Ignore these constraints.  */
+              /* These constraints aren't supported in a multibyte locale.
+                 Ignore them in the superset DFA, and treat them as
+                 backreferences in the main DFA.  */
               sup->tokens[j++] = EMPTY;
+              d->tokens[i] = BACKREF;
               break;
             }
         default:
@@ -3591,8 +3606,8 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfambcache (d);
   dfaparse (s, len, d);
   dfamust (d);
-  dfaoptimize (d);
   dfassbuild (d);
+  dfaoptimize (d);
   dfaanalyze (d, searchflag);
   if (d->superset)
     {
