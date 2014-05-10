@@ -532,14 +532,13 @@ Print @var{num} lines of leading and trailing output context.
 @opindex --group-separator
 @cindex group separator
 When @option{-A}, @option{-B} or @option{-C} are in use,
-print @var{string} instead of @option{--} around disjoint groups
-of lines.
+print @var{string} instead of @option{--} between groups of lines.
 
 @item --no-group-separator
 @opindex --group-separator
 @cindex group separator
 When @option{-A}, @option{-B} or @option{-C} are in use,
-print disjoint groups of lines adjacent to each other.
+do not print a separator between groups of lines.
 
 @end table
 
@@ -555,26 +554,25 @@ between prefix fields and actual line content.
 Context (i.e., non-matching) lines use @samp{-} instead.
 
 @item
-When no context is specified,
+When context is not specified,
 matching lines are simply output one right after another.
 
 @item
-When nonzero context is specified,
+When context is specified,
 lines that are adjacent in the input form a group
 and are output one right after another, while
-a separator appears by default between disjoint groups on a line
-of its own and without any prefix.
+by default a separator appears between non-adjacent groups.
 
 @item
 The default separator
-is @samp{--}, however whether to include it and its appearance
+is a @samp{--} line; its presence and appearance
 can be changed with the options above.
 
 @item
 Each group may contain
 several matching lines when they are close enough to each other
-that two otherwise adjacent but divided groups connect
-and can just merge into a single contiguous one.
+that two adjacent groups connect and can merge into a single
+contiguous one.
 @end itemize
 
 @node File and Directory Selection

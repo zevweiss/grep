@@ -1002,7 +1002,8 @@ prtext (char const *beg, char const *lim)
 
       /* Print the group separator unless the output is adjacent to
          the previous output in the file.  */
-      if ((out_before || out_after) && used && p != lastout && group_separator)
+      if ((0 <= out_before || 0 <= out_after) && used
+          && p != lastout && group_separator)
         {
           pr_sgr_start_if (sep_color);
           fputs (group_separator, stdout);
@@ -1961,7 +1962,7 @@ main (int argc, char **argv)
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
   /* Default before/after context: changed by -C/-NUM options */
-  default_context = 0;
+  default_context = -1;
   /* Changed by -o option */
   only_matching = 0;
 

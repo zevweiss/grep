@@ -11,6 +11,10 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer mishandles an empty pattern at the end of a pattern list.
   [bug introduced in grep-2.5]
 
+  grep -C NUM now outputs separators consistently even when NUM is zero,
+  and similarly for grep -A NUM and grep -B NUM.
+  [bug present since "the beginning"]
+
   grep -f no longer mishandles patterns containing NUL bytes.
   [bug introduced in grep-2.11]
 
