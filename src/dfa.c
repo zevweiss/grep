@@ -27,12 +27,10 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
 #include <locale.h>
-#include <stdbool.h>
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
