@@ -6,7 +6,7 @@ GNU grep NEWS                                    -*- outline -*-
 
   Performance has improved, typically by 10% and in some cases by a
   factor of 200.  However, performance of grep -P in UTF-8 locales has
-  gotten worse as part of the fix for the abovementioned crashes.
+  gotten worse as part of the fix for the crashes mentioned below.
 
 ** Bug fixes
 
