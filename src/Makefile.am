@@ -47,7 +47,14 @@ EXTRA_DIST = dosbuf.c egrep.sh
 egrep fgrep: egrep.sh Makefile
 	$(AM_V_GEN)grep=`echo grep | sed -e '$(transform)'`	&& \
 	case $@ in egrep) option=-E;; fgrep) option=-F;; esac	&& \
+	shell_does_substrings='set x/y && d=$${1%/*} && test "$$d" = x' && \
+	if $(SHELL) -c "$$shell_does_substrings" 2>/dev/null; then \
+	  edit_substring='s,X,X,'; \
+	else \
+	  edit_substring='s,\$${0%/\*},`expr "X$$0" : '\''X\\(.*\\)/'\''`,g'; \
+	fi && \
 	sed -e 's|[@]SHELL@|$(SHELL)|g' \
+	    -e "$$edit_substring" \
 	    -e "s|[@]grep@|$$grep|g" \
 	    -e "s|[@]option@|$$option|g" <$(srcdir)/egrep.sh >$@-t
 	$(AM_V_at)chmod +x $@-t

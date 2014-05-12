@@ -2,8 +2,9 @@
 grep=grep
 case $0 in
   */*)
-    if test -x "${0%/*}/@grep@"; then
-      PATH=${0%/*}:$PATH
+    dir=${0%/*}
+    if test -x "$dir/@grep@"; then
+      PATH=$dir:$PATH
       grep=@grep@
     fi;;
 esac
