@@ -1409,10 +1409,10 @@ lex (void)
               {
                 if (syntax_bits & RE_INVALID_INTERVAL_ORD)
                   goto normal_char;
-                dfaerror (_("Invalid content of \\{\\}"));
+                dfaerror (_("invalid content of \\{\\}"));
               }
             if (RE_DUP_MAX < maxrep)
-              dfaerror (_("Regular expression too big"));
+              dfaerror (_("regular expression too big"));
             lexptr = p;
             lexleft = lim - p;
           }
