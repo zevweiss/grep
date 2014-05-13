@@ -3237,6 +3237,24 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   return s1;
 }
 
+/* The initial state may encounter a byte which is not a single byte character
+   nor the first byte of a multibyte character.  But it is incorrect for the
+   initial state to accept such a byte.  For example, in Shift JIS the regular
+   expression "\\" accepts the codepoint 0x5c, but should not accept the second
+   byte of the codepoint 0x815c.  Then the initial state must skip the bytes
+   that are not a single byte character nor the first byte of a multibyte
+   character.  */
+static unsigned char const *
+skip_remains_mb (struct dfa *d, unsigned char const *p,
+                 unsigned char const *mbp, char const *end)
+{
+  wint_t wc;
+  while (mbp < p)
+    mbp += mbs_to_wchar (&wc, (char const *) mbp,
+                         end - (char const *) mbp, d);
+  return mbp;
+}
+
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the
    buffer, and the shortest possible version thereof.  Return a pointer to
@@ -3293,27 +3311,18 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
               if (s == 0)
                 {
-                  /* The initial state may encounter a byte which is not
-                     a single byte character nor the first byte of a
-                     multibyte character.  But it is incorrect for the
-                     initial state to accept such a byte.  For example,
-                     in Shift JIS the regular expression "\\" accepts
-                     the codepoint 0x5c, but should not accept the second
-                     byte of the codepoint 0x815c.  Then the initial
-                     state must skip the bytes that are not a single
-                     byte character nor the first byte of a multibyte
-                     character.  */
-                  wint_t wc;
-                  while (mbp < p)
-                    mbp += mbs_to_wchar (&wc, (char const *) mbp,
-                                         end - (char const *) mbp, d);
-                  p = mbp;
-
-                  if ((char *) p > end)
+                  if (d->states[s].mbps.nelem == 0)
                     {
-                      p = NULL;
-                      goto done;
+                      do
+                        {
+                          while (t[*p] == 0)
+                            p++;
+                          p = mbp = skip_remains_mb (d, p, mbp, end);
+                        }
+                      while (t[*p] == 0);
                     }
+                  else
+                    p = mbp = skip_remains_mb (d, p, mbp, end);
                 }
 
               if (d->states[s].mbps.nelem == 0)
@@ -3341,6 +3350,13 @@ dfaexec (struct dfa *d, char const *begin, char *end,
         }
       else
         {
+          if (s == 0 && (t = trans[s]) != NULL)
+            {
+              while (t[*p] == 0)
+                p++;
+              s = t[*p++];
+            }
+
           while ((t = trans[s]) != NULL)
             {
               s1 = t[*p++];
