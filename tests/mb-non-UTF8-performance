@@ -32,7 +32,11 @@ stop=$(hi_res_time_)
 
 # Use a multiple of the LC_ALL=C duration as the timeout for the JP/EUC test.
 # A multiple of 3 seems to be enough for i5,i7, but AMD needs >25.
-timeout=$($AWK 'BEGIN { print 30 * ('$stop' - '$start')}' < /dev/null)
+# Use an integer; some 'timeout' implementations have trouble with
+# floating-point in JP_EUC locales.
+timeout=$(
+  $AWK 'BEGIN { print 1 + int (30 * ('$stop' - '$start'))}' < /dev/null
+)
 
 test $st = 1 || fail=1
 
