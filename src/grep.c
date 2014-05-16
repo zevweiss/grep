@@ -1052,8 +1052,7 @@ prtext (char const *beg, char const *lim)
    is no match, return (size_t) -1.  Otherwise, set *MATCH_SIZE to the
    length of the match and return the offset of the start of the match.  */
 static size_t
-do_execute (char const *buf, size_t size, size_t *match_size,
-            char const *start_ptr)
+do_execute (char const *buf, size_t size, size_t *match_size)
 {
   size_t result;
   const char *line_next;
@@ -1072,7 +1071,7 @@ do_execute (char const *buf, size_t size, size_t *match_size,
      return buf + size otherwise.  */
   if (! (execute == Fexecute || execute == Pexecute)
       || MB_CUR_MAX == 1 || !match_icase)
-    return execute (buf, size, match_size, start_ptr);
+    return execute (buf, size, match_size, NULL);
 
   for (line_next = buf; line_next < buf + size; )
     {
@@ -1084,10 +1083,7 @@ do_execute (char const *buf, size_t size, size_t *match_size,
       else
         line_next = line_end + 1;
 
-      if (start_ptr && start_ptr >= line_end)
-        continue;
-
-      result = execute (line_buf, line_next - line_buf, match_size, start_ptr);
+      result = execute (line_buf, line_next - line_buf, match_size, NULL);
       if (result != (size_t) -1)
         return (line_buf - buf) + result;
     }
@@ -1108,7 +1104,7 @@ grepbuf (char const *beg, char const *lim)
   for (p = beg; p < lim; p = endp)
     {
       size_t match_size;
-      size_t match_offset = do_execute (p, lim - p, &match_size, NULL);
+      size_t match_offset = do_execute (p, lim - p, &match_size);
       if (match_offset == (size_t) -1)
         {
           if (!out_invert)
