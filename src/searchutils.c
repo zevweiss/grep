@@ -285,5 +285,6 @@ mb_next_wc (char const *cur, char const *end)
 {
   wchar_t wc;
   mbstate_t mbs = { 0 };
-  return mbrtowc (&wc, cur, end - cur, &mbs) < (size_t) -2 ? wc : WEOF;
+  return (end - cur != 0 && mbrtowc (&wc, cur, end - cur, &mbs) < (size_t) -2
+          ? wc : WEOF);
 }
