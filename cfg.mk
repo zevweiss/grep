@@ -89,3 +89,5 @@ exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
   (Makefile|\.(am|mk)$$)
 exclude_file_name_regexp--sc_error_message_uppercase = ^src/dfa\.c$$
 exclude_file_name_regexp--sc_prohibit_strncpy = ^src/dfa\.c$$
+
+exclude_file_name_regexp--sc_prohibit_doubled_word = ^tests/count-newline$$
