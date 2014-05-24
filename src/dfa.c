@@ -2850,16 +2850,17 @@ build_state (state_num s, struct dfa *d)
   /* Set an upper limit on the number of transition tables that will ever
      exist at once.  1024 is arbitrary.  The idea is that the frequently
      used transition tables will be quickly rebuilt, whereas the ones that
-     were only needed once or twice will be cleared away.  */
+     were only needed once or twice will be cleared away.  However, do
+     not clear the initial state, as it's always used.  */
   if (d->trcount >= 1024)
     {
-      for (i = 0; i < d->tralloc; ++i)
+      for (i = 1; i < d->tralloc; ++i)
         {
           free (d->trans[i]);
           free (d->fails[i]);
           d->trans[i] = d->fails[i] = NULL;
         }
-      d->trcount = 0;
+      d->trcount = 1;
     }
 
   ++d->trcount;
