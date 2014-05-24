@@ -190,7 +190,8 @@ case $host_os in
   mingw*) suffix=w32 ;;
   *) suffix=posix ;;
 esac
-AC_CONFIG_LINKS([lib/colorize.c:lib/colorize-$suffix.c])
+COLORIZE_SOURCE=colorize-$suffix.c
+AC_SUBST([COLORIZE_SOURCE])
 
 AC_CONFIG_FILES([
   Makefile
