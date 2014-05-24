@@ -668,8 +668,8 @@ under @option{--exclude}).
 @item --exclude-dir=@var{dir}
 @opindex --exclude-dir
 @cindex exclude directories
-Exclude directories matching the pattern @var{dir} from recursive
-directory searches.
+Skip any directory whose name matches the pattern @var{dir}, ignoring
+any redundant trailing slashes in @var{dir}.
 
 @item -I
 Process a binary file as if it did not contain matching data;

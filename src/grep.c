@@ -2234,6 +2234,7 @@ main (int argc, char **argv)
       case EXCLUDE_DIRECTORY_OPTION:
         if (!excluded_directory_patterns)
           excluded_directory_patterns = new_exclude ();
+        strip_trailing_slashes (optarg);
         add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
         break;
 

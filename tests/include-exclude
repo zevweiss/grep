@@ -36,6 +36,10 @@ grep -r --exclude-dir=dir . x > out || fail=1
 sort out > k && mv k out
 compare exp-not-dir out || fail=1
 
+grep -r --exclude-dir=dir/ . x > out || fail=1
+sort out > k && mv k out
+compare exp-not-dir out || fail=1
+
 # Test with a non-glob.
 grep -r --include=a    . x > out || fail=1
 # no need to sort

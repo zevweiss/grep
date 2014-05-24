@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Changes in behavior
+
+  grep --exclude-dir='FOO/' now excludes the directory FOO.
+  Previously, the trailing slash meant the option was ineffective.
+
 
 * Noteworthy changes in release 2.19 (2014-05-22) [stable]
 
