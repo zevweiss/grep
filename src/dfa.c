@@ -2897,22 +2897,6 @@ build_state (state_num s, struct dfa *d)
     d->trans[s] = trans;
 }
 
-static void
-build_state_zero (struct dfa *d)
-{
-  /* Initial size of the transition tables; must be positive.  */
-  int initial_tab_size = 1;
-
-  d->tralloc = 0;
-  d->trcount = 0;
-  d->trans = NULL;
-  d->fails = NULL;
-  d->success = NULL;
-  d->newlines = NULL;
-  realloc_trans_if_necessary (d, initial_tab_size);
-  build_state (0, d);
-}
-
 /* Multibyte character handling sub-routines for dfaexec.  */
 
 /* Return values of transit_state_singlebyte, and
@@ -3276,7 +3260,10 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   size_t nlcount = 0;
 
   if (!d->tralloc)
-    build_state_zero (d);
+    {
+      realloc_trans_if_necessary (d, 0);
+      build_state (0, d);
+    }
 
   s = s1 = 0;
   p = mbp = (unsigned char const *) begin;
