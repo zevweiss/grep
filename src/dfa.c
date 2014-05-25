@@ -3267,9 +3267,9 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
    Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
    encountered a back-reference (1) or not (0).  The caller may use this
    to decide whether to fall back on a backtracking matcher.  */
-char *
-dfaexec (struct dfa *d, char const *begin, char *end,
-         int allow_nl, size_t *count, int *backref)
+static inline char *
+dfaexec_main (struct dfa *d, char const *begin, char *end,
+             int allow_nl, size_t *count, int *backref, bool const multibyte)
 {
   state_num s, s1;              /* Current state.  */
   unsigned char const *p, *mbp; /* Current input character.  */
@@ -3291,7 +3291,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
   saved_end = *(unsigned char *) end;
   *end = eol;
 
-  if (d->multibyte)
+  if (multibyte)
     {
       memset (&d->mbs, 0, sizeof d->mbs);
       if (! d->mb_match_lens)
@@ -3303,7 +3303,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   for (;;)
     {
-      if (d->multibyte)
+      if (multibyte)
         {
           while ((t = trans[s]) != NULL)
             {
@@ -3387,7 +3387,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
             }
 
           s1 = s;
-          if (d->multibyte)
+          if (multibyte)
             {
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
@@ -3430,6 +3430,29 @@ dfaexec (struct dfa *d, char const *begin, char *end,
     *count += nlcount;
   *end = saved_end;
   return (char *) p;
+}
+
+static char *__attribute__((noinline))
+dfaexec_mb (struct dfa *d, char const *begin, char *end,
+           int allow_nl, size_t *count, int *backref)
+{
+  return dfaexec_main (d, begin, end, allow_nl, count, backref, true);
+}
+
+static char *__attribute__((noinline))
+dfaexec_sb (struct dfa *d, char const *begin, char *end,
+           int allow_nl, size_t *count, int *backref)
+{
+  return dfaexec_main (d, begin, end, allow_nl, count, backref, false);
+}
+
+char *
+dfaexec (struct dfa *d, char const *begin, char *end,
+         int allow_nl, size_t *count, int *backref)
+{
+  return (d->multibyte
+    ? dfaexec_mb (d, begin, end, allow_nl, count, backref)
+    : dfaexec_sb (d, begin, end, allow_nl, count, backref));
 }
 
 struct dfa *
