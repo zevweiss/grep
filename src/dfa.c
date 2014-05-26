@@ -3397,7 +3397,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
       /* If the previous character was a newline, count it, and skip
          checking of multibyte character boundary until here.  */
-      if (p[-1] == eol && (char *) p != begin)
+      if (p[-1] == eol)
         {
           nlcount++;
           mbp = p;
