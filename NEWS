@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  A command like echo aa|grep -E 'a(b$|c$)' would mistakenly
+  report the input as a matched line.
+  [bug introduced in grep-2.19]
+
 ** Changes in behavior
 
   grep --exclude-dir='FOO/' now excludes the directory FOO.

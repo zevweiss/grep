@@ -3962,10 +3962,17 @@ dfamust (struct dfa *d)
             size_t j, ln, rn, n;
 
             /* Guaranteed to be.  Unlikely, but ...  */
-            if (!STREQ (lmp->is, rmp->is))
-              lmp->is[0] = '\0';
-            lmp->begline &= rmp->begline;
-            lmp->endline &= rmp->endline;
+            if (STREQ (lmp->is, rmp->is))
+              {
+                lmp->begline &= rmp->begline;
+                lmp->endline &= rmp->endline;
+              }
+            else
+              {
+                lmp->is[0] = '\0';
+                lmp->begline = false;
+                lmp->endline = false;
+              }
             /* Left side--easy */
             i = 0;
             while (lmp->left[i] != '\0' && lmp->left[i] == rmp->left[i])
