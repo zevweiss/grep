@@ -3261,7 +3261,7 @@ dfaexec (struct dfa *d, char const *begin, char *end,
 
   if (!d->tralloc)
     {
-      realloc_trans_if_necessary (d, 0);
+      realloc_trans_if_necessary (d, 1);
       build_state (0, d);
     }
 
