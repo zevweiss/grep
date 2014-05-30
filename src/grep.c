@@ -1043,7 +1043,7 @@ prtext (char const *beg, char const *lim)
     }
 
   after_last_match = bufoffset - (buflim - p);
-  pending = out_quiet ? 0 : out_after;
+  pending = out_quiet ? 0 : MAX (0, out_after);
   used = true;
   outleft -= n;
 }

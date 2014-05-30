@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep --max-count=N FILE would no longer stop reading after the Nth match.
+  I.e., while grep would still print the correct output, it would continue
+  reading until end of input, and hence, potentially forever.
+  [bug introduced in grep-2.19]
+
   A command like echo aa|grep -E 'a(b$|c$)' would mistakenly
   report the input as a matched line.
   [bug introduced in grep-2.19]
