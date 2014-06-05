@@ -3763,12 +3763,15 @@ static char **
 enlist (char **cpp, char *new, size_t len)
 {
   size_t i, j;
+  new = memcpy (xmalloc (len + 1), new, len);
+  new[len] = '\0';
   /* Is there already something in the list that's new (or longer)?  */
   for (i = 0; cpp[i] != NULL; ++i)
     if (strstr (cpp[i], new) != NULL)
-      return cpp;
-  new = memcpy (xmalloc (len + 1), new, len);
-  new[len] = '\0';
+      {
+        free (new);
+        return cpp;
+      }
   /* Eliminate any obsoleted strings.  */
   j = 0;
   while (cpp[j] != NULL)
