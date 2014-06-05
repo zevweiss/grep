@@ -2,6 +2,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Improvements
+
+  Performance has improved for very long strings in patterns.
+
 
 * Noteworthy changes in release 2.20 (2014-06-03) [stable]
 
