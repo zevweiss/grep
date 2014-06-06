@@ -50,8 +50,6 @@
 #include <wchar.h>
 #include <wctype.h>
 
-#include "xalloc.h"
-
 /* HPUX defines these as macros in sys/param.h.  */
 #ifdef setbit
 # undef setbit
@@ -429,9 +427,6 @@ struct dfa
                                    as a sentinel at the end of the buffer.  */
   state_num initstate_letter;   /* Initial state for letter context.  */
   state_num initstate_others;   /* Initial state for other contexts.  */
-  struct dfamust *musts;        /* List of strings, at least one of which
-                                   is known to appear in any r.e. matching
-                                   the dfa.  */
   position_set mb_follows;	/* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
   int *mb_match_lens;           /* Array of length reduced by ANYCHAR and/or
@@ -448,7 +443,6 @@ struct dfa
 #define ACCEPTS_IN_CONTEXT(prev, curr, state, dfa) \
   SUCCEEDS_IN_CONTEXT ((dfa).states[state].constraint, prev, curr)
 
-static void dfamust (struct dfa *dfa);
 static void regexp (void);
 
 static void
@@ -3647,7 +3641,6 @@ dfassbuild (struct dfa *d)
   sup->fails = NULL;
   sup->success = NULL;
   sup->newlines = NULL;
-  sup->musts = NULL;
 
   sup->charclasses = xnmalloc (sup->calloc, sizeof *sup->charclasses);
   if (d->cindex)
@@ -3714,7 +3707,6 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfainit (d);
   dfambcache (d);
   dfaparse (s, len, d);
-  dfamust (d);
   dfassbuild (d);
   dfaoptimize (d);
   dfaanalyze (d, searchflag);
@@ -3730,7 +3722,6 @@ void
 dfafree (struct dfa *d)
 {
   size_t i;
-  struct dfamust *dm, *ndm;
 
   free (d->charclasses);
   free (d->tokens);
@@ -3766,13 +3757,6 @@ dfafree (struct dfa *d)
       free (d->success);
     }
 
-  for (dm = d->musts; dm; dm = ndm)
-    {
-      ndm = dm->next;
-      free (dm->must);
-      free (dm);
-    }
-
   if (d->superset)
     dfafree (d->superset);
 }
@@ -3793,9 +3777,7 @@ dfafree (struct dfa *d)
         sequences that must constitute the match ("is")
 
    When we get to the root of the tree, we use one of the longest of its
-   calculated "in" sequences as our answer.  The sequence we find is returned in
-   d->must (where "d" is the single argument passed to "dfamust");
-   the length of the sequence is returned in d->mustn.
+   calculated "in" sequences as our answer.
 
    The sequences calculated for the various types of node (in pseudo ANSI c)
    are shown below.  "p" is the operand of unary operators (and the left-hand
@@ -4019,8 +4001,8 @@ freemust (must *mp)
   free (mp);
 }
 
-static void
-dfamust (struct dfa *d)
+struct dfamust *
+dfamust (struct dfa const *d)
 {
   must *mp = NULL;
   char const *result = "";
@@ -4029,7 +4011,6 @@ dfamust (struct dfa *d)
   bool exact = false;
   bool begline = false;
   bool endline = false;
-  struct dfamust *dm;
 
   for (ri = 0; ri < d->tindex; ++ri)
     {
@@ -4190,30 +4171,28 @@ dfamust (struct dfa *d)
               t = j;
               while (++j < NOTCHAR)
                 if (tstbit (j, *ccl)
-                    && ! (case_fold && !d->multibyte
+                    && ! (case_fold && MB_CUR_MAX == 1
                           && toupper (j) == toupper (t)))
                   break;
               if (j < NOTCHAR)
                 break;
             }
           mp->is[0] = mp->left[0] = mp->right[0]
-            = case_fold && !d->multibyte ? toupper (t) : t;
+            = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
           mp->is[1] = mp->left[1] = mp->right[1] = '\0';
           mp->in = enlist (mp->in, mp->is, 1);
           break;
         }
     }
 done:
-  if (*result)
-    {
-      dm = xmalloc (sizeof *dm);
-      dm->exact = exact;
-      dm->begline = begline;
-      dm->endline = endline;
-      dm->must = xstrdup (result);
-      dm->next = d->musts;
-      d->musts = dm;
-    }
+  if (!*result)
+    return NULL;
+
+  struct dfamust *dm = xmalloc (sizeof *dm);
+  dm->exact = exact;
+  dm->begline = begline;
+  dm->endline = endline;
+  dm->must = xstrdup (result);
 
   while (mp)
     {
@@ -4221,18 +4200,21 @@ done:
       freemust (mp);
       mp = prev;
     }
+
+  return dm;
+}
+
+void
+dfamustfree (struct dfamust *dm)
+{
+  free (dm->must);
+  free (dm);
 }
 
 struct dfa *
 dfaalloc (void)
 {
   return xmalloc (sizeof (struct dfa));
-}
-
-struct dfamust *_GL_ATTRIBUTE_PURE
-dfamusts (struct dfa const *d)
-{
-  return d->musts;
 }
 
 /* vim:set shiftwidth=2: */

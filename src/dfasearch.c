@@ -86,41 +86,37 @@ dfawarn (char const *mesg)
 static void
 kwsmusts (void)
 {
-  struct dfamust const *dm = dfamusts (dfa);
-  if (dm)
+  struct dfamust *dm = dfamust (dfa);
+  if (!dm)
+    return;
+  kwsinit (&kwset);
+  if (dm->exact)
     {
-      kwsinit (&kwset);
-      /* First, we compile in the substrings known to be exact
-         matches.  The kwset matcher will return the index
-         of the matching string that it chooses. */
-      for (; dm; dm = dm->next)
-        {
-          if (!dm->exact)
-            continue;
-          ++kwset_exact_matches;
-          size_t old_len = strlen (dm->must);
-          size_t new_len = old_len + dm->begline + dm->endline;
-          char *must = xmalloc (new_len);
-          char *mp = must;
-          *mp = eolbyte;
-          mp += dm->begline;
-          begline |= dm->begline;
-          memcpy (mp, dm->must, old_len);
-          if (dm->endline)
-            mp[old_len] = eolbyte;
-          kwsincr (kwset, must, new_len);
-          free (must);
-        }
-      /* Now, we compile the substrings that will require
-         the use of the regexp matcher.  */
-      for (dm = dfamusts (dfa); dm; dm = dm->next)
-        {
-          if (dm->exact)
-            continue;
-          kwsincr (kwset, dm->must, strlen (dm->must));
-        }
-      kwsprep (kwset);
+      /* Prepare a substring whose presence implies a match.
+         The kwset matcher will return the index of the matching
+         string that it chooses. */
+      ++kwset_exact_matches;
+      size_t old_len = strlen (dm->must);
+      size_t new_len = old_len + dm->begline + dm->endline;
+      char *must = xmalloc (new_len);
+      char *mp = must;
+      *mp = eolbyte;
+      mp += dm->begline;
+      begline |= dm->begline;
+      memcpy (mp, dm->must, old_len);
+      if (dm->endline)
+        mp[old_len] = eolbyte;
+      kwsincr (kwset, must, new_len);
+      free (must);
     }
+  else
+    {
+      /* Otherwise, filtering with this substring should help reduce the
+         search space, but we'll still have to use the regexp matcher.  */
+      kwsincr (kwset, dm->must, strlen (dm->must));
+    }
+  kwsprep (kwset);
+  dfamustfree (dm);
 }
 
 void
