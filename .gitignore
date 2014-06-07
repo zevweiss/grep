@@ -60,6 +60,7 @@ ChangeLog
 Makefile
 Makefile.in
 TAGS
+THANKS
 !/gnulib-tests/Makefile.am
 !/lib/Makefile.am
 !/lib/colorize-posix.c

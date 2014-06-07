@@ -78,6 +78,19 @@ sc_prohibit_emacs__indent_tabs_mode__setting:
 	halt='use of emacs indent-tabs-mode: setting'			\
 	  $(_sc_search_regexp)
 
+# THANKS.in is a list of name/email pairs for people who are mentioned in
+# commit logs (and generated ChangeLog), but who are not also listed as an
+# author of a commit.  Name/email pairs of commit authors are automatically
+# extracted from the repository.  As a very minor factorization, when
+# someone who was initially listed only in THANKS.in later authors a commit,
+# this rule detects that their pair may now be removed from THANKS.in.
+sc_THANKS_in_duplicates:
+	@{ git log --pretty=format:%aN | sort -u;			\
+	    cut -b-36 THANKS.in | sed '/^$$/d;s/  *$$//'; }		\
+	  | sort | uniq -d | grep .					\
+	    && { echo '$(ME): remove the above names from THANKS.in'	\
+		  1>&2; exit 1; } || :
+
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
