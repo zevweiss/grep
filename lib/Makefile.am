@@ -34,9 +34,7 @@ libgreputils_a_SOURCES += colorize.h
 EXTRA_DIST += colorize-posix.c colorize-w32.c
 CLEANFILES += colorize.c
 colorize.c:
-	$(AM_V_GEN)rm -f $@-t
 	$(AM_V_at)echo '#include <$(COLORIZE_SOURCE)>' >$@-t
-	$(AM_V_at)chmod a=rx $@-t
 	$(AM_V_at)mv $@-t $@
 
 libgreputils_a_LIBADD += $(LIBOBJS) $(ALLOCA)

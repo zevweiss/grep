@@ -25,11 +25,10 @@ EXTRA_DIST = grep.in.1
 CLEANFILES = grep.1 egrep.1 fgrep.1
 
 grep.1: grep.in.1
-	$(AM_V_GEN)rm -f $@ $@-t
-	$(AM_V_at)sed 's/@''VERSION@/$(VERSION)/' \
-	  < $(srcdir)/grep.in.1 > $@-t && chmod 444 $@-t && mv $@-t $@
+	$(AM_V_GEN)sed 's/@''VERSION@/$(VERSION)/' < $(srcdir)/grep.in.1 > $@-t
+	$(AM_V_at)mv $@-t $@
 
 egrep.1 fgrep.1: Makefile.am
-	$(AM_V_GEN)rm -f $@ $@-t
-	$(AM_V_at)inst=`echo grep | sed '$(transform)'`.1 \
-	  && echo ".so man1/$$inst" > $@-t && chmod 444 $@-t && mv $@-t $@
+	$(AM_V_GEN)inst=`echo grep | sed '$(transform)'`.1 \
+	  && echo ".so man1/$$inst" > $@-t
+	$(AM_V_at)mv $@-t $@

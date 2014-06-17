@@ -45,8 +45,7 @@ AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 EXTRA_DIST = dosbuf.c egrep.sh
 
 egrep fgrep: egrep.sh Makefile
-	$(AM_V_GEN)rm -f $@-t
-	$(AM_V_at)grep=`echo grep | sed -e '$(transform)'` &&		\
+	$(AM_V_GEN)grep=`echo grep | sed -e '$(transform)'` &&		\
 	case $@ in egrep) option=-E;; fgrep) option=-F;; esac &&	\
 	shell_does_substrings='set x/y && d=$${1%/*} && test "$$d" = x' && \
 	if $(SHELL) -c "$$shell_does_substrings" 2>/dev/null; then	\
@@ -58,7 +57,7 @@ egrep fgrep: egrep.sh Makefile
 	    -e "$$edit_substring"					\
 	    -e "s|[@]grep@|$$grep|g"					\
 	    -e "s|[@]option@|$$option|g" <$(srcdir)/egrep.sh >$@-t
-	$(AM_V_at)chmod a=rx $@-t
+	$(AM_V_at)chmod +x $@-t
 	$(AM_V_at)mv $@-t $@
 
 CLEANFILES = egrep fgrep *-t
