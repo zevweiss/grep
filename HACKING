@@ -119,6 +119,8 @@ Note 2:
     sometimes the checkout will fail, telling you that your local
     modifications conflict with changes required to switch branches.
     However, in any case, you will *not* lose your uncommitted changes.
+    Run "git stash" to temporarily hide uncommitted changes in your
+    local directory, restoring a clean working directory.
 
 Anyhow, get back onto your just-created branch:
 
@@ -231,6 +233,18 @@ Try to make the summary line fit one of the following forms:
   tests: change-description
   build: change-description
   maint: change-description
+
+If your commit fixes a bug, try to find the commit that introduced that
+bug.  If you do that, add a note in your new commit log saying something
+like "Introduced by commit v2.18-85-g2c94326.".  If that change made it
+into a release, also add something like [bug introduced in grep-2.19] in
+the corresponding NEWS blurb.  Assuming you found the bug in commit
+54cbe6e6, "git describe 54cbe6e6" will print the longer tag-relative
+string that you'll need.  Note that we used to use an 8-byte SHA1
+prefix like "54cbe6e6", because that was automatically rendered as a
+clickable link by "gitk", but with git-1.7.10, the more descriptive
+version-containing "git describe" format that we now require is also
+highlighted.
 
 
 Curly braces: use judiciously
@@ -349,10 +363,25 @@ this code enables the right mode:
              (not (string-equal mode-name "Makefile")))
         (setq indent-tabs-mode nil))))
 
-[*] Makefile and ChangeLog files are exempt, of course.
+If you use vim (7+ compiled with autocommands), and grep working
+directory name also matches, add the following in ~/.vimrc:
 
-[FIXME: suggest vim syntax to do same thing, if it can be done safely.
- Most distros now "set nomodeline" by default for a good reason. ]
+  " Set GNU style indentation, spaces instead of TABs
+  function! CoreutilsIndent()
+      " Check if 'grep' is part of the current working directory
+      if match(getcwd(), "grep") > 0
+          " The next 3 lines below set the GNU indentation
+          setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
+          setlocal shiftwidth=2
+          setlocal tabstop=8
+          " Coreutils specific, expand TABs with spaces
+          setlocal expandtab
+      endif
+  endfunction
+
+  autocmd BufEnter *.c,*.h call CoreutilsIndent()
+
+[*] Makefile and ChangeLog files are exempt, of course.
 
 
 Send patches to the address listed in --help output
@@ -444,12 +473,12 @@ The forms to choose from are in gnulib's doc/Copyright/ directory.
 If you want to assign a single change, you should use the file,
 doc/Copyright/request-assign.changes:
 
-    http://git.sv.gnu.org/gitweb/?p=gnulib.git;a=blob;f=doc/Copyright/request-assign.changes;hb=HEAD
+    http://www.gnu.org/software/gnulib/Copyright/request-assign.changes
 
 If you would like to assign past and future contributions to a project,
 you'd use doc/Copyright/request-assign.future:
 
-    http://git.sv.gnu.org/gitweb/?p=gnulib.git;a=blob;f=doc/Copyright/request-assign.future;hb=HEAD
+    http://www.gnu.org/software/gnulib/Copyright/request-assign.future
 
 You may make assignments for up to four projects at a time.
 
@@ -473,29 +502,23 @@ versions of gcc and the linux kernel, and modern GNU tools.
 Ensure that your changes are indented properly.
 ===============================================
 Format the code the way GNU indent does.
-In a file with the "indent-tabs-mode: nil" directive at the end,
-running "indent --no-tabs" should induce no change.
-With other files, there will be some existing differences.
-Try not to add any more.
+Filtering most source files through "indent --no-tabs" should
+induce no change in indentation.  Try not to add any more.
 
 
 Avoid trailing white space
 ==========================
-You may notice that the only trailing blanks in grep's
-version-controlled files are in a single directory: tests/pr,
-which contains expected output from various invocations of pr.
+There are no trailing blanks in grep's version-controlled files.
 
 Do not add any more trailing blanks anywhere.  While "make syntax-check"
 will alert you if you slip up, it's better to nip any problem in the
 bud, as you're typing.  A good way to help you adapt to this rule is
 to configure your editor to highlight any offending characters in the
-files you edit.  If you use Emacs, customize its font-lock mode (FIXME:
-provide more detail) or try one of its whitespace packages.  This appears
-to be the one that will end up in emacs 23:
+files you edit.  If you use Emacs, customize its font-lock mode
+or use its WhiteSpace mode:
 
     http://www.emacswiki.org/emacs/WhiteSpace
 
-[that page says its version also works with emacs 21 and 22]
 If you use vim, add this to ~/.vimrc:
 
     let c_space_errors=1
