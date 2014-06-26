@@ -45,7 +45,7 @@ Check <http://tony.abou-assaleh.net/greps.html>.  Take a look at these
 and consider opportunities for merging or cloning:
 
    -- ja-grep's mlb2 patch (Japanese grep)
-      <ftp://ftp.freebsd.org/pub/FreeBSD/ports/distfiles/grep-2.4.2-mlb2.patch.gz>
+  <ftp://ftp.freebsd.org/pub/FreeBSD/ports/distfiles/grep-2.4.2-mlb2.patch.gz>
    -- lgrep (from lv, a Powerful Multilingual File Viewer / Grep)
       <http://www.ff.iij4u.or.jp/~nrt/lv/>;
    -- cgrep (Context grep) <http://plg.uwaterloo.ca/~ftp/mt/cgrep/>
@@ -103,7 +103,8 @@ repertoire reduced to the following various forms of “LATIN LETTER I”:
 
 0049;LATIN CAPITAL LETTER I;Lu;0;L;;;;;N;;;;0069;
 0069;LATIN SMALL LETTER I;Ll;0;L;;;;;N;;;0049;;0049
-0130;LATIN CAPITAL LETTER I WITH DOT ABOVE;Lu;0;L;0049 0307;;;;N;LATIN CAPITAL LETTER I DOT;;;0069;
+0130;LATIN CAPITAL LETTER I WITH DOT ABOVE;Lu;0;L;0049 0307;;;;N;\
+  LATIN CAPITAL LETTER I DOT;;;0069;
 0131;LATIN SMALL LETTER DOTLESS I;Ll;0;L;;;;;N;;;0049;;0049
 
 First note the differing UTF-8 octet lengths of U+0049 (0x49) and

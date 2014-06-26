@@ -20,36 +20,37 @@ for locale in C en_US.UTF-8; do
         # should return 0 found a match
         echo "" | LC_ALL=$locale timeout 10s grep $options -e ''
         if test $? -ne 0 ; then
-                echo "Status: Wrong status code, test \#1 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#1 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 1 found no match
-        echo "abcd" | LC_ALL=$locale timeout 10s grep $options -f /dev/null
+        echo abcd | LC_ALL=$locale timeout 10s grep $options -f /dev/null
         if test $? -ne 1 ; then
-                echo "Status: Wrong status code, test \#2 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#2 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 0 found a match
-        echo "abcd" | LC_ALL=$locale timeout 10s grep $options -f /dev/null -e "abcd"
+        echo abcd \
+            | LC_ALL=$locale timeout 10s grep $options -f /dev/null -e abcd
         if test $? -ne 0 ; then
-                echo "Status: Wrong status code, test \#3 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#3 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 0 found a match
         echo "" | LC_ALL=$locale timeout 10s grep $options -e ''
         if test $? -ne 0 ; then
-                echo "Status: Wrong status code, test \#4 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#4 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 0 found a match
-        echo "abcd" | LC_ALL=$locale timeout 10s grep $options -e ''
+        echo abcd | LC_ALL=$locale timeout 10s grep $options -e ''
         if test $? -ne 0 ; then
-                echo "Status: Wrong status code, test \#5 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#5 failed ($options $locale)"
+          failures=1
         fi
     done
 
@@ -58,22 +59,22 @@ for locale in C en_US.UTF-8; do
         # should return 0 found a match
         echo "" | LC_ALL=$locale timeout 10s grep $options -e ''
         if test $? -ne 0 ; then
-                echo "Status: Wrong status code, test \#6 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#6 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 1 found no match
-        echo "abcd" | LC_ALL=$locale timeout 10s grep $options -f /dev/null
+        echo abcd | LC_ALL=$locale timeout 10s grep $options -f /dev/null
         if test $? -ne 1 ; then
-                echo "Status: Wrong status code, test \#7 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#7 failed ($options $locale)"
+          failures=1
         fi
 
         # should return 1 found no match
-        echo "abcd" | LC_ALL=$locale timeout 10s grep $options -f /dev/null -e ""
+        echo abcd | LC_ALL=$locale timeout 10s grep $options -f /dev/null -e ""
         if test $? -ne 1 ; then
-                echo "Status: Wrong status code, test \#8 failed ($options $locale)"
-                failures=1
+          echo "Status: Wrong status code, test \#8 failed ($options $locale)"
+          failures=1
         fi
     done
 done

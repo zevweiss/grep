@@ -1136,7 +1136,8 @@ parse_bracket_exp (void)
                   if (wc != WEOF && wc2 != WEOF)
                     {
                       work_mbc->ranges
-                        = maybe_realloc (work_mbc->ranges, work_mbc->nranges + 2,
+                        = maybe_realloc (work_mbc->ranges,
+                                         work_mbc->nranges + 2,
                                          &ranges_al, sizeof *work_mbc->ranges);
                       work_mbc->ranges[work_mbc->nranges].beg
                         = case_fold ? towlower (wc) : wc;
@@ -1145,7 +1146,8 @@ parse_bracket_exp (void)
 
                       if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
                         {
-                          work_mbc->ranges[work_mbc->nranges].beg = towupper (wc);
+                          work_mbc->ranges[work_mbc->nranges].beg
+                            = towupper (wc);
                           work_mbc->ranges[work_mbc->nranges++].end
                             = towupper (wc2);
                         }
@@ -3699,13 +3701,13 @@ dfafree (struct dfa *d)
 
         CAT	(p->is==ZERO)?	(q->is==ZERO)?	(p->is!=ZERO &&	p->in plus
                 p->left :	q->right :	q->is!=ZERO) ?	q->in plus
-                p->is##q->left	p->right##q->is	p->is##q->is :	p->right##q->left
+                p->is##q->left	p->right##q->is	p->is##q->is : p->right##q->left
                                                 ZERO
 
-        OR	longest common	longest common	(do p->is and	substrings common to
-                leading		trailing	q->is have same	p->in and q->in
-                (sub)sequence	(sub)sequence	length and
-                of p->left	of p->right	content) ?
+        OR	longest common	longest common	(do p->is and substrings common
+                leading		trailing	to q->is have same p->in and
+                (sub)sequence	(sub)sequence	q->in length and content) ?
+                of p->left	of p->right
                 and q->left	and q->right	p->is : NULL
 
    If there's anything else we recognize in the tree, all four sequences get set

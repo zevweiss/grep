@@ -1252,13 +1252,15 @@ in the current locale.
 @opindex alnum @r{character class}
 @cindex alphanumeric characters
 Alphanumeric characters:
-@samp{[:alpha:]} and @samp{[:digit:]}; in the @samp{C} locale and ASCII character encoding, this is the same as @samp{[0-9A-Za-z]}.
+@samp{[:alpha:]} and @samp{[:digit:]}; in the @samp{C} locale and ASCII
+character encoding, this is the same as @samp{[0-9A-Za-z]}.
 
 @item [:alpha:]
 @opindex alpha @r{character class}
 @cindex alphabetic characters
 Alphabetic characters:
-@samp{[:lower:]} and @samp{[:upper:]}; in the @samp{C} locale and ASCII character encoding, this is the same as @samp{[A-Za-z]}.
+@samp{[:lower:]} and @samp{[:upper:]}; in the @samp{C} locale and ASCII
+character encoding, this is the same as @samp{[A-Za-z]}.
 
 @item [:blank:]
 @opindex blank @r{character class}
@@ -1362,7 +1364,8 @@ represents the open equivalence class.
 represents the close equivalence class.
 
 @item [:
-represents the open character class symbol, and should be followed by a valid character class name.
+represents the open character class symbol, and should be followed by a
+valid character class name.
 
 @item :]
 represents the close character class symbol.

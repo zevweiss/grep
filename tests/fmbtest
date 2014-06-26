@@ -81,22 +81,28 @@ fi
 #  failures=1
 #fi
 
-# Test that --color=always does not depend on individual pattern order within the pattern
-# list, and that a longer match is preferred to a shorter one starting at the same point.
+# Test that --color=always does not depend on individual pattern order
+# within the pattern list, and that a longer match is preferred to a
+# shorter one starting at the same point.
 test6="$(echo 'Cosi tu ČišÍ...' \
-        | LC_ALL=$cz grep --color=always -${mode}i -e 'čiš' -e 'čiší')"
-if echo "$test6" | LC_ALL=C grep -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
+  | LC_ALL=$cz grep --color=always -${mode}i -e 'čiš' -e 'čiší')"
+if echo "$test6" \
+  | LC_ALL=C grep -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; \
+then
   :
 else
   echo "Test #6 ${mode} failed: $test6"
   failures=1
 fi
 
-# Test that --color=always does not depend on individual pattern order within the pattern
-# list, and that a longer match is preferred to a shorter one starting at the same point.
+# Test that --color=always does not depend on individual pattern order
+# within the pattern list, and that a longer match is preferred to a
+# shorter one starting at the same point.
 test7="$(echo 'Cosi tu ČišÍ...' \
-        | LC_ALL=$cz grep --color=always -${mode}i -e 'čiší' -e 'čiš')"
-if echo "$test7" | LC_ALL=C grep -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; then
+  | LC_ALL=$cz grep --color=always -${mode}i -e 'čiší' -e 'čiš')"
+if echo "$test7" \
+  | LC_ALL=C grep -q 'Cosi tu .*\[.*m\(.\[K\)\?ČišÍ.*\[.*m\(.\[K\)\?\.\.\.'; \
+then
   :
 else
   echo "Test #7 ${mode} failed: $test7"

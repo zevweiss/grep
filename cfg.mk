@@ -66,6 +66,25 @@ sc_prohibit_echo_minus_en:
 	halt='do not use echo ''-e or echo ''-n; use printf instead'	\
 	  $(_sc_search_regexp)
 
+# Look for lines longer than 80 characters, except omit:
+# - program-generated long lines in diff headers,
+# - the help2man script copied from upstream,
+# - tests involving long checksum lines, and
+# - the 'pr' test cases.
+LINE_LEN_MAX = 80
+FILTER_LONG_LINES =						\
+  /^[^:]*\.diff:[^:]*:@@ / d;					\
+  \|^[^:]*man/help2man:| d;			\
+  \|^[^:]*tests/misc/sha[0-9]*sum.*\.pl[-:]| d;			\
+  \|^[^:]*tests/pr/|{ \|^[^:]*tests/pr/pr-tests:| !d; };
+sc_long_lines:
+	@files=$$($(VC_LIST_EXCEPT))					\
+	halt='line(s) with more than $(LINE_LEN_MAX) characters; reindent'; \
+	for file in $$files; do						\
+	  expand $$file | grep -nE '^.{$(LINE_LEN_MAX)}.' |		\
+	  sed -e "s|^|$$file:|" -e '$(FILTER_LONG_LINES)';		\
+	done | grep . && { msg="$$halt" $(_sc_say_and_exit) } || :
+
 # Indent only with spaces.
 sc_prohibit_tab_based_indentation:
 	@prohibit='^ *	'						\
@@ -104,3 +123,5 @@ exclude_file_name_regexp--sc_error_message_uppercase = ^src/dfa\.c$$
 exclude_file_name_regexp--sc_prohibit_strncpy = ^src/dfa\.c$$
 
 exclude_file_name_regexp--sc_prohibit_doubled_word = ^tests/count-newline$$
+
+exclude_file_name_regexp--sc_long_lines = ^tests/.*$$

@@ -1536,10 +1536,10 @@ Example: %s -i 'hello world' menu.h main.c\n\
 Regexp selection and interpretation:\n"), program_name);
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
-  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings\n\
+  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
   -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n\
   -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
-  /* -X is undocumented on purpose. */
+  /* -X is deliberately undocumented.  */
       printf (_("\
   -e, --regexp=PATTERN      use PATTERN for matching\n\
   -f, --file=FILE           obtain PATTERN from FILE\n\
@@ -1583,7 +1583,8 @@ Output control:\n\
 "));
       printf (_("\
       --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
-      --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN\n\
+      --exclude=FILE_PATTERN  skip files and directories matching\
+ FILE_PATTERN\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
 "));
@@ -1617,12 +1618,7 @@ When FILE is -, read standard input.  With no FILE, read . if a command-line\n\
 -r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n\
 Exit status is 0 if any line is selected, 1 otherwise;\n\
 if any error occurs and -q is not given, the exit status is 2.\n"));
-      printf (_("\nReport bugs to: %s\n"), PACKAGE_BUGREPORT);
-      printf (_("GNU Grep home page: <%s>\n"),
-              "http://www.gnu.org/software/grep/");
-      fputs (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"),
-             stdout);
-
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
