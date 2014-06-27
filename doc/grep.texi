@@ -1208,6 +1208,7 @@ Repetition takes precedence over concatenation,
 which in turn takes precedence over alternation.
 A whole expression may be enclosed in parentheses
 to override these precedence rules and form a subexpression.
+An unmatched @samp{)} matches just itself.
 
 @node Character Classes and Bracket Expressions
 @section Character Classes and Bracket Expressions

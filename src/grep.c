@@ -1638,7 +1638,9 @@ Gcompile (char const *pattern, size_t size)
 static void
 Ecompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size, RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES);
+  GEAcompile (pattern, size,
+              (RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES
+               | RE_UNMATCHED_RIGHT_PAREN_ORD));
 }
 
 static void
