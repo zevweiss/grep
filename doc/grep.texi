@@ -759,15 +759,23 @@ this option can be used with commands like
 The behavior of @command{grep} is affected
 by the following environment variables.
 
+@vindex LANGUAGE @r{environment variable}
+@vindex LC_ALL @r{environment variable}
+@vindex LC_MESSAGES @r{environment variable}
+@vindex LANG @r{environment variable}
 The locale for category @w{@code{LC_@var{foo}}}
 is specified by examining the three environment variables
 @env{LC_ALL}, @w{@env{LC_@var{foo}}}, and @env{LANG},
 in that order.
 The first of these variables that is set specifies the locale.
 For example, if @env{LC_ALL} is not set,
-but @env{LC_MESSAGES} is set to @samp{pt_BR},
+but @env{LC_COLLATE} is set to @samp{pt_BR},
 then the Brazilian Portuguese locale is used
-for the @env{LC_MESSAGES} category.
+for the @env{LC_COLLATE} category.
+As a special case for @env{LC_MESSAGES} only, the environment variable
+@env{LANGUAGE} can contain a colon-separated list of languages that
+overrides the three environment variables that ordinarily specify
+the @env{LC_MESSAGES} category.
 The @samp{C} locale is used if none of these environment variables are set,
 if the locale catalog is not installed,
 or if @command{grep} was not compiled
@@ -978,9 +986,11 @@ These variables specify the locale for the @env{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
 
-@item LC_ALL
+@item LANGUAGE
+@itemx LC_ALL
 @itemx LC_MESSAGES
 @itemx LANG
+@vindex LANGUAGE @r{environment variable}
 @vindex LC_ALL @r{environment variable}
 @vindex LC_MESSAGES @r{environment variable}
 @vindex LANG @r{environment variable}
