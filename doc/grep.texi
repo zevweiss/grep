@@ -468,7 +468,7 @@ to be printed in a minimum-size field width.
 Report Unix-style byte offsets.
 This option causes @command{grep} to report byte offsets
 as if the file were a Unix-style text file,
-i.e., the byte offsets ignore the @code{CR} characters that were stripped.
+i.e., the byte offsets ignore carriage returns that were stripped.
 This will produce results identical
 to running @command{grep} on a Unix machine.
 This option has no effect unless the @option{-b} option is also used;
@@ -479,7 +479,7 @@ it has no effect on platforms other than MS-DOS and MS-Windows.
 @opindex -Z
 @opindex --null
 @cindex zero-terminated file names
-Output a zero byte (the ASCII @code{NUL} character)
+Output a zero byte (the ASCII NUL character)
 instead of the character that normally follows a file name.
 For example,
 @samp{grep -lZ} outputs a zero byte after each file name
@@ -731,7 +731,7 @@ By default, under MS-DOS and MS-Windows,
 @command{grep} guesses whether a file is text or binary
 as described for the @option{--binary-files} option.
 If @command{grep} decides the file is a text file,
-it strips the @code{CR} characters from the original file contents
+it strips carriage returns from the original file contents
 (to make regular expressions with @code{^} and @code{$} work correctly).
 Specifying @option{-U} overrules this guesswork,
 causing all files to be read and passed to the matching mechanism verbatim;
@@ -746,7 +746,7 @@ on platforms other than MS-DOS and MS-Windows.
 @opindex --null-data
 @cindex zero-terminated lines
 Treat the input as a set of lines, each terminated by a zero byte (the
-ASCII @code{NUL} character) instead of a newline.
+ASCII NUL character) instead of a newline.
 Like the @option{-Z} or @option{--null} option,
 this option can be used with commands like
 @samp{sort -z} to process arbitrary file names.
@@ -767,7 +767,7 @@ The first of these variables that is set specifies the locale.
 For example, if @env{LC_ALL} is not set,
 but @env{LC_MESSAGES} is set to @samp{pt_BR},
 then the Brazilian Portuguese locale is used
-for the @code{LC_MESSAGES} category.
+for the @env{LC_MESSAGES} category.
 The @samp{C} locale is used if none of these environment variables are set,
 if the locale catalog is not installed,
 or if @command{grep} was not compiled
@@ -816,7 +816,7 @@ the @code{terminfo} library.
 @cindex default options environment variable
 This variable specifies default options to be placed in front of any
 explicit options.
-For example, if @code{GREP_OPTIONS} is
+For example, if @env{GREP_OPTIONS} is
 @samp{--binary-files=without-match --directories=skip}, @command{grep}
 behaves as if the two options @samp{--binary-files=without-match} and
 @samp{--directories=skip} had been specified before
@@ -826,12 +826,12 @@ whitespace.
 A backslash escapes the next character, so it can be used to
 specify an option containing whitespace or a backslash.
 
-The @code{GREP_OPTIONS} value does not affect whether @command{grep}
+The @env{GREP_OPTIONS} value does not affect whether @command{grep}
 without file operands searches standard input or the working
 directory; that is affected only by command-line options.  For
 example, the command @samp{grep PAT} searches standard input and the
 command @samp{grep -r PAT} searches the working directory, regardless
-of whether @code{GREP_OPTIONS} contains @option{-r}.
+of whether @env{GREP_OPTIONS} contains @option{-r}.
 
 @item GREP_COLOR
 @vindex GREP_COLOR @r{environment variable}
@@ -964,7 +964,7 @@ They are omitted (i.e., false) by default and become true when specified.
 @cindex character type
 @cindex national language support
 @cindex NLS
-These variables specify the locale for the @code{LC_COLLATE} category,
+These variables specify the locale for the @env{LC_COLLATE} category,
 which might affect how range expressions like @samp{[a-z]} are
 interpreted.
 
@@ -974,7 +974,7 @@ interpreted.
 @vindex LC_ALL @r{environment variable}
 @vindex LC_CTYPE @r{environment variable}
 @vindex LANG @r{environment variable}
-These variables specify the locale for the @code{LC_CTYPE} category,
+These variables specify the locale for the @env{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
 
@@ -988,7 +988,7 @@ e.g., which characters are whitespace.
 @cindex message language
 @cindex national language support
 @cindex translation of message language
-These variables specify the locale for the @code{LC_MESSAGES} category,
+These variables specify the locale for the @env{LC_MESSAGES} category,
 which determines the language that @command{grep} uses for messages.
 The default @samp{C} locale uses American English messages.
 
@@ -1002,7 +1002,7 @@ follow file names must be treated as file names;
 by default,
 such options are permuted to the front of the operand list
 and are treated as options.
-Also, @code{POSIXLY_CORRECT} disables special handling of an
+Also, @env{POSIXLY_CORRECT} disables special handling of an
 invalid bracket expression.  @xref{invalid-bracket-expr}.
 
 @item _@var{N}_GNU_nonoption_argv_flags_
@@ -1015,7 +1015,7 @@ A shell can put this variable in the environment for each command it runs,
 specifying which operands are the results of file name wildcard expansion
 and therefore should not be treated as options.
 This behavior is available only with the GNU C library,
-and only when @code{POSIXLY_CORRECT} is not set.
+and only when @env{POSIXLY_CORRECT} is not set.
 
 @end table
 
@@ -1242,7 +1242,7 @@ of bracket expressions, you can use the @samp{C} locale by setting the
 
 Finally, certain named classes of characters are predefined within
 bracket expressions, as follows.
-Their interpretation depends on the @code{LC_CTYPE} locale;
+Their interpretation depends on the @env{LC_CTYPE} locale;
 for example, @samp{[[:alnum:]]} means the character class of numbers and letters
 in the current locale.
 
@@ -1275,7 +1275,7 @@ space and tab.
 @cindex control characters
 Control characters.
 In ASCII, these characters have octal codes 000
-through 037, and 177 (@code{DEL}).
+through 037, and 177 (DEL).
 In other character sets, these are
 the equivalent characters, if any.
 
@@ -1343,7 +1343,7 @@ If you mistakenly omit the outer brackets, and search for say, @samp{[:upper:]},
 GNU @command{grep} prints a diagnostic and exits with status 2, on
 the assumption that you did not intend to search for the nominally
 equivalent regular expression: @samp{[:epru]}.
-Set the @code{POSIXLY_CORRECT} environment variable to disable this feature.
+Set the @env{POSIXLY_CORRECT} environment variable to disable this feature.
 
 Most meta-characters lose their special meaning inside bracket expressions.
 
