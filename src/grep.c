@@ -397,7 +397,7 @@ static int grepdesc (int, int);
 
 static void dos_binary (void);
 static void dos_unix_byte_offsets (void);
-static int undossify_input (char *, size_t);
+static size_t undossify_input (char *, size_t);
 
 static int
 is_device_mode (mode_t m)
@@ -583,7 +583,7 @@ reset (int fd, struct stat const *st)
 static int
 fillbuf (size_t save, struct stat const *st)
 {
-  ssize_t fillsize;
+  size_t fillsize;
   int cc = 1;
   char *readbuf;
   size_t readsize;
@@ -645,7 +645,7 @@ fillbuf (size_t save, struct stat const *st)
   readsize -= readsize % pagesize;
 
   fillsize = safe_read (bufdesc, readbuf, readsize);
-  if (fillsize < 0)
+  if (fillsize == SAFE_READ_ERROR)
     fillsize = cc = 0;
   bufoffset += fillsize;
   fillsize = undossify_input (readbuf, fillsize);
