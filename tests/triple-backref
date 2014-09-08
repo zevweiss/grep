@@ -1,0 +1,35 @@
+#! /bin/sh
+# Test for a bug in glibc's regex code as of September 7, 2014.
+#
+# Copyright (C) 2014 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+failures=0
+
+# FIXME-2014: once the glibc bug is fixed, remove this skip-if-glibc guard.
+# Since this tests for an as-yet-unfixed bug in glibc,
+# we expect it to fail on such systems.
+# Since we expect this test to fail, we must skip this test on
+# non-glibc systems.
+cat <<\EOF > glibc.c
+#include <features.h>
+#if defined __GNU_LIBRARY__ && __GLIBC__ >= 2
+#else
+"run this test only with glibc"
+#endif
+EOF
+$CC -c glibc.c \
+  || skip_ 'this test runs only on systems with glibc'
+
+echo a > in || framework_failure_
+
+fail=0
+grep -E '(.?)(.?)(.?)\3\2\1' in > out || fail=1
+compare out in || fail=1
+
+Exit $fail

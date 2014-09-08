@@ -22,7 +22,7 @@ AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 
-XFAIL_TESTS =
+XFAIL_TESTS = triple-backref
 
 # Equivalence classes are only supported when using the system
 # matcher (which means only with glibc).
@@ -104,6 +104,7 @@ TESTS =						\
   status					\
   surrogate-pair				\
   symlink					\
+  triple-backref				\
   turkish-eyes					\
   turkish-I					\
   turkish-I-without-dot				\
