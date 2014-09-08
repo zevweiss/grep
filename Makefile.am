@@ -20,6 +20,7 @@ AUTOMAKE_OPTIONS = gnu 1.12
 SUBDIRS = po lib doc src tests gnulib-tests
 
 EXTRA_DIST =		\
+  .mailmap		\
   ChangeLog-2009	\
   README		\
   README-alpha		\
