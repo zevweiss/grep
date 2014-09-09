@@ -6,6 +6,9 @@ GNU grep NEWS                                    -*- outline -*-
 
   Performance has improved for very long strings in patterns.
 
+  grep -P no longer reports an error and exits when given invalid UTF-8 data.
+  Instead, it considers the data to be non-matching.
+
 ** Bug fixes
 
   grep -E rejected unmatched ')', instead of treating it like '\)'.

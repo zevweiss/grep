@@ -136,34 +136,41 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
 #else
   /* This array must have at least two elements; everything after that
      is just for performance improvement in pcre_exec.  */
-  int sub[300];
+  enum { nsub = 300 };
+  int sub[nsub];
 
-  const char *line_buf, *line_end, *line_next;
+  char const *p = start_ptr ? start_ptr : buf;
+  int options = p == buf || p[-1] == eolbyte ? 0 : PCRE_NOTBOL;
+  char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
-  ptrdiff_t start_ofs = start_ptr ? start_ptr - buf : 0;
+  char const *line_end;
 
   /* PCRE can't limit the matching to single lines, therefore we have to
      match each line in the buffer separately.  */
-  for (line_next = buf;
-       e == PCRE_ERROR_NOMATCH && line_next < buf + size;
-       start_ofs -= line_next - line_buf)
+  for (; p < buf + size; p = line_start = line_end + 1)
     {
-      line_buf = line_next;
-      line_end = memchr (line_buf, eolbyte, (buf + size) - line_buf);
-      if (line_end == NULL)
-        line_next = line_end = buf + size;
-      else
-        line_next = line_end + 1;
+      line_end = memchr (p, eolbyte, buf + size - p);
 
-      if (start_ptr && start_ptr >= line_end)
-        continue;
-
-      if (INT_MAX < line_end - line_buf)
+      if (INT_MAX < line_end - p)
         error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
-      e = pcre_exec (cre, extra, line_buf, line_end - line_buf,
-                     start_ofs < 0 ? 0 : start_ofs, 0,
-                     sub, sizeof sub / sizeof *sub);
+      /* Treat encoding-error bytes as data that cannot match.  */
+      for (;;)
+        {
+          e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, nsub);
+          if (e != PCRE_ERROR_BADUTF8)
+            break;
+          e = pcre_exec (cre, extra, p, sub[0], 0,
+                         options | PCRE_NO_UTF8_CHECK, sub, nsub);
+          if (e != PCRE_ERROR_NOMATCH)
+            break;
+          p += sub[0] + 1;
+          options = PCRE_NOTBOL;
+        }
+
+      if (e != PCRE_ERROR_NOMATCH)
+        break;
+      options = 0;
     }
 
   if (e <= 0)
@@ -180,10 +187,6 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           error (EXIT_TROUBLE, 0,
                  _("exceeded PCRE's backtracking limit"));
 
-        case PCRE_ERROR_BADUTF8:
-          error (EXIT_TROUBLE, 0,
-                 _("invalid UTF-8 byte sequence in input"));
-
         default:
           /* For now, we lump all remaining PCRE failures into this basket.
              If anyone cares to provide sample grep usage that can trigger
@@ -197,25 +200,8 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
     }
   else
     {
-      /* Narrow down to the line we've found.  */
-      char const *beg = line_buf + sub[0];
-      char const *end = line_buf + sub[1];
-      char const *buflim = buf + size;
-      char eol = eolbyte;
-      if (!start_ptr)
-        {
-          /* FIXME: The case when '\n' is not found indicates a bug:
-             Since grep is line oriented, the match should never contain
-             a newline, so there _must_ be a newline following.
-           */
-          if (!(end = memchr (end, eol, buflim - end)))
-            end = buflim;
-          else
-            end++;
-          while (buf < beg && beg[-1] != eol)
-            --beg;
-        }
-
+      char const *beg = start_ptr ? p + sub[0] : line_start;
+      char const *end = start_ptr ? p + sub[1] : line_end + 1;
       *match_size = end - beg;
       return beg - buf;
     }
