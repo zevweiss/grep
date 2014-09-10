@@ -157,14 +157,16 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       /* Treat encoding-error bytes as data that cannot match.  */
       for (;;)
         {
+          int valid_bytes;
           e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, nsub);
           if (e != PCRE_ERROR_BADUTF8)
             break;
-          e = pcre_exec (cre, extra, p, sub[0], 0,
+          valid_bytes = sub[0];
+          e = pcre_exec (cre, extra, p, valid_bytes, 0,
                          options | PCRE_NO_UTF8_CHECK, sub, nsub);
           if (e != PCRE_ERROR_NOMATCH)
             break;
-          p += sub[0] + 1;
+          p += valid_bytes + 1;
           options = PCRE_NOTBOL;
         }
 
