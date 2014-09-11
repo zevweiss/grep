@@ -1773,11 +1773,11 @@ g/re/p
 @chapter Reporting bugs
 
 @cindex bugs, reporting
-Email bug reports to @email{bug-grep@@gnu.org},
-a mailing list whose web page is
-@url{http://lists.gnu.org/mailman/listinfo/bug-grep}.
-The Savannah bug tracker for @command{grep} is located at
-@url{http://savannah.gnu.org/bugs/?group=grep}.
+Bug reports can be found at the
+@url{http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep,
+GNU bug report logs for @command{grep}}.
+If you find a bug not listed there, please email it to
+@email{bug-grep@@gnu.org} to create a new bug report.
 
 @section Known Bugs
 @cindex Bugs, known

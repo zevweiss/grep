@@ -45,9 +45,9 @@ The option -i does not work properly in some multibyte locales such as
 tr_TR.UTF-8 where the upper case and lower case forms of a character are not
 necessarily of the same byte length.
 
-Additional bug reports can be found at:
+A list of outstanding and resolved bugs can be found at:
 
-        http://savannah.gnu.org/bugs/?group=grep
+        http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep
 
 You can also browse the bug-grep mailing list archive at:
 
