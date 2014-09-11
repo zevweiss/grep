@@ -163,7 +163,8 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
             break;
           valid_bytes = sub[0];
           e = pcre_exec (cre, extra, p, valid_bytes, 0,
-                         options | PCRE_NO_UTF8_CHECK, sub, nsub);
+                         options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
+                         sub, nsub);
           if (e != PCRE_ERROR_NOMATCH)
             break;
           p += valid_bytes + 1;
