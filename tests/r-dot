@@ -14,8 +14,7 @@ compare exp out || fail=1
 (cd dir && grep -r aaa < a) > out || fail=1
 compare exp out || fail=1
 
-echo aaa > exp || framework_failure_
-(cd dir && GREP_OPTIONS=-r grep aaa < a) > out || fail=1
+(cd dir && grep -r aaa *) > out || fail=1
 compare exp out || fail=1
 
 Exit $fail

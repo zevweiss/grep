@@ -851,19 +851,13 @@ was not compiled with national language support (\s-1NLS\s0).
 .B GREP_OPTIONS
 This variable specifies default options
 to be placed in front of any explicit options.
-For example, if
-.B GREP_OPTIONS
-is
-.BR "'\-\^\-binary-files=without-match \-\^\-directories=skip'" ,
-.B grep
-behaves as if the two options
-.B \-\^\-binary\-files=without-match
+As this causes problems when writing portable scripts,
+this feature will be removed in a future release of
+.BR grep ,
 and
-.B \-\^\-directories=skip
-had been specified before any explicit options.
-Option specifications are separated by whitespace.
-A backslash escapes the next character,
-so it can be used to specify an option containing whitespace or a backslash.
+.B grep
+warns if it is used.
+Please use an alias or script instead.
 .TP
 .B GREP_COLOR
 This variable specifies the color used to highlight matched (non-empty) text.

@@ -1973,7 +1973,12 @@ main (int argc, char **argv)
   atexit (clean_up_stdout);
 
   last_recursive = 0;
+
   prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
+  if (prepended)
+    error (0, 0, _("warning: GREP_OPTIONS is deprecated;"
+                   " please use an alias or script"));
+
   compile = matchers[0].compile;
   execute = matchers[0].execute;
 

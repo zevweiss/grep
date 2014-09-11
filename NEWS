@@ -29,6 +29,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Changes in behavior
 
+  The GREP_OPTIONS environment variable is now obsolescent, and grep
+  now warns if it is used.  Please use an alias or script instead.
+
   grep --exclude-dir='FOO/' now excludes the directory FOO.
   Previously, the trailing slash meant the option was ineffective.
 

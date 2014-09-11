@@ -824,22 +824,9 @@ the @code{terminfo} library.
 @cindex default options environment variable
 This variable specifies default options to be placed in front of any
 explicit options.
-For example, if @env{GREP_OPTIONS} is
-@samp{--binary-files=without-match --directories=skip}, @command{grep}
-behaves as if the two options @samp{--binary-files=without-match} and
-@samp{--directories=skip} had been specified before
-any explicit options.
-Option specifications are separated by
-whitespace.
-A backslash escapes the next character, so it can be used to
-specify an option containing whitespace or a backslash.
-
-The @env{GREP_OPTIONS} value does not affect whether @command{grep}
-without file operands searches standard input or the working
-directory; that is affected only by command-line options.  For
-example, the command @samp{grep PAT} searches standard input and the
-command @samp{grep -r PAT} searches the working directory, regardless
-of whether @env{GREP_OPTIONS} contains @option{-r}.
+As this causes problems when writing portable scripts, this feature
+will be removed in a future release of @command{grep}, and @command{grep}
+warns if it is used.  Please use an alias or script instead.
 
 @item GREP_COLOR
 @vindex GREP_COLOR @r{environment variable}
