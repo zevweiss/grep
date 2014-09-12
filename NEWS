@@ -14,6 +14,11 @@ GNU grep NEWS                                    -*- outline -*-
   grep -E rejected unmatched ')', instead of treating it like '\)'.
   [bug present since "the beginning"]
 
+** Changes in behavior
+
+  The GREP_OPTIONS environment variable is now obsolescent, and grep
+  now warns if it is used.  Please use an alias or script instead.
+
 * Noteworthy changes in release 2.20 (2014-06-03) [stable]
 
 ** Bug fixes
@@ -28,9 +33,6 @@ GNU grep NEWS                                    -*- outline -*-
   [bug introduced in grep-2.19]
 
 ** Changes in behavior
-
-  The GREP_OPTIONS environment variable is now obsolescent, and grep
-  now warns if it is used.  Please use an alias or script instead.
 
   grep --exclude-dir='FOO/' now excludes the directory FOO.
   Previously, the trailing slash meant the option was ineffective.
