@@ -52,12 +52,16 @@ Pcompile (char const *pattern, size_t size)
   char const *ep;
   char *re = xnmalloc (4, size + 7);
   int flags = (PCRE_MULTILINE
-               | (match_icase ? PCRE_CASELESS : 0)
-               | (using_utf8 () ? PCRE_UTF8 : 0));
+               | (match_icase ? PCRE_CASELESS : 0));
   char const *patlim = pattern + size;
   char *n = re;
   char const *p;
   char const *pnul;
+
+  if (using_utf8 ())
+    flags |= PCRE_UTF8;
+  else if (MB_CUR_MAX != 1)
+    error (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
 
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))

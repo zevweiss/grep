@@ -19,6 +19,9 @@ GNU grep NEWS                                    -*- outline -*-
   The GREP_OPTIONS environment variable is now obsolescent, and grep
   now warns if it is used.  Please use an alias or script instead.
 
+  In locales with multibyte character encodings other than UTF-8,
+  grep -P now reports an error and exits instead of misbehaving.
+
 * Noteworthy changes in release 2.20 (2014-06-03) [stable]
 
 ** Bug fixes
