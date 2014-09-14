@@ -33,6 +33,10 @@ static pcre *cre;
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
+/* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
+   string matches when that flag is used.  */
+static int empty_match[2];
+
 # ifdef PCRE_STUDY_JIT_COMPILE
 static pcre_jit_stack *jit_stack;
 # else
@@ -124,6 +128,10 @@ Pcompile (char const *pattern, size_t size)
                _("failed to allocate memory for the PCRE JIT stack"));
       pcre_assign_jit_stack (extra, NULL, jit_stack);
     }
+
+  empty_match[false] = pcre_exec (cre, extra, "", 0, 0, PCRE_NOTBOL, NULL, 0);
+  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, NULL, 0);
+
 # endif
   free (re);
 #endif /* HAVE_LIBPCRE */
@@ -144,7 +152,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   int sub[nsub];
 
   char const *p = start_ptr ? start_ptr : buf;
-  int options = p == buf || p[-1] == eolbyte ? 0 : PCRE_NOTBOL;
+  bool bol = p[-1] == eolbyte;
   char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
@@ -164,23 +172,26 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       /* Treat encoding-error bytes as data that cannot match.  */
       for (;;)
         {
+          int options = bol ? 0 : PCRE_NOTBOL;
           int valid_bytes;
           e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, nsub);
           if (e != PCRE_ERROR_BADUTF8)
             break;
           valid_bytes = sub[0];
-          e = pcre_exec (cre, extra, p, valid_bytes, 0,
-                         options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
-                         sub, nsub);
+          e = (valid_bytes == 0
+               ? empty_match[bol]
+               : pcre_exec (cre, extra, p, valid_bytes, 0,
+                            options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
+                            sub, nsub));
           if (e != PCRE_ERROR_NOMATCH)
             break;
           p += valid_bytes + 1;
-          options = PCRE_NOTBOL;
+          bol = false;
         }
 
       if (e != PCRE_ERROR_NOMATCH)
         break;
-      options = 0;
+      bol = true;
     }
 
   if (e <= 0)
@@ -188,7 +199,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       switch (e)
         {
         case PCRE_ERROR_NOMATCH:
-          return -1;
+          break;
 
         case PCRE_ERROR_NOMEMORY:
           error (EXIT_TROUBLE, 0, _("memory exhausted"));
@@ -205,7 +216,6 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           error (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
         }
 
-      /* NOTREACHED */
       return -1;
     }
   else
