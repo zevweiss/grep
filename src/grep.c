@@ -65,20 +65,20 @@ static struct stat out_stat;
 /* if non-zero, display usage information and exit */
 static int show_help;
 
-/* If non-zero, print the version on standard output and exit.  */
-static int show_version;
+/* Print the version on standard output and exit.  */
+static bool show_version;
 
-/* If nonzero, suppress diagnostics for nonexistent or unreadable files.  */
-static int suppress_errors;
+/* Suppress diagnostics for nonexistent or unreadable files.  */
+static bool suppress_errors;
 
 /* If nonzero, use color markers.  */
 static int color_option;
 
-/* If nonzero, show only the part of a line matching the expression. */
-static int only_matching;
+/* Show only the part of a line matching the expression. */
+static bool only_matching;
 
 /* If nonzero, make sure first content char in a line is on a tab stop. */
-static int align_tabs;
+static bool align_tabs;
 
 /* The group separator used when context is requested. */
 static const char *group_separator = SEP_STR_GROUP;
@@ -347,9 +347,9 @@ static struct option const long_options[] =
 };
 
 /* Define flags declared in grep.h. */
-int match_icase;
-int match_words;
-int match_lines;
+bool match_icase;
+bool match_words;
+bool match_lines;
 unsigned char eolbyte;
 
 static char const *matcher;
@@ -358,8 +358,8 @@ static char const *matcher;
 /* The input file name, or (if standard input) "-" or a --label argument.  */
 static char const *filename;
 static size_t filename_prefix_len;
-static int errseen;
-static int write_error_seen;
+static bool errseen;
+static bool write_error_seen;
 
 enum directories_type
   {
@@ -392,22 +392,22 @@ static enum
     SKIP_DEVICES
   } devices = READ_COMMAND_LINE_DEVICES;
 
-static int grepfile (int, char const *, int, int);
-static int grepdesc (int, int);
+static bool grepfile (int, char const *, bool, bool);
+static bool grepdesc (int, bool);
 
 static void dos_binary (void);
 static void dos_unix_byte_offsets (void);
 static size_t undossify_input (char *, size_t);
 
-static int
+static bool
 is_device_mode (mode_t m)
 {
   return S_ISCHR (m) || S_ISBLK (m) || S_ISSOCK (m) || S_ISFIFO (m);
 }
 
-/* Return nonzero if ST->st_size is defined.  Assume the file is not a
+/* Return if ST->st_size is defined.  Assume the file is not a
    symbolic link.  */
-static int
+static bool
 usable_st_size (struct stat const *st)
 {
   return S_ISREG (st->st_mode) || S_TYPEISSHM (st) || S_TYPEISTMO (st);
@@ -425,7 +425,7 @@ suppressible_error (char const *mesg, int errnum)
 {
   if (! suppress_errors)
     error (0, errnum, "%s", mesg);
-  errseen = 1;
+  errseen = true;
 }
 
 /* If there has already been a write error, don't bother closing
@@ -437,10 +437,10 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-/* Return 1 if a file is known to be binary for the purpose of 'grep'.
+/* Return true if a file is known to be binary for the purpose of 'grep'.
    BUF, of size BUFSIZE, is the initial buffer read from the file with
    descriptor FD and status ST.  */
-static int
+static bool
 file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
 {
   #ifndef SEEK_HOLE
@@ -455,7 +455,7 @@ file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
   /* If the initial buffer contains a null byte, guess that the file
      is binary.  */
   if (memchr (buf, '\0', bufsize))
-    return 1;
+    return true;
 
   /* If the file has holes, it must contain a null byte somewhere.  */
   if (SEEK_HOLE != SEEK_END && usable_st_size (st))
@@ -465,7 +465,7 @@ file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
         {
           cur = lseek (fd, 0, SEEK_CUR);
           if (cur < 0)
-            return 0;
+            return false;
         }
 
       /* Look for a hole after the current location.  */
@@ -475,12 +475,12 @@ file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
           if (lseek (fd, cur, SEEK_SET) < 0)
             suppressible_error (filename, errno);
           if (hole_start < st->st_size)
-            return 1;
+            return true;
         }
     }
 
   /* Guess that the file does not contain binary data.  */
-  return 0;
+  return false;
 }
 
 /* Convert STR to a nonnegative integer, storing the result in *OUT.
@@ -503,11 +503,11 @@ context_length_arg (char const *str, intmax_t *out)
     }
 }
 
-/* Return nonzero if the file with NAME should be skipped.
-   If COMMAND_LINE is nonzero, it is a command-line argument.
-   If IS_DIR is nonzero, it is a directory.  */
-static int
-skipped_file (char const *name, int command_line, int is_dir)
+/* Return true if the file with NAME should be skipped.
+   If COMMAND_LINE, it is a command-line argument.
+   If IS_DIR, it is a directory.  */
+static bool
+skipped_file (char const *name, bool command_line, bool is_dir)
 {
   return (is_dir
           ? (directories == SKIP_DIRECTORIES
@@ -541,9 +541,9 @@ static off_t after_last_match;	/* Pointer after last matching line that
    ? (val) \
    : (val) + ((alignment) - (size_t) (val) % (alignment)))
 
-/* Reset the buffer for a new file, returning zero if we should skip it.
+/* Reset the buffer for a new file, returning false if we should skip it.
    Initialize on the first time through. */
-static int
+static bool
 reset (int fd, struct stat const *st)
 {
   if (! pagesize)
@@ -569,22 +569,22 @@ reset (int fd, struct stat const *st)
           if (bufoffset < 0)
             {
               suppressible_error (_("lseek failed"), errno);
-              return 0;
+              return false;
             }
         }
     }
-  return 1;
+  return true;
 }
 
 /* Read new stuff into the buffer, saving the specified
    amount of old stuff.  When we're done, 'bufbeg' points
    to the beginning of the buffer contents, and 'buflim'
-   points just after the end.  Return zero if there's an error.  */
-static int
+   points just after the end.  Return false if there's an error.  */
+static bool
 fillbuf (size_t save, struct stat const *st)
 {
   size_t fillsize;
-  int cc = 1;
+  bool cc = true;
   char *readbuf;
   size_t readsize;
 
@@ -646,7 +646,10 @@ fillbuf (size_t save, struct stat const *st)
 
   fillsize = safe_read (bufdesc, readbuf, readsize);
   if (fillsize == SAFE_READ_ERROR)
-    fillsize = cc = 0;
+    {
+      fillsize = 0;
+      cc = false;
+    }
   bufoffset += fillsize;
   fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
@@ -662,20 +665,19 @@ static enum
 } binary_files;		/* How to handle binary files.  */
 
 static int filename_mask;	/* If zero, output nulls after filenames.  */
-static int out_quiet;		/* Suppress all normal output. */
+static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
-static int out_line;		/* Print line numbers. */
-static int out_byte;		/* Print byte offsets. */
+static bool out_line;		/* Print line numbers. */
+static bool out_byte;		/* Print byte offsets. */
 static intmax_t out_before;	/* Lines of leading context. */
 static intmax_t out_after;	/* Lines of trailing context. */
-static int count_matches;	/* Count matching lines.  */
+static bool count_matches;	/* Count matching lines.  */
 static int list_files;		/* List matching files.  */
-static int no_filenames;	/* Suppress file names.  */
+static bool no_filenames;	/* Suppress file names.  */
 static intmax_t max_count;	/* Stop after outputting this many
                                    lines from an input file.  */
-static int line_buffered;       /* If nonzero, use line buffering, i.e.
-                                   fflush everyline out.  */
+static bool line_buffered;	/* Use line buffering.  */
 static char *label = NULL;      /* Fake filename for stdin */
 
 
@@ -689,8 +691,8 @@ static uintmax_t totalnl;	/* Total newline count before lastnl. */
 static intmax_t outleft;	/* Maximum number of lines to be output.  */
 static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
-static int done_on_match;	/* Stop scanning file on first match.  */
-static int exit_on_match;	/* Exit on first match.  */
+static bool done_on_match;	/* Stop scanning file on first match.  */
+static bool exit_on_match;	/* Exit on first match.  */
 
 #include "dosbuf.c"
 
@@ -768,15 +770,15 @@ print_offset (uintmax_t pos, int min_width, const char *color)
 
 /* Print a whole line head (filename, line, byte).  */
 static void
-print_line_head (char const *beg, char const *lim, int sep)
+print_line_head (char const *beg, char const *lim, char sep)
 {
-  int pending_sep = 0;
+  bool pending_sep = false;
 
   if (out_file)
     {
       print_filename ();
       if (filename_mask)
-        pending_sep = 1;
+        pending_sep = true;
       else
         fputc (0, stdout);
     }
@@ -792,7 +794,7 @@ print_line_head (char const *beg, char const *lim, int sep)
       if (pending_sep)
         print_sep (sep);
       print_offset (totalnl, 4, line_num_color);
-      pending_sep = 1;
+      pending_sep = true;
     }
 
   if (out_byte)
@@ -802,7 +804,7 @@ print_line_head (char const *beg, char const *lim, int sep)
       if (pending_sep)
         print_sep (sep);
       print_offset (pos, 6, byte_num_color);
-      pending_sep = 1;
+      pending_sep = true;
     }
 
   if (pending_sep)
@@ -903,9 +905,9 @@ print_line_tail (const char *beg, const char *lim, const char *line_color)
 }
 
 static void
-prline (char const *beg, char const *lim, int sep)
+prline (char const *beg, char const *lim, char sep)
 {
-  int matching;
+  bool matching;
   const char *line_color;
   const char *match_color;
 
@@ -945,7 +947,7 @@ prline (char const *beg, char const *lim, int sep)
 
   if (ferror (stdout))
     {
-      write_error_seen = 1;
+      write_error_seen = true;
       error (EXIT_TROUBLE, 0, _("write error"));
     }
 
@@ -1098,12 +1100,14 @@ static intmax_t
 grep (int fd, struct stat const *st)
 {
   intmax_t nlines, i;
-  int not_text;
+  bool not_text;
   size_t residue, save;
   char oldc;
   char *beg;
   char *lim;
   char eol = eolbyte;
+  bool done_on_match_0 = done_on_match;
+  bool out_quiet_0 = out_quiet;
 
   if (! reset (fd, st))
     return 0;
@@ -1130,8 +1134,8 @@ grep (int fd, struct stat const *st)
               && file_is_binary (bufbeg, buflim - bufbeg, fd, st));
   if (not_text && binary_files == WITHOUT_MATCH_BINARY_FILES)
     return 0;
-  done_on_match += not_text;
-  out_quiet += not_text;
+  done_on_match |= not_text;
+  out_quiet |= not_text;
 
   for (;;)
     {
@@ -1208,17 +1212,18 @@ grep (int fd, struct stat const *st)
     }
 
  finish_grep:
-  done_on_match -= not_text;
-  out_quiet -= not_text;
+  done_on_match = done_on_match_0;
+  out_quiet = out_quiet_0;
   if ((not_text & ~out_quiet) && nlines != 0)
     printf (_("Binary file %s matches\n"), filename);
   return nlines;
 }
 
-static int
-grepdirent (FTS *fts, FTSENT *ent, int command_line)
+static bool
+grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 {
-  int follow, dirdesc;
+  bool follow;
+  int dirdesc;
   struct stat *st = ent->fts_statp;
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
@@ -1226,7 +1231,7 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
     {
       if (directories == RECURSE_DIRECTORIES && command_line)
         out_file &= ~ (2 * !no_filenames);
-      return 1;
+      return true;
     }
 
   if (skipped_file (ent->fts_name, command_line,
@@ -1234,7 +1239,7 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
                      || ent->fts_info == FTS_DNR)))
     {
       fts_set (fts, ent, FTS_SKIP);
-      return 1;
+      return true;
     }
 
   filename = ent->fts_path + filename_prefix_len;
@@ -1247,7 +1252,7 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
       if (directories == RECURSE_DIRECTORIES)
         {
           out_file |= 2 * !no_filenames;
-          return 1;
+          return true;
         }
       fts_set (fts, ent, FTS_SKIP);
       break;
@@ -1256,13 +1261,13 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
       if (!suppress_errors)
         error (0, 0, _("warning: %s: %s"), filename,
                _("recursive directory loop"));
-      return 1;
+      return true;
 
     case FTS_DNR:
     case FTS_ERR:
     case FTS_NS:
       suppressible_error (filename, ent->fts_errno);
-      return 1;
+      return true;
 
     case FTS_DEFAULT:
     case FTS_NSOK:
@@ -1279,12 +1284,12 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
               if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
                 {
                   suppressible_error (filename, errno);
-                  return 1;
+                  return true;
                 }
               st = &st1;
             }
           if (is_device_mode (st->st_mode))
-            return 1;
+            return true;
         }
       break;
 
@@ -1294,7 +1299,7 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
 
     case FTS_SL:
     case FTS_W:
-      return 1;
+      return true;
 
     default:
       abort ();
@@ -1306,24 +1311,24 @@ grepdirent (FTS *fts, FTSENT *ent, int command_line)
   return grepfile (dirdesc, ent->fts_accpath, follow, command_line);
 }
 
-static int
-grepfile (int dirdesc, char const *name, int follow, int command_line)
+static bool
+grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
   int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
   if (desc < 0)
     {
       if (follow || (errno != ELOOP && errno != EMLINK))
         suppressible_error (filename, errno);
-      return 1;
+      return true;
     }
   return grepdesc (desc, command_line);
 }
 
-static int
-grepdesc (int desc, int command_line)
+static bool
+grepdesc (int desc, bool command_line)
 {
   intmax_t count;
-  int status = 1;
+  bool status = true;
   struct stat st;
 
   /* Get the file status, possibly for the second time.  This catches
@@ -1339,7 +1344,7 @@ grepdesc (int desc, int command_line)
     }
 
   if (desc != STDIN_FILENO && command_line
-      && skipped_file (filename, 1, S_ISDIR (st.st_mode)))
+      && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))
     goto closeout;
 
   if (desc != STDIN_FILENO
@@ -1404,7 +1409,7 @@ grepdesc (int desc, int command_line)
     {
       if (! suppress_errors)
         error (0, 0, _("input file %s is also the output"), quote (filename));
-      errseen = 1;
+      errseen = true;
       goto closeout;
     }
 
@@ -1456,18 +1461,18 @@ grepdesc (int desc, int command_line)
   return status;
 }
 
-static int
+static bool
 grep_command_line_arg (char const *arg)
 {
   if (STREQ (arg, "-"))
     {
       filename = label ? label : _("(standard input)");
-      return grepdesc (STDIN_FILENO, 1);
+      return grepdesc (STDIN_FILENO, true);
     }
   else
     {
       filename = arg;
-      return grepfile (AT_FDCWD, arg, 1, 1);
+      return grepfile (AT_FDCWD, arg, true, true);
     }
 }
 
@@ -1721,14 +1726,15 @@ static int
 get_nondigit_option (int argc, char *const *argv, intmax_t *default_context)
 {
   static int prev_digit_optind = -1;
-  int this_digit_optind, was_digit;
+  int this_digit_optind;
+  bool was_digit;
   char buf[INT_BUFSIZE_BOUND (intmax_t) + 4];
   char *p = buf;
   int opt;
 
-  was_digit = 0;
+  was_digit = false;
   this_digit_optind = optind;
-  while (1)
+  while (true)
     {
       opt = getopt_long (argc, (char **) argv, short_options,
                          long_options, NULL);
@@ -1758,7 +1764,7 @@ get_nondigit_option (int argc, char *const *argv, intmax_t *default_context)
         }
       *p++ = opt;
 
-      was_digit = 1;
+      was_digit = true;
       prev_digit_optind = this_digit_optind;
       this_digit_optind = optind;
     }
@@ -1890,9 +1896,9 @@ main (int argc, char **argv)
 {
   char *keys;
   size_t keycc, oldcc, keyalloc;
-  int with_filenames;
+  bool with_filenames, ok;
   size_t cc;
-  int opt, status, prepended;
+  int opt, prepended;
   int prev_optind, last_recursive;
   int fread_errno;
   intmax_t default_context;
@@ -1904,7 +1910,7 @@ main (int argc, char **argv)
 
   keys = NULL;
   keycc = 0;
-  with_filenames = 0;
+  with_filenames = false;
   eolbyte = '\n';
   filename_mask = ~0;
 
@@ -1915,7 +1921,7 @@ main (int argc, char **argv)
   /* Default before/after context: changed by -C/-NUM options */
   default_context = -1;
   /* Changed by -o option */
-  only_matching = 0;
+  only_matching = false;
 
   /* Internationalization. */
 #if defined HAVE_SETLOCALE
@@ -1987,8 +1993,8 @@ main (int argc, char **argv)
         break;
 
       case 'H':
-        with_filenames = 1;
-        no_filenames = 0;
+        with_filenames = true;
+        no_filenames = false;
         break;
 
       case 'I':
@@ -1996,7 +2002,7 @@ main (int argc, char **argv)
         break;
 
       case 'T':
-        align_tabs = 1;
+        align_tabs = true;
         break;
 
       case 'U':
@@ -2008,7 +2014,7 @@ main (int argc, char **argv)
         break;
 
       case 'V':
-        show_version = 1;
+        show_version = true;
         break;
 
       case 'a':
@@ -2016,11 +2022,11 @@ main (int argc, char **argv)
         break;
 
       case 'b':
-        out_byte = 1;
+        out_byte = true;
         break;
 
       case 'c':
-        count_matches = 1;
+        count_matches = true;
         break;
 
       case 'd':
@@ -2063,13 +2069,13 @@ main (int argc, char **argv)
         break;
 
       case 'h':
-        with_filenames = 0;
-        no_filenames = 1;
+        with_filenames = false;
+        no_filenames = true;
         break;
 
       case 'i':
       case 'y':			/* For old-timers . . . */
-        match_icase = 1;
+        match_icase = true;
         break;
 
       case 'L':
@@ -2095,15 +2101,15 @@ main (int argc, char **argv)
         break;
 
       case 'n':
-        out_line = 1;
+        out_line = true;
         break;
 
       case 'o':
-        only_matching = 1;
+        only_matching = true;
         break;
 
       case 'q':
-        exit_on_match = 1;
+        exit_on_match = true;
         exit_failure = 0;
         break;
 
@@ -2116,7 +2122,7 @@ main (int argc, char **argv)
         break;
 
       case 's':
-        suppress_errors = 1;
+        suppress_errors = true;
         break;
 
       case 'v':
@@ -2124,11 +2130,11 @@ main (int argc, char **argv)
         break;
 
       case 'w':
-        match_words = 1;
+        match_words = true;
         break;
 
       case 'x':
-        match_lines = 1;
+        match_lines = true;
         break;
 
       case 'Z':
@@ -2199,7 +2205,7 @@ main (int argc, char **argv)
         break;
 
       case LINE_BUFFERED_OPTION:
-        line_buffered = 1;
+        line_buffered = true;
         break;
 
       case LABEL_OPTION:
@@ -2226,8 +2232,8 @@ main (int argc, char **argv)
     list_files = 0;
   if (exit_on_match | list_files)
     {
-      count_matches = 0;
-      done_on_match = 1;
+      count_matches = false;
+      done_on_match = true;
     }
   out_quiet = count_matches | done_on_match;
 
@@ -2267,7 +2273,7 @@ main (int argc, char **argv)
         {
           /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
           out_invert ^= true;
-          match_lines = match_words = 0;
+          match_lines = match_words = false;
         }
       else
         /* Strip trailing newline. */
@@ -2323,21 +2329,21 @@ main (int argc, char **argv)
 
   if (optind < argc)
     {
-      status = 1;
+      ok = true;
       do
-        status &= grep_command_line_arg (argv[optind]);
+        ok &= grep_command_line_arg (argv[optind]);
       while (++optind < argc);
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
       /* Grep through ".", omitting leading "./" from diagnostics.  */
       filename_prefix_len = 2;
-      status = grep_command_line_arg (".");
+      ok = grep_command_line_arg (".");
     }
   else
-    status = grep_command_line_arg ("-");
+    ok = grep_command_line_arg ("-");
 
   /* We register via atexit() to test stdout.  */
-  exit (errseen ? EXIT_TROUBLE : status);
+  exit (errseen ? EXIT_TROUBLE : ok);
 }
 /* vim:set shiftwidth=2: */

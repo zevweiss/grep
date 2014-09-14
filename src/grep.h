@@ -20,11 +20,13 @@
 #ifndef GREP_GREP_H
 #define GREP_GREP_H 1
 
+#include <stdbool.h>
+
 /* The following flags are exported from grep for the matchers
    to look at. */
-extern int match_icase;		/* -i */
-extern int match_words;		/* -w */
-extern int match_lines;		/* -x */
+extern bool match_icase;	/* -i */
+extern bool match_words;	/* -w */
+extern bool match_lines;	/* -x */
 extern unsigned char eolbyte;	/* -z */
 
 #endif
