@@ -149,8 +149,11 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
 
-  /* PCRE can't limit the matching to single lines, therefore we have to
-     match each line in the buffer separately.  */
+  /* pcre_exec mishandles matches that cross line boundaries.
+     PCRE_MULTILINE isn't a win, partly because it's incompatible with
+     -z, and partly because it checks the entire input buffer and is
+     therefore slow on a large buffer containing many matches.
+     Avoid these problems by matching line-by-line.  */
   for (; p < buf + size; p = line_start = line_end + 1)
     {
       line_end = memchr (p, eolbyte, buf + size - p);
