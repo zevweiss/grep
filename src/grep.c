@@ -437,50 +437,74 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-/* Return true if a file is known to be binary for the purpose of 'grep'.
+/* Return 1 if BUF (of size SIZE) contains text, -1 if it contains
+   binary data, and 0 if the answer depends on what comes immediately
+   after BUF.  */
+static int
+buffer_textbin (char const *buf, size_t size)
+{
+  mbstate_t mbs = { 0 };
+  size_t charlen;
+  char badbyte = eolbyte ? '\0' : '\200';
+  char const *p;
+
+  for (p = buf; p < buf + size; p += charlen)
+    {
+      if (*p == badbyte)
+        return -1;
+      charlen = mbrlen (p, buf + size - p, &mbs);
+      if ((size_t) -2 <= charlen)
+        return charlen == (size_t) -2 ? 0 : -1;
+      charlen += !charlen;
+    }
+
+  return 1;
+}
+
+/* Return 1 if a file is known to be text for the purpose of 'grep'.
+   Return -1 if it is known to be binary, 0 if unknown.
    BUF, of size BUFSIZE, is the initial buffer read from the file with
    descriptor FD and status ST.  */
-static bool
-file_is_binary (char const *buf, size_t bufsize, int fd, struct stat const *st)
+static int
+file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
 {
   #ifndef SEEK_HOLE
   enum { SEEK_HOLE = SEEK_END };
   #endif
 
-  /* If -z, test only whether the initial buffer contains '\200';
-     knowing about holes won't help.  */
-  if (! eolbyte)
-    return memchr (buf, '\200', bufsize) != 0;
+  int textbin = buffer_textbin (buf, bufsize);
+  if (textbin < 0)
+    return textbin;
 
-  /* If the initial buffer contains a null byte, guess that the file
-     is binary.  */
-  if (memchr (buf, '\0', bufsize))
-    return true;
-
-  /* If the file has holes, it must contain a null byte somewhere.  */
-  if (SEEK_HOLE != SEEK_END && usable_st_size (st))
+  if (usable_st_size (st))
     {
-      off_t cur = bufsize;
-      if (O_BINARY || fd == STDIN_FILENO)
-        {
-          cur = lseek (fd, 0, SEEK_CUR);
-          if (cur < 0)
-            return false;
-        }
+      if (st->st_size <= bufsize)
+        return 2 * textbin - 1;
 
-      /* Look for a hole after the current location.  */
-      off_t hole_start = lseek (fd, cur, SEEK_HOLE);
-      if (0 <= hole_start)
+      /* If the file has holes, it must contain a null byte somewhere.  */
+      if (SEEK_HOLE != SEEK_END && eolbyte)
         {
-          if (lseek (fd, cur, SEEK_SET) < 0)
-            suppressible_error (filename, errno);
-          if (hole_start < st->st_size)
-            return true;
+          off_t cur = bufsize;
+          if (O_BINARY || fd == STDIN_FILENO)
+            {
+              cur = lseek (fd, 0, SEEK_CUR);
+              if (cur < 0)
+                return 0;
+            }
+
+          /* Look for a hole after the current location.  */
+          off_t hole_start = lseek (fd, cur, SEEK_HOLE);
+          if (0 <= hole_start)
+            {
+              if (lseek (fd, cur, SEEK_SET) < 0)
+                suppressible_error (filename, errno);
+              if (hole_start < st->st_size)
+                return -1;
+            }
         }
     }
 
-  /* Guess that the file does not contain binary data.  */
-  return false;
+  return 0;
 }
 
 /* Convert STR to a nonnegative integer, storing the result in *OUT.
@@ -1100,7 +1124,7 @@ static intmax_t
 grep (int fd, struct stat const *st)
 {
   intmax_t nlines, i;
-  bool not_text;
+  int textbin;
   size_t residue, save;
   char oldc;
   char *beg;
@@ -1129,13 +1153,18 @@ grep (int fd, struct stat const *st)
       return 0;
     }
 
-  not_text = (((binary_files == BINARY_BINARY_FILES && !out_quiet)
-               || binary_files == WITHOUT_MATCH_BINARY_FILES)
-              && file_is_binary (bufbeg, buflim - bufbeg, fd, st));
-  if (not_text && binary_files == WITHOUT_MATCH_BINARY_FILES)
-    return 0;
-  done_on_match |= not_text;
-  out_quiet |= not_text;
+  if (binary_files == TEXT_BINARY_FILES)
+    textbin = 1;
+  else
+    {
+      textbin = file_textbin (bufbeg, buflim - bufbeg, fd, st);
+      if (textbin < 0)
+        {
+          if (binary_files == WITHOUT_MATCH_BINARY_FILES)
+            return 0;
+          done_on_match = out_quiet = true;
+        }
+    }
 
   for (;;)
     {
@@ -1187,8 +1216,13 @@ grep (int fd, struct stat const *st)
         }
 
       /* Detect whether leading context is adjacent to previous output.  */
-      if (beg != lastout)
-        lastout = 0;
+      if (lastout)
+        {
+          if (!textbin)
+            textbin = 1;
+          if (beg != lastout)
+            lastout = 0;
+        }
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
@@ -1200,6 +1234,16 @@ grep (int fd, struct stat const *st)
         {
           suppressible_error (filename, errno);
           goto finish_grep;
+        }
+
+      /* If the file's textbin has not been determined yet, assume
+         it's binary if the next input buffer suggests so.  */
+      if (! textbin && buffer_textbin (bufbeg, buflim - bufbeg) < 0)
+        {
+          textbin = -1;
+          if (binary_files == WITHOUT_MATCH_BINARY_FILES)
+            return 0;
+          done_on_match = out_quiet = true;
         }
     }
   if (residue)
@@ -1214,7 +1258,7 @@ grep (int fd, struct stat const *st)
  finish_grep:
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
-  if ((not_text & ~out_quiet) && nlines != 0)
+  if (textbin < 0 && !out_quiet && nlines != 0)
     printf (_("Binary file %s matches\n"), filename);
   return nlines;
 }

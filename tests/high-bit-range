@@ -21,7 +21,7 @@
 fail=0
 
 printf '\201\n' > in || framework_failure_
-grep "$(printf '[\201]')" in > out || fail=1
+grep -a "$(printf '[\201]')" in > out || fail=1
 
 compare out in || fail=1
 

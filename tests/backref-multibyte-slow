@@ -21,7 +21,7 @@ max_seconds=$(LC_ALL=C perl -le 'use Time::HiRes qw(time); my $s = time();
 
 for LOC in en_US.UTF-8; do
   out=out-$LOC
-  LC_ALL=$LOC timeout ${max_seconds}s grep -E '^([a-z]).\1$' in > $out 2>&1
+  LC_ALL=$LOC timeout ${max_seconds}s grep -aE '^([a-z]).\1$' in > $out 2>&1
   test $? = 0 || fail=1
   compare $out in || fail=1
 done

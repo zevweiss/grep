@@ -6,6 +6,10 @@ GNU grep NEWS                                    -*- outline -*-
 
   Performance has improved for very long strings in patterns.
 
+  If a file contains data improperly encoded for the current locale,
+  and this is discovered before any of the file's contents are output,
+  grep now treats the file as binary.
+
   grep -P no longer reports an error and exits when given invalid UTF-8 data.
   Instead, it considers the data to be non-matching.
 

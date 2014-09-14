@@ -592,7 +592,8 @@ this is equivalent to the @samp{--binary-files=text} option.
 @item --binary-files=@var{type}
 @opindex --binary-files
 @cindex binary files
-If a file's allocation metadata or its first few bytes
+If a file's allocation metadata,
+or if its data read before a line is selected for output,
 indicate that the file contains binary data,
 assume that the file is of type @var{type}.
 By default, @var{type} is @samp{binary},
