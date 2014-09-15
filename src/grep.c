@@ -437,16 +437,38 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-/* Return 1 if BUF (of size SIZE) contains text, -1 if it contains
-   binary data, and 0 if the answer depends on what comes immediately
-   after BUF.  */
-static int
+/* An enum textbin describes the file's type, inferred from data read
+   before the first line is selected for output.  */
+enum textbin
+  {
+    /* Binary, as it contains null bytes and the -z option is not in effect,
+       or it contains encoding errors.  */
+    TEXTBIN_BINARY = -1,
+
+    /* Not known yet.  Only text has been seen so far.  */
+    TEXTBIN_UNKNOWN = 0,
+
+    /* Text.  */
+    TEXTBIN_TEXT = 1
+  };
+
+static bool
+textbin_is_binary (enum textbin textbin)
+{
+  return textbin < TEXTBIN_UNKNOWN;
+}
+
+/* Return the text type of data in BUF, of size SIZE.  */
+static enum textbin
 buffer_textbin (char const *buf, size_t size)
 {
   char badbyte = eolbyte ? '\0' : '\200';
 
   if (MB_CUR_MAX <= 1)
-    return memchr (buf, badbyte, size) ? -1 : 1;
+    {
+      if (memchr (buf, badbyte, size))
+        return TEXTBIN_BINARY;
+    }
   else
     {
       mbstate_t mbs = { 0 };
@@ -456,35 +478,33 @@ buffer_textbin (char const *buf, size_t size)
       for (p = buf; p < buf + size; p += clen)
         {
           if (*p == badbyte)
-            return -1;
+            return TEXTBIN_BINARY;
           clen = mb_clen (p, buf + size - p, &mbs);
           if ((size_t) -2 <= clen)
-            return clen == (size_t) -2 ? 0 : -1;
+            return clen == (size_t) -2 ? TEXTBIN_UNKNOWN : TEXTBIN_BINARY;
         }
-
-      return 1;
     }
+
+  return TEXTBIN_TEXT;
 }
 
-/* Return 1 if a file is known to be text for the purpose of 'grep'.
-   Return -1 if it is known to be binary, 0 if unknown.
-   BUF, of size BUFSIZE, is the initial buffer read from the file with
-   descriptor FD and status ST.  */
-static int
+/* Return the text type of a file.  BUF, of size BUFSIZE, is the initial
+   buffer read from the file with descriptor FD and status ST.  */
+static enum textbin
 file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
 {
   #ifndef SEEK_HOLE
   enum { SEEK_HOLE = SEEK_END };
   #endif
 
-  int textbin = buffer_textbin (buf, bufsize);
-  if (textbin < 0)
+  enum textbin textbin = buffer_textbin (buf, bufsize);
+  if (textbin_is_binary (textbin))
     return textbin;
 
   if (usable_st_size (st))
     {
       if (st->st_size <= bufsize)
-        return 2 * textbin - 1;
+        return textbin == TEXTBIN_UNKNOWN ? TEXTBIN_BINARY : textbin;
 
       /* If the file has holes, it must contain a null byte somewhere.  */
       if (SEEK_HOLE != SEEK_END && eolbyte)
@@ -494,7 +514,7 @@ file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
             {
               cur = lseek (fd, 0, SEEK_CUR);
               if (cur < 0)
-                return 0;
+                return TEXTBIN_UNKNOWN;
             }
 
           /* Look for a hole after the current location.  */
@@ -504,12 +524,12 @@ file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
               if (lseek (fd, cur, SEEK_SET) < 0)
                 suppressible_error (filename, errno);
               if (hole_start < st->st_size)
-                return -1;
+                return TEXTBIN_BINARY;
             }
         }
     }
 
-  return 0;
+  return TEXTBIN_UNKNOWN;
 }
 
 /* Convert STR to a nonnegative integer, storing the result in *OUT.
@@ -1129,7 +1149,7 @@ static intmax_t
 grep (int fd, struct stat const *st)
 {
   intmax_t nlines, i;
-  int textbin;
+  enum textbin textbin;
   size_t residue, save;
   char oldc;
   char *beg;
@@ -1159,11 +1179,11 @@ grep (int fd, struct stat const *st)
     }
 
   if (binary_files == TEXT_BINARY_FILES)
-    textbin = 1;
+    textbin = TEXTBIN_TEXT;
   else
     {
       textbin = file_textbin (bufbeg, buflim - bufbeg, fd, st);
-      if (textbin < 0)
+      if (textbin_is_binary (textbin))
         {
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
@@ -1223,8 +1243,8 @@ grep (int fd, struct stat const *st)
       /* Detect whether leading context is adjacent to previous output.  */
       if (lastout)
         {
-          if (!textbin)
-            textbin = 1;
+          if (textbin == TEXTBIN_UNKNOWN)
+            textbin = TEXTBIN_TEXT;
           if (beg != lastout)
             lastout = 0;
         }
@@ -1243,12 +1263,16 @@ grep (int fd, struct stat const *st)
 
       /* If the file's textbin has not been determined yet, assume
          it's binary if the next input buffer suggests so.  */
-      if (! textbin && buffer_textbin (bufbeg, buflim - bufbeg) < 0)
+      if (textbin == TEXTBIN_UNKNOWN)
         {
-          textbin = -1;
-          if (binary_files == WITHOUT_MATCH_BINARY_FILES)
-            return 0;
-          done_on_match = out_quiet = true;
+          enum textbin tb = buffer_textbin (bufbeg, buflim - bufbeg);
+          if (textbin_is_binary (tb))
+            {
+              if (binary_files == WITHOUT_MATCH_BINARY_FILES)
+                return 0;
+              textbin = tb;
+              done_on_match = out_quiet = true;
+            }
         }
     }
   if (residue)
@@ -1263,7 +1287,7 @@ grep (int fd, struct stat const *st)
  finish_grep:
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
-  if (textbin < 0 && !out_quiet && nlines != 0)
+  if (textbin_is_binary (textbin) && !out_quiet && nlines != 0)
     printf (_("Binary file %s matches\n"), filename);
   return nlines;
 }
