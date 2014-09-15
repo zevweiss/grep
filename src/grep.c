@@ -462,14 +462,10 @@ textbin_is_binary (enum textbin textbin)
 static enum textbin
 buffer_textbin (char const *buf, size_t size)
 {
-  char badbyte = eolbyte ? '\0' : '\200';
+  if (eolbyte && memchr (buf, '\0', size))
+    return TEXTBIN_BINARY;
 
-  if (MB_CUR_MAX <= 1)
-    {
-      if (memchr (buf, badbyte, size))
-        return TEXTBIN_BINARY;
-    }
-  else
+  if (1 < MB_CUR_MAX)
     {
       mbstate_t mbs = { 0 };
       size_t clen;
@@ -477,8 +473,6 @@ buffer_textbin (char const *buf, size_t size)
 
       for (p = buf; p < buf + size; p += clen)
         {
-          if (*p == badbyte)
-            return TEXTBIN_BINARY;
           clen = mb_clen (p, buf + size - p, &mbs);
           if ((size_t) -2 <= clen)
             return clen == (size_t) -2 ? TEXTBIN_UNKNOWN : TEXTBIN_BINARY;

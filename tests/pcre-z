@@ -20,4 +20,8 @@ grep -Pz "$REGEX" in > out 2>err || fail=1
 compare exp out || fail=1
 compare /dev/null err || fail=1
 
+printf '\200\0' >in0
+LC_ALL=C grep -z . in0 >out || fail=1
+compare in0 out || fail=1
+
 Exit $fail
