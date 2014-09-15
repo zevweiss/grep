@@ -443,22 +443,27 @@ clean_up_stdout (void)
 static int
 buffer_textbin (char const *buf, size_t size)
 {
-  mbstate_t mbs = { 0 };
-  size_t charlen;
   char badbyte = eolbyte ? '\0' : '\200';
-  char const *p;
 
-  for (p = buf; p < buf + size; p += charlen)
+  if (MB_CUR_MAX <= 1)
+    return memchr (buf, badbyte, size) ? -1 : 1;
+  else
     {
-      if (*p == badbyte)
-        return -1;
-      charlen = mbrlen (p, buf + size - p, &mbs);
-      if ((size_t) -2 <= charlen)
-        return charlen == (size_t) -2 ? 0 : -1;
-      charlen += !charlen;
-    }
+      mbstate_t mbs = { 0 };
+      size_t clen;
+      char const *p;
 
-  return 1;
+      for (p = buf; p < buf + size; p += clen)
+        {
+          if (*p == badbyte)
+            return -1;
+          clen = mb_clen (p, buf + size - p, &mbs);
+          if ((size_t) -2 <= clen)
+            return clen == (size_t) -2 ? 0 : -1;
+        }
+
+      return 1;
+    }
 }
 
 /* Return 1 if a file is known to be text for the purpose of 'grep'.
@@ -1887,9 +1892,9 @@ contains_encoding_error (char const *pat, size_t patlen)
   mbstate_t mbs = { 0 };
   size_t i, charlen;
 
-  for (i = 0; i < patlen; i += charlen + (charlen == 0))
+  for (i = 0; i < patlen; i += charlen)
     {
-      charlen = mbrlen (pat + i, patlen - i, &mbs);
+      charlen = mb_clen (pat + i, patlen - i, &mbs);
       if ((size_t) -2 <= charlen)
         return true;
     }
@@ -2332,6 +2337,8 @@ main (int argc, char **argv)
   else
     usage (EXIT_TROUBLE);
 
+  build_mbclen_cache ();
+
   /* If fgrep in a multibyte locale, then use grep if either
      (1) case is ignored (where grep is typically faster), or
      (2) the pattern has an encoding error (where fgrep might not work).  */
@@ -2348,9 +2355,6 @@ main (int argc, char **argv)
       compile = Gcompile;
       execute = EGexecute;
     }
-
-  if (MB_CUR_MAX > 1)
-    build_mbclen_cache ();
 
   compile (keys, keycc);
   free (keys);
