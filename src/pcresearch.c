@@ -33,16 +33,16 @@ static pcre *cre;
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
-/* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
-   string matches when that flag is used.  */
-static int empty_match[2];
-
 # ifdef PCRE_STUDY_JIT_COMPILE
 static pcre_jit_stack *jit_stack;
 # else
 #  define PCRE_STUDY_JIT_COMPILE 0
 # endif
 #endif
+
+/* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
+   string matches when that flag is used.  */
+static int empty_match[2];
 
 void
 Pcompile (char const *pattern, size_t size)
@@ -129,11 +129,11 @@ Pcompile (char const *pattern, size_t size)
       pcre_assign_jit_stack (extra, NULL, jit_stack);
     }
 
-  empty_match[false] = pcre_exec (cre, extra, "", 0, 0, PCRE_NOTBOL, NULL, 0);
-  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, NULL, 0);
-
 # endif
   free (re);
+
+  empty_match[false] = pcre_exec (cre, extra, "", 0, 0, PCRE_NOTBOL, NULL, 0);
+  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, NULL, 0);
 #endif /* HAVE_LIBPCRE */
 }
 
