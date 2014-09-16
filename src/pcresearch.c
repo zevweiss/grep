@@ -156,28 +156,91 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
+  char const *validated = validated_boundary;
 
-  /* pcre_exec mishandles matches that cross line boundaries.
-     PCRE_MULTILINE isn't a win, partly because it's incompatible with
-     -z, and partly because it checks the entire input buffer and is
-     therefore slow on a large buffer containing many matches.
-     Avoid these problems by matching line-by-line.  */
+  /* If the input type is unknown, the caller is still testing the
+     input, which means the current buffer cannot contain encoding
+     errors and a multiline search is typically more efficient.
+     Otherwise, a single-line search is typically faster, so that
+     pcre_exec doesn't waste time validating the entire input
+     buffer.  */
+  bool multiline = input_textbin == TEXTBIN_UNKNOWN;
+
   for (; p < buf + size; p = line_start = line_end + 1)
     {
-      line_end = memchr (p, eolbyte, buf + size - p);
+      bool too_big;
 
-      if (INT_MAX < line_end - p)
+      if (multiline)
+        {
+          size_t pcre_size_max = MIN (INT_MAX, SIZE_MAX - 1);
+          size_t scan_size = MIN (pcre_size_max + 1, buf + size - p);
+          line_end = memrchr (p, eolbyte, scan_size);
+          too_big = ! line_end;
+        }
+      else
+        {
+          line_end = memchr (p, eolbyte, buf + size - p);
+          too_big = INT_MAX < line_end - p;
+        }
+
+      if (too_big)
         error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
-      /* Treat encoding-error bytes as data that cannot match.  */
       for (;;)
         {
-          int options = bol ? 0 : PCRE_NOTBOL;
-          int valid_bytes;
-          e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, NSUB);
-          if (e != PCRE_ERROR_BADUTF8)
-            break;
-          valid_bytes = sub[0];
+          /* Skip past bytes that are easily determined to be encoding
+             errors, treating them as data that cannot match.  This is
+             faster than having pcre_exec check them.  */
+          while (mbclen_cache[to_uchar (*p)] == (size_t) -1)
+            {
+              p++;
+              bol = false;
+            }
+
+          /* Check for an empty match; this is faster than letting
+             pcre_exec do it.  */
+          int search_bytes = line_end - p;
+          if (search_bytes == 0)
+            {
+              sub[0] = sub[1] = 0;
+              e = empty_match[bol];
+              break;
+            }
+
+          int options = 0;
+          if (!bol)
+            options |= PCRE_NOTBOL;
+          if (multiline || p + search_bytes <= validated)
+            options |= PCRE_NO_UTF8_CHECK;
+
+          int valid_bytes = validated - p;
+          if (valid_bytes < 0)
+            {
+              e = pcre_exec (cre, extra, p, search_bytes, 0,
+                             options, sub, NSUB);
+              if (e != PCRE_ERROR_BADUTF8)
+                {
+                  validated = p + search_bytes;
+                  if (0 < e && multiline && sub[1] - sub[0] != 0)
+                    {
+                      char const *nl = memchr (p + sub[0], eolbyte,
+                                               sub[1] - sub[0]);
+                      if (nl)
+                        {
+                          /* This match crosses a line boundary; reject it.  */
+                          p += sub[0];
+                          line_end = nl;
+                          continue;
+                        }
+                    }
+                  break;
+                }
+              valid_bytes = sub[0];
+              validated = p + valid_bytes;
+            }
+
+          /* Try to match the string before the encoding error.
+             Again, handle the empty-match case specially, for speed.  */
           if (valid_bytes == 0)
             {
               sub[1] = 0;
@@ -189,6 +252,8 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
                            sub, NSUB);
           if (e != PCRE_ERROR_NOMATCH)
             break;
+
+          /* Treat the encoding error as data that cannot match.  */
           p += valid_bytes + 1;
           bol = false;
         }
@@ -197,6 +262,8 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         break;
       bol = true;
     }
+
+  validated_boundary = validated;
 
   if (e <= 0)
     {
@@ -224,8 +291,29 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
     }
   else
     {
-      char const *beg = start_ptr ? p + sub[0] : line_start;
-      char const *end = start_ptr ? p + sub[1] : line_end + 1;
+      char const *matchbeg = p + sub[0];
+      char const *matchend = p + sub[1];
+      char const *beg;
+      char const *end;
+      if (start_ptr)
+        {
+          beg = matchbeg;
+          end = matchend;
+        }
+      else if (multiline)
+        {
+          char const *prev_nl = memrchr (line_start - 1, eolbyte,
+                                         matchbeg - (line_start - 1));
+          char const *next_nl = memchr (matchend, eolbyte,
+                                        line_end + 1 - matchend);
+          beg = prev_nl + 1;
+          end = next_nl + 1;
+        }
+      else
+        {
+          beg = line_start;
+          end = line_end + 1;
+        }
       *match_size = end - beg;
       return beg - buf;
     }

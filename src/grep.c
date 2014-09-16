@@ -351,6 +351,8 @@ bool match_icase;
 bool match_words;
 bool match_lines;
 unsigned char eolbyte;
+enum textbin input_textbin;
+char const *validated_boundary;
 
 static char const *matcher;
 
@@ -436,21 +438,6 @@ clean_up_stdout (void)
   if (! write_error_seen)
     close_stdout ();
 }
-
-/* An enum textbin describes the file's type, inferred from data read
-   before the first line is selected for output.  */
-enum textbin
-  {
-    /* Binary, as it contains null bytes and the -z option is not in effect,
-       or it contains encoding errors.  */
-    TEXTBIN_BINARY = -1,
-
-    /* Not known yet.  Only text has been seen so far.  */
-    TEXTBIN_UNKNOWN = 0,
-
-    /* Text.  */
-    TEXTBIN_TEXT = 1
-  };
 
 static bool
 textbin_is_binary (enum textbin textbin)
@@ -1123,6 +1110,7 @@ grepbuf (char const *beg, char const *lim)
   intmax_t outleft0 = outleft;
   char const *p;
   char const *endp;
+  validated_boundary = beg;
 
   for (p = beg; p < lim; p = endp)
     {
@@ -1210,6 +1198,7 @@ grep (int fd, struct stat const *st)
 
   for (;;)
     {
+      input_textbin = textbin;
       lastnl = bufbeg;
       if (lastout)
         lastout = bufbeg;
