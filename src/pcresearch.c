@@ -33,9 +33,7 @@ static pcre *cre;
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
-# ifdef PCRE_STUDY_JIT_COMPILE
-static pcre_jit_stack *jit_stack;
-# else
+# ifndef PCRE_STUDY_JIT_COMPILE
 #  define PCRE_STUDY_JIT_COMPILE 0
 # endif
 #endif
@@ -126,7 +124,7 @@ Pcompile (char const *pattern, size_t size)
       /* A 32K stack is allocated for the machine code by default, which
          can grow to 512K if necessary. Since JIT uses far less memory
          than the interpreter, this should be enough in practice.  */
-      jit_stack = pcre_jit_stack_alloc (32 * 1024, 512 * 1024);
+      pcre_jit_stack *jit_stack = pcre_jit_stack_alloc (32 * 1024, 512 * 1024);
       if (!jit_stack)
         error (EXIT_TROUBLE, 0,
                _("failed to allocate memory for the PCRE JIT stack"));
