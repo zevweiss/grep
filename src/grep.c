@@ -1093,9 +1093,30 @@ prtext (char const *beg, char const *lim)
   outleft -= n;
 }
 
+/* Replace all NUL bytes in buffer P (which ends at LIM) with EOL.
+   This avoids running out of memory when binary input contains a long
+   sequence of zeros, which would otherwise be considered to be part
+   of a long line.  P[LIM] should be EOL.  */
+static void
+zap_nuls (char *p, char *lim, char eol)
+{
+  if (eol)
+    while (true)
+      {
+        *lim = '\0';
+        p += strlen (p);
+        *lim = eol;
+        if (p == lim)
+          break;
+        do
+          *p++ = eol;
+        while (!*p);
+      }
+}
+
 /* Scan the specified portion of the buffer, matching lines (or
    between matching lines if OUT_INVERT is true).  Return a count of
-   lines printed. */
+   lines printed.  Replace all NUL bytes with NUL_ZAPPER as we go.  */
 static intmax_t
 grepbuf (char const *beg, char const *lim)
 {
@@ -1149,6 +1170,7 @@ grep (int fd, struct stat const *st)
   char *beg;
   char *lim;
   char eol = eolbyte;
+  char nul_zapper = '\0';
   bool done_on_match_0 = done_on_match;
   bool out_quiet_0 = out_quiet;
 
@@ -1182,6 +1204,7 @@ grep (int fd, struct stat const *st)
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
           done_on_match = out_quiet = true;
+          nul_zapper = eol;
         }
     }
 
@@ -1196,6 +1219,8 @@ grep (int fd, struct stat const *st)
       /* no more data to scan (eof) except for maybe a residue -> break */
       if (beg == buflim)
         break;
+
+      zap_nuls (beg, buflim, nul_zapper);
 
       /* Determine new residue (the length of an incomplete line at the end of
          the buffer, 0 means there is no incomplete last line).  */
@@ -1266,6 +1291,7 @@ grep (int fd, struct stat const *st)
                 return 0;
               textbin = tb;
               done_on_match = out_quiet = true;
+              nul_zapper = eol;
             }
         }
     }

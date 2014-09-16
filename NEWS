@@ -26,6 +26,9 @@ GNU grep NEWS                                    -*- outline -*-
   In locales with multibyte character encodings other than UTF-8,
   grep -P now reports an error and exits instead of misbehaving.
 
+  When searching binary data, grep now may treat non-text bytes as
+  line terminators.  This can boost performance significantly.
+
   grep -z no longer automatically treats the byte '\200' as binary data.
 
 * Noteworthy changes in release 2.20 (2014-06-03) [stable]

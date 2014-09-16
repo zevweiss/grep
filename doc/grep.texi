@@ -600,6 +600,8 @@ By default, @var{type} is @samp{binary},
 and @command{grep} normally outputs either
 a one-line message saying that a binary file matches,
 or no message if there is no match.
+When matching binary data, @command{grep} may treat non-text
+bytes as line terminators.
 
 If @var{type} is @samp{without-match},
 @command{grep} assumes that a binary file does not match;
