@@ -44,6 +44,10 @@ static pcre_jit_stack *jit_stack;
    string matches when that flag is used.  */
 static int empty_match[2];
 
+/* This must be at least 2; everything after that is for performance
+   in pcre_exec.  */
+enum { NSUB = 300 };
+
 void
 Pcompile (char const *pattern, size_t size)
 {
@@ -132,8 +136,10 @@ Pcompile (char const *pattern, size_t size)
 # endif
   free (re);
 
-  empty_match[false] = pcre_exec (cre, extra, "", 0, 0, PCRE_NOTBOL, NULL, 0);
-  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, NULL, 0);
+  int sub[NSUB];
+  empty_match[false] = pcre_exec (cre, extra, "", 0, 0,
+                                  PCRE_NOTBOL, sub, NSUB);
+  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, sub, NSUB);
 #endif /* HAVE_LIBPCRE */
 }
 
@@ -146,11 +152,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   error (EXIT_TROUBLE, 0, _("internal error"));
   return -1;
 #else
-  /* This array must have at least two elements; everything after that
-     is just for performance improvement in pcre_exec.  */
-  enum { nsub = 300 };
-  int sub[nsub];
-
+  int sub[NSUB];
   char const *p = start_ptr ? start_ptr : buf;
   bool bol = p[-1] == eolbyte;
   char const *line_start = buf;
@@ -174,15 +176,19 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         {
           int options = bol ? 0 : PCRE_NOTBOL;
           int valid_bytes;
-          e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, nsub);
+          e = pcre_exec (cre, extra, p, line_end - p, 0, options, sub, NSUB);
           if (e != PCRE_ERROR_BADUTF8)
             break;
           valid_bytes = sub[0];
-          e = (valid_bytes == 0
-               ? empty_match[bol]
-               : pcre_exec (cre, extra, p, valid_bytes, 0,
-                            options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
-                            sub, nsub));
+          if (valid_bytes == 0)
+            {
+              sub[1] = 0;
+              e = empty_match[bol];
+            }
+          else
+            e = pcre_exec (cre, extra, p, valid_bytes, 0,
+                           options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
+                           sub, NSUB);
           if (e != PCRE_ERROR_NOMATCH)
             break;
           p += valid_bytes + 1;
