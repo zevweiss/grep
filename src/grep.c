@@ -1912,8 +1912,7 @@ fgrep_to_grep_pattern (size_t len, char const *keys,
 
   for (; len; keys += n, len -= n)
     {
-      wchar_t wc;
-      n = mbrtowc (&wc, keys, len, &mb_state);
+      n = mb_clen (keys, len, &mb_state);
       switch (n)
         {
         case (size_t) -2:
