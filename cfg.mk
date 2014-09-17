@@ -28,6 +28,10 @@ local-checks-to-skip =			\
 # Tools used to bootstrap this package, used for "announcement".
 bootstrap-tools = autoconf,automake,gnulib
 
+# The tight_scope test gets confused about inline functions.
+# like 'to_uchar'.
+_gl_TS_unmarked_extern_functions = main usage mb_clen to_uchar
+
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
