@@ -720,7 +720,12 @@ fillbuf (size_t save, struct stat const *st)
 
       if (SEEK_DATA != SEEK_SET && !seek_data_failed)
         {
+          /* Solaris SEEK_DATA fails with errno == ENXIO in a hole at EOF.  */
           off_t data_start = lseek (bufdesc, bufoffset, SEEK_DATA);
+          if (data_start < 0 && errno == ENXIO
+              && usable_st_size (st) && bufoffset < st->st_size)
+            data_start = lseek (bufdesc, 0, SEEK_END);
+
           if (data_start < 0)
             seek_data_failed = true;
           else
