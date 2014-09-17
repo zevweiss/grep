@@ -27,7 +27,7 @@
 extern bool match_icase;	/* -i */
 extern bool match_words;	/* -w */
 extern bool match_lines;	/* -x */
-extern unsigned char eolbyte;	/* -z */
+extern char eolbyte;		/* -z */
 
 /* An enum textbin describes the file's type, inferred from data read
    before the first line is selected for output.  */

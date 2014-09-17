@@ -350,7 +350,7 @@ static struct option const long_options[] =
 bool match_icase;
 bool match_words;
 bool match_lines;
-unsigned char eolbyte;
+char eolbyte;
 enum textbin input_textbin;
 char const *validated_boundary;
 
@@ -563,6 +563,10 @@ static off_t bufoffset;		/* Read offset; defined on regular files.  */
 static off_t after_last_match;	/* Pointer after last matching line that
                                    would have been output if we were
                                    outputting characters. */
+static bool skip_nuls;		/* Skip '\0' in data.  */
+static bool skip_empty_lines;	/* Skip empty lines in data.  */
+static bool seek_data_failed;	/* lseek with SEEK_DATA failed.  */
+static uintmax_t totalnl;	/* Total newline count before lastnl. */
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
@@ -570,6 +574,27 @@ static off_t after_last_match;	/* Pointer after last matching line that
   ((size_t) (val) % (alignment) == 0 \
    ? (val) \
    : (val) + ((alignment) - (size_t) (val) % (alignment)))
+
+/* Add two numbers that count input bytes or lines, and report an
+   error if the addition overflows.  */
+static uintmax_t
+add_count (uintmax_t a, uintmax_t b)
+{
+  uintmax_t sum = a + b;
+  if (sum < a)
+    error (EXIT_TROUBLE, 0, _("input is too large to count"));
+  return sum;
+}
+
+/* Return true if BUF (of size SIZE) is all zeros.  */
+static bool
+all_zeros (char const *buf, size_t size)
+{
+  for (char const *p = buf; p < buf + size; p++)
+    if (*p)
+      return false;
+  return true;
+}
 
 /* Reset the buffer for a new file, returning false if we should skip it.
    Initialize on the first time through. */
@@ -674,13 +699,33 @@ fillbuf (size_t save, struct stat const *st)
   readsize = buffer + bufalloc - readbuf;
   readsize -= readsize % pagesize;
 
-  fillsize = safe_read (bufdesc, readbuf, readsize);
-  if (fillsize == SAFE_READ_ERROR)
+  while (true)
     {
-      fillsize = 0;
-      cc = false;
+      fillsize = safe_read (bufdesc, readbuf, readsize);
+      if (fillsize == SAFE_READ_ERROR)
+        {
+          fillsize = 0;
+          cc = false;
+        }
+      bufoffset += fillsize;
+
+      if (fillsize == 0 || !skip_nuls || !all_zeros (readbuf, fillsize))
+        break;
+      totalnl = add_count (totalnl, fillsize);
+
+      if (!seek_data_failed)
+        {
+          off_t data_start = lseek (bufdesc, bufoffset, SEEK_DATA);
+          if (data_start < 0)
+            seek_data_failed = true;
+          else
+            {
+              totalnl = add_count (totalnl, data_start - bufoffset);
+              bufoffset = data_start;
+            }
+        }
     }
-  bufoffset += fillsize;
+
   fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
   return cc;
@@ -717,7 +762,6 @@ static char const *lastnl;	/* Pointer after last newline counted. */
 static char const *lastout;	/* Pointer after last character output;
                                    NULL if no character has been output
                                    or if it's conceptually before bufbeg. */
-static uintmax_t totalnl;	/* Total newline count before lastnl. */
 static intmax_t outleft;	/* Maximum number of lines to be output.  */
 static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
@@ -725,17 +769,6 @@ static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
 
 #include "dosbuf.c"
-
-/* Add two numbers that count input bytes or lines, and report an
-   error if the addition overflows.  */
-static uintmax_t
-add_count (uintmax_t a, uintmax_t b)
-{
-  uintmax_t sum = a + b;
-  if (sum < a)
-    error (EXIT_TROUBLE, 0, _("input is too large to count"));
-  return sum;
-}
 
 static void
 nlscan (char const *lim)
@@ -1171,6 +1204,8 @@ grep (int fd, struct stat const *st)
   outleft = max_count;
   after_last_match = 0;
   pending = 0;
+  skip_nuls = skip_empty_lines && !eol;
+  seek_data_failed = false;
 
   nlines = 0;
   residue = 0;
@@ -1193,6 +1228,7 @@ grep (int fd, struct stat const *st)
             return 0;
           done_on_match = out_quiet = true;
           nul_zapper = eol;
+          skip_nuls = skip_empty_lines;
         }
     }
 
@@ -1281,6 +1317,7 @@ grep (int fd, struct stat const *st)
               textbin = tb;
               done_on_match = out_quiet = true;
               nul_zapper = eol;
+              skip_nuls = skip_empty_lines;
             }
         }
     }
@@ -2390,6 +2427,9 @@ main (int argc, char **argv)
 
   compile (keys, keycc);
   free (keys);
+  size_t match_size;
+  skip_empty_lines = ((execute (&eolbyte, 1, &match_size, NULL) == 0)
+                      == out_invert);
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
