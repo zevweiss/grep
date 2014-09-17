@@ -415,6 +415,15 @@ usable_st_size (struct stat const *st)
   return S_ISREG (st->st_mode) || S_TYPEISSHM (st) || S_TYPEISTMO (st);
 }
 
+/* Lame substitutes for SEEK_DATA and SEEK_HOLE on platforms lacking them.
+   Do not rely on these finding data or holes if they equal SEEK_SET.  */
+#ifndef SEEK_DATA
+enum { SEEK_DATA = SEEK_SET };
+#endif
+#ifndef SEEK_HOLE
+enum { SEEK_HOLE = SEEK_SET };
+#endif
+
 /* Functions we'll use to search. */
 typedef void (*compile_fp_t) (char const *, size_t);
 typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);
@@ -474,10 +483,6 @@ buffer_textbin (char const *buf, size_t size)
 static enum textbin
 file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
 {
-  #ifndef SEEK_HOLE
-  enum { SEEK_HOLE = SEEK_END };
-  #endif
-
   enum textbin textbin = buffer_textbin (buf, bufsize);
   if (textbin_is_binary (textbin))
     return textbin;
@@ -488,7 +493,7 @@ file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
         return textbin == TEXTBIN_UNKNOWN ? TEXTBIN_BINARY : textbin;
 
       /* If the file has holes, it must contain a null byte somewhere.  */
-      if (SEEK_HOLE != SEEK_END && eolbyte)
+      if (SEEK_HOLE != SEEK_SET && eolbyte)
         {
           off_t cur = bufsize;
           if (O_BINARY || fd == STDIN_FILENO)
@@ -713,7 +718,7 @@ fillbuf (size_t save, struct stat const *st)
         break;
       totalnl = add_count (totalnl, fillsize);
 
-      if (!seek_data_failed)
+      if (SEEK_DATA != SEEK_SET && !seek_data_failed)
         {
           off_t data_start = lseek (bufdesc, bufoffset, SEEK_DATA);
           if (data_start < 0)
