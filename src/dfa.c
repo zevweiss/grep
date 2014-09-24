@@ -910,11 +910,11 @@ enum
 /* Find the characters equal to C after case-folding, other than C
    itself, and store them into FOLDED.  Return the number of characters
    stored.  */
-static int
+static unsigned int
 case_folded_counterparts (wchar_t c, wchar_t folded[CASE_FOLDED_BUFSIZE])
 {
-  int i;
-  int n = 0;
+  unsigned int i;
+  unsigned int n = 0;
   wint_t uc = towupper (c);
   wint_t lc = towlower (uc);
   if (uc != c)
@@ -1201,9 +1201,10 @@ parse_bracket_exp (void)
       else
         {
           wchar_t folded[CASE_FOLDED_BUFSIZE + 1];
-          int i;
-          int n = (case_fold ? case_folded_counterparts (wc, folded + 1) + 1
-                   : 1);
+          unsigned int i;
+          unsigned int n = (case_fold
+                            ? case_folded_counterparts (wc, folded + 1) + 1
+                            : 1);
           folded[0] = wc;
           for (i = 0; i < n; i++)
             if (!setbit_wc (folded[i], ccl))
@@ -1829,7 +1830,7 @@ atom (void)
           if (case_fold)
             {
               wchar_t folded[CASE_FOLDED_BUFSIZE];
-              int i, n = case_folded_counterparts (wctok, folded);
+              unsigned int i, n = case_folded_counterparts (wctok, folded);
               for (i = 0; i < n; i++)
                 {
                   addtok_wc (folded[i]);
