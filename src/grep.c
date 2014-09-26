@@ -454,9 +454,60 @@ textbin_is_binary (enum textbin textbin)
   return textbin < TEXTBIN_UNKNOWN;
 }
 
-/* Return the text type of data in BUF, of size SIZE.  */
+/* The high-order bit of a byte.  */
+enum { HIBYTE = 0x80 };
+
+/* True if every byte with HIBYTE off is a single-byte character.
+   UTF-8 has this property.  */
+static bool easy_encoding;
+
+static void
+init_easy_encoding (void)
+{
+  easy_encoding = true;
+  for (int i = 0; i < HIBYTE; i++)
+    easy_encoding &= mbclen_cache[i] == 1;
+}
+
+/* An unsigned type suitable for fast matching.  */
+typedef uintmax_t uword;
+
+/* Skip the easy bytes in a buffer that is guaranteed to have a sentinel
+   that is not easy, and return a pointer to the first non-easy byte.
+   In easy encodings, the easy bytes all have HIBYTE off.
+   In other encodings, no byte is easy.  */
+static char const * _GL_ATTRIBUTE_PURE
+skip_easy_bytes (char const *buf)
+{
+  if (!easy_encoding)
+    return buf;
+
+  uword uword_max = -1;
+
+  /* 0x8080..., extended to be wide enough for uword.  */
+  uword hibyte_mask = uword_max / UCHAR_MAX * HIBYTE;
+
+  /* Search a byte at a time until the pointer is aligned, then a
+     uword at a time until a match is found, then a byte at a time to
+     identify the exact byte.  The uword search may go slightly past
+     the buffer end, but that's benign.  */
+  char const *p;
+  uword const *s;
+  for (p = buf; (uintptr_t) p % sizeof (uword) != 0; p++)
+    if (*p & HIBYTE)
+      return p;
+  for (s = (uword const *) p; ! (*s & hibyte_mask); s++)
+    continue;
+  for (p = (char const *) s; ! (*p & HIBYTE); p++)
+    continue;
+  return p;
+}
+
+/* Return the text type of data in BUF, of size SIZE.
+   BUF must be followed by at least sizeof (uword) bytes,
+   which may be arbitrarily written to or read from.  */
 static enum textbin
-buffer_textbin (char const *buf, size_t size)
+buffer_textbin (char *buf, size_t size)
 {
   if (eolbyte && memchr (buf, '\0', size))
     return TEXTBIN_BINARY;
@@ -467,9 +518,10 @@ buffer_textbin (char const *buf, size_t size)
       size_t clen;
       char const *p;
 
-      for (p = buf; p < buf + size; p += clen)
+      buf[size] = -1;
+      for (p = buf; (p = skip_easy_bytes (p)) < buf + size; p += clen)
         {
-          clen = mb_clen (p, buf + size - p, &mbs);
+          clen = mbrlen (p, buf + size - p, &mbs);
           if ((size_t) -2 <= clen)
             return clen == (size_t) -2 ? TEXTBIN_UNKNOWN : TEXTBIN_BINARY;
         }
@@ -478,24 +530,26 @@ buffer_textbin (char const *buf, size_t size)
   return TEXTBIN_TEXT;
 }
 
-/* Return the text type of a file.  BUF, of size BUFSIZE, is the initial
-   buffer read from the file with descriptor FD and status ST.  */
+/* Return the text type of a file.  BUF, of size SIZE, is the initial
+   buffer read from the file with descriptor FD and status ST.
+   BUF must be followed by at least sizeof (uword) bytes,
+   which may be arbitrarily written to or read from.  */
 static enum textbin
-file_textbin (char const *buf, size_t bufsize, int fd, struct stat const *st)
+file_textbin (char *buf, size_t size, int fd, struct stat const *st)
 {
-  enum textbin textbin = buffer_textbin (buf, bufsize);
+  enum textbin textbin = buffer_textbin (buf, size);
   if (textbin_is_binary (textbin))
     return textbin;
 
   if (usable_st_size (st))
     {
-      if (st->st_size <= bufsize)
+      if (st->st_size <= size)
         return textbin == TEXTBIN_UNKNOWN ? TEXTBIN_BINARY : textbin;
 
       /* If the file has holes, it must contain a null byte somewhere.  */
       if (SEEK_HOLE != SEEK_SET && eolbyte)
         {
-          off_t cur = bufsize;
+          off_t cur = size;
           if (O_BINARY || fd == STDIN_FILENO)
             {
               cur = lseek (fd, 0, SEEK_CUR);
@@ -611,7 +665,8 @@ reset (int fd, struct stat const *st)
       pagesize = getpagesize ();
       if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
         abort ();
-      bufalloc = ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + 1;
+      bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
+                  + pagesize + sizeof (uword));
       buffer = xmalloc (bufalloc);
     }
 
@@ -652,7 +707,7 @@ fillbuf (size_t save, struct stat const *st)
      that we want to save.  */
   size_t saved_offset = buflim - save - buffer;
 
-  if (pagesize <= buffer + bufalloc - buflim)
+  if (pagesize <= buffer + bufalloc - sizeof (uword) - buflim)
     {
       readbuf = buflim;
       bufbeg = buflim - save;
@@ -665,8 +720,10 @@ fillbuf (size_t save, struct stat const *st)
       char *newbuf;
 
       /* Grow newsize until it is at least as great as minsize.  */
-      for (newsize = bufalloc - pagesize - 1; newsize < minsize; newsize *= 2)
-        if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
+      for (newsize = bufalloc - pagesize - sizeof (uword);
+           newsize < minsize;
+           newsize *= 2)
+        if ((SIZE_MAX - pagesize - sizeof (uword)) / 2 < newsize)
           xalloc_die ();
 
       /* Try not to allocate more memory than the file size indicates,
@@ -686,8 +743,9 @@ fillbuf (size_t save, struct stat const *st)
         }
 
       /* Add enough room so that the buffer is aligned and has room
-         for byte sentinels fore and aft.  */
-      newalloc = newsize + pagesize + 1;
+         for byte sentinels fore and aft, and so that a uword can
+         be read aft.  */
+      newalloc = newsize + pagesize + sizeof (uword);
 
       newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
       readbuf = ALIGN_TO (newbuf + 1 + save, pagesize);
@@ -701,7 +759,7 @@ fillbuf (size_t save, struct stat const *st)
         }
     }
 
-  readsize = buffer + bufalloc - readbuf;
+  readsize = buffer + bufalloc - sizeof (uword) - readbuf;
   readsize -= readsize % pagesize;
 
   while (true)
@@ -2417,6 +2475,7 @@ main (int argc, char **argv)
     usage (EXIT_TROUBLE);
 
   build_mbclen_cache ();
+  init_easy_encoding ();
 
   /* If fgrep in a multibyte locale, then use grep if either
      (1) case is ignored (where grep is typically faster), or
