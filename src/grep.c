@@ -1298,6 +1298,8 @@ grep (int fd, struct stat const *st)
           nul_zapper = eol;
           skip_nuls = skip_empty_lines;
         }
+      else if (execute != Pexecute)
+        textbin = TEXTBIN_TEXT;
     }
 
   for (;;)
