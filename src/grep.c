@@ -496,8 +496,15 @@ skip_easy_bytes (char const *buf)
   for (p = buf; (uintptr_t) p % sizeof (uword) != 0; p++)
     if (*p & HIBYTE)
       return p;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-align"
+  /* We have aligned P to a uword boundary, so we can safely
+     tell gcc to suppress its cast-alignment warning.  */
   for (s = (uword const *) p; ! (*s & hibyte_mask); s++)
     continue;
+#pragma GCC diagnostic pop
+
   for (p = (char const *) s; ! (*p & HIBYTE); p++)
     continue;
   return p;
