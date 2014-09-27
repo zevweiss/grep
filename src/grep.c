@@ -469,6 +469,21 @@ init_easy_encoding (void)
     easy_encoding &= mbclen_cache[i] == 1;
 }
 
+/* A cast to TYPE of VAL.  Use this when TYPE is a pointer type, VAL
+   is properly aligned for TYPE, and 'gcc -Wcast-align' cannot infer
+   the alignment and would otherwise complain about the cast.  */
+#if 4 < __GNUC__ + (6 <= __GNUC_MINOR__)
+# define CAST_ALIGNED(type, val)                           \
+    ({ __typeof__ (val) val_ = val;                        \
+       _Pragma ("GCC diagnostic push")                     \
+       _Pragma ("GCC diagnostic ignored \"-Wcast-align\"") \
+       (type) val_;                                        \
+       _Pragma ("GCC diagnostic pop")                      \
+    })
+#else
+# define CAST_ALIGNED(type, val) ((type) (val))
+#endif
+
 /* An unsigned type suitable for fast matching.  */
 typedef uintmax_t uword;
 
@@ -496,15 +511,8 @@ skip_easy_bytes (char const *buf)
   for (p = buf; (uintptr_t) p % sizeof (uword) != 0; p++)
     if (*p & HIBYTE)
       return p;
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-align"
-  /* We have aligned P to a uword boundary, so we can safely
-     tell gcc to suppress its cast-alignment warning.  */
-  for (s = (uword const *) p; ! (*s & hibyte_mask); s++)
+  for (s = CAST_ALIGNED (uword const *, p); ! (*s & hibyte_mask); s++)
     continue;
-#pragma GCC diagnostic pop
-
   for (p = (char const *) s; ! (*p & HIBYTE); p++)
     continue;
   return p;
