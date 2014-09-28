@@ -3351,6 +3351,21 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
               /* Can match with a multibyte character (and multi character
                  collating element).  Transition table might be updated.  */
               s = transit_state (d, s, &p, (unsigned char *) end);
+
+              if (p[-1] == eol)
+                {
+                  if ((char *) p > end)
+                    {
+                      p = NULL;
+                      goto done;
+                    }
+
+                  nlcount++;
+
+                  if (!allow_nl)
+                    s = 0;
+                }
+
               mbp = p;
               trans = d->trans;
             }
@@ -3399,6 +3414,21 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
               /* Can match with a multibyte character (and multicharacter
                  collating element).  Transition table might be updated.  */
               s = transit_state (d, s, &p, (unsigned char *) end);
+
+              if (p[-1] == eol)
+                {
+                  if ((char *) p > end)
+                    {
+                      p = NULL;
+                      goto done;
+                    }
+
+                  nlcount++;
+
+                  if (!allow_nl)
+                    s = 0;
+                }
+
               mbp = p;
               trans = d->trans;
             }

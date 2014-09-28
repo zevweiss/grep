@@ -2513,8 +2513,8 @@ main (int argc, char **argv)
 
   compile (keys, keycc);
   free (keys);
-  /* We need one byte prior and at least two after.  */
-  char eolbytes[4] = { 0, eolbyte, 0, 0 };
+  /* We need one byte prior and one after.  */
+  char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
   skip_empty_lines = ((execute (eolbytes + 1, 1, &match_size, NULL) == 0)
                       == out_invert);
