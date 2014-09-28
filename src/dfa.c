@@ -342,6 +342,9 @@ struct dfa
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
 
+  /* dfaexec implementation.  */
+  char *(*dfaexec) (struct dfa *, char const *, char *, int, size_t *, int *);
+
   /* The following are valid only if MB_CUR_MAX > 1.  */
 
   /* The value of multibyte_prop[i] is defined by following rule.
@@ -3266,10 +3269,14 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
    If COUNT is non-NULL, increment *COUNT once for each newline processed.
    Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
    encountered a back-reference (1) or not (0).  The caller may use this
-   to decide whether to fall back on a backtracking matcher.  */
+   to decide whether to fall back on a backtracking matcher.
+
+   If MULTIBYTE, the input consists of multibyte characters and/or
+   encoding-error bytes.  Otherwise, the input consists of single-byte
+   characters.  */
 static inline char *
 dfaexec_main (struct dfa *d, char const *begin, char *end,
-             int allow_nl, size_t *count, int *backref, bool const multibyte)
+             int allow_nl, size_t *count, int *backref, bool multibyte)
 {
   state_num s, s1;              /* Current state.  */
   unsigned char const *p, *mbp; /* Current input character.  */
@@ -3432,27 +3439,31 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
   return (char *) p;
 }
 
-static char *__attribute__((noinline))
+/* Specialized versions of dfaexec_main for multibyte and single-byte
+   cases.  This is for performance.  */
+
+static char *
 dfaexec_mb (struct dfa *d, char const *begin, char *end,
-           int allow_nl, size_t *count, int *backref)
+            int allow_nl, size_t *count, int *backref)
 {
   return dfaexec_main (d, begin, end, allow_nl, count, backref, true);
 }
 
-static char *__attribute__((noinline))
+static char *
 dfaexec_sb (struct dfa *d, char const *begin, char *end,
-           int allow_nl, size_t *count, int *backref)
+            int allow_nl, size_t *count, int *backref)
 {
   return dfaexec_main (d, begin, end, allow_nl, count, backref, false);
 }
+
+/* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, BACKREF, D->multibyte),
+   but faster.  */
 
 char *
 dfaexec (struct dfa *d, char const *begin, char *end,
          int allow_nl, size_t *count, int *backref)
 {
-  return (d->multibyte
-    ? dfaexec_mb (d, begin, end, allow_nl, count, backref)
-    : dfaexec_sb (d, begin, end, allow_nl, count, backref));
+  return d->dfaexec (d, begin, end, allow_nl, count, backref);
 }
 
 struct dfa *
@@ -3504,6 +3515,7 @@ dfainit (struct dfa *d)
 {
   memset (d, 0, sizeof *d);
   d->multibyte = MB_CUR_MAX > 1;
+  d->dfaexec = d->multibyte ? dfaexec_mb : dfaexec_sb;
   d->fast = !d->multibyte;
 }
 
@@ -3544,6 +3556,7 @@ dfaoptimize (struct dfa *d)
 
   free_mbdata (d);
   d->multibyte = false;
+  d->dfaexec = dfaexec_sb;
 }
 
 static void
@@ -3557,6 +3570,7 @@ dfassbuild (struct dfa *d)
 
   *sup = *d;
   sup->multibyte = false;
+  sup->dfaexec = dfaexec_sb;
   sup->multibyte_prop = NULL;
   sup->mbcsets = NULL;
   sup->superset = NULL;

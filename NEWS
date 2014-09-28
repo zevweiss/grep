@@ -7,6 +7,9 @@ GNU grep NEWS                                    -*- outline -*-
   Performance has been greatly improved for searching files containing
   holes, on platforms where lseek's SEEK_DATA flag works efficiently.
 
+  Performance has improved for rejecting data that cannot match even
+  the first part of a nontrivial pattern.
+
   Performance has improved for very long strings in patterns.
 
   If a file contains data improperly encoded for the current locale,
