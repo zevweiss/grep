@@ -2513,9 +2513,10 @@ main (int argc, char **argv)
 
   compile (keys, keycc);
   free (keys);
-  char eolbytes[2] = { eolbyte };
+  /* We need one byte prior and at least two after.  */
+  char eolbytes[4] = { 0, eolbyte, 0, 0 };
   size_t match_size;
-  skip_empty_lines = ((execute (eolbytes, 1, &match_size, NULL) == 0)
+  skip_empty_lines = ((execute (eolbytes + 1, 1, &match_size, NULL) == 0)
                       == out_invert);
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
