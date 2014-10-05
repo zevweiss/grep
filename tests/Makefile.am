@@ -73,6 +73,7 @@ TESTS =						\
   in-eq-out-infloop				\
   include-exclude				\
   inconsistent-range				\
+  invalid-char-class				\
   invalid-multibyte-infloop			\
   khadafy					\
   kwset-abuse					\

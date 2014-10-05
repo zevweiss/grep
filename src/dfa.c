@@ -971,9 +971,8 @@ find_pred (const char *str)
   unsigned int i;
   for (i = 0; prednames[i].name; ++i)
     if (STREQ (str, prednames[i].name))
-      break;
-
-  return &prednames[i];
+      return &prednames[i];
+  return NULL;
 }
 
 /* Multibyte character handling sub-routine for lex.
