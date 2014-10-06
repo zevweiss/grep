@@ -75,6 +75,7 @@ TESTS =						\
   long-line-vs-2GiB-read			\
   max-count-overread				\
   max-count-vs-context				\
+  mb-dot-newline				\
   mb-non-UTF8-overrun				\
   mb-non-UTF8-performance			\
   multibyte-white-space				\
