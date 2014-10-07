@@ -1143,23 +1143,15 @@ when
 is not set.
 .
 .SH "EXIT STATUS"
-Normally, the exit status is 0 if selected lines are found and 1 otherwise.
-But the exit status is 2 if an error occurred, unless the
+Normally the exit status is 0 if a line is selected, 1 if no lines
+were selected, and 2 if an error occurred.  However, if the
 .B \-q
 or
 .B \-\^\-quiet
 or
 .B \-\^\-silent
-option is used and a selected line is found.
-Note, however, that \s-1POSIX\s0 only mandates, for programs such as
-.BR grep ,
-.BR cmp ,
-and
-.BR diff ,
-that the exit status in case of error be greater than 1;
-it is therefore advisable, for the sake of portability,
-to use logic that tests for this general condition
-instead of strict equality with\ 2.
+is used and a line is selected, the exit status is 0 even if an error
+occurred.
 .
 .SH COPYRIGHT
 Copyright 1998-2000, 2002, 2005-2014 Free Software Foundation, Inc.
