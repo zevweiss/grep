@@ -3388,6 +3388,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
             {
               while (t[*p] == 0)
                 p++;
+              s1 = 0;
               s = t[*p++];
             }
 
