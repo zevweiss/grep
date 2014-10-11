@@ -39,6 +39,7 @@ make_input BABAAB |euc_grep AB > out || fail=1
 make_input BABAAB > exp || framework_failure_
 compare exp out || fail=1
 make_input BABABA |euc_grep AB; test $? = 1 || fail=1
+make_input BABABA |euc_grep '^x\|AB'; test $? = 1 || fail=1
 
 # -P supports only unibyte and UTF-8 locales.
 LC_ALL=$locale grep -P x /dev/null

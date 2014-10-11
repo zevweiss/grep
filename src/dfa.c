@@ -405,6 +405,10 @@ struct dfa
                                    slots so far, not counting trans[-1].  */
   int trcount;                  /* Number of transition tables that have
                                    actually been built.  */
+  int min_trcount;              /* Minimum of number of transition tables.
+                                   Always keep the number, even after freeing
+                                   the transition tables.  It is also the
+                                   number of initial states.  */
   state_num **trans;            /* Transition tables for states that can
                                    never accept.  If the transitions for a
                                    state have not yet been computed, or the
@@ -423,6 +427,8 @@ struct dfa
                                    newline is stored separately and handled
                                    as a special case.  Newline is also used
                                    as a sentinel at the end of the buffer.  */
+  state_num initstate_letter;   /* Initial state for letter context.  */
+  state_num initstate_others;   /* Initial state for other contexts.  */
   struct dfamust *musts;        /* List of strings, at least one of which
                                    is known to appear in any r.e. matching
                                    the dfa.  */
@@ -2517,9 +2523,16 @@ dfaanalyze (struct dfa *d, int searchflag)
 
   /* Build the initial state.  */
   separate_contexts = state_separate_contexts (&merged);
-  state_index (d, &merged,
-               (separate_contexts & CTX_NEWLINE
-                ? CTX_NEWLINE : separate_contexts ^ CTX_ANY));
+  if (separate_contexts & CTX_NEWLINE)
+    state_index (d, &merged, CTX_NEWLINE);
+  d->initstate_others = d->min_trcount
+    = state_index (d, &merged, separate_contexts ^ CTX_ANY);
+  if (separate_contexts & CTX_LETTER)
+    d->initstate_letter = d->min_trcount
+      = state_index (d, &merged, CTX_LETTER);
+  else
+    d->initstate_letter = d->initstate_others;
+  d->min_trcount++;
 
   free (posalloc);
   free (stkalloc);
@@ -2855,17 +2868,17 @@ build_state (state_num s, struct dfa *d)
   /* Set an upper limit on the number of transition tables that will ever
      exist at once.  1024 is arbitrary.  The idea is that the frequently
      used transition tables will be quickly rebuilt, whereas the ones that
-     were only needed once or twice will be cleared away.  However, do
-     not clear the initial state, as it's always used.  */
+     were only needed once or twice will be cleared away.  However, do not
+     clear the initial D->min_trcount states, since they are always used.  */
   if (d->trcount >= 1024)
     {
-      for (i = 1; i < d->tralloc; ++i)
+      for (i = d->min_trcount; i < d->tralloc; ++i)
         {
           free (d->trans[i]);
           free (d->fails[i]);
           d->trans[i] = d->fails[i] = NULL;
         }
-      d->trcount = 1;
+      d->trcount = d->min_trcount;
     }
 
   ++d->trcount;
@@ -3236,15 +3249,22 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
    expression "\\" accepts the codepoint 0x5c, but should not accept the second
    byte of the codepoint 0x815c.  Then the initial state must skip the bytes
    that are not a single byte character nor the first byte of a multibyte
-   character.  */
+   character.
+
+   Given DFA state d, use mbs_to_wchar to advance MBP until it reaches or
+   exceeds P.  If WCP is non-NULL, set *WCP to the final wide character
+   processed, or if no wide character is processed, set it to WEOF.
+   Both P and MBP must be no larger than END.  */
 static unsigned char const *
 skip_remains_mb (struct dfa *d, unsigned char const *p,
-                 unsigned char const *mbp, char const *end)
+                 unsigned char const *mbp, char const *end, wint_t *wcp)
 {
-  wint_t wc;
+  wint_t wc = WEOF;
   while (mbp < p)
     mbp += mbs_to_wchar (&wc, (char const *) mbp,
                          end - (char const *) mbp, d);
+  if (wcp != NULL)
+    *wcp = wc;
   return mbp;
 }
 
@@ -3306,20 +3326,44 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
             {
               s1 = s;
 
-              if (s == 0)
+              if (s < d->min_trcount)
                 {
-                  if (d->states[s].mbps.nelem == 0)
+                  if (d->min_trcount == 1)
                     {
-                      do
+                      if (d->states[s].mbps.nelem == 0)
                         {
-                          while (t[*p] == 0)
-                            p++;
-                          p = mbp = skip_remains_mb (d, p, mbp, end);
+                          do
+                            {
+                              while (t[*p] == 0)
+                                p++;
+                              p = mbp = skip_remains_mb (d, p, mbp, end, NULL);
+                            }
+                          while (t[*p] == 0);
                         }
-                      while (t[*p] == 0);
+                      else
+                        p = mbp = skip_remains_mb (d, p, mbp, end, NULL);
                     }
                   else
-                    p = mbp = skip_remains_mb (d, p, mbp, end);
+                    {
+                      wint_t wc;
+                      mbp = skip_remains_mb (d, p, mbp, end, &wc);
+
+                      /* If d->min_trcount is greater than 1, maybe
+                         transit to another initial state after skip.  */
+                      if (p < mbp)
+                        {
+                          int context = wchar_context (wc);
+                          if (context == CTX_LETTER)
+                            s = d->initstate_letter;
+                          else
+                            /* It's CTX_NONE.  CTX_NEWLINE cannot happen,
+                               as we assume that a newline is always a
+                               single byte character.  */
+                            s = d->initstate_others;
+                          p = mbp;
+                          s1 = s;
+                        }
+                    }
                 }
 
               if (d->states[s].mbps.nelem == 0)
