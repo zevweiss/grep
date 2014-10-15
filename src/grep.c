@@ -2516,6 +2516,7 @@ main (int argc, char **argv)
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
+  validated_boundary = eolbytes + 1;
   skip_empty_lines = ((execute (eolbytes + 1, 1, &match_size, NULL) == 0)
                       == out_invert);
 
