@@ -214,7 +214,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
             options |= PCRE_NO_UTF8_CHECK;
 
           int valid_bytes = validated - p;
-          if (valid_bytes < 0)
+          if (valid_bytes <= 0)
             {
               e = pcre_exec (cre, extra, p, search_bytes, 0,
                              options, sub, NSUB);
