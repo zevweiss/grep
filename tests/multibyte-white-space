@@ -73,4 +73,14 @@ for i in $utf8_space_characters; do
       || { warn_ "$i vs. \\S FAILED"; fail=1; }
 done
 
+
+# This is a separate test, only nominally related to \s.
+# It is solely to get coverage of a code path (exercising dfa.c's
+# match_mb_charset function) that would have otherwise been untouched.
+# However, as of the change-set adding this new test, match_mb_charset
+# is unreachable via grep.
+printf '\0' | grep -aE '^\s?$' > out 2>&1
+test $? = 1 || fail=1
+compare /dev/null out
+
 Exit $fail
