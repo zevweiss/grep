@@ -1249,6 +1249,20 @@ parse_bracket_exp (void)
   return CSET + charclass_index (ccl);
 }
 
+#define PUSH_LEX_STATE(s)			\
+  do						\
+    {						\
+      char const *lexptr_saved = lexptr;	\
+      size_t lexleft_saved = lexleft;		\
+      lexptr = (s);				\
+      lexleft = strlen (lexptr)
+
+#define POP_LEX_STATE()				\
+      lexptr = lexptr_saved;			\
+      lexleft = lexleft_saved;			\
+    }						\
+  while (0)
+
 static token
 lex (void)
 {
@@ -1496,20 +1510,6 @@ lex (void)
               return lasttok = CSET + charclass_index (ccl);
             }
 
-#define PUSH_LEX_STATE(s)			\
-  do						\
-    {						\
-      char const *lexptr_saved = lexptr;	\
-      size_t lexleft_saved = lexleft;		\
-      lexptr = (s);				\
-      lexleft = strlen (lexptr)
-
-#define POP_LEX_STATE()				\
-      lexptr = lexptr_saved;			\
-      lexleft = lexleft_saved;			\
-    }						\
-  while (0)
-
           /* FIXME: see if optimizing this, as is done with ANYCHAR and
              add_utf8_anychar, makes sense.  */
 
@@ -1529,14 +1529,33 @@ lex (void)
         case 'W':
           if (!backslash || (syntax_bits & RE_NO_GNU_OPS))
             goto normal_char;
-          zeroset (ccl);
-          for (c2 = 0; c2 < NOTCHAR; ++c2)
-            if (IS_WORD_CONSTITUENT (c2))
-              setbit (c2, ccl);
-          if (c == 'W')
-            notset (ccl);
+
+          if (!dfa->multibyte)
+            {
+              zeroset (ccl);
+              for (c2 = 0; c2 < NOTCHAR; ++c2)
+                if (IS_WORD_CONSTITUENT (c2))
+                  setbit (c2, ccl);
+              if (c == 'W')
+                notset (ccl);
+              laststart = false;
+              return lasttok = CSET + charclass_index (ccl);
+            }
+
+          /* FIXME: see if optimizing this, as is done with ANYCHAR and
+             add_utf8_anychar, makes sense.  */
+
+          /* \w and \W are documented to be equivalent to [_[:alnum:]] and
+             [^_[:alnum:]] respectively, so tell the lexer to process those
+             strings, each minus its "already processed" '['.  */
+          PUSH_LEX_STATE (c == 'w' ? "_[:alnum:]]" : "^_[:alnum:]]");
+
+          lasttok = parse_bracket_exp ();
+
+          POP_LEX_STATE ();
+
           laststart = false;
-          return lasttok = CSET + charclass_index (ccl);
+          return lasttok;
 
         case '[':
           if (backslash)

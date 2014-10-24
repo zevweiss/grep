@@ -21,6 +21,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep no longer mishandles patterns that contain \w or \W in multibyte
+  locales.
+
   grep would fail to count newlines internally when operating in non-UTF8
   multibyte locales, leading it to print potentially many lines that did
   not match.  E.g., the command, "seq 10 | env LC_ALL=zh_CN src/grep -n .."

@@ -114,6 +114,7 @@ TESTS =						\
   warn-char-classes				\
   word-delim-multibyte				\
   word-multi-file				\
+  word-multibyte				\
   yesno
 
 EXTRA_DIST =					\
