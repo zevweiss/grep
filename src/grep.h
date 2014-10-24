@@ -47,8 +47,4 @@ enum textbin
 /* Input file type.  */
 extern enum textbin input_textbin;
 
-/* Validation boundary.  Earlier bytes have already been validated by
-   the PCRE matcher, which cares about this sort of thing.  */
-extern char const *validated_boundary;
-
 #endif

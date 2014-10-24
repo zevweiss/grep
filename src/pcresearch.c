@@ -156,7 +156,6 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
-  char const *validated = validated_boundary;
 
   /* If the input type is unknown, the caller is still testing the
      input, which means the current buffer cannot contain encoding
@@ -210,34 +209,28 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           int options = 0;
           if (!bol)
             options |= PCRE_NOTBOL;
-          if (multiline || p + search_bytes <= validated)
+          if (multiline)
             options |= PCRE_NO_UTF8_CHECK;
 
-          int valid_bytes = validated - p;
-          if (valid_bytes <= 0)
+          e = pcre_exec (cre, extra, p, search_bytes, 0,
+                         options, sub, NSUB);
+          if (e != PCRE_ERROR_BADUTF8)
             {
-              e = pcre_exec (cre, extra, p, search_bytes, 0,
-                             options, sub, NSUB);
-              if (e != PCRE_ERROR_BADUTF8)
+              if (0 < e && multiline && sub[1] - sub[0] != 0)
                 {
-                  validated = p + search_bytes;
-                  if (0 < e && multiline && sub[1] - sub[0] != 0)
+                  char const *nl = memchr (p + sub[0], eolbyte,
+                                           sub[1] - sub[0]);
+                  if (nl)
                     {
-                      char const *nl = memchr (p + sub[0], eolbyte,
-                                               sub[1] - sub[0]);
-                      if (nl)
-                        {
-                          /* This match crosses a line boundary; reject it.  */
-                          p += sub[0];
-                          line_end = nl;
-                          continue;
-                        }
+                      /* This match crosses a line boundary; reject it.  */
+                      p += sub[0];
+                      line_end = nl;
+                      continue;
                     }
-                  break;
                 }
-              valid_bytes = sub[0];
-              validated = p + valid_bytes;
+              break;
             }
+          int valid_bytes = sub[0];
 
           /* Try to match the string before the encoding error.
              Again, handle the empty-match case specially, for speed.  */
@@ -262,8 +255,6 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         break;
       bol = true;
     }
-
-  validated_boundary = validated;
 
   if (e <= 0)
     {
