@@ -90,6 +90,7 @@ TESTS =						\
   pcre-abort					\
   pcre-infloop					\
   pcre-invalid-utf8-input			\
+  pcre-o					\
   pcre-utf8					\
   pcre-w					\
   pcre-wx-backref				\
