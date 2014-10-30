@@ -10,7 +10,7 @@ export LC_ALL
 
 fail=0
 
-for LOC in en_US.UTF-8 zh_CN $LOCALE_FR_UTF8; do
+for LOC in en_US.UTF-8 zh_CN.UTF-8 $LOCALE_FR_UTF8; do
   out=out1-$LOC
   LC_ALL=$LOC grep '\w' in >$out || fail=1
   compare in $out || fail=1
