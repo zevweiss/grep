@@ -282,8 +282,6 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  bool has_backref;		/* This state matches a \<digit>.  */
-  bool has_mbcset;		/* This state matches a MBCSET.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
@@ -2168,8 +2166,6 @@ state_index (struct dfa *d, position_set const *s, int context)
   alloc_position_set (&d->states[i].elems, s->nelem);
   copy (s, &d->states[i].elems);
   d->states[i].context = context;
-  d->states[i].has_backref = false;
-  d->states[i].has_mbcset = false;
   d->states[i].constraint = 0;
   d->states[i].first_end = 0;
   d->states[i].mbps.nelem = 0;
@@ -2185,10 +2181,7 @@ state_index (struct dfa *d, position_set const *s, int context)
           d->states[i].first_end = d->tokens[s->elems[j].index];
       }
     else if (d->tokens[s->elems[j].index] == BACKREF)
-      {
-        d->states[i].constraint = NO_CONSTRAINT;
-        d->states[i].has_backref = true;
-      }
+      d->states[i].constraint = NO_CONSTRAINT;
 
   ++d->sindex;
 
@@ -2647,9 +2640,6 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
           if (d->tokens[pos.index] == MBCSET
               || d->tokens[pos.index] == ANYCHAR)
             {
-              /* MB_CUR_MAX > 1 */
-              if (d->tokens[pos.index] == MBCSET)
-                d->states[s].has_mbcset = true;
               /* ANYCHAR and MBCSET must match with a single character, so we
                  must put it to d->states[s].mbps, which contains the positions
                  which can match with a single character not a byte.  */
@@ -3361,15 +3351,17 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
    When ALLOW_NL is nonzero, newlines may appear in the matching string.
    If COUNT is non-NULL, increment *COUNT once for each newline processed.
    Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
-   encountered a back-reference (1) or not (0).  The caller may use this
-   to decide whether to fall back on a backtracking matcher.
-
-   If MULTIBYTE, the input consists of multibyte characters and/or
-   encoding-error bytes.  Otherwise, the input consists of single-byte
-   characters.  */
+   encountered a DFA-unfriendly construct.  The caller may use this to
+   decide whether to fall back on a matcher like regex.  If MULTIBYTE,
+   the input consists of multibyte characters and/or encoding-error bytes.
+   Otherwise, the input consists of single-byte characters.
+   Here is the list of features that make this DFA matcher punt:
+    - [M-N]-range-in-MB-locale: regex is up to 25% faster on [a-z]
+    - back-reference: (.)\1
+    */
 static inline char *
-dfaexec_main (struct dfa *d, char const *begin, char *end,
-             int allow_nl, size_t *count, int *backref, bool multibyte)
+dfaexec_main (struct dfa *d, char const *begin, char *end, int allow_nl,
+             size_t *count, bool multibyte)
 {
   state_num s, s1;              /* Current state.  */
   unsigned char const *p, *mbp; /* Current input character.  */
@@ -3459,16 +3451,6 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
                  Use a macro to avoid the risk that they diverge.  */
 #define State_transition()                                              \
   do {                                                                  \
-              /* Falling back to the glibc matcher in this case gives   \
-                 better performance (up to 25% better on [a-z], for     \
-                 example) and enables support for collating symbols and \
-                 equivalence classes.  */                               \
-              if (d->states[s].has_mbcset && backref)                   \
-                {                                                       \
-                  *backref = 1;                                         \
-                  goto done;                                            \
-                }                                                       \
-                                                                        \
               /* Can match with a multibyte character (and multi-character \
                  collating element).  Transition table might be updated.  */ \
               s = transit_state (d, s, &p, (unsigned char *) end);      \
@@ -3542,11 +3524,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
       if (d->fails[s])
         {
           if (d->success[s] & sbit[*p])
-            {
-              if (backref)
-                *backref = d->states[s].has_backref;
-              goto done;
-            }
+            goto done;
 
           s1 = s;
           if (multibyte)
@@ -3576,14 +3554,24 @@ static char *
 dfaexec_mb (struct dfa *d, char const *begin, char *end,
             int allow_nl, size_t *count, int *backref)
 {
-  return dfaexec_main (d, begin, end, allow_nl, count, backref, true);
+  return dfaexec_main (d, begin, end, allow_nl, count, true);
 }
 
 static char *
 dfaexec_sb (struct dfa *d, char const *begin, char *end,
             int allow_nl, size_t *count, int *backref)
 {
-  return dfaexec_main (d, begin, end, allow_nl, count, backref, false);
+  return dfaexec_main (d, begin, end, allow_nl, count, false);
+}
+
+/* Always set *BACKREF and return BEGIN.  Use this wrapper for
+   any regexp that uses a construct not supported by this code.  */
+static char *
+dfaexec_noop (struct dfa *d, char const *begin, char *end,
+              int allow_nl, size_t *count, int *backref)
+{
+  *backref = 1;
+  return (char *) begin;
 }
 
 /* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, BACKREF, D->multibyte),
@@ -3647,6 +3635,22 @@ dfainit (struct dfa *d)
   d->multibyte = MB_CUR_MAX > 1;
   d->dfaexec = d->multibyte ? dfaexec_mb : dfaexec_sb;
   d->fast = !d->multibyte;
+}
+
+/* Return true if every construct in D is supported by this DFA matcher.  */
+static bool _GL_ATTRIBUTE_PURE
+dfa_supported (struct dfa const *d)
+{
+  for (size_t i = 0; i < d->tindex; i++)
+    {
+      switch (d->tokens[i])
+        {
+        case BACKREF:
+        case MBCSET:
+          return false;
+        }
+    }
+  return true;
 }
 
 static void
@@ -3746,10 +3750,8 @@ dfassbuild (struct dfa *d)
           if (d->multibyte)
             {
               /* These constraints aren't supported in a multibyte locale.
-                 Ignore them in the superset DFA, and treat them as
-                 backreferences in the main DFA.  */
+                 Ignore them in the superset DFA.  */
               sup->tokens[j++] = EMPTY;
-              d->tokens[i] = BACKREF;
               break;
             }
         default:
@@ -3779,8 +3781,17 @@ dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
   dfambcache (d);
   dfaparse (s, len, d);
   dfassbuild (d);
-  dfaoptimize (d);
-  dfaanalyze (d, searchflag);
+
+  if (dfa_supported (d))
+    {
+      dfaoptimize (d);
+      dfaanalyze (d, searchflag);
+    }
+  else
+    {
+      d->dfaexec = dfaexec_noop;
+    }
+
   if (d->superset)
     {
       d->fast = true;
