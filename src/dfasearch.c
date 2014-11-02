@@ -283,23 +283,22 @@ EGexecute (char *buf, size_t size, size_t *match_size,
               /* Keep using the superset while it reports multiline
                  potential matches; this is more likely to be fast
                  than falling back to KWset would be.  */
-              while ((next_beg = dfaexec (superset, dfa_beg, (char *) end, 1,
-                                          &count, NULL))
-                     && next_beg != end
-                     && count != 0)
-                {
-                  /* Try to match in just one line.  */
-                  count = 0;
-                  beg = memrchr (buf, eol, next_beg - buf);
-                  beg++;
-                  dfa_beg = beg;
-                }
+              next_beg = dfaexec (superset, dfa_beg, (char *) end, 0,
+                                  &count, NULL);
               if (next_beg == NULL || next_beg == end)
                 continue;
 
               /* Narrow down to the line we've found.  */
+              if (count != 0)
+                {
+                  beg = memrchr (buf, eol, next_beg - buf);
+                  beg++;
+                  dfa_beg = beg;
+                }
               end = memchr (next_beg, eol, buflim - next_beg);
               end = end ? end + 1 : buflim;
+
+              count = 0;
             }
 
           /* Try matching with DFA.  */
