@@ -48,6 +48,10 @@ GNU grep NEWS                                    -*- outline -*-
   grep -E rejected unmatched ')', instead of treating it like '\)'.
   [bug present since "the beginning"]
 
+  On NetBSD, grep -r no longer reports "Inappropriate file type or format"
+  when refusing to follow a symbolic link.
+  [bug introduced in grep-2.12]
+
 ** Changes in behavior
 
   The GREP_OPTIONS environment variable is now obsolescent, and grep

@@ -1513,13 +1513,27 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
   return grepfile (dirdesc, ent->fts_accpath, follow, command_line);
 }
 
+/* True if errno is ERR after 'open ("symlink", ... O_NOFOLLOW ...)'.
+   POSIX specifies ELOOP, but it's EMLINK on FreeBSD and EFTYPE on NetBSD.  */
+static bool
+open_symlink_nofollow_error (int err)
+{
+  if (err == ELOOP || err == EMLINK)
+    return true;
+#ifdef EFTYPE
+  if (err == EFTYPE)
+    return true;
+#endif
+  return false;
+}
+
 static bool
 grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
   int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
   if (desc < 0)
     {
-      if (follow || (errno != ELOOP && errno != EMLINK))
+      if (follow || ! open_symlink_nofollow_error (errno))
         suppressible_error (filename, errno);
       return true;
     }
