@@ -57,18 +57,10 @@ EOF
 
 fail=0
 
-# Like printf with a single argument.
-# The difference is that while some printf implementations fail to
-# handle \xHH escapes, no awk implementation has that problem.
-hex_printf()
-{
-   ${AWK-awk} 'BEGIN { printf "'"$1"'" }' </dev/null
-}
-
 for i in $utf8_space_characters; do
-  hex_printf "$i\n" | grep -q '^\s$' \
+  hex_printf_ "$i\n" | grep -q '^\s$' \
       || { warn_ "$i FAILED to match \\s"; fail=1; }
-  hex_printf "$i\n" | grep -q '\S'
+  hex_printf_ "$i\n" | grep -q '\S'
   test $? = 1 \
       || { warn_ "$i vs. \\S FAILED"; fail=1; }
 done
