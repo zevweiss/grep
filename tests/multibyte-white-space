@@ -58,9 +58,9 @@ EOF
 fail=0
 
 for i in $utf8_space_characters; do
-  hex_printf_ "$i\n" | grep -q '^\s$' \
+  hex_printf_ "$i" | grep -q '^\s$' \
       || { warn_ "$i FAILED to match \\s"; fail=1; }
-  hex_printf_ "$i\n" | grep -q '\S'
+  hex_printf_ "$i" | grep -q '\S'
   test $? = 1 \
       || { warn_ "$i vs. \\S FAILED"; fail=1; }
 done
