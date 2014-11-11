@@ -8,10 +8,10 @@
 # notice and this notice are preserved.
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
-require_pcre_
 require_timeout_
 require_en_utf8_locale_
 require_compiled_in_MB_support
+LC_ALL=en_US.UTF-8 require_pcre_
 
 fail=0
 
