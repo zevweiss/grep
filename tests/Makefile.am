@@ -73,6 +73,7 @@ TESTS =						\
   invalid-multibyte-infloop			\
   khadafy					\
   long-line-vs-2GiB-read			\
+  match-lines					\
   max-count-overread				\
   max-count-vs-context				\
   mb-dot-newline				\

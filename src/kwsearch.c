@@ -129,7 +129,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
                                buf + size - beg + match_lines, &kwsmatch);
       if (offset == (size_t) -1)
         goto failure;
-      len = kwsmatch.size[0] - match_lines;
+      len = kwsmatch.size[0] - 2 * match_lines;
       if (!match_lines && MB_CUR_MAX > 1 && !using_utf8 ()
           && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
@@ -142,7 +142,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (start_ptr && !match_words)
         goto success_in_beg_and_len;
       if (match_lines)
-        goto success_in_beg_and_len;
+        {
+          len += start_ptr == NULL;
+          goto success_in_beg_and_len;
+        }
       if (match_words)
         for (try = beg; ; )
           {

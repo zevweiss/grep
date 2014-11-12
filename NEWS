@@ -41,6 +41,9 @@ GNU grep NEWS                                    -*- outline -*-
   implying that the match, "10" was on line 1.
   [bug introduced in grep-2.19]
 
+  grep -F -x -o no longer prints an extra newline for each match.
+  [bug introduced in grep-2.19]
+
   grep in a non-UTF8 multibyte locale could mistakenly match in the middle
   of a multibyte character when using a '^'-anchored alternate in a pattern,
   leading it to print non-matching lines.  [bug present since "the beginning"]
