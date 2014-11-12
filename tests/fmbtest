@@ -52,30 +52,30 @@ EOF
 
 for mode in F G E; do
 
-test1="$(echo $(LC_ALL=$cz grep -${mode} -f cspatfile csinput \
-               | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'))"
+test1=$(echo $(LC_ALL=$cz; export LC_ALL
+               grep -${mode} -f cspatfile csinput | sed 's/[^0-9]/ /g'))
 if test "$test1" != "11 12 13 14 15 16 17 18"; then
   echo "Test #1 ${mode} failed: $test1"
   failures=1
 fi
 
-test2="$(echo $(LC_ALL=$cz grep -${mode}i -f cspatfile csinput \
-               | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'))"
+test2=$(echo $(LC_ALL=$cz; export LC_ALL
+               grep -${mode}i -f cspatfile csinput | sed 's/[^0-9]/ /g'))
 if test "$test2" != "01 02 07 08 10 11 12 13 14 15 16 17 18 19 20"; then
   echo "Test #2 ${mode} failed: $test2"
   failures=1
 fi
 
-test3="$(echo $(LC_ALL=$cz grep -${mode}i -e 'ČÍšE' -e 'Čas' csinput \
-               | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'))"
+test3=$(echo $(LC_ALL=$cz; export LC_ALL
+               grep -${mode}i -e 'ČÍšE' -e 'Čas' csinput | sed 's/[^0-9]/ /g'))
 if test "$test3" != "01 02 07 08 10 11 12 13 14 15 16 17 18 19 20"; then
   echo "Test #3 ${mode} failed: $test3"
   failures=1
 fi
 
 # Skip the next test - known to fail. TAA.
-#test4="$(echo $(LC_ALL=$cz grep -${mode}iw -f cspatfile csinput \
-#	       | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'))"
+#test4=$(echo $(LC_ALL=$cz; export LC_ALL
+#               grep -${mode}iw -f cspatfile csinput | sed 's/[^0-9]/ /g'))
 #if test "$test4" != "01 02 08 13 17 19"; then
 #  echo "Test #4 ${mode} failed: $test4"
 #  failures=1
@@ -113,8 +113,9 @@ done
 
 for mode in G E; do
 
-test8="$(echo $(LC_ALL=$cz grep -${mode}i -e 'Č.šE' -e 'Č[a-f]s' csinput \
-               | LC_ALL=C sed 's/^.*\([0-9][0-9]\).*$/\1/'))"
+test8=$(echo $(LC_ALL=$cz; export LC_ALL
+               grep -${mode}i -e 'Č.šE' -e 'Č[a-f]s' csinput |
+                 sed 's/[^0-9]/ /g'))
 if test "$test8" != "01 02 07 08 10 11 12 13 14 15 16 17 18 19 20"; then
   echo "Test #8 ${mode} failed: $test8"
   failures=1
