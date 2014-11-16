@@ -3968,13 +3968,13 @@ struct must
 };
 
 static must *
-allocmust (must *mp)
+allocmust (must *mp, size_t size)
 {
   must *new_mp = xmalloc (sizeof *new_mp);
   new_mp->in = xzalloc (sizeof *new_mp->in);
-  new_mp->left = xzalloc (2);
-  new_mp->right = xzalloc (2);
-  new_mp->is = xzalloc (2);
+  new_mp->left = xzalloc (size);
+  new_mp->right = xzalloc (size);
+  new_mp->is = xzalloc (size);
   new_mp->begline = false;
   new_mp->endline = false;
   new_mp->prev = mp;
@@ -4007,23 +4007,22 @@ dfamust (struct dfa const *d)
 {
   must *mp = NULL;
   char const *result = "";
-  size_t ri;
   size_t i;
   bool exact = false;
   bool begline = false;
   bool endline = false;
 
-  for (ri = 0; ri < d->tindex; ++ri)
+  for (size_t ri = 0; ri < d->tindex; ++ri)
     {
       token t = d->tokens[ri];
       switch (t)
         {
         case BEGLINE:
-          mp = allocmust (mp);
+          mp = allocmust (mp, 2);
           mp->begline = true;
           break;
         case ENDLINE:
-          mp = allocmust (mp);
+          mp = allocmust (mp, 2);
           mp->endline = true;
           break;
         case LPAREN:
@@ -4038,7 +4037,7 @@ dfamust (struct dfa const *d)
         case BACKREF:
         case ANYCHAR:
         case MBCSET:
-          mp = allocmust (mp);
+          mp = allocmust (mp, 2);
           break;
 
         case STAR:
@@ -4155,7 +4154,6 @@ dfamust (struct dfa const *d)
           goto done;
 
         default:
-          mp = allocmust (mp);
           if (CSET <= t)
             {
               /* If T is a singleton, or if case-folding in a unibyte
@@ -4168,7 +4166,10 @@ dfamust (struct dfa const *d)
                 if (tstbit (j, *ccl))
                   break;
               if (! (j < NOTCHAR))
-                break;
+                {
+                  mp = allocmust (mp, 2);
+                  break;
+                }
               t = j;
               while (++j < NOTCHAR)
                 if (tstbit (j, *ccl)
@@ -4176,12 +4177,36 @@ dfamust (struct dfa const *d)
                           && toupper (j) == toupper (t)))
                   break;
               if (j < NOTCHAR)
-                break;
+                {
+                  mp = allocmust (mp, 2);
+                  break;
+                }
             }
+
+          size_t rj = ri + 2;
+          if (d->tokens[ri + 1] == CAT)
+            {
+              for (; rj < d->tindex - 1; rj += 2)
+                {
+                  if ((rj != ri && (d->tokens[rj] <= 0
+                                    || NOTCHAR <= d->tokens[rj]))
+                      || d->tokens[rj + 1] != CAT)
+                    break;
+                }
+            }
+          mp = allocmust (mp, ((rj - ri) >> 1) + 1);
           mp->is[0] = mp->left[0] = mp->right[0]
             = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
-          mp->is[1] = mp->left[1] = mp->right[1] = '\0';
-          mp->in = enlist (mp->in, mp->is, 1);
+
+          for (i = 1; ri + 2 < rj; i++)
+            {
+              ri += 2;
+              t = d->tokens[ri];
+              mp->is[i] = mp->left[i] = mp->right[i]
+                = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
+            }
+          mp->is[i] = mp->left[i] = mp->right[i] = '\0';
+          mp->in = enlist (mp->in, mp->is, i - 1);
           break;
         }
     }
