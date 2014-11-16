@@ -3660,8 +3660,11 @@ dfassbuild (struct dfa *d)
   sup->musts = NULL;
 
   sup->charclasses = xnmalloc (sup->calloc, sizeof *sup->charclasses);
-  memcpy (sup->charclasses, d->charclasses,
-          d->cindex * sizeof *sup->charclasses);
+  if (d->cindex)
+    {
+      memcpy (sup->charclasses, d->charclasses,
+              d->cindex * sizeof *sup->charclasses);
+    }
 
   sup->tokens = xnmalloc (d->tindex, 2 * sizeof *sup->tokens);
   sup->talloc = d->tindex * 2;
