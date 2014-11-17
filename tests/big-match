@@ -11,7 +11,10 @@ skip_diagnostic=
 
 # These two patterns catch different kinds of
 # failures due to internal integer overflows.
-for pattern in '^.*' '^.*x\(\)\1'; do
+# However, the second one, '^.*x\(\)\1', provokes
+# so much memory consumption via regexec.c that it renders
+# some systems unusable.
+for pattern in '^.*'; do
   diagnostic=$(LC_ALL=C grep -a "$pattern" 2G-plus-2 2>&1 >/dev/null)
   status=$?
 
