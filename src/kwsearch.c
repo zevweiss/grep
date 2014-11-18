@@ -133,9 +133,20 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (!match_lines && MB_CUR_MAX > 1 && !using_utf8 ()
           && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
-          /* The match was a part of multibyte character, advance at least
-             one byte to ensure no infinite loop happens.  */
-          beg = mb_start;
+          /* We have matched a single byte that is not at the beginning of a
+             multibyte character.  mb_goback has advanced MB_START past that
+             multibyte character.  Now, we want to position BEG so that the
+             next kwsexec search starts there.  Thus, to compensate for the
+             for-loop's BEG++, above, subtract one here.  This code is
+             unusually hard to reach, and exceptionally, let's show how to
+             trigger it here:
+
+               printf '\203AA\n'|LC_ALL=ja_JP.SHIFT_JIS src/grep -F A
+
+             That assumes the named locale is installed.
+             Note that your system's shift-JIS locale may have a different
+             name, possibly including "sjis".  */
+          beg = mb_start - 1;
           continue;
         }
       beg += offset;

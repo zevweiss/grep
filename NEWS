@@ -48,6 +48,13 @@ GNU grep NEWS                                    -*- outline -*-
   of a multibyte character when using a '^'-anchored alternate in a pattern,
   leading it to print non-matching lines.  [bug present since "the beginning"]
 
+  grep -F Y no longer fails to match in non-UTF8 multibyte locales like
+  Shift-JIS, when the input contains a 2-byte character, XY, followed by
+  the single-byte search pattern, Y.  grep would find the first, middle-
+  of-multibyte matching "Y", and then mistakenly advance an internal
+  pointer one byte too far, skipping over the target "Y" just after that.
+  [bug introduced in grep-2.19]
+
   grep -E rejected unmatched ')', instead of treating it like '\)'.
   [bug present since "the beginning"]
 
