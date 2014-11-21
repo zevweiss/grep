@@ -51,8 +51,6 @@ for i in $successful_tests; do
   test_grep -E $i A || fail=1
 done
 
-test_grep_reject -F @@ @ || fail=1
-test_grep_reject -E @@ @ || fail=1
 for i in $failure_tests; do
   test_grep_reject -F $i A || fail=1
   test_grep_reject -E $i A || fail=1
