@@ -14,13 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-check_PROGRAMS = get-mb-cur-max
-AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
+check_PROGRAMS = get-mb-cur-max dfa-match-aux
+AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
+  -I$(top_srcdir)/src
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 
 # Tell the linker to omit references to unused shared libraries.
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
+dfa_match_aux_LDADD = ../src/dfa.$(OBJEXT) $(LDADD)
 
 XFAIL_TESTS = triple-backref
 
@@ -52,6 +54,7 @@ TESTS =						\
   count-newline					\
   dfa-coverage					\
   dfa-heap-overrun				\
+  dfa-match					\
   dfaexec-multibyte				\
   empty						\
   empty-line					\

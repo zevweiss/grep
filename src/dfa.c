@@ -3498,13 +3498,13 @@ dfaexec_main (struct dfa *d, char const *begin, char *end,
           continue;
         }
 
-      if (p[-1] == eol && allow_nl)
+      if (p[-1] != eol || d->newlines[s1] < 0)
         {
-          s = d->newlines[s1];
-          continue;
+          p = NULL;
+          goto done;
         }
 
-      s = 0;
+      s = allow_nl ? d->newlines[s1] : 0;
     }
 
  done:

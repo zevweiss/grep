@@ -1,0 +1,45 @@
+#!/bin/sh
+# This would fail for grep-2.21.
+
+# Copyright 2014 Free Software Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+# Add "." to PATH for the use of dfa-match-aux.
+path_prepend_ .
+
+require_timeout_
+
+fail=0
+
+fail1=0
+dfa-match-aux a ba 0 > out || fail1=1
+compare /dev/null out || fail1=1
+if test $fail1 -ne 0; then
+  warn_ 'dfa-match test #1 failed\n'
+  fail=1
+fi
+
+fail2=0
+in=$(printf "bb\nbb")
+timeout 3 dfa-match-aux a "$in" 1 > out || fail2=1
+compare /dev/null out || fail2=1
+if test $fail2 -ne 0; then
+  warn_ 'dfa-match test #2 failed\n'
+  fail=1
+fi
+
+Exit $fail
