@@ -698,6 +698,7 @@ For each directory operand,
 read and process all files in that directory, recursively.
 Follow symbolic links on the command line, but skip symlinks
 that are encountered recursively.
+Note that if no file operand is given, grep searches the working directory.
 This is the same as the @samp{--directories=recurse} option.
 
 @item -R
