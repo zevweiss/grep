@@ -3358,6 +3358,7 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
    Here is the list of features that make this DFA matcher punt:
     - [M-N]-range-in-MB-locale: regex is up to 25% faster on [a-z]
     - back-reference: (.)\1
+    - word-delimiter-in-MB-locale: \<, \>, \b
     */
 static inline char *
 dfaexec_main (struct dfa *d, char const *begin, char *end, int allow_nl,
@@ -3645,6 +3646,14 @@ dfa_supported (struct dfa const *d)
     {
       switch (d->tokens[i])
         {
+        case BEGWORD:
+        case ENDWORD:
+        case LIMWORD:
+        case NOTLIMWORD:
+          if (!d->multibyte)
+            continue;
+          /* fallthrough */
+
         case BACKREF:
         case MBCSET:
           return false;
