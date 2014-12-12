@@ -1,4 +1,5 @@
-/* Auxiliary program to test a code which can not happen for dfa.
+/* Auxiliary program to test a DFA code path that cannot be triggered
+   by grep or gawk.
    Copyright 2014 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
