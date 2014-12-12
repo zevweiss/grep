@@ -38,9 +38,11 @@ static pcre_extra *extra;
 # endif
 #endif
 
+#if HAVE_LIBPCRE
 /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
    string matches when that flag is used.  */
 static int empty_match[2];
+#endif
 
 /* This must be at least 2; everything after that is for performance
    in pcre_exec.  */
