@@ -596,6 +596,11 @@ If a file's allocation metadata,
 or if its data read before a line is selected for output,
 indicate that the file contains binary data,
 assume that the file is of type @var{type}.
+Non-text bytes indicate binary data; these are either data bytes
+improperly encoded for the current locale, or null bytes when the
+@option{-z} (@option{--null-data}) option is not given (@pxref{Other
+Options}).
+
 By default, @var{type} is @samp{binary},
 and @command{grep} normally outputs either
 a one-line message saying that a binary file matches,
@@ -1721,8 +1726,8 @@ Standard grep cannot do this, as it is fundamentally line-based.
 Therefore, merely using the @code{[:space:]} character class does not
 match newlines in the way you might expect.
 
-With the GNU @command{grep} option @code{-z} (@pxref{File and
-Directory Selection}), the input is terminated by null bytes.  Thus,
+With the GNU @command{grep} option @option{-z} (@option{--null-data}), each
+input ``line'' is terminated by a null byte; @pxref{Other Options}.  Thus,
 you can match newlines in the input, but typically if there is a match
 the entire input is output, so this usage is often combined with
 output-suppressing options like @option{-q}, e.g.:
