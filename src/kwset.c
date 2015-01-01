@@ -643,6 +643,8 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
                     if (! tp)
                       return -1;
                     tp++;
+                    if (ep <= tp)
+                      break;
                   }
               }
           }

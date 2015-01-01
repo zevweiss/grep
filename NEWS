@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep no longer reads from uninitialized memory or from beyond the end
+  of the heap-allocated input buffer.
+
 
 * Noteworthy changes in release 2.21 (2014-11-23) [stable]
 

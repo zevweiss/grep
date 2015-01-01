@@ -75,6 +75,7 @@ TESTS =						\
   inconsistent-range				\
   invalid-multibyte-infloop			\
   khadafy					\
+  kwset-abuse					\
   long-line-vs-2GiB-read			\
   match-lines					\
   max-count-overread				\
