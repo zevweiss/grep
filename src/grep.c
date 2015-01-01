@@ -810,6 +810,12 @@ fillbuf (size_t save, struct stat const *st)
 
   fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
+
+  /* Initialize the following word, because skip_easy_bytes and some
+     matchers read (but do not use) those bytes.  This avoids false
+     positive reports of these bytes being used uninitialized.  */
+  memset (buflim, 0, sizeof (uword));
+
   return cc;
 }
 
