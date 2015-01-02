@@ -1,5 +1,5 @@
 /* grep.h - interface to grep driver for searching subroutines.
-   Copyright (C) 1992, 1998, 2001, 2007, 2009-2014 Free Software Foundation,
+   Copyright (C) 1992, 1998, 2001, 2007, 2009-2015 Free Software Foundation,
    Inc.
 
    This program is free software; you can redistribute it and/or modify

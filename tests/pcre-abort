@@ -2,7 +2,7 @@
 # Show that grep handles PCRE's PCRE_ERROR_MATCHLIMIT.
 # In grep-2.8, it would abort.
 #
-# Copyright (C) 2011-2014 Free Software Foundation, Inc.
+# Copyright (C) 2011-2015 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright

@@ -3,7 +3,7 @@
 # (like "I" in the tr_TR.utf8 locale) whose lower-case representation
 # occupies more bytes (two in this case, for 0xc4b1, aka U+0131).
 
-# Copyright (C) 2011-2014 Free Software Foundation, Inc.
+# Copyright (C) 2011-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
