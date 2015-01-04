@@ -816,6 +816,11 @@ fillbuf (size_t save, struct stat const *st)
      positive reports of these bytes being used uninitialized.  */
   memset (buflim, 0, sizeof (uword));
 
+  /* Mark the part of the buffer not filled by the read or set by
+     the above memset call as ASAN-poisoned.  */
+  __asan_poison_memory_region (buflim + sizeof (uword),
+                               bufalloc - (buflim - buffer) - sizeof (uword));
+
   return cc;
 }
 

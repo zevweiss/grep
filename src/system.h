@@ -26,6 +26,7 @@
 #include "binary-io.h"
 #include "configmake.h"
 #include "dirname.h"
+#include "ignore-value.h"
 #include "minmax.h"
 #include "same-inode.h"
 
@@ -66,5 +67,44 @@ to_uchar (char ch)
 }
 
 _GL_INLINE_HEADER_END
+
+#ifndef __has_feature
+# define __has_feature(F) false
+#endif
+
+#if defined __SANITIZE_ADDRESS__ || __has_feature (address_sanitizer)
+# define HAVE_ASAN 1
+#else
+# define HAVE_ASAN 0
+#endif
+
+#if HAVE_ASAN
+
+/* Mark memory region [addr, addr+size) as unaddressable.
+   This memory must be previously allocated by the user program.  Accessing
+   addresses in this region from instrumented code is forbidden until
+   this region is unpoisoned.  This function is not guaranteed to poison
+   the whole region - it may poison only a subregion of [addr, addr+size)
+   due to ASan alignment restrictions.
+   Method is NOT thread-safe in the sense that no two threads can
+   (un)poison memory in the same memory region simultaneously.  */
+void __asan_poison_memory_region (void const volatile *addr, size_t size);
+
+/* Mark memory region [addr, addr+size) as addressable.
+   This memory must be previously allocated by the user program.  Accessing
+   addresses in this region is allowed until this region is poisoned again.
+   This function may unpoison a superregion of [addr, addr+size) due to
+   ASan alignment restrictions.
+   Method is NOT thread-safe in the sense that no two threads can
+   (un)poison memory in the same memory region simultaneously.  */
+void __asan_unpoison_memory_region (void const volatile *addr, size_t size);
+
+#else
+
+static _GL_UNUSED void
+__asan_poison_memory_region (void const volatile *addr, size_t size) { }
+static _GL_UNUSED void
+__asan_unpoison_memory_region (void const volatile *addr, size_t size) { }
+#endif
 
 #endif
