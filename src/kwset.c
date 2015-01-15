@@ -637,7 +637,7 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
                        delta1 when the latter doesn't advance much.  */
                     int advance_heuristic = 16 * sizeof (long);
                     if (advance_heuristic <= tp - tp0)
-                      goto big_advance;
+                      continue;
                     tp--;
                     tp = memchr_kwset (tp, text + size - tp, kwset);
                     if (! tp)
@@ -650,7 +650,6 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
           }
         if (bm_delta2_search (&tp, ep, sp, len, trans, gc1, gc2, d1, kwset))
           return tp - text;
-      big_advance:;
       }
 
   /* Now we have only a few characters left to search.  We
