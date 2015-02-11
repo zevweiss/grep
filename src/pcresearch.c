@@ -27,6 +27,11 @@
 #endif
 
 #if HAVE_LIBPCRE
+
+/* This must be at least 2; everything after that is for performance
+   in pcre_exec.  */
+enum { NSUB = 300 };
+
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;
 
@@ -36,6 +41,45 @@ static pcre_extra *extra;
 # ifndef PCRE_STUDY_JIT_COMPILE
 #  define PCRE_STUDY_JIT_COMPILE 0
 # endif
+
+# if PCRE_STUDY_JIT_COMPILE
+/* Maximum size of the JIT stack.  */
+static int jit_stack_size;
+# endif
+
+/* Match the already-compiled PCRE pattern against the data in P, of
+   size SEARCH_BYTES, with options OPTIONS, and storing resulting
+   matches into SUB.  Return the (nonnegative) match location or a
+   (negative) error number.  */
+static int
+jit_exec (char const *p, int search_bytes, int options, int *sub)
+{
+  while (true)
+    {
+      int e = pcre_exec (cre, extra, p, search_bytes, 0, options, sub, NSUB);
+
+# if PCRE_STUDY_JIT_COMPILE
+      if (e == PCRE_ERROR_JIT_STACKLIMIT
+          && 0 < jit_stack_size && jit_stack_size <= INT_MAX / 2)
+        {
+          int old_size = jit_stack_size;
+          int new_size = jit_stack_size = old_size * 2;
+          static pcre_jit_stack *jit_stack;
+          if (jit_stack)
+            pcre_jit_stack_free (jit_stack);
+          jit_stack = pcre_jit_stack_alloc (old_size, new_size);
+          if (!jit_stack)
+            error (EXIT_TROUBLE, 0,
+                   _("failed to allocate memory for the PCRE JIT stack"));
+          pcre_assign_jit_stack (extra, NULL, jit_stack);
+          continue;
+        }
+# endif
+
+      return e;
+    }
+}
+
 #endif
 
 #if HAVE_LIBPCRE
@@ -43,10 +87,6 @@ static pcre_extra *extra;
    string matches when that flag is used.  */
 static int empty_match[2];
 #endif
-
-/* This must be at least 2; everything after that is for performance
-   in pcre_exec.  */
-enum { NSUB = 300 };
 
 void
 Pcompile (char const *pattern, size_t size)
@@ -121,19 +161,11 @@ Pcompile (char const *pattern, size_t size)
   if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
     error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
+  /* The PCRE documentation says that a 32 KiB stack is the default.  */
   if (e)
-    {
-      /* A 32K stack is allocated for the machine code by default, which
-         can grow to 512K if necessary. Since JIT uses far less memory
-         than the interpreter, this should be enough in practice.  */
-      pcre_jit_stack *jit_stack = pcre_jit_stack_alloc (32 * 1024, 512 * 1024);
-      if (!jit_stack)
-        error (EXIT_TROUBLE, 0,
-               _("failed to allocate memory for the PCRE JIT stack"));
-      pcre_assign_jit_stack (extra, NULL, jit_stack);
-    }
-
+    jit_stack_size = 32 << 10;
 # endif
+
   free (re);
 
   int sub[NSUB];
@@ -214,8 +246,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           if (multiline)
             options |= PCRE_NO_UTF8_CHECK;
 
-          e = pcre_exec (cre, extra, p, search_bytes, 0,
-                         options, sub, NSUB);
+          e = jit_exec (p, search_bytes, options, sub);
           if (e != PCRE_ERROR_BADUTF8)
             {
               if (0 < e && multiline && sub[1] - sub[0] != 0)
@@ -268,9 +299,13 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         case PCRE_ERROR_NOMEMORY:
           error (EXIT_TROUBLE, 0, _("memory exhausted"));
 
+# if PCRE_STUDY_JIT_COMPILE
+        case PCRE_ERROR_JIT_STACKLIMIT:
+          error (EXIT_TROUBLE, 0, _("PCRE JIT stack exhausted"));
+# endif
+
         case PCRE_ERROR_MATCHLIMIT:
-          error (EXIT_TROUBLE, 0,
-                 _("exceeded PCRE's backtracking limit"));
+          error (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
 
         default:
           /* For now, we lump all remaining PCRE failures into this basket.

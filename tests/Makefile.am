@@ -95,6 +95,7 @@ TESTS =						\
   pcre-abort					\
   pcre-infloop					\
   pcre-invalid-utf8-input			\
+  pcre-jitstack					\
   pcre-o					\
   pcre-utf8					\
   pcre-w					\
