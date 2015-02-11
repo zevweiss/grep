@@ -114,6 +114,7 @@ TESTS =						\
   surrogate-pair				\
   symlink					\
   triple-backref				\
+  two-files					\
   turkish-eyes					\
   turkish-I					\
   turkish-I-without-dot				\

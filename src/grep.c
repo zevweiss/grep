@@ -80,6 +80,32 @@ static bool only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static bool align_tabs;
 
+#if HAVE_ASAN
+/* Record the starting address and length of the sole poisoned region,
+   so that we can unpoison it later, just before each following read.  */
+static void const *poison_buf;
+static size_t poison_len;
+
+static void
+clear_asan_poison (void)
+{
+  if (poison_buf)
+    __asan_unpoison_memory_region (poison_buf, poison_len);
+}
+
+static void
+asan_poison (void const *addr, size_t size)
+{
+  poison_buf = addr;
+  poison_len = size;
+
+  __asan_poison_memory_region (poison_buf, poison_len);
+}
+#else
+static void clear_asan_poison (void) { }
+static void asan_poison (void const volatile *addr, size_t size) { }
+#endif
+
 /* The group separator used when context is requested. */
 static const char *group_separator = SEP_STR_GROUP;
 
@@ -773,6 +799,8 @@ fillbuf (size_t save, struct stat const *st)
         }
     }
 
+  clear_asan_poison ();
+
   readsize = buffer + bufalloc - sizeof (uword) - readbuf;
   readsize -= readsize % pagesize;
 
@@ -818,8 +846,8 @@ fillbuf (size_t save, struct stat const *st)
 
   /* Mark the part of the buffer not filled by the read or set by
      the above memset call as ASAN-poisoned.  */
-  __asan_poison_memory_region (buflim + sizeof (uword),
-                               bufalloc - (buflim - buffer) - sizeof (uword));
+  asan_poison (buflim + sizeof (uword),
+               bufalloc - (buflim - buffer) - sizeof (uword));
 
   return cc;
 }
