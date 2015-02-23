@@ -23,6 +23,8 @@ will run more slowly, however.)
 See the files AUTHORS and THANKS for a list of authors and other contributors.
 
 See the file INSTALL for compilation and installation instructions.
+If there is no INSTALL file, this copy of the source code is intended
+for expert hackers; please see the file README-hacking.
 
 See the file NEWS for a description of major changes in this release.
 
