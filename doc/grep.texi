@@ -605,8 +605,10 @@ By default, @var{type} is @samp{binary},
 and @command{grep} normally outputs either
 a one-line message saying that a binary file matches,
 or no message if there is no match.
-When matching binary data, @command{grep} may treat non-text
-bytes as line terminators.
+When processing binary data, @command{grep} may treat non-text bytes
+as line terminators; for example, the pattern @samp{.} (period) might
+not match a null byte, as the null byte might be treated as a line
+terminator even without the @option{-z} (@option{--null-data}) option.
 
 If @var{type} is @samp{without-match},
 @command{grep} assumes that a binary file does not match;

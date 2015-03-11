@@ -383,6 +383,12 @@ is
 processes a binary file as if it were text; this is equivalent to the
 .B \-a
 option.
+When processing binary data,
+.B grep
+may treat non-text bytes as line terminators; for example, the pattern
+.RB ' . '\&
+(period) might not match a null byte, as the null byte might be
+treated as a line terminator.
 .I Warning:
 .B "grep \-\^\-binary\-files=text"
 might output binary garbage,
