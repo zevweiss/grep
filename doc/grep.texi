@@ -838,6 +838,15 @@ explicit options.
 As this causes problems when writing portable scripts, this feature
 will be removed in a future release of @command{grep}, and @command{grep}
 warns if it is used.  Please use an alias or script instead.
+For example, if @command{grep} is in the directory @samp{/usr/bin} you
+can prepend @file{$HOME/bin} to your @env{PATH} and create an
+executable script @file{$HOME/bin/grep} containing the following:
+
+@example
+#! /bin/sh
+export PATH=/usr/bin
+exec grep --color=auto --devices=skip "$@@"
+@end example
 
 @item GREP_COLOR
 @vindex GREP_COLOR @r{environment variable}
