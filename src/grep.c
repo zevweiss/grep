@@ -384,7 +384,8 @@ static char const *matcher;
 /* For error messages. */
 /* The input file name, or (if standard input) "-" or a --label argument.  */
 static char const *filename;
-static size_t filename_prefix_len;
+/* Omit leading "./" from file names in diagnostics.  */
+static bool omit_dot_slash;
 static bool errseen;
 static bool write_error_seen;
 
@@ -640,7 +641,7 @@ skipped_file (char const *name, bool command_line, bool is_dir)
 {
   return (is_dir
           ? (directories == SKIP_DIRECTORIES
-             || (! (command_line && filename_prefix_len != 0)
+             || (! (command_line && omit_dot_slash)
                  && excluded_directory_patterns
                  && excluded_file_name (excluded_directory_patterns, name)))
           : (excluded_patterns
@@ -1483,7 +1484,9 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       return true;
     }
 
-  filename = ent->fts_path + filename_prefix_len;
+  filename = ent->fts_path;
+  if (omit_dot_slash && filename[1])
+    filename += 2;
   follow = (fts->fts_options & FTS_LOGICAL
             || (fts->fts_options & FTS_COMFOLLOW && command_line));
 
@@ -2595,8 +2598,7 @@ main (int argc, char **argv)
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
-      /* Grep through ".", omitting leading "./" from diagnostics.  */
-      filename_prefix_len = 2;
+      omit_dot_slash = true;
       ok = grep_command_line_arg (".");
     }
   else
