@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Improvements
+
+  When building grep, 'configure' now uses PCRE's pkg-config module for
+  configuration information, rather than attempting to guess it by hand.
+
 ** Bug fixes
 
   grep no longer reads from uninitialized memory or from beyond the end

@@ -14,16 +14,14 @@ AC_DEFUN([gl_FUNC_PCRE],
        yes|no) test_pcre=$enableval;;
        *) AC_MSG_ERROR([invalid value $enableval for --disable-perl-regexp]);;
      esac],
-    [test_pcre=yes])
+    [test_pcre=maybe])
 
-  PCRE_CFLAGS=
-  PCRE_LIBS=
   AC_SUBST([PCRE_CFLAGS])
   AC_SUBST([PCRE_LIBS])
   use_pcre=no
 
-  if test $test_pcre = yes; then
-    PKG_CHECK_MODULES([PCRE], [libpcre], [], [PCRE_LIBS=-lpcre])
+  if test $test_pcre != no; then
+    PKG_CHECK_MODULES([PCRE], [libpcre], [], [: ${PCRE_LIBS=-lpcre}])
 
     AC_CACHE_CHECK([for pcre_compile], [pcre_cv_have_pcre_compile],
       [pcre_saved_CFLAGS=$CFLAGS
@@ -42,8 +40,10 @@ AC_DEFUN([gl_FUNC_PCRE],
 
     if test "$pcre_cv_have_pcre_compile" = yes; then
       use_pcre=yes
-    else
+    elif test $test_pcre = maybe; then
       AC_MSG_WARN([AC_PACKAGE_NAME will be built without pcre support.])
+    else
+      AC_MSG_ERROR([pcre support not available])
     fi
   fi
 
