@@ -23,13 +23,7 @@ AC_DEFUN([gl_FUNC_PCRE],
   use_pcre=no
 
   if test $test_pcre = yes; then
-    PKG_CHECK_MODULES([PCRE], [libpcre], [],
-      [if test -r /usr/include/pcre/pcre.h &&
-          test ! -r /usr/include/pcre.h
-       then
-         PCRE_CFLAGS=-I/usr/include/libpng
-       fi
-       PCRE_LIBS=-lpcre])
+    PKG_CHECK_MODULES([PCRE], [libpcre], [], [PCRE_LIBS=-lpcre])
 
     AC_CACHE_CHECK([for pcre_compile], [pcre_cv_have_pcre_compile],
       [pcre_saved_CFLAGS=$CFLAGS
