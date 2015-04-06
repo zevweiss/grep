@@ -16,7 +16,7 @@
 
 LN = ln
 
-AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(PCRE_CFLAGS)
 
 # Tell the linker to omit references to unused shared libraries.
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
@@ -38,7 +38,7 @@ LDADD = \
   ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a $(LIBICONV) \
   $(LIBTHREAD)
 
-grep_LDADD = $(LDADD) $(LIB_PCRE)
+grep_LDADD = $(LDADD) $(PCRE_LIBS)
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 

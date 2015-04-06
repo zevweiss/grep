@@ -20,13 +20,9 @@
 
 #include <config.h>
 #include "search.h"
-#if HAVE_PCRE_H
-# include <pcre.h>
-#elif HAVE_PCRE_PCRE_H
-# include <pcre/pcre.h>
-#endif
 
 #if HAVE_LIBPCRE
+# include <pcre.h>
 
 /* This must be at least 2; everything after that is for performance
    in pcre_exec.  */
