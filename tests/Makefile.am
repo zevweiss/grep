@@ -58,6 +58,7 @@ TESTS =						\
   dfaexec-multibyte				\
   empty						\
   empty-line					\
+  empty-line-mb					\
   epipe						\
   equiv-classes					\
   ere						\
@@ -70,6 +71,7 @@ TESTS =						\
   grep-dev-null					\
   grep-dir					\
   help-version					\
+  high-bit-range				\
   in-eq-out-infloop				\
   include-exclude				\
   inconsistent-range				\
@@ -87,10 +89,6 @@ TESTS =						\
   multibyte-white-space				\
   multiple-begin-or-end-line			\
   null-byte					\
-  empty-line-mb					\
-  unibyte-bracket-expr				\
-  unibyte-negated-circumflex			\
-  high-bit-range				\
   options					\
   pcre						\
   pcre-abort					\
@@ -107,18 +105,20 @@ TESTS =						\
   r-dot						\
   repetition-overflow				\
   reversed-range-endpoints			\
-  skip-device					\
   sjis-mb					\
+  skip-device					\
   spencer1					\
   spencer1-locale				\
   status					\
   surrogate-pair				\
   symlink					\
   triple-backref				\
-  two-files					\
-  turkish-eyes					\
   turkish-I					\
   turkish-I-without-dot				\
+  turkish-eyes					\
+  two-files					\
+  unibyte-bracket-expr				\
+  unibyte-negated-circumflex			\
   warn-char-classes				\
   word-delim-multibyte				\
   word-multi-file				\

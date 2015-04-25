@@ -101,6 +101,12 @@ sc_prohibit_emacs__indent_tabs_mode__setting:
 	halt='use of emacs indent-tabs-mode: setting'			\
 	  $(_sc_search_regexp)
 
+# Ensure that the list of test file names in tests/Makefile.am is sorted.
+sc_sorted_tests:
+	@perl -0777 -ne \
+	    '/^TESTS =(.*?)^$$/ms; ($$t = $$1) =~ s/[\\\s\n]+/\n/g;print $$t' \
+	  tests/Makefile.am | sort -c
+
 # THANKS.in is a list of name/email pairs for people who are mentioned in
 # commit logs (and generated ChangeLog), but who are not also listed as an
 # author of a commit.  Name/email pairs of commit authors are automatically
