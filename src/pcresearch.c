@@ -297,7 +297,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
 
 # if PCRE_STUDY_JIT_COMPILE
         case PCRE_ERROR_JIT_STACKLIMIT:
-          error (EXIT_TROUBLE, 0, _("PCRE JIT stack exhausted"));
+          error (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
 # endif
 
         case PCRE_ERROR_MATCHLIMIT:
