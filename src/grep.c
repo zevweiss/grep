@@ -2589,20 +2589,27 @@ main (int argc, char **argv)
   if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
     devices = READ_DEVICES;
 
+  char **files;
   if (optind < argc)
     {
-      ok = true;
-      do
-        ok &= grep_command_line_arg (argv[optind]);
-      while (++optind < argc);
+      files = argv + optind;
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
+      static char *cwd_only[] = { (char *) ".", NULL };
+      files = cwd_only;
       omit_dot_slash = true;
-      ok = grep_command_line_arg (".");
     }
   else
-    ok = grep_command_line_arg ("-");
+    {
+      static char *stdin_only[] = { (char *) "-", NULL };
+      files = stdin_only;
+    }
+
+  ok = true;
+  do
+    ok &= grep_command_line_arg (*files++);
+  while (*files != NULL);
 
   /* We register via atexit() to test stdout.  */
   exit (errseen ? EXIT_TROUBLE : ok);
