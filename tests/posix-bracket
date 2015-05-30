@@ -24,10 +24,11 @@ fail=0
 
 echo a >in || framework_failure_
 for bracketed in '[.a.]' '[.a.]-a' 'a-[.a.]' '[.a.]-[.a.]' \
-    '[=a=]' '[:alpha:]'; do
+    '[=a=]' '[:alpha:]' 'a-a[.-.]--'; do
   grep "[$bracketed]" in >out || fail=1
   compare in out || fail=1
-  grep "[^$bracketed]" in >out && fail=1
+  grep "[^$bracketed]" in >out
+  test $? -eq 1 || fail=1
   compare /dev/null out || fail=1
 done
 Exit $fail
