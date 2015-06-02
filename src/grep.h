@@ -44,7 +44,6 @@ enum textbin
     TEXTBIN_TEXT = 1
   };
 
-/* Input file type.  */
-extern enum textbin input_textbin;
+extern enum textbin get_input_textbin (void);
 
 #endif

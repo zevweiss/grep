@@ -200,7 +200,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
      Otherwise, a single-line search is typically faster, so that
      pcre_exec doesn't waste time validating the entire input
      buffer.  */
-  bool multiline = input_textbin == TEXTBIN_UNKNOWN;
+  bool multiline = get_input_textbin () == TEXTBIN_UNKNOWN;
 
   for (; p < buf + size; p = line_start = line_end + 1)
     {
