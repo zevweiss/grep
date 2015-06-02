@@ -128,7 +128,6 @@ struct grepctx
 };
 
 #if HAVE_ASAN
-/* XXX FIXME */
 static void
 clear_asan_poison (struct grepctx *ctx)
 {
@@ -756,17 +755,6 @@ all_zeros (char const *buf, size_t size)
 static bool
 reset (struct grepctx *ctx, int fd, struct stat const *st)
 {
-  /* XXX: fix this. */
-  if (! pagesize)
-    {
-      pagesize = getpagesize ();
-      if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
-        abort ();
-      ctx->bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
-                       + pagesize + sizeof (uword));
-      ctx->buffer = xmalloc (ctx->bufalloc);
-    }
-
   ctx->bufbeg = ctx->buflim = ALIGN_TO (ctx->buffer + 1, pagesize);
   ctx->bufbeg[-1] = eolbyte;
   ctx->bufdesc = fd;
@@ -2241,6 +2229,13 @@ main (int argc, char **argv)
   program_name = argv[0];
 
   memset(ctx, 0, sizeof(*ctx));
+
+  pagesize = getpagesize ();
+  if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
+    abort ();
+  ctx->bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
+                   + pagesize + sizeof (uword));
+  ctx->buffer = xmalloc (ctx->bufalloc);
 
   keys = NULL;
   keycc = 0;
