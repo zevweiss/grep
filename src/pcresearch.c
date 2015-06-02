@@ -174,7 +174,7 @@ Pcompile (char const *pattern, size_t size)
 }
 
 size_t
-Pexecute (char const *buf, size_t size, size_t *match_size,
+Pexecute (struct grepctx *ctx, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
@@ -200,7 +200,7 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
      Otherwise, a single-line search is typically faster, so that
      pcre_exec doesn't waste time validating the entire input
      buffer.  */
-  bool multiline = get_input_textbin () == TEXTBIN_UNKNOWN;
+  bool multiline = get_input_textbin (ctx) == TEXTBIN_UNKNOWN;
 
   for (; p < buf + size; p = line_start = line_end + 1)
     {

@@ -93,7 +93,7 @@ guess_type (char *buf, size_t buflen)
    Return the count of bytes left in the buffer.
    Build table to map character positions when reporting byte counts.  */
 static size_t
-undossify_input (char *buf, size_t buflen)
+undossify_input (struct grepctx *ctx, char *buf, size_t buflen)
 {
   if (! O_BINARY)
     return buflen;
