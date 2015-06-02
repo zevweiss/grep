@@ -80,9 +80,6 @@ static bool only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static bool align_tabs;
 
-/* Print width of line numbers and byte offsets.  Nonzero if ALIGN_TABS.  */
-static int offset_width;
-
 /* An entry in the PATLOC array saying where patterns came from.  */
 struct patloc
   {
@@ -215,26 +212,79 @@ pattern_file_name (size_t lineno, size_t *new_lineno)
   return patloc[i - 1].filename;
 }
 
-#if HAVE_ASAN
-/* Record the starting address and length of the sole poisoned region,
-   so that we can unpoison it later, just before each following read.  */
-static void const *poison_buf;
-static size_t poison_len;
+struct grepctx
+{
+  /* Opaque value from compile(), passed to execute()  */
+  void *compiled_pattern;
 
+  bool out_quiet;		/* Suppress all normal output. */
+
+  /* Print width of line numbers and byte offsets.  Nonzero if ALIGN_TABS.  */
+  int offset_width;
+
+  /* Internal variables to keep track of byte count, context, etc. */
+  uintmax_t totalcc;	/* Total character count before bufbeg. */
+  char const *lastnl;	/* Pointer after last newline counted. */
+  char *lastout;      /* Pointer after last character output;
+                            NULL if no character has been output
+                            or if it's conceptually before bufbeg. */
+  intmax_t outleft;	/* Maximum number of selected lines.  */
+  intmax_t pending;	/* Pending lines of output.
+                            Always kept 0 if out_quiet is true.  */
+  bool done_on_match;	/* Stop scanning file on first match.  */
+
+  /* True if output from the current input file has been suppressed
+     because an output line had an encoding error.  */
+  bool encoding_error_output;
+
+  /* The input file name, or (if standard input) null or a --label argument.  */
+  char const *filename;
+
+  /* Hairy buffering mechanism for grep.  The intent is to keep
+     all reads aligned on a page boundary and multiples of the
+     page size, unless a read yields a partial page.  */
+  char *buffer;		/* Base of buffer. */
+  size_t bufalloc;		/* Allocated buffer size, counting slop. */
+  int bufdesc;		/* File descriptor. */
+  char *bufbeg;		/* Beginning of user-visible stuff. */
+  char *buflim;		/* Limit of user-visible stuff. */
+  off_t bufoffset;		/* Read offset.  */
+  off_t after_last_match;	/* Pointer after last matching line that
+                              would have been output if we were
+                              outputting characters. */
+  bool skip_nuls;		/* Skip '\0' in data.  */
+
+  /* True if lseek with SEEK_CUR or SEEK_DATA failed on the current input.  */
+  bool seek_failed;
+  bool seek_data_failed;
+
+  uintmax_t totalnl;	/* Total newline count before lastnl. */
+
+#if HAVE_ASAN
+  /* Record the starting address and length of the sole poisoned region,
+     so that we can unpoison it later, just before each following read.  */
+  void const *poison_buf;
+  size_t poison_len;
+#endif
+};
+
+static struct grepctx *ctx = &(struct grepctx){};
+
+#if HAVE_ASAN
 static void
 clear_asan_poison (void)
 {
-  if (poison_buf)
-    __asan_unpoison_memory_region (poison_buf, poison_len);
+  if (ctx->poison_buf)
+    __asan_unpoison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 
 static void
 asan_poison (void const *addr, size_t size)
 {
-  poison_buf = addr;
-  poison_len = size;
+  ctx->poison_buf = addr;
+  ctx->poison_len = size;
 
-  __asan_poison_memory_region (poison_buf, poison_len);
+  __asan_poison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 #else
 static void clear_asan_poison (void) { }
@@ -556,16 +606,9 @@ bool match_words;
 bool match_lines;
 char eolbyte;
 
-/* For error messages. */
-/* The input file name, or (if standard input) null or a --label argument.  */
-static char const *filename;
 /* Omit leading "./" from file names in diagnostics.  */
 static bool omit_dot_slash;
 static bool errseen;
-
-/* True if output from the current input file has been suppressed
-   because an output line had an encoding error.  */
-static bool encoding_error_output;
 
 enum directories_type
   {
@@ -631,23 +674,18 @@ enum { SEEK_DATA = SEEK_SET };
 enum { SEEK_HOLE = SEEK_SET };
 #endif
 
-/* True if lseek with SEEK_CUR or SEEK_DATA failed on the current input.  */
-static bool seek_failed;
-static bool seek_data_failed;
-
 /* Functions we'll use to search. */
 typedef void *(*compile_fp_t) (char *, size_t, reg_syntax_t, bool);
 typedef size_t (*execute_fp_t) (void *, char const *, size_t, size_t *,
                                 char const *);
 static execute_fp_t execute;
-static void *compiled_pattern;
 
 char const *
 input_filename (void)
 {
-  if (!filename)
-    filename = _("(standard input)");
-  return filename;
+  if (!ctx->filename)
+    ctx->filename = _("(standard input)");
+  return ctx->filename;
 }
 
 /* Unless requested, diagnose an error about the input file.  */
@@ -785,7 +823,7 @@ static bool
 file_must_have_nulls (size_t size, int fd, struct stat const *st)
 {
   /* If the file has holes, it must contain a null byte somewhere.  */
-  if (SEEK_HOLE != SEEK_SET && !seek_failed
+  if (SEEK_HOLE != SEEK_SET && !ctx->seek_failed
       && usable_st_size (st) && size < st->st_size)
     {
       off_t cur = size;
@@ -860,19 +898,8 @@ skipped_file (char const *name, bool command_line, bool is_dir)
    all reads aligned on a page boundary and multiples of the
    page size, unless a read yields a partial page.  */
 
-static char *buffer;		/* Base of buffer. */
-static size_t bufalloc;		/* Allocated buffer size, counting slop. */
-static int bufdesc;		/* File descriptor. */
-static char *bufbeg;		/* Beginning of user-visible stuff. */
-static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
-static off_t bufoffset;		/* Read offset.  */
-static off_t after_last_match;	/* Pointer after last matching line that
-                                   would have been output if we were
-                                   outputting characters. */
-static bool skip_nuls;		/* Skip '\0' in data.  */
 static bool skip_empty_lines;	/* Skip empty lines in data.  */
-static uintmax_t totalnl;	/* Total newline count before lastnl. */
 
 /* Initial buffer size, not counting slop. */
 enum { INITIAL_BUFSIZE = 96 * 1024 };
@@ -910,23 +937,23 @@ all_zeros (char const *buf, size_t size)
 static bool
 reset (int fd, struct stat const *st)
 {
-  bufbeg = buflim = ALIGN_TO (buffer + 1, pagesize);
-  bufbeg[-1] = eolbyte;
-  bufdesc = fd;
-  bufoffset = fd == STDIN_FILENO ? lseek (fd, 0, SEEK_CUR) : 0;
-  seek_failed = bufoffset < 0;
+  ctx->bufbeg = ctx->buflim = ALIGN_TO (ctx->buffer + 1, pagesize);
+  ctx->bufbeg[-1] = eolbyte;
+  ctx->bufdesc = fd;
+  ctx->bufoffset = fd == STDIN_FILENO ? lseek (fd, 0, SEEK_CUR) : 0;
+  ctx->seek_failed = ctx->bufoffset < 0;
 
   /* Assume SEEK_DATA fails if SEEK_CUR does.  */
-  seek_data_failed = seek_failed;
+  ctx->seek_data_failed = ctx->seek_failed;
 
-  if (seek_failed)
+  if (ctx->seek_failed)
     {
       if (errno != ESPIPE)
         {
           suppressible_error (errno);
           return false;
         }
-      bufoffset = 0;
+      ctx->bufoffset = 0;
     }
   return true;
 }
@@ -945,12 +972,12 @@ fillbuf (size_t save, struct stat const *st)
 
   /* Offset from start of buffer to start of old stuff
      that we want to save.  */
-  size_t saved_offset = buflim - save - buffer;
+  size_t saved_offset = ctx->buflim - save - ctx->buffer;
 
-  if (pagesize <= buffer + bufalloc - sizeof (uword) - buflim)
+  if (pagesize <= ctx->buffer + ctx->bufalloc - sizeof (uword) - ctx->buflim)
     {
-      readbuf = buflim;
-      bufbeg = buflim - save;
+      readbuf = ctx->buflim;
+      ctx->bufbeg = ctx->buflim - save;
     }
   else
     {
@@ -960,7 +987,7 @@ fillbuf (size_t save, struct stat const *st)
       char *newbuf;
 
       /* Grow newsize until it is at least as great as minsize.  */
-      for (newsize = bufalloc - pagesize - sizeof (uword);
+      for (newsize = ctx->bufalloc - pagesize - sizeof (uword);
            newsize < minsize;
            newsize *= 2)
         if ((SIZE_MAX - pagesize - sizeof (uword)) / 2 < newsize)
@@ -973,7 +1000,7 @@ fillbuf (size_t save, struct stat const *st)
          likely the file is growing.  */
       if (usable_st_size (st))
         {
-          off_t to_be_read = st->st_size - bufoffset;
+          off_t to_be_read = st->st_size - ctx->bufoffset;
           off_t maxsize_off = save + to_be_read;
           if (0 <= to_be_read && to_be_read <= maxsize_off
               && maxsize_off == (size_t) maxsize_off
@@ -987,66 +1014,68 @@ fillbuf (size_t save, struct stat const *st)
          be read aft.  */
       newalloc = newsize + pagesize + sizeof (uword);
 
-      newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
+      newbuf = ctx->bufalloc < newalloc ?
+        xmalloc (ctx->bufalloc = newalloc) : ctx->buffer;
       readbuf = ALIGN_TO (newbuf + 1 + save, pagesize);
-      bufbeg = readbuf - save;
-      memmove (bufbeg, buffer + saved_offset, save);
-      bufbeg[-1] = eolbyte;
-      if (newbuf != buffer)
+      ctx->bufbeg = readbuf - save;
+      memmove (ctx->bufbeg, ctx->buffer + saved_offset, save);
+      ctx->bufbeg[-1] = eolbyte;
+      if (newbuf != ctx->buffer)
         {
-          free (buffer);
-          buffer = newbuf;
+          free (ctx->buffer);
+          ctx->buffer = newbuf;
         }
     }
 
   clear_asan_poison ();
 
-  readsize = buffer + bufalloc - sizeof (uword) - readbuf;
+  readsize = ctx->buffer + ctx->bufalloc - sizeof (uword) - readbuf;
   readsize -= readsize % pagesize;
 
   while (true)
     {
-      fillsize = safe_read (bufdesc, readbuf, readsize);
+      fillsize = safe_read (ctx->bufdesc, readbuf, readsize);
       if (fillsize == SAFE_READ_ERROR)
         {
           fillsize = 0;
           cc = false;
         }
-      bufoffset += fillsize;
+      ctx->bufoffset += fillsize;
 
-      if (((fillsize == 0) | !skip_nuls) || !all_zeros (readbuf, fillsize))
+      if (((fillsize == 0) | !ctx->skip_nuls) || !all_zeros (readbuf, fillsize))
         break;
-      totalnl = add_count (totalnl, fillsize);
+      ctx->totalnl = add_count (ctx->totalnl, fillsize);
 
-      if (SEEK_DATA != SEEK_SET && !seek_data_failed)
+      if (SEEK_DATA != SEEK_SET && !ctx->seek_data_failed)
         {
           /* Solaris SEEK_DATA fails with errno == ENXIO in a hole at EOF.  */
-          off_t data_start = lseek (bufdesc, bufoffset, SEEK_DATA);
+          off_t data_start = lseek (ctx->bufdesc, ctx->bufoffset, SEEK_DATA);
           if (data_start < 0 && errno == ENXIO
-              && usable_st_size (st) && bufoffset < st->st_size)
-            data_start = lseek (bufdesc, 0, SEEK_END);
+              && usable_st_size (st) && ctx->bufoffset < st->st_size)
+            data_start = lseek (ctx->bufdesc, 0, SEEK_END);
 
           if (data_start < 0)
-            seek_data_failed = true;
+            ctx->seek_data_failed = true;
           else
             {
-              totalnl = add_count (totalnl, data_start - bufoffset);
-              bufoffset = data_start;
+              ctx->totalnl = add_count (ctx->totalnl,
+                                        data_start - ctx->bufoffset);
+              ctx->bufoffset = data_start;
             }
         }
     }
 
-  buflim = readbuf + fillsize;
+  ctx->buflim = readbuf + fillsize;
 
   /* Initialize the following word, because skip_easy_bytes and some
      matchers read (but do not use) those bytes.  This avoids false
      positive reports of these bytes being used uninitialized.  */
-  memset (buflim, 0, sizeof (uword));
+  memset (ctx->buflim, 0, sizeof (uword));
 
   /* Mark the part of the buffer not filled by the read or set by
      the above memset call as ASAN-poisoned.  */
-  asan_poison (buflim + sizeof (uword),
-               bufalloc - (buflim - buffer) - sizeof (uword));
+  asan_poison (ctx->buflim + sizeof (uword),
+               ctx->bufalloc - (ctx->buflim - ctx->buffer) - sizeof (uword));
 
   return cc;
 }
@@ -1073,7 +1102,6 @@ static enum
 static int out_file;
 
 static int filename_mask;	/* If zero, output nulls after filenames.  */
-static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
 static bool out_line;		/* Print line numbers. */
 static bool out_byte;		/* Print byte offsets. */
@@ -1085,17 +1113,6 @@ static intmax_t max_count;	/* Max number of selected
 static bool line_buffered;	/* Use line buffering.  */
 static char *label = NULL;      /* Fake filename for stdin */
 
-
-/* Internal variables to keep track of byte count, context, etc. */
-static uintmax_t totalcc;	/* Total character count before bufbeg. */
-static char const *lastnl;	/* Pointer after last newline counted. */
-static char *lastout;		/* Pointer after last character output;
-                                   NULL if no character has been output
-                                   or if it's conceptually before bufbeg. */
-static intmax_t outleft;	/* Maximum number of selected lines.  */
-static intmax_t pending;	/* Pending lines of output.
-                                   Always kept 0 if out_quiet is true.  */
-static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
 static bool dev_null_output;	/* Stdout is known to be /dev/null.  */
 static bool binary;		/* Use binary rather than text I/O.  */
@@ -1104,15 +1121,15 @@ static void
 nlscan (char const *lim)
 {
   size_t newlines = 0;
-  for (char const *beg = lastnl; beg < lim; beg++)
+  for (char const *beg = ctx->lastnl; beg < lim; beg++)
     {
       beg = memchr (beg, eolbyte, lim - beg);
       if (!beg)
         break;
       newlines++;
     }
-  totalnl = add_count (totalnl, newlines);
-  lastnl = lim;
+  ctx->totalnl = add_count (ctx->totalnl, newlines);
+  ctx->lastnl = lim;
 }
 
 /* Print the current filename.  */
@@ -1138,7 +1155,7 @@ static void
 print_offset (uintmax_t pos, const char *color)
 {
   pr_sgr_start_if (color);
-  printf_errno ("%*"PRIuMAX, offset_width, pos);
+  printf_errno ("%*"PRIuMAX, ctx->offset_width, pos);
   pr_sgr_end_if (color);
 }
 
@@ -1161,7 +1178,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
       beg[len] = ch;
       if (encoding_errors)
         {
-          encoding_error_output = true;
+          ctx->encoding_error_output = true;
           return false;
         }
     }
@@ -1177,19 +1194,19 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
 
   if (out_line)
     {
-      if (lastnl < lim)
+      if (ctx->lastnl < lim)
         {
           nlscan (beg);
-          totalnl = add_count (totalnl, 1);
-          lastnl = lim;
+          ctx->totalnl = add_count (ctx->totalnl, 1);
+          ctx->lastnl = lim;
         }
-      print_offset (totalnl, line_num_color);
+      print_offset (ctx->totalnl, line_num_color);
       print_sep (sep);
     }
 
   if (out_byte)
     {
-      uintmax_t pos = add_count (totalcc, beg - bufbeg);
+      uintmax_t pos = add_count (ctx->totalcc, beg - ctx->bufbeg);
       print_offset (pos, byte_num_color);
       print_sep (sep);
     }
@@ -1212,7 +1229,7 @@ print_line_middle (char *beg, char *lim,
 
   for (cur = beg;
        (cur < lim
-        && ((match_offset = execute (compiled_pattern, beg, lim - beg,
+        && ((match_offset = execute (ctx->compiled_pattern, beg, lim - beg,
                                      &match_size, cur)) != (size_t) -1));
        cur = b + match_size)
     {
@@ -1341,19 +1358,19 @@ prline (char *beg, char *lim, char sep)
   if (stdout_errno)
     die (EXIT_TROUBLE, stdout_errno, _("write error"));
 
-  lastout = lim;
+  ctx->lastout = lim;
 }
 
 /* Print pending lines of trailing context prior to LIM.  */
 static void
 prpending (char const *lim)
 {
-  if (!lastout)
-    lastout = bufbeg;
-  for (; 0 < pending && lastout < lim; pending--)
+  if (!ctx->lastout)
+    ctx->lastout = ctx->bufbeg;
+  for (; 0 < ctx->pending && ctx->lastout < lim; ctx->pending--)
     {
-      char *nl = rawmemchr (lastout, eolbyte);
-      prline (lastout, nl + 1, SEP_CHAR_REJECTED);
+      char *nl = rawmemchr (ctx->lastout, eolbyte);
+      prline (ctx->lastout, nl + 1, SEP_CHAR_REJECTED);
     }
 }
 
@@ -1364,15 +1381,15 @@ prtext (char *beg, char *lim)
   static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
   char eol = eolbyte;
 
-  if (!out_quiet && pending > 0)
+  if (!ctx->out_quiet && ctx->pending > 0)
     prpending (beg);
 
   char *p = beg;
 
-  if (!out_quiet)
+  if (!ctx->out_quiet)
     {
       /* Deal with leading context.  */
-      char const *bp = lastout ? lastout : bufbeg;
+      char const *bp = ctx->lastout ? ctx->lastout : ctx->bufbeg;
       intmax_t i;
       for (i = 0; i < out_before; ++i)
         if (p > bp)
@@ -1383,7 +1400,7 @@ prtext (char *beg, char *lim)
       /* Print the group separator unless the output is adjacent to
          the previous output in the file.  */
       if ((0 <= out_before || 0 <= out_after) && used
-          && p != lastout && group_separator)
+          && p != ctx->lastout && group_separator)
         {
           pr_sgr_start_if (sep_color);
           fputs_errno (group_separator);
@@ -1404,11 +1421,11 @@ prtext (char *beg, char *lim)
   if (out_invert)
     {
       /* One or more lines are output.  */
-      for (n = 0; p < lim && n < outleft; n++)
+      for (n = 0; p < lim && n < ctx->outleft; n++)
         {
           char *nl = rawmemchr (p, eol);
           nl++;
-          if (!out_quiet)
+          if (!ctx->out_quiet)
             prline (p, nl, SEP_CHAR_SELECTED);
           p = nl;
         }
@@ -1416,16 +1433,16 @@ prtext (char *beg, char *lim)
   else
     {
       /* Just one line is output.  */
-      if (!out_quiet)
+      if (!ctx->out_quiet)
         prline (beg, lim, SEP_CHAR_SELECTED);
       n = 1;
       p = lim;
     }
 
-  after_last_match = bufoffset - (buflim - p);
-  pending = out_quiet ? 0 : MAX (0, out_after);
+  ctx->after_last_match = ctx->bufoffset - (ctx->buflim - p);
+  ctx->pending = ctx->out_quiet ? 0 : MAX (0, out_after);
   used = true;
-  outleft -= n;
+  ctx->outleft -= n;
 }
 
 /* Replace all NUL bytes in buffer P (which ends at LIM) with EOL.
@@ -1455,13 +1472,13 @@ zap_nuls (char *p, char *lim, char eol)
 static intmax_t
 grepbuf (char *beg, char const *lim)
 {
-  intmax_t outleft0 = outleft;
+  intmax_t outleft0 = ctx->outleft;
   char *endp;
 
   for (char *p = beg; p < lim; p = endp)
     {
       size_t match_size;
-      size_t match_offset = execute (compiled_pattern, p, lim - p,
+      size_t match_offset = execute (ctx->compiled_pattern, p, lim - p,
                                      &match_size, NULL);
       if (match_offset == (size_t) -1)
         {
@@ -1480,7 +1497,7 @@ grepbuf (char *beg, char const *lim)
           char *prbeg = out_invert ? p : b;
           char *prend = out_invert ? b : endp;
           prtext (prbeg, prend);
-          if (!outleft || done_on_match)
+          if (!ctx->outleft || ctx->done_on_match)
             {
               if (exit_on_match)
                 exit (errseen ? exit_failure : EXIT_SUCCESS);
@@ -1489,7 +1506,7 @@ grepbuf (char *beg, char const *lim)
         }
     }
 
-  return outleft0 - outleft;
+  return outleft0 - ctx->outleft;
 }
 
 /* Search a given (non-directory) file.  Return a count of lines printed.
@@ -1504,8 +1521,8 @@ grep (int fd, struct stat const *st, bool *ineof)
   char *lim;
   char eol = eolbyte;
   char nul_zapper = '\0';
-  bool done_on_match_0 = done_on_match;
-  bool out_quiet_0 = out_quiet;
+  bool done_on_match_0 = ctx->done_on_match;
+  bool out_quiet_0 = ctx->out_quiet;
 
   /* The value of NLINES when nulls were first deduced in the input;
      this is not necessarily the same as the number of matching lines
@@ -1515,14 +1532,14 @@ grep (int fd, struct stat const *st, bool *ineof)
   if (! reset (fd, st))
     return 0;
 
-  totalcc = 0;
-  lastout = 0;
-  totalnl = 0;
-  outleft = max_count;
-  after_last_match = 0;
-  pending = 0;
-  skip_nuls = skip_empty_lines && !eol;
-  encoding_error_output = false;
+  ctx->totalcc = 0;
+  ctx->lastout = 0;
+  ctx->totalnl = 0;
+  ctx->outleft = max_count;
+  ctx->after_last_match = 0;
+  ctx->pending = 0;
+  ctx->skip_nuls = skip_empty_lines && !eol;
+  ctx->encoding_error_output = false;
 
   nlines = 0;
   residue = 0;
@@ -1534,46 +1551,47 @@ grep (int fd, struct stat const *st, bool *ineof)
       return 0;
     }
 
-  offset_width = 0;
+  ctx->offset_width = 0;
   if (align_tabs)
     {
       /* Width is log of maximum number.  Line numbers are origin-1.  */
       uintmax_t num = usable_st_size (st) ? st->st_size : UINTMAX_MAX;
       num += out_line && num < UINTMAX_MAX;
       do
-        offset_width++;
+        ctx->offset_width++;
       while ((num /= 10) != 0);
     }
 
   for (bool firsttime = true; ; firsttime = false)
     {
       if (nlines_first_null < 0 && eol && binary_files != TEXT_BINARY_FILES
-          && (buf_has_nulls (bufbeg, buflim - bufbeg)
-              || (firsttime && file_must_have_nulls (buflim - bufbeg, fd, st))))
+          && (buf_has_nulls (ctx->bufbeg, ctx->buflim - ctx->bufbeg)
+              || (firsttime
+                  && file_must_have_nulls (ctx->buflim - ctx->bufbeg, fd, st))))
         {
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
           if (!count_matches)
-            done_on_match = out_quiet = true;
+            ctx->done_on_match = ctx->out_quiet = true;
           nlines_first_null = nlines;
           nul_zapper = eol;
-          skip_nuls = skip_empty_lines;
+          ctx->skip_nuls = skip_empty_lines;
         }
 
-      lastnl = bufbeg;
-      if (lastout)
-        lastout = bufbeg;
+      ctx->lastnl = ctx->bufbeg;
+      if (ctx->lastout)
+        ctx->lastout = ctx->bufbeg;
 
-      beg = bufbeg + save;
+      beg = ctx->bufbeg + save;
 
       /* no more data to scan (eof) except for maybe a residue -> break */
-      if (beg == buflim)
+      if (beg == ctx->buflim)
         {
           *ineof = true;
           break;
         }
 
-      zap_nuls (beg, buflim, nul_zapper);
+      zap_nuls (beg, ctx->buflim, nul_zapper);
 
       /* Determine new residue (the length of an incomplete line at the end of
          the buffer, 0 means there is no incomplete last line).  */
@@ -1581,22 +1599,22 @@ grep (int fd, struct stat const *st, bool *ineof)
       beg[-1] = eol;
       /* FIXME: use rawmemrchr if/when it exists, since we have ensured
          that this use of memrchr is guaranteed never to return NULL.  */
-      lim = memrchr (beg - 1, eol, buflim - beg + 1);
+      lim = memrchr (beg - 1, eol, ctx->buflim - beg + 1);
       ++lim;
       beg[-1] = oldc;
       if (lim == beg)
         lim = beg - residue;
       beg -= residue;
-      residue = buflim - lim;
+      residue = ctx->buflim - lim;
 
       if (beg < lim)
         {
-          if (outleft)
+          if (ctx->outleft)
             nlines += grepbuf (beg, lim);
-          if (pending)
+          if (ctx->pending)
             prpending (lim);
-          if ((!outleft && !pending)
-              || (done_on_match && MAX (0, nlines_first_null) < nlines))
+          if ((!ctx->outleft && !ctx->pending)
+              || (ctx->done_on_match && MAX (0, nlines_first_null) < nlines))
             goto finish_grep;
         }
 
@@ -1605,7 +1623,7 @@ grep (int fd, struct stat const *st, bool *ineof)
          next data. Make beg point to their begin.  */
       i = 0;
       beg = lim;
-      while (i < out_before && beg > bufbeg && beg != lastout)
+      while (i < out_before && beg > ctx->bufbeg && beg != ctx->lastout)
         {
           ++i;
           do
@@ -1614,13 +1632,14 @@ grep (int fd, struct stat const *st, bool *ineof)
         }
 
       /* Detect whether leading context is adjacent to previous output.  */
-      if (beg != lastout)
-        lastout = 0;
+      if (beg != ctx->lastout)
+        ctx->lastout = 0;
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
       if (out_byte)
-        totalcc = add_count (totalcc, buflim - bufbeg - save);
+        ctx->totalcc = add_count (ctx->totalcc,
+                                  ctx->buflim - ctx->bufbeg - save);
       if (out_line)
         nlscan (beg);
       if (! fillbuf (save, st))
@@ -1631,18 +1650,18 @@ grep (int fd, struct stat const *st, bool *ineof)
     }
   if (residue)
     {
-      *buflim++ = eol;
-      if (outleft)
-        nlines += grepbuf (bufbeg + save - residue, buflim);
-      if (pending)
-        prpending (buflim);
+      *ctx->buflim++ = eol;
+      if (ctx->outleft)
+        nlines += grepbuf (ctx->bufbeg + save - residue, ctx->buflim);
+      if (ctx->pending)
+        prpending (ctx->buflim);
     }
 
  finish_grep:
-  done_on_match = done_on_match_0;
-  out_quiet = out_quiet_0;
-  if (binary_files == BINARY_BINARY_FILES && ! (out_quiet | suppress_errors)
-      && (encoding_error_output
+  ctx->done_on_match = done_on_match_0;
+  ctx->out_quiet = out_quiet_0;
+  if (binary_files == BINARY_BINARY_FILES && ! (ctx->out_quiet | suppress_errors)
+      && (ctx->encoding_error_output
           || (0 <= nlines_first_null && nlines_first_null < nlines)))
     error (0, 0, _("%s: binary file matches"), input_filename ());
   return nlines;
@@ -1666,9 +1685,9 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       return true;
     }
 
-  filename = ent->fts_path;
-  if (omit_dot_slash && filename[1])
-    filename += 2;
+  ctx->filename = ent->fts_path;
+  if (omit_dot_slash && ctx->filename[1])
+    ctx->filename += 2;
   follow = (fts->fts_options & FTS_LOGICAL
             || (fts->fts_options & FTS_COMFOLLOW && command_line));
 
@@ -1682,7 +1701,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 
     case FTS_DC:
       if (!suppress_errors)
-        error (0, 0, _("%s: warning: recursive directory loop"), filename);
+        error (0, 0, _("%s: warning: recursive directory loop"), ctx->filename);
       return true;
 
     case FTS_DNR:
@@ -1783,7 +1802,7 @@ drain_input (int fd, struct stat const *st)
         }
 #endif
     }
-  while ((nbytes = safe_read (fd, buffer, bufalloc)))
+  while ((nbytes = safe_read (fd, ctx->buffer, ctx->bufalloc)))
     if (nbytes == SAFE_READ_ERROR)
       return false;
   return true;
@@ -1798,15 +1817,15 @@ static void
 finalize_input (int fd, struct stat const *st, bool ineof)
 {
   if (fd == STDIN_FILENO
-      && (outleft
+      && (ctx->outleft
           ? (!ineof
-             && (seek_failed
+             && (ctx->seek_failed
                  || (lseek (fd, 0, SEEK_END) < 0
                      /* Linux proc file system has EINVAL (Bug#25180).  */
                      && errno != EINVAL))
              && ! drain_input (fd, st))
-          : (bufoffset != after_last_match && !seek_failed
-             && lseek (fd, after_last_match, SEEK_SET) < 0)))
+          : (ctx->bufoffset != ctx->after_last_match && !ctx->seek_failed
+             && lseek (fd, ctx->after_last_match, SEEK_SET) < 0)))
     suppressible_error (errno);
 }
 
@@ -1835,7 +1854,7 @@ grepdesc (int desc, bool command_line)
     goto closeout;
 
   if (desc != STDIN_FILENO && command_line
-      && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))
+      && skipped_file (ctx->filename, true, S_ISDIR (st.st_mode) != 0))
     goto closeout;
 
   /* Don't output file names if invoked as 'grep -r PATTERN NONDIRECTORY'.  */
@@ -1859,7 +1878,7 @@ grepdesc (int desc, bool command_line)
       if (close (desc) != 0)
         suppressible_error (errno);
 
-      fts_arg[0] = (char *) filename;
+      fts_arg[0] = (char *) ctx->filename;
       fts_arg[1] = NULL;
       fts = fts_open (fts_arg, opts, NULL);
 
@@ -1898,7 +1917,7 @@ grepdesc (int desc, bool command_line)
      so there is no risk of malfunction.  But even --max-count=2, with
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
-  if (!out_quiet && list_files == LISTFILES_NONE && 1 < max_count
+  if (!ctx->out_quiet && list_files == LISTFILES_NONE && 1 < max_count
       && S_ISREG (st.st_mode) && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
@@ -1946,14 +1965,14 @@ grep_command_line_arg (char const *arg)
 {
   if (STREQ (arg, "-"))
     {
-      filename = label;
+      ctx->filename = label;
       if (binary)
         xset_binary_mode (STDIN_FILENO, O_BINARY);
       return grepdesc (STDIN_FILENO, true);
     }
   else
     {
-      filename = arg;
+      ctx->filename = arg;
       return grepfile (AT_FDCWD, arg, true, true);
     }
 }
@@ -2888,9 +2907,9 @@ main (int argc, char **argv)
   if ((exit_on_match | dev_null_output) || list_files != LISTFILES_NONE)
     {
       count_matches = false;
-      done_on_match = true;
+      ctx->done_on_match = true;
     }
-  out_quiet = count_matches | done_on_match;
+  ctx->out_quiet = count_matches | ctx->done_on_match;
 
   if (out_after < 0)
     out_after = default_context;
@@ -2954,13 +2973,13 @@ main (int argc, char **argv)
     }
 
   execute = matchers[matcher].execute;
-  compiled_pattern =
+  ctx->compiled_pattern =
     matchers[matcher].compile (keys, keycc, matchers[matcher].syntax,
                                only_matching | color_option);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
-  skip_empty_lines = ((execute (compiled_pattern, eolbytes + 1, 1,
+  skip_empty_lines = ((execute (ctx->compiled_pattern, eolbytes + 1, 1,
                                 &match_size, NULL) == 0)
                       == out_invert);
 
@@ -2981,8 +3000,9 @@ main (int argc, char **argv)
   if (! (0 < psize && psize <= (SIZE_MAX - sizeof (uword)) / 2))
     abort ();
   pagesize = psize;
-  bufalloc = ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + sizeof (uword);
-  buffer = xmalloc (bufalloc);
+  ctx->bufalloc =
+    ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + sizeof (uword);
+  ctx->buffer = xmalloc (ctx->bufalloc);
 
   if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
     devices = READ_DEVICES;
