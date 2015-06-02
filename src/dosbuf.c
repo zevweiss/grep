@@ -100,7 +100,7 @@ undossify_input (char *buf, size_t buflen)
 
   size_t bytes_left = 0;
 
-  if (totalcc == 0)
+  if (ctx->totalcc == 0)
     {
       /* New file: forget everything we knew about character
          position mapping table and file type.  */
@@ -166,12 +166,14 @@ undossify_input (char *buf, size_t buflen)
                      the line ends *before* the CR, not *after* it.  */
                   inp_map_idx++;
                   dos_pos_map[inp_map_idx-1].pos =
-                    (*buf == '\n' ? destp + 1 : destp ) - bufbeg + totalcc;
+                    (*buf == '\n' ? destp + 1 : destp ) - ctx->bufbeg
+                    + ctx->totalcc;
                   dos_pos_map[inp_map_idx].add = dos_stripped_crs;
                   dos_pos_map_used = inp_map_idx;
 
                   /* The following will be updated on the next pass.  */
-                  dos_pos_map[inp_map_idx].pos = destp - bufbeg + totalcc + 1;
+                  dos_pos_map[inp_map_idx].pos =
+                    destp - ctx->bufbeg + ctx->totalcc + 1;
                 }
             }
         }
