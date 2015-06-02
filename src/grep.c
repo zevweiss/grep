@@ -268,18 +268,16 @@ struct grepctx
 #endif
 };
 
-static struct grepctx *ctx = &(struct grepctx){};
-
 #if HAVE_ASAN
 static void
-clear_asan_poison (void)
+clear_asan_poison (struct grepctx *ctx)
 {
   if (ctx->poison_buf)
     __asan_unpoison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 
 static void
-asan_poison (void const *addr, size_t size)
+asan_poison (struct grepctx *ctx, void const *addr, size_t size)
 {
   ctx->poison_buf = addr;
   ctx->poison_len = size;
@@ -287,8 +285,9 @@ asan_poison (void const *addr, size_t size)
   __asan_poison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 #else
-static void clear_asan_poison (void) { }
-static void asan_poison (void const volatile *addr, size_t size) { }
+static void clear_asan_poison (struct grepctx *ctx) { }
+static void asan_poison (struct grepctx *ctx, void const volatile *addr,
+                         size_t size) { }
 #endif
 
 /* The group separator used when context is requested. */
@@ -641,8 +640,8 @@ static enum
     SKIP_DEVICES
   } devices = READ_COMMAND_LINE_DEVICES;
 
-static bool grepfile (int, char const *, bool, bool);
-static bool grepdesc (int, bool);
+static bool grepfile (struct grepctx *, int, char const *, bool, bool);
+static bool grepdesc (struct grepctx *, int, bool);
 
 static bool
 is_device_mode (mode_t m)
@@ -677,11 +676,11 @@ enum { SEEK_HOLE = SEEK_SET };
 /* Functions we'll use to search. */
 typedef void *(*compile_fp_t) (char *, size_t, reg_syntax_t, bool);
 typedef size_t (*execute_fp_t) (void *, char const *, size_t, size_t *,
-                                char const *);
+                                char const *, struct grepctx *);
 static execute_fp_t execute;
 
 char const *
-input_filename (void)
+input_filename (struct grepctx *ctx)
 {
   if (!ctx->filename)
     ctx->filename = _("(standard input)");
@@ -690,10 +689,10 @@ input_filename (void)
 
 /* Unless requested, diagnose an error about the input file.  */
 static void
-suppressible_error (int errnum)
+suppressible_error (struct grepctx *ctx, int errnum)
 {
   if (! suppress_errors)
-    error (0, errnum, "%s", input_filename ());
+    error (0, errnum, "%s", input_filename (ctx));
   errseen = true;
 }
 
@@ -820,7 +819,8 @@ buf_has_nulls (char *buf, size_t size)
    SIZE bytes have already been read from the file
    with descriptor FD and status ST.  */
 static bool
-file_must_have_nulls (size_t size, int fd, struct stat const *st)
+file_must_have_nulls (struct grepctx *ctx, size_t size, int fd,
+                      struct stat const *st)
 {
   /* If the file has holes, it must contain a null byte somewhere.  */
   if (SEEK_HOLE != SEEK_SET && !ctx->seek_failed
@@ -839,7 +839,7 @@ file_must_have_nulls (size_t size, int fd, struct stat const *st)
       if (0 <= hole_start)
         {
           if (lseek (fd, cur, SEEK_SET) < 0)
-            suppressible_error (errno);
+            suppressible_error (ctx, errno);
           if (hole_start < st->st_size)
             return true;
         }
@@ -935,7 +935,7 @@ all_zeros (char const *buf, size_t size)
 /* Reset the buffer for a new file, returning false if we should skip it.
    Initialize on the first time through. */
 static bool
-reset (int fd, struct stat const *st)
+reset (struct grepctx *ctx, int fd, struct stat const *st)
 {
   ctx->bufbeg = ctx->buflim = ALIGN_TO (ctx->buffer + 1, pagesize);
   ctx->bufbeg[-1] = eolbyte;
@@ -950,7 +950,7 @@ reset (int fd, struct stat const *st)
     {
       if (errno != ESPIPE)
         {
-          suppressible_error (errno);
+          suppressible_error (ctx, errno);
           return false;
         }
       ctx->bufoffset = 0;
@@ -963,7 +963,7 @@ reset (int fd, struct stat const *st)
    to the beginning of the buffer contents, and 'buflim'
    points just after the end.  Return false if there's an error.  */
 static bool
-fillbuf (size_t save, struct stat const *st)
+fillbuf (struct grepctx *ctx, size_t save, struct stat const *st)
 {
   size_t fillsize;
   bool cc = true;
@@ -1027,7 +1027,7 @@ fillbuf (size_t save, struct stat const *st)
         }
     }
 
-  clear_asan_poison ();
+  clear_asan_poison (ctx);
 
   readsize = ctx->buffer + ctx->bufalloc - sizeof (uword) - readbuf;
   readsize -= readsize % pagesize;
@@ -1074,7 +1074,7 @@ fillbuf (size_t save, struct stat const *st)
 
   /* Mark the part of the buffer not filled by the read or set by
      the above memset call as ASAN-poisoned.  */
-  asan_poison (ctx->buflim + sizeof (uword),
+  asan_poison (ctx, ctx->buflim + sizeof (uword),
                ctx->bufalloc - (ctx->buflim - ctx->buffer) - sizeof (uword));
 
   return cc;
@@ -1118,7 +1118,7 @@ static bool dev_null_output;	/* Stdout is known to be /dev/null.  */
 static bool binary;		/* Use binary rather than text I/O.  */
 
 static void
-nlscan (char const *lim)
+nlscan (struct grepctx *ctx, char const *lim)
 {
   size_t newlines = 0;
   for (char const *beg = ctx->lastnl; beg < lim; beg++)
@@ -1134,10 +1134,10 @@ nlscan (char const *lim)
 
 /* Print the current filename.  */
 static void
-print_filename (void)
+print_filename (struct grepctx *ctx)
 {
   pr_sgr_start_if (filename_color);
-  fputs_errno (input_filename ());
+  fputs_errno (input_filename (ctx));
   pr_sgr_end_if (filename_color);
 }
 
@@ -1152,7 +1152,7 @@ print_sep (char sep)
 
 /* Print a line number or a byte offset.  */
 static void
-print_offset (uintmax_t pos, const char *color)
+print_offset (struct grepctx const *ctx, uintmax_t pos, const char *color)
 {
   pr_sgr_start_if (color);
   printf_errno ("%*"PRIuMAX, ctx->offset_width, pos);
@@ -1169,7 +1169,8 @@ print_offset (uintmax_t pos, const char *color)
    Return true unless the line was suppressed due to an encoding error.  */
 
 static bool
-print_line_head (char *beg, size_t len, char const *lim, char sep)
+print_line_head (struct grepctx *ctx, char *beg, size_t len, char const *lim,
+                 char sep)
 {
   if (binary_files != TEXT_BINARY_FILES)
     {
@@ -1185,7 +1186,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
 
   if (out_file)
     {
-      print_filename ();
+      print_filename (ctx);
       if (filename_mask)
         print_sep (sep);
       else
@@ -1196,18 +1197,18 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
     {
       if (ctx->lastnl < lim)
         {
-          nlscan (beg);
+          nlscan (ctx, beg);
           ctx->totalnl = add_count (ctx->totalnl, 1);
           ctx->lastnl = lim;
         }
-      print_offset (ctx->totalnl, line_num_color);
+      print_offset (ctx, ctx->totalnl, line_num_color);
       print_sep (sep);
     }
 
   if (out_byte)
     {
       uintmax_t pos = add_count (ctx->totalcc, beg - ctx->bufbeg);
-      print_offset (pos, byte_num_color);
+      print_offset (ctx, pos, byte_num_color);
       print_sep (sep);
     }
 
@@ -1218,7 +1219,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
 }
 
 static char *
-print_line_middle (char *beg, char *lim,
+print_line_middle (struct grepctx *ctx, char *beg, char *lim,
                    const char *line_color, const char *match_color)
 {
   size_t match_size;
@@ -1230,7 +1231,7 @@ print_line_middle (char *beg, char *lim,
   for (cur = beg;
        (cur < lim
         && ((match_offset = execute (ctx->compiled_pattern, beg, lim - beg,
-                                     &match_size, cur)) != (size_t) -1));
+                                     &match_size, cur, ctx)) != (size_t) -1));
        cur = b + match_size)
     {
       b = beg + match_offset;
@@ -1255,7 +1256,7 @@ print_line_middle (char *beg, char *lim,
           if (only_matching)
             {
               char sep = out_invert ? SEP_CHAR_REJECTED : SEP_CHAR_SELECTED;
-              if (! print_line_head (b, match_size, lim, sep))
+              if (! print_line_head (ctx, b, match_size, lim, sep))
                 return NULL;
             }
           else
@@ -1307,14 +1308,14 @@ print_line_tail (char *beg, const char *lim, const char *line_color)
 }
 
 static void
-prline (char *beg, char *lim, char sep)
+prline (struct grepctx *ctx, char *beg, char *lim, char sep)
 {
   bool matching;
   const char *line_color;
   const char *match_color;
 
   if (!only_matching)
-    if (! print_line_head (beg, lim - beg - 1, lim, sep))
+    if (! print_line_head (ctx, beg, lim - beg - 1, lim, sep))
       return;
 
   matching = (sep == SEP_CHAR_SELECTED) ^ out_invert;
@@ -1336,7 +1337,7 @@ prline (char *beg, char *lim, char sep)
       /* We already know that non-matching lines have no match (to colorize). */
       if (matching && (only_matching || *match_color))
         {
-          beg = print_line_middle (beg, lim, line_color, match_color);
+          beg = print_line_middle (ctx, beg, lim, line_color, match_color);
           if (! beg)
             return;
         }
@@ -1363,26 +1364,26 @@ prline (char *beg, char *lim, char sep)
 
 /* Print pending lines of trailing context prior to LIM.  */
 static void
-prpending (char const *lim)
+prpending (struct grepctx *ctx, char const *lim)
 {
   if (!ctx->lastout)
     ctx->lastout = ctx->bufbeg;
   for (; 0 < ctx->pending && ctx->lastout < lim; ctx->pending--)
     {
       char *nl = rawmemchr (ctx->lastout, eolbyte);
-      prline (ctx->lastout, nl + 1, SEP_CHAR_REJECTED);
+      prline (ctx, ctx->lastout, nl + 1, SEP_CHAR_REJECTED);
     }
 }
 
 /* Output the lines between BEG and LIM.  Deal with context.  */
 static void
-prtext (char *beg, char *lim)
+prtext (struct grepctx *ctx, char *beg, char *lim)
 {
   static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
   char eol = eolbyte;
 
   if (!ctx->out_quiet && ctx->pending > 0)
-    prpending (beg);
+    prpending (ctx, beg);
 
   char *p = beg;
 
@@ -1412,7 +1413,7 @@ prtext (char *beg, char *lim)
         {
           char *nl = rawmemchr (p, eol);
           nl++;
-          prline (p, nl, SEP_CHAR_REJECTED);
+          prline (ctx, p, nl, SEP_CHAR_REJECTED);
           p = nl;
         }
     }
@@ -1426,7 +1427,7 @@ prtext (char *beg, char *lim)
           char *nl = rawmemchr (p, eol);
           nl++;
           if (!ctx->out_quiet)
-            prline (p, nl, SEP_CHAR_SELECTED);
+            prline (ctx, p, nl, SEP_CHAR_SELECTED);
           p = nl;
         }
     }
@@ -1434,7 +1435,7 @@ prtext (char *beg, char *lim)
     {
       /* Just one line is output.  */
       if (!ctx->out_quiet)
-        prline (beg, lim, SEP_CHAR_SELECTED);
+        prline (ctx, beg, lim, SEP_CHAR_SELECTED);
       n = 1;
       p = lim;
     }
@@ -1470,7 +1471,7 @@ zap_nuls (char *p, char *lim, char eol)
    between matching lines if OUT_INVERT is true).  Return a count of
    lines printed.  Replace all NUL bytes with NUL_ZAPPER as we go.  */
 static intmax_t
-grepbuf (char *beg, char const *lim)
+grepbuf (struct grepctx *ctx, char *beg, char const *lim)
 {
   intmax_t outleft0 = ctx->outleft;
   char *endp;
@@ -1479,7 +1480,7 @@ grepbuf (char *beg, char const *lim)
     {
       size_t match_size;
       size_t match_offset = execute (ctx->compiled_pattern, p, lim - p,
-                                     &match_size, NULL);
+                                     &match_size, NULL, ctx);
       if (match_offset == (size_t) -1)
         {
           if (!out_invert)
@@ -1496,7 +1497,7 @@ grepbuf (char *beg, char const *lim)
         {
           char *prbeg = out_invert ? p : b;
           char *prend = out_invert ? b : endp;
-          prtext (prbeg, prend);
+          prtext (ctx, prbeg, prend);
           if (!ctx->outleft || ctx->done_on_match)
             {
               if (exit_on_match)
@@ -1512,7 +1513,7 @@ grepbuf (char *beg, char const *lim)
 /* Search a given (non-directory) file.  Return a count of lines printed.
    Set *INEOF to true if end-of-file reached.  */
 static intmax_t
-grep (int fd, struct stat const *st, bool *ineof)
+grep (struct grepctx *ctx, int fd, struct stat const *st, bool *ineof)
 {
   intmax_t nlines, i;
   size_t residue, save;
@@ -1529,7 +1530,7 @@ grep (int fd, struct stat const *st, bool *ineof)
      before the first null.  -1 if no input nulls have been deduced.  */
   intmax_t nlines_first_null = -1;
 
-  if (! reset (fd, st))
+  if (! reset (ctx, fd, st))
     return 0;
 
   ctx->totalcc = 0;
@@ -1545,9 +1546,9 @@ grep (int fd, struct stat const *st, bool *ineof)
   residue = 0;
   save = 0;
 
-  if (! fillbuf (save, st))
+  if (! fillbuf (ctx, save, st))
     {
-      suppressible_error (errno);
+      suppressible_error (ctx, errno);
       return 0;
     }
 
@@ -1567,7 +1568,8 @@ grep (int fd, struct stat const *st, bool *ineof)
       if (nlines_first_null < 0 && eol && binary_files != TEXT_BINARY_FILES
           && (buf_has_nulls (ctx->bufbeg, ctx->buflim - ctx->bufbeg)
               || (firsttime
-                  && file_must_have_nulls (ctx->buflim - ctx->bufbeg, fd, st))))
+                  && file_must_have_nulls (ctx, ctx->buflim - ctx->bufbeg, fd,
+                                           st))))
         {
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
@@ -1610,9 +1612,9 @@ grep (int fd, struct stat const *st, bool *ineof)
       if (beg < lim)
         {
           if (ctx->outleft)
-            nlines += grepbuf (beg, lim);
+            nlines += grepbuf (ctx, beg, lim);
           if (ctx->pending)
-            prpending (lim);
+            prpending (ctx, lim);
           if ((!ctx->outleft && !ctx->pending)
               || (ctx->done_on_match && MAX (0, nlines_first_null) < nlines))
             goto finish_grep;
@@ -1641,10 +1643,10 @@ grep (int fd, struct stat const *st, bool *ineof)
         ctx->totalcc = add_count (ctx->totalcc,
                                   ctx->buflim - ctx->bufbeg - save);
       if (out_line)
-        nlscan (beg);
-      if (! fillbuf (save, st))
+        nlscan (ctx, beg);
+      if (! fillbuf (ctx, save, st))
         {
-          suppressible_error (errno);
+          suppressible_error (ctx, errno);
           goto finish_grep;
         }
     }
@@ -1652,9 +1654,9 @@ grep (int fd, struct stat const *st, bool *ineof)
     {
       *ctx->buflim++ = eol;
       if (ctx->outleft)
-        nlines += grepbuf (ctx->bufbeg + save - residue, ctx->buflim);
+        nlines += grepbuf (ctx, ctx->bufbeg + save - residue, ctx->buflim);
       if (ctx->pending)
-        prpending (ctx->buflim);
+        prpending (ctx, ctx->buflim);
     }
 
  finish_grep:
@@ -1663,12 +1665,12 @@ grep (int fd, struct stat const *st, bool *ineof)
   if (binary_files == BINARY_BINARY_FILES && ! (ctx->out_quiet | suppress_errors)
       && (ctx->encoding_error_output
           || (0 <= nlines_first_null && nlines_first_null < nlines)))
-    error (0, 0, _("%s: binary file matches"), input_filename ());
+    error (0, 0, _("%s: binary file matches"), input_filename (ctx));
   return nlines;
 }
 
 static bool
-grepdirent (FTS *fts, FTSENT *ent, bool command_line)
+grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
 {
   bool follow;
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
@@ -1707,7 +1709,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
     case FTS_DNR:
     case FTS_ERR:
     case FTS_NS:
-      suppressible_error (ent->fts_errno);
+      suppressible_error (ctx, ent->fts_errno);
       return true;
 
     case FTS_DEFAULT:
@@ -1724,7 +1726,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
               int flag = follow ? 0 : AT_SYMLINK_NOFOLLOW;
               if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
                 {
-                  suppressible_error (errno);
+                  suppressible_error (ctx, errno);
                   return true;
                 }
               st = &st1;
@@ -1746,7 +1748,8 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       abort ();
     }
 
-  return grepfile (fts->fts_cwd_fd, ent->fts_accpath, follow, command_line);
+  return grepfile (ctx, fts->fts_cwd_fd, ent->fts_accpath, follow,
+                   command_line);
 }
 
 /* True if errno is ERR after 'open ("symlink", ... O_NOFOLLOW ...)'.
@@ -1764,7 +1767,8 @@ open_symlink_nofollow_error (int err)
 }
 
 static bool
-grepfile (int dirdesc, char const *name, bool follow, bool command_line)
+grepfile (struct grepctx *ctx, int dirdesc, char const *name, bool follow,
+          bool command_line)
 {
   int oflag = (O_RDONLY | O_NOCTTY
                | (IGNORE_DUPLICATE_BRANCH_WARNING
@@ -1775,16 +1779,16 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
   if (desc < 0)
     {
       if (follow || ! open_symlink_nofollow_error (errno))
-        suppressible_error (errno);
+        suppressible_error (ctx, errno);
       return true;
     }
-  return grepdesc (desc, command_line);
+  return grepdesc (ctx, desc, command_line);
 }
 
 /* Read all data from FD, with status ST.  Return true if successful,
    false (setting errno) otherwise.  */
 static bool
-drain_input (int fd, struct stat const *st)
+drain_input (struct grepctx *ctx, int fd, struct stat const *st)
 {
   ssize_t nbytes;
   if (S_ISFIFO (st->st_mode) && dev_null_output)
@@ -1814,7 +1818,7 @@ drain_input (int fd, struct stat const *st)
    pipe.  */
 
 static void
-finalize_input (int fd, struct stat const *st, bool ineof)
+finalize_input (struct grepctx *ctx, int fd, struct stat const *st, bool ineof)
 {
   if (fd == STDIN_FILENO
       && (ctx->outleft
@@ -1823,14 +1827,14 @@ finalize_input (int fd, struct stat const *st, bool ineof)
                  || (lseek (fd, 0, SEEK_END) < 0
                      /* Linux proc file system has EINVAL (Bug#25180).  */
                      && errno != EINVAL))
-             && ! drain_input (fd, st))
+             && ! drain_input (ctx, fd, st))
           : (ctx->bufoffset != ctx->after_last_match && !ctx->seek_failed
              && lseek (fd, ctx->after_last_match, SEEK_SET) < 0)))
-    suppressible_error (errno);
+    suppressible_error (ctx, errno);
 }
 
 static bool
-grepdesc (int desc, bool command_line)
+grepdesc (struct grepctx *ctx, int desc, bool command_line)
 {
   intmax_t count;
   bool status = true;
@@ -1845,7 +1849,7 @@ grepdesc (int desc, bool command_line)
      directory for a non-directory while 'grep' is running.  */
   if (fstat (desc, &st) != 0)
     {
-      suppressible_error (errno);
+      suppressible_error (ctx, errno);
       goto closeout;
     }
 
@@ -1876,7 +1880,7 @@ grepdesc (int desc, bool command_line)
       /* Close DESC now, to conserve file descriptors if the race
          condition occurs many times in a deep recursion.  */
       if (close (desc) != 0)
-        suppressible_error (errno);
+        suppressible_error (ctx, errno);
 
       fts_arg[0] = (char *) ctx->filename;
       fts_arg[1] = NULL;
@@ -1885,11 +1889,11 @@ grepdesc (int desc, bool command_line)
       if (!fts)
         xalloc_die ();
       while ((ent = fts_read (fts)))
-        status &= grepdirent (fts, ent, command_line);
+        status &= grepdirent (ctx, fts, ent, command_line);
       if (errno)
-        suppressible_error (errno);
+        suppressible_error (ctx, errno);
       if (fts_close (fts) != 0)
-        suppressible_error (errno);
+        suppressible_error (ctx, errno);
       return status;
     }
   if (desc != STDIN_FILENO
@@ -1921,17 +1925,18 @@ grepdesc (int desc, bool command_line)
       && S_ISREG (st.st_mode) && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
-        error (0, 0, _("%s: input file is also the output"), input_filename ());
+        error (0, 0, _("%s: input file is also the output"),
+               input_filename (ctx));
       errseen = true;
       goto closeout;
     }
 
-  count = grep (desc, &st, &ineof);
+  count = grep (ctx, desc, &st, &ineof);
   if (count_matches)
     {
       if (out_file)
         {
-          print_filename ();
+          print_filename (ctx);
           if (filename_mask)
             print_sep (SEP_CHAR_SELECTED);
           else
@@ -1945,10 +1950,10 @@ grepdesc (int desc, bool command_line)
   status = !count;
 
   if (list_files == LISTFILES_NONE)
-    finalize_input (desc, &st, ineof);
+    finalize_input (ctx, desc, &st, ineof);
   else if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
     {
-      print_filename ();
+      print_filename (ctx);
       putchar_errno ('\n' & filename_mask);
       if (line_buffered)
         fflush_errno ();
@@ -1956,24 +1961,24 @@ grepdesc (int desc, bool command_line)
 
  closeout:
   if (desc != STDIN_FILENO && close (desc) != 0)
-    suppressible_error (errno);
+    suppressible_error (ctx, errno);
   return status;
 }
 
 static bool
-grep_command_line_arg (char const *arg)
+grep_command_line_arg (struct grepctx *ctx, char const *arg)
 {
   if (STREQ (arg, "-"))
     {
       ctx->filename = label;
       if (binary)
         xset_binary_mode (STDIN_FILENO, O_BINARY);
-      return grepdesc (STDIN_FILENO, true);
+      return grepdesc (ctx, STDIN_FILENO, true);
     }
   else
     {
       ctx->filename = arg;
-      return grepfile (AT_FDCWD, arg, true, true);
+      return grepfile (ctx, AT_FDCWD, arg, true, true);
     }
 }
 
@@ -2495,12 +2500,15 @@ main (int argc, char **argv)
   int fread_errno;
   intmax_t default_context;
   FILE *fp;
+  struct grepctx *ctx = &(struct grepctx){};
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
 
   /* Which command-line options have been specified for filename output.
      -1 for -h, 1 for -H, 0 for neither.  */
   int filename_option = 0;
+
+  memset(ctx, 0, sizeof(*ctx));
 
   eolbyte = '\n';
   filename_mask = ~0;
@@ -2980,7 +2988,7 @@ main (int argc, char **argv)
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
   skip_empty_lines = ((execute (ctx->compiled_pattern, eolbytes + 1, 1,
-                                &match_size, NULL) == 0)
+                                &match_size, NULL, ctx) == 0)
                       == out_invert);
 
   int num_operands = argc - optind;
@@ -3026,7 +3034,7 @@ main (int argc, char **argv)
 
   bool status = true;
   do
-    status &= grep_command_line_arg (*files++);
+    status &= grep_command_line_arg (ctx, *files++);
   while (*files != NULL);
 
   /* We register via atexit to test stdout.  */

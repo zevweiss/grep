@@ -31,4 +31,5 @@ extern char eolbyte;		/* -z */
 
 extern char const *pattern_file_name (size_t, size_t *);
 
+struct grepctx;
 #endif

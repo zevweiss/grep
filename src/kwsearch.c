@@ -106,7 +106,7 @@ Fcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
    If START_PTR is nonnull, start searching there.  */
 size_t
 Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
-          char const *start_ptr)
+          char const *start_ptr, struct grepctx *ctx)
 {
   char const *beg, *end, *mb_start;
   ptrdiff_t len;
@@ -198,7 +198,8 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
                 else
                   end = buf + size;
 
-                if (EGexecute (kwsearch->re, beg, end - beg, match_size, NULL)
+                if (EGexecute (kwsearch->re, beg, end - beg, match_size, NULL,
+                               ctx)
                     != (size_t) -1)
                   goto success_match_words;
                 beg = end - 1;

@@ -57,15 +57,18 @@ extern ptrdiff_t mb_goback (char const **, size_t *, char const *,
 
 /* dfasearch.c */
 extern void *GEAcompile (char *, size_t, reg_syntax_t, bool);
-extern size_t EGexecute (void *, char const *, size_t, size_t *, char const *);
+extern size_t EGexecute (void *, char const *, size_t, size_t *, char const *,
+                        struct grepctx *);
 
 /* kwsearch.c */
 extern void *Fcompile (char *, size_t, reg_syntax_t, bool);
-extern size_t Fexecute (void *, char const *, size_t, size_t *, char const *);
+extern size_t Fexecute (void *, char const *, size_t, size_t *, char const *,
+                        struct grepctx *);
 
 /* pcresearch.c */
 extern void *Pcompile (char *, size_t, reg_syntax_t, bool);
-extern size_t Pexecute (void *, char const *, size_t, size_t *, char const *);
+extern size_t Pexecute (void *, char const *, size_t, size_t *, char const *,
+                        struct grepctx *);
 
 /* grep.c */
 extern struct localeinfo localeinfo;
@@ -82,7 +85,7 @@ mb_clen (char const *s, size_t n, mbstate_t *mbs)
   return len == (size_t) -2 ? mbrlen (s, n, mbs) : len;
 }
 
-extern char const *input_filename (void);
+extern char const *input_filename (struct grepctx *);
 
 _GL_INLINE_HEADER_END
 

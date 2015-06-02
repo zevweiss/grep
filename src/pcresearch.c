@@ -204,7 +204,7 @@ Pcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
 
 size_t
 Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
-          char const *start_ptr)
+          char const *start_ptr, struct grepctx *ctx)
 {
   int sub[NSUB];
   char const *p = start_ptr ? start_ptr : buf;
@@ -303,21 +303,21 @@ Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           break;
 
         case PCRE_ERROR_NOMEMORY:
-          die (EXIT_TROUBLE, 0, _("%s: memory exhausted"), input_filename ());
+          die (EXIT_TROUBLE, 0, _("%s: memory exhausted"), input_filename (ctx));
 
 #if PCRE_STUDY_JIT_COMPILE
         case PCRE_ERROR_JIT_STACKLIMIT:
           die (EXIT_TROUBLE, 0, _("%s: exhausted PCRE JIT stack"),
-               input_filename ());
+               input_filename (ctx));
 #endif
 
         case PCRE_ERROR_MATCHLIMIT:
           die (EXIT_TROUBLE, 0, _("%s: exceeded PCRE's backtracking limit"),
-               input_filename ());
+               input_filename (ctx));
 
         case PCRE_ERROR_RECURSIONLIMIT:
           die (EXIT_TROUBLE, 0, _("%s: exceeded PCRE's recursion limit"),
-               input_filename ());
+               input_filename (ctx));
 
         default:
           /* For now, we lump all remaining PCRE failures into this basket.
@@ -325,7 +325,7 @@ Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
              particular PCRE errors, we can add to the list (above) of more
              detailed diagnostics.  */
           die (EXIT_TROUBLE, 0, _("%s: internal PCRE error: %d"),
-               input_filename (), e);
+               input_filename (ctx), e);
         }
 
       return -1;
