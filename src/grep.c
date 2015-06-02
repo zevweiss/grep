@@ -80,26 +80,76 @@ static bool only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static bool align_tabs;
 
-#if HAVE_ASAN
-/* Record the starting address and length of the sole poisoned region,
-   so that we can unpoison it later, just before each following read.  */
-static void const *poison_buf;
-static size_t poison_len;
+struct grepctx
+{
+  bool out_quiet;		/* Suppress all normal output. */
+  int out_file;		/* Print filenames. */
 
+  /* Internal variables to keep track of byte count, context, etc. */
+  uintmax_t totalcc;	/* Total character count before bufbeg. */
+  char const *lastnl;	/* Pointer after last newline counted. */
+  char const *lastout;	/* Pointer after last character output;
+                            NULL if no character has been output
+                            or if it's conceptually before bufbeg. */
+  intmax_t outleft;	/* Maximum number of lines to be output.  */
+  intmax_t pending;	/* Pending lines of output.
+                            Always kept 0 if out_quiet is true.  */
+  bool done_on_match;	/* Stop scanning file on first match.  */
+
+  enum textbin input_textbin;
+
+  /* The input file name, or (if standard input) "-" or a --label argument.  */
+  char const *filename;
+
+  /* Hairy buffering mechanism for grep.  The intent is to keep
+     all reads aligned on a page boundary and multiples of the
+     page size, unless a read yields a partial page.  */
+  char *buffer;		/* Base of buffer. */
+  size_t bufalloc;		/* Allocated buffer size, counting slop. */
+  int bufdesc;		/* File descriptor. */
+  char *bufbeg;		/* Beginning of user-visible stuff. */
+  char *buflim;		/* Limit of user-visible stuff. */
+  off_t bufoffset;		/* Read offset; defined on regular files.  */
+  off_t after_last_match;	/* Pointer after last matching line that
+                              would have been output if we were
+                              outputting characters. */
+  bool skip_nuls;		/* Skip '\0' in data.  */
+  bool seek_data_failed;	/* lseek with SEEK_DATA failed.  */
+  uintmax_t totalnl;	/* Total newline count before lastnl. */
+
+#if HAVE_ASAN
+  /* Record the starting address and length of the sole poisoned region,
+     so that we can unpoison it later, just before each following read.  */
+  void const *poison_buf;
+  size_t poison_len;
+#endif
+};
+
+static struct grepctx *ctx = &(struct grepctx){};
+
+/* XXX __attribute__(())??  (Got a warning without it...) */
+__attribute__((pure)) enum textbin
+get_input_textbin (void)
+{
+  return ctx->input_textbin;
+}
+
+#if HAVE_ASAN
+/* XXX FIXME */
 static void
 clear_asan_poison (void)
 {
-  if (poison_buf)
-    __asan_unpoison_memory_region (poison_buf, poison_len);
+  if (ctx->poison_buf)
+    __asan_unpoison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 
 static void
 asan_poison (void const *addr, size_t size)
 {
-  poison_buf = addr;
-  poison_len = size;
+  ctx->poison_buf = addr;
+  ctx->poison_len = size;
 
-  __asan_poison_memory_region (poison_buf, poison_len);
+  __asan_poison_memory_region (ctx->poison_buf, ctx->poison_len);
 }
 #else
 static void clear_asan_poison (void) { }
@@ -377,13 +427,10 @@ bool match_icase;
 bool match_words;
 bool match_lines;
 char eolbyte;
-enum textbin input_textbin;
 
 static char const *matcher;
 
 /* For error messages. */
-/* The input file name, or (if standard input) "-" or a --label argument.  */
-static char const *filename;
 /* Omit leading "./" from file names in diagnostics.  */
 static bool omit_dot_slash;
 static bool errseen;
@@ -610,7 +657,7 @@ file_textbin (char *buf, size_t size, int fd, struct stat const *st)
           if (0 <= hole_start)
             {
               if (lseek (fd, cur, SEEK_SET) < 0)
-                suppressible_error (filename, errno);
+                suppressible_error (ctx->filename, errno);
               if (hole_start < st->st_size)
                 return TEXTBIN_BINARY;
             }
@@ -659,21 +706,9 @@ skipped_file (char const *name, bool command_line, bool is_dir)
    all reads aligned on a page boundary and multiples of the
    page size, unless a read yields a partial page.  */
 
-static char *buffer;		/* Base of buffer. */
-static size_t bufalloc;		/* Allocated buffer size, counting slop. */
 #define INITIAL_BUFSIZE 32768	/* Initial buffer size, not counting slop. */
-static int bufdesc;		/* File descriptor. */
-static char *bufbeg;		/* Beginning of user-visible stuff. */
-static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
-static off_t bufoffset;		/* Read offset; defined on regular files.  */
-static off_t after_last_match;	/* Pointer after last matching line that
-                                   would have been output if we were
-                                   outputting characters. */
-static bool skip_nuls;		/* Skip '\0' in data.  */
 static bool skip_empty_lines;	/* Skip empty lines in data.  */
-static bool seek_data_failed;	/* lseek with SEEK_DATA failed.  */
-static uintmax_t totalnl;	/* Total newline count before lastnl. */
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
@@ -708,28 +743,29 @@ all_zeros (char const *buf, size_t size)
 static bool
 reset (int fd, struct stat const *st)
 {
+  /* XXX: fix this. */
   if (! pagesize)
     {
       pagesize = getpagesize ();
       if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
         abort ();
-      bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
-                  + pagesize + sizeof (uword));
-      buffer = xmalloc (bufalloc);
+      ctx->bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
+                       + pagesize + sizeof (uword));
+      ctx->buffer = xmalloc (ctx->bufalloc);
     }
 
-  bufbeg = buflim = ALIGN_TO (buffer + 1, pagesize);
-  bufbeg[-1] = eolbyte;
-  bufdesc = fd;
+  ctx->bufbeg = ctx->buflim = ALIGN_TO (ctx->buffer + 1, pagesize);
+  ctx->bufbeg[-1] = eolbyte;
+  ctx->bufdesc = fd;
 
   if (S_ISREG (st->st_mode))
     {
       if (fd != STDIN_FILENO)
-        bufoffset = 0;
+        ctx->bufoffset = 0;
       else
         {
-          bufoffset = lseek (fd, 0, SEEK_CUR);
-          if (bufoffset < 0)
+          ctx->bufoffset = lseek (fd, 0, SEEK_CUR);
+          if (ctx->bufoffset < 0)
             {
               suppressible_error (_("lseek failed"), errno);
               return false;
@@ -753,12 +789,12 @@ fillbuf (size_t save, struct stat const *st)
 
   /* Offset from start of buffer to start of old stuff
      that we want to save.  */
-  size_t saved_offset = buflim - save - buffer;
+  size_t saved_offset = ctx->buflim - save - ctx->buffer;
 
-  if (pagesize <= buffer + bufalloc - sizeof (uword) - buflim)
+  if (pagesize <= ctx->buffer + ctx->bufalloc - sizeof (uword) - ctx->buflim)
     {
-      readbuf = buflim;
-      bufbeg = buflim - save;
+      readbuf = ctx->buflim;
+      ctx->bufbeg = ctx->buflim - save;
     }
   else
     {
@@ -768,7 +804,7 @@ fillbuf (size_t save, struct stat const *st)
       char *newbuf;
 
       /* Grow newsize until it is at least as great as minsize.  */
-      for (newsize = bufalloc - pagesize - sizeof (uword);
+      for (newsize = ctx->bufalloc - pagesize - sizeof (uword);
            newsize < minsize;
            newsize *= 2)
         if ((SIZE_MAX - pagesize - sizeof (uword)) / 2 < newsize)
@@ -781,7 +817,7 @@ fillbuf (size_t save, struct stat const *st)
          likely the file is growing.  */
       if (usable_st_size (st))
         {
-          off_t to_be_read = st->st_size - bufoffset;
+          off_t to_be_read = st->st_size - ctx->bufoffset;
           off_t maxsize_off = save + to_be_read;
           if (0 <= to_be_read && to_be_read <= maxsize_off
               && maxsize_off == (size_t) maxsize_off
@@ -795,67 +831,69 @@ fillbuf (size_t save, struct stat const *st)
          be read aft.  */
       newalloc = newsize + pagesize + sizeof (uword);
 
-      newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
+      newbuf = ctx->bufalloc < newalloc ?
+        xmalloc (ctx->bufalloc = newalloc) : ctx->buffer;
       readbuf = ALIGN_TO (newbuf + 1 + save, pagesize);
-      bufbeg = readbuf - save;
-      memmove (bufbeg, buffer + saved_offset, save);
-      bufbeg[-1] = eolbyte;
-      if (newbuf != buffer)
+      ctx->bufbeg = readbuf - save;
+      memmove (ctx->bufbeg, ctx->buffer + saved_offset, save);
+      ctx->bufbeg[-1] = eolbyte;
+      if (newbuf != ctx->buffer)
         {
-          free (buffer);
-          buffer = newbuf;
+          free (ctx->buffer);
+          ctx->buffer = newbuf;
         }
     }
 
   clear_asan_poison ();
 
-  readsize = buffer + bufalloc - sizeof (uword) - readbuf;
+  readsize = ctx->buffer + ctx->bufalloc - sizeof (uword) - readbuf;
   readsize -= readsize % pagesize;
 
   while (true)
     {
-      fillsize = safe_read (bufdesc, readbuf, readsize);
+      fillsize = safe_read (ctx->bufdesc, readbuf, readsize);
       if (fillsize == SAFE_READ_ERROR)
         {
           fillsize = 0;
           cc = false;
         }
-      bufoffset += fillsize;
+      ctx->bufoffset += fillsize;
 
-      if (fillsize == 0 || !skip_nuls || !all_zeros (readbuf, fillsize))
+      if (fillsize == 0 || !ctx->skip_nuls || !all_zeros (readbuf, fillsize))
         break;
-      totalnl = add_count (totalnl, fillsize);
+      ctx->totalnl = add_count (ctx->totalnl, fillsize);
 
-      if (SEEK_DATA != SEEK_SET && !seek_data_failed)
+      if (SEEK_DATA != SEEK_SET && !ctx->seek_data_failed)
         {
           /* Solaris SEEK_DATA fails with errno == ENXIO in a hole at EOF.  */
-          off_t data_start = lseek (bufdesc, bufoffset, SEEK_DATA);
+          off_t data_start = lseek (ctx->bufdesc, ctx->bufoffset, SEEK_DATA);
           if (data_start < 0 && errno == ENXIO
-              && usable_st_size (st) && bufoffset < st->st_size)
-            data_start = lseek (bufdesc, 0, SEEK_END);
+              && usable_st_size (st) && ctx->bufoffset < st->st_size)
+            data_start = lseek (ctx->bufdesc, 0, SEEK_END);
 
           if (data_start < 0)
-            seek_data_failed = true;
+            ctx->seek_data_failed = true;
           else
             {
-              totalnl = add_count (totalnl, data_start - bufoffset);
-              bufoffset = data_start;
+              ctx->totalnl = add_count (ctx->totalnl,
+                                        data_start - ctx->bufoffset);
+              ctx->bufoffset = data_start;
             }
         }
     }
 
   fillsize = undossify_input (readbuf, fillsize);
-  buflim = readbuf + fillsize;
+  ctx->buflim = readbuf + fillsize;
 
   /* Initialize the following word, because skip_easy_bytes and some
      matchers read (but do not use) those bytes.  This avoids false
      positive reports of these bytes being used uninitialized.  */
-  memset (buflim, 0, sizeof (uword));
+  memset (ctx->buflim, 0, sizeof (uword));
 
   /* Mark the part of the buffer not filled by the read or set by
      the above memset call as ASAN-poisoned.  */
-  asan_poison (buflim + sizeof (uword),
-               bufalloc - (buflim - buffer) - sizeof (uword));
+  asan_poison (ctx->buflim + sizeof (uword),
+               ctx->bufalloc - (ctx->buflim - ctx->buffer) - sizeof (uword));
 
   return cc;
 }
@@ -869,9 +907,7 @@ static enum
 } binary_files;		/* How to handle binary files.  */
 
 static int filename_mask;	/* If zero, output nulls after filenames.  */
-static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
-static int out_file;		/* Print filenames. */
 static bool out_line;		/* Print line numbers. */
 static bool out_byte;		/* Print byte offsets. */
 static intmax_t out_before;	/* Lines of leading context. */
@@ -884,17 +920,6 @@ static intmax_t max_count;	/* Stop after outputting this many
 static bool line_buffered;	/* Use line buffering.  */
 static char *label = NULL;      /* Fake filename for stdin */
 
-
-/* Internal variables to keep track of byte count, context, etc. */
-static uintmax_t totalcc;	/* Total character count before bufbeg. */
-static char const *lastnl;	/* Pointer after last newline counted. */
-static char const *lastout;	/* Pointer after last character output;
-                                   NULL if no character has been output
-                                   or if it's conceptually before bufbeg. */
-static intmax_t outleft;	/* Maximum number of lines to be output.  */
-static intmax_t pending;	/* Pending lines of output.
-                                   Always kept 0 if out_quiet is true.  */
-static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
 
 #include "dosbuf.c"
@@ -904,15 +929,15 @@ nlscan (char const *lim)
 {
   size_t newlines = 0;
   char const *beg;
-  for (beg = lastnl; beg < lim; beg++)
+  for (beg = ctx->lastnl; beg < lim; beg++)
     {
       beg = memchr (beg, eolbyte, lim - beg);
       if (!beg)
         break;
       newlines++;
     }
-  totalnl = add_count (totalnl, newlines);
-  lastnl = lim;
+  ctx->totalnl = add_count (ctx->totalnl, newlines);
+  ctx->lastnl = lim;
 }
 
 /* Print the current filename.  */
@@ -920,7 +945,7 @@ static void
 print_filename (void)
 {
   pr_sgr_start_if (filename_color);
-  fputs (filename, stdout);
+  fputs (ctx->filename, stdout);
   pr_sgr_end_if (filename_color);
 }
 
@@ -966,7 +991,7 @@ print_line_head (char const *beg, char const *lim, char sep)
 {
   bool pending_sep = false;
 
-  if (out_file)
+  if (ctx->out_file)
     {
       print_filename ();
       if (filename_mask)
@@ -977,21 +1002,21 @@ print_line_head (char const *beg, char const *lim, char sep)
 
   if (out_line)
     {
-      if (lastnl < lim)
+      if (ctx->lastnl < lim)
         {
           nlscan (beg);
-          totalnl = add_count (totalnl, 1);
-          lastnl = lim;
+          ctx->totalnl = add_count (ctx->totalnl, 1);
+          ctx->lastnl = lim;
         }
       if (pending_sep)
         print_sep (sep);
-      print_offset (totalnl, 4, line_num_color);
+      print_offset (ctx->totalnl, 4, line_num_color);
       pending_sep = true;
     }
 
   if (out_byte)
     {
-      uintmax_t pos = add_count (totalcc, beg - bufbeg);
+      uintmax_t pos = add_count (ctx->totalcc, beg - ctx->bufbeg);
       pos = dossified_pos (pos);
       if (pending_sep)
         print_sep (sep);
@@ -1143,7 +1168,7 @@ prline (char const *beg, char const *lim, char sep)
       error (EXIT_TROUBLE, 0, _("write error"));
     }
 
-  lastout = lim;
+  ctx->lastout = lim;
 
   if (line_buffered)
     fflush (stdout);
@@ -1154,20 +1179,20 @@ prline (char const *beg, char const *lim, char sep)
 static void
 prpending (char const *lim)
 {
-  if (!lastout)
-    lastout = bufbeg;
-  while (pending > 0 && lastout < lim)
+  if (!ctx->lastout)
+    ctx->lastout = ctx->bufbeg;
+  while (ctx->pending > 0 && ctx->lastout < lim)
     {
-      char const *nl = memchr (lastout, eolbyte, lim - lastout);
+      char const *nl = memchr (ctx->lastout, eolbyte, lim - ctx->lastout);
       size_t match_size;
-      --pending;
-      if (outleft
-          || ((execute (lastout, nl + 1 - lastout,
+      --ctx->pending;
+      if (ctx->outleft
+          || ((execute (ctx->lastout, nl + 1 - ctx->lastout,
                         &match_size, NULL) == (size_t) -1)
               == !out_invert))
-        prline (lastout, nl + 1, SEP_CHAR_REJECTED);
+        prline (ctx->lastout, nl + 1, SEP_CHAR_REJECTED);
       else
-        pending = 0;
+        ctx->pending = 0;
     }
 }
 
@@ -1178,15 +1203,15 @@ prtext (char const *beg, char const *lim)
   static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
   char eol = eolbyte;
 
-  if (!out_quiet && pending > 0)
+  if (!ctx->out_quiet && ctx->pending > 0)
     prpending (beg);
 
   char const *p = beg;
 
-  if (!out_quiet)
+  if (!ctx->out_quiet)
     {
       /* Deal with leading context.  */
-      char const *bp = lastout ? lastout : bufbeg;
+      char const *bp = ctx->lastout ? ctx->lastout : ctx->bufbeg;
       intmax_t i;
       for (i = 0; i < out_before; ++i)
         if (p > bp)
@@ -1197,7 +1222,7 @@ prtext (char const *beg, char const *lim)
       /* Print the group separator unless the output is adjacent to
          the previous output in the file.  */
       if ((0 <= out_before || 0 <= out_after) && used
-          && p != lastout && group_separator)
+          && p != ctx->lastout && group_separator)
         {
           pr_sgr_start_if (sep_color);
           fputs (group_separator, stdout);
@@ -1218,11 +1243,11 @@ prtext (char const *beg, char const *lim)
   if (out_invert)
     {
       /* One or more lines are output.  */
-      for (n = 0; p < lim && n < outleft; n++)
+      for (n = 0; p < lim && n < ctx->outleft; n++)
         {
           char const *nl = memchr (p, eol, lim - p);
           nl++;
-          if (!out_quiet)
+          if (!ctx->out_quiet)
             prline (p, nl, SEP_CHAR_SELECTED);
           p = nl;
         }
@@ -1230,16 +1255,16 @@ prtext (char const *beg, char const *lim)
   else
     {
       /* Just one line is output.  */
-      if (!out_quiet)
+      if (!ctx->out_quiet)
         prline (beg, lim, SEP_CHAR_SELECTED);
       n = 1;
       p = lim;
     }
 
-  after_last_match = bufoffset - (buflim - p);
-  pending = out_quiet ? 0 : MAX (0, out_after);
+  ctx->after_last_match = ctx->bufoffset - (ctx->buflim - p);
+  ctx->pending = ctx->out_quiet ? 0 : MAX (0, out_after);
   used = true;
-  outleft -= n;
+  ctx->outleft -= n;
 }
 
 /* Replace all NUL bytes in buffer P (which ends at LIM) with EOL.
@@ -1269,7 +1294,7 @@ zap_nuls (char *p, char *lim, char eol)
 static intmax_t
 grepbuf (char const *beg, char const *lim)
 {
-  intmax_t outleft0 = outleft;
+  intmax_t outleft0 = ctx->outleft;
   char const *p;
   char const *endp;
 
@@ -1294,7 +1319,7 @@ grepbuf (char const *beg, char const *lim)
           char const *prbeg = out_invert ? p : b;
           char const *prend = out_invert ? b : endp;
           prtext (prbeg, prend);
-          if (!outleft || done_on_match)
+          if (!ctx->outleft || ctx->done_on_match)
             {
               if (exit_on_match)
                 exit (EXIT_SUCCESS);
@@ -1303,7 +1328,7 @@ grepbuf (char const *beg, char const *lim)
         }
     }
 
-  return outleft0 - outleft;
+  return outleft0 - ctx->outleft;
 }
 
 /* Search a given file.  Normally, return a count of lines printed;
@@ -1320,20 +1345,20 @@ grep (int fd, struct stat const *st)
   char *lim;
   char eol = eolbyte;
   char nul_zapper = '\0';
-  bool done_on_match_0 = done_on_match;
-  bool out_quiet_0 = out_quiet;
+  bool done_on_match_0 = ctx->done_on_match;
+  bool out_quiet_0 = ctx->out_quiet;
 
   if (! reset (fd, st))
     return 0;
 
-  totalcc = 0;
-  lastout = 0;
-  totalnl = 0;
-  outleft = max_count;
-  after_last_match = 0;
-  pending = 0;
-  skip_nuls = skip_empty_lines && !eol;
-  seek_data_failed = false;
+  ctx->totalcc = 0;
+  ctx->lastout = 0;
+  ctx->totalnl = 0;
+  ctx->outleft = max_count;
+  ctx->after_last_match = 0;
+  ctx->pending = 0;
+  ctx->skip_nuls = skip_empty_lines && !eol;
+  ctx->seek_data_failed = false;
 
   nlines = 0;
   residue = 0;
@@ -1341,7 +1366,7 @@ grep (int fd, struct stat const *st)
 
   if (! fillbuf (save, st))
     {
-      suppressible_error (filename, errno);
+      suppressible_error (ctx->filename, errno);
       return 0;
     }
 
@@ -1349,14 +1374,14 @@ grep (int fd, struct stat const *st)
     textbin = TEXTBIN_TEXT;
   else
     {
-      textbin = file_textbin (bufbeg, buflim - bufbeg, fd, st);
+      textbin = file_textbin (ctx->bufbeg, ctx->buflim - ctx->bufbeg, fd, st);
       if (textbin_is_binary (textbin))
         {
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
-          done_on_match = out_quiet = true;
+          ctx->done_on_match = ctx->out_quiet = true;
           nul_zapper = eol;
-          skip_nuls = skip_empty_lines;
+          ctx->skip_nuls = skip_empty_lines;
         }
       else if (execute != Pexecute)
         textbin = TEXTBIN_TEXT;
@@ -1364,18 +1389,18 @@ grep (int fd, struct stat const *st)
 
   for (;;)
     {
-      input_textbin = textbin;
-      lastnl = bufbeg;
-      if (lastout)
-        lastout = bufbeg;
+      ctx->input_textbin = textbin;
+      ctx->lastnl = ctx->bufbeg;
+      if (ctx->lastout)
+        ctx->lastout = ctx->bufbeg;
 
-      beg = bufbeg + save;
+      beg = ctx->bufbeg + save;
 
       /* no more data to scan (eof) except for maybe a residue -> break */
-      if (beg == buflim)
+      if (beg == ctx->buflim)
         break;
 
-      zap_nuls (beg, buflim, nul_zapper);
+      zap_nuls (beg, ctx->buflim, nul_zapper);
 
       /* Determine new residue (the length of an incomplete line at the end of
          the buffer, 0 means there is no incomplete last line).  */
@@ -1383,21 +1408,22 @@ grep (int fd, struct stat const *st)
       beg[-1] = eol;
       /* FIXME: use rawmemrchr if/when it exists, since we have ensured
          that this use of memrchr is guaranteed never to return NULL.  */
-      lim = memrchr (beg - 1, eol, buflim - beg + 1);
+      lim = memrchr (beg - 1, eol, ctx->buflim - beg + 1);
       ++lim;
       beg[-1] = oldc;
       if (lim == beg)
         lim = beg - residue;
       beg -= residue;
-      residue = buflim - lim;
+      residue = ctx->buflim - lim;
 
       if (beg < lim)
         {
-          if (outleft)
+          if (ctx->outleft)
             nlines += grepbuf (beg, lim);
-          if (pending)
+          if (ctx->pending)
             prpending (lim);
-          if ((!outleft && !pending) || (nlines && done_on_match))
+          if ((!ctx->outleft && !ctx->pending)
+              || (nlines && ctx->done_on_match))
             goto finish_grep;
         }
 
@@ -1406,7 +1432,7 @@ grep (int fd, struct stat const *st)
          next data. Make beg point to their begin.  */
       i = 0;
       beg = lim;
-      while (i < out_before && beg > bufbeg && beg != lastout)
+      while (i < out_before && beg > ctx->bufbeg && beg != ctx->lastout)
         {
           ++i;
           do
@@ -1415,23 +1441,24 @@ grep (int fd, struct stat const *st)
         }
 
       /* Detect whether leading context is adjacent to previous output.  */
-      if (lastout)
+      if (ctx->lastout)
         {
           if (textbin == TEXTBIN_UNKNOWN)
             textbin = TEXTBIN_TEXT;
-          if (beg != lastout)
-            lastout = 0;
+          if (beg != ctx->lastout)
+            ctx->lastout = 0;
         }
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
       if (out_byte)
-        totalcc = add_count (totalcc, buflim - bufbeg - save);
+        ctx->totalcc = add_count (ctx->totalcc,
+                                  ctx->buflim - ctx->bufbeg - save);
       if (out_line)
         nlscan (beg);
       if (! fillbuf (save, st))
         {
-          suppressible_error (filename, errno);
+          suppressible_error (ctx->filename, errno);
           goto finish_grep;
         }
 
@@ -1439,32 +1466,33 @@ grep (int fd, struct stat const *st)
          it's binary if the next input buffer suggests so.  */
       if (textbin == TEXTBIN_UNKNOWN)
         {
-          enum textbin tb = buffer_textbin (bufbeg, buflim - bufbeg);
+          enum textbin tb = buffer_textbin (ctx->bufbeg,
+                                            ctx->buflim - ctx->bufbeg);
           if (textbin_is_binary (tb))
             {
               if (binary_files == WITHOUT_MATCH_BINARY_FILES)
                 return 0;
               textbin = tb;
-              done_on_match = out_quiet = true;
+              ctx->done_on_match = ctx->out_quiet = true;
               nul_zapper = eol;
-              skip_nuls = skip_empty_lines;
+              ctx->skip_nuls = skip_empty_lines;
             }
         }
     }
   if (residue)
     {
-      *buflim++ = eol;
-      if (outleft)
-        nlines += grepbuf (bufbeg + save - residue, buflim);
-      if (pending)
-        prpending (buflim);
+      *ctx->buflim++ = eol;
+      if (ctx->outleft)
+        nlines += grepbuf (ctx->bufbeg + save - residue, ctx->buflim);
+      if (ctx->pending)
+        prpending (ctx->buflim);
     }
 
  finish_grep:
-  done_on_match = done_on_match_0;
-  out_quiet = out_quiet_0;
-  if (textbin_is_binary (textbin) && !out_quiet && nlines != 0)
-    printf (_("Binary file %s matches\n"), filename);
+  ctx->done_on_match = done_on_match_0;
+  ctx->out_quiet = out_quiet_0;
+  if (textbin_is_binary (textbin) && !ctx->out_quiet && nlines != 0)
+    printf (_("Binary file %s matches\n"), ctx->filename);
   return nlines;
 }
 
@@ -1478,7 +1506,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
   if (ent->fts_info == FTS_DP)
     {
       if (directories == RECURSE_DIRECTORIES && command_line)
-        out_file &= ~ (2 * !no_filenames);
+        ctx->out_file &= ~ (2 * !no_filenames);
       return true;
     }
 
@@ -1491,9 +1519,9 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       return true;
     }
 
-  filename = ent->fts_path;
-  if (omit_dot_slash && filename[1])
-    filename += 2;
+  ctx->filename = ent->fts_path;
+  if (omit_dot_slash && ctx->filename[1])
+    ctx->filename += 2;
   follow = (fts->fts_options & FTS_LOGICAL
             || (fts->fts_options & FTS_COMFOLLOW && command_line));
 
@@ -1502,7 +1530,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
     case FTS_D:
       if (directories == RECURSE_DIRECTORIES)
         {
-          out_file |= 2 * !no_filenames;
+          ctx->out_file |= 2 * !no_filenames;
           return true;
         }
       fts_set (fts, ent, FTS_SKIP);
@@ -1510,14 +1538,14 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 
     case FTS_DC:
       if (!suppress_errors)
-        error (0, 0, _("warning: %s: %s"), filename,
+        error (0, 0, _("warning: %s: %s"), ctx->filename,
                _("recursive directory loop"));
       return true;
 
     case FTS_DNR:
     case FTS_ERR:
     case FTS_NS:
-      suppressible_error (filename, ent->fts_errno);
+      suppressible_error (ctx->filename, ent->fts_errno);
       return true;
 
     case FTS_DEFAULT:
@@ -1534,7 +1562,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
               int flag = follow ? 0 : AT_SYMLINK_NOFOLLOW;
               if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
                 {
-                  suppressible_error (filename, errno);
+                  suppressible_error (ctx->filename, errno);
                   return true;
                 }
               st = &st1;
@@ -1586,7 +1614,7 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
   if (desc < 0)
     {
       if (follow || ! open_symlink_nofollow_error (errno))
-        suppressible_error (filename, errno);
+        suppressible_error (ctx->filename, errno);
       return true;
     }
   return grepdesc (desc, command_line);
@@ -1607,7 +1635,7 @@ grepdesc (int desc, bool command_line)
      directory for a non-directory while 'grep' is running.  */
   if (fstat (desc, &st) != 0)
     {
-      suppressible_error (filename, errno);
+      suppressible_error (ctx->filename, errno);
       goto closeout;
     }
 
@@ -1616,7 +1644,7 @@ grepdesc (int desc, bool command_line)
     goto closeout;
 
   if (desc != STDIN_FILENO && command_line
-      && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))
+      && skipped_file (ctx->filename, true, S_ISDIR (st.st_mode) != 0))
     goto closeout;
 
   if (desc != STDIN_FILENO
@@ -1634,9 +1662,9 @@ grepdesc (int desc, bool command_line)
       /* Close DESC now, to conserve file descriptors if the race
          condition occurs many times in a deep recursion.  */
       if (close (desc) != 0)
-        suppressible_error (filename, errno);
+        suppressible_error (ctx->filename, errno);
 
-      fts_arg[0] = (char *) filename;
+      fts_arg[0] = (char *) ctx->filename;
       fts_arg[1] = NULL;
       fts = fts_open (fts_arg, opts, NULL);
 
@@ -1645,9 +1673,9 @@ grepdesc (int desc, bool command_line)
       while ((ent = fts_read (fts)))
         status &= grepdirent (fts, ent, command_line);
       if (errno)
-        suppressible_error (filename, errno);
+        suppressible_error (ctx->filename, errno);
       if (fts_close (fts) != 0)
-        suppressible_error (filename, errno);
+        suppressible_error (ctx->filename, errno);
       return status;
     }
   if (desc != STDIN_FILENO
@@ -1675,12 +1703,13 @@ grepdesc (int desc, bool command_line)
      so there is no risk of malfunction.  But even --max-count=2, with
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
-  if (!out_quiet && list_files == 0 && 1 < max_count
+  if (!ctx->out_quiet && list_files == 0 && 1 < max_count
       && S_ISREG (out_stat.st_mode) && out_stat.st_ino
       && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
-        error (0, 0, _("input file %s is also the output"), quote (filename));
+        error (0, 0, _("input file %s is also the output"),
+               quote (ctx->filename));
       errseen = true;
       goto closeout;
     }
@@ -1699,7 +1728,7 @@ grepdesc (int desc, bool command_line)
     {
       if (count_matches)
         {
-          if (out_file)
+          if (ctx->out_file)
             {
               print_filename ();
               if (filename_mask)
@@ -1719,17 +1748,18 @@ grepdesc (int desc, bool command_line)
 
       if (desc == STDIN_FILENO)
         {
-          off_t required_offset = outleft ? bufoffset : after_last_match;
-          if (required_offset != bufoffset
+          off_t required_offset = ctx->outleft ?
+            ctx->bufoffset : ctx->after_last_match;
+          if (required_offset != ctx->bufoffset
               && lseek (desc, required_offset, SEEK_SET) < 0
               && S_ISREG (st.st_mode))
-            suppressible_error (filename, errno);
+            suppressible_error (ctx->filename, errno);
         }
     }
 
  closeout:
   if (desc != STDIN_FILENO && close (desc) != 0)
-    suppressible_error (filename, errno);
+    suppressible_error (ctx->filename, errno);
   return status;
 }
 
@@ -1738,12 +1768,12 @@ grep_command_line_arg (char const *arg)
 {
   if (STREQ (arg, "-"))
     {
-      filename = label ? label : _("(standard input)");
+      ctx->filename = label ? label : _("(standard input)");
       return grepdesc (STDIN_FILENO, true);
     }
   else
     {
-      filename = arg;
+      ctx->filename = arg;
       return grepfile (AT_FDCWD, arg, true, true);
     }
 }
@@ -2503,9 +2533,9 @@ main (int argc, char **argv)
   if (exit_on_match | list_files)
     {
       count_matches = false;
-      done_on_match = true;
+      ctx->done_on_match = true;
     }
-  out_quiet = count_matches | done_on_match;
+  ctx->out_quiet = count_matches | ctx->done_on_match;
 
   if (out_after < 0)
     out_after = default_context;
@@ -2587,7 +2617,7 @@ main (int argc, char **argv)
                       == out_invert);
 
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
-    out_file = 1;
+    ctx->out_file = 1;
 
 #ifdef SET_BINARY
   /* Output is set to binary mode because we shouldn't convert
