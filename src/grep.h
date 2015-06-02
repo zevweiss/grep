@@ -31,4 +31,5 @@ extern char eolbyte;		/* -z */
 
 extern bool buf_has_encoding_errors (char *, size_t);
 
+struct grepctx;
 #endif

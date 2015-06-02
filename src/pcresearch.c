@@ -182,7 +182,7 @@ Pcompile (char const *pattern, size_t size)
 }
 
 size_t
-Pexecute (char *buf, size_t size, size_t *match_size,
+Pexecute (struct grepctx *ctx, char *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
