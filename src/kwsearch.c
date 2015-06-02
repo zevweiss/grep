@@ -102,7 +102,7 @@ mb_case_map_apply (mb_len_map_t const *map, size_t *off, size_t *len)
 }
 
 size_t
-Fexecute (char const *buf, size_t size, size_t *match_size,
+Fexecute (struct grepctx *ctx, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
   char const *beg, *try, *end, *mb_start;
