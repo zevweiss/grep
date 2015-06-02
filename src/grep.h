@@ -44,6 +44,7 @@ enum textbin
     TEXTBIN_TEXT = 1
   };
 
-extern enum textbin get_input_textbin (void);
+struct grepctx;
+extern enum textbin get_input_textbin (struct grepctx *);
 
 #endif
