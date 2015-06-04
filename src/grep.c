@@ -2499,12 +2499,12 @@ main (int argc, char **argv)
      other output options.  */
   if (exit_on_match)
     list_files = 0;
-  if (exit_on_match | list_files)
+  if (exit_on_match || list_files)
     {
       count_matches = false;
       ctx->done_on_match = true;
     }
-  ctx->out_quiet = count_matches | ctx->done_on_match;
+  ctx->out_quiet = count_matches || ctx->done_on_match;
 
   if (out_after < 0)
     out_after = default_context;
