@@ -1321,9 +1321,7 @@ grepbuf (struct grepctx *ctx, char const *beg, char const *lim)
   return outleft0 - ctx->outleft;
 }
 
-/* Search a given file.  Normally, return a count of lines printed;
-   but if the file is a directory and we search it recursively, then
-   return -2 if there was a match, and -1 otherwise.  */
+/* Search a given (non-directory) file.  Return a count of lines printed. */
 static intmax_t
 grep (struct grepctx *ctx, int fd, struct stat const *st)
 {
@@ -1714,39 +1712,34 @@ grepdesc (struct grepctx *ctx, int desc, bool command_line)
 #endif
 
   count = grep (ctx, desc, &st);
-  if (count < 0)
-    status = count + 2;
-  else
+  if (count_matches)
     {
-      if (count_matches)
-        {
-          if (ctx->out_file)
-            {
-              print_filename (ctx);
-              if (filename_mask)
-                print_sep (SEP_CHAR_SELECTED);
-              else
-                fputc (0, stdout);
-            }
-          printf ("%" PRIdMAX "\n", count);
-        }
-
-      status = !count;
-      if (list_files == 1 - 2 * status)
+      if (ctx->out_file)
         {
           print_filename (ctx);
-          fputc ('\n' & filename_mask, stdout);
+          if (filename_mask)
+            print_sep (SEP_CHAR_SELECTED);
+          else
+            fputc (0, stdout);
         }
+      printf ("%" PRIdMAX "\n", count);
+    }
 
-      if (desc == STDIN_FILENO)
-        {
-          off_t required_offset = ctx->outleft ?
-            ctx->bufoffset : ctx->after_last_match;
-          if (required_offset != ctx->bufoffset
-              && lseek (desc, required_offset, SEEK_SET) < 0
-              && S_ISREG (st.st_mode))
-            suppressible_error (ctx->filename, errno);
-        }
+  status = !count;
+  if (list_files == 1 - 2 * status)
+    {
+      print_filename (ctx);
+      fputc ('\n' & filename_mask, stdout);
+    }
+
+  if (desc == STDIN_FILENO)
+    {
+      off_t required_offset = ctx->outleft ?
+        ctx->bufoffset : ctx->after_last_match;
+      if (required_offset != ctx->bufoffset
+          && lseek (desc, required_offset, SEEK_SET) < 0
+          && S_ISREG (st.st_mode))
+        suppressible_error (ctx->filename, errno);
     }
 
  closeout:
