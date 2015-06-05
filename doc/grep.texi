@@ -731,6 +731,20 @@ directory, recursively, following all symbolic links.
 Use line buffering on output.
 This can cause a performance penalty.
 
+@item -M [@var{num}]
+@itemx --parallel[=@var{num}]
+@opindex -M
+@opindex --parallel
+@cindex parallel, multithreaded
+Parallelize work between @var{num} threads.  This is only useful when
+multiple files are given as command-line arguments or when operating
+recursively (parallelization is done at file granularity).  If
+@var{num} is not specified, it defaults to the number of available
+processors.  Note that using this option introduces nondeterminism
+into @command{grep}'s output; the ordering of output lines may vary
+from one run to the next, and lines from different files may be
+intermingled.
+
 @item -U
 @itemx --binary
 @opindex -U
