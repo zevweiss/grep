@@ -129,10 +129,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   size_t total = size;
   char *motif;
 
+  dfa = dfaalloc ();
+
   if (match_icase)
     syntax_bits |= RE_ICASE;
   re_set_syntax (syntax_bits);
-  dfasyntax (syntax_bits, match_icase, eolbyte);
+  dfasyntax (dfa, syntax_bits, match_icase, eolbyte);
 
   /* For GNU regex, pass the patterns separately to detect errors like
      "[\nallo\n]\n", where the patterns are "[", "allo" and "]", and
@@ -198,7 +200,6 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   else
     motif = NULL;
 
-  dfa = dfaalloc ();
   dfacomp (pattern, size, dfa, 1);
   kwsmusts ();
 
