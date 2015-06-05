@@ -54,8 +54,8 @@ main (int argc, char **argv)
 
   setlocale (LC_ALL, "");
 
-  dfasyntax (RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0, '\n');
   dfa = dfaalloc ();
+  dfasyntax (dfa, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0, '\n');
   dfacomp (argv[1], strlen (argv[1]), dfa, 0);
 
   beg = argv[2];
