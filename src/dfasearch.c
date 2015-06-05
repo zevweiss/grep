@@ -38,7 +38,7 @@ static kwset_t kwset;
 static struct dfa *dfa;
 
 /* The Regex compiled patterns.  */
-static struct patterns
+static const struct patterns
 {
   /* Regex compiled regexp. */
   struct re_pattern_buffer regexbuf;
