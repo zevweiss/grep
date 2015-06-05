@@ -33,7 +33,7 @@ wordchar (wint_t wc)
    any string matching the regexp. */
 static kwset_t kwset;
 
-void
+void *
 Fcompile (char const *pattern, size_t size)
 {
   size_t total = size;
@@ -75,11 +75,13 @@ Fcompile (char const *pattern, size_t size)
   while (p);
 
   kwsprep (kwset);
+
+  return NULL;
 }
 
 size_t
-Fexecute (struct grepctx *ctx, char const *buf, size_t size, size_t *match_size,
-          char const *start_ptr)
+Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
+          size_t *match_size, char const *start_ptr)
 {
   char const *beg, *try, *end, *mb_start;
   size_t len;
