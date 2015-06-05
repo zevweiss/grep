@@ -1500,11 +1500,7 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
   if (ent->fts_info == FTS_DP)
-    {
-      if (directories == RECURSE_DIRECTORIES && command_line)
-        ctx->out_file &= ~ (2 * !no_filenames);
-      return true;
-    }
+    return true;
 
   if (skipped_file (ent->fts_name, command_line,
                     (ent->fts_info == FTS_D || ent->fts_info == FTS_DC
@@ -1524,10 +1520,7 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
     {
     case FTS_D:
       if (directories == RECURSE_DIRECTORIES)
-        {
-          ctx->out_file |= 2 * !no_filenames;
-          return true;
-        }
+        return true;
       fts_set (fts, ent, FTS_SKIP);
       break;
 
@@ -2619,7 +2612,9 @@ main (int argc, char **argv)
   skip_empty_lines = ((execute (ctx, eolbytes + 1, 1, &match_size, NULL) == 0)
                       == out_invert);
 
-  if ((argc - optind > 1 && !no_filenames) || with_filenames)
+  if (((argc - optind > 1 || directories == RECURSE_DIRECTORIES)
+       && !no_filenames)
+      || with_filenames)
     ctx->out_file = 1;
 
 #ifdef SET_BINARY
