@@ -29,14 +29,6 @@ wordchar (wint_t wc)
   return wc == L'_' || iswalnum (wc);
 }
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
-
-/* DFA compiled regexp. */
-static struct dfa *dfa;
-
 /* The Regex compiled patterns.  */
 static const struct patterns
 {
@@ -46,15 +38,26 @@ static const struct patterns
                                Q@#%!# library interface in regex.c.  */
 } patterns0;
 
-static struct patterns *patterns;
-static size_t pcount;
+struct dfa_comp
+{
+  /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
+     a list of strings, at least one of which is known to occur in
+     any string matching the regexp. */
+  kwset_t kwset;
 
-/* Number of compiled fixed strings known to exactly match the regexp.
-   If kwsexec returns < kwset_exact_matches, then we don't need to
-   call the regexp matcher at all. */
-static size_t kwset_exact_matches;
+  /* DFA compiled regexp. */
+  struct dfa *dfa;
 
-static bool begline;
+  struct patterns *patterns;
+  size_t pcount;
+
+  /* Number of compiled fixed strings known to exactly match the regexp.
+     If kwsexec returns < kwset_exact_matches, then we don't need to
+     call the regexp matcher at all. */
+  size_t kwset_exact_matches;
+
+  bool begline;
+};
 
 void
 dfaerror (char const *mesg)
@@ -84,38 +87,38 @@ dfawarn (char const *mesg)
    to find those strings, and thus quickly filter out impossible
    matches. */
 static void
-kwsmusts (void)
+kwsmusts (struct dfa_comp *dc)
 {
-  struct dfamust *dm = dfamust (dfa);
+  struct dfamust *dm = dfamust (dc->dfa);
   if (!dm)
     return;
-  kwsinit (&kwset);
+  kwsinit (&dc->kwset);
   if (dm->exact)
     {
       /* Prepare a substring whose presence implies a match.
          The kwset matcher will return the index of the matching
          string that it chooses. */
-      ++kwset_exact_matches;
+      ++dc->kwset_exact_matches;
       size_t old_len = strlen (dm->must);
       size_t new_len = old_len + dm->begline + dm->endline;
       char *must = xmalloc (new_len);
       char *mp = must;
       *mp = eolbyte;
       mp += dm->begline;
-      begline |= dm->begline;
+      dc->begline |= dm->begline;
       memcpy (mp, dm->must, old_len);
       if (dm->endline)
         mp[old_len] = eolbyte;
-      kwsincr (kwset, must, new_len);
+      kwsincr (dc->kwset, must, new_len);
       free (must);
     }
   else
     {
       /* Otherwise, filtering with this substring should help reduce the
          search space, but we'll still have to use the regexp matcher.  */
-      kwsincr (kwset, dm->must, strlen (dm->must));
+      kwsincr (dc->kwset, dm->must, strlen (dm->must));
     }
-  kwsprep (kwset);
+  kwsprep (dc->kwset);
   dfamustfree (dm);
 }
 
@@ -124,13 +127,14 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   size_t total = size;
   char *motif;
+  struct dfa_comp *dc = xcalloc (1, sizeof (*dc));
 
-  dfa = dfaalloc ();
+  dc->dfa = dfaalloc ();
 
   if (match_icase)
     syntax_bits |= RE_ICASE;
   re_set_syntax (syntax_bits);
-  dfasyntax (dfa, syntax_bits, match_icase, eolbyte);
+  dfasyntax (dc->dfa, syntax_bits, match_icase, eolbyte);
 
   /* For GNU regex, pass the patterns separately to detect errors like
      "[\nallo\n]\n", where the patterns are "[", "allo" and "]", and
@@ -153,14 +157,15 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
           total = 0;
         }
 
-      patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
-      patterns[pcount] = patterns0;
+      dc->patterns = xnrealloc (dc->patterns, dc->pcount + 1,
+                                sizeof *dc->patterns);
+      dc->patterns[dc->pcount] = patterns0;
 
-      char const *err = re_compile_pattern (p, len,
-                                            &(patterns[pcount].regexbuf));
+      char const *err =
+        re_compile_pattern (p, len, &(dc->patterns[dc->pcount].regexbuf));
       if (err)
         error (EXIT_TROUBLE, 0, "%s", err);
-      pcount++;
+      dc->pcount++;
       p = sep;
     }
   while (p);
@@ -196,12 +201,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   else
     motif = NULL;
 
-  dfacomp (pattern, size, dfa, 1);
-  kwsmusts ();
+  dfacomp (pattern, size, dc->dfa, 1);
+  kwsmusts (dc);
 
   free(motif);
 
-  return NULL;
+  return dc;
 }
 
 size_t
@@ -215,8 +220,9 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
   size_t len, best_len;
   struct kwsmatch kwsm;
   size_t i;
-  struct dfa *superset = dfasuperset (dfa);
-  bool dfafast = dfaisfast (dfa);
+  struct dfa_comp *dc = vdc;
+  struct dfa *superset = dfasuperset (dc->dfa);
+  bool dfafast = dfaisfast (dc->dfa);
 
   mb_start = buf;
   buflim = buf + size;
@@ -232,13 +238,13 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
           bool exact_kwset_match = false;
 
           /* Try matching with KWset, if it's defined.  */
-          if (kwset)
+          if (dc->kwset)
             {
               char const *prev_beg;
 
               /* Find a possible match using the KWset matcher.  */
-              size_t offset = kwsexec (kwset, beg - begline,
-                                       buflim - beg + begline, &kwsm);
+              size_t offset = kwsexec (dc->kwset, beg - dc->begline,
+                                       buflim - beg + dc->begline, &kwsm);
               if (offset == (size_t) -1)
                 goto failure;
               match = beg + offset;
@@ -255,7 +261,7 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
                  PREV_BEG is less than 64 or (MATCH - PREV_BEG), this is the
                  greater of the latter two values; this temporarily prefers
                  the DFA to KWset.  */
-              exact_kwset_match = kwsm.index < kwset_exact_matches;
+              exact_kwset_match = kwsm.index < dc->kwset_exact_matches;
               end = ((exact_kwset_match || !dfafast
                       || MAX (16, match - beg) < (match - prev_beg) >> 2)
                      ? match
@@ -306,7 +312,8 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
             }
 
           /* Try matching with DFA.  */
-          next_beg = dfaexec (dfa, dfa_beg, (char *) end, 0, &count, &backref);
+          next_beg = dfaexec (dc->dfa, dfa_beg, (char *) end, 0, &count,
+                              &backref);
 
           /* If there's no match, or if we've matched the sentinel,
              we're done.  */
@@ -342,18 +349,18 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
       /* Run the possible match through Regex.  */
       best_match = end;
       best_len = 0;
-      for (i = 0; i < pcount; i++)
+      for (i = 0; i < dc->pcount; i++)
         {
-          patterns[i].regexbuf.not_eol = 0;
-          start = re_search (&(patterns[i].regexbuf),
+          dc->patterns[i].regexbuf.not_eol = 0;
+          start = re_search (&(dc->patterns[i].regexbuf),
                              beg, end - beg - 1,
                              ptr - beg, end - ptr - 1,
-                             &(patterns[i].regs));
+                             &(dc->patterns[i].regs));
           if (start < -1)
             xalloc_die ();
           else if (0 <= start)
             {
-              len = patterns[i].regs.end[0] - start;
+              len = dc->patterns[i].regs.end[0] - start;
               match = beg + start;
               if (match > best_match)
                 continue;
@@ -384,11 +391,11 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
                       {
                         /* Try a shorter length anchored at the same place. */
                         --len;
-                        patterns[i].regexbuf.not_eol = 1;
-                        shorter_len = re_match (&(patterns[i].regexbuf),
+                        dc->patterns[i].regexbuf.not_eol = 1;
+                        shorter_len = re_match (&(dc->patterns[i].regexbuf),
                                                 beg, match + len - ptr,
                                                 match - beg,
-                                                &(patterns[i].regs));
+                                                &(dc->patterns[i].regs));
                         if (shorter_len < -1)
                           xalloc_die ();
                       }
@@ -400,18 +407,18 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
                         if (match == end - 1)
                           break;
                         match++;
-                        patterns[i].regexbuf.not_eol = 0;
-                        start = re_search (&(patterns[i].regexbuf),
+                        dc->patterns[i].regexbuf.not_eol = 0;
+                        start = re_search (&(dc->patterns[i].regexbuf),
                                            beg, end - beg - 1,
                                            match - beg, end - match - 1,
-                                           &(patterns[i].regs));
+                                           &(dc->patterns[i].regs));
                         if (start < 0)
                           {
                             if (start < -1)
                               xalloc_die ();
                             break;
                           }
-                        len = patterns[i].regs.end[0] - start;
+                        len = dc->patterns[i].regs.end[0] - start;
                         match = beg + start;
                       }
                   } /* while (match <= best_match) */
