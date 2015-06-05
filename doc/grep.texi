@@ -781,6 +781,20 @@ and is fully buffered otherwise.  With full buffering, the output
 buffer is flushed when full; with line buffering, the buffer is also
 flushed after every output line.  The buffer size is system dependent.
 
+@item -p [@var{num}]
+@itemx --parallel[=@var{num}]
+@opindex -p
+@opindex --parallel
+@cindex parallel, multithreaded
+Parallelize work between @var{num} threads.  This is only useful when
+multiple files are given as command-line arguments or when operating
+recursively (parallelization is done at file granularity).  If
+@var{num} is not specified, it defaults to the number of available
+processors.  Note that using this option introduces nondeterminism
+into @command{grep}'s output; the ordering of output lines may vary
+from one run to the next, and lines from different files may be
+intermingled.
+
 @item -U
 @itemx --binary
 @opindex -U

@@ -48,8 +48,6 @@ enum { NCHAR = UCHAR_MAX + 1 };
 # define initialize_main(argcp, argvp)
 #endif
 
-#include "unlocked-io.h"
-
 _GL_INLINE_HEADER_BEGIN
 #ifndef SYSTEM_INLINE
 # define SYSTEM_INLINE _GL_INLINE

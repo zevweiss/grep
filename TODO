@@ -25,8 +25,6 @@ tutorial and examples.
 Some tests in tests/spencer2.tests should have failed!  Need to filter out
 some bugs in dfa.[ch]/regex.[ch].
 
-Multithreading?
-
 GNU grep originally did 32-bit arithmetic.  Although it has moved to
 64-bit on 64-bit platforms by using types like ptrdiff_t and size_t,
 this conversion has not been entirely systematic and should be checked.
