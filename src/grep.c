@@ -26,6 +26,9 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <pthread.h>
 #include "system.h"
 
 #include "argmatch.h"
@@ -86,7 +89,6 @@ struct grepctx
   void *compiled_pattern;
 
   bool out_quiet;		/* Suppress all normal output. */
-  int out_file;		/* Print filenames. */
 
   /* Internal variables to keep track of byte count, context, etc. */
   uintmax_t totalcc;	/* Total character count before bufbeg. */
@@ -128,8 +130,7 @@ struct grepctx
 #endif
 };
 
-/* XXX __attribute__(())??  (Got a warning without it...) */
-__attribute__((pure)) enum textbin
+enum textbin _GL_ATTRIBUTE_PURE
 get_input_textbin (struct grepctx *ctx)
 {
   return ctx->input_textbin;
@@ -351,7 +352,7 @@ static struct exclude *excluded_patterns;
 static struct exclude *excluded_directory_patterns;
 /* Short options.  */
 static char const short_options[] =
-"0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiLlm:noqRrsuvwxyZz";
+"0123456789A:B:C:D:EFGHIM::PTUVX:abcd:e:f:hiLlm:noqRrsuvwxyZz";
 
 /* Non-boolean long options that have no corresponding short equivalents.  */
 enum
@@ -401,6 +402,7 @@ static struct option const long_options[] =
   {"line-number", no_argument, NULL, 'n'},
   {"line-regexp", no_argument, NULL, 'x'},
   {"max-count", required_argument, NULL, 'm'},
+  {"parallel", optional_argument, NULL, 'M'},
 
   {"no-filename", no_argument, NULL, 'h'},
   {"no-group-separator", no_argument, NULL, GROUP_SEPARATOR_OPTION},
@@ -430,6 +432,10 @@ bool match_lines;
 char eolbyte;
 
 static char const *matcher;
+
+static int out_file;		/* Print filenames. */
+static int out_quiet;
+static int done_on_match;
 
 /* For error messages. */
 /* Omit leading "./" from file names in diagnostics.  */
@@ -468,8 +474,7 @@ static enum
     SKIP_DEVICES
   } devices = READ_COMMAND_LINE_DEVICES;
 
-static bool grepfile (struct grepctx *, int, char const *, bool, bool);
-static bool grepdesc (struct grepctx *, int, bool);
+static bool search_file (int, char const *, char const *, bool, bool);
 
 static void dos_binary (void);
 static void dos_unix_byte_offsets (void);
@@ -505,12 +510,35 @@ typedef size_t (*execute_fp_t) (void *, struct grepctx *, char const *, size_t,
 static compile_fp_t compile;
 static execute_fp_t execute;
 
+static pthread_mutex_t output_lock;
+
+static void
+lock_output (void)
+{
+  if (pthread_mutex_lock (&output_lock))
+    abort ();
+}
+
+static void
+unlock_output (void)
+{
+  if (pthread_mutex_unlock (&output_lock))
+    abort ();
+}
+
+/* Thread-safe error() */
+#define ts_error(s, e, f, ...) do { \
+    lock_output ();                 \
+    error (s, e, f, ##__VA_ARGS__); \
+    unlock_output ();               \
+  } while (0)
+
 /* Like error, but suppress the diagnostic if requested.  */
 static void
 suppressible_error (char const *mesg, int errnum)
 {
   if (! suppress_errors)
-    error (0, errnum, "%s", mesg);
+      ts_error (0, errnum, "%s", mesg);
   errseen = true;
 }
 
@@ -678,8 +706,8 @@ context_length_arg (char const *str, intmax_t *out)
         break;
       /* Fall through.  */
     default:
-      error (EXIT_TROUBLE, 0, "%s: %s", str,
-             _("invalid context length argument"));
+      ts_error (EXIT_TROUBLE, 0, "%s: %s", str,
+                _("invalid context length argument"));
     }
 }
 
@@ -720,7 +748,7 @@ add_count (uintmax_t a, uintmax_t b)
 {
   uintmax_t sum = a + b;
   if (sum < a)
-    error (EXIT_TROUBLE, 0, _("input is too large to count"));
+    ts_error (EXIT_TROUBLE, 0, _("input is too large to count"));
   return sum;
 }
 
@@ -984,7 +1012,7 @@ print_line_head (struct grepctx *ctx, char const *beg, char const *lim,
 {
   bool pending_sep = false;
 
-  if (ctx->out_file)
+  if (out_file)
     {
       print_filename (ctx);
       if (filename_mask)
@@ -1159,7 +1187,7 @@ prline (struct grepctx *ctx, char const *beg, char const *lim, char sep)
   if (ferror (stdout))
     {
       write_error_seen = true;
-      error (EXIT_TROUBLE, 0, _("write error"));
+      ts_error (EXIT_TROUBLE, 0, _("write error"));
     }
 
   ctx->lastout = lim;
@@ -1175,6 +1203,7 @@ prpending (struct grepctx *ctx, char const *lim)
 {
   if (!ctx->lastout)
     ctx->lastout = ctx->bufbeg;
+  lock_output ();
   while (ctx->pending > 0 && ctx->lastout < lim)
     {
       char const *nl = memchr (ctx->lastout, eolbyte, lim - ctx->lastout);
@@ -1189,19 +1218,24 @@ prpending (struct grepctx *ctx, char const *lim)
       else
         ctx->pending = 0;
     }
+  unlock_output ();
 }
 
 /* Output the lines between BEG and LIM.  Deal with context.  */
 static void
 prtext (struct grepctx *ctx, char const *beg, char const *lim)
 {
-  static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
+  /* Avoid printing SEP_STR_GROUP before any output.  Static is OK here since
+     it's only accessed under output_lock. */
+  static bool used;
   char eol = eolbyte;
 
   if (!ctx->out_quiet && ctx->pending > 0)
     prpending (ctx, beg);
 
   char const *p = beg;
+
+  lock_output ();
 
   if (!ctx->out_quiet)
     {
@@ -1260,6 +1294,8 @@ prtext (struct grepctx *ctx, char const *beg, char const *lim)
   ctx->pending = ctx->out_quiet ? 0 : MAX (0, out_after);
   used = true;
   ctx->outleft -= n;
+
+  unlock_output ();
 }
 
 /* Replace all NUL bytes in buffer P (which ends at LIM) with EOL.
@@ -1487,16 +1523,180 @@ grep (struct grepctx *ctx, int fd, struct stat const *st)
   ctx->done_on_match = done_on_match_0;
   ctx->out_quiet = out_quiet_0;
   if (textbin_is_binary (textbin) && !ctx->out_quiet && nlines != 0)
-    printf (_("Binary file %s matches\n"), ctx->filename);
+    {
+      lock_output ();
+      printf (_("Binary file %s matches\n"), ctx->filename);
+      unlock_output ();
+    }
   return nlines;
 }
 
-static bool
-grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
+struct search_file
 {
+  int fd;
+  char *path;
+  struct stat st;
+  struct search_file *next;
+};
+
+static struct
+{
+  struct search_file *head;
+  struct search_file *tail;
+  int num_files;
+  int producer_done;
+  pthread_mutex_t lock;
+  pthread_cond_t consumer_cond;
+  pthread_cond_t producer_cond;
+} workqueue;
+
+static intmax_t max_queued_files;
+
+/* Retrieve a search_file from the work queue, returning NULL if there's
+   nothing left to process. */
+static struct search_file *
+dequeue_search_file (void)
+{
+  struct search_file *workfile;
+
+  pthread_mutex_lock (&workqueue.lock);
+  while (!workqueue.num_files && !workqueue.producer_done)
+    pthread_cond_wait (&workqueue.consumer_cond, &workqueue.lock);
+  if (!workqueue.num_files && workqueue.producer_done)
+    workfile = NULL;
+  else
+    {
+      workfile = workqueue.head;
+      workqueue.head = workqueue.head->next;
+      if (!workqueue.head)
+        workqueue.tail = NULL;
+      workqueue.num_files--;
+      pthread_cond_signal (&workqueue.producer_cond);
+    }
+  pthread_mutex_unlock (&workqueue.lock);
+
+  return workfile;
+}
+
+static void
+enqueue_search_file (int fd, char const *path, struct stat *st)
+{
+  struct search_file *sf;
+
+  sf = xmalloc (sizeof (*sf));
+  sf->fd = fd;
+  sf->path = xstrdup (path);
+  sf->st = *st;
+  sf->next = NULL;
+
+  pthread_mutex_lock (&workqueue.lock);
+  while (workqueue.num_files >= max_queued_files)
+    pthread_cond_wait (&workqueue.producer_cond, &workqueue.lock);
+  if (!workqueue.head)
+    workqueue.head = workqueue.tail = sf;
+  else
+    {
+      workqueue.tail->next = sf;
+      workqueue.tail = sf;
+    }
+  workqueue.num_files++;
+  pthread_cond_signal (&workqueue.consumer_cond);
+  pthread_mutex_unlock (&workqueue.lock);
+}
+
+static void
+finish_workqueue (void)
+{
+  pthread_mutex_lock (&workqueue.lock);
+  workqueue.producer_done = 1;
+  pthread_cond_broadcast (&workqueue.consumer_cond);
+  pthread_mutex_unlock (&workqueue.lock);
+}
+
+static void *
+worker_thread_func (void *arg)
+{
+  struct search_file* file;
+  struct grepctx ctx;
+  intmax_t count;
+  bool status = true;
+
+  memset (&ctx, 0, sizeof (ctx));
+  if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
+    abort ();
+  ctx.bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
+                  + pagesize + sizeof (uword));
+  ctx.buffer = xmalloc (ctx.bufalloc);
+
+  ctx.out_quiet = out_quiet;
+  ctx.done_on_match = done_on_match;
+  ctx.compiled_pattern = arg;
+
+  while ((file = dequeue_search_file ()))
+    {
+      ctx.filename = file->path;
+
+#if defined SET_BINARY
+      /* Set input to binary mode.  Pipes are simulated with files
+         on DOS, so this includes the case of "foo | grep bar".  */
+      if (!isatty (file->fd))
+        SET_BINARY (file->fd);
+#endif
+
+      count = grep (&ctx, file->fd, &file->st);
+      status = !count && status;
+      if (count_matches)
+        {
+          lock_output ();
+          if (out_file)
+            {
+              print_filename (&ctx);
+              if (filename_mask)
+                print_sep (SEP_CHAR_SELECTED);
+              else
+                fputc (0, stdout);
+            }
+          printf ("%" PRIdMAX "\n", count);
+          unlock_output ();
+        }
+
+      if ((list_files == LISTFILES_MATCHING && count > 0)
+          || (list_files == LISTFILES_NONMATCHING && count == 0))
+        {
+          lock_output ();
+          print_filename (&ctx);
+          fputc ('\n' & filename_mask, stdout);
+          unlock_output ();
+        }
+
+      if (file->fd == STDIN_FILENO)
+        {
+          off_t required_offset =
+            ctx.outleft ? ctx.bufoffset : ctx.after_last_match;
+          if (required_offset != ctx.bufoffset
+              && lseek (file->fd, required_offset, SEEK_SET) < 0
+              && S_ISREG (file->st.st_mode))
+            suppressible_error (file->path, errno);
+        }
+
+      if (file->fd != STDIN_FILENO && close (file->fd) != 0)
+        suppressible_error (file->path, errno);
+      free (file->path);
+      free (file);
+    }
+
+  return (void *) status;
+}
+
+static bool
+search_dirent (FTS *fts, FTSENT *ent, bool command_line)
+{
+  char *name;
   bool follow;
   struct stat *st = ent->fts_statp;
-  command_line &= ent->fts_level == FTS_ROOTLEVEL;
+
+  if (ent->fts_level != FTS_ROOTLEVEL)
+    command_line = false;
 
   if (ent->fts_info == FTS_DP)
     return true;
@@ -1509,9 +1709,9 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
       return true;
     }
 
-  ctx->filename = ent->fts_path;
-  if (omit_dot_slash && ctx->filename[1])
-    ctx->filename += 2;
+  name = ent->fts_path;
+  if (omit_dot_slash && strlen (name) >= 2)
+    name += 2;
   follow = (fts->fts_options & FTS_LOGICAL
             || (fts->fts_options & FTS_COMFOLLOW && command_line));
 
@@ -1525,14 +1725,14 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
 
     case FTS_DC:
       if (!suppress_errors)
-        error (0, 0, _("warning: %s: %s"), ctx->filename,
-               _("recursive directory loop"));
+        ts_error (0, 0, _("warning: %s: %s"), name,
+                    _("recursive directory loop"));
       return true;
 
     case FTS_DNR:
     case FTS_ERR:
     case FTS_NS:
-      suppressible_error (ctx->filename, ent->fts_errno);
+      suppressible_error (name, ent->fts_errno);
       return true;
 
     case FTS_DEFAULT:
@@ -1549,7 +1749,7 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
               int flag = follow ? 0 : AT_SYMLINK_NOFOLLOW;
               if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
                 {
-                  suppressible_error (ctx->filename, errno);
+                  suppressible_error (name, errno);
                   return true;
                 }
               st = &st1;
@@ -1571,59 +1771,24 @@ grepdirent (struct grepctx *ctx, FTS *fts, FTSENT *ent, bool command_line)
       abort ();
     }
 
-  return grepfile (ctx, fts->fts_cwd_fd, ent->fts_accpath, follow,
-                   command_line);
-}
-
-/* True if errno is ERR after 'open ("symlink", ... O_NOFOLLOW ...)'.
-   POSIX specifies ELOOP, but it's EMLINK on FreeBSD and EFTYPE on NetBSD.  */
-static bool
-open_symlink_nofollow_error (int err)
-{
-  if (err == ELOOP || err == EMLINK)
-    return true;
-#ifdef EFTYPE
-  if (err == EFTYPE)
-    return true;
-#endif
-  return false;
+  return search_file (fts->fts_cwd_fd, ent->fts_accpath, name, follow,
+                      command_line);
 }
 
 static bool
-grepfile (struct grepctx *ctx, int dirdesc, char const *name, bool follow,
-          bool command_line)
+search_desc (int desc, char const *path, bool command_line)
 {
-  int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
-  if (desc < 0)
-    {
-      if (follow || ! open_symlink_nofollow_error (errno))
-        suppressible_error (ctx->filename, errno);
-      return true;
-    }
-  return grepdesc (ctx, desc, command_line);
-}
-
-static bool
-grepdesc (struct grepctx *ctx, int desc, bool command_line)
-{
-  intmax_t count;
-  bool status = true;
   struct stat st;
+  bool status = true;
 
-  /* Get the file status, possibly for the second time.  This catches
-     a race condition if the directory entry changes after the
-     directory entry is read and before the file is opened.  For
-     example, normally DESC is a directory only at the top level, but
-     there is an exception if some other process substitutes a
-     directory for a non-directory while 'grep' is running.  */
   if (fstat (desc, &st) != 0)
     {
-      suppressible_error (ctx->filename, errno);
+      suppressible_error (path, errno);
       goto closeout;
     }
 
   if (desc != STDIN_FILENO && command_line
-      && skipped_file (ctx->filename, true, S_ISDIR (st.st_mode) != 0))
+      && skipped_file (path, true, S_ISDIR (st.st_mode)))
     goto closeout;
 
   if (desc != STDIN_FILENO
@@ -1636,25 +1801,23 @@ grepdesc (struct grepctx *ctx, int desc, bool command_line)
       FTS *fts;
       FTSENT *ent;
       int opts = fts_options & ~(command_line ? 0 : FTS_COMFOLLOW);
-      char *fts_arg[2];
+      char *fts_arg[2] = { (char *) path, NULL, };
 
       /* Close DESC now, to conserve file descriptors if the race
          condition occurs many times in a deep recursion.  */
       if (close (desc) != 0)
-        suppressible_error (ctx->filename, errno);
+        suppressible_error (path, errno);
 
-      fts_arg[0] = (char *) ctx->filename;
-      fts_arg[1] = NULL;
       fts = fts_open (fts_arg, opts, NULL);
 
       if (!fts)
         xalloc_die ();
       while ((ent = fts_read (fts)))
-        status &= grepdirent (ctx, fts, ent, command_line);
+        status = search_dirent (fts, ent, command_line) && status;
       if (errno)
-        suppressible_error (ctx->filename, errno);
-      if (fts_close (fts) != 0)
-        suppressible_error (ctx->filename, errno);
+        suppressible_error (path, errno);
+      if (fts_close (fts))
+        suppressible_error (path, errno);
       return status;
     }
   if (desc != STDIN_FILENO
@@ -1682,75 +1845,64 @@ grepdesc (struct grepctx *ctx, int desc, bool command_line)
      so there is no risk of malfunction.  But even --max-count=2, with
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
-  if (!ctx->out_quiet && list_files == LISTFILES_NONE && 1 < max_count
+  if (!out_quiet && list_files == LISTFILES_NONE && 1 < max_count
       && S_ISREG (out_stat.st_mode) && out_stat.st_ino
       && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
-        error (0, 0, _("input file %s is also the output"),
-               quote (ctx->filename));
+        ts_error (0, 0, _("input file %s is also the output"), quote (path));
       errseen = true;
       goto closeout;
     }
 
-#if defined SET_BINARY
-  /* Set input to binary mode.  Pipes are simulated with files
-     on DOS, so this includes the case of "foo | grep bar".  */
-  if (!isatty (desc))
-    SET_BINARY (desc);
-#endif
+  /* Request readahead and enqueue a piece of work to worker threads */
+  posix_fadvise (desc, 0, 0, POSIX_FADV_WILLNEED);
+  enqueue_search_file (desc, path, &st);
 
-  count = grep (ctx, desc, &st);
-  if (count_matches)
-    {
-      if (ctx->out_file)
-        {
-          print_filename (ctx);
-          if (filename_mask)
-            print_sep (SEP_CHAR_SELECTED);
-          else
-            fputc (0, stdout);
-        }
-      printf ("%" PRIdMAX "\n", count);
-    }
-
-  status = !count;
-  if ((list_files == LISTFILES_MATCHING && count > 0)
-      || (list_files == LISTFILES_NONMATCHING && count == 0))
-    {
-      print_filename (ctx);
-      fputc ('\n' & filename_mask, stdout);
-    }
-
-  if (desc == STDIN_FILENO)
-    {
-      off_t required_offset = ctx->outleft ?
-        ctx->bufoffset : ctx->after_last_match;
-      if (required_offset != ctx->bufoffset
-          && lseek (desc, required_offset, SEEK_SET) < 0
-          && S_ISREG (st.st_mode))
-        suppressible_error (ctx->filename, errno);
-    }
+  return status;
 
  closeout:
   if (desc != STDIN_FILENO && close (desc) != 0)
-    suppressible_error (ctx->filename, errno);
+    suppressible_error (path, errno);
   return status;
 }
 
+/* True if errno is ERR after 'open ("symlink", ... O_NOFOLLOW ...)'.
+   POSIX specifies ELOOP, but it's EMLINK on FreeBSD and EFTYPE on NetBSD.  */
 static bool
-grep_command_line_arg (struct grepctx *ctx, char const *arg)
+open_symlink_nofollow_error (int err)
+{
+  if (err == ELOOP || err == EMLINK)
+    return true;
+#ifdef EFTYPE
+  if (err == EFTYPE)
+    return true;
+#endif
+  return false;
+}
+
+static bool
+search_file (int dirdesc, char const *name, char const *path, bool follow,
+             bool command_line)
+{
+  int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
+  if (desc < 0)
+    {
+      if (follow || ! open_symlink_nofollow_error (errno))
+        suppressible_error (name, errno);
+      return true;
+    }
+  return search_desc (desc, path, command_line);
+}
+
+static bool
+search_command_line_arg (char const *arg)
 {
   if (STREQ (arg, "-"))
-    {
-      ctx->filename = label ? label : _("(standard input)");
-      return grepdesc (ctx, STDIN_FILENO, true);
-    }
+    return search_desc (STDIN_FILENO, label ? label : _("(standard input)"),
+                        true);
   else
-    {
-      ctx->filename = arg;
-      return grepfile (ctx, AT_FDCWD, arg, true, true);
-    }
+    return search_file (AT_FDCWD, arg, arg, true, true);
 }
 
 _Noreturn void usage (int);
@@ -1791,6 +1943,7 @@ Regexp selection and interpretation:\n"), program_name);
 Miscellaneous:\n\
   -s, --no-messages         suppress error messages\n\
   -v, --invert-match        select non-matching lines\n\
+  -M, --parallel=NUM        use NUM search threads\n\
   -V, --version             display version information and exit\n\
       --help                display this help text and exit\n"));
       printf (_("\
@@ -1921,7 +2074,7 @@ setmatcher (char const *m)
   struct matcher const *p;
 
   if (matcher && !STREQ (matcher, m))
-    error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
+    ts_error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
 
   for (p = matchers; p->compile; p++)
     if (STREQ (m, p->name))
@@ -1932,7 +2085,7 @@ setmatcher (char const *m)
         return;
       }
 
-  error (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
+  ts_error (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
 }
 
 /* Find the white-space-separated options specified by OPTIONS, and
@@ -2002,6 +2155,7 @@ prepend_default_options (char const *options, int *pargc, char ***pargv)
 static int
 get_nondigit_option (int argc, char *const *argv, intmax_t *default_context)
 {
+  /* Static is OK here since this is only called from the main thread. */
   static int prev_digit_optind = -1;
   int this_digit_optind;
   bool was_digit;
@@ -2172,27 +2326,26 @@ main (int argc, char **argv)
 {
   char *keys;
   size_t keycc, oldcc, keyalloc;
-  bool with_filenames, ok;
+  bool with_filenames;
   size_t cc;
+  int i, status;
   int opt, prepended;
   int prev_optind, last_recursive;
   int fread_errno;
   intmax_t default_context;
+  intmax_t num_threads;
   FILE *fp;
-  struct grepctx *ctx = &(struct grepctx){};
+  pthread_t *worker_threads;
+  pthread_mutexattr_t output_lock_attr;
+  void *worker_status;
+  struct rlimit rlim;
+  struct grepctx tmpctx;
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
   program_name = argv[0];
 
-  memset(ctx, 0, sizeof(*ctx));
-
   pagesize = getpagesize ();
-  if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
-    abort ();
-  ctx->bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
-                   + pagesize + sizeof (uword));
-  ctx->buffer = xmalloc (ctx->bufalloc);
 
   keys = NULL;
   keycc = 0;
@@ -2201,6 +2354,7 @@ main (int argc, char **argv)
   filename_mask = ~0;
 
   max_count = INTMAX_MAX;
+  num_threads = 1;
 
   /* The value -1 means to use DEFAULT_CONTEXT. */
   out_after = out_before = -1;
@@ -2208,6 +2362,18 @@ main (int argc, char **argv)
   default_context = -1;
   /* Changed by -o option */
   only_matching = false;
+
+  pthread_mutexattr_init (&output_lock_attr);
+
+  /* Recursive locking (output_lock in this case) is always a little
+     unfortunate, but ts_error() is called from functions that are sometimes
+     within print functions that already hold it, and sometimes not. */
+  if (pthread_mutexattr_settype (&output_lock_attr, PTHREAD_MUTEX_RECURSIVE)
+      || pthread_mutex_init (&output_lock, &output_lock_attr)
+      || pthread_mutex_init (&workqueue.lock, NULL)
+      || pthread_cond_init (&workqueue.producer_cond, NULL)
+      || pthread_cond_init (&workqueue.consumer_cond, NULL))
+    abort ();
 
   /* Internationalization. */
 #if defined HAVE_SETLOCALE
@@ -2227,8 +2393,8 @@ main (int argc, char **argv)
 
   prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
   if (prepended)
-    error (0, 0, _("warning: GREP_OPTIONS is deprecated;"
-                   " please use an alias or script"));
+    ts_error (0, 0, _("warning: GREP_OPTIONS is deprecated;"
+                      " please use an alias or script"));
 
   compile = matchers[0].compile;
   execute = matchers[0].execute;
@@ -2257,7 +2423,7 @@ main (int argc, char **argv)
         else if (STREQ (optarg, "skip"))
           devices = SKIP_DEVICES;
         else
-          error (EXIT_TROUBLE, 0, _("unknown devices method"));
+          ts_error (EXIT_TROUBLE, 0, _("unknown devices method"));
         break;
 
       case 'E':
@@ -2335,7 +2501,7 @@ main (int argc, char **argv)
       case 'f':
         fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
         if (!fp)
-          error (EXIT_TROUBLE, errno, "%s", optarg);
+          ts_error (EXIT_TROUBLE, errno, "%s", optarg);
         for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
           ;
         keys = xrealloc (keys, keyalloc);
@@ -2348,7 +2514,7 @@ main (int argc, char **argv)
           }
         fread_errno = errno;
         if (ferror (fp))
-          error (EXIT_TROUBLE, fread_errno, "%s", optarg);
+          ts_error (EXIT_TROUBLE, fread_errno, "%s", optarg);
         if (fp != stdin)
           fclose (fp);
         /* Append final newline if file ended in non-newline. */
@@ -2376,6 +2542,22 @@ main (int argc, char **argv)
         list_files = LISTFILES_MATCHING;
         break;
 
+      case 'M':
+        if (optarg)
+          {
+            status = xstrtoimax (optarg, 0, 10, &num_threads, "");
+            if ((status != LONGINT_OK && status != LONGINT_OVERFLOW)
+                || num_threads < 1)
+              ts_error (EXIT_TROUBLE, 0, _("invalid number of threads"));
+          }
+        else
+          {
+            num_threads = sysconf (_SC_NPROCESSORS_ONLN);
+            if (num_threads < 1)
+              num_threads = 1;
+          }
+        break;
+
       case 'm':
         switch (xstrtoimax (optarg, 0, 10, &max_count, ""))
           {
@@ -2384,7 +2566,7 @@ main (int argc, char **argv)
             break;
 
           default:
-            error (EXIT_TROUBLE, 0, _("invalid max count"));
+            ts_error (EXIT_TROUBLE, 0, _("invalid max count"));
           }
         break;
 
@@ -2441,7 +2623,7 @@ main (int argc, char **argv)
         else if (STREQ (optarg, "without-match"))
           binary_files = WITHOUT_MATCH_BINARY_FILES;
         else
-          error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
+          ts_error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
         break;
 
       case COLOR_OPTION:
@@ -2477,7 +2659,7 @@ main (int argc, char **argv)
         if (add_exclude_file (add_exclude, excluded_patterns, optarg,
                               EXCLUDE_WILDCARDS, '\n') != 0)
           {
-            error (EXIT_TROUBLE, errno, "%s", optarg);
+            ts_error (EXIT_TROUBLE, errno, "%s", optarg);
           }
         break;
 
@@ -2521,9 +2703,9 @@ main (int argc, char **argv)
   if (exit_on_match || list_files != LISTFILES_NONE)
     {
       count_matches = false;
-      ctx->done_on_match = true;
+      done_on_match = true;
     }
-  ctx->out_quiet = count_matches || ctx->done_on_match;
+  out_quiet = count_matches || done_on_match;
 
   if (out_after < 0)
     out_after = default_context;
@@ -2596,19 +2778,21 @@ main (int argc, char **argv)
       execute = EGexecute;
     }
 
-  ctx->compiled_pattern = compile (keys, keycc);
-  free (keys);
+  /* Mild hack -- temporary little on-stack grepctx */
+  memset (&tmpctx, 0, sizeof (tmpctx));
+
+  tmpctx.compiled_pattern = compile (keys, keycc);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
-  skip_empty_lines = ((execute (ctx->compiled_pattern, ctx, eolbytes + 1, 1,
-                                &match_size, NULL) == 0)
+  skip_empty_lines = ((execute (tmpctx.compiled_pattern, &tmpctx, eolbytes + 1,
+                                1, &match_size, NULL) == 0)
                       == out_invert);
 
   if (((argc - optind > 1 || directories == RECURSE_DIRECTORIES)
        && !no_filenames)
       || with_filenames)
-    ctx->out_file = 1;
+    out_file = 1;
 
 #ifdef SET_BINARY
   /* Output is set to binary mode because we shouldn't convert
@@ -2623,22 +2807,47 @@ main (int argc, char **argv)
   if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
     devices = READ_DEVICES;
 
+  /* Each entry in the work queue consumes an open file descriptor, so limit
+     the queue to half the relevant rlimit. */
+  if (getrlimit (RLIMIT_NOFILE, &rlim))
+    abort ();
+  max_queued_files = rlim.rlim_cur / 2;
+
+  worker_threads = xmalloc (num_threads * sizeof (*worker_threads));
+  for (i = 0; i < num_threads; i++)
+    {
+      if (pthread_create (&worker_threads[i], NULL, worker_thread_func,
+                          compile (keys, keycc)))
+        abort ();
+    }
+
+  free (keys);
+
   if (optind < argc)
     {
-      ok = true;
       do
-        ok &= grep_command_line_arg (ctx, argv[optind]);
+        search_command_line_arg (argv[optind]);
       while (++optind < argc);
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
       omit_dot_slash = true;
-      ok = grep_command_line_arg (ctx, ".");
+      search_command_line_arg (".");
     }
   else
-    ok = grep_command_line_arg (ctx, "-");
+    search_command_line_arg ("-");
+
+  finish_workqueue ();
+
+  status = 1;
+  for (i = 0; i < num_threads; i++)
+    {
+      if (pthread_join (worker_threads[i], &worker_status))
+        abort ();
+      status = status && !!worker_status;
+    }
 
   /* We register via atexit() to test stdout.  */
-  exit (errseen ? EXIT_TROUBLE : ok);
+  exit (errseen ? EXIT_TROUBLE : status);
 }
 /* vim:set shiftwidth=2: */
