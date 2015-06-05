@@ -1206,7 +1206,7 @@ parse_bracket_exp (struct dfa *dfa)
 
   if (dfa->multibyte)
     {
-      static charclass zeroclass;
+      static charclass const zeroclass;
       work_mbc->invert = invert;
       work_mbc->cset = equal (ccl, zeroclass) ? -1
         : dfa_charclass_index (dfa, ccl);
