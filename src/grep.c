@@ -82,6 +82,9 @@ static bool align_tabs;
 
 struct grepctx
 {
+  /* Opaque value from compile(), passed to execute() */
+  void *compiled_pattern;
+
   bool out_quiet;		/* Suppress all normal output. */
   int out_file;		/* Print filenames. */
 
@@ -503,8 +506,8 @@ enum { SEEK_HOLE = SEEK_SET };
 #endif
 
 /* Functions we'll use to search. */
-typedef void (*compile_fp_t) (char const *, size_t);
-typedef size_t (*execute_fp_t) (struct grepctx *, char const *, size_t,
+typedef void *(*compile_fp_t) (char const *, size_t);
+typedef size_t (*execute_fp_t) (void *, struct grepctx *, char const *, size_t,
                                 size_t *, char const *);
 static compile_fp_t compile;
 static execute_fp_t execute;
@@ -1044,7 +1047,8 @@ print_line_middle (struct grepctx *ctx, const char *beg, const char *lim,
   const char *mid = NULL;
 
   while (cur < lim
-         && ((match_offset = execute (ctx, beg, lim - beg, &match_size, cur))
+         && ((match_offset = execute (ctx->compiled_pattern, ctx, beg,
+                                      lim - beg, &match_size, cur))
              != (size_t) -1))
     {
       char const *b = beg + match_offset;
@@ -1184,8 +1188,9 @@ prpending (struct grepctx *ctx, char const *lim)
       size_t match_size;
       --ctx->pending;
       if (ctx->outleft
-          || ((execute (ctx, ctx->lastout, nl + 1 - ctx->lastout,
-                        &match_size, NULL) == (size_t) -1)
+          || ((execute (ctx->compiled_pattern, ctx, ctx->lastout,
+                        nl + 1 - ctx->lastout, &match_size, NULL)
+               == (size_t) -1)
               == !out_invert))
         prline (ctx, ctx->lastout, nl + 1, SEP_CHAR_REJECTED);
       else
@@ -1298,7 +1303,8 @@ grepbuf (struct grepctx *ctx, char const *beg, char const *lim)
   for (p = beg; p < lim; p = endp)
     {
       size_t match_size;
-      size_t match_offset = execute (ctx, p, lim - p, &match_size, NULL);
+      size_t match_offset = execute (ctx->compiled_pattern, ctx, p, lim - p,
+                                     &match_size, NULL);
       if (match_offset == (size_t) -1)
         {
           if (!out_invert)
@@ -1871,36 +1877,36 @@ if any error occurs and -q is not given, the exit status is 2.\n"));
 
 /* Pattern compilers and matchers.  */
 
-static void
+static void *
 Gcompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES);
+  return GEAcompile (pattern, size, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES);
 }
 
-static void
+static void *
 Ecompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size,
-              (RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES
-               | RE_UNMATCHED_RIGHT_PAREN_ORD));
+  return GEAcompile (pattern, size,
+                     (RE_SYNTAX_POSIX_EGREP | RE_NO_EMPTY_RANGES
+                      | RE_UNMATCHED_RIGHT_PAREN_ORD));
 }
 
-static void
+static void *
 Acompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size, RE_SYNTAX_AWK);
+  return GEAcompile (pattern, size, RE_SYNTAX_AWK);
 }
 
-static void
+static void *
 GAcompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size, RE_SYNTAX_GNU_AWK);
+  return GEAcompile (pattern, size, RE_SYNTAX_GNU_AWK);
 }
 
-static void
+static void *
 PAcompile (char const *pattern, size_t size)
 {
-  GEAcompile (pattern, size, RE_SYNTAX_POSIX_AWK);
+  return GEAcompile (pattern, size, RE_SYNTAX_POSIX_AWK);
 }
 
 struct matcher
@@ -2601,12 +2607,13 @@ main (int argc, char **argv)
       execute = EGexecute;
     }
 
-  compile (keys, keycc);
+  ctx->compiled_pattern = compile (keys, keycc);
   free (keys);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
-  skip_empty_lines = ((execute (ctx, eolbytes + 1, 1, &match_size, NULL) == 0)
+  skip_empty_lines = ((execute (ctx->compiled_pattern, ctx, eolbytes + 1, 1,
+                                &match_size, NULL) == 0)
                       == out_invert);
 
   if (((argc - optind > 1 || directories == RECURSE_DIRECTORIES)
