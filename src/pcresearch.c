@@ -88,7 +88,7 @@ static int empty_match[2];
 static bool multibyte_locale;
 #endif
 
-void
+void *
 Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
@@ -179,11 +179,13 @@ Pcompile (char const *pattern, size_t size)
                                   PCRE_NOTBOL, sub, NSUB);
   empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, sub, NSUB);
 #endif /* HAVE_LIBPCRE */
+
+  return NULL;
 }
 
 size_t
-Pexecute (struct grepctx *ctx, char *buf, size_t size, size_t *match_size,
-          char const *start_ptr)
+Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
+          size_t *match_size, char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
   /* We can't get here, because Pcompile would have been called earlier.  */

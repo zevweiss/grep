@@ -119,7 +119,7 @@ kwsmusts (void)
   dfamustfree (dm);
 }
 
-void
+void *
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   size_t total = size;
@@ -200,10 +200,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   kwsmusts ();
 
   free(motif);
+
+  return NULL;
 }
 
 size_t
-EGexecute (struct grepctx *ctx, char *buf, size_t size,
+EGexecute (void *vdc, struct grepctx *ctx, char *buf, size_t size,
            size_t *match_size, char const *start_ptr)
 {
   char const *buflim, *beg, *end, *ptr, *match, *best_match, *mb_start;
