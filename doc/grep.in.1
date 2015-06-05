@@ -488,6 +488,18 @@ Follow all symbolic links, unlike
 Use line buffering on output.
 This can cause a performance penalty.
 .TP
+.BR \-M " [" \fINUM\fP "], "  \-\^\-parallel [ =\fINUM\fP ]
+Parallelize work between
+.I NUM
+threads.  This is only useful when multiple files are given as
+command-line arguments or when operating recursively (parallelization
+is done at file granularity).  If
+.I NUM
+is not specified, it defaults to the number of available processors.
+Note that using this option introduces nondeterminism into
+.B grep\fP's output; the ordering of output lines may vary from one run to the
+next, and lines from different files may be intermingled.
+.TP
 .BR \-U ", " \-\^\-binary
 Treat the file(s) as binary.
 By default, under \s-1MS-DOS\s0 and \s-1MS\s0-Windows,
