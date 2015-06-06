@@ -28,14 +28,13 @@ wordchar (wint_t wc)
   return wc == L'_' || iswalnum (wc);
 }
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
+/* For Ecompile and Gcompile, we compile a list of strings, at least one of
+   which is known to occur in any string matching the regexp. */
 
 void *
 Fcompile (char const *pattern, size_t size)
 {
+  kwset_t kwset;
   size_t total = size;
   mb_len_map_t *map = NULL;
   char const *pat = (match_icase && MB_CUR_MAX > 1
@@ -80,7 +79,7 @@ Fcompile (char const *pattern, size_t size)
 
   kwsprep (kwset);
 
-  return NULL;
+  return kwset;
 }
 
 /* Apply the MAP (created by mbtoupper) to the uppercase-buffer-relative
@@ -113,6 +112,7 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
   struct kwsmatch kwsmatch;
   size_t ret_val;
   mb_len_map_t *map = NULL;
+  kwset_t kwset = vcp;
 
   if (MB_CUR_MAX > 1)
     {
