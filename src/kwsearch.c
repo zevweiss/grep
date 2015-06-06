@@ -28,14 +28,13 @@ wordchar (wint_t wc)
   return wc == L'_' || iswalnum (wc);
 }
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
+/* For Ecompile and Gcompile, we compile a list of strings, at least one of
+   which is known to occur in any string matching the regexp. */
 
 void *
 Fcompile (char const *pattern, size_t size)
 {
+  kwset_t kwset;
   size_t total = size;
 
   kwsinit (&kwset);
@@ -76,7 +75,7 @@ Fcompile (char const *pattern, size_t size)
 
   kwsprep (kwset);
 
-  return NULL;
+  return kwset;
 }
 
 size_t
@@ -88,6 +87,7 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
+  kwset_t kwset = vcp;
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
