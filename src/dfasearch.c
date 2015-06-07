@@ -277,7 +277,7 @@ EGexecute (void *vdc, struct grepctx *ctx, char const *buf, size_t size,
 
               if (exact_kwset_match)
                 {
-                  if (MB_CUR_MAX == 1 || using_utf8 ())
+                  if (MB_CUR_MAX == 1 || using_utf8)
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;
