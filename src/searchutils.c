@@ -55,21 +55,15 @@ kwsinit (kwset_t *kwset)
    trailing NUL byte), and return a pointer to the uppercase string.
    Upon memory allocation failure, exit.  *N must be positive.
 
-   Although this function returns a pointer to malloc'd storage,
-   the caller must not free it, since this function retains a pointer
-   to the buffer and reuses it on any subsequent call.  As a consequence,
-   this function is not thread-safe.
-
    When each character in the uppercase result string has the same length
-   as the corresponding character in the input string, set *LEN_MAP_P
-   to NULL.  Otherwise, set it to a malloc'd buffer (like the returned
-   buffer, this must not be freed by caller) of the same length as the
-   result string.  (*LEN_MAP_P)[J] is the change in byte-length of the
-   character in BEG that formed byte J of the result as it was converted to
-   uppercase.  It is usually zero.  For lowercase Turkish dotless I it
-   is -1, since the lowercase input occupies two bytes, while the
-   uppercase output occupies only one byte.  For lowercase I in the
-   tr_TR.utf8 locale, it is 1 because the uppercase Turkish dotted I
+   as the corresponding character in the input string, set *LEN_MAP_P to
+   NULL.  Otherwise, set it to a malloc'd buffer of the same length as
+   the result string.  (*LEN_MAP_P)[J] is the change in byte-length of
+   the character in BEG that formed byte J of the result as it was
+   converted to uppercase.  It is usually zero.  For lowercase Turkish
+   dotless I it is -1, since the lowercase input occupies two bytes,
+   while the uppercase output occupies only one byte.  For lowercase I in
+   the tr_TR.utf8 locale, it is 1 because the uppercase Turkish dotted I
    is one byte longer than the original.  When that happens, we have two
    or more slots in *LEN_MAP_P for each such character.  We store the
    difference in the first one and 0's in any remaining slots.
@@ -81,9 +75,9 @@ kwsinit (kwset_t *kwset)
 char *
 mbtoupper (const char *beg, size_t *n, mb_len_map_t **len_map_p)
 {
-  static char *out;
-  static mb_len_map_t *len_map;
-  static size_t outalloc;
+  char *out;
+  mb_len_map_t *len_map;
+  size_t outalloc;
   size_t outlen, mb_cur_max;
   mbstate_t is, os;
   const char *end;
@@ -91,18 +85,19 @@ mbtoupper (const char *beg, size_t *n, mb_len_map_t **len_map_p)
   mb_len_map_t *m;
   bool lengths_differ = false;
 
-  if (*n > outalloc || outalloc == 0)
-    {
-      outalloc = MAX (1, *n);
-      out = xrealloc (out, outalloc);
-      len_map = xrealloc (len_map, outalloc);
-    }
+  outalloc = MAX (1, *n);
+  out = xmalloc (outalloc);
+  len_map = xmalloc (outalloc);
 
   /* appease clang-2.6 */
   assert (out);
   assert (len_map);
   if (*n == 0)
-    return out;
+    {
+      *out = '\0';
+      *len_map_p = NULL;
+      return out;
+    }
 
   memset (&is, 0, sizeof (is));
   memset (&os, 0, sizeof (os));
