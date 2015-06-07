@@ -96,7 +96,7 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
       if (offset == (size_t) -1)
         goto failure;
       len = kwsmatch.size[0] - 2 * match_lines;
-      if (!match_lines && MB_CUR_MAX > 1 && !using_utf8 ()
+      if (!match_lines && MB_CUR_MAX > 1 && !using_utf8
           && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
           /* We have matched a single byte that is not at the beginning of a
