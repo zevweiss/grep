@@ -37,9 +37,13 @@ Fcompile (char const *pattern, size_t size)
   kwset_t kwset;
   size_t total = size;
   mb_len_map_t *map = NULL;
-  char const *pat = (match_icase && MB_CUR_MAX > 1
-                     ? mbtoupper (pattern, &total, &map)
-                     : pattern);
+  char const *pat = pattern;
+  char *case_pat;
+  int mb_icase = MB_CUR_MAX > 1 && match_icase;
+
+  /* Keep a non-const version of mbtoupper's return so we can free it later. */
+  if (mb_icase)
+    pat = case_pat = mbtoupper (pattern, &total, &map);
 
   kwsinit (&kwset);
 
@@ -79,6 +83,12 @@ Fcompile (char const *pattern, size_t size)
 
   kwsprep (kwset);
 
+  if (mb_icase)
+    {
+      free (case_pat);
+      free (map);
+    }
+
   return kwset;
 }
 
@@ -110,19 +120,18 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
   size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
-  size_t ret_val;
+  size_t ret_val, off;
+  char *case_buf;
   mb_len_map_t *map = NULL;
   kwset_t kwset = vcp;
+  int mb_icase = MB_CUR_MAX > 1 && match_icase;
 
-  if (MB_CUR_MAX > 1)
+  if (mb_icase)
     {
-      if (match_icase)
-        {
-          char *case_buf = mbtoupper (buf, &size, &map);
-          if (start_ptr)
-            start_ptr = case_buf + (start_ptr - buf);
-          buf = case_buf;
-        }
+      case_buf = mbtoupper (buf, &size, &map);
+      if (start_ptr)
+        start_ptr = case_buf + (start_ptr - buf);
+      buf = case_buf;
     }
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
@@ -184,7 +193,8 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
     } /* for (beg in buf) */
 
  failure:
-  return -1;
+  ret_val = -1;
+  goto out;
 
  success:
   if ((end = memchr (beg + len, eol, (buf + size) - (beg + len))) != NULL)
@@ -195,10 +205,17 @@ Fexecute (void *vcp, struct grepctx *ctx, char const *buf, size_t size,
     --beg;
   len = end - beg;
  success_in_beg_and_len:;
-  size_t off = beg - buf;
+  off = beg - buf;
   mb_case_map_apply (map, &off, &len);
 
   *match_size = len;
   ret_val = off;
+
+ out:
+  if (mb_icase)
+    {
+      free (case_buf);
+      free (map);
+    }
   return ret_val;
 }
