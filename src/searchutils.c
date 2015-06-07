@@ -31,11 +31,12 @@ size_t mbclen_cache[NCHAR];
 void
 kwsinit (kwset_t *kwset)
 {
-  static char trans[NCHAR];
+  char *trans;
   int i;
 
   if (match_icase && MB_CUR_MAX == 1)
     {
+      trans = xmalloc (NCHAR);
       for (i = 0; i < NCHAR; ++i)
         trans[i] = toupper (i);
 
