@@ -29,44 +29,50 @@ if test $? -ne 1 ; then
         fail=1
 fi
 
-# the filename MMMMMMMM.MMM should not exist hopefully
-if test -r MMMMMMMM.MMM; then
-        echo "Please remove MMMMMMMM.MMM to run check"
-else
+runtests()
+{
         # should return 2 file not found
-        grep -E -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
+        grep $1 -E -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
         if test $? -ne 2 ; then
                 echo "Status: Wrong status code, test \#3 failed"
                 fail=1
         fi
 
         # should return 2 file not found
-        grep -E -s -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
+        grep $1 -E -s -e 'abc' MMMMMMMM.MMM > /dev/null 2>&1
         if test $? -ne 2 ; then
                 echo "Status: Wrong status code, test \#4 failed"
                 fail=1
         fi
 
         # should return 2 file not found
-        echo "abcd" | grep -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
+        echo "abcd" | grep $1 -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
         if test $? -ne 2 ; then
                 echo "Status: Wrong status code, test \#5 failed"
                 fail=1
         fi
 
         # should return 0 found a match
-        echo "abcd" | grep -E -q -s 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
+        echo "abcd" | grep $1 -E -q -s 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
         if test $? -ne 0 ; then
                 echo "Status: Wrong status code, test \#6 failed"
                 fail=1
         fi
 
         # should still return 0 found a match
-        echo "abcd" | grep -E -q 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
+        echo "abcd" | grep $1 -E -q 'abc' MMMMMMMM.MMM - > /dev/null 2>&1
         if test $? -ne 0 ; then
                 echo "Status: Wrong status code, test \#7 failed"
                 fail=1
         fi
+}
+
+# the filename MMMMMMMM.MMM should not exist hopefully
+if test -r MMMMMMMM.MMM; then
+        echo "Please remove MMMMMMMM.MMM to run check"
+else
+        runtests ""
+        runtests "-M"
 fi
 
 Exit $fail
