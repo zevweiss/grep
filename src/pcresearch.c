@@ -117,7 +117,7 @@ Pcompile (char const *pattern, size_t size)
 
   if (1 < MB_CUR_MAX)
     {
-      if (! using_utf8 ())
+      if (! using_utf8)
         error (EXIT_TROUBLE, 0,
                _("-P supports only unibyte and UTF-8 locales"));
       pc->multibyte_locale = true;

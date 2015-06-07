@@ -2257,6 +2257,8 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 #endif
 
+  dfa_init ();
+
   exit_failure = EXIT_TROUBLE;
   atexit (clean_up_stdout);
 
