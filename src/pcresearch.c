@@ -108,7 +108,7 @@ Pcompile (char const *pattern, size_t size)
   char const *pnul;
   struct pcre_comp *pc = xcalloc (1, sizeof (*pc));
 
-  if (using_utf8 ())
+  if (using_utf8)
     flags |= PCRE_UTF8;
   else if (MB_CUR_MAX != 1)
     error (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
