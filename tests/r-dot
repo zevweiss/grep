@@ -8,13 +8,15 @@ echo bbb > dir/b || framework_failure_
 
 echo a:aaa > exp || framework_failure_
 
-(cd dir && grep -r aaa) > out || fail=1
-compare exp out || fail=1
+for p in "" "-p"; do
+  (cd dir && grep $p -r aaa) > out || fail=1
+  compare exp out || fail=1
 
-(cd dir && grep -r aaa < a) > out || fail=1
-compare exp out || fail=1
+  (cd dir && grep $p -r aaa < a) > out || fail=1
+  compare exp out || fail=1
 
-(cd dir && grep -r aaa *) > out || fail=1
-compare exp out || fail=1
+  (cd dir && grep $p -r aaa *) > out || fail=1
+  compare exp out || fail=1
+done
 
 Exit $fail

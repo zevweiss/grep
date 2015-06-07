@@ -19,11 +19,20 @@ EOF
 sed s/..// exp1 > exp2 || framework_failure_
 
 fail=0
-grep -rw bb a > out || fail=1
-sort < out > k; mv k out
-compare exp1 out || fail=1
+
+for p in "" "-p"; do
+  grep $p -rw bb a > out || fail=1
+  sort < out > k; mv k out
+  compare exp1 out || fail=1
+done
 
 (cd a && grep -w bb [1-4]) > out || fail=1
+compare exp2 out || fail=1
+
+# Multithreading can legitimately reorder output lines, so sort before
+# comparing here.
+(cd a && grep -p -w bb [1-4]) > out || fail=1
+sort < out > k; mv k out
 compare exp2 out || fail=1
 
 Exit $fail
