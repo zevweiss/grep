@@ -113,4 +113,7 @@ extern void dfawarn (const char *);
    The user must supply a dfaerror.  */
 extern _Noreturn void dfaerror (const char *);
 
-extern int using_utf8 (void);
+extern void dfa_init (void);
+
+/* Valid only after calling dfa_init() */
+extern bool using_utf8;
