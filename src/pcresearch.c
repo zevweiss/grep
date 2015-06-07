@@ -28,48 +28,58 @@
    in pcre_exec.  */
 enum { NSUB = 300 };
 
-/* Compiled internal form of a Perl regular expression.  */
-static pcre *cre;
-
-/* Additional information about the pattern.  */
-static pcre_extra *extra;
-
 # ifndef PCRE_STUDY_JIT_COMPILE
 #  define PCRE_STUDY_JIT_COMPILE 0
 # endif
 
+struct pcre_comp
+{
+  /* Compiled internal form of a Perl regular expression.  */
+  pcre *cre;
+
+  /* Additional information about the pattern.  */
+  pcre_extra *extra;
+
 # if PCRE_STUDY_JIT_COMPILE
-/* Maximum size of the JIT stack.  */
-static int jit_stack_size;
+  /* Maximum size of the JIT stack.  */
+  int jit_stack_size;
 # endif
+
+  /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
+     string matches when that flag is used.  */
+  int empty_match[2];
+  bool multibyte_locale;
+
+  pcre_jit_stack *jit_stack;
+};
+
 
 /* Match the already-compiled PCRE pattern against the data in SUBJECT,
    of size SEARCH_BYTES and starting with offset SEARCH_OFFSET, with
    options OPTIONS, and storing resulting matches into SUB.  Return
    the (nonnegative) match location or a (negative) error number.  */
 static int
-jit_exec (char const *subject, int search_bytes, int search_offset,
-          int options, int *sub)
+jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
+          int search_offset, int options, int *sub)
 {
   while (true)
     {
-      int e = pcre_exec (cre, extra, subject, search_bytes, search_offset,
-                         options, sub, NSUB);
+      int e = pcre_exec (pc->cre, pc->extra, subject, search_bytes,
+                         search_offset, options, sub, NSUB);
 
 # if PCRE_STUDY_JIT_COMPILE
       if (e == PCRE_ERROR_JIT_STACKLIMIT
-          && 0 < jit_stack_size && jit_stack_size <= INT_MAX / 2)
+          && 0 < pc->jit_stack_size && pc->jit_stack_size <= INT_MAX / 2)
         {
-          int old_size = jit_stack_size;
-          int new_size = jit_stack_size = old_size * 2;
-          static pcre_jit_stack *jit_stack;
-          if (jit_stack)
-            pcre_jit_stack_free (jit_stack);
-          jit_stack = pcre_jit_stack_alloc (old_size, new_size);
-          if (!jit_stack)
+          int old_size = pc->jit_stack_size;
+          int new_size = pc->jit_stack_size = old_size * 2;
+          if (pc->jit_stack)
+            pcre_jit_stack_free (pc->jit_stack);
+          pc->jit_stack = pcre_jit_stack_alloc (old_size, new_size);
+          if (!pc->jit_stack)
             error (EXIT_TROUBLE, 0,
                    _("failed to allocate memory for the PCRE JIT stack"));
-          pcre_assign_jit_stack (extra, NULL, jit_stack);
+          pcre_assign_jit_stack (pc->extra, NULL, pc->jit_stack);
           continue;
         }
 # endif
@@ -78,14 +88,6 @@ jit_exec (char const *subject, int search_bytes, int search_offset,
     }
 }
 
-#endif
-
-#if HAVE_LIBPCRE
-/* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
-   string matches when that flag is used.  */
-static int empty_match[2];
-
-static bool multibyte_locale;
 #endif
 
 void *
@@ -111,13 +113,14 @@ Pcompile (char const *pattern, size_t size)
   char *n = re;
   char const *p;
   char const *pnul;
+  struct pcre_comp *pc = xcalloc (1, sizeof (*pc));
 
   if (1 < MB_CUR_MAX)
     {
       if (! using_utf8 ())
         error (EXIT_TROUBLE, 0,
                _("-P supports only unibyte and UTF-8 locales"));
-      multibyte_locale = true;
+      pc->multibyte_locale = true;
       flags |= PCRE_UTF8;
     }
 
@@ -155,32 +158,33 @@ Pcompile (char const *pattern, size_t size)
   if (match_lines)
     strcpy (n, xsuffix);
 
-  cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
-  if (!cre)
+  pc->cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
+  if (!pc->cre)
     error (EXIT_TROUBLE, 0, "%s", ep);
 
-  extra = pcre_study (cre, PCRE_STUDY_JIT_COMPILE, &ep);
+  pc->extra = pcre_study (pc->cre, PCRE_STUDY_JIT_COMPILE, &ep);
   if (ep)
     error (EXIT_TROUBLE, 0, "%s", ep);
 
 # if PCRE_STUDY_JIT_COMPILE
-  if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
+  if (pcre_fullinfo (pc->cre, pc->extra, PCRE_INFO_JIT, &e))
     error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
   /* The PCRE documentation says that a 32 KiB stack is the default.  */
   if (e)
-    jit_stack_size = 32 << 10;
+    pc->jit_stack_size = 32 << 10;
 # endif
 
   free (re);
 
   int sub[NSUB];
-  empty_match[false] = pcre_exec (cre, extra, "", 0, 0,
-                                  PCRE_NOTBOL, sub, NSUB);
-  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, sub, NSUB);
-#endif /* HAVE_LIBPCRE */
+  pc->empty_match[false] = pcre_exec (pc->cre, pc->extra, "", 0, 0,
+                                      PCRE_NOTBOL, sub, NSUB);
+  pc->empty_match[true] = pcre_exec (pc->cre, pc->extra, "", 0, 0, 0, sub,
+                                     NSUB);
 
-  return NULL;
+  return pc;
+#endif /* HAVE_LIBPCRE */
 }
 
 size_t
@@ -198,6 +202,7 @@ Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
   char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
+  struct pcre_comp *pc = vcp;
 
   /* The search address to pass to pcre_exec.  This is the start of
      the buffer, or just past the most-recently discovered encoding
@@ -209,7 +214,7 @@ Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
      typically faster, so that pcre_exec doesn't waste time validating
      the entire input buffer.  */
   bool multiline = true;
-  if (multibyte_locale)
+  if (pc->multibyte_locale)
     {
       multiline = ! buf_has_encoding_errors (buf, size - 1);
       buf[size - 1] = eolbyte;
@@ -254,7 +259,7 @@ Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
           if (p == line_end)
             {
               sub[0] = sub[1] = search_offset;
-              e = empty_match[bol];
+              e = pc->empty_match[bol];
               break;
             }
 
@@ -264,7 +269,7 @@ Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
           if (multiline)
             options |= PCRE_NO_UTF8_CHECK;
 
-          e = jit_exec (subject, line_end - subject, search_offset,
+          e = jit_exec (pc, subject, line_end - subject, search_offset,
                         options, sub);
           if (e != PCRE_ERROR_BADUTF8)
             {
@@ -293,10 +298,10 @@ Pexecute (void *vcp, struct grepctx *ctx, char *buf, size_t size,
                      This optimization is valid if VALID_BYTES is zero,
                      which means SEARCH_OFFSET is also zero.  */
                   sub[1] = 0;
-                  e = empty_match[bol];
+                  e = pc->empty_match[bol];
                 }
               else
-                e = jit_exec (subject, valid_bytes, search_offset,
+                e = jit_exec (pc, subject, valid_bytes, search_offset,
                               options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL, sub);
 
               if (e != PCRE_ERROR_NOMATCH)
