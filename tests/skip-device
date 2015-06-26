@@ -8,4 +8,9 @@
 echo foo | grep -D skip foo - || fail=1
 echo foo | grep --devices=skip foo || fail=1
 
+require_timeout_
+mkfifo myfifo || framework_failure_
+timeout 2s grep -D skip foo myfifo
+test $? -eq 1 || fail=1
+
 Exit $fail

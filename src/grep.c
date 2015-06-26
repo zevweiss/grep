@@ -433,6 +433,13 @@ is_device_mode (mode_t m)
   return S_ISCHR (m) || S_ISBLK (m) || S_ISSOCK (m) || S_ISFIFO (m);
 }
 
+static bool
+skip_devices (bool command_line)
+{
+  return (devices == SKIP_DEVICES
+          || (devices == READ_COMMAND_LINE_DEVICES && !command_line));
+}
+
 /* Return if ST->st_size is defined.  Assume the file is not a
    symbolic link.  */
 static bool
@@ -1466,7 +1473,6 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 {
   bool follow;
   int dirdesc;
-  struct stat *st = ent->fts_statp;
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
   if (ent->fts_info == FTS_DP)
@@ -1515,9 +1521,9 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 
     case FTS_DEFAULT:
     case FTS_NSOK:
-      if (devices == SKIP_DEVICES
-          || (devices == READ_COMMAND_LINE_DEVICES && !command_line))
+      if (skip_devices (command_line))
         {
+          struct stat *st = ent->fts_statp;
           struct stat st1;
           if (! st->st_mode)
             {
@@ -1572,7 +1578,10 @@ open_symlink_nofollow_error (int err)
 static bool
 grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
-  int desc = openat_safer (dirdesc, name, O_RDONLY | (follow ? 0 : O_NOFOLLOW));
+  int oflag = (O_RDONLY | O_NOCTTY
+               | (follow ? 0 : O_NOFOLLOW)
+               | (skip_devices (command_line) ? O_NONBLOCK : 0));
+  int desc = openat_safer (dirdesc, name, oflag);
   if (desc < 0)
     {
       if (follow || ! open_symlink_nofollow_error (errno))
@@ -1600,6 +1609,10 @@ grepdesc (int desc, bool command_line)
       suppressible_error (filename, errno);
       goto closeout;
     }
+
+  if (desc != STDIN_FILENO && skip_devices (command_line)
+      && is_device_mode (st.st_mode))
+    goto closeout;
 
   if (desc != STDIN_FILENO && command_line
       && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))

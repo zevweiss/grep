@@ -15,6 +15,9 @@ GNU grep NEWS                                    -*- outline -*-
   When the JIT stack is exhausted, grep -P now grows the stack rather
   than reporting an internal PCRE error.
 
+  'grep -D skip PATTERN FILE' no longer hangs if FILE is a fifo.
+  [bug introduced in grep-2.12]
+
 
 * Noteworthy changes in release 2.21 (2014-11-23) [stable]
 
