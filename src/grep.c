@@ -2153,7 +2153,7 @@ main (int argc, char **argv)
 {
   char *keys;
   size_t keycc, oldcc, keyalloc;
-  bool with_filenames, ok;
+  bool with_filenames;
   size_t cc;
   int opt, prepended;
   int prev_optind, last_recursive;
@@ -2514,7 +2514,7 @@ main (int argc, char **argv)
     {
       version_etc (stdout, program_name, PACKAGE_NAME, VERSION, AUTHORS,
                    (char *) NULL);
-      exit (EXIT_SUCCESS);
+      return EXIT_SUCCESS;
     }
 
   if (show_help)
@@ -2579,39 +2579,38 @@ main (int argc, char **argv)
 #ifdef SET_BINARY
   /* Output is set to binary mode because we shouldn't convert
      NL to CR-LF pairs, especially when grepping binary files.  */
-  if (!isatty (1))
-    SET_BINARY (1);
+  if (!isatty (STDOUT_FILENO))
+    SET_BINARY (STDOUT_FILENO);
 #endif
 
   if (max_count == 0)
-    exit (EXIT_FAILURE);
+    return EXIT_FAILURE;
 
   if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
     devices = READ_DEVICES;
 
-  char **files;
+  char *const *files;
   if (optind < argc)
     {
       files = argv + optind;
     }
   else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
     {
-      static char *cwd_only[] = { (char *) ".", NULL };
+      static char *const cwd_only[] = { (char *) ".", NULL };
       files = cwd_only;
       omit_dot_slash = true;
     }
   else
     {
-      static char *stdin_only[] = { (char *) "-", NULL };
+      static char *const stdin_only[] = { (char *) "-", NULL };
       files = stdin_only;
     }
 
-  ok = true;
+  bool status = true;
   do
-    ok &= grep_command_line_arg (*files++);
+    status &= grep_command_line_arg (*files++);
   while (*files != NULL);
 
   /* We register via atexit() to test stdout.  */
-  exit (errseen ? EXIT_TROUBLE : ok);
+  return errseen ? EXIT_TROUBLE : status;
 }
-/* vim:set shiftwidth=2: */
