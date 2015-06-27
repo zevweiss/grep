@@ -14,6 +14,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+TEST_EXTENSIONS = .sh .pl
+
+if HAVE_PERL
+TESTSUITE_PERL = $(PERL)
+else
+TESTSUITE_PERL = $(SHELL) $(srcdir)/no-perl
+endif
+
+# Options passed to the perl invocations running the perl test scripts.
+TESTSUITE_PERL_OPTIONS = -w -I$(srcdir) -MCoreutils -MCuSkip
+# '$f' is set by the Automake-generated test harness to the path of the
+# current test script stripped of VPATH components, and is used by the
+# CuTmpdir module to determine the name of the temporary files to be
+# used.  Note that $f is a shell variable, not a make macro, so the use
+# of '$$f' below is correct, and not a typo.
+TESTSUITE_PERL_OPTIONS += -M"CuTmpdir qw($$f)"
+
+SH_LOG_COMPILER = $(SHELL)
+PL_LOG_COMPILER = $(TESTSUITE_PERL) $(TESTSUITE_PERL_OPTIONS)
+
 check_PROGRAMS = get-mb-cur-max dfa-match-aux
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
   -I$(top_srcdir)/src
@@ -152,6 +172,9 @@ EXTRA_DIST =					\
   $(TESTS)					\
   bre.awk					\
   bre.tests					\
+  Coreutils.pm					\
+  CuSkip.pm					\
+  CuTmpdir.pm					\
   envvar-check					\
   ere.awk					\
   ere.tests					\
@@ -159,6 +182,7 @@ EXTRA_DIST =					\
   init.sh					\
   khadafy.lines					\
   khadafy.regexp				\
+  no-perl					\
   spencer1.awk					\
   spencer1.tests				\
   spencer1-locale.awk
