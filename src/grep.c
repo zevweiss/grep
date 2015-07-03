@@ -1022,8 +1022,8 @@ print_line_middle (const char *beg, const char *lim,
   const char *mid = NULL;
 
   while (cur < lim
-         && ((match_offset = execute (beg, lim - beg, &match_size,
-                                      beg + (cur - beg))) != (size_t) -1))
+         && ((match_offset = execute (beg, lim - beg, &match_size, cur))
+             != (size_t) -1))
     {
       char const *b = beg + match_offset;
 
