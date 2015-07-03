@@ -92,6 +92,7 @@ TESTS =						\
   options					\
   pcre						\
   pcre-abort					\
+  pcre-context					\
   pcre-infloop					\
   pcre-invalid-utf8-input			\
   pcre-jitstack					\

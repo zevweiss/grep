@@ -43,16 +43,18 @@ static pcre_extra *extra;
 static int jit_stack_size;
 # endif
 
-/* Match the already-compiled PCRE pattern against the data in P, of
-   size SEARCH_BYTES, with options OPTIONS, and storing resulting
-   matches into SUB.  Return the (nonnegative) match location or a
-   (negative) error number.  */
+/* Match the already-compiled PCRE pattern against the data in SUBJECT,
+   of size SEARCH_BYTES and starting with offset SEARCH_OFFSET, with
+   options OPTIONS, and storing resulting matches into SUB.  Return
+   the (nonnegative) match location or a (negative) error number.  */
 static int
-jit_exec (char const *p, int search_bytes, int options, int *sub)
+jit_exec (char const *subject, int search_bytes, int search_offset,
+          int options, int *sub)
 {
   while (true)
     {
-      int e = pcre_exec (cre, extra, p, search_bytes, 0, options, sub, NSUB);
+      int e = pcre_exec (cre, extra, subject, search_bytes, search_offset,
+                         options, sub, NSUB);
 
 # if PCRE_STUDY_JIT_COMPILE
       if (e == PCRE_ERROR_JIT_STACKLIMIT
@@ -187,6 +189,11 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
 
+  /* The search address to pass to pcre_exec.  This is the start of
+     the buffer, or just past the most-recently discovered encoding
+     error.  */
+  char const *subject = buf;
+
   /* If the input type is unknown, the caller is still testing the
      input, which means the current buffer cannot contain encoding
      errors and a multiline search is typically more efficient.
@@ -226,12 +233,13 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
               bol = false;
             }
 
+          int search_offset = p - subject;
+
           /* Check for an empty match; this is faster than letting
              pcre_exec do it.  */
-          int search_bytes = line_end - p;
-          if (search_bytes == 0)
+          if (p == line_end)
             {
-              sub[0] = sub[1] = 0;
+              sub[0] = sub[1] = search_offset;
               e = empty_match[bol];
               break;
             }
@@ -242,17 +250,18 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           if (multiline)
             options |= PCRE_NO_UTF8_CHECK;
 
-          e = jit_exec (p, search_bytes, options, sub);
+          e = jit_exec (subject, line_end - subject, search_offset,
+                        options, sub);
           if (e != PCRE_ERROR_BADUTF8)
             {
               if (0 < e && multiline && sub[1] - sub[0] != 0)
                 {
-                  char const *nl = memchr (p + sub[0], eolbyte,
+                  char const *nl = memchr (subject + sub[0], eolbyte,
                                            sub[1] - sub[0]);
                   if (nl)
                     {
                       /* This match crosses a line boundary; reject it.  */
-                      p += sub[0];
+                      p = subject + sub[0];
                       line_end = nl;
                       continue;
                     }
@@ -261,22 +270,26 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
             }
           int valid_bytes = sub[0];
 
-          /* Try to match the string before the encoding error.
-             Again, handle the empty-match case specially, for speed.  */
-          if (valid_bytes == 0)
+          /* Try to match the string before the encoding error.  */
+          if (valid_bytes < search_offset)
+            e = PCRE_ERROR_NOMATCH;
+          else if (valid_bytes == 0)
             {
+              /* Handle the empty-match case specially, for speed.
+                 This optimization is valid if VALID_BYTES is zero,
+                 which means SEARCH_OFFSET is also zero.  */
               sub[1] = 0;
               e = empty_match[bol];
             }
           else
-            e = pcre_exec (cre, extra, p, valid_bytes, 0,
-                           options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL,
-                           sub, NSUB);
+            e = jit_exec (subject, valid_bytes, search_offset,
+                          options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL, sub);
+
           if (e != PCRE_ERROR_NOMATCH)
             break;
 
           /* Treat the encoding error as data that cannot match.  */
-          p += valid_bytes + 1;
+          p = subject += valid_bytes + 1;
           bol = false;
         }
 
@@ -315,8 +328,8 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
     }
   else
     {
-      char const *matchbeg = p + sub[0];
-      char const *matchend = p + sub[1];
+      char const *matchbeg = subject + sub[0];
+      char const *matchend = subject + sub[1];
       char const *beg;
       char const *end;
       if (start_ptr)
