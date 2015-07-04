@@ -120,6 +120,7 @@ TESTS =						\
   two-files					\
   unibyte-bracket-expr				\
   unibyte-negated-circumflex			\
+  utf8-bracket					\
   warn-char-classes				\
   word-delim-multibyte				\
   word-multi-file				\

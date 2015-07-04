@@ -12,6 +12,10 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer reads from uninitialized memory or from beyond the end
   of the heap-allocated input buffer.  This fix addressed CVE-2015-1345.
 
+  With -z, '.' in a pattern now consistently matches newline.
+  Previously, it sometimes matched newline, and sometimes did not.
+  [bug introduced in grep-2.4]
+
   When the JIT stack is exhausted, grep -P now grows the stack rather
   than reporting an internal PCRE error.
 
