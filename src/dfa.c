@@ -1242,7 +1242,7 @@ parse_bracket_exp (void)
       assert (!dfa->multibyte);
       notset (ccl);
       if (syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
-        clrbit (eolbyte, ccl);
+        clrbit ('\n', ccl);
     }
 
   return CSET + charclass_index (ccl);
@@ -1487,7 +1487,7 @@ lex (void)
           zeroset (ccl);
           notset (ccl);
           if (!(syntax_bits & RE_DOT_NEWLINE))
-            clrbit (eolbyte, ccl);
+            clrbit ('\n', ccl);
           if (syntax_bits & RE_DOT_NOT_NULL)
             clrbit ('\0', ccl);
           laststart = false;
@@ -1759,7 +1759,7 @@ add_utf8_anychar (void)
         if (i == 1)
           {
             if (!(syntax_bits & RE_DOT_NEWLINE))
-              clrbit (eolbyte, c);
+              clrbit ('\n', c);
             if (syntax_bits & RE_DOT_NOT_NULL)
               clrbit ('\0', c);
           }
@@ -2991,7 +2991,7 @@ match_anychar (struct dfa *d, state_num s, position pos,
   int context;
 
   /* Check syntax bits.  */
-  if (wc == (wchar_t) eolbyte)
+  if (wc == (wchar_t) '\n')
     {
       if (!(syntax_bits & RE_DOT_NEWLINE))
         return 0;
