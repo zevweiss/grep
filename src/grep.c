@@ -1862,15 +1862,17 @@ static void
 Gcompile (char const *pattern, size_t size)
 {
   GEAcompile (pattern, size,
-              RE_SYNTAX_GREP | RE_DOT_NEWLINE | RE_NO_EMPTY_RANGES);
+              ((RE_SYNTAX_GREP | RE_DOT_NEWLINE | RE_NO_EMPTY_RANGES)
+               & ~RE_HAT_LISTS_NOT_NEWLINE));
 }
 
 static void
 Ecompile (char const *pattern, size_t size)
 {
   GEAcompile (pattern, size,
-              (RE_SYNTAX_POSIX_EGREP | RE_DOT_NEWLINE
-               | RE_NO_EMPTY_RANGES | RE_UNMATCHED_RIGHT_PAREN_ORD));
+              ((RE_SYNTAX_POSIX_EGREP | RE_DOT_NEWLINE
+                | RE_NO_EMPTY_RANGES | RE_UNMATCHED_RIGHT_PAREN_ORD)
+               & ~RE_HAT_LISTS_NOT_NEWLINE));
 }
 
 static void
