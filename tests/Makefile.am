@@ -80,6 +80,7 @@ TESTS =						\
   khadafy					\
   kwset-abuse					\
   long-line-vs-2GiB-read			\
+  long-pattern-perf				\
   match-lines					\
   max-count-overread				\
   max-count-vs-context				\
