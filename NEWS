@@ -22,6 +22,10 @@ GNU grep NEWS                                    -*- outline -*-
   'grep -D skip PATTERN FILE' no longer hangs if FILE is a fifo.
   [bug introduced in grep-2.12]
 
+  --exclude and related options are now matched against entire
+  command-line arguments, not against command-line components.
+  [bug introduced in grep-2.6]
+
 
 * Noteworthy changes in release 2.21 (2014-11-23) [stable]
 

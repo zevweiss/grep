@@ -1482,9 +1482,10 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       return true;
     }
 
-  if (skipped_file (ent->fts_name, command_line,
-                    (ent->fts_info == FTS_D || ent->fts_info == FTS_DC
-                     || ent->fts_info == FTS_DNR)))
+  if (!command_line
+      && skipped_file (ent->fts_name, false,
+                       (ent->fts_info == FTS_D || ent->fts_info == FTS_DC
+                        || ent->fts_info == FTS_DNR)))
     {
       fts_set (fts, ent, FTS_SKIP);
       return true;
@@ -2448,14 +2449,14 @@ main (int argc, char **argv)
         if (!excluded_patterns)
           excluded_patterns = new_exclude ();
         add_exclude (excluded_patterns, optarg,
-                     (EXCLUDE_WILDCARDS
+                     (EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS
                       | (opt == INCLUDE_OPTION ? EXCLUDE_INCLUDE : 0)));
         break;
       case EXCLUDE_FROM_OPTION:
         if (!excluded_patterns)
           excluded_patterns = new_exclude ();
         if (add_exclude_file (add_exclude, excluded_patterns, optarg,
-                              EXCLUDE_WILDCARDS, '\n') != 0)
+                              EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS, '\n') != 0)
           {
             error (EXIT_TROUBLE, errno, "%s", optarg);
           }
@@ -2465,7 +2466,8 @@ main (int argc, char **argv)
         if (!excluded_directory_patterns)
           excluded_directory_patterns = new_exclude ();
         strip_trailing_slashes (optarg);
-        add_exclude (excluded_directory_patterns, optarg, EXCLUDE_WILDCARDS);
+        add_exclude (excluded_directory_patterns, optarg,
+                     EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS);
         break;
 
       case GROUP_SEPARATOR_OPTION:

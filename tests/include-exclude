@@ -14,6 +14,7 @@ printf '%s\n' x/a:aaa x/b:bbb     > exp-not-dir || framework_failure_
 printf '%s\n' x/a:aaa             > exp-a       || framework_failure_
 printf '%s\n' a:aaa               > exp-aa      || framework_failure_
 printf '%s\n' aaa                 > exp-aaa     || framework_failure_
+printf '%s\n' ./x/a ./x/b ./x/dir/d > exp-dotnames || framework_failure+
 
 grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
@@ -51,7 +52,7 @@ grep -r --include='a*'    . x > out || fail=1
 compare exp-a out || fail=1
 
 # --include (without --recursive) uses different code
-grep --directories=skip --include=a --exclude-dir=dir '^aaa$' x/* > out \
+grep --directories=skip --include=x/a --exclude-dir=dir '^aaa$' x/* > out \
     || fail=1
 compare exp-a out || fail=1
 
@@ -60,5 +61,14 @@ compare exp-aa out || fail=1
 
 grep --exclude=- '^aaa$' - < x/a > out || fail=1
 compare exp-aaa out || fail=1
+
+for exclude in 'x' 'x*'; do
+    grep -rl --exclude-dir="$exclude" . x > out
+    test $? -eq 1 || fail=1
+    compare /dev/null out || fail=1
+
+    grep -rl --exclude-dir="$exclude" . ./x > out || fail=1
+    compare exp-dotnames out || fail=1
+done
 
 Exit $fail
