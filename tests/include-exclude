@@ -14,7 +14,7 @@ printf '%s\n' x/a:aaa x/b:bbb     > exp-not-dir || framework_failure_
 printf '%s\n' x/a:aaa             > exp-a       || framework_failure_
 printf '%s\n' a:aaa               > exp-aa      || framework_failure_
 printf '%s\n' aaa                 > exp-aaa     || framework_failure_
-printf '%s\n' ./x/a ./x/b ./x/dir/d > exp-dotnames || framework_failure+
+printf '%s\n' ./x/a ./x/b ./x/dir/d | sort > exp-dotnames || framework_failure_
 
 grep -r --exclude='a*'    . x > out || fail=1
 sort out > k && mv k out
@@ -59,7 +59,7 @@ compare exp-a out || fail=1
 (cd x && grep -r --exclude-dir=. '^aaa$') > out || fail=1
 compare exp-aa out || fail=1
 
-grep --exclude=- '^aaa$' - < x/a > out || fail=1
+grep --exclude=- '^aaa$' - < x/a | sort > out || fail=1
 compare exp-aaa out || fail=1
 
 for exclude in 'x' 'x*'; do
