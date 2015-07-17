@@ -59,7 +59,7 @@ compare exp-a out || fail=1
 (cd x && grep -r --exclude-dir=. '^aaa$') > out || fail=1
 compare exp-aa out || fail=1
 
-grep --exclude=- '^aaa$' - < x/a | sort > out || fail=1
+grep --exclude=- '^aaa$' - < x/a > out || fail=1
 compare exp-aaa out || fail=1
 
 for exclude in 'x' 'x*'; do
@@ -67,7 +67,7 @@ for exclude in 'x' 'x*'; do
     test $? -eq 1 || fail=1
     compare /dev/null out || fail=1
 
-    grep -rl --exclude-dir="$exclude" . ./x > out || fail=1
+    grep -rl --exclude-dir="$exclude" . ./x | sort > out || fail=1
     compare exp-dotnames out || fail=1
 done
 
