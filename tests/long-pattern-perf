@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
-require_timeout_
-require_hi_res_time_
 
 fail=0
 
@@ -26,25 +24,15 @@ echo x > in || framework_failure_
 # We could use seq -s '' (avoiding the tr filter), but I
 # suspect some version of seq does not honor that option.
 # Note that we want 10x the byte count (not line count) in the larger file.
-seq 5000  | tr -d '\012' > re     || framework_failure_
-seq 40000 | tr -d '\012' > re-10x || framework_failure_
+seq 10000  20000 | tr -d '\012' > re     || framework_failure_
+seq 10000 100000 | tr -d '\012' > re-10x || framework_failure_
 
-start=$(hi_res_time_)
-grep -f re in; st=$?
-stop=$(hi_res_time_)
-test $st = 1 || fail=1
+base_ms=$(user_time_ 1 grep -f re in    ) || fail=1
+b10x_ms=$(user_time_ 1 grep -f re-10x in) || fail=1
 
 # Increasing the length of the regular expression by a factor
 # of 10 should cause no more than a 10x increase in duration.
-# However, we'll draw the line at 30x to avoid false-positives.
-# Use an integer; some 'timeout' implementations have trouble with
-# floating-point.
-n_sec=$(
-  $AWK 'BEGIN { print 1 + int (30 * ('$stop' - '$start'))}' < /dev/null
-)
-
-# Expect no match, i.e., exit status of 1.  Anything else is an error.
-timeout $n_sec grep -f re-10x in; st=$?
-test $st = 1 || fail=1
+# However, we'll draw the line at 20x to avoid false-positives.
+expr $base_ms '<' $b10x_ms / 20 && fail=1
 
 Exit $fail
