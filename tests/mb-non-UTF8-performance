@@ -19,31 +19,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
-require_timeout_
-require_hi_res_time_
 
 fail=0
 
-yes $(printf '%078d' 0) | head -50000 > in || framework_failure_
+# Make this large enough so that even on high-end systems
+# it incurs at least 5-10ms of user time.
+yes $(printf '%078d' 0) | head -400000 > in || framework_failure_
 
-start=$(hi_res_time_)
-LC_ALL=C grep -i foobar in; st=$?
-stop=$(hi_res_time_)
-
-# Use a multiple of the LC_ALL=C duration as the timeout for the JP/EUC test.
-# A multiple of 3 seems to be enough for i5,i7, but AMD needs >25.
-# Use an integer; some 'timeout' implementations have trouble with
-# floating-point in JP_EUC locales.
-timeout=$(
-  $AWK 'BEGIN { print 1 + int (30 * ('$stop' - '$start'))}' < /dev/null
-)
-
-test $st = 1 || fail=1
-
+ubyte_ms=$(LC_ALL=C user_time_ 1 grep -i foobar in) || fail=1
 require_JP_EUC_locale_
+mbyte_ms=$(user_time_ 1 grep -i foobar in) || fail=1
 
-# Expect no match, i.e., exit status of 1.  Anything else is an error.
-timeout $timeout grep -i foobar in; st=$?
-test $st = 1 || fail=1
+# The duration of the multi-byte run must be no more than 30 times
+# that of the single-byte one.
+# A multiple of 3 seems to be enough for i5,i7, but AMD needs >25.
+expr $ubyte_ms '<' $mbyte_ms / 30 && fail=1
 
 Exit $fail
