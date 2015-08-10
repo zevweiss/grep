@@ -207,7 +207,6 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
 {
   char const *buflim, *beg, *end, *ptr, *match, *best_match, *mb_start;
   char eol = eolbyte;
-  int backref;
   regoff_t start;
   size_t len, best_len;
   struct kwsmatch kwsm;
@@ -227,6 +226,7 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
           char const *next_beg, *dfa_beg = beg;
           size_t count = 0;
           bool exact_kwset_match = false;
+          int backref = 0;
 
           /* Try matching with KWset, if it's defined.  */
           if (kwset)
