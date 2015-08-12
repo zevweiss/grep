@@ -37,14 +37,10 @@ void
 Fcompile (char const *pattern, size_t size)
 {
   size_t total = size;
-  mb_len_map_t *map = NULL;
-  char const *pat = (match_icase && MB_CUR_MAX > 1
-                     ? mbtoupper (pattern, &total, &map)
-                     : pattern);
 
   kwsinit (&kwset);
 
-  char const *p = pat;
+  char const *p = pattern;
   do
     {
       size_t len;
@@ -81,26 +77,6 @@ Fcompile (char const *pattern, size_t size)
   kwsprep (kwset);
 }
 
-/* Apply the MAP (created by mbtoupper) to the uppercase-buffer-relative
-   *OFF and *LEN, converting them to be relative to the original buffer.  */
-
-static void
-mb_case_map_apply (mb_len_map_t const *map, size_t *off, size_t *len)
-{
-  if (map)
-    {
-      size_t off_incr = 0;
-      size_t len_incr = 0;
-      size_t k;
-      for (k = 0; k < *off; k++)
-        off_incr += map[k];
-      for (; k < *off + *len; k++)
-        len_incr += map[k];
-      *off += off_incr;
-      *len += len_incr;
-    }
-}
-
 size_t
 Fexecute (char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
@@ -110,18 +86,6 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
-  mb_len_map_t *map = NULL;
-
-  if (MB_CUR_MAX > 1)
-    {
-      if (match_icase)
-        {
-          char *case_buf = mbtoupper (buf, &size, &map);
-          if (start_ptr)
-            start_ptr = case_buf + (start_ptr - buf);
-          buf = case_buf;
-        }
-    }
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
@@ -194,7 +158,6 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   len = end - beg;
  success_in_beg_and_len:;
   size_t off = beg - buf;
-  mb_case_map_apply (map, &off, &len);
 
   *match_size = len;
   ret_val = off;
