@@ -301,18 +301,6 @@ struct mb_char_classes
   bool invert;
   wchar_t *chars;               /* Normal characters.  */
   size_t nchars;
-  wctype_t *ch_classes;         /* Character classes.  */
-  size_t nch_classes;
-  struct			/* Range characters.  */
-  {
-    wchar_t beg;		/* Range start.  */
-    wchar_t end;		/* Range end.  */
-  } *ranges;
-  size_t nranges;
-  char **equivs;                /* Equivalence classes.  */
-  size_t nequivs;
-  char **coll_elems;
-  size_t ncoll_elems;           /* Collating elements.  */
 };
 
 /* A compiled regular expression.  */
@@ -993,9 +981,9 @@ parse_bracket_exp (void)
 
   /* Work area to build a mb_char_classes.  */
   struct mb_char_classes *work_mbc;
-  size_t chars_al, ranges_al, ch_classes_al, equivs_al, coll_elems_al;
+  size_t chars_al;
 
-  chars_al = ranges_al = ch_classes_al = equivs_al = coll_elems_al = 0;
+  chars_al = 0;
   if (dfa->multibyte)
     {
       dfa->mbcsets = maybe_realloc (dfa->mbcsets, dfa->nmbcsets,
@@ -1073,20 +1061,11 @@ parse_bracket_exp (void)
                     dfaerror (_("invalid character class"));
 
                   if (dfa->multibyte && !pred->single_byte_only)
-                    {
-                      /* Store the character class as wctype_t.  */
-                      wctype_t wt = wctype (class);
-
-                      work_mbc->ch_classes
-                        = maybe_realloc (work_mbc->ch_classes,
-                                         work_mbc->nch_classes, &ch_classes_al,
-                                         sizeof *work_mbc->ch_classes);
-                      work_mbc->ch_classes[work_mbc->nch_classes++] = wt;
-                    }
-
-                  for (c2 = 0; c2 < NOTCHAR; ++c2)
-                    if (pred->func (c2))
-                      setbit (c2, ccl);
+                    known_bracket_exp = false;
+                  else
+                    for (c2 = 0; c2 < NOTCHAR; ++c2)
+                      if (pred->func (c2))
+                        setbit (c2, ccl);
                 }
               else
                 known_bracket_exp = false;
@@ -1128,31 +1107,7 @@ parse_bracket_exp (void)
                 FETCH_WC (c2, wc2, _("unbalanced ["));
 
               if (dfa->multibyte)
-                {
-                  /* When case folding map a range, say [m-z] (or even [M-z])
-                     to the pair of ranges, [m-z] [M-Z].  Although this code
-                     is wrong in multiple ways, it's never used in practice.
-                     FIXME: Remove this (and related) unused code.  */
-                  if (wc != WEOF && wc2 != WEOF)
-                    {
-                      work_mbc->ranges
-                        = maybe_realloc (work_mbc->ranges,
-                                         work_mbc->nranges + 2,
-                                         &ranges_al, sizeof *work_mbc->ranges);
-                      work_mbc->ranges[work_mbc->nranges].beg
-                        = case_fold ? towlower (wc) : wc;
-                      work_mbc->ranges[work_mbc->nranges++].end
-                        = case_fold ? towlower (wc2) : wc2;
-
-                      if (case_fold && (iswalpha (wc) || iswalpha (wc2)))
-                        {
-                          work_mbc->ranges[work_mbc->nranges].beg
-                            = towupper (wc);
-                          work_mbc->ranges[work_mbc->nranges++].end
-                            = towupper (wc2);
-                        }
-                    }
-                }
+                known_bracket_exp = false;
               else if (using_simple_locale ())
                 {
                   for (c1 = c; c1 <= c2; c1++)
@@ -1641,45 +1596,26 @@ addtok (token t)
     {
       bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
+      size_t i;
 
       /* Extract wide characters into alternations for better performance.
          This does not require UTF-8.  */
-      if (!work_mbc->invert)
+      for (i = 0; i < work_mbc->nchars; i++)
         {
-          size_t i;
-          for (i = 0; i < work_mbc->nchars; i++)
-            {
-              addtok_wc (work_mbc->chars[i]);
-              if (need_or)
-                addtok (OR);
-              need_or = true;
-            }
-          work_mbc->nchars = 0;
-        }
-
-      /* If the MBCSET is non-inverted and doesn't include neither
-         character classes including multibyte characters, range
-         expressions, equivalence classes nor collating elements,
-         it can be replaced to a simple CSET. */
-      if (work_mbc->invert
-          || work_mbc->nch_classes != 0
-          || work_mbc->nranges != 0
-          || work_mbc->nequivs != 0 || work_mbc->ncoll_elems != 0)
-        {
-          addtok_mb (MBCSET, ((dfa->nmbcsets - 1) << 2) + 3);
+          addtok_wc (work_mbc->chars[i]);
           if (need_or)
             addtok (OR);
+          need_or = true;
         }
-      else
+      work_mbc->nchars = 0;
+
+      /* Characters have been handled above, so it is possible
+         that the mbcset is empty now.  Do nothing in that case.  */
+      if (work_mbc->cset != -1)
         {
-          /* Characters have been handled above, so it is possible
-             that the mbcset is empty now.  Do nothing in that case.  */
-          if (work_mbc->cset != -1)
-            {
-              addtok (CSET + work_mbc->cset);
-              if (need_or)
-                addtok (OR);
-            }
+          addtok (CSET + work_mbc->cset);
+          if (need_or)
+            addtok (OR);
         }
     }
   else
@@ -3066,97 +3002,6 @@ match_anychar (struct dfa *d, state_num s, position pos,
   return mbclen;
 }
 
-/* Match a bracket expression against the current context.
-   Return the length of the match, in bytes.
-   POS is the position of the bracket expression.  */
-static int
-match_mb_charset (struct dfa *d, state_num s, position pos,
-                  char const *p, wint_t wc, size_t match_len)
-{
-  size_t i;
-  bool match;              /* Matching succeeded.  */
-  int op_len;              /* Length of the operator.  */
-  char buffer[128];
-
-  /* Pointer to the structure to which we are currently referring.  */
-  struct mb_char_classes *work_mbc;
-
-  int context;
-
-  /* Check syntax bits.  */
-  if (wc == WEOF)
-    return 0;
-
-  context = wchar_context (wc);
-  if (!SUCCEEDS_IN_CONTEXT (pos.constraint, d->states[s].context, context))
-    return 0;
-
-  /* Assign the current referring operator to work_mbc.  */
-  work_mbc = &(d->mbcsets[(d->multibyte_prop[pos.index]) >> 2]);
-  match = !work_mbc->invert;
-
-  /* Match in range 0-255?  */
-  if (wc < NOTCHAR && work_mbc->cset != -1
-      && tstbit (to_uchar (wc), d->charclasses[work_mbc->cset]))
-    goto charset_matched;
-
-  /* match with a character class?  */
-  for (i = 0; i < work_mbc->nch_classes; i++)
-    {
-      if (iswctype ((wint_t) wc, work_mbc->ch_classes[i]))
-        goto charset_matched;
-    }
-
-  strncpy (buffer, p, match_len);
-  buffer[match_len] = '\0';
-
-  /* match with an equivalence class?  */
-  for (i = 0; i < work_mbc->nequivs; i++)
-    {
-      op_len = strlen (work_mbc->equivs[i]);
-      strncpy (buffer, p, op_len);
-      buffer[op_len] = '\0';
-      if (strcoll (work_mbc->equivs[i], buffer) == 0)
-        {
-          match_len = op_len;
-          goto charset_matched;
-        }
-    }
-
-  /* match with a collating element?  */
-  for (i = 0; i < work_mbc->ncoll_elems; i++)
-    {
-      op_len = strlen (work_mbc->coll_elems[i]);
-      strncpy (buffer, p, op_len);
-      buffer[op_len] = '\0';
-
-      if (strcoll (work_mbc->coll_elems[i], buffer) == 0)
-        {
-          match_len = op_len;
-          goto charset_matched;
-        }
-    }
-
-  /* match with a range?  */
-  for (i = 0; i < work_mbc->nranges; i++)
-    {
-      if (work_mbc->ranges[i].beg <= wc && wc <= work_mbc->ranges[i].end)
-        goto charset_matched;
-    }
-
-  /* match with a character?  */
-  for (i = 0; i < work_mbc->nchars; i++)
-    {
-      if (wc == work_mbc->chars[i])
-        goto charset_matched;
-    }
-
-  match = !match;
-
-charset_matched:
-  return match ? match_len : 0;
-}
-
 /* Check whether each of 'd->states[s].mbps.elem' can match.  Then return the
    array which corresponds to 'd->states[s].mbps.elem'; each element of the
    array contains the number of bytes with which the element can match.
@@ -3177,9 +3022,6 @@ check_matching_with_multibyte_ops (struct dfa *d, state_num s,
         {
         case ANYCHAR:
           rarray[i] = match_anychar (d, s, pos, wc, mbclen);
-          break;
-        case MBCSET:
-          rarray[i] = match_mb_charset (d, s, pos, p, wc, mbclen);
           break;
         default:
           break;                /* cannot happen.  */
@@ -3606,19 +3448,8 @@ free_mbdata (struct dfa *d)
 
   for (i = 0; i < d->nmbcsets; ++i)
     {
-      size_t j;
       struct mb_char_classes *p = &(d->mbcsets[i]);
       free (p->chars);
-      free (p->ch_classes);
-      free (p->ranges);
-
-      for (j = 0; j < p->nequivs; ++j)
-        free (p->equivs[j]);
-      free (p->equivs);
-
-      for (j = 0; j < p->ncoll_elems; ++j)
-        free (p->coll_elems[j]);
-      free (p->coll_elems);
     }
 
   free (d->mbcsets);
