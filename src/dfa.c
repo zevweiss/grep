@@ -1101,41 +1101,49 @@ parse_bracket_exp (void)
               c2 = ']';
             }
 
-          if (c2 != ']')
+          if (c2 == ']')
+            {
+              /* In the case [x-], the - is an ordinary hyphen,
+                 which is left in c1, the lookahead character.  */
+              lexptr -= cur_mb_len;
+              lexleft += cur_mb_len;
+            }
+          else
             {
               if (c2 == '\\' && (syntax_bits & RE_BACKSLASH_ESCAPE_IN_LISTS))
                 FETCH_WC (c2, wc2, _("unbalanced ["));
 
-              if (dfa->multibyte)
-                known_bracket_exp = false;
-              else if (using_simple_locale ())
-                {
-                  for (c1 = c; c1 <= c2; c1++)
-                    setbit (c1, ccl);
-                  if (case_fold)
-                    {
-                      int uc = toupper (c);
-                      int uc2 = toupper (c2);
-                      for (c1 = 0; c1 < NOTCHAR; c1++)
-                        {
-                          int uc1 = toupper (c1);
-                          if (uc <= uc1 && uc1 <= uc2)
-                            setbit (c1, ccl);
-                        }
-                    }
-                }
-              else
-                known_bracket_exp = false;
-
               colon_warning_state |= 8;
               FETCH_WC (c1, wc1, _("unbalanced ["));
-              continue;
-            }
 
-          /* In the case [x-], the - is an ordinary hyphen,
-             which is left in c1, the lookahead character.  */
-          lexptr -= cur_mb_len;
-          lexleft += cur_mb_len;
+              /* Treat [x-y] as a range if x != y.  */
+              if (wc != wc2 || wc == WEOF)
+                {
+                  if (dfa->multibyte)
+                    known_bracket_exp = false;
+                  else if (using_simple_locale ())
+                    {
+                      int ci;
+                      for (ci = c; ci <= c2; ci++)
+                        setbit (ci, ccl);
+                      if (case_fold)
+                        {
+                          int uc = toupper (c);
+                          int uc2 = toupper (c2);
+                          for (ci = 0; ci < NOTCHAR; ci++)
+                            {
+                              int uci = toupper (ci);
+                              if (uc <= uci && uci <= uc2)
+                                setbit (ci, ccl);
+                            }
+                        }
+                    }
+                  else
+                    known_bracket_exp = false;
+
+                  continue;
+                }
+            }
         }
 
       colon_warning_state |= (c == ':') ? 2 : 4;
