@@ -24,16 +24,27 @@ AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
 dfa_match_aux_LDADD = ../src/dfa.$(OBJEXT) $(LDADD)
 
+# The triple-backref test is expected to fail with both the system
+# matcher (i.e., with glibc) and with the included matcher.
+# Both matchers need to be fixed.
+# FIXME-2015: Remove this once the glibc and gnulib bugs are fixed.
 XFAIL_TESTS = triple-backref
 
 # Equivalence classes are only supported when using the system
 # matcher (which means only with glibc).
+# The included matcher needs to be fixed.
+# FIXME-2015: Remove this once the gnulib bug is fixed.
 if USE_INCLUDED_REGEX
 XFAIL_TESTS += equiv-classes
+else
+# The backslash-alt test fails for glibc, which needs to be fixed.
+# FIXME-2015: Remove this once the glibc bug is fixed.
+XFAIL_TESTS += backref-alt
 endif
 
 TESTS =						\
   backref					\
+  backref-alt					\
   backref-multibyte-slow			\
   backref-word					\
   backslash-s-and-repetition-operators		\
