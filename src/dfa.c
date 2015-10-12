@@ -3940,6 +3940,8 @@ dfamust (struct dfa const *d)
   bool exact = false;
   bool begline = false;
   bool endline = false;
+  bool need_begline = false;
+  bool need_endline = false;
 
   for (size_t ri = 0; ri < d->tindex; ++ri)
     {
@@ -3949,10 +3951,12 @@ dfamust (struct dfa const *d)
         case BEGLINE:
           mp = allocmust (mp, 2);
           mp->begline = true;
+          need_begline = true;
           break;
         case ENDLINE:
           mp = allocmust (mp, 2);
           mp->endline = true;
+          need_endline = true;
           break;
         case LPAREN:
         case RPAREN:
@@ -4029,7 +4033,9 @@ dfamust (struct dfa const *d)
               result = mp->in[i];
           if (STREQ (result, mp->is))
             {
-              exact = true;
+              if ((!need_begline || mp->begline) && (!need_endline
+                                                     || mp->endline))
+                exact = true;
               begline = mp->begline;
               endline = mp->endline;
             }
