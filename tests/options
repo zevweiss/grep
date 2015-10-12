@@ -20,21 +20,29 @@ fail=0
 # checking for -E extended regex
 echo "abababccccccd" | grep -E -e 'c{3}' > /dev/null 2>&1
 if test $? -ne 0 ; then
-        echo "Options: Wrong status code, test \#1 failed"
+        echo "Options: Wrong status code, test #1 failed"
         fail=1
 fi
 
 # checking for basic regex
 echo "abababccccccd" | grep -G -e 'c\{3\}' > /dev/null 2>&1
 if test $? -ne 0 ; then
-        echo "Options: Wrong status code, test \#2 failed"
+        echo "Options: Wrong status code, test #2 failed"
         fail=1
 fi
 
 # checking for fixed string
 echo "abababccccccd" | grep -F -e 'c\{3\}' > /dev/null 2>&1
 if test $? -ne 1 ; then
-        echo "Options: Wrong status code, test \#3 failed"
+        echo "Options: Wrong status code, test #3 failed"
+        fail=1
+fi
+
+# checking for multiple -e options; see:
+# http://bugs.gnu.org/21670
+echo abchelloabc | grep -e '^hello' -e 'hello$' > /dev/null 2>&1
+if test $? -ne 1 ; then
+        echo "Options: Wrong status code, test #4 failed"
         fail=1
 fi
 
