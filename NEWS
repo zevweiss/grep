@@ -9,6 +9,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  A DFA matcher bug made this command mistakenly print its input line:
+    echo axb | grep -E '^x|x$'
+  Likewise for this equivalent command:
+    echo axb | grep -e '^x' -e 'x$'
+  [bug introduced in grep-2.19 ]
+
   grep no longer reads from uninitialized memory or from beyond the end
   of the heap-allocated input buffer.  This fix addressed CVE-2015-1345.
 
