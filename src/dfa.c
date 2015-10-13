@@ -4135,7 +4135,7 @@ dfamust (struct dfa const *d)
                 = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
             }
           mp->is[i] = mp->left[i] = mp->right[i] = '\0';
-          mp->in = enlist (mp->in, mp->is, i - 1);
+          mp->in = enlist (mp->in, mp->is, i);
           break;
         }
     }
