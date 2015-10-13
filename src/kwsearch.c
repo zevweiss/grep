@@ -124,7 +124,11 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (match_words)
         for (try = beg; ; )
           {
-            if (wordchar (mb_prev_wc (buf, try, buf + size)))
+            char const *bol;
+            bol = beg;
+            while (buf < bol && bol[-1] != eol)
+              --bol;
+            if (wordchar (mb_prev_wc (bol, try, buf + size)))
               break;
             if (wordchar (mb_next_wc (try + len, buf + size)))
               {
