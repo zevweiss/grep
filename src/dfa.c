@@ -3942,6 +3942,7 @@ dfamust (struct dfa const *d)
   bool endline = false;
   bool need_begline = false;
   bool need_endline = false;
+  bool case_fold_unibyte = case_fold && MB_CUR_MAX == 1;
 
   for (size_t ri = 0; ri < d->tindex; ++ri)
     {
@@ -4108,7 +4109,7 @@ dfamust (struct dfa const *d)
               t = j;
               while (++j < NOTCHAR)
                 if (tstbit (j, *ccl)
-                    && ! (case_fold && MB_CUR_MAX == 1
+                    && ! (case_fold_unibyte
                           && toupper (j) == toupper (t)))
                   break;
               if (j < NOTCHAR)
@@ -4131,14 +4132,14 @@ dfamust (struct dfa const *d)
             }
           mp = allocmust (mp, ((rj - ri) >> 1) + 1);
           mp->is[0] = mp->left[0] = mp->right[0]
-            = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
+            = case_fold_unibyte ? toupper (t) : t;
 
           for (i = 1; ri + 2 < rj; i++)
             {
               ri += 2;
               t = d->tokens[ri];
               mp->is[i] = mp->left[i] = mp->right[i]
-                = case_fold && MB_CUR_MAX == 1 ? toupper (t) : t;
+                = case_fold_unibyte ? toupper (t) : t;
             }
           mp->is[i] = mp->left[i] = mp->right[i] = '\0';
           mp->in = enlist (mp->in, mp->is, i);
