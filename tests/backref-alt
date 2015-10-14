@@ -15,7 +15,7 @@ fail=0
 
 grep -E 'b|(.)b|\1|b' in >out
 status=$?
-# POSIX isn’t clear whether this regular expression should be invalid,
+# POSIX isn't clear whether this regular expression should be invalid,
 # (because the \1 is out of range for REs that could precede it)
 # or valid but \1 should not match.  Allow either interpretation.
 test $status -eq 2 || test $status -eq 1 || fail=1
