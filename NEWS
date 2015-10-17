@@ -32,7 +32,8 @@ GNU grep NEWS                                    -*- outline -*-
   command-line arguments, not against command-line components.
   [bug introduced in grep-2.6]
 
-  Performance has improved for patterns containing very long strings.
+  Performance has improved for patterns containing very long strings,
+  and for grep -Fw in unibyte locales.
 
 
 * Noteworthy changes in release 2.21 (2014-11-23) [stable]
