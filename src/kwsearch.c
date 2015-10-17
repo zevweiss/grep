@@ -124,10 +124,8 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       if (match_words)
         for (try = beg; ; )
           {
-            char const *bol;
-            bol = beg;
-            while (buf < bol && bol[-1] != eol)
-              --bol;
+            char const *bol = memrchr (buf, eol, beg - buf);
+            bol = bol ? bol + 1 : buf;
             if (wordchar (mb_prev_wc (bol, try, buf + size)))
               break;
             if (wordchar (mb_next_wc (try + len, buf + size)))
@@ -153,12 +151,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
   return -1;
 
  success:
-  if ((end = memchr (beg + len, eol, (buf + size) - (beg + len))) != NULL)
-    end++;
-  else
-    end = buf + size;
-  while (buf < beg && beg[-1] != eol)
-    --beg;
+  end = memchr (beg + len, eol, (buf + size) - (beg + len));
+  end = end ? end + 1 : buf + size;
+  beg = memrchr (buf, eol, beg - buf);
+  beg = beg ? beg + 1 : buf;
   len = end - beg;
  success_in_beg_and_len:;
   size_t off = beg - buf;
