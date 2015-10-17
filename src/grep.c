@@ -2561,14 +2561,15 @@ main (int argc, char **argv)
   build_mbclen_cache ();
   init_easy_encoding ();
 
-  /* If fgrep in a multibyte locale, then use grep if either
+  /* In a unibyte locale, switch from fgrep to grep if
+     the pattern matches words (where grep is typically faster).
+     In a multibyte locale, switch from fgrep to grep if either
      (1) case is ignored (where grep is typically faster), or
-     (2) the pattern matches words (where grep is typically faster), or
-     (3) the pattern has an encoding error (where fgrep might not work).  */
+     (2) the pattern has an encoding error (where fgrep might not work).  */
   if (compile == Fcompile
-      && (MB_CUR_MAX > 1 && (match_icase
-                             || contains_encoding_error (keys, keycc)))
-          || (MB_CUR_MAX == 1 && match_words))
+      && (MB_CUR_MAX <= 1
+          ? match_words
+          : match_icase || contains_encoding_error (keys, keycc)))
     {
       size_t new_keycc;
       char *new_keys;
