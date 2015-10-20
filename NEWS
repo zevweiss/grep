@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Improvements
 
+  Performance has improved for patterns containing very long strings,
+  reducing preprocessing time for an N-byte regexp from O(N^2) to
+  only slightly superlinear for most patterns.  Before, a command like
+  the following would take over a minute, but now, it takes less than
+  a second:
+  : | grep -f <(seq -s '' 99999)
+
   When building grep, 'configure' now uses PCRE's pkg-config module for
   configuration information, rather than attempting to guess it by hand.
 
@@ -17,6 +24,7 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep no longer reads from uninitialized memory or from beyond the end
   of the heap-allocated input buffer.  This fix addressed CVE-2015-1345.
+  [bug introduced in grep-2.19 ]
 
   With -z, '.' and '[^x]' in a pattern now consistently match newline.
   Previously, they sometimes matched newline, and sometimes did not.
@@ -32,8 +40,8 @@ GNU grep NEWS                                    -*- outline -*-
   command-line arguments, not against command-line components.
   [bug introduced in grep-2.6]
 
-  Performance has improved for patterns containing very long strings,
-  and for grep -Fw in unibyte locales.
+  Fix performance degradation of grep -Fw in unibyte locales.
+  [bug introduced in grep-2.19 ]
 
 
 * Noteworthy changes in release 2.21 (2014-11-23) [stable]
