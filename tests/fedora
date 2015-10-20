@@ -33,17 +33,20 @@ cat > 116909.out <<EOF
 a
 c
 EOF
-grep -F -w -f 116909.list 116909.in | diff - 116909.out && ok || fail
+grep -F -w -f 116909.list 116909.in > actual || fail
+compare 116909.out actual && ok || fail
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=123362
 printf 'bad handling of brackets in UTF-8: '
 echo Y > 123362.out
-echo Y | LC_ALL=de_DE.UTF-8 grep -i '[y,Y]' | diff - 123362.out && ok || fail
+echo Y | LC_ALL=de_DE.UTF-8 grep -i '[y,Y]' > actual || fail
+compare 123362.out actual && ok || fail
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=112869
 printf 'crash with \\W: '
 echo '<form>' > 112869.out
-LANG=it_IT grep -iE '\Wform\W' 112869.out | diff - 112869.out && ok || fail
+LANG=it_IT grep -iE '\Wform\W' 112869.out > actual || fail
+compare 112869.out actual && ok || fail
 
 if ( timeout --version ) > /dev/null 2>&1; then
 
@@ -67,12 +70,14 @@ fi
 U=https://bugzilla.redhat.com/show_bug.cgi?id=161700
 printf 'grep -Fw fails to match anything: '
 echo test > 161700.out
-grep -Fw test 161700.out | diff - 161700.out && ok || fail
+grep -Fw test 161700.out > actual || fail
+compare 161700.out actual && ok || fail
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=179698
 printf 'grep -w broken in non-utf8 multibyte locales: '
 echo za a > 179698.out
-LANG=ja_JP.eucjp grep -w a 179698.out | diff - 179698.out && ok || fail
+LANG=ja_JP.eucjp grep -w a 179698.out > actual || fail
+compare 179698.out actual && ok || fail
 
 # Skip the rest of tests in compiled without PCRE
 echo a |grep -P a >/dev/null || Exit $failures
@@ -80,7 +85,8 @@ echo a |grep -P a >/dev/null || Exit $failures
 U=https://bugzilla.redhat.com/show_bug.cgi?id=171379
 printf 'grep -P crashes on whitespace lines: '
 echo '   ' > 171379.out
-grep -P '^\s+$' 171379.out | diff - 171379.out && ok || fail
+grep -P '^\s+$' 171379.out > actual || fail
+compare 171379.out actual && ok || fail
 
 U=https://bugzilla.redhat.com/show_bug.cgi?id=204255
 printf '%s' "-e '' does not work if not a first parameter: "
