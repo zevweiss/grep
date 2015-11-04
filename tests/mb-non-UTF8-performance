@@ -22,6 +22,11 @@
 
 fail=0
 
+# This test is susceptible to failure due to differences in
+# system load during the two test runs, so we'll mark it as
+# "expensive", making it less likely to be run by regular users.
+expensive_
+
 # Make this large enough so that even on high-end systems
 # it incurs at least 5-10ms of user time.
 yes $(printf '%078d' 0) | head -400000 > in || framework_failure_
