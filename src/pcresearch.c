@@ -289,7 +289,9 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
             break;
 
           /* Treat the encoding error as data that cannot match.  */
-          p = subject += valid_bytes + 1;
+          subject += valid_bytes + 1;
+          if (p < subject)
+            p = subject;
           bol = false;
         }
 

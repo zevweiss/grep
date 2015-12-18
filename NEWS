@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep -oP is no longer susceptible to an infinite loop when processing
+  invalid UTF8 just before a match.
+  [bug introduced in grep-2.22]
+
 
 * Noteworthy changes in release 2.22 (2015-11-01) [stable]
 
