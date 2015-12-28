@@ -661,8 +661,10 @@ this is equivalent to the @option{-r} option.
 @opindex --exclude
 @cindex exclude files
 @cindex searching directory trees
-Skip files whose name matches the pattern @var{glob}, using wildcard
-matching.  When searching recursively, skip any subfile whose base
+Skip any command-line file with a name suffix that matches the pattern
+@var{glob}, using wildcard matching; a name suffix is either the whole
+name, or any suffix starting after a @samp{/} and before a
+non-@samp{/}.  When searching recursively, skip any subfile whose base
 name matches @var{glob}; the base name is the part after the last
 @samp{/}.  A pattern can use
 @samp{*}, @samp{?}, and @samp{[}...@samp{]} as wildcards,
@@ -679,9 +681,10 @@ under @option{--exclude}).
 @item --exclude-dir=@var{glob}
 @opindex --exclude-dir
 @cindex exclude directories
-Skip any directory whose name matches the pattern @var{glob}.  When
-searching recursively, skip any subdirectory whose base name matches
-@var{glob}.  Ignore any redundant trailing slashes in @var{glob}.
+Skip any command-line directory with a name suffix that matches the
+pattern @var{glob}.  When searching recursively, skip any subdirectory
+whose base name matches @var{glob}.  Ignore any redundant trailing
+slashes in @var{glob}.
 
 @item -I
 Process a binary file as if it did not contain matching data;

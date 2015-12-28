@@ -66,9 +66,11 @@ for exclude in 'x' 'x*'; do
     grep -rl --exclude-dir="$exclude" . x > out
     test $? -eq 1 || fail=1
     compare /dev/null out || fail=1
+done
 
+for exclude in 'x' 'x*' './x' './x*'; do
     grep -rl --exclude-dir="$exclude" . ./x | sort > out || fail=1
-    compare exp-dotnames out || fail=1
+    compare /dev/null out || fail=1
 done
 
 Exit $fail

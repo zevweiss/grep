@@ -8,6 +8,11 @@ GNU grep NEWS                                    -*- outline -*-
   invalid UTF8 just before a match.
   [bug introduced in grep-2.22]
 
+  --exclude and related options are now matched against trailing
+  parts of command-line arguments, not against the entire arguments.
+  This partly reverts the --exclude-related change in 2.22.
+  [bug introduced in grep-2.22]
+
 
 * Noteworthy changes in release 2.22 (2015-11-01) [stable]
 

@@ -296,8 +296,8 @@ static const struct color_cap color_dict[] =
     { NULL, NULL,                  NULL }
   };
 
-static struct exclude *excluded_patterns;
-static struct exclude *excluded_directory_patterns;
+static struct exclude *excluded_patterns[2];
+static struct exclude *excluded_directory_patterns[2];
 /* Short options.  */
 static char const short_options[] =
 "0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiLlm:noqRrsuvwxyZz";
@@ -640,19 +640,30 @@ context_length_arg (char const *str, intmax_t *out)
     }
 }
 
+/* Return the add_exclude options suitable for excluding a file name.
+   If COMMAND_LINE, it is a command-line file name.  */
+static int
+exclude_options (bool command_line)
+{
+  return EXCLUDE_WILDCARDS | (command_line ? 0 : EXCLUDE_ANCHORED);
+}
+
 /* Return true if the file with NAME should be skipped.
    If COMMAND_LINE, it is a command-line argument.
    If IS_DIR, it is a directory.  */
 static bool
 skipped_file (char const *name, bool command_line, bool is_dir)
 {
-  return (is_dir
-          ? (directories == SKIP_DIRECTORIES
-             || (! (command_line && omit_dot_slash)
-                 && excluded_directory_patterns
-                 && excluded_file_name (excluded_directory_patterns, name)))
-          : (excluded_patterns
-             && excluded_file_name (excluded_patterns, name)));
+  struct exclude **pats;
+  if (! is_dir)
+    pats = excluded_patterns;
+  else if (directories == SKIP_DIRECTORIES)
+    return true;
+  else if (command_line && omit_dot_slash)
+    return false;
+  else
+    pats = excluded_directory_patterns;
+  return pats[command_line] && excluded_file_name (pats[command_line], name);
 }
 
 /* Hairy buffering mechanism for grep.  The intent is to keep
@@ -2446,28 +2457,36 @@ main (int argc, char **argv)
 
       case EXCLUDE_OPTION:
       case INCLUDE_OPTION:
-        if (!excluded_patterns)
-          excluded_patterns = new_exclude ();
-        add_exclude (excluded_patterns, optarg,
-                     (EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS
-                      | (opt == INCLUDE_OPTION ? EXCLUDE_INCLUDE : 0)));
+        for (int cmd = 0; cmd < 2; cmd++)
+          {
+            if (!excluded_patterns[cmd])
+              excluded_patterns[cmd] = new_exclude ();
+            add_exclude (excluded_patterns[cmd], optarg,
+                         ((opt == INCLUDE_OPTION ? EXCLUDE_INCLUDE : 0)
+                          | exclude_options (cmd)));
+          }
         break;
       case EXCLUDE_FROM_OPTION:
-        if (!excluded_patterns)
-          excluded_patterns = new_exclude ();
-        if (add_exclude_file (add_exclude, excluded_patterns, optarg,
-                              EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS, '\n') != 0)
+        for (int cmd = 0; cmd < 2; cmd++)
           {
-            error (EXIT_TROUBLE, errno, "%s", optarg);
+            if (!excluded_patterns[cmd])
+              excluded_patterns[cmd] = new_exclude ();
+            if (add_exclude_file (add_exclude, excluded_patterns[cmd],
+                                  optarg, exclude_options (cmd), '\n')
+                != 0)
+              error (EXIT_TROUBLE, errno, "%s", optarg);
           }
         break;
 
       case EXCLUDE_DIRECTORY_OPTION:
-        if (!excluded_directory_patterns)
-          excluded_directory_patterns = new_exclude ();
         strip_trailing_slashes (optarg);
-        add_exclude (excluded_directory_patterns, optarg,
-                     EXCLUDE_ANCHORED | EXCLUDE_WILDCARDS);
+        for (int cmd = 0; cmd < 2; cmd++)
+          {
+            if (!excluded_directory_patterns[cmd])
+              excluded_directory_patterns[cmd] = new_exclude ();
+            add_exclude (excluded_directory_patterns[cmd], optarg,
+                         exclude_options (cmd));
+          }
         break;
 
       case GROUP_SEPARATOR_OPTION:
