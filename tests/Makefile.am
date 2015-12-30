@@ -106,8 +106,8 @@ TESTS =						\
   pcre-abort					\
   pcre-context					\
   pcre-infloop					\
-  pcre-invalid-utf8-input			\
   pcre-invalid-utf8-infloop			\
+  pcre-invalid-utf8-input			\
   pcre-jitstack					\
   pcre-o					\
   pcre-utf8					\
