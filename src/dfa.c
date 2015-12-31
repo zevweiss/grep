@@ -1667,7 +1667,7 @@ addtok_wc (wint_t wc)
 static void
 add_utf8_anychar (void)
 {
-  static const charclass utf8_classes[5] = {
+  static charclass const utf8_classes[5] = {
     /* 80-bf: non-leading bytes.  */
     {0, 0, 0, 0, CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK, 0, 0},
 
