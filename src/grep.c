@@ -1481,7 +1481,11 @@ grep (int fd, struct stat const *st)
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
   if ((has_nulls || encoding_error_output) && !out_quiet && nlines != 0)
-    printf (_("Binary file %s matches\n"), filename);
+    {
+      printf (_("Binary file %s matches\n"), filename);
+      if (line_buffered)
+        fflush (stdout);
+    }
   return nlines;
 }
 
@@ -1725,6 +1729,8 @@ grepdesc (int desc, bool command_line)
                 fputc (0, stdout);
             }
           printf ("%" PRIdMAX "\n", count);
+          if (line_buffered)
+            fflush (stdout);
         }
 
       status = !count;
@@ -1732,6 +1738,8 @@ grepdesc (int desc, bool command_line)
         {
           print_filename ();
           fputc ('\n' & filename_mask, stdout);
+          if (line_buffered)
+            fflush (stdout);
         }
 
       if (desc == STDIN_FILENO)

@@ -23,6 +23,9 @@ GNU grep NEWS                                    -*- outline -*-
   This partly reverts the --exclude-related change in 2.22.
   [bug introduced in grep-2.22]
 
+  --line-buffer is no longer ineffective when combined with -l
+  [bug introduced in grep-2.5]
+
 
 * Noteworthy changes in release 2.22 (2015-11-01) [stable]
 
