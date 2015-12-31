@@ -1397,7 +1397,8 @@ grep (int fd, struct stat const *st)
           has_nulls = true;
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
-          done_on_match = out_quiet = true;
+          if (!count_matches)
+            done_on_match = out_quiet = true;
           nul_zapper = eol;
           skip_nuls = skip_empty_lines;
         }

@@ -106,6 +106,7 @@ TESTS =						\
   pcre						\
   pcre-abort					\
   pcre-context					\
+  pcre-count					\
   pcre-infloop					\
   pcre-invalid-utf8-infloop			\
   pcre-invalid-utf8-input			\

@@ -1,0 +1,23 @@
+#! /bin/sh
+# grep -P / grep -Pc are inconsistent results
+# This bug affected grep versions 2.21 through 2.22.
+#
+# Copyright (C) 2015 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+require_pcre_
+
+fail=0
+
+printf 'a\n%032768d\nb\x0\n%032768d\na\n' 0 0 > in
+
+LC_ALL=C grep -P 'a' in | wc -l > exp
+
+LC_ALL=C grep -Pc 'a' in > out ||  fail=1
+compare exp out || fail=1
+
+Exit $fail

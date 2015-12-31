@@ -11,6 +11,9 @@ GNU grep NEWS                                    -*- outline -*-
   an encoding error in FOO before generating output for FOO.
   [bug introduced in grep-2.21]
 
+  grep -c no longer stops counting when finding binary data.
+  [bug introduced in grep-2.21]
+
   grep -oP is no longer susceptible to an infinite loop when processing
   invalid UTF8 just before a match.
   [bug introduced in grep-2.22]
