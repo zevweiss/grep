@@ -1180,6 +1180,9 @@ prline (char *beg, char *lim, char sep)
   if (!only_matching && lim > beg)
     fwrite (beg, 1, lim - beg, stdout);
 
+  if (line_buffered)
+    fflush (stdout);
+
   if (ferror (stdout))
     {
       write_error_seen = true;
@@ -1187,9 +1190,6 @@ prline (char *beg, char *lim, char sep)
     }
 
   lastout = lim;
-
-  if (line_buffered)
-    fflush (stdout);
 }
 
 /* Print pending lines of trailing context prior to LIM. Trailing context ends
