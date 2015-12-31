@@ -70,6 +70,7 @@ TESTS =						\
   empty						\
   empty-line					\
   empty-line-mb					\
+  encoding-error				\
   epipe						\
   equiv-classes					\
   ere						\

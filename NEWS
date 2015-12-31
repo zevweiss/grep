@@ -4,6 +4,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  Binary files are now less likely to generate diagnostics.  grep now
+  reports "Binary file FOO matches" and suppresses further output when
+  grep is about to output a match that contains an encoding error.
+  Formerly, grep reported FOO to be binary merely because grep found
+  an encoding error in FOO before generating output for FOO.
+  [bug introduced in grep-2.21]
+
   grep -oP is no longer susceptible to an infinite loop when processing
   invalid UTF8 just before a match.
   [bug introduced in grep-2.22]

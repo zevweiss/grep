@@ -596,13 +596,13 @@ If a file's allocation metadata,
 or if its data read before a line is selected for output,
 indicate that the file contains binary data,
 assume that the file is of type @var{type}.
-Non-text bytes indicate binary data; these are either data bytes
-improperly encoded for the current locale, or null bytes when the
+Non-text bytes indicate binary data; these are either output bytes that are
+improperly encoded for the current locale, or null input bytes when the
 @option{-z} (@option{--null-data}) option is not given (@pxref{Other
 Options}).
 
-By default, @var{type} is @samp{binary},
-and @command{grep} normally outputs either
+By default, @var{type} is @samp{binary}, and when @command{grep}
+discovers that a file is binary it normally outputs either
 a one-line message saying that a binary file matches,
 or no message if there is no match.
 When processing binary data, @command{grep} may treat non-text bytes
@@ -611,7 +611,8 @@ not match a null byte, as the null byte might be treated as a line
 terminator even without the @option{-z} (@option{--null-data}) option.
 
 If @var{type} is @samp{without-match},
-@command{grep} assumes that a binary file does not match;
+when @command{grep} discovers that a file is binary
+it assumes that the rest of the file does not match;
 this is equivalent to the @option{-I} option.
 
 If @var{type} is @samp{text},

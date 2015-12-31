@@ -194,32 +194,13 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
      error.  */
   char const *subject = buf;
 
-  /* If the input type is unknown, the caller is still testing the
-     input, which means the current buffer cannot contain encoding
-     errors and a multiline search is typically more efficient.
-     Otherwise, a single-line search is typically faster, so that
-     pcre_exec doesn't waste time validating the entire input
-     buffer.  */
-  bool multiline = input_textbin == TEXTBIN_UNKNOWN;
-
   for (; p < buf + size; p = line_start = line_end + 1)
     {
-      bool too_big;
-
-      if (multiline)
-        {
-          size_t pcre_size_max = MIN (INT_MAX, SIZE_MAX - 1);
-          size_t scan_size = MIN (pcre_size_max + 1, buf + size - p);
-          line_end = memrchr (p, eolbyte, scan_size);
-          too_big = ! line_end;
-        }
-      else
-        {
-          line_end = memchr (p, eolbyte, buf + size - p);
-          too_big = INT_MAX < line_end - p;
-        }
-
-      if (too_big)
+      /* A single-line search is typically faster, so that
+         pcre_exec doesn't waste time validating the entire input
+         buffer.  */
+      line_end = memchr (p, eolbyte, buf + size - p);
+      if (INT_MAX < line_end - p)
         error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
       for (;;)
@@ -247,27 +228,11 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
           int options = 0;
           if (!bol)
             options |= PCRE_NOTBOL;
-          if (multiline)
-            options |= PCRE_NO_UTF8_CHECK;
 
           e = jit_exec (subject, line_end - subject, search_offset,
                         options, sub);
           if (e != PCRE_ERROR_BADUTF8)
-            {
-              if (0 < e && multiline && sub[1] - sub[0] != 0)
-                {
-                  char const *nl = memchr (subject + sub[0], eolbyte,
-                                           sub[1] - sub[0]);
-                  if (nl)
-                    {
-                      /* This match crosses a line boundary; reject it.  */
-                      p = subject + sub[0];
-                      line_end = nl;
-                      continue;
-                    }
-                }
-              break;
-            }
+            break;
           int valid_bytes = sub[0];
 
           /* Try to match the string before the encoding error.  */
@@ -338,15 +303,6 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
         {
           beg = matchbeg;
           end = matchend;
-        }
-      else if (multiline)
-        {
-          char const *prev_nl = memrchr (line_start - 1, eolbyte,
-                                         matchbeg - (line_start - 1));
-          char const *next_nl = memchr (matchend, eolbyte,
-                                        line_end + 1 - matchend);
-          beg = prev_nl + 1;
-          end = next_nl + 1;
         }
       else
         {

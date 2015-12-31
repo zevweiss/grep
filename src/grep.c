@@ -377,7 +377,6 @@ bool match_icase;
 bool match_words;
 bool match_lines;
 char eolbyte;
-enum textbin input_textbin;
 
 static char const *matcher;
 
@@ -388,6 +387,10 @@ static char const *filename;
 static bool omit_dot_slash;
 static bool errseen;
 static bool write_error_seen;
+
+/* True if output from the current input file has been suppressed
+   because an output line had an encoding error.  */
+static bool encoding_error_output;
 
 enum directories_type
   {
@@ -481,12 +484,6 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-static bool
-textbin_is_binary (enum textbin textbin)
-{
-  return textbin < TEXTBIN_UNKNOWN;
-}
-
 /* The high-order bit of a byte.  */
 enum { HIBYTE = 0x80 };
 
@@ -551,58 +548,60 @@ skip_easy_bytes (char const *buf)
   return p;
 }
 
-/* Return the text type of data in BUF, of size SIZE.
+/* Return true if BUF, of size SIZE, has an encoding error.
    BUF must be followed by at least sizeof (uword) bytes,
-   which may be arbitrarily written to or read from.  */
-static enum textbin
-buffer_textbin (char *buf, size_t size)
+   the first of which may be modified.  */
+static bool
+buf_has_encoding_errors (char *buf, size_t size)
 {
-  if (eolbyte && memchr (buf, '\0', size))
-    return TEXTBIN_BINARY;
+  if (MB_CUR_MAX <= 1)
+    return false;
 
-  if (1 < MB_CUR_MAX)
+  mbstate_t mbs = { 0 };
+  size_t clen;
+
+  buf[size] = -1;
+  for (char const *p = buf; (p = skip_easy_bytes (p)) < buf + size; p += clen)
     {
-      mbstate_t mbs = { 0 };
-      size_t clen;
-      char const *p;
-
-      buf[size] = -1;
-      for (p = buf; (p = skip_easy_bytes (p)) < buf + size; p += clen)
-        {
-          clen = mbrlen (p, buf + size - p, &mbs);
-          if ((size_t) -2 <= clen)
-            return clen == (size_t) -2 ? TEXTBIN_UNKNOWN : TEXTBIN_BINARY;
-        }
+      clen = mbrlen (p, buf + size - p, &mbs);
+      if ((size_t) -2 <= clen)
+        return true;
     }
 
-  return TEXTBIN_TEXT;
+  return false;
 }
 
-/* Return the text type of a file.  BUF, of size SIZE, is the initial
-   buffer read from the file with descriptor FD and status ST.
-   BUF must be followed by at least sizeof (uword) bytes,
-   which may be arbitrarily written to or read from.  */
-static enum textbin
-file_textbin (char *buf, size_t size, int fd, struct stat const *st)
-{
-  enum textbin textbin = buffer_textbin (buf, size);
-  if (textbin_is_binary (textbin))
-    return textbin;
 
+/* Return true if BUF, of size SIZE, has a null byte.
+   BUF must be followed by at least one byte,
+   which may be arbitrarily written to or read from.  */
+static bool
+buf_has_nulls (char *buf, size_t size)
+{
+  buf[size] = 0;
+  return strlen (buf) != size;
+}
+
+/* Return true if a file is known to contain null bytes.
+   SIZE bytes have already been read from the file
+   with descriptor FD and status ST.  */
+static bool
+file_must_have_nulls (size_t size, int fd, struct stat const *st)
+{
   if (usable_st_size (st))
     {
       if (st->st_size <= size)
-        return textbin == TEXTBIN_UNKNOWN ? TEXTBIN_BINARY : textbin;
+        return false;
 
       /* If the file has holes, it must contain a null byte somewhere.  */
-      if (SEEK_HOLE != SEEK_SET && eolbyte)
+      if (SEEK_HOLE != SEEK_SET)
         {
           off_t cur = size;
           if (O_BINARY || fd == STDIN_FILENO)
             {
               cur = lseek (fd, 0, SEEK_CUR);
               if (cur < 0)
-                return TEXTBIN_UNKNOWN;
+                return false;
             }
 
           /* Look for a hole after the current location.  */
@@ -612,12 +611,12 @@ file_textbin (char *buf, size_t size, int fd, struct stat const *st)
               if (lseek (fd, cur, SEEK_SET) < 0)
                 suppressible_error (filename, errno);
               if (hole_start < st->st_size)
-                return TEXTBIN_BINARY;
+                return true;
             }
         }
     }
 
-  return TEXTBIN_UNKNOWN;
+  return false;
 }
 
 /* Convert STR to a nonnegative integer, storing the result in *OUT.
@@ -899,7 +898,7 @@ static char *label = NULL;      /* Fake filename for stdin */
 /* Internal variables to keep track of byte count, context, etc. */
 static uintmax_t totalcc;	/* Total character count before bufbeg. */
 static char const *lastnl;	/* Pointer after last newline counted. */
-static char const *lastout;	/* Pointer after last character output;
+static char *lastout;		/* Pointer after last character output;
                                    NULL if no character has been output
                                    or if it's conceptually before bufbeg. */
 static intmax_t outleft;	/* Maximum number of lines to be output.  */
@@ -971,10 +970,31 @@ print_offset (uintmax_t pos, int min_width, const char *color)
   pr_sgr_end_if (color);
 }
 
-/* Print a whole line head (filename, line, byte).  */
-static void
-print_line_head (char const *beg, char const *lim, char sep)
+/* Print a whole line head (filename, line, byte).  The output data
+   starts at BEG and contains LEN bytes; it is followed by at least
+   sizeof (uword) bytes, the first of which may be temporarily modified.
+   The output data comes from what is perhaps a larger input line that
+   goes until LIM, where LIM[-1] is an end-of-line byte.  Use SEP as
+   the separator on output.
+
+   Return true unless the line was suppressed due to an encoding error.  */
+
+static bool
+print_line_head (char *beg, size_t len, char const *lim, char sep)
 {
+  bool encoding_errors = false;
+  if (binary_files != TEXT_BINARY_FILES)
+    {
+      char ch = beg[len];
+      encoding_errors = buf_has_encoding_errors (beg, len);
+      beg[len] = ch;
+    }
+  if (encoding_errors)
+    {
+      encoding_error_output = done_on_match = out_quiet = true;
+      return false;
+    }
+
   bool pending_sep = false;
 
   if (out_file)
@@ -1021,22 +1041,27 @@ print_line_head (char const *beg, char const *lim, char sep)
 
       print_sep (sep);
     }
+
+  return true;
 }
 
-static const char *
-print_line_middle (const char *beg, const char *lim,
+static char *
+print_line_middle (char *beg, char *lim,
                    const char *line_color, const char *match_color)
 {
   size_t match_size;
   size_t match_offset;
-  const char *cur = beg;
-  const char *mid = NULL;
+  char *cur = beg;
+  char *mid = NULL;
+  char *b;
 
-  while (cur < lim
-         && ((match_offset = execute (beg, lim - beg, &match_size, cur))
-             != (size_t) -1))
+  for (cur = beg;
+       (cur < lim
+        && ((match_offset = execute (beg, lim - beg, &match_size, cur))
+            != (size_t) -1));
+       cur = b + match_size)
     {
-      char const *b = beg + match_offset;
+      b = beg + match_offset;
 
       /* Avoid matching the empty line at the end of the buffer. */
       if (b == lim)
@@ -1056,8 +1081,11 @@ print_line_middle (const char *beg, const char *lim,
           /* This function is called on a matching line only,
              but is it selected or rejected/context?  */
           if (only_matching)
-            print_line_head (b, lim, (out_invert ? SEP_CHAR_REJECTED
-                                      : SEP_CHAR_SELECTED));
+            {
+              char sep = out_invert ? SEP_CHAR_REJECTED : SEP_CHAR_SELECTED;
+              if (! print_line_head (b, match_size, lim, sep))
+                return NULL;
+            }
           else
             {
               pr_sgr_start (line_color);
@@ -1075,7 +1103,6 @@ print_line_middle (const char *beg, const char *lim,
           if (only_matching)
             fputs ("\n", stdout);
         }
-      cur = b + match_size;
     }
 
   if (only_matching)
@@ -1086,8 +1113,8 @@ print_line_middle (const char *beg, const char *lim,
   return cur;
 }
 
-static const char *
-print_line_tail (const char *beg, const char *lim, const char *line_color)
+static char *
+print_line_tail (char *beg, const char *lim, const char *line_color)
 {
   size_t eol_size;
   size_t tail_size;
@@ -1108,14 +1135,15 @@ print_line_tail (const char *beg, const char *lim, const char *line_color)
 }
 
 static void
-prline (char const *beg, char const *lim, char sep)
+prline (char *beg, char *lim, char sep)
 {
   bool matching;
   const char *line_color;
   const char *match_color;
 
   if (!only_matching)
-    print_line_head (beg, lim, sep);
+    if (! print_line_head (beg, lim - beg - 1, lim, sep))
+      return;
 
   matching = (sep == SEP_CHAR_SELECTED) ^ out_invert;
 
@@ -1135,7 +1163,11 @@ prline (char const *beg, char const *lim, char sep)
     {
       /* We already know that non-matching lines have no match (to colorize). */
       if (matching && (only_matching || *match_color))
-        beg = print_line_middle (beg, lim, line_color, match_color);
+        {
+          beg = print_line_middle (beg, lim, line_color, match_color);
+          if (! beg)
+            return;
+        }
 
       if (!only_matching && *line_color)
         {
@@ -1169,7 +1201,7 @@ prpending (char const *lim)
     lastout = bufbeg;
   while (pending > 0 && lastout < lim)
     {
-      char const *nl = memchr (lastout, eolbyte, lim - lastout);
+      char *nl = memchr (lastout, eolbyte, lim - lastout);
       size_t match_size;
       --pending;
       if (outleft
@@ -1184,7 +1216,7 @@ prpending (char const *lim)
 
 /* Output the lines between BEG and LIM.  Deal with context.  */
 static void
-prtext (char const *beg, char const *lim)
+prtext (char *beg, char *lim)
 {
   static bool used;	/* Avoid printing SEP_STR_GROUP before any output.  */
   char eol = eolbyte;
@@ -1192,7 +1224,7 @@ prtext (char const *beg, char const *lim)
   if (!out_quiet && pending > 0)
     prpending (beg);
 
-  char const *p = beg;
+  char *p = beg;
 
   if (!out_quiet)
     {
@@ -1218,7 +1250,7 @@ prtext (char const *beg, char const *lim)
 
       while (p < beg)
         {
-          char const *nl = memchr (p, eol, beg - p);
+          char *nl = memchr (p, eol, beg - p);
           nl++;
           prline (p, nl, SEP_CHAR_REJECTED);
           p = nl;
@@ -1231,7 +1263,7 @@ prtext (char const *beg, char const *lim)
       /* One or more lines are output.  */
       for (n = 0; p < lim && n < outleft; n++)
         {
-          char const *nl = memchr (p, eol, lim - p);
+          char *nl = memchr (p, eol, lim - p);
           nl++;
           if (!out_quiet)
             prline (p, nl, SEP_CHAR_SELECTED);
@@ -1278,13 +1310,12 @@ zap_nuls (char *p, char *lim, char eol)
    between matching lines if OUT_INVERT is true).  Return a count of
    lines printed.  Replace all NUL bytes with NUL_ZAPPER as we go.  */
 static intmax_t
-grepbuf (char const *beg, char const *lim)
+grepbuf (char *beg, char const *lim)
 {
   intmax_t outleft0 = outleft;
-  char const *p;
-  char const *endp;
+  char *endp;
 
-  for (p = beg; p < lim; p = endp)
+  for (char *p = beg; p < lim; p = endp)
     {
       size_t match_size;
       size_t match_offset = execute (p, lim - p, &match_size, NULL);
@@ -1295,15 +1326,15 @@ grepbuf (char const *beg, char const *lim)
           match_offset = lim - p;
           match_size = 0;
         }
-      char const *b = p + match_offset;
+      char *b = p + match_offset;
       endp = b + match_size;
       /* Avoid matching the empty line at the end of the buffer. */
       if (!out_invert && b == lim)
         break;
       if (!out_invert || p < b)
         {
-          char const *prbeg = out_invert ? p : b;
-          char const *prend = out_invert ? b : endp;
+          char *prbeg = out_invert ? p : b;
+          char *prend = out_invert ? b : endp;
           prtext (prbeg, prend);
           if (!outleft || done_on_match)
             {
@@ -1324,7 +1355,6 @@ static intmax_t
 grep (int fd, struct stat const *st)
 {
   intmax_t nlines, i;
-  enum textbin textbin;
   size_t residue, save;
   char oldc;
   char *beg;
@@ -1333,6 +1363,7 @@ grep (int fd, struct stat const *st)
   char nul_zapper = '\0';
   bool done_on_match_0 = done_on_match;
   bool out_quiet_0 = out_quiet;
+  bool has_nulls = false;
 
   if (! reset (fd, st))
     return 0;
@@ -1344,6 +1375,7 @@ grep (int fd, struct stat const *st)
   after_last_match = 0;
   pending = 0;
   skip_nuls = skip_empty_lines && !eol;
+  encoding_error_output = false;
   seek_data_failed = false;
 
   nlines = 0;
@@ -1356,26 +1388,20 @@ grep (int fd, struct stat const *st)
       return 0;
     }
 
-  if (binary_files == TEXT_BINARY_FILES)
-    textbin = TEXTBIN_TEXT;
-  else
+  for (bool firsttime = true; ; firsttime = false)
     {
-      textbin = file_textbin (bufbeg, buflim - bufbeg, fd, st);
-      if (textbin_is_binary (textbin))
+      if (!has_nulls && eol && binary_files != TEXT_BINARY_FILES
+          && (buf_has_nulls (bufbeg, buflim - bufbeg)
+              || (firsttime && file_must_have_nulls (buflim - bufbeg, fd, st))))
         {
+          has_nulls = true;
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
           done_on_match = out_quiet = true;
           nul_zapper = eol;
           skip_nuls = skip_empty_lines;
         }
-      else if (execute != Pexecute)
-        textbin = TEXTBIN_TEXT;
-    }
 
-  for (;;)
-    {
-      input_textbin = textbin;
       lastnl = bufbeg;
       if (lastout)
         lastout = bufbeg;
@@ -1426,13 +1452,8 @@ grep (int fd, struct stat const *st)
         }
 
       /* Detect whether leading context is adjacent to previous output.  */
-      if (lastout)
-        {
-          if (textbin == TEXTBIN_UNKNOWN)
-            textbin = TEXTBIN_TEXT;
-          if (beg != lastout)
-            lastout = 0;
-        }
+      if (beg != lastout)
+        lastout = 0;
 
       /* Handle some details and read more data to scan.  */
       save = residue + lim - beg;
@@ -1444,22 +1465,6 @@ grep (int fd, struct stat const *st)
         {
           suppressible_error (filename, errno);
           goto finish_grep;
-        }
-
-      /* If the file's textbin has not been determined yet, assume
-         it's binary if the next input buffer suggests so.  */
-      if (textbin == TEXTBIN_UNKNOWN)
-        {
-          enum textbin tb = buffer_textbin (bufbeg, buflim - bufbeg);
-          if (textbin_is_binary (tb))
-            {
-              if (binary_files == WITHOUT_MATCH_BINARY_FILES)
-                return 0;
-              textbin = tb;
-              done_on_match = out_quiet = true;
-              nul_zapper = eol;
-              skip_nuls = skip_empty_lines;
-            }
         }
     }
   if (residue)
@@ -1474,7 +1479,7 @@ grep (int fd, struct stat const *st)
  finish_grep:
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
-  if (textbin_is_binary (textbin) && !out_quiet && nlines != 0)
+  if ((has_nulls || encoding_error_output) && !out_quiet && nlines != 0)
     printf (_("Binary file %s matches\n"), filename);
   return nlines;
 }

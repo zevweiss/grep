@@ -29,22 +29,4 @@ extern bool match_words;	/* -w */
 extern bool match_lines;	/* -x */
 extern char eolbyte;		/* -z */
 
-/* An enum textbin describes the file's type, inferred from data read
-   before the first line is selected for output.  */
-enum textbin
-  {
-    /* Binary, as it contains null bytes and the -z option is not in effect,
-       or it contains encoding errors.  */
-    TEXTBIN_BINARY = -1,
-
-    /* Not known yet.  Only text has been seen so far.  */
-    TEXTBIN_UNKNOWN = 0,
-
-    /* Text.  */
-    TEXTBIN_TEXT = 1
-  };
-
-/* Input file type.  */
-extern enum textbin input_textbin;
-
 #endif
