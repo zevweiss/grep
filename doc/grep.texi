@@ -594,8 +594,7 @@ this is equivalent to the @samp{--binary-files=text} option.
 @item --binary-files=@var{type}
 @opindex --binary-files
 @cindex binary files
-If a file's allocation metadata,
-or if its data read before a line is selected for output,
+If a file's data or metadata
 indicate that the file contains binary data,
 assume that the file is of type @var{type}.
 Non-text bytes indicate binary data; these are either output bytes that are
@@ -604,9 +603,9 @@ improperly encoded for the current locale, or null input bytes when the
 Options}).
 
 By default, @var{type} is @samp{binary}, and when @command{grep}
-discovers that a file is binary it normally outputs either
-a one-line message saying that a binary file matches,
-or no message if there is no match.
+discovers that a file is binary it suppresses any further output, and
+instead outputs either a one-line message saying that a binary file
+matches, or no message if there is no match.
 When processing binary data, @command{grep} may treat non-text bytes
 as line terminators; for example, the pattern @samp{.} (period) might
 not match a null byte, as the null byte might be treated as a line
