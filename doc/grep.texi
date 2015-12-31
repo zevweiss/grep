@@ -240,6 +240,8 @@ Word-constituent characters are letters, digits, and the underscore.
 @opindex --line-regexp
 @cindex match the whole line
 Select only those matches that exactly match the whole line.
+For a regular expression pattern, this is like parenthesizing the
+pattern and then surrounding it with @samp{^} and @samp{$}.
 (@option{-x} is specified by POSIX.)
 
 @end table
@@ -1091,8 +1093,8 @@ Interpret the pattern as an extended regular expression (ERE).
 @opindex -F
 @opindex --fixed-strings
 @cindex matching fixed strings
-Interpret the pattern as a list of fixed strings, separated
-by newlines, any of which is to be matched.
+Interpret the pattern as a list of fixed strings (instead of regular
+expressions), separated by newlines, any of which is to be matched.
 (@option{-F} is specified by POSIX.)
 
 @item -P
@@ -1134,7 +1136,7 @@ The following description applies to extended regular expressions;
 differences for basic regular expressions are summarized afterwards.
 Perl regular expressions give additional functionality, and are
 documented in the @i{pcresyntax}(3) and @i{pcrepattern}(3) manual pages,
-but may not be available on every system.
+but work only if PCRE is available in the system.
 
 @menu
 * Fundamental Structure::
