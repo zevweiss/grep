@@ -1051,7 +1051,7 @@ print_line_middle (char *beg, char *lim,
 {
   size_t match_size;
   size_t match_offset;
-  char *cur = beg;
+  char *cur;
   char *mid = NULL;
   char *b;
 
