@@ -2,7 +2,7 @@
 # Read two files, of increasing size.
 # With ASAN, this would have triggered a false-positive read of poisoned memory.
 #
-# Copyright 2015 Free Software Foundation, Inc.
+# Copyright 2015-2016 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright

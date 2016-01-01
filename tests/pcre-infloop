@@ -2,7 +2,7 @@
 # With some versions of libpcre, apparently including 8.35,
 # the following would trigger an infinite loop in its match function.
 
-# Copyright 2014-2015 Free Software Foundation, Inc.
+# Copyright 2014-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

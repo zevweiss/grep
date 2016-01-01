@@ -1,6 +1,6 @@
 # source this file; set up for tests
 
-# Copyright (C) 2009-2015 Free Software Foundation, Inc.
+# Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -327,7 +327,7 @@ elif diff_out_=`exec 2>/dev/null; diff -c "$0" "$0" < /dev/null`; then
       fi
     }
   fi
-elif ( cmp --version < /dev/null 2>&1 | grep GNU ) > /dev/null 2>&1; then
+elif cmp -s /dev/null /dev/null 2>/dev/null; then
   compare_ () { cmp -s "$@"; }
 else
   compare_ () { cmp "$@"; }

@@ -1,7 +1,7 @@
 #! /bin/sh
 # Test for a bug in glibc's regex code as of 2015-09-19.
 #
-# Copyright 2015 Free Software Foundation, Inc.
+# Copyright 2015-2016 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
