@@ -484,21 +484,6 @@ clean_up_stdout (void)
     close_stdout ();
 }
 
-/* The high-order bit of a byte.  */
-enum { HIBYTE = 0x80 };
-
-/* True if every byte with HIBYTE off is a single-byte character.
-   UTF-8 has this property.  */
-static bool easy_encoding;
-
-static void
-init_easy_encoding (void)
-{
-  easy_encoding = true;
-  for (int i = 0; i < HIBYTE; i++)
-    easy_encoding &= mbclen_cache[i] == 1;
-}
-
 /* A cast to TYPE of VAL.  Use this when TYPE is a pointer type, VAL
    is properly aligned for TYPE, and 'gcc -Wcast-align' cannot infer
    the alignment and would otherwise complain about the cast.  */
@@ -517,21 +502,33 @@ init_easy_encoding (void)
 /* An unsigned type suitable for fast matching.  */
 typedef uintmax_t uword;
 
+/* All bytes that are not unibyte characters, ANDed together, and then
+   with the pattern repeated to fill a uword.  For an encoding where
+   all bytes are unibyte characters, this is 0.  For UTF-8, this is
+   0x808080....  For encodings where unibyte characters have no useful
+   pattern, this is all 1s.  The unsigned char C is a unibyte
+   character if C & UNIBYTE_MASK is zero.  If the uword W is the
+   concatenation of bytes, the bytes are all unibyte characters
+   if W & UNIBYTE_MASK is zero.  */
+static uword unibyte_mask;
+
+static void
+initialize_unibyte_mask (void)
+{
+  unsigned char mask = UCHAR_MAX;
+  for (int i = 1; i <= UCHAR_MAX; i++)
+    if (mbclen_cache[i] != 1)
+      mask &= i;
+  uword uword_max = -1;
+  unibyte_mask = uword_max / UCHAR_MAX * mask;
+}
+
 /* Skip the easy bytes in a buffer that is guaranteed to have a sentinel
    that is not easy, and return a pointer to the first non-easy byte.
-   In easy encodings, the easy bytes all have HIBYTE off.
-   In other encodings, no byte is easy.  */
+   The easy bytes all have UNIBYTE_MASK off.  */
 static char const * _GL_ATTRIBUTE_PURE
 skip_easy_bytes (char const *buf)
 {
-  if (!easy_encoding)
-    return buf;
-
-  uword uword_max = -1;
-
-  /* 0x8080..., extended to be wide enough for uword.  */
-  uword hibyte_mask = uword_max / UCHAR_MAX * HIBYTE;
-
   /* Search a byte at a time until the pointer is aligned, then a
      uword at a time until a match is found, then a byte at a time to
      identify the exact byte.  The uword search may go slightly past
@@ -539,11 +536,11 @@ skip_easy_bytes (char const *buf)
   char const *p;
   uword const *s;
   for (p = buf; (uintptr_t) p % sizeof (uword) != 0; p++)
-    if (*p & HIBYTE)
+    if (to_uchar (*p) & unibyte_mask)
       return p;
-  for (s = CAST_ALIGNED (uword const *, p); ! (*s & hibyte_mask); s++)
+  for (s = CAST_ALIGNED (uword const *, p); ! (*s & unibyte_mask); s++)
     continue;
-  for (p = (char const *) s; ! (*p & HIBYTE); p++)
+  for (p = (char const *) s; ! (to_uchar (*p) & unibyte_mask); p++)
     continue;
   return p;
 }
@@ -554,7 +551,7 @@ skip_easy_bytes (char const *buf)
 static bool
 buf_has_encoding_errors (char *buf, size_t size)
 {
-  if (MB_CUR_MAX <= 1)
+  if (! unibyte_mask)
     return false;
 
   mbstate_t mbs = { 0 };
@@ -2592,7 +2589,7 @@ main (int argc, char **argv)
     usage (EXIT_TROUBLE);
 
   build_mbclen_cache ();
-  init_easy_encoding ();
+  initialize_unibyte_mask ();
 
   /* In a unibyte locale, switch from fgrep to grep if
      the pattern matches words (where grep is typically faster).

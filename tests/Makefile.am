@@ -133,6 +133,7 @@ TESTS =						\
   turkish-I-without-dot				\
   turkish-eyes					\
   two-files					\
+  unibyte-binary				\
   unibyte-bracket-expr				\
   unibyte-negated-circumflex			\
   utf8-bracket					\
