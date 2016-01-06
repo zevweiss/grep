@@ -78,7 +78,7 @@ Fcompile (char const *pattern, size_t size)
 }
 
 size_t
-Fexecute (char const *buf, size_t size, size_t *match_size,
+Fexecute (char *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
   char const *beg, *try, *end, *mb_start;

@@ -462,7 +462,7 @@ enum { SEEK_HOLE = SEEK_SET };
 
 /* Functions we'll use to search. */
 typedef void (*compile_fp_t) (char const *, size_t);
-typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);
+typedef size_t (*execute_fp_t) (char *, size_t, size_t *, char const *);
 static compile_fp_t compile;
 static execute_fp_t execute;
 
@@ -561,7 +561,7 @@ skip_easy_bytes (char const *buf)
 /* Return true if BUF, of size SIZE, has an encoding error.
    BUF must be followed by at least sizeof (uword) bytes,
    the first of which may be modified.  */
-static bool
+bool
 buf_has_encoding_errors (char *buf, size_t size)
 {
   if (! unibyte_mask)
