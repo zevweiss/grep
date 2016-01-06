@@ -502,10 +502,10 @@ clean_up_stdout (void)
 /* An unsigned type suitable for fast matching.  */
 typedef uintmax_t uword;
 
-/* All bytes that are not unibyte characters, ANDed together, and then
-   with the pattern repeated to fill a uword.  For an encoding where
+/* A mask to test for unibyte characters, with the pattern repeated to
+   fill a uword.  For a multibyte character encoding where
    all bytes are unibyte characters, this is 0.  For UTF-8, this is
-   0x808080....  For encodings where unibyte characters have no useful
+   0x808080....  For encodings where unibyte characters have no discerned
    pattern, this is all 1s.  The unsigned char C is a unibyte
    character if C & UNIBYTE_MASK is zero.  If the uword W is the
    concatenation of bytes, the bytes are all unibyte characters
@@ -515,10 +515,23 @@ static uword unibyte_mask;
 static void
 initialize_unibyte_mask (void)
 {
-  unsigned char mask = UCHAR_MAX;
+  /* For each encoding error I that MASK does not already match,
+     accumulate I's most significant 1 bit by ORing it into MASK.
+     Although any 1 bit of I could be used, in practice high-order
+     bits work better.  */
+  unsigned char mask = 0;
+  int ms1b = 1;
   for (int i = 1; i <= UCHAR_MAX; i++)
-    if (mbclen_cache[i] != 1)
-      mask &= i;
+    if (mbclen_cache[i] != 1 && ! (mask & i))
+      {
+        while (ms1b * 2 <= i)
+          ms1b *= 2;
+        mask |= ms1b;
+      }
+
+  /* Now MASK will detect any encoding-error byte, although it may
+     cry wolf and it may not be optimal.  Build a uword-length mask by
+     repeating MASK.  */
   uword uword_max = -1;
   unibyte_mask = uword_max / UCHAR_MAX * mask;
 }
