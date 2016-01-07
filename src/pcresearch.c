@@ -229,6 +229,7 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           while (mbclen_cache[to_uchar (*p)] == (size_t) -1)
             {
               p++;
+              subject = p;
               bol = false;
             }
 
@@ -269,29 +270,30 @@ Pexecute (char *buf, size_t size, size_t *match_size,
             }
           int valid_bytes = sub[0];
 
-          /* Try to match the string before the encoding error.  */
-          if (valid_bytes < search_offset)
-            e = PCRE_ERROR_NOMATCH;
-          else if (valid_bytes == 0)
+          if (search_offset <= valid_bytes)
             {
-              /* Handle the empty-match case specially, for speed.
-                 This optimization is valid if VALID_BYTES is zero,
-                 which means SEARCH_OFFSET is also zero.  */
-              sub[1] = 0;
-              e = empty_match[bol];
+              /* Try to match the string before the encoding error.  */
+              if (valid_bytes == 0)
+                {
+                  /* Handle the empty-match case specially, for speed.
+                     This optimization is valid if VALID_BYTES is zero,
+                     which means SEARCH_OFFSET is also zero.  */
+                  sub[1] = 0;
+                  e = empty_match[bol];
+                }
+              else
+                e = jit_exec (subject, valid_bytes, search_offset,
+                              options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL, sub);
+
+              if (e != PCRE_ERROR_NOMATCH)
+                break;
+
+              /* Treat the encoding error as data that cannot match.  */
+              p = subject + valid_bytes + 1;
+              bol = false;
             }
-          else
-            e = jit_exec (subject, valid_bytes, search_offset,
-                          options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL, sub);
 
-          if (e != PCRE_ERROR_NOMATCH)
-            break;
-
-          /* Treat the encoding error as data that cannot match.  */
           subject += valid_bytes + 1;
-          if (p < subject)
-            p = subject;
-          bol = false;
         }
 
       if (e != PCRE_ERROR_NOMATCH)
