@@ -18,6 +18,11 @@ GNU grep NEWS                                    -*- outline -*-
   grep -c no longer stops counting when finding binary data.
   [bug introduced in grep-2.21]
 
+  grep no longer outputs encoding errors in unibyte locales.
+  For example, if the byte '\x81' is not a valid character in a
+  unibyte locale, grep treats the byte as binary data.
+  [bug introduced in grep-2.21]
+
   grep -oP is no longer susceptible to an infinite loop when processing
   invalid UTF8 just before a match.
   [bug introduced in grep-2.22]
