@@ -84,6 +84,8 @@ jit_exec (char const *subject, int search_bytes, int search_offset,
 /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
    string matches when that flag is used.  */
 static int empty_match[2];
+
+static bool multibyte_locale;
 #endif
 
 void
@@ -104,10 +106,14 @@ Pcompile (char const *pattern, size_t size)
   char const *p;
   char const *pnul;
 
-  if (using_utf8 ())
-    flags |= PCRE_UTF8;
-  else if (MB_CUR_MAX != 1)
-    error (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
+  if (1 < MB_CUR_MAX)
+    {
+      if (! using_utf8 ())
+        error (EXIT_TROUBLE, 0,
+               _("-P supports only unibyte and UTF-8 locales"));
+      multibyte_locale = true;
+      flags |= PCRE_UTF8;
+    }
 
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))
@@ -194,12 +200,16 @@ Pexecute (char *buf, size_t size, size_t *match_size,
      error.  */
   char const *subject = buf;
 
-  /* If the input is free of encoding errors a multiline search is
+  /* If the input is unibyte or is free of encoding errors a multiline search is
      typically more efficient.  Otherwise, a single-line search is
      typically faster, so that pcre_exec doesn't waste time validating
      the entire input buffer.  */
-  bool multiline = ! buf_has_encoding_errors (buf, size - 1);
-  buf[size - 1] = eolbyte;
+  bool multiline = true;
+  if (multibyte_locale)
+    {
+      multiline = ! buf_has_encoding_errors (buf, size - 1);
+      buf[size - 1] = eolbyte;
+    }
 
   for (; p < buf + size; p = line_start = line_end + 1)
     {
