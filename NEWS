@@ -7,7 +7,7 @@ GNU grep NEWS                                    -*- outline -*-
   Binary files are now less likely to generate diagnostics and more
   likely to yield text matches.  grep now reports "Binary file FOO
   matches" and suppresses further output instead of outputting a line
-  containing a encoding error; hence grep can now report matching text
+  containing an encoding error; hence grep can now report matching text
   before a later binary match.  Formerly, grep reported FOO to be
   binary when it found an encoding error in FOO before generating
   output for FOO, which meant it never reported both matching text and
