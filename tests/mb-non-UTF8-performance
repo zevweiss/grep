@@ -31,7 +31,9 @@ expensive_
 # the unibyte test takes at least 10ms of user time.
 n_lines=100000
 while :; do
-  yes $(printf '%078d' 0) | head -$n_lines > in || framework_failure_
+  ${AWK-awk} -v n_lines=$n_lines \
+      'BEGIN {while (n_lines--) printf "%078d\n", 0}' </dev/null >in ||
+    framework_failure_
   ubyte_ms=$(LC_ALL=C user_time_ 1 grep -i foobar in) || fail=1
   test $ubyte_ms -ge 10 && break
   n_lines=$(expr $n_lines + 200000)
