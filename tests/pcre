@@ -1,5 +1,5 @@
 #! /bin/sh
-# Ensure that with -P, \s matches a newline.
+# Simple PCRE tests.
 #
 # Copyright (C) 2001, 2006, 2009-2016 Free Software Foundation, Inc.
 #
@@ -14,5 +14,8 @@ fail=0
 
 echo | grep -P '\s*$' || fail=1
 echo | grep -zP '\s$' || fail=1
+
+echo '.ab' | grep -Pwx ab
+test $? -eq 1 || fail=1
 
 Exit $fail

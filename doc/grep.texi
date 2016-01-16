@@ -233,6 +233,7 @@ Similarly,
 it must be either at the end of the line
 or followed by a non-word constituent character.
 Word-constituent characters are letters, digits, and the underscore.
+This option has no effect if @option{-x} is also specified.
 
 @item -x
 @itemx --line-regexp

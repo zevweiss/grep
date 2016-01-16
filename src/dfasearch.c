@@ -363,14 +363,14 @@ EGexecute (char *buf, size_t size, size_t *match_size,
                   len = end - ptr;
                   goto assess_pattern_match;
                 }
-              /* If -w, check if the match aligns with word boundaries.
-                 We do this iteratively because:
+              /* If -w and not -x, check whether the match aligns with
+                 word boundaries.  Do this iteratively because:
                  (a) the line may contain more than one occurrence of the
                  pattern, and
                  (b) Several alternatives in the pattern might be valid at a
                  given point, and we may need to consider a shorter one to
                  find a word boundary.  */
-              if (match_words)
+              if (!match_lines && match_words)
                 while (match <= best_match)
                   {
                     regoff_t shorter_len = 0;

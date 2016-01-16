@@ -98,7 +98,13 @@ Pcompile (char const *pattern, size_t size)
 #else
   int e;
   char const *ep;
-  char *re = xnmalloc (4, size + 7);
+  static char const wprefix[] = "(?<!\\w)(?:";
+  static char const wsuffix[] = ")(?!\\w)";
+  static char const xprefix[] = "^(?:";
+  static char const xsuffix[] = ")$";
+  int fix_len_max = MAX (sizeof wprefix - 1 + sizeof wsuffix - 1,
+                         sizeof xprefix - 1 + sizeof xsuffix - 1);
+  char *re = xnmalloc (4, size + (fix_len_max + 4 - 1) / 4);
   int flags = (PCRE_MULTILINE
                | (match_icase ? PCRE_CASELESS : 0));
   char const *patlim = pattern + size;
@@ -120,20 +126,16 @@ Pcompile (char const *pattern, size_t size)
     error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
 
   *n = '\0';
-  if (match_lines)
-    strcpy (n, "^(?:");
   if (match_words)
-    strcpy (n, "(?<!\\w)(?:");
+    strcpy (n, wprefix);
+  if (match_lines)
+    strcpy (n, xprefix);
   n += strlen (n);
 
   /* The PCRE interface doesn't allow NUL bytes in the pattern, so
      replace each NUL byte in the pattern with the four characters
      "\000", removing a preceding backslash if there are an odd
-     number of backslashes before the NUL.
-
-     FIXME: This method does not work with some multibyte character
-     encodings, notably Shift-JIS, where a multibyte character can end
-     in a backslash byte.  */
+     number of backslashes before the NUL.  */
   for (p = pattern; (pnul = memchr (p, '\0', patlim - p)); p = pnul + 1)
     {
       memcpy (n, p, pnul - p);
@@ -149,9 +151,9 @@ Pcompile (char const *pattern, size_t size)
   n += patlim - p;
   *n = '\0';
   if (match_words)
-    strcpy (n, ")(?!\\w)");
+    strcpy (n, wsuffix);
   if (match_lines)
-    strcpy (n, ")$");
+    strcpy (n, xsuffix);
 
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
