@@ -1373,7 +1373,11 @@ grep (int fd, struct stat const *st)
   char nul_zapper = '\0';
   bool done_on_match_0 = done_on_match;
   bool out_quiet_0 = out_quiet;
-  bool has_nulls = false;
+
+  /* The value of NLINES when nulls were first deduced in the input;
+     this is not necessarily the same as the number of matching lines
+     before the first null.  -1 if no input nulls have been deduced.  */
+  intmax_t nlines_first_null = -1;
 
   if (! reset (fd, st))
     return 0;
@@ -1400,15 +1404,15 @@ grep (int fd, struct stat const *st)
 
   for (bool firsttime = true; ; firsttime = false)
     {
-      if (!has_nulls && eol && binary_files != TEXT_BINARY_FILES
+      if (nlines_first_null < 0 && eol && binary_files != TEXT_BINARY_FILES
           && (buf_has_nulls (bufbeg, buflim - bufbeg)
               || (firsttime && file_must_have_nulls (buflim - bufbeg, fd, st))))
         {
-          has_nulls = true;
           if (binary_files == WITHOUT_MATCH_BINARY_FILES)
             return 0;
           if (!count_matches)
             done_on_match = out_quiet = true;
+          nlines_first_null = nlines;
           nul_zapper = eol;
           skip_nuls = skip_empty_lines;
         }
@@ -1445,7 +1449,8 @@ grep (int fd, struct stat const *st)
             nlines += grepbuf (beg, lim);
           if (pending)
             prpending (lim);
-          if ((!outleft && !pending) || (nlines && done_on_match))
+          if ((!outleft && !pending)
+              || (done_on_match && MAX (0, nlines_first_null) < nlines))
             goto finish_grep;
         }
 
@@ -1490,7 +1495,8 @@ grep (int fd, struct stat const *st)
  finish_grep:
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
-  if ((has_nulls || encoding_error_output) && !out_quiet && nlines != 0)
+  if (!out_quiet && (encoding_error_output
+                     || (0 <= nlines_first_null && nlines_first_null < nlines)))
     {
       printf (_("Binary file %s matches\n"), filename);
       if (line_buffered)
