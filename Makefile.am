@@ -29,10 +29,12 @@ EXTRA_DIST =		\
   cfg.mk		\
   thanks-gen
 
-# Shortcut target to make it easier to run expensive tests.
+# Shortcut targets to make it easier to run expensive tests.
 .PHONY: check-expensive
 check-expensive:
 	$(MAKE) check RUN_EXPENSIVE_TESTS=yes
+.PHONY: check-very-expensive
+check-very-expensive: check-expensive
 
 # Run syntax-check rules before creating a distribution tarball.
 .PHONY: run-syntax-check
