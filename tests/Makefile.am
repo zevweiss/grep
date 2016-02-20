@@ -141,7 +141,8 @@ TESTS =						\
   word-delim-multibyte				\
   word-multi-file				\
   word-multibyte				\
-  yesno
+  yesno						\
+  z-anchor-newline
 
 EXTRA_DIST =					\
   $(TESTS)					\

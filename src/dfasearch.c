@@ -342,6 +342,7 @@ EGexecute (char *buf, size_t size, size_t *match_size,
       for (i = 0; i < pcount; i++)
         {
           patterns[i].regexbuf.not_eol = 0;
+          patterns[i].regexbuf.newline_anchor = eolbyte == '\n';
           start = re_search (&(patterns[i].regexbuf),
                              beg, end - beg - 1,
                              ptr - beg, end - ptr - 1,

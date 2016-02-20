@@ -2,6 +2,19 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep -z would match strings it should not.  To trigger the bug, you'd
+  have to use a regular expression including an anchor (^ or $) and a
+  feature like a range or a backreference, causing grep to forego its DFA
+  matcher and resort to using re_search.  With a multibyte locale, that
+  matcher could mistakenly match a string containing a newline.
+  For example, this command:
+    printf 'a\nb\0' | LC_ALL=en_US.utf-8 grep -z '^[a-b]*b'
+  would mistakenly match and print all four input bytes.  After the fix,
+  there is no match, as expected.
+  [bug introduced in grep-2.7]
+
 
 * Noteworthy changes in release 2.23 (2016-02-04) [stable]
 
