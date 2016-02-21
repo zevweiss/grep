@@ -27,7 +27,6 @@ printf 'a\nb\0' > in || framework_failure_
 
 fail=0
 
-env > /t/x
 # These three would all mistakenly match, because the [a-b] range
 # forced the non-DFA (regexp-using) code path.
 returns_ 1 grep -z '^[a-b]*$' in || fail=1
