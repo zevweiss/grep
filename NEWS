@@ -15,6 +15,13 @@ GNU grep NEWS                                    -*- outline -*-
   there is no match, as expected.
   [bug introduced in grep-2.7]
 
+  grep -Pz now diagnoses attempts to use patterns containing ^ and $,
+  instead of mishandling these patterns.  This problem seems to be
+  inherent to the PCRE API; removing this limitation is on PCRE's
+  maint/README wish list.  Patterns can continue to match literal ^
+  and $ by escaping them with \ (now needed even inside [...]).
+  [bug introduced in grep-2.5]
+
 
 * Noteworthy changes in release 2.23 (2016-02-04) [stable]
 

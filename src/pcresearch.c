@@ -124,6 +124,20 @@ Pcompile (char const *pattern, size_t size)
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))
     error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
+  if (! eolbyte)
+    {
+      bool escaped = false;
+      for (p = pattern; *p; p++)
+        if (escaped)
+          escaped = false;
+        else
+          {
+            escaped = *p == '\\';
+            if (*p == '^' || *p == '$')
+              error (EXIT_TROUBLE, 0,
+                     _("unescaped ^ or $ not supported with -Pz"));
+          }
+    }
 
   *n = '\0';
   if (match_words)

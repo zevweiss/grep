@@ -13,9 +13,7 @@ require_pcre_
 fail=0
 
 echo | grep -P '\s*$' || fail=1
-echo | grep -zP '\s$' || fail=1
-
-echo '.ab' | grep -Pwx ab
-test $? -eq 1 || fail=1
+echo | returns_ 2 grep -zP '\s$' || fail=1
+echo '.ab' | returns_ 1 grep -Pwx ab || fail=1
 
 Exit $fail
