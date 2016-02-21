@@ -38,6 +38,6 @@ b10x_ms=$(user_time_ 1 grep -f re-10x in) || fail=1
 # Increasing the length of the regular expression by a factor
 # of 10 should cause no more than a 10x increase in duration.
 # However, we'll draw the line at 20x to avoid false-positives.
-expr $base_ms '<' $b10x_ms / 20 && fail=1
+returns_ 1 expr $base_ms '<' $b10x_ms / 20 || fail=1
 
 Exit $fail

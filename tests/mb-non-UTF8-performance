@@ -43,6 +43,6 @@ mbyte_ms=$(user_time_ 1 grep -i foobar in) || fail=1
 # The duration of the multi-byte run must be no more than 30 times
 # that of the single-byte one.
 # A multiple of 3 seems to be enough for i5,i7, but AMD needs >25.
-expr $ubyte_ms '<' $mbyte_ms / 30 && fail=1
+returns_ 1 expr $ubyte_ms '<' $mbyte_ms / 30 || fail=1
 
 Exit $fail
