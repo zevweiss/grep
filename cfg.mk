@@ -135,6 +135,8 @@ update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
 
+include $(abs_top_srcdir)/dist-check.mk
+
 exclude_file_name_regexp--sc_bindtextdomain = \
   ^tests/(get-mb-cur-max|dfa-match-aux)\.c$$
 exclude_file_name_regexp--sc_prohibit_atoi_atof = \

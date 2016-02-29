@@ -22,6 +22,7 @@ SUBDIRS = po lib doc src tests gnulib-tests
 EXTRA_DIST =		\
   .mailmap		\
   ChangeLog-2009	\
+  dist-check.mk		\
   README		\
   README-alpha		\
   THANKS.in		\
