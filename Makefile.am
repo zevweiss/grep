@@ -73,12 +73,12 @@ THANKS: THANKS.in Makefile.am .mailmap thanks-gen
 	$(AM_V_GEN)rm -f $@-t $@;					\
 	{								\
 	  $(prologue); echo;						\
-	  { perl -ne '/^$$/.../^$$/ and print' $(srcdir)/THANKS.in	\
-	      | grep -v '^$$' | perl -pe 's/  +/\0/';			\
+	  { perl -ne '/^$$/.../^$$/ and !/^$$/ and s/  +/\0/ and print'	\
+	      $(srcdir)/THANKS.in;					\
 	    git log --pretty=format:'%aN%x00%aE'			\
 	      | $(ASSORT) -u;						\
 	  } | $(srcdir)/thanks-gen					\
-	    | LC_ALL=en_US.UTF-8 sort -f;				\
+	    | LC_ALL=en_US.UTF-8 sort -k1,1;				\
 	  echo;								\
 	  printf ';; %s\n' 'Local Variables:' 'coding: utf-8' End:;	\
 	} > $@-t && chmod a-w $@-t && mv $@-t $@
