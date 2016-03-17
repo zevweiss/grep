@@ -141,6 +141,7 @@ TESTS =						\
   word-delim-multibyte				\
   word-multi-file				\
   word-multibyte				\
+  write-error-msg				\
   yesno						\
   z-anchor-newline
 

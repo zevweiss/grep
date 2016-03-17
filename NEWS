@@ -5,6 +5,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release 2.24 (2016-03-10) [stable]
 
+** Improvements
+
+  grep now outputs details more consistently when reporting a write error.
+  E.g., "grep: write error: No space left on device" rather than just
+  "grep: write error".
+
 ** Bug fixes
 
   grep -z would match strings it should not.  To trigger the bug, you'd

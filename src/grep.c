@@ -25,6 +25,7 @@
 #include <wctype.h>
 #include <fcntl.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include "system.h"
 
@@ -296,6 +297,47 @@ static const struct color_cap color_dict[] =
     { NULL, NULL,                  NULL }
   };
 
+/* Saved errno value from failed output functions on stdout.  */
+static int stdout_errno;
+
+static void
+putchar_errno (int c)
+{
+  if (putchar (c) < 0)
+    stdout_errno = errno;
+}
+
+static void
+fputs_errno (char const *s)
+{
+  if (fputs (s, stdout) < 0)
+    stdout_errno = errno;
+}
+
+static void _GL_ATTRIBUTE_FORMAT_PRINTF (1, 2)
+printf_errno (char const *format, ...)
+{
+  va_list ap;
+  va_start (ap, format);
+  if (vfprintf (stdout, format, ap) < 0)
+    stdout_errno = errno;
+  va_end (ap);
+}
+
+static void
+fwrite_errno (void const *ptr, size_t size, size_t nmemb)
+{
+  if (fwrite (ptr, size, nmemb, stdout) != nmemb)
+    stdout_errno = errno;
+}
+
+static void
+fflush_errno (void)
+{
+  if (fflush (stdout) != 0)
+    stdout_errno = errno;
+}
+
 static struct exclude *excluded_patterns[2];
 static struct exclude *excluded_directory_patterns[2];
 /* Short options.  */
@@ -386,7 +428,6 @@ static char const *filename;
 /* Omit leading "./" from file names in diagnostics.  */
 static bool omit_dot_slash;
 static bool errseen;
-static bool write_error_seen;
 
 /* True if output from the current input file has been suppressed
    because an output line had an encoding error.  */
@@ -480,7 +521,7 @@ suppressible_error (char const *mesg, int errnum)
 static void
 clean_up_stdout (void)
 {
-  if (! write_error_seen)
+  if (! stdout_errno)
     close_stdout ();
 }
 
@@ -940,7 +981,7 @@ static void
 print_filename (void)
 {
   pr_sgr_start_if (filename_color);
-  fputs (filename, stdout);
+  fputs_errno (filename);
   pr_sgr_end_if (filename_color);
 }
 
@@ -949,7 +990,7 @@ static void
 print_sep (char sep)
 {
   pr_sgr_start_if (sep_color);
-  fputc (sep, stdout);
+  putchar_errno (sep);
   pr_sgr_end_if (sep_color);
 }
 
@@ -976,7 +1017,7 @@ print_offset (uintmax_t pos, int min_width, const char *color)
       *--p = ' ';
 
   pr_sgr_start_if (color);
-  fwrite (p, 1, buf + sizeof buf - p, stdout);
+  fwrite_errno (p, 1, buf + sizeof buf - p);
   pr_sgr_end_if (color);
 }
 
@@ -1013,7 +1054,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
       if (filename_mask)
         pending_sep = true;
       else
-        fputc (0, stdout);
+        putchar_errno (0);
     }
 
   if (out_line)
@@ -1047,7 +1088,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
          (and its combining and wide characters)
          filenames and you're wasting your efforts.  */
       if (align_tabs)
-        fputs ("\t\b", stdout);
+        fputs_errno ("\t\b");
 
       print_sep (sep);
     }
@@ -1104,14 +1145,14 @@ print_line_middle (char *beg, char *lim,
                   cur = mid;
                   mid = NULL;
                 }
-              fwrite (cur, sizeof (char), b - cur, stdout);
+              fwrite_errno (cur, 1, b - cur);
             }
 
           pr_sgr_start_if (match_color);
-          fwrite (b, sizeof (char), match_size, stdout);
+          fwrite_errno (b, 1, match_size);
           pr_sgr_end_if (match_color);
           if (only_matching)
-            fputs ("\n", stdout);
+            putchar_errno ('\n');
         }
     }
 
@@ -1136,7 +1177,7 @@ print_line_tail (char *beg, const char *lim, const char *line_color)
   if (tail_size > 0)
     {
       pr_sgr_start (line_color);
-      fwrite (beg, 1, tail_size, stdout);
+      fwrite_errno (beg, 1, tail_size);
       beg += tail_size;
       pr_sgr_end (line_color);
     }
@@ -1188,16 +1229,13 @@ prline (char *beg, char *lim, char sep)
     }
 
   if (!only_matching && lim > beg)
-    fwrite (beg, 1, lim - beg, stdout);
+    fwrite_errno (beg, 1, lim - beg);
 
   if (line_buffered)
-    fflush (stdout);
+    fflush_errno ();
 
-  if (ferror (stdout))
-    {
-      write_error_seen = true;
-      error (EXIT_TROUBLE, 0, _("write error"));
-    }
+  if (stdout_errno)
+    error (EXIT_TROUBLE, stdout_errno, _("write error"));
 
   lastout = lim;
 }
@@ -1253,9 +1291,9 @@ prtext (char *beg, char *lim)
           && p != lastout && group_separator)
         {
           pr_sgr_start_if (sep_color);
-          fputs (group_separator, stdout);
+          fputs_errno (group_separator);
           pr_sgr_end_if (sep_color);
-          fputc ('\n', stdout);
+          putchar_errno ('\n');
         }
 
       while (p < beg)
@@ -1498,9 +1536,9 @@ grep (int fd, struct stat const *st)
   if (!out_quiet && (encoding_error_output
                      || (0 <= nlines_first_null && nlines_first_null < nlines)))
     {
-      printf (_("Binary file %s matches\n"), filename);
+      printf_errno (_("Binary file %s matches\n"), filename);
       if (line_buffered)
-        fflush (stdout);
+        fflush_errno ();
     }
   return nlines;
 }
@@ -1742,20 +1780,20 @@ grepdesc (int desc, bool command_line)
               if (filename_mask)
                 print_sep (SEP_CHAR_SELECTED);
               else
-                fputc (0, stdout);
+                putchar_errno (0);
             }
-          printf ("%" PRIdMAX "\n", count);
+          printf_errno ("%" PRIdMAX "\n", count);
           if (line_buffered)
-            fflush (stdout);
+            fflush_errno ();
         }
 
       status = !count;
       if (list_files == 1 - 2 * status)
         {
           print_filename ();
-          fputc ('\n' & filename_mask, stdout);
+          putchar_errno ('\n' & filename_mask);
           if (line_buffered)
-            fflush (stdout);
+            fflush_errno ();
         }
 
       if (desc == STDIN_FILENO)
