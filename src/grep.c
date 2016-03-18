@@ -1152,7 +1152,7 @@ print_line_middle (char *beg, char *lim,
           fwrite_errno (b, 1, match_size);
           pr_sgr_end_if (match_color);
           if (only_matching)
-            putchar_errno ('\n');
+            putchar_errno (eolbyte);
         }
     }
 
