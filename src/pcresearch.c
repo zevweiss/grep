@@ -127,15 +127,17 @@ Pcompile (char const *pattern, size_t size)
   if (! eolbyte)
     {
       bool escaped = false;
+      bool after_unescaped_left_bracket = false;
       for (p = pattern; *p; p++)
         if (escaped)
-          escaped = false;
+          escaped = after_unescaped_left_bracket = false;
         else
           {
-            escaped = *p == '\\';
-            if (*p == '^' || *p == '$')
+            if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket))
               error (EXIT_TROUBLE, 0,
                      _("unescaped ^ or $ not supported with -Pz"));
+            escaped = *p == '\\';
+            after_unescaped_left_bracket = *p == '[';
           }
     }
 
