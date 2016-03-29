@@ -5,7 +5,7 @@
 fail=0
 
 printf 'Invalid range end\n' > exp
-for prog in grep egrep 'grep -E'; do
+for prog in grep 'grep -E'; do
   $prog '[b-a]' < /dev/null > out 2>&1
   # exit status must be 2, not 1
   test $? = 2 || fail=1
