@@ -607,10 +607,6 @@ By default, @var{type} is @samp{binary}, and when @command{grep}
 discovers that a file is binary it suppresses any further output, and
 instead outputs either a one-line message saying that a binary file
 matches, or no message if there is no match.
-When processing binary data, @command{grep} may treat non-text bytes
-as line terminators; for example, the pattern @samp{.} (period) might
-not match a null byte, as the null byte might be treated as a line
-terminator even without the @option{-z} (@option{--null-data}) option.
 
 If @var{type} is @samp{without-match},
 when @command{grep} discovers that a file is binary
@@ -620,6 +616,16 @@ this is equivalent to the @option{-I} option.
 If @var{type} is @samp{text},
 @command{grep} processes a binary file as if it were text;
 this is equivalent to the @option{-a} option.
+
+When @var{type} is @samp{binary}, @command{grep} may treat non-text
+bytes as line terminators even without the @option{-z}
+(@option{--null-data}) option.  This means choosing @samp{binary}
+versus @samp{text} can affect whether a pattern matches a file.  For
+example, when @var{type} is @samp{binary} the pattern @samp{q$} might
+match @samp{q} immediately followed by a null byte, even though this
+is not matched when @var{type} is @samp{text}.  Conversely, when
+@var{type} is @samp{binary} the pattern @samp{.} (period) might not
+match a null byte.
 
 @emph{Warning:} @samp{--binary-files=text} might output binary garbage,
 which can have nasty side effects
