@@ -4,6 +4,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  In the C or POSIX locale, grep now treats all bytes as valid
+  characters even if the C runtime library says otherwise.  The
+  revised behavior is more compatible with the original intent of
+  POSIX, and the next release of POSIX will likely make this official.
+  [bug introduced in grep-2.23]
+
   grep -Pz no longer mistakenly diagnoses patterns like [^a] that use
   negated character classes. [bug introduced in grep-2.24]
 

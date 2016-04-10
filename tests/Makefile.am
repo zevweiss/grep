@@ -53,6 +53,7 @@ TESTS =						\
   big-match					\
   bogus-wctob					\
   bre						\
+  c-locale					\
   case-fold-backref				\
   case-fold-backslash-w				\
   case-fold-char-class				\

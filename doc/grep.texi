@@ -599,7 +599,8 @@ If a file's data or metadata
 indicate that the file contains binary data,
 assume that the file is of type @var{type}.
 Non-text bytes indicate binary data; these are either output bytes that are
-improperly encoded for the current locale, or null input bytes when the
+improperly encoded for the current locale (@pxref{Environment
+Variables}), or null input bytes when the
 @option{-z} (@option{--null-data}) option is not given (@pxref{Other
 Options}).
 
@@ -627,10 +628,13 @@ is not matched when @var{type} is @samp{text}.  Conversely, when
 @var{type} is @samp{binary} the pattern @samp{.} (period) might not
 match a null byte.
 
-@emph{Warning:} @samp{--binary-files=text} might output binary garbage,
-which can have nasty side effects
-if the output is a terminal and
-if the terminal driver interprets some of it as commands.
+@emph{Warning:} The @option{-a} (@option{--binary-files=text}) option
+might output binary garbage, which can have nasty side effects if the
+output is a terminal and if the terminal driver interprets some of it
+as commands.  On the other hand, when reading files whose text
+encodings are unknown, it can be helpful to use @option{-a} or to set
+@samp{LC_ALL='C'} in the environment, in order to find more matches
+even if the matches are unsafe for direct display.
 
 @item -D @var{action}
 @itemx --devices=@var{action}
@@ -803,6 +807,7 @@ The @samp{C} locale is used if none of these environment variables are set,
 if the locale catalog is not installed,
 or if @command{grep} was not compiled
 with national language support (NLS).
+The shell command @code{locale -a} lists locales that are currently available.
 
 Many of the environment variables in the following list let you
 control highlighting using
@@ -1004,6 +1009,10 @@ interpreted.
 These variables specify the locale for the @env{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
+This category also determines the character encoding, that is, whether
+text is encoded in UTF-8, ASCII, or some other encoding.  In the
+@samp{C} or @samp{POSIX} locale, all characters are encoded as a
+single byte and every byte is a valid character.
 
 @item LANGUAGE
 @itemx LC_ALL
