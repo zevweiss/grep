@@ -48,7 +48,6 @@ typedef signed char mb_len_map_t;
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
 
-extern char *mbtoupper (char const *, size_t *, mb_len_map_t **);
 extern void build_mbclen_cache (void);
 extern size_t mbclen_cache[];
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);
