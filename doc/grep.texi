@@ -175,8 +175,8 @@ This version number should be included in all bug reports.
 @opindex --regexp=@var{pattern}
 @cindex pattern list
 Use @var{pattern} as the pattern.
-This can be used to specify multiple search patterns,
-or to protect a pattern beginning with a @samp{-}.
+If this option is used multiple times or is combined with the
+@option{-f} (@option{--file}) option, search for all patterns given.
 (@option{-e} is specified by POSIX.)
 
 @item -f @var{file}
@@ -185,6 +185,8 @@ or to protect a pattern beginning with a @samp{-}.
 @opindex --file
 @cindex pattern from file
 Obtain patterns from @var{file}, one per line.
+If this option is used multiple times or is combined with the
+@option{-e} (@option{--regexp}) option, search for all patterns given.
 The empty file contains zero patterns, and therefore matches nothing.
 (@option{-f} is specified by POSIX.)
 
@@ -1116,8 +1118,8 @@ expressions), separated by newlines, any of which is to be matched.
 @itemx --perl-regexp
 @opindex -P
 @opindex --perl-regexp
-@cindex matching Perl regular expressions
-Interpret the pattern as a Perl regular expression.
+@cindex matching Perl-compatible regular expressions
+Interpret the pattern as a Perl-compatible regular expression (PCRE).
 This is highly experimental and
 @samp{grep@ -P} may warn of unimplemented features.
 
@@ -1142,16 +1144,16 @@ Regular expressions are constructed analogously to arithmetic expressions,
 by using various operators to combine smaller expressions.
 @command{grep} understands
 three different versions of regular expression syntax:
-``basic,'' (BRE) ``extended'' (ERE) and ``perl''.
+``basic'' (BRE), ``extended'' (ERE) and ``perl'' (PCRE).
 In GNU @command{grep},
 there is no difference in available functionality between the basic and
 extended syntaxes.
 In other implementations, basic regular expressions are less powerful.
 The following description applies to extended regular expressions;
 differences for basic regular expressions are summarized afterwards.
-Perl regular expressions give additional functionality, and are
-documented in the @i{pcresyntax}(3) and @i{pcrepattern}(3) manual pages,
-but work only if PCRE is available in the system.
+Perl-compatible regular expressions give additional functionality, and
+are documented in the @i{pcresyntax}(3) and @i{pcrepattern}(3) manual
+pages, but work only if PCRE is available in the system.
 
 @menu
 * Fundamental Structure::

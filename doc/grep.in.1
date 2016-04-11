@@ -98,9 +98,7 @@ as a basic regular expression (BRE, see below).
 This is the default.
 .TP
 .BR \-P ", " \-\^\-perl\-regexp
-Interpret
-.I PATTERN
-as a Perl regular expression (PCRE, see below).
+Interpret the pattern as a Perl-compatible regular expression (PCRE).
 This is highly experimental and
 .B "grep \-P"
 may warn of unimplemented features.
@@ -110,14 +108,20 @@ may warn of unimplemented features.
 Use
 .I PATTERN
 as the pattern.
-This can be used to specify multiple search patterns,
-or to protect a pattern beginning with a hyphen
-.RB ( \- ).
+If this option is used multiple times or is combined with the
+.B \-f
+.RB ( \-\-file )
+option, search for all patterns given.
+This option can be used to protect a pattern beginning with \*(lq\-\*(rq.
 .TP
 .BI \-f " FILE" "\fR,\fP \-\^\-file=" FILE
 Obtain patterns from
 .IR FILE ,
 one per line.
+If this option is used multiple times or is combined with the
+.B \-e
+.RB ( \-\-regexp )
+option, search for all patterns given.
 The empty file contains zero patterns, and therefore matches nothing.
 .TP
 .BR \-i ", " \-\^\-ignore\-case
@@ -545,7 +549,7 @@ extended syntaxes.
 In other implementations, basic regular expressions are less powerful.
 The following description applies to extended regular expressions;
 differences for basic regular expressions are summarized afterwards.
-Perl regular expressions give additional functionality, and are
+Perl-compatible regular expressions give additional functionality, and are
 documented in pcresyntax(3) and pcrepattern(3), but work only if
 PCRE is available in the system.
 .PP
