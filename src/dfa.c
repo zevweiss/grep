@@ -350,11 +350,6 @@ struct dfa
    */
   int *multibyte_prop;
 
-  /* A table indexed by byte values that contains the corresponding wide
-     character (if any) for that byte.  WEOF means the byte is not a
-     valid single-byte character.  */
-  wint_t mbrtowc_cache[NOTCHAR];
-
   /* Array of the bracket expression in the DFA.  */
   struct mb_char_classes *mbcsets;
   size_t nmbcsets;
@@ -431,19 +426,10 @@ struct dfa
 
 static void regexp (void);
 
-static void
-dfambcache (struct dfa *d)
-{
-  int i;
-  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
-    {
-      char c = i;
-      unsigned char uc = i;
-      mbstate_t s = { 0 };
-      wchar_t wc;
-      d->mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
-    }
-}
+/* A table indexed by byte values that contains the corresponding wide
+   character (if any) for that byte.  WEOF means the byte is not a
+   valid single-byte character.  */
+static wint_t mbrtowc_cache[NOTCHAR];
 
 /* Store into *PWC the result of converting the leading bytes of the
    multibyte buffer S of length N bytes, using the mbrtowc_cache in *D
@@ -466,7 +452,7 @@ static size_t
 mbs_to_wchar (wint_t *pwc, char const *s, size_t n, struct dfa *d)
 {
   unsigned char uc = s[0];
-  wint_t wc = d->mbrtowc_cache[uc];
+  wint_t wc = mbrtowc_cache[uc];
 
   if (wc == WEOF)
     {
@@ -671,25 +657,18 @@ static charclass letters;
 /* Set of characters that are newline.  */
 static charclass newline;
 
-/* Add this to the test for whether a byte is word-constituent, since on
-   BSD-based systems, many values in the 128..255 range are classified as
-   alphabetic, while on glibc-based systems, they are not.  */
-#ifdef __GLIBC__
-# define is_valid_unibyte_character(c) 1
-#else
-# define is_valid_unibyte_character(c) (btowc (c) != WEOF)
-#endif
-
-/* C is a "word-constituent" byte.  */
-#define IS_WORD_CONSTITUENT(C) \
-  (is_valid_unibyte_character (C) && (isalnum (C) || (C) == '_'))
+static bool
+unibyte_word_constituent (unsigned char c)
+{
+  return mbrtowc_cache[c] != WEOF && (isalnum (c) || (c) == '_');
+}
 
 static int
 char_context (unsigned char c)
 {
   if (c == eolbyte)
     return CTX_NEWLINE;
-  if (IS_WORD_CONSTITUENT (c))
+  if (unibyte_word_constituent (c))
     return CTX_LETTER;
   return CTX_NONE;
 }
@@ -708,23 +687,29 @@ wchar_context (wint_t wc)
 void
 dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
 {
-  unsigned int i;
-
+  int i;
   syntax_bits_set = 1;
   syntax_bits = bits;
   case_fold = fold != 0;
   eolbyte = eol;
 
-  for (i = 0; i < NOTCHAR; ++i)
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
     {
-      sbit[i] = char_context (i);
-      switch (sbit[i])
+      char c = i;
+      unsigned char uc = i;
+      mbstate_t s = { 0 };
+      wchar_t wc;
+      mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
+
+      /* Now that mbrtowc_cache[uc] is set, use it to calculate sbit.  */
+      sbit[uc] = char_context (uc);
+      switch (sbit[uc])
         {
         case CTX_LETTER:
-          setbit (i, letters);
+          setbit (uc, letters);
           break;
         case CTX_NEWLINE:
-          setbit (i, newline);
+          setbit (uc, newline);
           break;
         }
     }
@@ -1489,7 +1474,7 @@ lex (void)
             {
               zeroset (ccl);
               for (c2 = 0; c2 < NOTCHAR; ++c2)
-                if (IS_WORD_CONSTITUENT (c2))
+                if (unibyte_word_constituent (c2))
                   setbit (c2, ccl);
               if (c == 'W')
                 notset (ccl);
@@ -2714,7 +2699,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         state_letter = state;
 
       for (i = 0; i < NOTCHAR; ++i)
-        trans[i] = (IS_WORD_CONSTITUENT (i)) ? state_letter : state;
+        trans[i] = unibyte_word_constituent (i) ? state_letter : state;
       trans[eolbyte] = state_newline;
     }
   else
@@ -2820,7 +2805,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
 
               if (c == eolbyte)
                 trans[c] = state_newline;
-              else if (IS_WORD_CONSTITUENT (c))
+              else if (unibyte_word_constituent (c))
                 trans[c] = state_letter;
               else if (c < NOTCHAR)
                 trans[c] = state;
@@ -3626,7 +3611,6 @@ void
 dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
 {
   dfainit (d);
-  dfambcache (d);
   dfaparse (s, len, d);
   dfassbuild (d);
 
