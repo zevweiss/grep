@@ -1913,7 +1913,7 @@ regexp (void)
 /* Main entry point for the parser.  S is a string to be parsed, len is the
    length of the string, so s can include NUL characters.  D is a pointer to
    the struct dfa to parse into.  */
-void
+static void
 dfaparse (char const *s, size_t len, struct dfa *d)
 {
   dfa = d;
@@ -2292,7 +2292,7 @@ state_separate_contexts (position_set const *s)
    Sets are stored as arrays of the elements, obeying a stack-like allocation
    scheme; the number of elements in each set deeper in the stack can be
    used to determine the address of a particular set's array.  */
-void
+static void
 dfaanalyze (struct dfa *d, bool searchflag)
 {
   /* Array allocated to hold position sets.  */
@@ -2538,7 +2538,7 @@ dfaanalyze (struct dfa *d, bool searchflag)
    If after comparing with every group there are characters remaining in C,
    create a new group labeled with the characters of C and insert this
    position in that group.  */
-void
+static void
 dfastate (state_num s, struct dfa *d, state_num trans[])
 {
   leaf_set grps[NOTCHAR];       /* As many as will ever be needed.  */
@@ -3468,7 +3468,7 @@ free_mbdata (struct dfa *d)
 
 /* Initialize the components of a dfa that the other routines don't
    initialize for themselves.  */
-void
+static void
 dfainit (struct dfa *d)
 {
   memset (d, 0, sizeof *d);

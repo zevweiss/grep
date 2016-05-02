@@ -87,22 +87,6 @@ extern bool dfaisfast (struct dfa const *) _GL_ATTRIBUTE_PURE;
 /* Free the storage held by the components of a struct dfa. */
 extern void dfafree (struct dfa *);
 
-/* Entry points for people who know what they're doing. */
-
-/* Initialize the components of a struct dfa. */
-extern void dfainit (struct dfa *);
-
-/* Incrementally parse a string of given length into a struct dfa. */
-extern void dfaparse (char const *, size_t, struct dfa *);
-
-/* Analyze a parsed regexp; second argument tells whether to build a searching
-   or an exact matcher. */
-extern void dfaanalyze (struct dfa *, bool);
-
-/* Compute, for each possible character, the transitions out of a given
-   state, storing them in an array of integers. */
-extern void dfastate (ptrdiff_t, struct dfa *, ptrdiff_t []);
-
 /* Error handling. */
 
 /* dfawarn() is called by the regexp routines whenever a regex is compiled
