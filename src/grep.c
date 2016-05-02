@@ -1387,7 +1387,7 @@ grepbuf (char *beg, char const *lim)
           if (!outleft || done_on_match)
             {
               if (exit_on_match)
-                exit (EXIT_SUCCESS);
+                exit (errseen ? exit_failure : EXIT_SUCCESS);
               break;
             }
         }
@@ -1751,7 +1751,6 @@ grepdesc (int desc, bool command_line)
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
   if (!out_quiet && list_files == 0 && 1 < max_count
-      && S_ISREG (out_stat.st_mode) && out_stat.st_ino
       && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
@@ -2280,7 +2279,6 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 #endif
 
-  exit_failure = EXIT_TROUBLE;
   atexit (clean_up_stdout);
 
   last_recursive = 0;
@@ -2579,12 +2577,50 @@ main (int argc, char **argv)
 
       }
 
+  if (show_version)
+    {
+      version_etc (stdout, program_name, PACKAGE_NAME, VERSION, AUTHORS,
+                   (char *) NULL);
+      return EXIT_SUCCESS;
+    }
+
+  if (show_help)
+    usage (EXIT_SUCCESS);
+
+  bool possibly_tty = false;
+  struct stat tmp_stat;
+  if (! exit_on_match && fstat (STDOUT_FILENO, &tmp_stat) == 0)
+    {
+      if (S_ISREG (tmp_stat.st_mode))
+        out_stat = tmp_stat;
+      else if (S_ISCHR (tmp_stat.st_mode))
+        {
+          struct stat null_stat;
+          if (stat ("/dev/null", &null_stat) == 0
+              && SAME_INODE (tmp_stat, null_stat))
+            exit_on_match = true;
+          else
+            possibly_tty = true;
+        }
+    }
+
   if (color_option == 2)
-    color_option = isatty (STDOUT_FILENO) && should_colorize ();
+    color_option = possibly_tty && should_colorize () && isatty (STDOUT_FILENO);
   init_colorize ();
 
-  /* POSIX says that -q overrides -l, which in turn overrides the
-     other output options.  */
+  if (color_option)
+    {
+      /* Legacy.  */
+      char *userval = getenv ("GREP_COLOR");
+      if (userval != NULL && *userval != '\0')
+        selected_match_color = context_match_color = userval;
+
+      /* New GREP_COLORS has priority.  */
+      parse_grep_colors ();
+    }
+
+  /* POSIX says -c, -l and -q are mutually exclusive.  In this
+     implementation, -q overrides -l and -L, which in turn override -c.  */
   if (exit_on_match)
     list_files = 0;
   if (exit_on_match | list_files)
@@ -2598,31 +2634,6 @@ main (int argc, char **argv)
     out_after = default_context;
   if (out_before < 0)
     out_before = default_context;
-
-  if (color_option)
-    {
-      /* Legacy.  */
-      char *userval = getenv ("GREP_COLOR");
-      if (userval != NULL && *userval != '\0')
-        selected_match_color = context_match_color = userval;
-
-      /* New GREP_COLORS has priority.  */
-      parse_grep_colors ();
-    }
-
-  if (show_version)
-    {
-      version_etc (stdout, program_name, PACKAGE_NAME, VERSION, AUTHORS,
-                   (char *) NULL);
-      return EXIT_SUCCESS;
-    }
-
-  if (show_help)
-    usage (EXIT_SUCCESS);
-
-  struct stat tmp_stat;
-  if (fstat (STDOUT_FILENO, &tmp_stat) == 0 && S_ISREG (tmp_stat.st_mode))
-    out_stat = tmp_stat;
 
   if (keys)
     {

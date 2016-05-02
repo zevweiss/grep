@@ -21,6 +21,8 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Improvements
 
+  grep can be much faster now when standard output is /dev/null.
+
   grep now outputs details more consistently when reporting a write error.
   E.g., "grep: write error: No space left on device" rather than just
   "grep: write error".

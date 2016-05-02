@@ -47,9 +47,9 @@ else
                 fail=1
         fi
 
-        # should return 2 file not found
+        # should return 0 (found a match) or 2 (file not found)
         echo "abcd" | grep -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
-        if test $? -ne 2 ; then
+        if test $? -ne 0 && test $? -ne 2 ; then
                 echo "Status: Wrong status code, test \#5 failed"
                 fail=1
         fi

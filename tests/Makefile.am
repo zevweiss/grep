@@ -82,6 +82,7 @@ TESTS =						\
   fmbtest					\
   foad1						\
   grep-dev-null					\
+  grep-dev-null-out				\
   grep-dir					\
   help-version					\
   high-bit-range				\
