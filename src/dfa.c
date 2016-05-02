@@ -641,7 +641,8 @@ charclass_index (charclass const s)
 }
 
 /* Syntax bits controlling the behavior of the lexical analyzer.  */
-static reg_syntax_t syntax_bits, syntax_bits_set;
+static reg_syntax_t syntax_bits;
+static bool syntax_bits_set;
 
 /* Flag for case-folding letters into sets.  */
 static bool case_fold;
@@ -693,7 +694,7 @@ void
 dfasyntax (reg_syntax_t bits, bool fold, unsigned char eol)
 {
   int i;
-  syntax_bits_set = 1;
+  syntax_bits_set = true;
   syntax_bits = bits;
   case_fold = fold;
   eolbyte = eol;
@@ -757,7 +758,7 @@ setbit_case_fold_c (int b, charclass c)
 
 /* UTF-8 encoding allows some optimizations that we can't otherwise
    assume in a multibyte encoding.  */
-int
+bool
 using_utf8 (void)
 {
   static int utf8 = -1;
@@ -858,7 +859,7 @@ static wint_t wctok;		/* Wide character representation of the current
         lexptr += nbytes;			\
         lexleft -= nbytes;			\
       }						\
-  } while (0)
+  } while (false)
 
 #ifndef MIN
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -1211,7 +1212,7 @@ parse_bracket_exp (void)
       lexptr = lexptr_saved;			\
       lexleft = lexleft_saved;			\
     }						\
-  while (0)
+  while (false)
 
 static token
 lex (void)
@@ -3327,7 +3328,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
                                                                         \
               mbp = p;                                                  \
               trans = d->trans;                                         \
-  } while (0)
+  } while (false)
 
               State_transition();
             }

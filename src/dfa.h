@@ -100,4 +100,4 @@ extern void dfawarn (const char *);
    The user must supply a dfaerror.  */
 extern _Noreturn void dfaerror (const char *);
 
-extern int using_utf8 (void);
+extern bool using_utf8 (void);
