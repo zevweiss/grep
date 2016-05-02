@@ -327,7 +327,8 @@ struct dfa
   mbstate_t mbs;		/* Multibyte conversion state.  */
 
   /* dfaexec implementation.  */
-  char *(*dfaexec) (struct dfa *, char const *, char *, int, size_t *, int *);
+  char *(*dfaexec) (struct dfa *, char const *, char *,
+                    bool, size_t *, bool *);
 
   /* The following are valid only if MB_CUR_MAX > 1.  */
 
@@ -689,12 +690,12 @@ wchar_context (wint_t wc)
 
 /* Entry point to set syntax options.  */
 void
-dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
+dfasyntax (reg_syntax_t bits, bool fold, unsigned char eol)
 {
   int i;
   syntax_bits_set = 1;
   syntax_bits = bits;
-  case_fold = fold != 0;
+  case_fold = fold;
   eolbyte = eol;
 
   for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
@@ -2292,7 +2293,7 @@ state_separate_contexts (position_set const *s)
    scheme; the number of elements in each set deeper in the stack can be
    used to determine the address of a particular set's array.  */
 void
-dfaanalyze (struct dfa *d, int searchflag)
+dfaanalyze (struct dfa *d, bool searchflag)
 {
   /* Array allocated to hold position sets.  */
   position *posalloc = xnmalloc (d->nleaves, 2 * sizeof *posalloc);
@@ -2328,7 +2329,7 @@ dfaanalyze (struct dfa *d, int searchflag)
   putc ('\n', stderr);
 #endif
 
-  d->searchflag = searchflag != 0;
+  d->searchflag = searchflag;
   alloc_position_set (&merged, d->nleaves);
   d->follows = xcalloc (d->tindex, sizeof *d->follows);
 
@@ -3210,7 +3211,7 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
     - word-delimiter-in-MB-locale: \<, \>, \b
     */
 static inline char *
-dfaexec_main (struct dfa *d, char const *begin, char *end, int allow_nl,
+dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
              size_t *count, bool multibyte)
 {
   state_num s, s1;              /* Current state.  */
@@ -3402,14 +3403,14 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, int allow_nl,
 
 static char *
 dfaexec_mb (struct dfa *d, char const *begin, char *end,
-            int allow_nl, size_t *count, int *backref)
+            bool allow_nl, size_t *count, bool *backref)
 {
   return dfaexec_main (d, begin, end, allow_nl, count, true);
 }
 
 static char *
 dfaexec_sb (struct dfa *d, char const *begin, char *end,
-            int allow_nl, size_t *count, int *backref)
+            bool allow_nl, size_t *count, bool *backref)
 {
   return dfaexec_main (d, begin, end, allow_nl, count, false);
 }
@@ -3418,9 +3419,9 @@ dfaexec_sb (struct dfa *d, char const *begin, char *end,
    any regexp that uses a construct not supported by this code.  */
 static char *
 dfaexec_noop (struct dfa *d, char const *begin, char *end,
-              int allow_nl, size_t *count, int *backref)
+              bool allow_nl, size_t *count, bool *backref)
 {
-  *backref = 1;
+  *backref = true;
   return (char *) begin;
 }
 
@@ -3429,7 +3430,7 @@ dfaexec_noop (struct dfa *d, char const *begin, char *end,
 
 char *
 dfaexec (struct dfa *d, char const *begin, char *end,
-         int allow_nl, size_t *count, int *backref)
+         bool allow_nl, size_t *count, bool *backref)
 {
   return d->dfaexec (d, begin, end, allow_nl, count, backref);
 }
@@ -3622,7 +3623,7 @@ dfassbuild (struct dfa *d)
 
 /* Parse and analyze a single string of the given length.  */
 void
-dfacomp (char const *s, size_t len, struct dfa *d, int searchflag)
+dfacomp (char const *s, size_t len, struct dfa *d, bool searchflag)
 {
   dfainit (d);
   dfaparse (s, len, d);

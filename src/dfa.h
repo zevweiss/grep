@@ -53,12 +53,12 @@ extern void dfamustfree (struct dfamust *);
 /* dfasyntax() takes three arguments; the first sets the syntax bits described
    earlier in this file, the second sets the case-folding flag, and the
    third specifies the line terminator. */
-extern void dfasyntax (reg_syntax_t, int, unsigned char);
+extern void dfasyntax (reg_syntax_t, bool, unsigned char);
 
 /* Compile the given string of the given length into the given struct dfa.
    Final argument is a flag specifying whether to build a searching or an
    exact matcher. */
-extern void dfacomp (char const *, size_t, struct dfa *, int);
+extern void dfacomp (char const *, size_t, struct dfa *, bool);
 
 /* Search through a buffer looking for a match to the given struct dfa.
    Find the first occurrence of a string matching the regexp in the
@@ -67,13 +67,13 @@ extern void dfacomp (char const *, size_t, struct dfa *, int);
    points to the beginning of the buffer, and END points to the first byte
    after its end.  Note however that we store a sentinel byte (usually
    newline) in *END, so the actual buffer must be one byte longer.
-   When NEWLINE is nonzero, newlines may appear in the matching string.
+   When ALLOW_NL is true, newlines may appear in the matching string.
    If COUNT is non-NULL, increment *COUNT once for each newline processed.
    Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
-   encountered a back-reference (1) or not (0).  The caller may use this
-   to decide whether to fall back on a backtracking matcher. */
+   encountered a back-reference.  The caller can use this to decide
+   whether to fall back on a backtracking matcher.  */
 extern char *dfaexec (struct dfa *d, char const *begin, char *end,
-                      int newline, size_t *count, int *backref);
+                      bool allow_nl, size_t *count, bool *backref);
 
 /* Return a superset for D.  The superset matches everything that D
    matches, along with some other strings (though the latter should be
@@ -97,7 +97,7 @@ extern void dfaparse (char const *, size_t, struct dfa *);
 
 /* Analyze a parsed regexp; second argument tells whether to build a searching
    or an exact matcher. */
-extern void dfaanalyze (struct dfa *, int);
+extern void dfaanalyze (struct dfa *, bool);
 
 /* Compute, for each possible character, the transitions out of a given
    state, storing them in an array of integers. */

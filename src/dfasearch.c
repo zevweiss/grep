@@ -226,7 +226,7 @@ EGexecute (char *buf, size_t size, size_t *match_size,
           char const *next_beg, *dfa_beg = beg;
           size_t count = 0;
           bool exact_kwset_match = false;
-          int backref = 0;
+          bool backref = false;
 
           /* Try matching with KWset, if it's defined.  */
           if (kwset)
