@@ -651,6 +651,10 @@ static unsigned char eolbyte;
 /* Cache of char-context values.  */
 static int sbit[NOTCHAR];
 
+/* If never_trail[B], the byte B cannot be a non-initial byte in a
+   multibyte character.  */
+static bool never_trail[NOTCHAR];
+
 /* Set of characters considered letters.  */
 static charclass letters;
 
@@ -712,6 +716,11 @@ dfasyntax (reg_syntax_t bits, int fold, unsigned char eol)
           setbit (uc, newline);
           break;
         }
+
+      /* POSIX requires that the five bytes in "\n\r./" (including the
+         terminating NUL) cannot occur inside a multibyte character.  */
+      never_trail[uc] = (using_utf8 () ? (uc & 0xc0) != 0x80
+                         : strchr ("\n\r./", uc) != NULL);
     }
 }
 
@@ -3159,15 +3168,20 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
    that are not a single byte character nor the first byte of a multibyte
    character.
 
-   Given DFA state d, use mbs_to_wchar to advance MBP until it reaches or
-   exceeds P.  If WCP is non-NULL, set *WCP to the final wide character
-   processed, or if no wide character is processed, set it to WEOF.
+   Given DFA state d, use mbs_to_wchar to advance MBP until it reaches
+   or exceeds P, and return the advanced MBP.  If WCP is non-NULL and
+   the result is greater than P, set *WCP to the final wide character
+   processed, or to WEOF if no wide character is processed.  Otherwise,
+   if WCP is non-NULL, *WCP may or may not be updated.
+
    Both P and MBP must be no larger than END.  */
 static unsigned char const *
 skip_remains_mb (struct dfa *d, unsigned char const *p,
                  unsigned char const *mbp, char const *end, wint_t *wcp)
 {
   wint_t wc = WEOF;
+  if (never_trail[*p])
+    return p;
   while (mbp < p)
     mbp += mbs_to_wchar (&wc, (char const *) mbp,
                          end - (char const *) mbp, d);
