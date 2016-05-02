@@ -2,6 +2,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Improvements
+
+  grep can be much faster now when standard output is /dev/null.
+
 
 * Noteworthy changes in release 2.25 (2016-04-21) [stable]
 
@@ -20,8 +24,6 @@ GNU grep NEWS                                    -*- outline -*-
   [bug introduced in grep-2.5]
 
 ** Improvements
-
-  grep can be much faster now when standard output is /dev/null.
 
   grep now outputs details more consistently when reporting a write error.
   E.g., "grep: write error: No space left on device" rather than just
