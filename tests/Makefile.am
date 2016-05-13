@@ -151,6 +151,7 @@ EXTRA_DIST =					\
   $(TESTS)					\
   bre.awk					\
   bre.tests					\
+  envvar-check					\
   ere.awk					\
   ere.tests					\
   init.cfg					\
@@ -166,7 +167,9 @@ EXTRA_DIST =					\
 MALLOC_PERTURB_ = 1
 
 TESTS_ENVIRONMENT =				\
-  tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
+  tmp__=$${TMPDIR-/tmp};			\
+  test -d "$$tmp__" && test -w "$$tmp__" || tmp__=.;	\
+  . $(srcdir)/envvar-check;			\
   TMPDIR=$$tmp__; export TMPDIR;		\
 						\
   if test -n "$$BASH_VERSION" || (eval "export v=x") 2>/dev/null; then \
