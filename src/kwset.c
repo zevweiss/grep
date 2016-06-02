@@ -640,6 +640,31 @@ memchr_kwset (char const *s, size_t n, kwset_t kwset)
   return n == 0 ? NULL : memchr2 (s, kwset->gc1, kwset->gc1help, n);
 }
 
+/* Return the address of the first byte in the buffer S (of size N)
+   that matches the last byte specified by KWSET, a singleton.  */
+static size_t
+memchr2_kwset (char const *s, size_t n, kwset_t kwset,
+               struct kwsmatch *kwsmatch)
+{
+  struct tree const *link = kwset->trie->links;
+  struct tree const *clink = link->llink ? link->llink : link->rlink;
+
+  char const *mch = memchr2 (s, link->label, clink->label, n);
+  if (mch)
+    {
+      size_t off = mch - s;
+      if (*mch == link->label)
+        kwsmatch->index = link->trie->accepting / 2;
+      else
+        kwsmatch->index = clink->trie->accepting / 2;
+      kwsmatch->offset[0] = off;
+      kwsmatch->size[0] = 1;
+      return off;
+    }
+  else
+    return -1;
+}
+
 /* Fast Boyer-Moore search (inlinable version).  */
 static inline size_t _GL_ATTRIBUTE_PURE
 bmexec_trans (kwset_t kwset, char const *text, size_t size)
@@ -768,6 +793,8 @@ cwexec (kwset_t kwset, char const *text, size_t len,
   /* Initialize register copies and look for easy ways out. */
   if (len < kwset->mind)
     return -1;
+  if (!kwset->trans && kwset->maxd == 1 && kwset->words == 2)
+    return memchr2_kwset (text, len, kwset, kwsmatch);
   next = kwset->next;
   delta = kwset->delta;
   trans = kwset->trans;
@@ -925,6 +952,8 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
   /* Initialize register copies and look for easy ways out. */
   if (len < kwset->mind)
     return -1;
+  if (!kwset->trans && kwset->maxd == 1 && kwset->words == 2)
+    return memchr2_kwset (text, len, kwset, kwsmatch);
 
   next = kwset->next;
   trans = kwset->trans;
