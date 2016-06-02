@@ -116,7 +116,8 @@ struct kwset
   bool reverse;
 
   /* kwsexec() implementation.  */
-  size_t (*kwsexec) (kwset_t, char const *, size_t, struct kwsmatch *);
+  size_t (*kwsexec) (kwset_t, char const *, size_t, struct kwsmatch *,
+                     bool);
 };
 
 /* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
@@ -126,9 +127,12 @@ tr (char const *trans, char c)
   return trans ? trans[U(c)] : c;
 }
 
-static size_t acexec (kwset_t, char const *, size_t, struct kwsmatch *);
-static size_t cwexec (kwset_t, char const *, size_t, struct kwsmatch *);
-static size_t bmexec (kwset_t, char const *, size_t, struct kwsmatch *);
+static size_t acexec (kwset_t, char const *, size_t, struct kwsmatch *,
+                      bool);
+static size_t cwexec (kwset_t, char const *, size_t, struct kwsmatch *,
+                      bool);
+static size_t bmexec (kwset_t, char const *, size_t, struct kwsmatch *,
+                      bool);
 
 /* Allocate and initialize a keyword set object, returning an opaque
    pointer to it.  */
@@ -723,7 +727,7 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
 /* Fast Boyer-Moore search.  */
 static size_t
 bmexec (kwset_t kwset, char const *text, size_t size,
-        struct kwsmatch *kwsmatch)
+        struct kwsmatch *kwsmatch, bool const longest)
 {
   /* Help the compiler inline bmexec_trans in two ways, depending on
      whether kwset->trans is null.  */
@@ -743,7 +747,8 @@ bmexec (kwset_t kwset, char const *text, size_t size,
 
 /* Hairy multiple string search with Commentz-Walter algorithm.  */
 static size_t _GL_ARG_NONNULL ((4))
-cwexec (kwset_t kwset, char const *text, size_t len, struct kwsmatch *kwsmatch)
+cwexec (kwset_t kwset, char const *text, size_t len,
+        struct kwsmatch *kwsmatch, bool longest)
 {
   struct trie * const *next;
   struct trie const *trie;
@@ -838,56 +843,59 @@ cwexec (kwset_t kwset, char const *text, size_t len, struct kwsmatch *kwsmatch)
   /* Given a known match, find the longest possible match anchored
      at or before its starting point.  This is nearly a verbatim
      copy of the preceding main search loops. */
-  if (lim - mch > kwset->maxd)
-    lim = mch + kwset->maxd;
-  lmch = 0;
-  d = 1;
-  while (lim - end >= d)
+  if (longest)
     {
-      if ((d = delta[c = (end += d)[-1]]) != 0)
-        continue;
-      beg = end - 1;
-      if (!(trie = next[c]))
+      if (lim - mch > kwset->maxd)
+        lim = mch + kwset->maxd;
+      lmch = 0;
+      d = 1;
+      while (lim - end >= d)
         {
-          d = 1;
-          continue;
-        }
-      if (trie->accepting && beg <= mch)
-        {
-          lmch = beg;
-          accept = trie;
-        }
-      d = trie->shift;
-      while (beg > text)
-        {
-          unsigned char uc = *--beg;
-          c = trans ? trans[uc] : uc;
-          tree = trie->links;
-          while (tree && c != tree->label)
-            if (c < tree->label)
-              tree = tree->llink;
-            else
-              tree = tree->rlink;
-          if (tree)
+          if ((d = delta[c = (end += d)[-1]]) != 0)
+            continue;
+          beg = end - 1;
+          if (!(trie = next[c]))
             {
-              trie = tree->trie;
-              if (trie->accepting && beg <= mch)
-                {
-                  lmch = beg;
-                  accept = trie;
-                }
+              d = 1;
+              continue;
             }
-          else
-            break;
+          if (trie->accepting && beg <= mch)
+            {
+              lmch = beg;
+              accept = trie;
+            }
           d = trie->shift;
+          while (beg > text)
+            {
+              unsigned char uc = *--beg;
+              c = trans ? trans[uc] : uc;
+              tree = trie->links;
+              while (tree && c != tree->label)
+                if (c < tree->label)
+                  tree = tree->llink;
+                else
+                  tree = tree->rlink;
+              if (tree)
+                {
+                  trie = tree->trie;
+                  if (trie->accepting && beg <= mch)
+                    {
+                      lmch = beg;
+                      accept = trie;
+                    }
+                }
+              else
+                break;
+              d = trie->shift;
+            }
+          if (lmch)
+            {
+              mch = lmch;
+              goto match;
+            }
+          if (!d)
+            d = 1;
         }
-      if (lmch)
-        {
-          mch = lmch;
-          goto match;
-        }
-      if (!d)
-        d = 1;
     }
 
   kwsmatch->index = accept->accepting / 2;
@@ -901,7 +909,7 @@ cwexec (kwset_t kwset, char const *text, size_t len, struct kwsmatch *kwsmatch)
    (inlinable version)  */
 static inline size_t _GL_ARG_NONNULL ((4))
 acexec_trans (kwset_t kwset, char const *text, size_t len,
-              struct kwsmatch *kwsmatch)
+              struct kwsmatch *kwsmatch, bool const longest)
 {
   struct trie * const *next;
   struct trie const *trie, *accept;
@@ -1021,30 +1029,33 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
   left = tp - accept->depth;
 
   /* Try left-most longest match.  */
-  while (tp < lim)
+  if (longest)
     {
-      struct trie const *accept1;
-      char const *left1;
-      c = tr (trans, *tp++);
-      tree = trie->links;
-      while (tree && c != tree->label)
-        if (c < tree->label)
-          tree = tree->llink;
-        else
-          tree = tree->rlink;
-      if (!tree)
-        break;
-      trie = tree->trie;
-      if (!trie->accepting)
-        continue;
-      accept1 = trie;
-      while (accept1->accepting == (size_t) -1)
-        accept1 = accept1->fail;
-      left1 = tp - accept1->depth;
-      if (left1 <= left)
+      while (tp < lim)
         {
-          left = left1;
-          accept = accept1;
+          struct trie const *accept1;
+          char const *left1;
+          c = tr (trans, *tp++);
+          tree = trie->links;
+          while (tree && c != tree->label)
+            if (c < tree->label)
+              tree = tree->llink;
+            else
+              tree = tree->rlink;
+          if (!tree)
+            break;
+          trie = tree->trie;
+          if (!trie->accepting)
+            continue;
+          accept1 = trie;
+          while (accept1->accepting == (size_t) -1)
+            accept1 = accept1->fail;
+          left1 = tp - accept1->depth;
+          if (left1 <= left)
+            {
+              left = left1;
+              accept = accept1;
+            }
         }
     }
 
@@ -1058,13 +1069,13 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
 /* Hairy multiple string search with Aho-Corasick algorithm.  */
 static size_t
 acexec (kwset_t kwset, char const *text, size_t size,
-        struct kwsmatch *kwsmatch)
+        struct kwsmatch *kwsmatch, bool const longest)
 {
   /* Help the compiler inline bmexec_trans in two ways, depending on
      whether kwset->trans is null.  */
   return (kwset->trans
-          ? acexec_trans (kwset, text, size, kwsmatch)
-          : acexec_trans (kwset, text, size, kwsmatch));
+          ? acexec_trans (kwset, text, size, kwsmatch, longest)
+          : acexec_trans (kwset, text, size, kwsmatch, longest));
 }
 
 /* Search TEXT for a match of any member of KWSET.
@@ -1074,9 +1085,9 @@ acexec (kwset_t kwset, char const *text, size_t size,
    value), and length.  */
 size_t
 kwsexec (kwset_t kwset, char const *text, size_t size,
-         struct kwsmatch *kwsmatch)
+         struct kwsmatch *kwsmatch, bool const longest)
 {
-  return kwset->kwsexec (kwset, text, size, kwsmatch);
+  return kwset->kwsexec (kwset, text, size, kwsmatch, longest);
 }
 
 /* Free the components of the given keyword set. */

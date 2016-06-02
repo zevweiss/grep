@@ -86,16 +86,26 @@ Fexecute (char *buf, size_t size, size_t *match_size,
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
+  bool mb_check;
+  bool longest;
+
+  if (match_lines)
+    mb_check = longest = false;
+  else
+    {
+      mb_check = MB_CUR_MAX > 1 && !using_utf8 ();
+      longest = mb_check || start_ptr || match_words;
+    }
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
       size_t offset = kwsexec (kwset, beg - match_lines,
-                               buf + size - beg + match_lines, &kwsmatch);
+                               buf + size - beg + match_lines, &kwsmatch,
+                               longest);
       if (offset == (size_t) -1)
         goto failure;
       len = kwsmatch.size[0] - 2 * match_lines;
-      if (!match_lines && MB_CUR_MAX > 1 && !using_utf8 ()
-          && mb_goback (&mb_start, beg + offset, buf + size) != 0)
+      if (mb_check && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
           /* We have matched a single byte that is not at the beginning of a
              multibyte character.  mb_goback has advanced MB_START past that
@@ -132,7 +142,7 @@ Fexecute (char *buf, size_t size, size_t *match_size,
               {
                 if (!len)
                   break;
-                offset = kwsexec (kwset, beg, --len, &kwsmatch);
+                offset = kwsexec (kwset, beg, --len, &kwsmatch, true);
                 if (offset == (size_t) -1)
                   break;
                 try = beg + offset;

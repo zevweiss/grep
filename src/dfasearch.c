@@ -235,7 +235,7 @@ EGexecute (char *buf, size_t size, size_t *match_size,
 
               /* Find a possible match using the KWset matcher.  */
               size_t offset = kwsexec (kwset, beg - begline,
-                                       buflim - beg + begline, &kwsm);
+                                       buflim - beg + begline, &kwsm, true);
               if (offset == (size_t) -1)
                 goto failure;
               match = beg + offset;
