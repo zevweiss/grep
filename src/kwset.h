@@ -22,6 +22,7 @@
    or (US mail) as Mike Haertel c/o Free Software Foundation. */
 
 #include <stddef.h>
+#include <stdbool.h>
 
 struct kwsmatch
 {
@@ -38,7 +39,7 @@ typedef struct kwset *kwset_t;
 /* Return an opaque pointer to a newly allocated keyword set.  A nonnull arg
    specifies a table of character translations to be applied to all
    pattern and search text.  */
-extern kwset_t kwsalloc (char const *);
+extern kwset_t kwsalloc (char const *, bool const);
 
 /* Incrementally extend the keyword set to include the given string.
    Remember an index number for each keyword included in the set.  */

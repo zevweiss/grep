@@ -6,6 +6,11 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep can be much faster now when standard output is /dev/null.
 
+** Improvements
+
+  grep -F is now typically 7 times faster for a lot of words.  The
+  improvement replace Commentz-Walter algorithm which has been used for
+  a long time to Aho-Corasick algorithm.
 
 * Noteworthy changes in release 2.25 (2016-04-21) [stable]
 

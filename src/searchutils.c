@@ -37,10 +37,10 @@ kwsinit (kwset_t *kwset)
       for (i = 0; i < NCHAR; ++i)
         trans[i] = toupper (i);
 
-      *kwset = kwsalloc (trans);
+      *kwset = kwsalloc (trans, false);
     }
   else
-    *kwset = kwsalloc (NULL);
+    *kwset = kwsalloc (NULL, false);
 
   if (!*kwset)
     xalloc_die ();
