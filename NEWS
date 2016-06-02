@@ -8,9 +8,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Improvements
 
-  grep -F is now typically 7 times faster for a lot of words.  The
-  improvement replace Commentz-Walter algorithm which has been used for
-  a long time to Aho-Corasick algorithm.
+  grep -F is now typically much faster when many patterns are given,
+  as it now uses the Aho-Corasick algorithm instead of the
+  Commentz-Walter algorithm in that case.
+
 
 * Noteworthy changes in release 2.25 (2016-04-21) [stable]
 

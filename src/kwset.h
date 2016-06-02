@@ -39,7 +39,7 @@ typedef struct kwset *kwset_t;
 /* Return an opaque pointer to a newly allocated keyword set.  A nonnull arg
    specifies a table of character translations to be applied to all
    pattern and search text.  */
-extern kwset_t kwsalloc (char const *, bool const);
+extern kwset_t kwsalloc (char const *, bool);
 
 /* Incrementally extend the keyword set to include the given string.
    Remember an index number for each keyword included in the set.  */
@@ -54,8 +54,8 @@ extern void kwsprep (kwset_t);
    the matching substring in the integer it points to.  Similarly,
    if foundindex is non-NULL, store the index of the particular
    keyword found therein. */
-extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *,
-                       bool const) _GL_ARG_NONNULL ((4));
+extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *, bool)
+  _GL_ARG_NONNULL ((4));
 
 /* Deallocate the given keyword set and all its associated storage. */
 extern void kwsfree (kwset_t);
