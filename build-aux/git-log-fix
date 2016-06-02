@@ -2,6 +2,10 @@
 # option.  It specifies what changes to make to each given SHA1's commit
 # log and metadata, using Perl-eval'able expressions.
 
+a3d42de483a29c1da381f5c3dad87cbbc86a5c70
+# Correct the author:
+s/Paul Eggert  <eggert\@cs.ucla.edu>/Norihiro Tanaka  <noritnk\@kcn.ne.jp>/
+
 074842d3e3054714a495252e582886f0e4ace4e4
 # Correct spelling of name:
 s/Mercer/Meixner/
