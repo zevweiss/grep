@@ -932,110 +932,62 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
   struct trie * const *next;
   struct trie const *trie, *accept;
   char const *tp, *left, *lim;
-  unsigned char c;
   struct tree const *tree;
   char const *trans;
 
   /* Initialize register copies and look for easy ways out.  */
   if (len < kwset->mind)
     return SIZE_MAX;
-  if (!kwset->trans && kwset->maxd == 1 && kwset->words == 2)
+  trans = kwset->trans;
+  if (!trans && kwset->maxd == 1 && kwset->words == 2)
     return memoff2_kwset (text, len, kwset, kwsmatch);
 
   next = kwset->next;
-  trans = kwset->trans;
+  trie = kwset->trie;
   lim = text + len;
   tp = text;
 
-  if (kwset->trie->accepting)
+  if (!trie->accepting)
     {
-      trie = kwset->trie;
-      goto match;
-    }
-
-  trie = next[U(tr (trans, *tp++))];
-
-  while (true)
-    {
-      if (tp < lim - 8)
-        {
-          while (!trie)
-            {
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-              if (trie)
-                break;
-              if (tp >= lim - 8)
-                break;
-              trie = next[U(tr (trans, *tp++))];
-            }
-        }
-
-      while (!trie)
-        {
-          if (tp >= lim)
-            return SIZE_MAX;
-          trie = next[U(tr (trans, *tp++))];
-        }
-
-      if (trie->accepting)
-        goto match;
-      if (tp >= lim)
-        return SIZE_MAX;
-      c = tr (trans, *tp++);
-      tree = trie->links;
+      unsigned char c = tr (trans, *tp++);
 
       while (true)
         {
-          if (c == tree->label)
+          while (! (trie = next[c]))
             {
-              trie = tree->trie;
+              if (tp >= lim)
+                return SIZE_MAX;
+              c = tr (trans, *tp++);
+            }
+
+          while (true)
+            {
               if (trie->accepting)
                 goto match;
               if (tp >= lim)
                 return SIZE_MAX;
               c = tr (trans, *tp++);
-              tree = trie->links;
-            }
-          else
-            {
-              tree = c < tree->label ? tree->llink : tree->rlink;
-              if (! tree)
-                {
-                  trie = trie->fail;
-                  if (!trie)
-                    break;
-                  if (trie->accepting)
-                    {
-                      --tp;
-                      goto match;
-                    }
-                  tree = trie->links;
-                }
-            }
-        }
 
-      trie = next[c];
+              for (tree = trie->links; c != tree->label; )
+                {
+                  tree = c < tree->label ? tree->llink : tree->rlink;
+                  if (! tree)
+                    {
+                      trie = trie->fail;
+                      if (!trie)
+                        goto next_trie;
+                      if (trie->accepting)
+                        {
+                          --tp;
+                          goto match;
+                        }
+                      tree = trie->links;
+                    }
+                }
+              trie = tree->trie;
+            }
+        next_trie:;
+        }
     }
 
  match:
@@ -1051,7 +1003,7 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
         {
           struct trie const *accept1;
           char const *left1;
-          c = tr (trans, *tp++);
+          unsigned char c = tr (trans, *tp++);
           tree = trie->links;
           while (tree && c != tree->label)
             tree = c < tree->label ? tree->llink : tree->rlink;
