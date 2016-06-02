@@ -3372,8 +3372,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
 
           s = allow_nl ? d->newlines[s1] : 0;
         }
-
-      if (d->fails[s])
+      else if (d->fails[s])
         {
           if (d->success[s] & sbit[*p])
             goto done;
@@ -3386,8 +3385,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
         }
       else
         {
-          if (!d->trans[s])
-            build_state (s, d);
+          build_state (s, d);
           trans = d->trans;
         }
     }
