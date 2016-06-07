@@ -2623,12 +2623,12 @@ main (int argc, char **argv)
      implementation, -q overrides -l and -L, which in turn override -c.  */
   if (exit_on_match)
     list_files = 0;
-  if (exit_on_match | list_files)
+  if (exit_on_match || list_files)
     {
       count_matches = false;
       done_on_match = true;
     }
-  out_quiet = count_matches | done_on_match;
+  out_quiet = count_matches || done_on_match;
 
   if (out_after < 0)
     out_after = default_context;
