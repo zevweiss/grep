@@ -929,6 +929,14 @@ static enum
   WITHOUT_MATCH_BINARY_FILES
 } binary_files;		/* How to handle binary files.  */
 
+/* Options for output as a list of matching/non-matching files */
+static enum
+{
+  LISTFILES_NONE,
+  LISTFILES_MATCHING,
+  LISTFILES_NONMATCHING,
+} list_files;
+
 static int filename_mask;	/* If zero, output nulls after filenames.  */
 static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
@@ -938,7 +946,6 @@ static bool out_byte;		/* Print byte offsets. */
 static intmax_t out_before;	/* Lines of leading context. */
 static intmax_t out_after;	/* Lines of trailing context. */
 static bool count_matches;	/* Count matching lines.  */
-static int list_files;		/* List matching files.  */
 static bool no_filenames;	/* Suppress file names.  */
 static intmax_t max_count;	/* Stop after outputting this many
                                    lines from an input file.  */
@@ -1748,7 +1755,7 @@ grepdesc (int desc, bool command_line)
      so there is no risk of malfunction.  But even --max-count=2, with
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
-  if (!out_quiet && list_files == 0 && 1 < max_count
+  if (!out_quiet && list_files == LISTFILES_NONE && 1 < max_count
       && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
@@ -1781,7 +1788,8 @@ grepdesc (int desc, bool command_line)
     }
 
   status = !count;
-  if (list_files == 1 - 2 * status)
+  if ((list_files == LISTFILES_MATCHING && count > 0)
+      || (list_files == LISTFILES_NONMATCHING && count == 0))
     {
       print_filename ();
       putchar_errno ('\n' & filename_mask);
@@ -2420,11 +2428,11 @@ main (int argc, char **argv)
       case 'L':
         /* Like -l, except list files that don't contain matches.
            Inspired by the same option in Hume's gre. */
-        list_files = -1;
+        list_files = LISTFILES_NONMATCHING;
         break;
 
       case 'l':
-        list_files = 1;
+        list_files = LISTFILES_MATCHING;
         break;
 
       case 'm':
@@ -2615,8 +2623,8 @@ main (int argc, char **argv)
   /* POSIX says -c, -l and -q are mutually exclusive.  In this
      implementation, -q overrides -l and -L, which in turn override -c.  */
   if (exit_on_match)
-    list_files = 0;
-  if (exit_on_match || list_files)
+    list_files = LISTFILES_NONE;
+  if (exit_on_match || list_files != LISTFILES_NONE)
     {
       count_matches = false;
       done_on_match = true;
