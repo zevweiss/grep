@@ -769,16 +769,6 @@ all_zeros (char const *buf, size_t size)
 static bool
 reset (int fd, struct stat const *st)
 {
-  if (! pagesize)
-    {
-      pagesize = getpagesize ();
-      if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
-        abort ();
-      bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize)
-                  + pagesize + sizeof (uword));
-      buffer = xmalloc (bufalloc);
-    }
-
   bufbeg = buflim = ALIGN_TO (buffer + 1, pagesize);
   bufbeg[-1] = eolbyte;
   bufdesc = fd;
@@ -2251,6 +2241,12 @@ main (int argc, char **argv)
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
   program_name = argv[0];
+
+  pagesize = getpagesize ();
+  if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
+    abort ();
+  bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + sizeof (uword));
+  buffer = xmalloc (bufalloc);
 
   keys = NULL;
   keycc = 0;
