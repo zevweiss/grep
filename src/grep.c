@@ -1552,7 +1552,6 @@ static bool
 grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 {
   bool follow;
-  int dirdesc;
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
   if (ent->fts_info == FTS_DP)
@@ -1636,10 +1635,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
       abort ();
     }
 
-  dirdesc = ((fts->fts_options & (FTS_NOCHDIR | FTS_CWDFD)) == FTS_CWDFD
-             ? fts->fts_cwd_fd
-             : AT_FDCWD);
-  return grepfile (dirdesc, ent->fts_accpath, follow, command_line);
+  return grepfile (fts->fts_cwd_fd, ent->fts_accpath, follow, command_line);
 }
 
 /* True if errno is ERR after 'open ("symlink", ... O_NOFOLLOW ...)'.
