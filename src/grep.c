@@ -1396,9 +1396,7 @@ grepbuf (char *beg, char const *lim)
   return outleft0 - outleft;
 }
 
-/* Search a given file.  Normally, return a count of lines printed;
-   but if the file is a directory and we search it recursively, then
-   return -2 if there was a match, and -1 otherwise.  */
+/* Search a given (non-directory) file.  Return a count of lines printed. */
 static intmax_t
 grep (int fd, struct stat const *st)
 {
@@ -1767,42 +1765,37 @@ grepdesc (int desc, bool command_line)
 #endif
 
   count = grep (desc, &st);
-  if (count < 0)
-    status = count + 2;
-  else
+  if (count_matches)
     {
-      if (count_matches)
-        {
-          if (out_file)
-            {
-              print_filename ();
-              if (filename_mask)
-                print_sep (SEP_CHAR_SELECTED);
-              else
-                putchar_errno (0);
-            }
-          printf_errno ("%" PRIdMAX "\n", count);
-          if (line_buffered)
-            fflush_errno ();
-        }
-
-      status = !count;
-      if (list_files == 1 - 2 * status)
+      if (out_file)
         {
           print_filename ();
-          putchar_errno ('\n' & filename_mask);
-          if (line_buffered)
-            fflush_errno ();
+          if (filename_mask)
+            print_sep (SEP_CHAR_SELECTED);
+          else
+            putchar_errno (0);
         }
+      printf_errno ("%" PRIdMAX "\n", count);
+      if (line_buffered)
+        fflush_errno ();
+    }
 
-      if (desc == STDIN_FILENO)
-        {
-          off_t required_offset = outleft ? bufoffset : after_last_match;
-          if (required_offset != bufoffset
-              && lseek (desc, required_offset, SEEK_SET) < 0
-              && S_ISREG (st.st_mode))
-            suppressible_error (filename, errno);
-        }
+  status = !count;
+  if (list_files == 1 - 2 * status)
+    {
+      print_filename ();
+      putchar_errno ('\n' & filename_mask);
+      if (line_buffered)
+        fflush_errno ();
+    }
+
+  if (desc == STDIN_FILENO)
+    {
+      off_t required_offset = outleft ? bufoffset : after_last_match;
+      if (required_offset != bufoffset
+          && lseek (desc, required_offset, SEEK_SET) < 0
+          && S_ISREG (st.st_mode))
+        suppressible_error (filename, errno);
     }
 
  closeout:
