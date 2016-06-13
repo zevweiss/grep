@@ -502,8 +502,9 @@ This can cause a performance penalty.
 Treat the file(s) as binary.
 By default, under \s-1MS-DOS\s0 and \s-1MS\s0-Windows,
 .BR grep
-guesses the file type by looking at the contents of the first 32KB
-read from the file.
+guesses whether a file is text or binary as described for the
+.B \-\^\-binary\-files
+option.
 If
 .BR grep
 decides the file is a text file, it strips the CR characters from the
