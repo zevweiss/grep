@@ -140,6 +140,9 @@ character.
 Similarly, it must be either at the end of the line
 or followed by a non-word constituent character.
 Word-constituent characters are letters, digits, and the underscore.
+This option has no effect if
+.B \-x
+is also specified.
 .TP
 .BR \-x ", " \-\^\-line\-regexp
 Select only those matches that exactly match the whole line.
@@ -365,26 +368,36 @@ Process a binary file as if it were text; this is equivalent to the
 option.
 .TP
 .BI \-\^\-binary\-files= TYPE
-If the first few bytes of a file indicate that the file contains binary
-data, assume that the file is of type
+If a file's data or metadata
+indicate that the file contains binary data,
+assume that the file is of type
 .IR TYPE .
+Non-text bytes indicate binary data; these are either output bytes that are
+improperly encoded for the current locale, or null input bytes when the
+.B \-z
+option is not given.
+.IP
 By default,
 .I TYPE
 is
 .BR binary ,
-and
+and when
 .B grep
-normally outputs either
-a one-line message saying that a binary file matches, or no message if
-there is no match.
+discovers that a file is binary it suppresses any further output, and
+instead outputs either a one-line message saying that a binary file
+matches, or no message if there is no match.
+.IP
 If
 .I TYPE
 is
 .BR without-match ,
+when
 .B grep
-assumes that a binary file does not match; this is equivalent to the
+discovers that a file is binary it assumes that the rest of the file
+does not match; this is equivalent to the
 .B \-I
 option.
+.IP
 If
 .I TYPE
 is
@@ -393,17 +406,53 @@ is
 processes a binary file as if it were text; this is equivalent to the
 .B \-a
 option.
-When processing binary data,
+.IP
+When
+.I type
+is
+.BR binary ,
 .B grep
-may treat non-text bytes as line terminators; for example, the pattern
-.RB ' . '\&
-(period) might not match a null byte, as the null byte might be
-treated as a line terminator.
+may treat non-text bytes as line terminators even without the
+.B \-z
+option.  This means choosing
+.B binary
+versus
+.B text
+can affect whether a pattern matches a file.  For
+example, when
+.I type
+is
+.B binary
+the pattern
+.B q$ might
+match
+.B q
+immediately followed by a null byte, even though this
+is not matched when
+.I type
+is
+.BR text .
+Conversely, when
+.I type
+is
+.B binary
+the pattern
+.B .\&
+(period) might not match a null byte.
+.IP
 .I Warning:
-.B "grep \-\^\-binary\-files=text"
-might output binary garbage,
+The
+.B \-a
+option might output binary garbage,
 which can have nasty side effects if the output is a terminal and if the
 terminal driver interprets some of it as commands.
+On the other hand, when reading files whose text encodings are
+unknown, it can be helpful to use
+.B \-a
+or to set
+.B LC_ALL='C'
+in the environment, in order to find more matches even if the matches
+are unsafe for direct display.
 .TP
 .BI \-D " ACTION" "\fR,\fP \-\^\-devices=" ACTION
 If an input file is a device, FIFO or socket, use
@@ -445,10 +494,17 @@ This is equivalent to the
 option.
 .TP
 .BI \-\^\-exclude= GLOB
-Skip files whose base name matches
-.I GLOB
-(using wildcard matching).
-A file-name glob can use
+Skip any command-line file with a name suffix that matches the pattern
+.IR GLOB ,
+using wildcard matching; a name suffix is either the whole
+name, or any suffix starting after a
+.B /
+and before a +non-\fB/\fP.
+When searching recursively, skip any subfile whose base name matches
+.IR GLOB ;
+the base name is the part after the last
+.BR / .
+A pattern can use
 .BR * ,
 .BR ? ,
 and
@@ -463,10 +519,15 @@ Skip files whose base name matches any of the file-name globs read from
 (using wildcard matching as described under
 .BR \-\^\-exclude ).
 .TP
-.BI \-\^\-exclude-dir= DIR
-Exclude directories matching the pattern
-.I DIR
-from recursive searches.
+.BI \-\^\-exclude-dir= GLOB
+Skip any command-line directory with a name suffix that matches the
+pattern
+.IR GLOB .
+When searching recursively, skip any subdirectory
+whose base name matches
+.IR GLOB .
+Ignore any redundant trailing slashes in
+.IR GLOB .
 .TP
 .BR \-I
 Process a binary file as if it did not contain matching data; this is
@@ -523,12 +584,10 @@ This option has no effect on platforms
 other than \s-1MS-DOS\s0 and \s-1MS\s0-Windows.
 .TP
 .BR \-z ", " \-\^\-null\-data
-Treat the input as a set of lines,
-each terminated by a zero byte (the \s-1ASCII\s0
-.B NUL
-character) instead of a newline.
+Treat input and output data as sequences of lines, each terminated by
+a zero byte (the ASCII NUL character) instead of a newline.
 Like the
-.B -Z
+.B \-Z
 or
 .B \-\^\-null
 option, this option can be used with commands like
@@ -772,6 +831,9 @@ The C locale is used if none of these environment variables are set,
 if the locale catalog is not installed, or if
 .B grep
 was not compiled with national language support (\s-1NLS\s0).
+The shell command
+.B "locale \-a"
+lists locales that are currently available.
 .TP
 .B GREP_OPTIONS
 This variable specifies default options
@@ -1019,6 +1081,10 @@ These variables specify the locale for the
 category,
 which determines the type of characters,
 e.g., which characters are whitespace.
+This category also determines the character encoding, that is, whether
+text is encoded in UTF-8, ASCII, or some other encoding.  In the C or
+POSIX locale, all characters are encoded as a single byte and every
+byte is a valid character.
 .TP
 \fBLC_ALL\fP, \fBLC_MESSAGES\fP, \fBLANG\fP
 These variables specify the locale for the
