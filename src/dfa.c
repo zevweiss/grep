@@ -407,9 +407,11 @@ struct dfa
                                    newline is stored separately and handled
                                    as a special case.  Newline is also used
                                    as a sentinel at the end of the buffer.  */
-  state_num initstate_letter;   /* Initial state for letter context.  */
-  state_num initstate_others;   /* Initial state for other contexts.  */
-  position_set mb_follows;	/* Follow set added by ANYCHAR and/or MBCSET
+  state_num initstate_notbol;   /* Initial state for CTX_LETTER and CTX_NONE
+                                   context in multibyte locales, in which we
+                                   do not distinguish between their contexts,
+                                   as not supported word.  */
+  position_set mb_follows;      /* Follow set added by ANYCHAR and/or MBCSET
                                    on demand.  */
 };
 
@@ -672,16 +674,6 @@ char_context (unsigned char c)
   if (c == eolbyte)
     return CTX_NEWLINE;
   if (unibyte_word_constituent (c))
-    return CTX_LETTER;
-  return CTX_NONE;
-}
-
-static int
-wchar_context (wint_t wc)
-{
-  if (wc == (wchar_t) eolbyte || wc == 0)
-    return CTX_NEWLINE;
-  if (wc == L'_' || iswalnum (wc))
     return CTX_LETTER;
   return CTX_NONE;
 }
@@ -2490,13 +2482,10 @@ dfaanalyze (struct dfa *d, bool searchflag)
   separate_contexts = state_separate_contexts (&merged);
   if (separate_contexts & CTX_NEWLINE)
     state_index (d, &merged, CTX_NEWLINE);
-  d->initstate_others = d->min_trcount
+  d->initstate_notbol = d->min_trcount
     = state_index (d, &merged, separate_contexts ^ CTX_ANY);
   if (separate_contexts & CTX_LETTER)
-    d->initstate_letter = d->min_trcount
-      = state_index (d, &merged, CTX_LETTER);
-  else
-    d->initstate_letter = d->initstate_others;
+    d->min_trcount = state_index (d, &merged, CTX_LETTER);
   d->min_trcount++;
 
   free (posalloc);
@@ -2978,11 +2967,12 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   int context;
   size_t i, j;
   int k;
+  int separate_contexts;
 
   /* Note: caller must free the return value of this function.  */
   mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
 
-  context = wchar_context (wc);
+  context = (wc == (wchar_t) eolbyte || wc == 0) ? CTX_NEWLINE : CTX_NONE;
 
   /* This state has some operators which can match a multibyte character.  */
   d->mb_follows.nelem = 0;
@@ -3009,7 +2999,11 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
                 &d->mb_follows);
     }
 
-  s1 = state_index (d, &d->mb_follows, wchar_context (wc));
+  separate_contexts = state_separate_contexts (&d->mb_follows);
+  if (context == CTX_NEWLINE && separate_contexts & CTX_NEWLINE)
+    s1 = state_index (d, &d->mb_follows, CTX_NEWLINE);
+  else
+    s1 = state_index (d, &d->mb_follows, separate_contexts ^ CTX_ANY);
   realloc_trans_if_necessary (d, s1);
 
   return s1;
@@ -3129,16 +3123,11 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
                          transit to another initial state after skip.  */
                       if (p < mbp)
                         {
-                          int context = wchar_context (wc);
-                          if (context == CTX_LETTER)
-                            s = d->initstate_letter;
-                          else
-                            /* It's CTX_NONE.  CTX_NEWLINE cannot happen,
-                               as we assume that a newline is always a
-                               single byte character.  */
-                            s = d->initstate_others;
+                          /* It's CTX_LETTER or CTX_NONE.  CTX_NEWLINE
+                             cannot happen, as we assume that a newline
+                             is always a single byte character.  */
+                          s1 = s = d->initstate_notbol;
                           p = mbp;
-                          s1 = s;
                         }
                     }
                 }
