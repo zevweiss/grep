@@ -2932,35 +2932,34 @@ build_state (state_num s, struct dfa *d)
    But state transition is done just once, otherwise matching succeed or
    reach the end of the buffer.  */
 static state_num
-transit_state_singlebyte (struct dfa *d, state_num const s,
-                          unsigned char const **pp)
+transit_state_singlebyte (struct dfa *d, state_num s, unsigned char const **pp)
 {
   state_num *t;
 
   if (**pp == eolbyte)
     {
-      /* S is always an initial state in transit_state in order that the
-         newline is the single.  When transit_state is called, the
+      /* S is always an initial state in transit_state, so the
          transition table for the state must have been built already.  */
-      assert (d->trans[s] != NULL || d->fails[s] != NULL);
+      assert (d->trans[s] || d->fails[s]);
 
       ++*pp;
       return d->newlines[s];
     }
 
-  if (d->trans[s] != NULL)
+  if (d->trans[s])
     t = d->trans[s];
-  else if (d->fails[s] != NULL)
+  else if (d->fails[s])
     t = d->fails[s];
   else
     {
       build_state (s, d);
       if (d->trans[s])
         t = d->trans[s];
-      else if (d->fails[s])
-        t = d->fails[s];
       else
-        abort ();
+        {
+          t = d->fails[s];
+          assert (t);
+        }
     }
 
   return t[*(*pp)++];
@@ -3005,8 +3004,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
       if (!SUCCEEDS_IN_CONTEXT (d->states[s].mbps.elems[i].constraint,
                                 d->states[s].context, context))
         continue;
-      for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem;
-           j++)
+      for (j = 0; j < d->follows[d->states[s].mbps.elems[i].index].nelem; j++)
         insert (d->follows[d->states[s].mbps.elems[i].index].elems[j],
                 &d->mb_follows);
     }
@@ -3149,9 +3147,11 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
                   || (*p == '\n' && !(syntax_bits & RE_DOT_NEWLINE))
                   || (*p == '\0' && (syntax_bits & RE_DOT_NOT_NULL))
                   || (char *) p >= end)
-                /* If a input character does not match ANYCHAR, do it
-                   like a single-byte character.  */
-                s = t[*p++];
+                {
+                  /* If an input character does not match ANYCHAR, do it
+                     like a single-byte character.  */
+                  s = t[*p++];
+                }
               else
                 {
                   s = transit_state (d, s, &p, (unsigned char *) end);
@@ -3212,16 +3212,16 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
               || (*p == '\n' && !(syntax_bits & RE_DOT_NEWLINE))
               || (*p == '\0' && (syntax_bits & RE_DOT_NOT_NULL))
               || (char *) p >= end)
-           /* If a input character does not match ANYCHAR, do it
-              like a single-byte character.  */
-            s = d->fails[s][*p++];
+            {
+              /* If a input character does not match ANYCHAR, do it
+                 like a single-byte character.  */
+              s = d->fails[s][*p++];
+            }
           else
             {
               s = transit_state (d, s, &p, (unsigned char *) end);
-
               if (s >= 0 && p[-1] == eol)
                 nlcount++;
-
               mbp = p;
               trans = d->trans;
             }
