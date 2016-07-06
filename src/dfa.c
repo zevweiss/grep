@@ -2962,17 +2962,13 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
                unsigned char const *end)
 {
   state_num s1, s2;
-  int mbclen;  /* The length of current input multibyte character.  */
   wint_t wc;
-  int context;
   size_t i, j;
   int k;
   int separate_contexts;
 
-  /* Note: caller must free the return value of this function.  */
-  mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
-
-  context = (wc == (wchar_t) eolbyte || wc == 0) ? CTX_NEWLINE : CTX_NONE;
+  int mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
+  int context = wc == eolbyte ? CTX_NEWLINE : CTX_NONE;
 
   /* This state has some operators which can match a multibyte character.  */
   d->mb_follows.nelem = 0;
@@ -3000,10 +2996,9 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
     }
 
   separate_contexts = state_separate_contexts (&d->mb_follows);
-  if (context == CTX_NEWLINE && separate_contexts & CTX_NEWLINE)
-    s1 = state_index (d, &d->mb_follows, CTX_NEWLINE);
-  else
-    s1 = state_index (d, &d->mb_follows, separate_contexts ^ CTX_ANY);
+  if (! (context == CTX_NEWLINE || separate_contexts & CTX_NEWLINE))
+    context = separate_contexts ^ CTX_ANY;
+  s1 = state_index (d, &d->mb_follows, context);
   realloc_trans_if_necessary (d, s1);
 
   return s1;
