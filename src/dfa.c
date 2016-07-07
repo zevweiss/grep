@@ -3034,28 +3034,29 @@ skip_remains_mb (struct dfa *d, unsigned char const *p,
   return mbp;
 }
 
-/* Search through a buffer looking for a match to the given struct dfa.
+/* Search through a buffer looking for a match to the struct dfa *D.
    Find the first occurrence of a string matching the regexp in the
    buffer, and the shortest possible version thereof.  Return a pointer to
    the first character after the match, or NULL if none is found.  BEGIN
    points to the beginning of the buffer, and END points to the first byte
    after its end.  Note however that we store a sentinel byte (usually
    newline) in *END, so the actual buffer must be one byte longer.
-   When ALLOW_NL is nonzero, newlines may appear in the matching string.
+   When ALLOW_NL, newlines may appear in the matching string.
    If COUNT is non-NULL, increment *COUNT once for each newline processed.
-   Finally, if BACKREF is non-NULL set *BACKREF to indicate whether we
-   encountered a DFA-unfriendly construct.  The caller may use this to
-   decide whether to fall back on a matcher like regex.  If MULTIBYTE,
-   the input consists of multibyte characters and/or encoding-error bytes.
-   Otherwise, the input consists of single-byte characters.
+   If MULTIBYTE, the input consists of multibyte characters and/or
+   encoding-error bytes.  Otherwise, it consists of single-byte characters.
    Here is the list of features that make this DFA matcher punt:
-    - [M-N]-range-in-MB-locale: regex is up to 25% faster on [a-z]
+    - [M-N] range in non-simple locale: regex is up to 25% faster on [a-z]
+    - [^...] in non-simple locale
+    - [[=foo=]] or [[.foo.]]
+    - [[:alpha:]] etc. in multibyte locale (except [[:digit:]] works OK)
     - back-reference: (.)\1
-    - word-delimiter-in-MB-locale: \<, \>, \b
-    */
+    - word-delimiter in multibyte locale: \<, \>, \b, \B
+   See using_simple_locale for the definition of "simple locale".  */
+
 static inline char *
 dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
-             size_t *count, bool multibyte)
+              size_t *count, bool multibyte)
 {
   state_num s, s1;              /* Current state.  */
   unsigned char const *p, *mbp; /* Current input character.  */
@@ -3224,8 +3225,8 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
   return (char *) p;
 }
 
-/* Specialized versions of dfaexec_main for multibyte and single-byte
-   cases.  This is for performance.  */
+/* Specialized versions of dfaexec for multibyte and single-byte cases.
+   This is for performance, as dfaexec_main is an inline function.  */
 
 static char *
 dfaexec_mb (struct dfa *d, char const *begin, char *end,
@@ -3251,8 +3252,9 @@ dfaexec_noop (struct dfa *d, char const *begin, char *end,
   return (char *) begin;
 }
 
-/* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, BACKREF, D->multibyte),
-   but faster.  */
+/* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, D->multibyte),
+   but faster and set *BACKREF if the DFA code does not support this
+   regexp usage.  */
 
 char *
 dfaexec (struct dfa *d, char const *begin, char *end,
