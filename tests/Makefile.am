@@ -134,6 +134,7 @@ TESTS =						\
   turkish-I					\
   turkish-I-without-dot				\
   turkish-eyes					\
+  two-chars					\
   two-files					\
   unibyte-binary				\
   unibyte-bracket-expr				\
