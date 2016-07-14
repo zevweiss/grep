@@ -643,13 +643,9 @@ memoff2_kwset (char const *s, size_t n, kwset_t kwset,
 {
   struct tree const *link = kwset->trie->links;
   struct tree const *clink = link->llink ? link->llink : link->rlink;
-  char const *mch;
-
-  if (clink)
-    mch = memchr2 (s, link->label, clink->label, n);
-  else
-    mch = memchr (s, link->label, n);
-
+  char const *mch = (clink
+                     ? memchr2 (s, link->label, clink->label, n)
+                     : memchr (s, link->label, n));
   if (! mch)
     return SIZE_MAX;
   else
