@@ -1942,7 +1942,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
 
 /* Copy one set to another.  */
 static void
-copy (position_set const *src, position_set * dst)
+copy (position_set const *src, position_set *dst)
 {
   if (dst->alloc < src->nelem)
     {
@@ -1955,7 +1955,7 @@ copy (position_set const *src, position_set * dst)
 }
 
 static void
-alloc_position_set (position_set * s, size_t size)
+alloc_position_set (position_set *s, size_t size)
 {
   s->elems = xnmalloc (size, sizeof *s->elems);
   s->alloc = size;
@@ -1967,7 +1967,7 @@ alloc_position_set (position_set * s, size_t size)
    then merge (logically-OR) P's constraints into the one in S.
    S->elems must point to an array large enough to hold the resulting set.  */
 static void
-insert (position p, position_set * s)
+insert (position p, position_set *s)
 {
   size_t count = s->nelem;
   size_t lo = 0, hi = count;
@@ -1997,7 +1997,7 @@ insert (position p, position_set * s)
 /* Merge two sets of positions into a third.  The result is exactly as if
    the positions of both sets were inserted into an initially empty set.  */
 static void
-merge (position_set const *s1, position_set const *s2, position_set * m)
+merge (position_set const *s1, position_set const *s2, position_set *m)
 {
   size_t i = 0, j = 0;
 
@@ -2026,7 +2026,7 @@ merge (position_set const *s1, position_set const *s2, position_set * m)
 
 /* Delete a position from a set.  */
 static void
-delete (position p, position_set * s)
+delete (position p, position_set *s)
 {
   size_t i;
 
@@ -2605,8 +2605,8 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
       prtok (d->tokens[pos.index]);
       fprintf (stderr, " of");
       for (j = 0; j < NOTCHAR; j++)
-      if (tstbit (j,  matches))
-        fprintf (stderr, " 0x%02zx", j);
+        if (tstbit (j, matches))
+          fprintf (stderr, " 0x%02zx", j);
       fprintf (stderr, "\n");
 #endif
 
