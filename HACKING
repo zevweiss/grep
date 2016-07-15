@@ -192,7 +192,7 @@ grep-specific:
 No more ChangeLog files
 =======================
 
-Do not modify any the ChangeLog files during development.  Instead,
+Do not modify the ChangeLog files during development.  Instead,
 put that information only in commit messages.  The "make dist" command
 will generate the top-level ChangeLog file from commit messages.
 As such, there are strict requirements on the form of the commit log
