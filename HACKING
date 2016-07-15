@@ -3,14 +3,6 @@ Grep Contribution Guidelines
 
 Prerequisites
 =============
-You will need the "git" version control tools.
-On Fedora-based systems, do "yum install git".
-On Debian-based ones install the "git-core" package.
-Then run "git --version".  If that says it's older than
-version 1.4.4, then you'd do well to get a newer version.
-At worst, just download the latest stable release from
-http://git.or.cz/ and build from source.
-
 For details on building the programs in this package, see
 the file, README-hacking.
 
@@ -22,12 +14,9 @@ You can get a copy of the latest with this command:
 
     git clone git://git.sv.gnu.org/grep
 
-That downloads the entire repository, including revision control history
-dating back to 1991.  The repository (the part you download, and which
-resides in grep/.git) currently weighs in at about 9MB.  So you don't
-want to download it more often than necessary.  Once downloaded, you
-can get incremental updates by running one of these commands from
-inside your new grep/ directory:
+That downloads the entire repository, including revision control history.
+Once downloaded, you can get incremental updates by running one of
+these commands from inside your new grep/ directory:
 
 If you have made *no* changes:
     git pull
@@ -202,11 +191,10 @@ grep-specific:
 
 No more ChangeLog files
 =======================
-Do not modify any of the ChangeLog files in grep.  Starting in
-2008, the policy changed.  Before, we would insert the exact same text
-(or worse, sometimes slightly differing) into both the ChangeLog file
-and the commit log.  Now we put that information only in the commit log,
-and generate the top-level ChangeLog file from logs at "make dist" time.
+
+Do not modify any the ChangeLog files during development.  Instead,
+put that information only in commit messages.  The "make dist" command
+will generate the top-level ChangeLog file from commit messages.
 As such, there are strict requirements on the form of the commit log
 messages.
 
