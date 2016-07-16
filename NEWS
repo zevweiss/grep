@@ -6,11 +6,12 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep can be much faster now when standard output is /dev/null.
 
-** Improvements
-
   grep -F is now typically much faster when many patterns are given,
   as it now uses the Aho-Corasick algorithm instead of the
   Commentz-Walter algorithm in that case.
+
+  grep now prints a "FILENAME:LINENO: " prefix when diagnosing an
+  invalid regular expression that was read from an '-f'-specified file.
 
 
 * Noteworthy changes in release 2.25 (2016-04-21) [stable]

@@ -81,6 +81,85 @@ static bool only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static bool align_tabs;
 
+/* See below */
+struct FL_pair
+  {
+    char const *filename;
+    size_t lineno;
+  };
+
+/* A list of lineno,filename pairs corresponding to -f FILENAME
+   arguments. Since we store the concatenation of all patterns in
+   a single array, KEYS, be they from the command line via "-e PAT"
+   or read from one or more -f-specified FILENAMES.  Given this
+   invocation, grep -f <(seq 5) -f <(seq 2) -f <(seq 3) FILE, there
+   will be three entries in LF_PAIR: {1, x} {6, y} {8, z}, where
+   x, y and z are just place-holders for shell-generated names.  */
+static struct FL_pair *fl_pair;
+static size_t n_fl_pair_slots;
+/* Count not only -f-specified files, but also individual -e operands
+   and any command-line argument that serves as a regular expression.  */
+static size_t n_pattern_files;
+
+/* Given the concatenation of all patterns, one per line, be they
+   specified via -e, a lone command-line argument or -f, this is the
+   number of the first line of each entity, in that concatenation.
+   It is advanced by fl_add and, when needed, used in pattern_file_name
+   to derive a file-relative line number.  */
+static uintmax_t patfile_lineno = 1;
+
+/* Return the number of newline bytes in BUF starting at offset BEG
+   and up to and not including offset END.  */
+static size_t _GL_ATTRIBUTE_PURE
+count_nl_bytes (char const *buf, size_t beg, size_t end)
+{
+  char const *p = buf + beg;
+  char const *end_p = buf + end;
+  uintmax_t n = 0;
+  while (true)
+    {
+      p = memchr (p, '\n', end_p - p);
+      if (!p)
+        break;
+      p++;
+      n++;
+    }
+  return n;
+}
+
+/* Append a FILENAME,line-number pair to FL_PAIR.  The line number we save
+   with FILENAME is the initial value of the global PATFILE_LINENO.
+   PATFILE_LINENO is then incremented by the number of newlines in BUF
+   from offset BEG up to but not including offset END.  */
+static void
+fl_add (char const *buf, size_t beg, size_t end, char const *filename)
+{
+  if (n_fl_pair_slots <= n_pattern_files)
+    fl_pair = x2nrealloc (fl_pair, &n_fl_pair_slots, sizeof *fl_pair);
+
+  fl_pair[n_pattern_files].lineno = patfile_lineno;
+  fl_pair[n_pattern_files].filename = filename;
+  n_pattern_files++;
+  patfile_lineno += count_nl_bytes (buf, beg, end);
+}
+
+/* Map the line number, LINENO, of one of the input patterns to the
+   name of the file from which it came.  If it was read from stdin
+   or if it was specified on the command line, return "-".  */
+char const * _GL_ATTRIBUTE_PURE
+pattern_file_name (size_t lineno, size_t *new_lineno)
+{
+  size_t i;
+  for (i = 1; i < n_pattern_files; i++)
+    {
+      if (lineno < fl_pair[i].lineno)
+        break;
+    }
+
+  *new_lineno = lineno - fl_pair[i - 1].lineno + 1;
+  return fl_pair[i - 1].filename;
+}
+
 #if HAVE_ASAN
 /* Record the starting address and length of the sole poisoned region,
    so that we can unpoison it later, just before each following read.  */
@@ -2381,6 +2460,7 @@ main (int argc, char **argv)
         strcpy (&keys[keycc], optarg);
         keycc += cc;
         keys[keycc++] = '\n';
+        fl_add (keys, keycc - cc - 1, keycc, "");
         break;
 
       case 'f':
@@ -2405,6 +2485,7 @@ main (int argc, char **argv)
         /* Append final newline if file ended in non-newline. */
         if (oldcc != keycc && keys[keycc - 1] != '\n')
           keys[keycc++] = '\n';
+        fl_add (keys, oldcc, keycc, xstrdup (optarg));
         break;
 
       case 'h':
@@ -2645,6 +2726,7 @@ main (int argc, char **argv)
       /* A copy must be made in case of an xrealloc() or free() later.  */
       keycc = strlen (argv[optind]);
       keys = xmemdup (argv[optind++], keycc + 1);
+      fl_add (keys, 0, keycc, "");
     }
   else
     usage (EXIT_TROUBLE);

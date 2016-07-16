@@ -135,6 +135,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
      this should be a syntax error.  The same for backref, where the
      backref should be local to each pattern.  */
   char const *p = pattern;
+  bool compilation_failed = false;
   do
     {
       size_t len;
@@ -157,11 +158,24 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
       char const *err = re_compile_pattern (p, len,
                                             &(patterns[pcount].regexbuf));
       if (err)
-        error (EXIT_TROUBLE, 0, "%s", err);
+        {
+          /* With patterns specified only on the command line, emit the bare
+             diagnostic.  Otherwise, include a filename:lineno: prefix.  */
+          size_t lineno;
+          char const *pat_filename = pattern_file_name (pcount + 1, &lineno);
+          if (*pat_filename == '\0')
+            error (0, 0, "%s", err);
+          else
+            error (0, 0, "%s:%zu: %s", pat_filename, lineno, err);
+          compilation_failed = true;
+        }
       pcount++;
       p = sep;
     }
   while (p);
+
+  if (compilation_failed)
+    exit (EXIT_TROUBLE);
 
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.

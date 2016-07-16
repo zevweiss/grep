@@ -99,6 +99,7 @@ TESTS =						\
   fedora					\
   fgrep-infloop					\
   file						\
+  filename-lineno.pl				\
   fmbtest					\
   foad1						\
   grep-dev-null					\
