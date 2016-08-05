@@ -3365,6 +3365,7 @@ dfaoptimize (struct dfa *d)
   free_mbdata (d);
   d->multibyte = false;
   d->dfaexec = dfaexec_sb;
+  d->fast = true;
 }
 
 static void
