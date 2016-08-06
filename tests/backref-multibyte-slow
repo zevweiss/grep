@@ -14,7 +14,7 @@ $AWK 'BEGIN {for (i=0; i<13000; i++) print "aba"}' /dev/null > in || fail=1
 # when running in en_US.UTF-8.  Round up to whole seconds, since timeout
 # can't deal with fractional seconds.
 max_seconds=$(LC_ALL=C perl -le 'use Time::HiRes qw(time); my $s = time();
-              system q,grep -E '\''^([a-z]).\1$'\'' in > /dev/null,;
+              system q,grep -E '\''^([a-z]).\1$'\'' in > junk,;
               my $elapsed = time() - $s; print int (1 + 10 * $elapsed)') \
   || { max_seconds=5;
        warn_ "$ME_: warning: no perl? using default of 5s timeout"; }
