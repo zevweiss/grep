@@ -14,7 +14,7 @@ encode AA > input
 fail=0
 
 # Before 2.15, this would infloop.
-LC_ALL=en_US.UTF-8 timeout 3 grep -aF $(encode A) input > out
+LC_ALL=en_US.UTF-8 timeout 10 grep -aF $(encode A) input > out
 status=$?
 if test $status -eq 0; then
   compare input out
@@ -26,7 +26,7 @@ fi || fail=1
 
 echo 'Binary file input matches' >binary-file-matches
 
-LC_ALL=en_US.UTF-8 timeout 3 grep -F $(encode A) input > out
+LC_ALL=en_US.UTF-8 timeout 10 grep -F $(encode A) input > out
 status=$?
 if test $status -eq 0; then
   compare binary-file-matches out

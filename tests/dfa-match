@@ -35,7 +35,7 @@ fi
 
 fail2=0
 in=$(printf "bb\nbb")
-timeout 3 dfa-match-aux a "$in" 1 > out || fail2=1
+timeout 10 dfa-match-aux a "$in" 1 > out || fail2=1
 compare /dev/null out || fail2=1
 if test $fail2 -ne 0; then
   warn_ 'dfa-match test #2 failed\n'

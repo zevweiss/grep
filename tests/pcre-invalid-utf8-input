@@ -1,5 +1,5 @@
 #! /bin/sh
-# Ensure that grep -P doesn't abort for invalid multi-byte input
+# Ensure that grep -P doesn't abort or infloop for invalid multi-byte input
 #
 # Copyright (C) 2013-2016 Free Software Foundation, Inc.
 #
@@ -17,15 +17,15 @@ fail=0
 
 printf 'j\202j\nj\nk\202\n' > in || framework_failure_
 
-LC_ALL=en_US.UTF-8 timeout 3 grep -P j in
+LC_ALL=en_US.UTF-8 timeout 10 grep -P j in
 test $? -eq 0 || fail=1
 
-LC_ALL=en_US.UTF-8 timeout 3 grep -P 'k$' in
+LC_ALL=en_US.UTF-8 timeout 10 grep -P 'k$' in
 test $? -eq 1 || fail=1
 
 echo k >exp
 
-LC_ALL=en_US.UTF-8 timeout 3 grep -aoP 'k*' in >out || fail=1
+LC_ALL=en_US.UTF-8 timeout 10 grep -aoP 'k*' in >out || fail=1
 compare exp out || fail=1
 
 Exit $fail

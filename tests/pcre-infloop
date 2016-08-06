@@ -27,7 +27,7 @@ printf 'a\201b\r' > in || framework_failure_
 
 fail=0
 
-LC_ALL=en_US.UTF-8 timeout 3 grep -P 'a.?..b' in
+LC_ALL=en_US.UTF-8 timeout 10 grep -P 'a.?..b' in
 test $? = 1 || fail_ "libpcre's match function appears to infloop"
 
 Exit $fail
