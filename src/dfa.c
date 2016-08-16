@@ -3023,7 +3023,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   state_num s1;
   wint_t wc;
   int separate_contexts;
-  state_num state, state_newline;
+  state_num state, state_newline, mb_index;
   size_t i, j;
 
   int mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
@@ -3091,7 +3091,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
       d->states[s1].mb_trindex = d->mb_trcount++;
     }
 
-  size_t mb_index = d->states[s1].mb_trindex * 2;
+  mb_index = d->states[s1].mb_trindex * 2;
 
   if (d->mb_trans[s] == NULL)
     {
@@ -3436,7 +3436,8 @@ dfainit (struct dfa *d)
 static bool _GL_ATTRIBUTE_PURE
 dfa_supported (struct dfa const *d)
 {
-  for (size_t i = 0; i < d->tindex; i++)
+  size_t i;
+  for (i = 0; i < d->tindex; i++)
     {
       switch (d->tokens[i])
         {
@@ -3891,7 +3892,7 @@ dfamust (struct dfa const *d)
 {
   must *mp = NULL;
   char const *result = "";
-  size_t i;
+  size_t i, ri;
   bool exact = false;
   bool begline = false;
   bool endline = false;
@@ -3899,7 +3900,7 @@ dfamust (struct dfa const *d)
   bool need_endline = false;
   bool case_fold_unibyte = case_fold && MB_CUR_MAX == 1;
 
-  for (size_t ri = 0; ri < d->tindex; ++ri)
+  for (ri = 0; ri < d->tindex; ++ri)
     {
       token t = d->tokens[ri];
       switch (t)
