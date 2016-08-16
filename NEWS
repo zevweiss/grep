@@ -4,14 +4,14 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Improvements
 
-  grep now makes cache transition from a state with dot expression to
-  speed up matches in non-UTF8 multibyte locales.
-
   grep can be much faster now when standard output is /dev/null.
 
   grep -F is now typically much faster when many patterns are given,
   as it now uses the Aho-Corasick algorithm instead of the
   Commentz-Walter algorithm in that case.
+
+  In multibyte locales that are not UTF-8, grep now handles leading
+  "." in patterns more efficiently.
 
   grep now prints a "FILENAME:LINENO: " prefix when diagnosing an
   invalid regular expression that was read from an '-f'-specified file.
