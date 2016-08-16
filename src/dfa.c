@@ -3091,8 +3091,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
       d->states[s1].mb_trindex = d->mb_trcount++;
     }
 
-  size_t mb_index = d->states[s1].mb_trindex << 1 | (context_newline
-                                                     ? 1 : 0);
+  size_t mb_index = d->states[s1].mb_trindex * 2;
 
   if (d->mb_trans[s] == NULL)
     {
@@ -3100,8 +3099,12 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
       for (i = 0; i < 2 * MAX_TRCOUNT; i++)
         d->mb_trans[s][i] = -1;
     }
-  else if (d->mb_trans[s][mb_index] >= 0)
-    return d->mb_trans[s][mb_index];
+  else
+    {
+      state = d->mb_trans[s][mb_index + context_newline];
+      if (0 <= state)
+        return state;
+    }
 
   if (s < 0)
     copy (&d->states[s1].mbps, &d->mb_follows);
@@ -3116,8 +3119,8 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
     state_newline = state;
   realloc_trans_if_necessary (d, state_newline);
 
-  d->mb_trans[s][mb_index & ~0] = state;
-  d->mb_trans[s][mb_index | 1] = state_newline;
+  d->mb_trans[s][mb_index] = state;
+  d->mb_trans[s][mb_index + 1] = state_newline;
 
   return context_newline ? state_newline : state;
 }
