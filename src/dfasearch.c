@@ -38,15 +38,13 @@ static kwset_t kwset;
 static struct dfa *dfa;
 
 /* The Regex compiled patterns.  */
-static const struct patterns
+static struct
 {
   /* Regex compiled regexp. */
   struct re_pattern_buffer regexbuf;
   struct re_registers regs; /* This is here on account of a BRAIN-DEAD
                                Q@#%!# library interface in regex.c.  */
-} patterns0;
-
-static struct patterns *patterns;
+} *patterns;
 static size_t pcount;
 
 /* Number of compiled fixed strings known to exactly match the regexp.
@@ -153,7 +151,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
         }
 
       patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
-      patterns[pcount] = patterns0;
+      memset (&patterns[pcount], 0, sizeof patterns[pcount]);
 
       char const *err = re_compile_pattern (p, len,
                                             &(patterns[pcount].regexbuf));

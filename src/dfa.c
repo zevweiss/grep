@@ -608,6 +608,16 @@ equal (charclass const s1, charclass const s2)
   return memcmp (s1, s2, sizeof (charclass)) == 0;
 }
 
+static bool
+emptyset (charclass const s)
+{
+  charclass_word w = 0;
+  int i;
+  for (i = 0; i < CHARCLASS_WORDS; i++)
+    w |= s[i];
+  return w == 0;
+}
+
 /* Ensure that the array addressed by PTR holds at least NITEMS +
    (PTR || !NITEMS) items.  Either return PTR, or reallocate the array
    and return its new address.  Although PTR may be null, the returned
@@ -1184,9 +1194,8 @@ parse_bracket_exp (void)
 
   if (dfa->multibyte)
     {
-      static charclass const zeroclass;
       work_mbc->invert = invert;
-      work_mbc->cset = equal (ccl, zeroclass) ? -1 : charclass_index (ccl);
+      work_mbc->cset = emptyset (ccl) ? -1 : charclass_index (ccl);
       return MBCSET;
     }
 
