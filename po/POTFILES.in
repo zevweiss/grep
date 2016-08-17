@@ -17,6 +17,7 @@
 
 lib/argmatch.c
 lib/closeout.c
+lib/dfa.c
 lib/error.c
 lib/getopt.c
 lib/obstack.c
@@ -26,6 +27,5 @@ lib/regcomp.c
 lib/version-etc.c
 lib/xalloc-die.c
 lib/xstrtol-error.c
-src/dfa.c
 src/grep.c
 src/pcresearch.c

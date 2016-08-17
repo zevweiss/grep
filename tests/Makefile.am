@@ -34,7 +34,7 @@ TESTSUITE_PERL_OPTIONS += -M"CuTmpdir qw($$f)"
 SH_LOG_COMPILER = $(SHELL)
 PL_LOG_COMPILER = $(TESTSUITE_PERL) $(TESTSUITE_PERL_OPTIONS)
 
-check_PROGRAMS = get-mb-cur-max dfa-match-aux
+check_PROGRAMS = get-mb-cur-max
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
   -I$(top_srcdir)/src
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
@@ -42,7 +42,6 @@ AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 # Tell the linker to omit references to unused shared libraries.
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
-dfa_match_aux_LDADD = ../src/dfa.$(OBJEXT) ../src/localeinfo.$(OBJEXT) $(LDADD)
 
 # The triple-backref test is expected to fail with both the system
 # matcher (i.e., with glibc) and with the included matcher.
@@ -86,7 +85,6 @@ TESTS =						\
   count-newline					\
   dfa-coverage					\
   dfa-heap-overrun				\
-  dfa-match					\
   dfaexec-multibyte				\
   empty						\
   empty-line					\
@@ -110,7 +108,6 @@ TESTS =						\
   in-eq-out-infloop				\
   include-exclude				\
   inconsistent-range				\
-  invalid-char-class				\
   invalid-multibyte-infloop			\
   khadafy					\
   kwset-abuse					\
