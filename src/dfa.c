@@ -422,7 +422,7 @@ struct dfa
                                    do not distinguish between their contexts,
                                    as not supported word.  */
   position_set mb_follows;      /* Follow set added by ANYCHAR on demand.  */
-  state_num **mb_trans;         /* Transition tables for states with ANYCHAR.  */
+  state_num **mb_trans;      /* Transition tables for states with ANYCHAR.  */
   state_num mb_trcount;         /* Number of transition tables for states with
                                    ANYCHAR that have actually been built.  */
 };
