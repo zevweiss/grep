@@ -352,6 +352,18 @@ struct lexer_state
   bool laststart;
 };
 
+/* Recursive descent parser for regular expressions.  */
+
+struct parser_state
+{
+  token tok;               /* Lookahead token.  */
+  size_t depth;            /* Current depth of a hypothetical stack
+                              holding deferred productions.  This is
+                              used to determine the depth that will be
+                              required of the real stack later on in
+                              dfaanalyze.  */
+};
+
 /* A compiled regular expression.  */
 struct dfa
 {
@@ -362,6 +374,9 @@ struct dfa
 
   /* Scanner state */
   struct lexer_state lexstate;
+
+  /* Parser state */
+  struct parser_state parsestate;
 
   /* Fields filled by the parser.  */
   token *tokens;                /* Postfix parse array.  */
@@ -1585,15 +1600,6 @@ lex (struct dfa *dfa)
   return END;                   /* keeps pedantic compilers happy.  */
 }
 
-/* Recursive descent parser for regular expressions.  */
-
-static token tok;               /* Lookahead token.  */
-static size_t depth;            /* Current depth of a hypothetical stack
-                                   holding deferred productions.  This is
-                                   used to determine the depth that will be
-                                   required of the real stack later on in
-                                   dfaanalyze.  */
-
 static void
 addtok_mb (struct dfa *dfa, token t, int mbprop)
 {
@@ -1618,7 +1624,7 @@ addtok_mb (struct dfa *dfa, token t, int mbprop)
 
     case CAT:
     case OR:
-      --depth;
+      --dfa->parsestate.depth;
       break;
 
     case BACKREF:
@@ -1628,11 +1634,11 @@ addtok_mb (struct dfa *dfa, token t, int mbprop)
       ++dfa->nleaves;
       /* fallthrough */
     case EMPTY:
-      ++depth;
+      ++dfa->parsestate.depth;
       break;
     }
-  if (depth > dfa->depth)
-    dfa->depth = depth;
+  if (dfa->parsestate.depth > dfa->depth)
+    dfa->depth = dfa->parsestate.depth;
 }
 
 static void addtok_wc (struct dfa *dfa, wint_t wc);
@@ -1802,7 +1808,7 @@ add_utf8_anychar (struct dfa *dfa)
 static void
 atom (struct dfa *dfa)
 {
-  if (tok == WCHAR)
+  if (dfa->parsestate.tok == WCHAR)
     {
       if (dfa->lexstate.wctok == WEOF)
         addtok (dfa, BACKREF);
@@ -1823,9 +1829,9 @@ atom (struct dfa *dfa)
             }
         }
 
-      tok = lex (dfa);
+      dfa->parsestate.tok = lex (dfa);
     }
-  else if (tok == ANYCHAR && using_utf8 ())
+  else if (dfa->parsestate.tok == ANYCHAR && using_utf8 ())
     {
       /* For UTF-8 expand the period to a series of CSETs that define a valid
          UTF-8 character.  This avoids using the slow multibyte path.  I'm
@@ -1835,23 +1841,26 @@ atom (struct dfa *dfa)
          UTF-8: it is the most used, and the structure of the encoding
          makes the correctness more obvious.  */
       add_utf8_anychar (dfa);
-      tok = lex (dfa);
+      dfa->parsestate.tok = lex (dfa);
     }
-  else if ((tok >= 0 && tok < NOTCHAR) || tok >= CSET || tok == BACKREF
-           || tok == BEGLINE || tok == ENDLINE || tok == BEGWORD
-           || tok == ANYCHAR || tok == MBCSET
-           || tok == ENDWORD || tok == LIMWORD || tok == NOTLIMWORD)
+  else if ((dfa->parsestate.tok >= 0 && dfa->parsestate.tok < NOTCHAR)
+           || dfa->parsestate.tok >= CSET || dfa->parsestate.tok == BACKREF
+           || dfa->parsestate.tok == BEGLINE || dfa->parsestate.tok == ENDLINE
+           || dfa->parsestate.tok == BEGWORD || dfa->parsestate.tok == ANYCHAR
+           || dfa->parsestate.tok == MBCSET || dfa->parsestate.tok == ENDWORD
+           || dfa->parsestate.tok == LIMWORD
+           || dfa->parsestate.tok == NOTLIMWORD)
     {
-      addtok (dfa, tok);
-      tok = lex (dfa);
+      addtok (dfa, dfa->parsestate.tok);
+      dfa->parsestate.tok = lex (dfa);
     }
-  else if (tok == LPAREN)
+  else if (dfa->parsestate.tok == LPAREN)
     {
-      tok = lex (dfa);
+      dfa->parsestate.tok = lex (dfa);
       regexp (dfa);
-      if (tok != RPAREN)
+      if (dfa->parsestate.tok != RPAREN)
         dfaerror (_("unbalanced ("));
-      tok = lex (dfa);
+      dfa->parsestate.tok = lex (dfa);
     }
   else
     addtok (dfa, EMPTY);
@@ -1899,8 +1908,10 @@ closure (struct dfa *dfa)
   size_t tindex, ntokens;
 
   atom (dfa);
-  while (tok == QMARK || tok == STAR || tok == PLUS || tok == REPMN)
-    if (tok == REPMN && (dfa->lexstate.minrep || dfa->lexstate.maxrep))
+  while (dfa->parsestate.tok == QMARK || dfa->parsestate.tok == STAR
+         || dfa->parsestate.tok == PLUS || dfa->parsestate.tok == REPMN)
+    if (dfa->parsestate.tok == REPMN
+        && (dfa->lexstate.minrep || dfa->lexstate.maxrep))
       {
         ntokens = nsubtoks (dfa, dfa->tindex);
         tindex = dfa->tindex - ntokens;
@@ -1919,18 +1930,18 @@ closure (struct dfa *dfa)
             addtok (dfa, QMARK);
             addtok (dfa, CAT);
           }
-        tok = lex (dfa);
+        dfa->parsestate.tok = lex (dfa);
       }
-    else if (tok == REPMN)
+    else if (dfa->parsestate.tok == REPMN)
       {
         dfa->tindex -= nsubtoks (dfa, dfa->tindex);
-        tok = lex (dfa);
+        dfa->parsestate.tok = lex (dfa);
         closure (dfa);
       }
     else
       {
-        addtok (dfa, tok);
-        tok = lex (dfa);
+        addtok (dfa, dfa->parsestate.tok);
+        dfa->parsestate.tok = lex (dfa);
       }
 }
 
@@ -1938,7 +1949,8 @@ static void
 branch (struct dfa* dfa)
 {
   closure (dfa);
-  while (tok != RPAREN && tok != OR && tok >= 0)
+  while (dfa->parsestate.tok != RPAREN && dfa->parsestate.tok != OR
+         && dfa->parsestate.tok >= 0)
     {
       closure (dfa);
       addtok (dfa, CAT);
@@ -1949,9 +1961,9 @@ static void
 regexp (struct dfa *dfa)
 {
   branch (dfa);
-  while (tok == OR)
+  while (dfa->parsestate.tok == OR)
     {
-      tok = lex (dfa);
+      dfa->parsestate.tok = lex (dfa);
       branch (dfa);
       addtok (dfa, OR);
     }
@@ -1977,12 +1989,12 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   if (!syntax_bits_set)
     dfaerror (_("no syntax specified"));
 
-  tok = lex (d);
-  depth = d->depth;
+  d->parsestate.tok = lex (d);
+  d->parsestate.depth = d->depth;
 
   regexp (d);
 
-  if (tok != END)
+  if (d->parsestate.tok != END)
     dfaerror (_("unbalanced )"));
 
   addtok (d, END - d->nregexps);
