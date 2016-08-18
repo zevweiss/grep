@@ -50,10 +50,10 @@ extern struct dfamust *dfamust (struct dfa const *);
 /* Free the storage held by the components of a struct dfamust. */
 extern void dfamustfree (struct dfamust *);
 
-/* dfasyntax() takes three arguments; the first sets the syntax bits described
-   earlier in this file, the second sets the case-folding flag, and the
-   third specifies the line terminator. */
-extern void dfasyntax (reg_syntax_t, bool, unsigned char);
+/* dfasyntax() takes four arguments; the first is the dfa to operate on, the
+   second sets the syntax bits described earlier in this file, the third sets
+   the case-folding flag, and the fourth specifies the line terminator. */
+extern void dfasyntax (struct dfa *, reg_syntax_t, bool, unsigned char);
 
 /* Compile the given string of the given length into the given struct dfa.
    Final argument is a flag specifying whether to build a searching or an
