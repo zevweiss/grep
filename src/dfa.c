@@ -767,6 +767,20 @@ dfa_using_utf8 (void)
   return using_utf8;
 }
 
+static void
+init_mbrtowc_cache (void)
+{
+  int i;
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
+    {
+      char c = i;
+      unsigned char uc = i;
+      mbstate_t s = { 0 };
+      wchar_t wc;
+      mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
+    }
+}
+
 /* Entry point to set syntax options.  */
 void
 dfasyntax (struct dfa *dfa, reg_syntax_t bits, bool fold, unsigned char eol)
@@ -779,13 +793,9 @@ dfasyntax (struct dfa *dfa, reg_syntax_t bits, bool fold, unsigned char eol)
 
   for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
     {
-      char c = i;
       unsigned char uc = i;
-      mbstate_t s = { 0 };
-      wchar_t wc;
-      mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
 
-      /* Now that mbrtowc_cache[uc] is set, use it to calculate sbit.  */
+      /* Use mbrtowc_cache to calculate sbit.  */
       dfa->syntax.sbit[uc] = char_context (dfa, uc);
       switch (dfa->syntax.sbit[uc])
         {
@@ -4204,6 +4214,7 @@ dfa_init (void)
 {
   check_utf8 ();
   check_unibyte_c ();
+  init_mbrtowc_cache ();
 }
 
 /* vim:set shiftwidth=2: */
