@@ -63,15 +63,30 @@ enum { NOTCHAR = 1 << CHAR_BIT };
 
 /* This represents part of a character class.  It must be unsigned and
    at least CHARCLASS_WORD_BITS wide.  Any excess bits are zero.  */
-typedef unsigned int charclass_word;
+typedef unsigned long int charclass_word;
 
-/* The number of bits used in a charclass word.  utf8_classes assumes
-   this is exactly 32.  */
+/* CHARCLASS_WORD_BITS is the number of bits used in a charclass word.
+   CHARCLASS_PAIR (LO, HI) is part of a charclass initializer, and
+   represents 64 bits' worth of a charclass, where LO and HI are the
+   low and high-order 32 bits of the 64-bit quantity.  */
+#if ULONG_MAX >> 31 >> 31 < 3
 enum { CHARCLASS_WORD_BITS = 32 };
+# define CHARCLASS_PAIR(lo, hi) lo, hi
+#else
+enum { CHARCLASS_WORD_BITS = 64 };
+# define CHARCLASS_PAIR(lo, hi) (((charclass_word) (hi) << 32) + (lo))
+#endif
+
+/* An initializer for a charclass whose 32-bit words are A through H.  */
+#define CHARCLASS_INIT(a, b, c, d, e, f, g, h)		\
+    {							\
+      CHARCLASS_PAIR (a, b), CHARCLASS_PAIR (c, d),	\
+      CHARCLASS_PAIR (e, f), CHARCLASS_PAIR (g, h)	\
+    }
 
 /* The maximum useful value of a charclass_word; all used bits are 1.  */
-#define CHARCLASS_WORD_MASK \
-  (((charclass_word) 1 << (CHARCLASS_WORD_BITS - 1) << 1) - 1)
+static charclass_word const CHARCLASS_WORD_MASK
+  = ((charclass_word) 1 << (CHARCLASS_WORD_BITS - 1) << 1) - 1;
 
 /* Number of words required to hold a bit for every character.  */
 enum
@@ -605,7 +620,11 @@ notset (charclass s)
 static bool
 equal (charclass const s1, charclass const s2)
 {
-  return memcmp (s1, s2, sizeof (charclass)) == 0;
+  charclass_word w = 0;
+  int i;
+  for (i = 0; i < CHARCLASS_WORDS; i++)
+    w |= s1[i] ^ s2[i];
+  return w == 0;
 }
 
 static bool
@@ -1675,20 +1694,19 @@ add_utf8_anychar (void)
 {
   static charclass const utf8_classes[5] = {
     /* 80-bf: non-leading bytes.  */
-    {0, 0, 0, 0, CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK, 0, 0},
+    CHARCLASS_INIT (0, 0, 0, 0, 0xffffffff, 0xffffffff, 0, 0),
 
     /* 00-7f: 1-byte sequence.  */
-    {CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK, CHARCLASS_WORD_MASK,
-     CHARCLASS_WORD_MASK, 0, 0, 0, 0},
+    CHARCLASS_INIT (0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0, 0, 0, 0),
 
     /* c2-df: 2-byte sequence.  */
-    {0, 0, 0, 0, 0, 0, ~3 & CHARCLASS_WORD_MASK, 0},
+    CHARCLASS_INIT (0, 0, 0, 0, 0, 0, 0xfffffffc, 0),
 
     /* e0-ef: 3-byte sequence.  */
-    {0, 0, 0, 0, 0, 0, 0, 0xffff},
+    CHARCLASS_INIT (0, 0, 0, 0, 0, 0, 0, 0xffff),
 
     /* f0-f7: 4-byte sequence.  */
-    {0, 0, 0, 0, 0, 0, 0, 0xff0000}
+    CHARCLASS_INIT (0, 0, 0, 0, 0, 0, 0, 0xff0000)
   };
   const unsigned int n = sizeof (utf8_classes) / sizeof (utf8_classes[0]);
   unsigned int i;
