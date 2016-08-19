@@ -560,7 +560,7 @@ static bool
 skip_devices (bool command_line)
 {
   return (devices == SKIP_DEVICES
-          || (devices == READ_COMMAND_LINE_DEVICES && !command_line));
+          || ((devices == READ_COMMAND_LINE_DEVICES) & !command_line));
 }
 
 /* Return if ST->st_size is defined.  Assume the file is not a
@@ -642,7 +642,7 @@ initialize_unibyte_mask (void)
   unsigned char mask = 0;
   int ms1b = 1;
   for (int i = 1; i <= UCHAR_MAX; i++)
-    if (mbclen_cache[i] != 1 && ! (mask & i))
+    if ((mbclen_cache[i] != 1) & ! (mask & i))
       {
         while (ms1b * 2 <= i)
           ms1b *= 2;
@@ -952,7 +952,7 @@ fillbuf (size_t save, struct stat const *st)
         }
       bufoffset += fillsize;
 
-      if (fillsize == 0 || !skip_nuls || !all_zeros (readbuf, fillsize))
+      if (((fillsize == 0) | !skip_nuls) || !all_zeros (readbuf, fillsize))
         break;
       totalnl = add_count (totalnl, fillsize);
 
@@ -2152,7 +2152,7 @@ get_nondigit_option (int argc, char *const *argv, intmax_t *default_context)
     {
       opt = getopt_long (argc, (char **) argv, short_options,
                          long_options, NULL);
-      if ( ! ('0' <= opt && opt <= '9'))
+      if (! c_isdigit (opt))
         break;
 
       if (prev_digit_optind != this_digit_optind || !was_digit)
@@ -2244,7 +2244,7 @@ parse_grep_colors (void)
       }
     else if (val == NULL)
       q++; /* Accumulate name.  */
-    else if (*q == ';' || (*q >= '0' && *q <= '9'))
+    else if (*q == ';' || c_isdigit (*q))
       q++; /* Accumulate val.  Protect the terminal from being sent crap.  */
     else
       return;
@@ -2702,7 +2702,7 @@ main (int argc, char **argv)
       count_matches = false;
       done_on_match = true;
     }
-  out_quiet = count_matches || done_on_match;
+  out_quiet = count_matches | done_on_match;
 
   if (out_after < 0)
     out_after = default_context;

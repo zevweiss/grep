@@ -94,7 +94,7 @@ Fexecute (char *buf, size_t size, size_t *match_size,
   else
     {
       mb_check = MB_CUR_MAX > 1 && !using_utf8 ();
-      longest = mb_check || start_ptr || match_words;
+      longest = mb_check | !!start_ptr | match_words;
     }
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
@@ -124,7 +124,7 @@ Fexecute (char *buf, size_t size, size_t *match_size,
           continue;
         }
       beg += offset;
-      if (start_ptr && !match_words)
+      if (!!start_ptr & !match_words)
         goto success_in_beg_and_len;
       if (match_lines)
         {
