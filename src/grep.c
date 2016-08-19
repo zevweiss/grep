@@ -1853,8 +1853,7 @@ grepdesc (int desc, bool command_line)
     }
 
   status = !count;
-  if ((list_files == LISTFILES_MATCHING && count > 0)
-      || (list_files == LISTFILES_NONMATCHING && count == 0))
+  if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
     {
       print_filename ();
       putchar_errno ('\n' & filename_mask);
