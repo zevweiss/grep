@@ -2350,6 +2350,8 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 #endif
 
+  dfa_init ();
+
   atexit (clean_up_stdout);
 
   last_recursive = 0;

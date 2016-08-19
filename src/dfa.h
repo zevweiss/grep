@@ -100,4 +100,7 @@ extern void dfawarn (const char *);
    The user must supply a dfaerror.  */
 extern _Noreturn void dfaerror (const char *);
 
-extern bool using_utf8 (void);
+extern bool dfa_using_utf8 (void) _GL_ATTRIBUTE_PURE;
+
+/* This must be called before calling any of the above dfa*() functions. */
+extern void dfa_init (void);

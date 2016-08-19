@@ -277,7 +277,7 @@ EGexecute (char *buf, size_t size, size_t *match_size,
 
               if (exact_kwset_match)
                 {
-                  if (MB_CUR_MAX == 1 || using_utf8 ())
+                  if (MB_CUR_MAX == 1 || dfa_using_utf8 ())
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;

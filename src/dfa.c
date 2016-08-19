@@ -757,6 +757,16 @@ char_context (struct dfa *dfa, unsigned char c)
   return CTX_NONE;
 }
 
+/* UTF-8 encoding allows some optimizations that we can't otherwise
+   assume in a multibyte encoding.  */
+static bool using_utf8;
+
+bool
+dfa_using_utf8 (void)
+{
+  return using_utf8;
+}
+
 /* Entry point to set syntax options.  */
 void
 dfasyntax (struct dfa *dfa, reg_syntax_t bits, bool fold, unsigned char eol)
@@ -789,7 +799,7 @@ dfasyntax (struct dfa *dfa, reg_syntax_t bits, bool fold, unsigned char eol)
 
       /* POSIX requires that the five bytes in "\n\r./" (including the
          terminating NUL) cannot occur inside a multibyte character.  */
-      dfa->syntax.never_trail[uc] = (using_utf8 () ? (uc & 0xc0) != 0x80
+      dfa->syntax.never_trail[uc] = (using_utf8 ? (uc & 0xc0) != 0x80
                                      : strchr ("\n\r./", uc) != NULL);
     }
 }
@@ -822,21 +832,21 @@ setbit_case_fold_c (int b, charclass c)
       setbit (i, c);
 }
 
-
-
-/* UTF-8 encoding allows some optimizations that we can't otherwise
-   assume in a multibyte encoding.  */
-bool
-using_utf8 (void)
+static void check_utf8 (void)
 {
-  static int utf8 = -1;
-  if (utf8 < 0)
-    {
-      wchar_t wc;
-      mbstate_t mbs = { 0 };
-      utf8 = mbrtowc (&wc, "\xc4\x80", 2, &mbs) == 2 && wc == 0x100;
-    }
-  return utf8;
+  wchar_t wc;
+  mbstate_t mbs = { 0 };
+  using_utf8 = mbrtowc (&wc, "\xc4\x80", 2, &mbs) == 2 && wc == 0x100;
+}
+
+static bool unibyte_c;
+
+static void check_unibyte_c (void)
+{
+  char const *locale = setlocale (LC_ALL, NULL);
+  unibyte_c = (!locale
+               || STREQ (locale, "C")
+               || STREQ (locale, "POSIX"));
 }
 
 /* The current locale is known to be a unibyte locale
@@ -863,20 +873,7 @@ using_simple_locale (struct dfa const *dfa)
      && '}' == 125 && '~' == 126)
   };
 
-  if (! native_c_charset || dfa->multibyte)
-    return false;
-  else
-    {
-      static int unibyte_c = -1;
-      if (unibyte_c < 0)
-        {
-          char const *locale = setlocale (LC_ALL, NULL);
-          unibyte_c = (!locale
-                       || STREQ (locale, "C")
-                       || STREQ (locale, "POSIX"));
-        }
-      return unibyte_c;
-    }
+  return (!native_c_charset || dfa->multibyte) ? false : unibyte_c;
 }
 
 /* Fetch the next lexical input character.  Set C (of type int) to the
@@ -1843,7 +1840,7 @@ atom (struct dfa *dfa)
 
       dfa->parsestate.tok = lex (dfa);
     }
-  else if (dfa->parsestate.tok == ANYCHAR && using_utf8 ())
+  else if (dfa->parsestate.tok == ANYCHAR && using_utf8)
     {
       /* For UTF-8 expand the period to a series of CSETs that define a valid
          UTF-8 character.  This avoids using the slow multibyte path.  I'm
@@ -3524,7 +3521,7 @@ dfaoptimize (struct dfa *d)
   size_t i;
   bool have_backref = false;
 
-  if (!using_utf8 ())
+  if (!using_utf8)
     return;
 
   for (i = 0; i < d->tindex; ++i)
@@ -4200,6 +4197,13 @@ dfaalloc (void)
   d->fast = !d->multibyte;
   d->lexstate.cur_mb_len = 1;
   return d;
+}
+
+void
+dfa_init (void)
+{
+  check_utf8 ();
+  check_unibyte_c ();
 }
 
 /* vim:set shiftwidth=2: */
