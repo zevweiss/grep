@@ -748,7 +748,7 @@ unibyte_word_constituent (unsigned char c)
 }
 
 static int
-char_context (struct dfa *dfa, unsigned char c)
+char_context (struct dfa const *dfa, unsigned char c)
 {
   if (c == dfa->syntax.eolbyte)
     return CTX_NEWLINE;
@@ -2291,7 +2291,7 @@ epsclosure (position_set *s, struct dfa const *d, char *visited)
    character included in C.  */
 
 static int
-charclass_context (struct dfa *dfa, charclass c)
+charclass_context (struct dfa const *dfa, charclass c)
 {
   int context = 0;
   unsigned int j;
