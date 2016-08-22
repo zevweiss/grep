@@ -2320,12 +2320,6 @@ main (int argc, char **argv)
   set_program_name (argv[0]);
   program_name = argv[0];
 
-  pagesize = getpagesize ();
-  if (pagesize == 0 || 2 * pagesize + 1 <= pagesize)
-    abort ();
-  bufalloc = (ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + sizeof (uword));
-  buffer = xmalloc (bufalloc);
-
   keys = NULL;
   keycc = 0;
   with_filenames = false;
@@ -2776,6 +2770,18 @@ main (int argc, char **argv)
 
   if (max_count == 0)
     return EXIT_FAILURE;
+
+  /* Prefer sysconf for page size, as getpagesize typically returns int.  */
+#ifdef _SC_PAGESIZE
+  long psize = sysconf (_SC_PAGESIZE);
+#else
+  long psize = getpagesize ();
+#endif
+  if (! (0 < psize && psize <= (SIZE_MAX - sizeof (uword)) / 2))
+    abort ();
+  pagesize = psize;
+  bufalloc = ALIGN_TO (INITIAL_BUFSIZE, pagesize) + pagesize + sizeof (uword);
+  buffer = xmalloc (bufalloc);
 
   if (fts_options & FTS_LOGICAL && devices == READ_COMMAND_LINE_DEVICES)
     devices = READ_DEVICES;
