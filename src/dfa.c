@@ -303,9 +303,6 @@ typedef struct
   size_t hash;                  /* Hash of the positions of this state.  */
   position_set elems;           /* Positions this state could match.  */
   unsigned char context;        /* Context from previous state.  */
-  bool curr_dependent;          /* True if the follows of any positions with
-                                   ANYCHAR depends on the next character's
-                                   context.  */
   unsigned short constraint;    /* Constraint for this state to accept.  */
   token first_end;              /* Token value of the first END in elems.  */
   position_set mbps;            /* Positions which can match multibyte
@@ -2027,7 +2024,6 @@ state_index (struct dfa *d, position_set const *s, int context)
   size_t hash = 0;
   int constraint = 0;
   state_num i, j;
-  bool curr_dependent = false;
   token first_end = 0;
 
   for (i = 0; i < s->nelem; ++i)
@@ -2081,17 +2077,6 @@ state_index (struct dfa *d, position_set const *s, int context)
         }
       else if (d->tokens[s->elems[j].index] == BACKREF)
         constraint = NO_CONSTRAINT;
-      if (d->tokens[s->elems[j].index] == ANYCHAR)
-        {
-          int acceptable
-            = ((SUCCEEDS_IN_CONTEXT (c, context, CTX_NEWLINE)
-                ? CTX_NEWLINE : 0)
-               | (SUCCEEDS_IN_CONTEXT (c, context, CTX_LETTER)
-                  ? CTX_LETTER : 0)
-               | (SUCCEEDS_IN_CONTEXT (c, context, CTX_NONE)
-                  ? CTX_NONE : 0));
-          curr_dependent |= acceptable && (context & ~acceptable);
-        }
     }
 
 
@@ -2102,7 +2087,6 @@ state_index (struct dfa *d, position_set const *s, int context)
   alloc_position_set (&d->states[i].elems, s->nelem);
   copy (s, &d->states[i].elems);
   d->states[i].context = context;
-  d->states[i].curr_dependent = curr_dependent;
   d->states[i].constraint = constraint;
   d->states[i].first_end = first_end;
   d->states[i].mbps.nelem = 0;
@@ -2568,14 +2552,8 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
              positions which has ANYCHAR does not depend on context of
              next character, we put the follows instead of it to
              D->states[s].mbps to optimize.  */
-          if (d->states[s].curr_dependent)
-            {
-              if (d->states[s].mbps.nelem == 0)
-                alloc_position_set (&d->states[s].mbps, 1);
-              insert (pos, &d->states[s].mbps);
-            }
-          else if (SUCCEEDS_IN_CONTEXT (pos.constraint,
-                                        d->states[s].context, CTX_ANY))
+          if (SUCCEEDS_IN_CONTEXT (pos.constraint, d->states[s].context,
+                                   CTX_NONE))
             {
               if (d->states[s].mbps.nelem == 0)
                 alloc_position_set (&d->states[s].mbps,
@@ -2986,7 +2964,7 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   state_num s1, s2;
   wint_t wc;
   int separate_contexts;
-  size_t i, j;
+  size_t i;
 
   int mbclen = mbs_to_wchar (&wc, (char const *) *pp, end - *pp, d);
 
@@ -3003,31 +2981,6 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
   if (wc == WEOF)
     {
       /* It is an invalid character, so ANYCHAR is not accepted.  */
-      return s;
-    }
-
-  if (d->states[s1].curr_dependent)
-    {
-      if (s < 0)
-        d->mb_follows.nelem = 0;
-      else
-        copy (&d->states[s].elems, &d->mb_follows);
-
-      for (i = 0; i < d->states[s1].mbps.nelem; i++)
-        {
-          if (!SUCCEEDS_IN_CONTEXT (d->states[s1].mbps.elems[i].constraint,
-                                    d->states[s1].context, CTX_NONE))
-            continue;
-          for (j = 0; j < d->follows[d->states[s1].mbps.elems[i].index].nelem;
-               j++)
-            insert (d->follows[d->states[s1].mbps.elems[i].index].elems[j],
-                    &d->mb_follows);
-        }
-
-      separate_contexts = state_separate_contexts (&d->mb_follows);
-      s = state_index (d, &d->mb_follows, separate_contexts ^ CTX_ANY);
-      realloc_trans_if_necessary (d, s);
-
       return s;
     }
 
