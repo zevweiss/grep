@@ -3000,6 +3000,12 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
     s = transit_state_singlebyte (d, s, pp);
   *pp += mbclen - i;
 
+  if (wc == WEOF)
+    {
+      /* It is an invalid character, so ANYCHAR is not accepted.  */
+      return s;
+    }
+
   if (d->states[s1].curr_dependent)
     {
       if (s < 0)
