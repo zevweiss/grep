@@ -2265,14 +2265,91 @@ contains_encoding_error (char const *pat, size_t patlen)
   return false;
 }
 
+/* The set of wchar_t values C such that there's a useful locale
+   somewhere where C != towupper (C) && C != towlower (towupper (C)).
+   For example, 0x00B5 (U+00B5 MICRO SIGN) is in this table, because
+   towupper (0x00B5) == 0x039C (U+039C GREEK CAPITAL LETTER MU), and
+   towlower (0x039C) == 0x03BC (U+03BC GREEK SMALL LETTER MU).  */
+static short const lonesome_lower[] =
+  {
+    0x00B5, 0x0131, 0x017F, 0x01C5, 0x01C8, 0x01CB, 0x01F2, 0x0345,
+    0x03C2, 0x03D0, 0x03D1, 0x03D5, 0x03D6, 0x03F0, 0x03F1,
+
+    /* U+03F2 GREEK LUNATE SIGMA SYMBOL lacks a specific uppercase
+       counterpart in locales predating Unicode 4.0.0 (April 2003).  */
+    0x03F2,
+
+    0x03F5, 0x1E9B, 0x1FBE
+  };
+
+static bool
+fgrep_icase_available (char const *pat, size_t patlen)
+{
+  for (size_t i = 0; i < patlen; ++i)
+    {
+      unsigned char c = pat[i];
+      if (localeinfo.sbclen[c] > 1)
+        return false;
+    }
+
+  for (size_t i = 0; i < patlen; ++i)
+    {
+      unsigned char c = pat[i];
+
+      wint_t wc = localeinfo.sbctowc[c];
+      if (wc == WEOF)
+        return false;
+
+      wint_t uwc = towupper (wc);
+      if (uwc != wc)
+        {
+          char s[MB_LEN_MAX];
+          mbstate_t mb_state = { 0 };
+          size_t len = wcrtomb (s, uwc, &mb_state);
+          if (len > 1 && len != (size_t) -1)
+            return false;
+        }
+
+      wint_t lwc = towlower (uwc);
+      if (lwc != uwc && lwc != wc && towupper (lwc) == uwc)
+        {
+          char s[MB_LEN_MAX];
+          mbstate_t mb_state = { 0 };
+          size_t len = wcrtomb (s, lwc, &mb_state);
+          if (len > 1 && len != (size_t) -1)
+            return false;
+        }
+
+      for (size_t j = 0; lonesome_lower[j]; j++)
+        {
+          wint_t li = lonesome_lower[j];
+          if (li != lwc && li != uwc && li != wc && towupper (li) == uwc)
+            {
+              char s[MB_LEN_MAX];
+              mbstate_t mb_state = { 0 };
+              size_t len = wcrtomb (s, li, &mb_state);
+              if (len > 1 && len != (size_t) -1)
+                return false;
+            }
+        }
+    }
+
+  return true;
+}
+
 /* Change a pattern for fgrep into grep.  */
 static void
-fgrep_to_grep_pattern (size_t len, char const *keys,
-                       size_t *new_len, char **new_keys)
+fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
 {
-  char *p = *new_keys = xnmalloc (len + 1, 2);
+  char *keys, *new_keys, *p;
   mbstate_t mb_state = { 0 };
-  size_t n;
+  size_t len, n;
+
+  len = *len_p;
+  keys = *keys_p;
+
+  new_keys = xnmalloc (len + 1, 2);
+  p = new_keys;
 
   for (; len; keys += n, len -= n)
     {
@@ -2300,7 +2377,13 @@ fgrep_to_grep_pattern (size_t len, char const *keys,
         }
     }
 
-  *new_len = p - *new_keys;
+  free (*keys_p);
+  *keys_p = new_keys;
+  *len_p = p - new_keys;
+
+  matcher = "grep";
+  compile = Gcompile;
+  execute = EGexecute;
 }
 
 int
@@ -2733,20 +2816,17 @@ main (int argc, char **argv)
      In a multibyte locale, switch from fgrep to grep if either
      (1) case is ignored (where grep is typically faster), or
      (2) the pattern has an encoding error (where fgrep might not work).  */
-  if (compile == Fcompile
-      && (MB_CUR_MAX <= 1
-          ? match_words
-          : match_icase || contains_encoding_error (keys, keycc)))
+  if (compile == Fcompile)
     {
-      size_t new_keycc;
-      char *new_keys;
-      fgrep_to_grep_pattern (keycc, keys, &new_keycc, &new_keys);
-      free (keys);
-      keys = new_keys;
-      keycc = new_keycc;
-      matcher = "grep";
-      compile = Gcompile;
-      execute = EGexecute;
+      if (MB_CUR_MAX > 1)
+        {
+          if (contains_encoding_error (keys, keycc))
+            fgrep_to_grep_pattern (&keys, &keycc);
+          else if (match_icase && !fgrep_icase_available (keys, keycc))
+            fgrep_to_grep_pattern (&keys, &keycc);
+        }
+      else if (match_words)
+        fgrep_to_grep_pattern (&keys, &keycc);
     }
 
   compile (keys, keycc);

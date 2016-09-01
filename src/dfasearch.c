@@ -89,7 +89,7 @@ kwsmusts (void)
   struct dfamust *dm = dfamust (dfa);
   if (!dm)
     return;
-  kwsinit (&kwset);
+  kwsinit (&kwset, false);
   if (dm->exact)
     {
       /* Prepare a substring whose presence implies a match.

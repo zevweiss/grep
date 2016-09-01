@@ -25,15 +25,33 @@
 #define NCHAR (UCHAR_MAX + 1)
 
 void
-kwsinit (kwset_t *kwset)
+kwsinit (kwset_t *kwset, bool mb_trans)
 {
   static char trans[NCHAR];
   int i;
 
-  if (match_icase && MB_CUR_MAX == 1)
+  if (match_icase && (MB_CUR_MAX == 1 || mb_trans))
     {
-      for (i = 0; i < NCHAR; ++i)
-        trans[i] = toupper (i);
+      if (MB_CUR_MAX == 1)
+        for (i = 0; i < NCHAR; ++i)
+          trans[i] = toupper (i);
+      else
+        for (i = 0; i < NCHAR; ++i)
+          {
+            wint_t wc = localeinfo.sbctowc[i];
+            wint_t uwc = towupper (wc);
+            if (uwc != wc)
+              {
+                char s[MB_LEN_MAX];
+                mbstate_t mbs = { 0 };
+                size_t len = wcrtomb (s, uwc, &mbs);
+                if (len > 1)
+                  abort ();
+                trans[i] = s[0];
+              }
+            else
+              trans[i] = i;
+          }
 
       *kwset = kwsalloc (trans, false);
     }
