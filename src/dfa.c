@@ -820,7 +820,7 @@ using_simple_locale (bool multibyte)
       /* Treat C and POSIX locales as being compatible.  Also, treat
          errors as compatible, as these are invariably from stubs.  */
       char const *loc = setlocale (LC_ALL, NULL);
-      return !loc || strcmp (loc, "C") == 0 || strcmp (loc, "POSIX") == 0;
+      return !loc || STREQ (loc, "C") || STREQ (loc, "POSIX");
     }
 }
 
