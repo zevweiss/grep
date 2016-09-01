@@ -22,7 +22,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <wchar.h>
-#include <wctype.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <stdarg.h>
@@ -2265,91 +2264,53 @@ contains_encoding_error (char const *pat, size_t patlen)
   return false;
 }
 
-/* The set of wchar_t values C such that there's a useful locale
-   somewhere where C != towupper (C) && C != towlower (towupper (C)).
-   For example, 0x00B5 (U+00B5 MICRO SIGN) is in this table, because
-   towupper (0x00B5) == 0x039C (U+039C GREEK CAPITAL LETTER MU), and
-   towlower (0x039C) == 0x03BC (U+03BC GREEK SMALL LETTER MU).  */
-static short const lonesome_lower[] =
-  {
-    0x00B5, 0x0131, 0x017F, 0x01C5, 0x01C8, 0x01CB, 0x01F2, 0x0345,
-    0x03C2, 0x03D0, 0x03D1, 0x03D5, 0x03D6, 0x03F0, 0x03F1,
-
-    /* U+03F2 GREEK LUNATE SIGMA SYMBOL lacks a specific uppercase
-       counterpart in locales predating Unicode 4.0.0 (April 2003).  */
-    0x03F2,
-
-    0x03F5, 0x1E9B, 0x1FBE
-  };
+/* Return true if the fgrep pattern PAT, of size PATLEN, matches only
+   single-byte characters including case folding, and so is suitable
+   to be converted to a grep pattern.  */
 
 static bool
 fgrep_icase_available (char const *pat, size_t patlen)
 {
-  for (size_t i = 0; i < patlen; ++i)
+  bool used[UCHAR_MAX + 1] = { 0, };
+
+  for (size_t i = 0; i < patlen; i++)
     {
       unsigned char c = pat[i];
-      if (localeinfo.sbclen[c] > 1)
+      if (localeinfo.sbctowc[c] == WEOF)
         return false;
+      used[c] = true;
     }
 
-  for (size_t i = 0; i < patlen; ++i)
-    {
-      unsigned char c = pat[i];
+  for (int c = 0; c <= UCHAR_MAX; c++)
+    if (used[c])
+      {
+        wint_t wc = localeinfo.sbctowc[c];
+        wchar_t folded[CASE_FOLDED_BUFSIZE];
+        size_t nfolded = case_folded_counterparts (wc, folded);
 
-      wint_t wc = localeinfo.sbctowc[c];
-      if (wc == WEOF)
-        return false;
-
-      wint_t uwc = towupper (wc);
-      if (uwc != wc)
-        {
-          char s[MB_LEN_MAX];
-          mbstate_t mb_state = { 0 };
-          size_t len = wcrtomb (s, uwc, &mb_state);
-          if (len > 1 && len != (size_t) -1)
-            return false;
-        }
-
-      wint_t lwc = towlower (uwc);
-      if (lwc != uwc && lwc != wc && towupper (lwc) == uwc)
-        {
-          char s[MB_LEN_MAX];
-          mbstate_t mb_state = { 0 };
-          size_t len = wcrtomb (s, lwc, &mb_state);
-          if (len > 1 && len != (size_t) -1)
-            return false;
-        }
-
-      for (size_t j = 0; lonesome_lower[j]; j++)
-        {
-          wint_t li = lonesome_lower[j];
-          if (li != lwc && li != uwc && li != wc && towupper (li) == uwc)
-            {
-              char s[MB_LEN_MAX];
-              mbstate_t mb_state = { 0 };
-              size_t len = wcrtomb (s, li, &mb_state);
-              if (len > 1 && len != (size_t) -1)
-                return false;
-            }
-        }
-    }
+        for (size_t i = 0; i < nfolded; i++)
+          {
+            char s[MB_LEN_MAX];
+            mbstate_t mb_state = { 0 };
+            if (1 < wcrtomb (s, folded[i], &mb_state))
+              return false;
+          }
+      }
 
   return true;
 }
 
-/* Change a pattern for fgrep into grep.  */
+/* Change the pattern *KEYS_P, of size *LEN_P, from fgrep to grep style.  */
+
 static void
 fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
 {
-  char *keys, *new_keys, *p;
+  size_t len = *len_p;
+  char *keys = *keys_p;
   mbstate_t mb_state = { 0 };
-  size_t len, n;
-
-  len = *len_p;
-  keys = *keys_p;
-
-  new_keys = xnmalloc (len + 1, 2);
-  p = new_keys;
+  char *new_keys = xnmalloc (len + 1, 2);
+  char *p = new_keys;
+  size_t n;
 
   for (; len; keys += n, len -= n)
     {
@@ -2365,14 +2326,15 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
 
         case (size_t) -1:
           memset (&mb_state, 0, sizeof mb_state);
+          n = 1;
           /* Fall through.  */
         case 1:
-          *p = '\\';
-          p += strchr ("$*.[\\^", *keys) != NULL;
-          /* Fall through.  */
-        case 0:
+          switch (*keys)
+            {
+            case '$': case '*': case '.': case '[': case '\\': case '^':
+              *p++ = '\\'; break;
+            }
           *p++ = *keys;
-          n = 1;
           break;
         }
     }
@@ -2380,10 +2342,6 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
   free (*keys_p);
   *keys_p = new_keys;
   *len_p = p - new_keys;
-
-  matcher = "grep";
-  compile = Gcompile;
-  execute = EGexecute;
 }
 
 int
@@ -2814,19 +2772,18 @@ main (int argc, char **argv)
   /* In a unibyte locale, switch from fgrep to grep if
      the pattern matches words (where grep is typically faster).
      In a multibyte locale, switch from fgrep to grep if either
-     (1) case is ignored (where grep is typically faster), or
-     (2) the pattern has an encoding error (where fgrep might not work).  */
-  if (compile == Fcompile)
+     (1) the pattern has an encoding error (where fgrep might not work), or
+     (2) case is ignored and a fast fgrep ignore-case is not available.  */
+  if (compile == Fcompile
+      && (MB_CUR_MAX <= 1
+          ? match_words
+          : (contains_encoding_error (keys, keycc)
+             || (match_icase && !fgrep_icase_available (keys, keycc)))))
     {
-      if (MB_CUR_MAX > 1)
-        {
-          if (contains_encoding_error (keys, keycc))
-            fgrep_to_grep_pattern (&keys, &keycc);
-          else if (match_icase && !fgrep_icase_available (keys, keycc))
-            fgrep_to_grep_pattern (&keys, &keycc);
-        }
-      else if (match_words)
-        fgrep_to_grep_pattern (&keys, &keycc);
+      fgrep_to_grep_pattern (&keys, &keycc);
+      matcher = "grep";
+      compile = Gcompile;
+      execute = EGexecute;
     }
 
   compile (keys, keycc);

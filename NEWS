@@ -10,17 +10,14 @@ GNU grep NEWS                                    -*- outline -*-
   as it now uses the Aho-Corasick algorithm instead of the
   Commentz-Walter algorithm in that case.
 
+  grep -iF is typically much faster in a multibyte locale, if the
+  pattern and its case counterparts contain only single byte characters.
+
   In multibyte locales that are not UTF-8, grep now handles leading
   "." in patterns more efficiently.
 
   grep now prints a "FILENAME:LINENO: " prefix when diagnosing an
   invalid regular expression that was read from an '-f'-specified file.
-
-  grep -F now tries fgrep matcher for case insensitive matching in
-  multibyte locale.  It improves performance for a case which a pattern
-  is composed of only single byte characters and their all counterparts
-  are also single byte characters and the pattern does not have invalid
-  sequences.
 
 
 * Noteworthy changes in release 2.25 (2016-04-21) [stable]

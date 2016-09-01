@@ -50,7 +50,6 @@
 #define _(str) gettext (str)
 
 #include <wchar.h>
-#include <wctype.h>
 
 /* HPUX defines these as macros in sys/param.h.  */
 #ifdef setbit
@@ -856,53 +855,6 @@ using_simple_locale (bool multibyte)
 #ifndef MIN
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
-
-/* The set of wchar_t values C such that there's a useful locale
-   somewhere where C != towupper (C) && C != towlower (towupper (C)).
-   For example, 0x00B5 (U+00B5 MICRO SIGN) is in this table, because
-   towupper (0x00B5) == 0x039C (U+039C GREEK CAPITAL LETTER MU), and
-   towlower (0x039C) == 0x03BC (U+03BC GREEK SMALL LETTER MU).  */
-static short const lonesome_lower[] =
-  {
-    0x00B5, 0x0131, 0x017F, 0x01C5, 0x01C8, 0x01CB, 0x01F2, 0x0345,
-    0x03C2, 0x03D0, 0x03D1, 0x03D5, 0x03D6, 0x03F0, 0x03F1,
-
-    /* U+03F2 GREEK LUNATE SIGMA SYMBOL lacks a specific uppercase
-       counterpart in locales predating Unicode 4.0.0 (April 2003).  */
-    0x03F2,
-
-    0x03F5, 0x1E9B, 0x1FBE,
-  };
-
-/* Maximum number of characters that can be the case-folded
-   counterparts of a single character, not counting the character
-   itself.  This is 1 for towupper, 1 for towlower, and 1 for each
-   entry in LONESOME_LOWER.  */
-enum
-{ CASE_FOLDED_BUFSIZE = 2 + sizeof lonesome_lower / sizeof *lonesome_lower };
-
-/* Find the characters equal to C after case-folding, other than C
-   itself, and store them into FOLDED.  Return the number of characters
-   stored.  */
-static unsigned int
-case_folded_counterparts (wchar_t c, wchar_t folded[CASE_FOLDED_BUFSIZE])
-{
-  unsigned int i;
-  unsigned int n = 0;
-  wint_t uc = towupper (c);
-  wint_t lc = towlower (uc);
-  if (uc != c)
-    folded[n++] = uc;
-  if (lc != uc && lc != c && towupper (lc) == uc)
-    folded[n++] = lc;
-  for (i = 0; i < sizeof lonesome_lower / sizeof *lonesome_lower; i++)
-    {
-      wint_t li = lonesome_lower[i];
-      if (li != lc && li != uc && li != c && towupper (li) == uc)
-        folded[n++] = li;
-    }
-  return n;
-}
 
 typedef int predicate (int);
 

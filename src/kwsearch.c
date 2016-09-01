@@ -38,7 +38,7 @@ Fcompile (char const *pattern, size_t size)
 {
   size_t total = size;
 
-  kwsinit (&kwset, true);
+  kwset = kwsinit (true);
 
   char const *p = pattern;
   do
