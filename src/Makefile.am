@@ -25,9 +25,9 @@ bin_PROGRAMS = grep
 bin_SCRIPTS = egrep fgrep
 grep_SOURCES = grep.c searchutils.c \
           dfa.c dfasearch.c \
-          kwset.c kwsearch.c \
+          kwset.c kwsearch.c localeinfo.c \
           pcresearch.c
-noinst_HEADERS = grep.h dfa.h kwset.h search.h system.h
+noinst_HEADERS = grep.h dfa.h kwset.h localeinfo.h search.h system.h
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
 # include modules defining variables like 'optind', so libgreputils.a

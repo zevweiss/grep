@@ -42,7 +42,7 @@ AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 # Tell the linker to omit references to unused shared libraries.
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 LDADD = ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a
-dfa_match_aux_LDADD = ../src/dfa.$(OBJEXT) $(LDADD)
+dfa_match_aux_LDADD = ../src/dfa.$(OBJEXT) ../src/localeinfo.$(OBJEXT) $(LDADD)
 
 # The triple-backref test is expected to fail with both the system
 # matcher (i.e., with glibc) and with the included matcher.

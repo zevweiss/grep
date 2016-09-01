@@ -24,6 +24,7 @@
 #include <string.h>
 #include <regex.h>
 #include <dfa.h>
+#include <localeinfo.h>
 
 #include "progname.h"
 
@@ -47,17 +48,17 @@ main (int argc, char **argv)
   struct dfa *dfa;
   char *beg, *end, *p;
   int allow_nl;
+  struct localeinfo localeinfo;
 
   set_program_name (argv[0]);
   if (argc < 3)
     exit (EXIT_FAILURE);
 
   setlocale (LC_ALL, "");
-
-  dfa_init ();
+  init_localeinfo (&localeinfo);
 
   dfa = dfaalloc ();
-  dfasyntax (dfa, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0, '\n');
+  dfasyntax (dfa, &localeinfo, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0, '\n');
   dfacomp (argv[1], strlen (argv[1]), dfa, 0);
 
   beg = argv[2];

@@ -114,7 +114,7 @@ Pcompile (char const *pattern, size_t size)
 
   if (1 < MB_CUR_MAX)
     {
-      if (! dfa_using_utf8 ())
+      if (! localeinfo.using_utf8)
         error (EXIT_TROUBLE, 0,
                _("-P supports only unibyte and UTF-8 locales"));
       multibyte_locale = true;
@@ -254,7 +254,7 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           /* Skip past bytes that are easily determined to be encoding
              errors, treating them as data that cannot match.  This is
              faster than having pcre_exec check them.  */
-          while (mbclen_cache[to_uchar (*p)] == (size_t) -1)
+          while (localeinfo.sbclen[to_uchar (*p)] == -1)
             {
               p++;
               subject = p;

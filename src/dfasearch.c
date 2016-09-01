@@ -22,6 +22,8 @@
 #include "intprops.h"
 #include "search.h"
 
+struct localeinfo localeinfo;
+
 /* Whether -w considers WC to be a word constituent.  */
 static bool
 wordchar (wint_t wc)
@@ -128,7 +130,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   if (match_icase)
     syntax_bits |= RE_ICASE;
   re_set_syntax (syntax_bits);
-  dfasyntax (dfa, syntax_bits, match_icase, eolbyte);
+  dfasyntax (dfa, &localeinfo, syntax_bits, match_icase, eolbyte);
 
   /* For GNU regex, pass the patterns separately to detect errors like
      "[\nallo\n]\n", where the patterns are "[", "allo" and "]", and
@@ -277,7 +279,7 @@ EGexecute (char *buf, size_t size, size_t *match_size,
 
               if (exact_kwset_match)
                 {
-                  if (MB_CUR_MAX == 1 || dfa_using_utf8 ())
+                  if (MB_CUR_MAX == 1 || localeinfo.using_utf8)
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;

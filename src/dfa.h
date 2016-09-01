@@ -24,6 +24,8 @@
 
 #include "xalloc.h" /* for _GL_ATTRIBUTE_MALLOC */
 
+struct localeinfo; /* See localeinfo.h.  */
+
 /* Element of a list of strings, at least one of which is known to
    appear in any R.E. matching the DFA. */
 struct dfamust
@@ -44,16 +46,21 @@ struct dfa;
    calling dfafree() on it. */
 extern struct dfa *dfaalloc (void) _GL_ATTRIBUTE_MALLOC;
 
+/* Initialize or reinitialize a DFA.  This must be called before
+   any of the routines below.  The arguments are:
+   1. The DFA to operate on.
+   2. Information about the current locale.
+   3. The syntax bits described earlier in this file.
+   4. The case-folding flag.
+   5. The line terminator.  */
+extern void dfasyntax (struct dfa *, struct localeinfo const *,
+                       reg_syntax_t, bool, unsigned char);
+
 /* Build and return the struct dfamust from the given struct dfa. */
 extern struct dfamust *dfamust (struct dfa const *);
 
 /* Free the storage held by the components of a struct dfamust. */
 extern void dfamustfree (struct dfamust *);
-
-/* dfasyntax() takes four arguments; the first is the dfa to operate on, the
-   second sets the syntax bits described earlier in this file, the third sets
-   the case-folding flag, and the fourth specifies the line terminator. */
-extern void dfasyntax (struct dfa *, reg_syntax_t, bool, unsigned char);
 
 /* Compile the given string of the given length into the given struct dfa.
    Final argument is a flag specifying whether to build a searching or an
@@ -99,8 +106,3 @@ extern void dfawarn (const char *);
    takes a single argument, a NUL-terminated string describing the error.
    The user must supply a dfaerror.  */
 extern _Noreturn void dfaerror (const char *);
-
-extern bool dfa_using_utf8 (void) _GL_ATTRIBUTE_PURE;
-
-/* This must be called before calling any of the above dfa*() functions. */
-extern void dfa_init (void);

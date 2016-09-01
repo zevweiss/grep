@@ -24,8 +24,6 @@
 
 #define NCHAR (UCHAR_MAX + 1)
 
-size_t mbclen_cache[NCHAR];
-
 void
 kwsinit (kwset_t *kwset)
 {
@@ -44,22 +42,6 @@ kwsinit (kwset_t *kwset)
 
   if (!*kwset)
     xalloc_die ();
-}
-
-/* Initialize a cache of mbrlen values for each of its 1-byte inputs.  */
-void
-build_mbclen_cache (void)
-{
-  int i;
-
-  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
-    {
-      char c = i;
-      unsigned char uc = i;
-      mbstate_t mbs = { 0 };
-      size_t len = mbrlen (&c, 1, &mbs);
-      mbclen_cache[uc] = len ? len : 1;
-    }
 }
 
 /* In the buffer *MB_START, return the number of bytes needed to go

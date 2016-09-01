@@ -33,6 +33,7 @@
 #include "dfa.h"
 #include "kwset.h"
 #include "xalloc.h"
+#include "localeinfo.h"
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef SEARCH_INLINE
@@ -47,14 +48,12 @@ typedef signed char mb_len_map_t;
 
 /* searchutils.c */
 extern void kwsinit (kwset_t *);
-
-extern void build_mbclen_cache (void);
-extern size_t mbclen_cache[];
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);
 extern wint_t mb_prev_wc (char const *, char const *, char const *);
 extern wint_t mb_next_wc (char const *, char const *);
 
 /* dfasearch.c */
+extern struct localeinfo localeinfo;
 extern void GEAcompile (char const *, size_t, reg_syntax_t);
 extern size_t EGexecute (char *, size_t, size_t *, char const *);
 
@@ -73,7 +72,7 @@ extern size_t Pexecute (char *, size_t, size_t *, char const *);
 SEARCH_INLINE size_t
 mb_clen (char const *s, size_t n, mbstate_t *mbs)
 {
-  size_t len = mbclen_cache[to_uchar (*s)];
+  size_t len = localeinfo.sbclen[to_uchar (*s)];
   return len == (size_t) -2 ? mbrlen (s, n, mbs) : len;
 }
 

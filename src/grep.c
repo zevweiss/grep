@@ -642,7 +642,7 @@ initialize_unibyte_mask (void)
   unsigned char mask = 0;
   int ms1b = 1;
   for (int i = 1; i <= UCHAR_MAX; i++)
-    if ((mbclen_cache[i] != 1) & ! (mask & i))
+    if ((localeinfo.sbclen[i] != 1) & ! (mask & i))
       {
         while (ms1b * 2 <= i)
           ms1b *= 2;
@@ -2344,7 +2344,7 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 #endif
 
-  dfa_init ();
+  init_localeinfo (&localeinfo);
 
   atexit (clean_up_stdout);
 
@@ -2726,7 +2726,6 @@ main (int argc, char **argv)
   else
     usage (EXIT_TROUBLE);
 
-  build_mbclen_cache ();
   initialize_unibyte_mask ();
 
   /* In a unibyte locale, switch from fgrep to grep if

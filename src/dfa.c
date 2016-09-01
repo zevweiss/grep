@@ -24,6 +24,8 @@
 
 #include "dfa.h"
 
+#include "localeinfo.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -418,13 +420,8 @@ struct dfa
   size_t nregexps;              /* Count of parallel regexps being built
                                    with dfaparse.  */
   bool fast;			/* The DFA is fast.  */
-  bool multibyte;		/* MB_CUR_MAX > 1.  */
   token utf8_anychar_classes[5]; /* To lower ANYCHAR in UTF-8 locales.  */
   mbstate_t mbs;		/* Multibyte conversion state.  */
-
-  /* dfaexec implementation.  */
-  char *(*dfaexec) (struct dfa *, char const *, char *,
-                    bool, size_t *, bool *);
 
   /* The following are valid only if MB_CUR_MAX > 1.  */
 
@@ -511,6 +508,21 @@ struct dfa
   state_num **mb_trans;      /* Transition tables for states with ANYCHAR.  */
   state_num mb_trcount;         /* Number of transition tables for states with
                                    ANYCHAR that have actually been built.  */
+
+  /* Information derived from the locale.  This is at the end so that
+     a quick memset need not clear it specially.  */
+
+  /* dfaexec implementation.  */
+  char *(*dfaexec) (struct dfa *, char const *, char *,
+                    bool, size_t *, bool *);
+
+  /* The locale is simple, like the C locale.  These locales can be
+     processed more efficiently, e.g., the relationship between lower-
+     and upper-case letters is 1-1.  */
+  bool simple_locale;
+
+  /* Other cached information derived from the locale.  */
+  struct localeinfo localeinfo;
 };
 
 /* Some macros for user access to dfa internals.  */
@@ -524,13 +536,8 @@ struct dfa
 
 static void regexp (struct dfa *dfa);
 
-/* A table indexed by byte values that contains the corresponding wide
-   character (if any) for that byte.  WEOF means the byte is not a
-   valid single-byte character.  */
-static wint_t mbrtowc_cache[NOTCHAR];
-
 /* Store into *PWC the result of converting the leading bytes of the
-   multibyte buffer S of length N bytes, using the mbrtowc_cache in *D
+   multibyte buffer S of length N bytes, using D->localeinfo.sbctowc
    and updating the conversion state in *D.  On conversion error,
    convert just a single byte, to WEOF.  Return the number of bytes
    converted.
@@ -539,7 +546,7 @@ static wint_t mbrtowc_cache[NOTCHAR];
 
    * PWC points to wint_t, not to wchar_t.
    * The last arg is a dfa *D instead of merely a multibyte conversion
-     state D->mbs.  D also contains an mbrtowc_cache for speed.
+     state D->mbs.
    * N must be at least 1.
    * S[N - 1] must be a sentinel byte.
    * Shift encodings are not supported.
@@ -550,7 +557,7 @@ static size_t
 mbs_to_wchar (wint_t *pwc, char const *s, size_t n, struct dfa *d)
 {
   unsigned char uc = s[0];
-  wint_t wc = mbrtowc_cache[uc];
+  wint_t wc = d->localeinfo.sbctowc[uc];
 
   if (wc == WEOF)
     {
@@ -727,7 +734,7 @@ maybe_realloc (void *ptr, size_t nitems, size_t *nalloc, size_t itemsize)
 
 /* In DFA D, find the index of charclass S, or allocate a new one.  */
 static size_t
-dfa_charclass_index (struct dfa *d, charclass const s)
+charclass_index (struct dfa *d, charclass const s)
 {
   size_t i;
 
@@ -742,9 +749,9 @@ dfa_charclass_index (struct dfa *d, charclass const s)
 }
 
 static bool
-unibyte_word_constituent (unsigned char c)
+unibyte_word_constituent (struct dfa const *dfa, unsigned char c)
 {
-  return mbrtowc_cache[c] != WEOF && (isalnum (c) || (c) == '_');
+  return dfa->localeinfo.sbctowc[c] != WEOF && (isalnum (c) || (c) == '_');
 }
 
 static int
@@ -752,66 +759,9 @@ char_context (struct dfa const *dfa, unsigned char c)
 {
   if (c == dfa->syntax.eolbyte)
     return CTX_NEWLINE;
-  if (unibyte_word_constituent (c))
+  if (unibyte_word_constituent (dfa, c))
     return CTX_LETTER;
   return CTX_NONE;
-}
-
-/* UTF-8 encoding allows some optimizations that we can't otherwise
-   assume in a multibyte encoding.  */
-static bool using_utf8;
-
-bool
-dfa_using_utf8 (void)
-{
-  return using_utf8;
-}
-
-static void
-init_mbrtowc_cache (void)
-{
-  int i;
-  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
-    {
-      char c = i;
-      unsigned char uc = i;
-      mbstate_t s = { 0 };
-      wchar_t wc;
-      mbrtowc_cache[uc] = mbrtowc (&wc, &c, 1, &s) <= 1 ? wc : WEOF;
-    }
-}
-
-/* Entry point to set syntax options.  */
-void
-dfasyntax (struct dfa *dfa, reg_syntax_t bits, bool fold, unsigned char eol)
-{
-  int i;
-  dfa->syntax.syntax_bits_set = true;
-  dfa->syntax.syntax_bits = bits;
-  dfa->syntax.case_fold = fold;
-  dfa->syntax.eolbyte = eol;
-
-  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
-    {
-      unsigned char uc = i;
-
-      /* Use mbrtowc_cache to calculate sbit.  */
-      dfa->syntax.sbit[uc] = char_context (dfa, uc);
-      switch (dfa->syntax.sbit[uc])
-        {
-        case CTX_LETTER:
-          setbit (uc, dfa->syntax.letters);
-          break;
-        case CTX_NEWLINE:
-          setbit (uc, dfa->syntax.newline);
-          break;
-        }
-
-      /* POSIX requires that the five bytes in "\n\r./" (including the
-         terminating NUL) cannot occur inside a multibyte character.  */
-      dfa->syntax.never_trail[uc] = (using_utf8 ? (uc & 0xc0) != 0x80
-                                     : strchr ("\n\r./", uc) != NULL);
-    }
 }
 
 /* Set a bit in the charclass for the given wchar_t.  Do nothing if WC
@@ -842,30 +792,10 @@ setbit_case_fold_c (int b, charclass c)
       setbit (i, c);
 }
 
-static void check_utf8 (void)
-{
-  wchar_t wc;
-  mbstate_t mbs = { 0 };
-  using_utf8 = mbrtowc (&wc, "\xc4\x80", 2, &mbs) == 2 && wc == 0x100;
-}
-
-static bool unibyte_c;
-
-static void check_unibyte_c (void)
-{
-  char const *locale = setlocale (LC_ALL, NULL);
-  unibyte_c = (!locale
-               || STREQ (locale, "C")
-               || STREQ (locale, "POSIX"));
-}
-
-/* The current locale is known to be a unibyte locale
-   without multicharacter collating sequences and where range
-   comparisons simply use the native encoding.  These locales can be
-   processed more efficiently.  */
+/* Return true if the locale compatible with the C locale.  */
 
 static bool
-using_simple_locale (struct dfa const *dfa)
+using_simple_locale (bool multibyte)
 {
   /* The native character set is known to be compatible with
      the C locale.  The following test isn't perfect, but it's good
@@ -883,7 +813,15 @@ using_simple_locale (struct dfa const *dfa)
      && '}' == 125 && '~' == 126)
   };
 
-  return (native_c_charset & !dfa->multibyte) | unibyte_c;
+  if (native_c_charset && !multibyte)
+    return true;
+  else
+    {
+      /* Treat C and POSIX locales as being compatible.  Also, treat
+         errors as compatible, as these are invariably from stubs.  */
+      char const *loc = setlocale (LC_ALL, NULL);
+      return !loc || strcmp (loc, "C") == 0 || strcmp (loc, "POSIX") == 0;
+    }
 }
 
 /* Fetch the next lexical input character.  Set C (of type int) to the
@@ -1034,7 +972,7 @@ parse_bracket_exp (struct dfa *dfa)
   size_t chars_al;
 
   chars_al = 0;
-  if (dfa->multibyte)
+  if (dfa->localeinfo.multibyte)
     {
       dfa->mbcsets = maybe_realloc (dfa->mbcsets, dfa->nmbcsets,
                                     &dfa->mbcsets_alloc,
@@ -1057,7 +995,7 @@ parse_bracket_exp (struct dfa *dfa)
     {
       FETCH_WC (dfa, c, wc, _("unbalanced ["));
       invert = true;
-      known_bracket_exp = using_simple_locale (dfa);
+      known_bracket_exp = dfa->simple_locale;
     }
   else
     invert = false;
@@ -1112,7 +1050,7 @@ parse_bracket_exp (struct dfa *dfa)
                   if (!pred)
                     dfaerror (_("invalid character class"));
 
-                  if (dfa->multibyte && !pred->single_byte_only)
+                  if (dfa->localeinfo.multibyte && !pred->single_byte_only)
                     known_bracket_exp = false;
                   else
                     for (c2 = 0; c2 < NOTCHAR; ++c2)
@@ -1172,9 +1110,9 @@ parse_bracket_exp (struct dfa *dfa)
               /* Treat [x-y] as a range if x != y.  */
               if (wc != wc2 || wc == WEOF)
                 {
-                  if (dfa->multibyte)
+                  if (dfa->localeinfo.multibyte)
                     known_bracket_exp = false;
-                  else if (using_simple_locale (dfa))
+                  else if (dfa->simple_locale)
                     {
                       int ci;
                       for (ci = c; ci <= c2; ci++)
@@ -1201,7 +1139,7 @@ parse_bracket_exp (struct dfa *dfa)
 
       colon_warning_state |= (c == ':') ? 2 : 4;
 
-      if (!dfa->multibyte)
+      if (!dfa->localeinfo.multibyte)
         {
           if (dfa->syntax.case_fold)
             setbit_case_fold_c (c, ccl);
@@ -1238,22 +1176,22 @@ parse_bracket_exp (struct dfa *dfa)
   if (! known_bracket_exp)
     return BACKREF;
 
-  if (dfa->multibyte)
+  if (dfa->localeinfo.multibyte)
     {
       work_mbc->invert = invert;
-      work_mbc->cset = emptyset (ccl) ? -1 : dfa_charclass_index (dfa, ccl);
+      work_mbc->cset = emptyset (ccl) ? -1 : charclass_index (dfa, ccl);
       return MBCSET;
     }
 
   if (invert)
     {
-      assert (!dfa->multibyte);
+      assert (!dfa->localeinfo.multibyte);
       notset (ccl);
       if (dfa->syntax.syntax_bits & RE_HAT_LISTS_NOT_NEWLINE)
         clrbit ('\n', ccl);
     }
 
-  return CSET + dfa_charclass_index (dfa, ccl);
+  return CSET + charclass_index (dfa, ccl);
 }
 
 struct lexptr
@@ -1508,7 +1446,7 @@ lex (struct dfa *dfa)
         case '.':
           if (backslash)
             goto normal_char;
-          if (dfa->multibyte)
+          if (dfa->localeinfo.multibyte)
             {
               /* In multibyte environment period must match with a single
                  character not a byte.  So we use ANYCHAR.  */
@@ -1522,13 +1460,13 @@ lex (struct dfa *dfa)
           if (dfa->syntax.syntax_bits & RE_DOT_NOT_NULL)
             clrbit ('\0', ccl);
           dfa->lex.laststart = false;
-          return dfa->lex.lasttok = CSET + dfa_charclass_index (dfa, ccl);
+          return dfa->lex.lasttok = CSET + charclass_index (dfa, ccl);
 
         case 's':
         case 'S':
           if (!backslash || (dfa->syntax.syntax_bits & RE_NO_GNU_OPS))
             goto normal_char;
-          if (!dfa->multibyte)
+          if (!dfa->localeinfo.multibyte)
             {
               zeroset (ccl);
               for (c2 = 0; c2 < NOTCHAR; ++c2)
@@ -1537,7 +1475,7 @@ lex (struct dfa *dfa)
               if (c == 'S')
                 notset (ccl);
               dfa->lex.laststart = false;
-              return dfa->lex.lasttok = CSET + dfa_charclass_index (dfa, ccl);
+              return dfa->lex.lasttok = CSET + charclass_index (dfa, ccl);
             }
 
           /* FIXME: see if optimizing this, as is done with ANYCHAR and
@@ -1561,16 +1499,16 @@ lex (struct dfa *dfa)
           if (!backslash || (dfa->syntax.syntax_bits & RE_NO_GNU_OPS))
             goto normal_char;
 
-          if (!dfa->multibyte)
+          if (!dfa->localeinfo.multibyte)
             {
               zeroset (ccl);
               for (c2 = 0; c2 < NOTCHAR; ++c2)
-                if (unibyte_word_constituent (c2))
+                if (unibyte_word_constituent (dfa, c2))
                   setbit (c2, ccl);
               if (c == 'W')
                 notset (ccl);
               dfa->lex.laststart = false;
-              return dfa->lex.lasttok = CSET + dfa_charclass_index (dfa, ccl);
+              return dfa->lex.lasttok = CSET + charclass_index (dfa, ccl);
             }
 
           /* FIXME: see if optimizing this, as is done with ANYCHAR and
@@ -1600,14 +1538,14 @@ lex (struct dfa *dfa)
           dfa->lex.laststart = false;
           /* For multibyte character sets, folding is done in atom.  Always
              return WCHAR.  */
-          if (dfa->multibyte)
+          if (dfa->localeinfo.multibyte)
             return dfa->lex.lasttok = WCHAR;
 
           if (dfa->syntax.case_fold && isalpha (c))
             {
               zeroset (ccl);
               setbit_case_fold_c (c, ccl);
-              return dfa->lex.lasttok = CSET + dfa_charclass_index (dfa, ccl);
+              return dfa->lex.lasttok = CSET + charclass_index (dfa, ccl);
             }
 
           return dfa->lex.lasttok = c;
@@ -1627,11 +1565,11 @@ addtok_mb (struct dfa *dfa, token t, int mbprop)
     {
       dfa->tokens = x2nrealloc (dfa->tokens, &dfa->talloc,
                                 sizeof *dfa->tokens);
-      if (dfa->multibyte)
+      if (dfa->localeinfo.multibyte)
         dfa->multibyte_prop = xnrealloc (dfa->multibyte_prop, dfa->talloc,
                                          sizeof *dfa->multibyte_prop);
     }
-  if (dfa->multibyte)
+  if (dfa->localeinfo.multibyte)
     dfa->multibyte_prop[dfa->tindex] = mbprop;
   dfa->tokens[dfa->tindex++] = t;
 
@@ -1668,7 +1606,7 @@ static void addtok_wc (struct dfa *dfa, wint_t wc);
 static void
 addtok (struct dfa *dfa, token t)
 {
-  if (dfa->multibyte && t == MBCSET)
+  if (dfa->localeinfo.multibyte && t == MBCSET)
     {
       bool need_or = false;
       struct mb_char_classes *work_mbc = &dfa->mbcsets[dfa->nmbcsets - 1];
@@ -1767,7 +1705,7 @@ add_utf8_anychar (struct dfa *dfa)
             if (dfa->syntax.syntax_bits & RE_DOT_NOT_NULL)
               clrbit ('\0', c);
           }
-        dfa->utf8_anychar_classes[i] = CSET + dfa_charclass_index (dfa, c);
+        dfa->utf8_anychar_classes[i] = CSET + charclass_index (dfa, c);
       }
 
   /* A valid UTF-8 character is
@@ -1851,7 +1789,7 @@ atom (struct dfa *dfa)
 
       dfa->parse.tok = lex (dfa);
     }
-  else if (dfa->parse.tok == ANYCHAR && using_utf8)
+  else if (dfa->parse.tok == ANYCHAR && dfa->localeinfo.using_utf8)
     {
       /* For UTF-8 expand the period to a series of CSETs that define a valid
          UTF-8 character.  This avoids using the slow multibyte path.  I'm
@@ -1912,7 +1850,7 @@ copytoks (struct dfa *dfa, size_t tindex, size_t ntokens)
 {
   size_t i;
 
-  if (dfa->multibyte)
+  if (dfa->localeinfo.multibyte)
     for (i = 0; i < ntokens; ++i)
       addtok_mb (dfa, dfa->tokens[tindex + i], dfa->multibyte_prop[tindex + i]);
   else
@@ -1998,7 +1936,7 @@ dfaparse (char const *s, size_t len, struct dfa *d)
   d->lex.lasttok = END;
   d->lex.laststart = true;
   d->lex.parens = 0;
-  if (d->multibyte)
+  if (d->localeinfo.multibyte)
     {
       d->lex.cur_mb_len = 0;
       memset (&d->mbs, 0, sizeof d->mbs);
@@ -2187,7 +2125,7 @@ state_index (struct dfa *d, position_set const *s, int context)
         }
       else if (d->tokens[s->elems[j].index] == BACKREF)
         constraint = NO_CONSTRAINT;
-      if (d->multibyte && d->tokens[s->elems[j].index] == ANYCHAR)
+      if (d->localeinfo.multibyte && d->tokens[s->elems[j].index] == ANYCHAR)
         {
           int acceptable
             = ((SUCCEEDS_IN_CONTEXT (c, context, CTX_NEWLINE)
@@ -2664,7 +2602,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         setbit (d->tokens[pos.index], matches);
       else if (d->tokens[pos.index] >= CSET)
         copyset (d->charclasses[d->tokens[pos.index] - CSET], matches);
-      else if (d->multibyte && d->tokens[pos.index] == ANYCHAR)
+      else if (d->localeinfo.multibyte && d->tokens[pos.index] == ANYCHAR)
         {
           /* ANYCHAR must match a single character, so put it to
              D->states[s].mbps which contains the positions which can
@@ -2810,7 +2748,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         state_letter = state;
 
       for (i = 0; i < NOTCHAR; ++i)
-        trans[i] = unibyte_word_constituent (i) ? state_letter : state;
+        trans[i] = unibyte_word_constituent (d, i) ? state_letter : state;
       trans[d->syntax.eolbyte] = state_newline;
     }
   else
@@ -2827,7 +2765,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
         for (k = 0; k < d->follows[grps[i].elems[j]].nelem; ++k)
           insert (d->follows[grps[i].elems[j]].elems[k], &follows);
 
-      if (d->multibyte)
+      if (d->localeinfo.multibyte)
         {
           /* If a token in follows.elems is not 1st byte of a multibyte
              character, or the states of follows must accept the bytes
@@ -2860,7 +2798,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
 
       /* If we are building a searching matcher, throw in the positions
          of state 0 as well.  */
-      if (d->searchflag && (!d->multibyte || !next_isnt_1st_byte))
+      if (d->searchflag && (!d->localeinfo.multibyte || !next_isnt_1st_byte))
         {
           merge (&d->states[0].elems, &follows, &tmp);
           copy (&tmp, &follows);
@@ -2916,7 +2854,7 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
 
               if (c == d->syntax.eolbyte)
                 trans[c] = state_newline;
-              else if (unibyte_word_constituent (c))
+              else if (unibyte_word_constituent (d, c))
                 trans[c] = state_letter;
               else if (c < NOTCHAR)
                 trans[c] = state;
@@ -2957,7 +2895,7 @@ realloc_trans_if_necessary (struct dfa *d, state_num new_state)
       d->fails = xnrealloc (d->fails, newalloc, sizeof *d->fails);
       d->success = xnrealloc (d->success, newalloc, sizeof *d->success);
       d->newlines = xnrealloc (d->newlines, newalloc, sizeof *d->newlines);
-      if (d->multibyte)
+      if (d->localeinfo.multibyte)
         {
           realtrans = d->mb_trans ? d->mb_trans - 1 : NULL;
           realtrans = xnrealloc (realtrans, newalloc1, sizeof *realtrans);
@@ -2969,7 +2907,7 @@ realloc_trans_if_necessary (struct dfa *d, state_num new_state)
         {
           d->trans[oldalloc] = NULL;
           d->fails[oldalloc] = NULL;
-          if (d->multibyte)
+          if (d->localeinfo.multibyte)
             d->mb_trans[oldalloc] = NULL;
         }
     }
@@ -3003,7 +2941,7 @@ build_state (state_num s, struct dfa *d)
         }
       d->trcount = d->min_trcount;
 
-      if (d->multibyte)
+      if (d->localeinfo.multibyte)
         {
           for (i = d->min_trcount; i < d->tralloc; i++)
             {
@@ -3454,7 +3392,7 @@ dfaexec_noop (struct dfa *d, char const *begin, char *end,
   return (char *) begin;
 }
 
-/* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, D->multibyte),
+/* Like dfaexec_main (D, BEGIN, END, ALLOW_NL, COUNT, D->localeinfo.multibyte),
    but faster and set *BACKREF if the DFA code does not support this
    regexp usage.  */
 
@@ -3512,7 +3450,7 @@ dfa_supported (struct dfa const *d)
         case ENDWORD:
         case LIMWORD:
         case NOTLIMWORD:
-          if (!d->multibyte)
+          if (!d->localeinfo.multibyte)
             continue;
           /* fallthrough */
 
@@ -3530,7 +3468,7 @@ dfaoptimize (struct dfa *d)
   size_t i;
   bool have_backref = false;
 
-  if (!using_utf8)
+  if (!d->localeinfo.using_utf8)
     return;
 
   for (i = 0; i < d->tindex; ++i)
@@ -3560,7 +3498,7 @@ dfaoptimize (struct dfa *d)
     }
 
   free_mbdata (d);
-  d->multibyte = false;
+  d->localeinfo.multibyte = false;
   d->dfaexec = dfaexec_sb;
   d->fast = true;
 }
@@ -3575,7 +3513,7 @@ dfassbuild (struct dfa *d)
   struct dfa *sup = dfaalloc ();
 
   *sup = *d;
-  sup->multibyte = false;
+  sup->localeinfo.multibyte = false;
   sup->dfaexec = dfaexec_sb;
   sup->multibyte_prop = NULL;
   sup->mbcsets = NULL;
@@ -3608,7 +3546,7 @@ dfassbuild (struct dfa *d)
         case BACKREF:
           zeroset (ccl);
           notset (ccl);
-          sup->tokens[j++] = CSET + dfa_charclass_index (sup, ccl);
+          sup->tokens[j++] = CSET + charclass_index (sup, ccl);
           sup->tokens[j++] = STAR;
           if (d->tokens[i + 1] == QMARK || d->tokens[i + 1] == STAR
               || d->tokens[i + 1] == PLUS)
@@ -3619,7 +3557,7 @@ dfassbuild (struct dfa *d)
         case ENDWORD:
         case LIMWORD:
         case NOTLIMWORD:
-          if (d->multibyte)
+          if (d->localeinfo.multibyte)
             {
               /* These constraints aren't supported in a multibyte locale.
                  Ignore them in the superset DFA.  */
@@ -3636,7 +3574,7 @@ dfassbuild (struct dfa *d)
     }
   sup->tindex = j;
 
-  if (have_nchar && (have_achar || d->multibyte))
+  if (have_nchar && (have_achar || d->localeinfo.multibyte))
     d->superset = sup;
   else
     {
@@ -3678,7 +3616,7 @@ dfafree (struct dfa *d)
   free (d->charclasses);
   free (d->tokens);
 
-  if (d->multibyte)
+  if (d->localeinfo.multibyte)
     free_mbdata (d);
 
   for (i = 0; i < d->sindex; ++i)
@@ -4200,20 +4138,49 @@ dfamustfree (struct dfamust *dm)
 struct dfa *
 dfaalloc (void)
 {
-  struct dfa *d = xzalloc (sizeof *d);
-  d->multibyte = MB_CUR_MAX > 1;
-  d->dfaexec = d->multibyte ? dfaexec_mb : dfaexec_sb;
-  d->fast = !d->multibyte;
-  d->lex.cur_mb_len = 1;
-  return d;
+  return xmalloc (sizeof (struct dfa));
 }
 
+/* Initialize DFA.  */
 void
-dfa_init (void)
+dfasyntax (struct dfa *dfa, struct localeinfo const *linfo,
+           reg_syntax_t bits, bool fold, unsigned char eol)
 {
-  check_utf8 ();
-  check_unibyte_c ();
-  init_mbrtowc_cache ();
+  int i;
+  memset (dfa, 0, offsetof (struct dfa, dfaexec));
+  dfa->dfaexec = linfo->multibyte ? dfaexec_mb : dfaexec_sb;
+  dfa->simple_locale = using_simple_locale (linfo->multibyte);
+  dfa->localeinfo = *linfo;
+
+  dfa->fast = !dfa->localeinfo.multibyte;
+
+  dfa->lex.cur_mb_len = 1;
+  dfa->syntax.syntax_bits_set = true;
+  dfa->syntax.syntax_bits = bits;
+  dfa->syntax.case_fold = fold;
+  dfa->syntax.eolbyte = eol;
+
+  for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
+    {
+      unsigned char uc = i;
+
+      dfa->syntax.sbit[uc] = char_context (dfa, uc);
+      switch (dfa->syntax.sbit[uc])
+        {
+        case CTX_LETTER:
+          setbit (uc, dfa->syntax.letters);
+          break;
+        case CTX_NEWLINE:
+          setbit (uc, dfa->syntax.newline);
+          break;
+        }
+
+      /* POSIX requires that the five bytes in "\n\r./" (including the
+         terminating NUL) cannot occur inside a multibyte character.  */
+      dfa->syntax.never_trail[uc] = (dfa->localeinfo.using_utf8
+                                     ? (uc & 0xc0) != 0x80
+                                     : strchr ("\n\r./", uc) != NULL);
+    }
 }
 
 /* vim:set shiftwidth=2: */
