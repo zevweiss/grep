@@ -2671,18 +2671,9 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
      is to fail miserably.  */
   if (d->searchflag)
     {
-      /* Find the state(s) corresponding to the positions of state 0.  */
-      copy (&d->states[0].elems, &follows);
-      separate_contexts = state_separate_contexts (&follows);
-      state = state_index (d, &follows, separate_contexts ^ CTX_ANY);
-      if (separate_contexts & CTX_NEWLINE)
-        state_newline = state_index (d, &follows, CTX_NEWLINE);
-      else
-        state_newline = state;
-      if (separate_contexts & CTX_LETTER)
-        state_letter = state_index (d, &follows, CTX_LETTER);
-      else
-        state_letter = state;
+      state_newline = 0;
+      state_letter = d->min_trcount - 1;
+      state = d->initstate_notbol;
 
       for (i = 0; i < NOTCHAR; ++i)
         trans[i] = unibyte_word_constituent (d, i) ? state_letter : state;
