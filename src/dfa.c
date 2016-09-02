@@ -3747,9 +3747,11 @@ dfamust (struct dfa const *d)
   bool exact = false;
   bool begline = false;
   bool endline = false;
+  size_t rj;
   bool need_begline = false;
   bool need_endline = false;
   bool case_fold_unibyte = d->syntax.case_fold && MB_CUR_MAX == 1;
+  struct dfamust *dm;
 
   for (ri = 0; ri < d->tindex; ++ri)
     {
@@ -3926,7 +3928,7 @@ dfamust (struct dfa const *d)
                 }
             }
 
-          size_t rj = ri + 2;
+          rj = ri + 2;
           if (d->tokens[ri + 1] == CAT)
             {
               for (; rj < d->tindex - 1; rj += 2)
@@ -3955,7 +3957,7 @@ dfamust (struct dfa const *d)
     }
  done:;
 
-  struct dfamust *dm = NULL;
+  dm = NULL;
   if (*result)
     {
       dm = xmalloc (sizeof *dm);
