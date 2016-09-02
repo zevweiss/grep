@@ -22,7 +22,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "xalloc.h" /* for _GL_ATTRIBUTE_MALLOC */
+#if 3 <= __GNUC__
+# define _GL_ATTRIBUTE_MALLOC __attribute__ ((__malloc__))
+#else
+# define _GL_ATTRIBUTE_MALLOC
+#endif
 
 struct localeinfo; /* See localeinfo.h.  */
 

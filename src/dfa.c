@@ -24,8 +24,6 @@
 
 #include "dfa.h"
 
-#include "localeinfo.h"
-
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -50,6 +48,9 @@
 #define _(str) gettext (str)
 
 #include <wchar.h>
+
+#include "xalloc.h"
+#include "localeinfo.h"
 
 /* HPUX defines these as macros in sys/param.h.  */
 #ifdef setbit
