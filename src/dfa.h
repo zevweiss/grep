@@ -46,15 +46,29 @@ struct dfa;
    calling dfafree() on it. */
 extern struct dfa *dfaalloc (void) _GL_ATTRIBUTE_MALLOC;
 
+/* DFA options that can be ORed together, for dfasyntax's 4th arg.  */
+enum
+  {
+    /* ^ and $ match only the start and end of data, and do not match
+       end-of-line within data.  This is always false for grep, but
+       possibly true for other apps.  */
+    DFA_ANCHOR = 1 << 0,
+
+    /* Ignore case while matching.  */
+    DFA_CASE_FOLD = 1 << 1,
+
+    /* '\0' in data is end-of-line, instead of the traditional '\n'.  */
+    DFA_EOL_NUL = 1 << 2
+  };
+
 /* Initialize or reinitialize a DFA.  This must be called before
    any of the routines below.  The arguments are:
    1. The DFA to operate on.
    2. Information about the current locale.
-   3. The syntax bits described earlier in this file.
-   4. The case-folding flag.
-   5. The line terminator.  */
+   3. Syntax bits described in regex.h.
+   4. Additional DFA options described above.  */
 extern void dfasyntax (struct dfa *, struct localeinfo const *,
-                       reg_syntax_t, bool, unsigned char);
+                       reg_syntax_t, int);
 
 /* Build and return the struct dfamust from the given struct dfa. */
 extern struct dfamust *dfamust (struct dfa const *);

@@ -335,6 +335,10 @@ struct regex_syntax
   /* Flag for case-folding letters into sets.  */
   bool case_fold;
 
+  /* True if ^ and $ match only the start and end of data, and do not match
+     end-of-line within data.  */
+  bool anchor;
+
   /* End-of-line byte in data.  */
   unsigned char eolbyte;
 
@@ -754,7 +758,7 @@ unibyte_word_constituent (struct dfa const *dfa, unsigned char c)
 static int
 char_context (struct dfa const *dfa, unsigned char c)
 {
-  if (c == dfa->syntax.eolbyte)
+  if (c == dfa->syntax.eolbyte && !dfa->syntax.anchor)
     return CTX_NEWLINE;
   if (unibyte_word_constituent (dfa, c))
     return CTX_LETTER;
@@ -3987,7 +3991,7 @@ dfaalloc (void)
 /* Initialize DFA.  */
 void
 dfasyntax (struct dfa *dfa, struct localeinfo const *linfo,
-           reg_syntax_t bits, bool fold, unsigned char eol)
+           reg_syntax_t bits, int dfaopts)
 {
   int i;
   memset (dfa, 0, offsetof (struct dfa, dfaexec));
@@ -4000,9 +4004,10 @@ dfasyntax (struct dfa *dfa, struct localeinfo const *linfo,
   dfa->canychar = -1;
   dfa->lex.cur_mb_len = 1;
   dfa->syntax.syntax_bits_set = true;
+  dfa->syntax.case_fold = (dfaopts & DFA_CASE_FOLD) != 0;
+  dfa->syntax.anchor = (dfaopts & DFA_ANCHOR) != 0;
+  dfa->syntax.eolbyte = dfaopts & DFA_EOL_NUL ? '\0' : '\n';
   dfa->syntax.syntax_bits = bits;
-  dfa->syntax.case_fold = fold;
-  dfa->syntax.eolbyte = eol;
 
   for (i = CHAR_MIN; i <= CHAR_MAX; ++i)
     {
