@@ -151,7 +151,10 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
       struct re_pattern_buffer *pat = &patterns[pcount];
       pat->buffer = NULL;
       pat->allocated = 0;
-      pat->fastmap = NULL;
+
+      /* Do not use a fastmap with -i, to work around glibc Bug#20381.  */
+      pat->fastmap = match_icase ? NULL : xmalloc (UCHAR_MAX + 1);
+
       pat->translate = NULL;
 
       char const *err = re_compile_pattern (p, len, pat);
