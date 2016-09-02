@@ -40,13 +40,7 @@ static kwset_t kwset;
 static struct dfa *dfa;
 
 /* The Regex compiled patterns.  */
-static struct
-{
-  /* Regex compiled regexp. */
-  struct re_pattern_buffer regexbuf;
-  struct re_registers regs; /* This is here on account of a BRAIN-DEAD
-                               Q@#%!# library interface in regex.c.  */
-} *patterns;
+static struct re_pattern_buffer *patterns;
 static size_t pcount;
 
 /* Number of compiled fixed strings known to exactly match the regexp.
@@ -122,7 +116,6 @@ kwsmusts (void)
 void
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
-  size_t total = size;
   char *motif;
 
   dfa = dfaalloc ();
@@ -137,28 +130,31 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
      this should be a syntax error.  The same for backref, where the
      backref should be local to each pattern.  */
   char const *p = pattern;
+  char const *patlim = pattern + size;
   bool compilation_failed = false;
+  size_t palloc = 0;
+
   do
     {
       size_t len;
-      char const *sep = memchr (p, '\n', total);
+      char const *sep = memchr (p, '\n', patlim - p);
       if (sep)
         {
           len = sep - p;
           sep++;
-          total -= (len + 1);
         }
       else
-        {
-          len = total;
-          total = 0;
-        }
+        len = patlim - p;
 
-      patterns = xnrealloc (patterns, pcount + 1, sizeof *patterns);
-      memset (&patterns[pcount], 0, sizeof patterns[pcount]);
+      if (palloc <= pcount)
+        patterns = x2nrealloc (patterns, &palloc, sizeof *patterns);
+      struct re_pattern_buffer *pat = &patterns[pcount];
+      pat->buffer = NULL;
+      pat->allocated = 0;
+      pat->fastmap = NULL;
+      pat->translate = NULL;
 
-      char const *err = re_compile_pattern (p, len,
-                                            &(patterns[pcount].regexbuf));
+      char const *err = re_compile_pattern (p, len, pat);
       if (err)
         {
           /* With patterns specified only on the command line, emit the bare
@@ -198,7 +194,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 
       strcpy (n, match_lines ? (bk ? line_beg_bk : line_beg_no_bk)
                              : (bk ? word_beg_bk : word_beg_no_bk));
-      total = strlen(n);
+      size_t total = strlen (n);
       memcpy (n + total, pattern, size);
       total += size;
       strcpy (n + total, match_lines ? (bk ? line_end_bk : line_end_no_bk)
@@ -213,7 +209,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   dfacomp (pattern, size, dfa, 1);
   kwsmusts ();
 
-  free(motif);
+  free (motif);
 }
 
 size_t
@@ -355,17 +351,24 @@ EGexecute (char *buf, size_t size, size_t *match_size,
       best_len = 0;
       for (i = 0; i < pcount; i++)
         {
-          patterns[i].regexbuf.not_eol = 0;
-          patterns[i].regexbuf.newline_anchor = eolbyte == '\n';
-          start = re_search (&(patterns[i].regexbuf),
-                             beg, end - beg - 1,
-                             ptr - beg, end - ptr - 1,
-                             &(patterns[i].regs));
+          /* This is static because of a BRAIN-DEAD Q@#%!# library
+             interface in regex.c, as later calls reuse the
+             dynamically allocated storage that REGS members point at
+             and the API provides no way to free this storage.
+             If grep is ever made multithreaded, REGS would have to be
+             per-thread or the library API changed or the library
+             encapsulation violated.  */
+          static struct re_registers regs;
+
+          patterns[i].not_eol = 0;
+          patterns[i].newline_anchor = eolbyte == '\n';
+          start = re_search (&patterns[i], beg, end - beg - 1,
+                             ptr - beg, end - ptr - 1, &regs);
           if (start < -1)
             xalloc_die ();
           else if (0 <= start)
             {
-              len = patterns[i].regs.end[0] - start;
+              len = regs.end[0] - start;
               match = beg + start;
               if (match > best_match)
                 continue;
@@ -396,11 +399,10 @@ EGexecute (char *buf, size_t size, size_t *match_size,
                       {
                         /* Try a shorter length anchored at the same place. */
                         --len;
-                        patterns[i].regexbuf.not_eol = 1;
-                        shorter_len = re_match (&(patterns[i].regexbuf),
-                                                beg, match + len - ptr,
-                                                match - beg,
-                                                &(patterns[i].regs));
+                        patterns[i].not_eol = 1;
+                        shorter_len = re_match (&patterns[i], beg,
+                                                match + len - ptr, match - beg,
+                                                &regs);
                         if (shorter_len < -1)
                           xalloc_die ();
                       }
@@ -412,18 +414,17 @@ EGexecute (char *buf, size_t size, size_t *match_size,
                         if (match == end - 1)
                           break;
                         match++;
-                        patterns[i].regexbuf.not_eol = 0;
-                        start = re_search (&(patterns[i].regexbuf),
-                                           beg, end - beg - 1,
+                        patterns[i].not_eol = 0;
+                        start = re_search (&patterns[i], beg, end - beg - 1,
                                            match - beg, end - match - 1,
-                                           &(patterns[i].regs));
+                                           &regs);
                         if (start < 0)
                           {
                             if (start < -1)
                               xalloc_die ();
                             break;
                           }
-                        len = patterns[i].regs.end[0] - start;
+                        len = regs.end[0] - start;
                         match = beg + start;
                       }
                   } /* while (match <= best_match) */
