@@ -3038,16 +3038,14 @@ transit_state (struct dfa *d, state_num s, unsigned char const **pp,
    Both P and MBP must be no larger than END.  */
 static unsigned char const *
 skip_remains_mb (struct dfa *d, unsigned char const *p,
-                 unsigned char const *mbp, char const *end, wint_t *wcp)
+                 unsigned char const *mbp, char const *end)
 {
-  wint_t wc = WEOF;
+  wint_t wc;
   if (d->syntax.never_trail[*p])
     return p;
   while (mbp < p)
     mbp += mbs_to_wchar (&wc, (char const *) mbp,
                          end - (char const *) mbp, d);
-  if (wcp != NULL)
-    *wcp = wc;
   return mbp;
 }
 
@@ -3104,46 +3102,22 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
 
   for (;;)
     {
-      if (multibyte)
+      while ((t = trans[s]) != NULL)
         {
-          while ((t = trans[s]) != NULL)
+          if (s < d->min_trcount)
+            {
+              if (!multibyte || d->states[s].mbps.nelem == 0)
+                {
+                  while (t[*p] == s)
+                    p++;
+                }
+              if (multibyte)
+                p = mbp = skip_remains_mb (d, p, mbp, end);
+            }
+
+          if (multibyte)
             {
               s1 = s;
-
-              if (s < d->min_trcount)
-                {
-                  if (d->min_trcount == 1)
-                    {
-                      if (d->states[s].mbps.nelem == 0)
-                        {
-                          do
-                            {
-                              while (t[*p] == 0)
-                                p++;
-                              p = mbp = skip_remains_mb (d, p, mbp, end, NULL);
-                            }
-                          while (t[*p] == 0);
-                        }
-                      else
-                        p = mbp = skip_remains_mb (d, p, mbp, end, NULL);
-                    }
-                  else
-                    {
-                      wint_t wc;
-                      mbp = skip_remains_mb (d, p, mbp, end, &wc);
-
-                      /* If d->min_trcount is greater than 1, maybe
-                         transit to another initial state after skip.  */
-                      if (p < mbp)
-                        {
-                          /* It's CTX_LETTER or CTX_NONE.  CTX_NEWLINE
-                             cannot happen, as we assume that a newline
-                             is always a single byte character.  */
-                          s1 = s = d->initstate_notbol;
-                          p = mbp;
-                        }
-                    }
-                }
 
               if (d->states[s].mbps.nelem == 0
                   || d->localeinfo.sbctowc[*p] != WEOF || (char *) p >= end)
@@ -3159,22 +3133,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
                   trans = d->trans;
                 }
             }
-        }
-      else
-        {
-          if (s == 0)
-            {
-              t = trans[s];
-              if (t)
-                {
-                  while (t[*p] == 0)
-                    p++;
-                  s1 = 0;
-                  s = t[*p++];
-                }
-            }
-
-          while ((t = trans[s]) != NULL)
+          else
             {
               s1 = t[*p++];
               t = trans[s1];
@@ -3184,6 +3143,11 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
                   s = s1;
                   s1 = tmp;     /* swap */
                   break;
+                }
+              if (s < d->min_trcount)
+                {
+                  while (t[*p] == s1)
+                    p++;
                 }
               s = t[*p++];
             }
@@ -3208,6 +3172,9 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
         {
           if (d->success[s] & d->syntax.sbit[*p])
             goto done;
+
+          if (multibyte && s < d->min_trcount)
+            p = mbp = skip_remains_mb (d, p, mbp, end);
 
           s1 = s;
           if (!multibyte || d->states[s].mbps.nelem == 0
