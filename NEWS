@@ -13,6 +13,9 @@ GNU grep NEWS                                    -*- outline -*-
   grep -iF is typically much faster in a multibyte locale, if the
   pattern and its case counterparts contain only single byte characters.
 
+  grep with complicated expressions (e.g., back-references) and without
+  -i now uses the regex fastmap for better performance.
+
   In multibyte locales, grep now handles leading "." in patterns more
   efficiently.
 
