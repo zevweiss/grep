@@ -3183,10 +3183,7 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
 
           s1 = s;
           if (!multibyte || d->states[s].mbps.nelem == 0
-              || (*p == eol && !allow_nl)
-              || (*p == '\n' && !(d->syntax.syntax_bits & RE_DOT_NEWLINE))
-              || (*p == '\0' && (d->syntax.syntax_bits & RE_DOT_NOT_NULL))
-              || (char *) p >= end)
+              || d->localeinfo.sbctowc[*p] != WEOF || (char *) p >= end)
             {
               /* If a input character does not match ANYCHAR, do it
                  like a single-byte character.  */
