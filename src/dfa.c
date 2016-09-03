@@ -3171,12 +3171,10 @@ dfaexec_main (struct dfa *d, char const *begin, char *end, bool allow_nl,
           nlcount++;
           mbp = p;
 
-          s = allow_nl ? d->newlines[s1] : 0;
-
           s = (allow_nl ? d->newlines[s1]
-               : (d->syntax.sbit[eol] == CTX_NEWLINE ? 0
-                  : (d->syntax.sbit[eol] == CTX_LETTER ? d->min_trcount - 1
-                     : d->initstate_notbol)));
+               : d->syntax.sbit[eol] == CTX_NEWLINE ? 0
+               : d->syntax.sbit[eol] == CTX_LETTER ? d->min_trcount - 1
+               : d->initstate_notbol);
         }
       else if (d->fails[s])
         {
