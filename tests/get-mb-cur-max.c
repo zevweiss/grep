@@ -21,12 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "progname.h"
+#include "getprogname.h"
 
 int
 main (int argc, char **argv)
 {
-  set_program_name (argv[0]);
   if (1 < argc && setlocale (LC_ALL, argv[1]))
     {
       printf ("%d\n", (int) MB_CUR_MAX);

@@ -38,9 +38,9 @@
 #include "fcntl-safer.h"
 #include "fts_.h"
 #include "getopt.h"
+#include "getprogname.h"
 #include "grep.h"
 #include "intprops.h"
-#include "progname.h"
 #include "propername.h"
 #include "quote.h"
 #include "safe-read.h"
@@ -1897,19 +1897,19 @@ usage (int status)
   if (status != 0)
     {
       fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
-               program_name);
+               getprogname());
       fprintf (stderr, _("Try '%s --help' for more information.\n"),
-               program_name);
+               getprogname());
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), program_name);
+      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname());
       printf (_("Search for PATTERN in each FILE or standard input.\n"));
       printf (_("PATTERN is, by default, a basic regular expression (BRE).\n"));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n"), program_name);
+Regexp selection and interpretation:\n"), getprogname());
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
@@ -2358,8 +2358,6 @@ main (int argc, char **argv)
   FILE *fp;
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
-  set_program_name (argv[0]);
-  program_name = argv[0];
 
   keys = NULL;
   keycc = 0;
@@ -2689,7 +2687,7 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      version_etc (stdout, program_name, PACKAGE_NAME, VERSION, AUTHORS,
+      version_etc (stdout, getprogname(), PACKAGE_NAME, VERSION, AUTHORS,
                    (char *) NULL);
       return EXIT_SUCCESS;
     }

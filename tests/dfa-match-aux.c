@@ -26,7 +26,7 @@
 #include <dfa.h>
 #include <localeinfo.h>
 
-#include "progname.h"
+#include "getprogname.h"
 
 _Noreturn void
 dfaerror (char const *mesg)
@@ -50,7 +50,6 @@ main (int argc, char **argv)
   int allow_nl;
   struct localeinfo localeinfo;
 
-  set_program_name (argv[0]);
   if (argc < 3)
     exit (EXIT_FAILURE);
 
