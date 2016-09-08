@@ -1461,7 +1461,7 @@ lex (struct dfa *dfa)
             {
               zeroset (ccl);
               for (c2 = 0; c2 < NOTCHAR; ++c2)
-                if (unibyte_word_constituent (dfa, c2))
+                if (dfa->syntax.sbit[c2] == CTX_LETTER)
                   setbit (c2, ccl);
               if (c == 'W')
                 notset (ccl);
@@ -2178,11 +2178,10 @@ charclass_context (struct dfa const *dfa, charclass c)
   int context = 0;
   unsigned int j;
 
-  if (tstbit (dfa->syntax.eolbyte, c))
-    context |= CTX_NEWLINE;
-
   for (j = 0; j < CHARCLASS_WORDS; ++j)
     {
+      if (c[j] & dfa->syntax.newline[j])
+        context |= CTX_NEWLINE;
       if (c[j] & dfa->syntax.letters[j])
         context |= CTX_LETTER;
       if (c[j] & ~(dfa->syntax.letters[j] | dfa->syntax.newline[j]))
@@ -2676,13 +2675,27 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
      is to fail miserably.  */
   if (d->searchflag)
     {
+      int c;
+
       state_newline = 0;
       state_letter = d->min_trcount - 1;
       state = d->initstate_notbol;
 
-      for (i = 0; i < NOTCHAR; ++i)
-        trans[i] = unibyte_word_constituent (d, i) ? state_letter : state;
-      trans[d->syntax.eolbyte] = state_newline;
+      for (c = 0; c < NOTCHAR; ++c)
+        {
+          switch (d->syntax.sbit[c])
+            {
+            case CTX_NEWLINE:
+              trans[c] = state_newline;
+              break;
+            case CTX_LETTER:
+              trans[c] = state_letter;
+              break;
+            default:
+              trans[c] = state;
+              break;
+            }
+        }
     }
   else
     for (i = 0; i < NOTCHAR; ++i)
@@ -2785,12 +2798,18 @@ dfastate (state_num s, struct dfa *d, state_num trans[])
             {
               int c = j * CHARCLASS_WORD_BITS + k;
 
-              if (c == d->syntax.eolbyte)
-                trans[c] = state_newline;
-              else if (unibyte_word_constituent (d, c))
-                trans[c] = state_letter;
-              else if (c < NOTCHAR)
-                trans[c] = state;
+              switch (d->syntax.sbit[c])
+                {
+                case CTX_NEWLINE:
+                  trans[c] = state_newline;
+                  break;
+                case CTX_LETTER:
+                  trans[c] = state_letter;
+                  break;
+                default:
+                  trans[c] = state;
+                  break;
+                }
             }
     }
 
