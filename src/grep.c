@@ -1108,17 +1108,16 @@ print_offset (uintmax_t pos, int min_width, const char *color)
 static bool
 print_line_head (char *beg, size_t len, char const *lim, char sep)
 {
-  bool encoding_errors = false;
   if (binary_files != TEXT_BINARY_FILES)
     {
       char ch = beg[len];
-      encoding_errors = buf_has_encoding_errors (beg, len);
+      bool encoding_errors = buf_has_encoding_errors (beg, len);
       beg[len] = ch;
-    }
-  if (encoding_errors)
-    {
-      encoding_error_output = done_on_match = out_quiet = true;
-      return false;
+      if (encoding_errors)
+        {
+          encoding_error_output = true;
+          return false;
+        }
     }
 
   bool pending_sep = false;

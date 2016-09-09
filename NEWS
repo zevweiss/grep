@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Grep no longer omits output merely because it follows an output line
+  suppressed due to encoding errors.  [bug introduced in grep-2.21]
+
 ** Improvements
 
   grep can be much faster now when standard output is /dev/null.

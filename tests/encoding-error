@@ -35,6 +35,10 @@ grep '^X' in >out
 test $? = 1 || fail=1
 compare /dev/null out || fail=1
 
+grep . in >out || fail=1
+(cat a j && printf 'Binary file in matches\n') >exp || framework_failure_
+compare exp out || fail=1
+
 grep -a . in >out || fail=1
 compare in out
 
