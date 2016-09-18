@@ -7,6 +7,9 @@ GNU grep NEWS                                    -*- outline -*-
   Grep no longer omits output merely because it follows an output line
   suppressed due to encoding errors.  [bug introduced in grep-2.21]
 
+  In the Shift_JIS locale, grep no longer mistakenly matches in the
+  middle of a multibyte character. [bug present since "the beginning"]
+
 ** Improvements
 
   grep can be much faster now when standard output is /dev/null.
