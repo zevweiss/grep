@@ -19,6 +19,10 @@ max_seconds=$(LC_ALL=C perl -le 'use Time::HiRes qw(time); my $s = time();
   || { max_seconds=5;
        warn_ "$ME_: warning: no perl? using default of 5s timeout"; }
 
+# If the above finished so quickly that we'd have a 1-second timeout,
+# increase it to a duration less likely to arise in a parallel test run.
+test $max_seconds = 1 && max_seconds=5
+
 for LOC in en_US.UTF-8; do
   out=out-$LOC
   LC_ALL=$LOC timeout ${max_seconds}s grep -aE '^([a-z]).\1$' in > $out 2>&1
