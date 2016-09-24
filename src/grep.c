@@ -1819,7 +1819,7 @@ grepdesc (int desc, bool command_line)
      input==output, while there is no risk of infloop, there is a race
      condition that could result in "alternate" output.  */
   if (!out_quiet && list_files == LISTFILES_NONE && 1 < max_count
-      && SAME_INODE (st, out_stat))
+      && S_ISREG (st.st_mode) && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
         error (0, 0, _("input file %s is also the output"), quote (filename));
