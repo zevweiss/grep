@@ -48,7 +48,7 @@ if test $? != 1; then
 
     # Use ulimit to remove that limit, if possible.
     # If ulimit is not usable, just skip this test.
-    (ulimit -s unlimited; : ) || skip_ this shell lacks ulimit support
+    (ulimit -s unlimited) || skip_ this shell lacks ulimit support
 
     # Rerun that same test, but now with no limit on stack size:
     (ulimit -s unlimited;
