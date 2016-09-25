@@ -39,7 +39,7 @@ check-very-expensive: check-expensive
 
 # Run syntax-check rules before creating a distribution tarball.
 .PHONY: run-syntax-check
-run-syntax-check:
+run-syntax-check: all
 	$(AM_V_GEN)test ! -d .git || $(MAKE) syntax-check
 
 # Arrange so that .tarball-version appears only in the distribution
