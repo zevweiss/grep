@@ -114,7 +114,7 @@ AC_ARG_ENABLE([gcc-warnings],
      AC_COMPILE_IFELSE(
        [AC_LANG_PROGRAM([[
           #if ! (6 < __GNUC__ + (2 <= __GNUC_MINOR__))
-            #error "This GCC is too old."
+            #error "--enable-gcc-warnings defaults to 'no' on older GCC"
           #endif
           ]])],
        [gl_gcc_warnings=yes])
