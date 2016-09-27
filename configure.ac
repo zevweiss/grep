@@ -109,10 +109,17 @@ AC_ARG_ENABLE([gcc-warnings],
      *)      AC_MSG_ERROR([bad value $enableval for gcc-warnings option]) ;;
    esac
    gl_gcc_warnings=$enableval],
-  [if test -d "$srcdir"/.git; then
-     gl_gcc_warnings=yes
-   else
-     gl_gcc_warnings=no
+  [gl_gcc_warnings=no
+   if test "$GCC" = yes && test -d "$srcdir"/.git; then
+     AC_COMPILE_IFELSE(
+       [AC_LANG_PROGRAM([[
+          #if 6 < __GNUC__ + (2 <= __GNUC_MINOR__)
+            int main (void) { return 0; }
+          #else
+            #error "This GCC is too old."
+          #endif
+          ]])],
+       [gl_gcc_warnings=yes])
    fi]
 )
 
