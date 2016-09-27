@@ -113,9 +113,7 @@ AC_ARG_ENABLE([gcc-warnings],
    if test "$GCC" = yes && test -d "$srcdir"/.git; then
      AC_COMPILE_IFELSE(
        [AC_LANG_PROGRAM([[
-          #if 6 < __GNUC__ + (2 <= __GNUC_MINOR__)
-            int main (void) { return 0; }
-          #else
+          #if ! (6 < __GNUC__ + (2 <= __GNUC_MINOR__))
             #error "This GCC is too old."
           #endif
           ]])],
