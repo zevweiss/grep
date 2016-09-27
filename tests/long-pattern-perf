@@ -29,8 +29,9 @@ echo x > in || framework_failure_
 # We could use seq -s '' (avoiding the tr filter), but I
 # suspect some version of seq does not honor that option.
 # Note that we want 10x the byte count (not line count) in the larger file.
-seq 10000  20000 | tr -d '\012' > re     || framework_failure_
-seq 10000 100000 | tr -d '\012' > re-10x || framework_failure_
+seq 10000 50000 | tr -d '\012' > r || framework_failure_
+cat r r r r r r r r r r > re-10x || framework_failure_
+mv r re || framework_failure_
 
 base_ms=$(user_time_ 1 grep -f re in    ) || fail=1
 b10x_ms=$(user_time_ 1 grep -f re-10x in) || fail=1
