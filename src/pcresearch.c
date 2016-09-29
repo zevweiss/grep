@@ -20,6 +20,19 @@
 
 #include <config.h>
 #include "search.h"
+#include "verify.h"
+
+/* Wrap a fatal 3-argument use of "error" (with literal nonzero exit
+   status), so that static analyzers like clang-analyzer and GCC 7's
+   -Wimplicit-fallthrough know this "function" does not return.  */
+#define die(st, fmt, arg)						\
+  do									\
+    {									\
+      verify ((st) != 0);						\
+      error (0, fmt, arg);						\
+      exit (st);							\
+    }									\
+  while (0)
 
 #if HAVE_LIBPCRE
 # include <pcre.h>
@@ -337,15 +350,15 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           break;
 
         case PCRE_ERROR_NOMEMORY:
-          error (EXIT_TROUBLE, 0, _("memory exhausted"));
+          die (EXIT_TROUBLE, 0, _("memory exhausted"));
 
 # if PCRE_STUDY_JIT_COMPILE
         case PCRE_ERROR_JIT_STACKLIMIT:
-          error (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
+          die (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
 # endif
 
         case PCRE_ERROR_MATCHLIMIT:
-          error (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
+          die (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
 
         default:
           /* For now, we lump all remaining PCRE failures into this basket.
