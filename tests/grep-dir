@@ -6,7 +6,7 @@ mkdir a || framework_failure
 
 # Lower and upper bound of valid exit status for "grep -f DIR",
 # when reading from empty and nonempty files, respectively.
-if cat a >/dev/null 2>&1; then
+if cat a >acopy 2>&1 && cmp a acopy; then
   l=1 u=1 L=0 U=1
 else
   l=2 u=127 L=2 U=127
