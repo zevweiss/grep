@@ -28,7 +28,6 @@
 #include <regex.h>
 
 #include "system.h"
-#include "error.h"
 #include "grep.h"
 #include "dfa.h"
 #include "kwset.h"

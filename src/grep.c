@@ -32,6 +32,7 @@
 #include "c-ctype.h"
 #include "closeout.h"
 #include "colorize.h"
+#include "die.h"
 #include "error.h"
 #include "exclude.h"
 #include "exitfail.h"
@@ -763,8 +764,8 @@ context_length_arg (char const *str, intmax_t *out)
         break;
       /* Fall through.  */
     default:
-      error (EXIT_TROUBLE, 0, "%s: %s", str,
-             _("invalid context length argument"));
+      die (EXIT_TROUBLE, 0, "%s: %s", str,
+           _("invalid context length argument"));
     }
 }
 
@@ -828,7 +829,7 @@ add_count (uintmax_t a, uintmax_t b)
 {
   uintmax_t sum = a + b;
   if (sum < a)
-    error (EXIT_TROUBLE, 0, _("input is too large to count"));
+    die (EXIT_TROUBLE, 0, _("input is too large to count"));
   return sum;
 }
 
@@ -1309,7 +1310,7 @@ prline (char *beg, char *lim, char sep)
     fflush_errno ();
 
   if (stdout_errno)
-    error (EXIT_TROUBLE, stdout_errno, _("write error"));
+    die (EXIT_TROUBLE, stdout_errno, _("write error"));
 
   lastout = lim;
 }
@@ -2055,7 +2056,7 @@ setmatcher (char const *m)
   struct matcher const *p;
 
   if (matcher && !STREQ (matcher, m))
-    error (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
+    die (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
 
   for (p = matchers; p->compile; p++)
     if (STREQ (m, p->name))
@@ -2066,7 +2067,7 @@ setmatcher (char const *m)
         return;
       }
 
-  error (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
+  die (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
 }
 
 /* Find the white-space-separated options specified by OPTIONS, and
@@ -2420,7 +2421,7 @@ main (int argc, char **argv)
         else if (STREQ (optarg, "skip"))
           devices = SKIP_DEVICES;
         else
-          error (EXIT_TROUBLE, 0, _("unknown devices method"));
+          die (EXIT_TROUBLE, 0, _("unknown devices method"));
         break;
 
       case 'E':
@@ -2499,7 +2500,7 @@ main (int argc, char **argv)
       case 'f':
         fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
         if (!fp)
-          error (EXIT_TROUBLE, errno, "%s", optarg);
+          die (EXIT_TROUBLE, errno, "%s", optarg);
         for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
           ;
         keys = xrealloc (keys, keyalloc);
@@ -2512,7 +2513,7 @@ main (int argc, char **argv)
           }
         fread_errno = errno;
         if (ferror (fp))
-          error (EXIT_TROUBLE, fread_errno, "%s", optarg);
+          die (EXIT_TROUBLE, fread_errno, "%s", optarg);
         if (fp != stdin)
           fclose (fp);
         /* Append final newline if file ended in non-newline. */
@@ -2549,7 +2550,7 @@ main (int argc, char **argv)
             break;
 
           default:
-            error (EXIT_TROUBLE, 0, _("invalid max count"));
+            die (EXIT_TROUBLE, 0, _("invalid max count"));
           }
         break;
 
@@ -2606,7 +2607,7 @@ main (int argc, char **argv)
         else if (STREQ (optarg, "without-match"))
           binary_files = WITHOUT_MATCH_BINARY_FILES;
         else
-          error (EXIT_TROUBLE, 0, _("unknown binary-files type"));
+          die (EXIT_TROUBLE, 0, _("unknown binary-files type"));
         break;
 
       case COLOR_OPTION:
@@ -2647,7 +2648,7 @@ main (int argc, char **argv)
             if (add_exclude_file (add_exclude, excluded_patterns[cmd],
                                   optarg, exclude_options (cmd), '\n')
                 != 0)
-              error (EXIT_TROUBLE, errno, "%s", optarg);
+              die (EXIT_TROUBLE, errno, "%s", optarg);
           }
         break;
 

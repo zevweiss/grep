@@ -20,19 +20,7 @@
 
 #include <config.h>
 #include "search.h"
-#include "verify.h"
-
-/* Wrap a fatal 3-argument use of "error" (with literal nonzero exit
-   status), so that static analyzers like clang-analyzer and GCC 7's
-   -Wimplicit-fallthrough know this "function" does not return.  */
-#define die(st, fmt, arg)						\
-  do									\
-    {									\
-      verify ((st) != 0);						\
-      error (0, fmt, arg);						\
-      exit (st);							\
-    }									\
-  while (0)
+#include "die.h"
 
 #if HAVE_LIBPCRE
 # include <pcre.h>
@@ -80,8 +68,8 @@ jit_exec (char const *subject, int search_bytes, int search_offset,
             pcre_jit_stack_free (jit_stack);
           jit_stack = pcre_jit_stack_alloc (old_size, new_size);
           if (!jit_stack)
-            error (EXIT_TROUBLE, 0,
-                   _("failed to allocate memory for the PCRE JIT stack"));
+            die (EXIT_TROUBLE, 0,
+                 _("failed to allocate memory for the PCRE JIT stack"));
           pcre_assign_jit_stack (extra, NULL, jit_stack);
           continue;
         }
@@ -105,9 +93,9 @@ void
 Pcompile (char const *pattern, size_t size)
 {
 #if !HAVE_LIBPCRE
-  error (EXIT_TROUBLE, 0, "%s",
-         _("support for the -P option is not compiled into "
-           "this --disable-perl-regexp binary"));
+  die (EXIT_TROUBLE, 0,
+       _("support for the -P option is not compiled into "
+         "this --disable-perl-regexp binary"));
 #else
   int e;
   char const *ep;
@@ -128,15 +116,14 @@ Pcompile (char const *pattern, size_t size)
   if (1 < MB_CUR_MAX)
     {
       if (! localeinfo.using_utf8)
-        error (EXIT_TROUBLE, 0,
-               _("-P supports only unibyte and UTF-8 locales"));
+        die (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
       multibyte_locale = true;
       flags |= PCRE_UTF8;
     }
 
   /* FIXME: Remove these restrictions.  */
   if (memchr (pattern, '\n', size))
-    error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
+    die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
   if (! eolbyte)
     {
       bool escaped = false;
@@ -147,8 +134,8 @@ Pcompile (char const *pattern, size_t size)
         else
           {
             if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket))
-              error (EXIT_TROUBLE, 0,
-                     _("unescaped ^ or $ not supported with -Pz"));
+              die (EXIT_TROUBLE, 0,
+                   _("unescaped ^ or $ not supported with -Pz"));
             escaped = *p == '\\';
             after_unescaped_left_bracket = *p == '[';
           }
@@ -186,15 +173,15 @@ Pcompile (char const *pattern, size_t size)
 
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
-    error (EXIT_TROUBLE, 0, "%s", ep);
+    die (EXIT_TROUBLE, 0, "%s", ep);
 
   extra = pcre_study (cre, PCRE_STUDY_JIT_COMPILE, &ep);
   if (ep)
-    error (EXIT_TROUBLE, 0, "%s", ep);
+    die (EXIT_TROUBLE, 0, "%s", ep);
 
 # if PCRE_STUDY_JIT_COMPILE
   if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
-    error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
+    die (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
   /* The PCRE documentation says that a 32 KiB stack is the default.  */
   if (e)
@@ -216,8 +203,7 @@ Pexecute (char *buf, size_t size, size_t *match_size,
 {
 #if !HAVE_LIBPCRE
   /* We can't get here, because Pcompile would have been called earlier.  */
-  error (EXIT_TROUBLE, 0, _("internal error"));
-  return -1;
+  die (EXIT_TROUBLE, 0, _("internal error"));
 #else
   int sub[NSUB];
   char const *p = start_ptr ? start_ptr : buf;
@@ -260,7 +246,7 @@ Pexecute (char *buf, size_t size, size_t *match_size,
         }
 
       if (too_big)
-        error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
+        die (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
       for (;;)
         {
@@ -365,7 +351,7 @@ Pexecute (char *buf, size_t size, size_t *match_size,
              If anyone cares to provide sample grep usage that can trigger
              particular PCRE errors, we can add to the list (above) of more
              detailed diagnostics.  */
-          error (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
+          die (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
         }
 
       return -1;
