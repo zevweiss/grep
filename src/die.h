@@ -17,6 +17,7 @@
    02110-1301, USA.  */
 
 #ifndef DIE_H
+#define DIE_H
 
 #include <error.h>
 #include <stdbool.h>
