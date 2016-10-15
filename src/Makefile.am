@@ -23,10 +23,15 @@ AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 
 bin_PROGRAMS = grep
 bin_SCRIPTS = egrep fgrep
-grep_SOURCES = grep.c searchutils.c \
-          dfasearch.c \
-          kwset.c kwsearch.c \
-          pcresearch.c
+grep_SOURCES =					\
+  dfasearch.c					\
+  die.h						\
+  grep.c					\
+  kwsearch.c					\
+  kwset.c					\
+  pcresearch.c					\
+  searchutils.c
+
 noinst_HEADERS = grep.h kwset.h search.h system.h
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
