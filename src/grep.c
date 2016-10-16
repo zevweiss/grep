@@ -1074,6 +1074,7 @@ print_sep (char sep)
 static void
 print_offset (uintmax_t pos, int min_width, const char *color)
 {
+#if !HAVE_PRINTF_C99_SIZES
   /* Do not rely on printf to print pos, since uintmax_t may be longer
      than long, and long long is not portable.  */
 
@@ -1091,9 +1092,14 @@ print_offset (uintmax_t pos, int min_width, const char *color)
   if (align_tabs)
     while (--min_width >= 0)
       *--p = ' ';
+#endif /* !HAVE_PRINTF_C99_SIZES */
 
   pr_sgr_start_if (color);
+#if HAVE_PRINTF_C99_SIZES
+  printf_errno ("%*ju", align_tabs ? min_width : 0, pos);
+#else
   fwrite_errno (p, 1, buf + sizeof buf - p);
+#endif
   pr_sgr_end_if (color);
 }
 
