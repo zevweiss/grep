@@ -32,6 +32,7 @@
 /doc/grep.toc
 /doc/grep.tp
 /doc/grep.vr
+/doc/coverage
 /gnulib-tests/*
 /grep-*.tar.[gx]z
 /grep-*.tar.[gx]z.sig
@@ -55,6 +56,10 @@
 /tests/patfile
 /tests/spencer1.script
 /tests/yesno.txt
+/tests/*.gcda
+/tests/*.gcno
+/src/*.gcda
+/src/*.gcno
 ABOUT-NLS
 ChangeLog
 Makefile
