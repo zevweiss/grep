@@ -20,7 +20,6 @@
 
 fail=0
 
-grep -E '(^| )*(a|b)*(c|d)*( |$)' < /dev/null
-test $? = 1 || fail=1
+returns_ 1 grep -E '(^| )*(a|b)*(c|d)*( |$)' < /dev/null || fail=1
 
 Exit $fail

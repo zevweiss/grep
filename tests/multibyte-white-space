@@ -83,8 +83,7 @@ for i in $utf8_space_characters; do
 
   hex_printf_ "$i" | grep -q '^\s$' \
       || { warn_ " $m: \\s failed to match $i in the $LC_ALL locale"; fail; }
-  hex_printf_ "$i" | grep -q '\S'
-  test $? = 1 \
+  hex_printf_ "$i" | returns_ 1 grep -q '\S' \
       || { warn_ " $m: \\S mistakenly matched $i in the $LC_ALL locale"; fail; }
 done
 
@@ -94,8 +93,7 @@ done
 # match_mb_charset function) that would have otherwise been untouched.
 # However, as of the change-set adding this new test, match_mb_charset
 # is unreachable via grep.
-printf '\0' | grep -aE '^\s?$' > out 2>&1
-test $? = 1 || fail=1
+printf '\0' | returns_ 1 grep -aE '^\s?$' > out 2>&1 || fail=1
 compare /dev/null out
 
 Exit $fail

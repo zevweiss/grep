@@ -52,8 +52,8 @@ if test $? != 1; then
 
     # Rerun that same test, but now with no limit on stack size:
     (ulimit -s unlimited;
-     LC_ALL=C grep -P -n '^([/](?!/)|[^/])*~/.*' pcrejit.txt)
-    test $? = 1 || fail=1
+     LC_ALL=C returns_ 1 grep -P -n '^([/](?!/)|[^/])*~/.*' pcrejit.txt) \
+       || fail=1
 fi
 
 Exit $fail

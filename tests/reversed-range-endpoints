@@ -6,9 +6,8 @@ fail=0
 
 printf 'Invalid range end\n' > exp
 for prog in grep 'grep -E'; do
-  $prog '[b-a]' < /dev/null > out 2>&1
   # exit status must be 2, not 1
-  test $? = 2 || fail=1
+  returns_ 2 $prog '[b-a]' < /dev/null > out 2>&1 || fail=1
 
   # Remove "$prog: " prefix from actual output.
   sed 's/^[grep]*: //' out > k && mv k out

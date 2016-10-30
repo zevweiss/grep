@@ -52,18 +52,16 @@ if ( timeout --version ) > /dev/null 2>&1; then
 
   U=https://bugzilla.redhat.com/show_bug.cgi?id=189580
   printf 'grep -D skip opening a special file: '
-  timeout 10 grep -D skip foo /dev/zero
-  test $? = 124 && fail || ok
+  returns_ 124 timeout 10 grep -D skip foo /dev/zero && fail || ok
 
   U=https://bugzilla.redhat.com/show_bug.cgi?id=169524
   printf 'grep -Fw looping infinitely: '
-  echo foobar | timeout 10 grep -Fw ""
-  test $? = 124 && fail || ok
+  echo foobar | returns_ 124 timeout 10 grep -Fw "" && fail || ok
 
   U=https://bugzilla.redhat.com/show_bug.cgi?id=140781
   printf 'fgrep hangs on binary files: '
-  timeout 10 grep -F grep "$abs_top_builddir/src/grep" >/dev/null
-  test $? = 124 && fail || ok
+  returns_ 124 timeout 10 grep -F grep "$abs_top_builddir/src/grep" \
+    > /dev/null && fail || ok
 
 fi
 

@@ -29,9 +29,8 @@ LC_ALL=en_US.UTF-8
 export LC_ALL
 
 # On Cygwin, before grep-2.15, this would segfault.
-grep -i anything-else in > out 2>&1
 # Require not just non-zero exit status, but exactly 1.
-test $? = 1 || fail=1
+returns_ 1 grep -i anything-else in > out 2>&1 || fail=1
 # Expect no output.
 compare /dev/null out || fail=1
 

@@ -31,8 +31,7 @@ compare exp out || fail=1
 grep '^J' in >out || fail=1
 compare j out || fail=1
 
-grep '^X' in >out
-test $? = 1 || fail=1
+returns_ 1 grep '^X' in >out || fail=1
 compare /dev/null out || fail=1
 
 grep . in >out || fail=1

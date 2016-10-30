@@ -25,8 +25,8 @@ test $max_seconds = 1 && max_seconds=5
 
 for LOC in en_US.UTF-8; do
   out=out-$LOC
-  LC_ALL=$LOC timeout ${max_seconds}s grep -aE '^([a-z]).\1$' in > $out 2>&1
-  test $? = 0 || fail=1
+  LC_ALL=$LOC timeout ${max_seconds}s grep -aE '^([a-z]).\1$' in > $out 2>&1 \
+    || fail=1
   compare $out in || fail=1
 done
 

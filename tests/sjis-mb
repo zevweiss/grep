@@ -29,10 +29,10 @@ test -n "$locale" || skip_ 'SJIS locale not found'
 k=0
 test_grep_reject() {
   k=$(expr $k + 1)
-  encode "$2" | \
-    LC_ALL=$locale \
-      timeout 10s grep $1 $(encode "$3") > out$k 2>&1
-  test $? = 1 && compare /dev/null out$k
+  encode "$2" > in || return 1
+  LC_ALL=$locale \
+    returns_ 1 timeout 10s grep $1 $(encode "$3") in >out$k 2>&1 \
+      && compare /dev/null out$k
 }
 
 test_grep() {

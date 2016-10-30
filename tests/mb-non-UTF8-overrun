@@ -24,7 +24,6 @@ fail=0
 
 # This would fail when running an ASAN-enabled binary, or when run via
 # valgrind, accessing one byte beyond the end of an input buffer.
-grep -z . < /dev/null
-test $? = 1 || fail=1
+returns_ 1 grep -z . < /dev/null || fail=1
 
 Exit $fail
