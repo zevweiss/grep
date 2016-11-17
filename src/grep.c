@@ -1031,6 +1031,7 @@ static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
 static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
+static bool dev_null_output;	/* Stdout is known to be /dev/null.  */
 
 #include "dosbuf.c"
 
@@ -1743,6 +1744,29 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
   return grepdesc (desc, command_line);
 }
 
+/* Read all data from FD, with status ST.  Return true if successful,
+   false (setting errno) otherwise.  */
+static bool
+drain_input (int fd, struct stat const *st)
+{
+  ssize_t nbytes;
+  if (S_ISFIFO (st->st_mode) && dev_null_output)
+    {
+#ifdef SPLICE_F_MOVE
+      /* Should be faster, since it need not copy data to user space.  */
+      while ((nbytes = splice (fd, NULL, STDOUT_FILENO, NULL,
+                               INITIAL_BUFSIZE, SPLICE_F_MOVE)))
+        if (nbytes < 0)
+          return false;
+      return true;
+#endif
+    }
+  while ((nbytes = safe_read (fd, buffer, bufalloc)))
+    if (nbytes == SAFE_READ_ERROR)
+      return false;
+  return true;
+}
+
 /* Finish reading from FD, with status ST and where end-of-file has
    been seen if INEOF.  Typically this is a no-op, but when reading
    from standard input this may adjust the file offset or drain a
@@ -1760,9 +1784,8 @@ finalize_input (int fd, struct stat const *st, bool ineof)
         return;
       if (seek_failed)
         {
-          while (fillbuf (0, st))
-            if (bufbeg == buflim)
-              return;
+          if (drain_input (fd, st))
+            return;
         }
       else if (0 <= lseek (fd, 0, SEEK_END))
         return;
@@ -2729,7 +2752,6 @@ main (int argc, char **argv)
   if (show_help)
     usage (EXIT_SUCCESS);
 
-  bool dev_null_output = false;
   bool possibly_tty = false;
   struct stat tmp_stat;
   if (! exit_on_match && fstat (STDOUT_FILENO, &tmp_stat) == 0)
