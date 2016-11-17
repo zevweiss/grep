@@ -4,6 +4,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep by default now reads all of standard input if it is a pipe,
+  even if this cannot affect grep's output or exit status.  This works
+  better with nonportable scripts that run "PROGRAM | grep PATTERN
+  >/dev/null" where PROGRAM dies when writing into a broken pipe.
+  [bug introduced in grep-2.26]
+
   grep -Pz no longer rejects patterns containing ^ and $, and is
   more cautious about special patterns like (?-m) and (*FAIL).
   [bug introduced in grep-2.23]

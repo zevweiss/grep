@@ -580,6 +580,10 @@ enum { SEEK_DATA = SEEK_SET };
 enum { SEEK_HOLE = SEEK_SET };
 #endif
 
+/* True if lseek with SEEK_CUR or SEEK_DATA failed on the current input.  */
+static bool seek_failed;
+static bool seek_data_failed;
+
 /* Functions we'll use to search. */
 typedef void (*compile_fp_t) (char const *, size_t);
 typedef size_t (*execute_fp_t) (char *, size_t, size_t *, char const *);
@@ -718,31 +722,26 @@ buf_has_nulls (char *buf, size_t size)
 static bool
 file_must_have_nulls (size_t size, int fd, struct stat const *st)
 {
-  if (usable_st_size (st))
+  /* If the file has holes, it must contain a null byte somewhere.  */
+  if (SEEK_HOLE != SEEK_SET && !seek_failed
+      && usable_st_size (st) && size < st->st_size)
     {
-      if (st->st_size <= size)
-        return false;
-
-      /* If the file has holes, it must contain a null byte somewhere.  */
-      if (SEEK_HOLE != SEEK_SET)
+      off_t cur = size;
+      if (O_BINARY || fd == STDIN_FILENO)
         {
-          off_t cur = size;
-          if (O_BINARY || fd == STDIN_FILENO)
-            {
-              cur = lseek (fd, 0, SEEK_CUR);
-              if (cur < 0)
-                return false;
-            }
+          cur = lseek (fd, 0, SEEK_CUR);
+          if (cur < 0)
+            return false;
+        }
 
-          /* Look for a hole after the current location.  */
-          off_t hole_start = lseek (fd, cur, SEEK_HOLE);
-          if (0 <= hole_start)
-            {
-              if (lseek (fd, cur, SEEK_SET) < 0)
-                suppressible_error (filename, errno);
-              if (hole_start < st->st_size)
-                return true;
-            }
+      /* Look for a hole after the current location.  */
+      off_t hole_start = lseek (fd, cur, SEEK_HOLE);
+      if (0 <= hole_start)
+        {
+          if (lseek (fd, cur, SEEK_SET) < 0)
+            suppressible_error (filename, errno);
+          if (hole_start < st->st_size)
+            return true;
         }
     }
 
@@ -806,13 +805,12 @@ static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
 static size_t pagesize;		/* alignment of memory pages */
-static off_t bufoffset;		/* Read offset; defined on regular files.  */
+static off_t bufoffset;		/* Read offset.  */
 static off_t after_last_match;	/* Pointer after last matching line that
                                    would have been output if we were
                                    outputting characters. */
 static bool skip_nuls;		/* Skip '\0' in data.  */
 static bool skip_empty_lines;	/* Skip empty lines in data.  */
-static bool seek_data_failed;	/* lseek with SEEK_DATA failed.  */
 static uintmax_t totalnl;	/* Total newline count before lastnl. */
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
@@ -851,20 +849,20 @@ reset (int fd, struct stat const *st)
   bufbeg = buflim = ALIGN_TO (buffer + 1, pagesize);
   bufbeg[-1] = eolbyte;
   bufdesc = fd;
+  bufoffset = fd == STDIN_FILENO ? lseek (fd, 0, SEEK_CUR) : 0;
+  seek_failed = bufoffset < 0;
 
-  if (S_ISREG (st->st_mode))
+  /* Assume SEEK_DATA fails if SEEK_CUR does.  */
+  seek_data_failed = seek_failed;
+
+  if (seek_failed)
     {
-      if (fd != STDIN_FILENO)
-        bufoffset = 0;
-      else
+      if (errno != ESPIPE)
         {
-          bufoffset = lseek (fd, 0, SEEK_CUR);
-          if (bufoffset < 0)
-            {
-              suppressible_error (filename, errno);
-              return false;
-            }
+          suppressible_error (filename, errno);
+          return false;
         }
+      bufoffset = 0;
     }
   return true;
 }
@@ -1477,9 +1475,10 @@ grepbuf (char *beg, char const *lim)
   return outleft0 - outleft;
 }
 
-/* Search a given (non-directory) file.  Return a count of lines printed. */
+/* Search a given (non-directory) file.  Return a count of lines printed.
+   Set *INEOF to true if end-of-file reached.  */
 static intmax_t
-grep (int fd, struct stat const *st)
+grep (int fd, struct stat const *st, bool *ineof)
 {
   intmax_t nlines, i;
   size_t residue, save;
@@ -1507,7 +1506,6 @@ grep (int fd, struct stat const *st)
   pending = 0;
   skip_nuls = skip_empty_lines && !eol;
   encoding_error_output = false;
-  seek_data_failed = false;
 
   nlines = 0;
   residue = 0;
@@ -1542,7 +1540,10 @@ grep (int fd, struct stat const *st)
 
       /* no more data to scan (eof) except for maybe a residue -> break */
       if (beg == buflim)
-        break;
+        {
+          *ineof = true;
+          break;
+        }
 
       zap_nuls (beg, buflim, nul_zapper);
 
@@ -1742,11 +1743,46 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
   return grepdesc (desc, command_line);
 }
 
+/* Finish reading from FD, with status ST and where end-of-file has
+   been seen if INEOF.  Typically this is a no-op, but when reading
+   from standard input this may adjust the file offset or drain a
+   pipe.  */
+
+static void
+finalize_input (int fd, struct stat const *st, bool ineof)
+{
+  if (fd != STDIN_FILENO)
+    return;
+
+  if (outleft)
+    {
+      if (ineof)
+        return;
+      if (seek_failed)
+        {
+          while (fillbuf (0, st))
+            if (bufbeg == buflim)
+              return;
+        }
+      else if (0 <= lseek (fd, 0, SEEK_END))
+        return;
+    }
+  else
+    {
+      if (seek_failed || bufoffset == after_last_match
+          || 0 <= lseek (fd, after_last_match, SEEK_SET))
+        return;
+    }
+
+  suppressible_error (filename, errno);
+}
+
 static bool
 grepdesc (int desc, bool command_line)
 {
   intmax_t count;
   bool status = true;
+  bool ineof = false;
   struct stat st;
 
   /* Get the file status, possibly for the second time.  This catches
@@ -1839,7 +1875,7 @@ grepdesc (int desc, bool command_line)
   if (O_BINARY && !isatty (desc))
     set_binary_mode (desc, O_BINARY);
 
-  count = grep (desc, &st);
+  count = grep (desc, &st, &ineof);
   if (count_matches)
     {
       if (out_file)
@@ -1856,21 +1892,15 @@ grepdesc (int desc, bool command_line)
     }
 
   status = !count;
-  if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
+
+  if (list_files == LISTFILES_NONE)
+    finalize_input (desc, &st, ineof);
+  else if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
     {
       print_filename ();
       putchar_errno ('\n' & filename_mask);
       if (line_buffered)
         fflush_errno ();
-    }
-
-  if (desc == STDIN_FILENO)
-    {
-      off_t required_offset = outleft ? bufoffset : after_last_match;
-      if (required_offset != bufoffset
-          && lseek (desc, required_offset, SEEK_SET) < 0
-          && S_ISREG (st.st_mode))
-        suppressible_error (filename, errno);
     }
 
  closeout:
@@ -2699,6 +2729,7 @@ main (int argc, char **argv)
   if (show_help)
     usage (EXIT_SUCCESS);
 
+  bool dev_null_output = false;
   bool possibly_tty = false;
   struct stat tmp_stat;
   if (! exit_on_match && fstat (STDOUT_FILENO, &tmp_stat) == 0)
@@ -2710,7 +2741,7 @@ main (int argc, char **argv)
           struct stat null_stat;
           if (stat ("/dev/null", &null_stat) == 0
               && SAME_INODE (tmp_stat, null_stat))
-            exit_on_match = true;
+            dev_null_output = true;
           else
             possibly_tty = true;
         }
@@ -2733,9 +2764,9 @@ main (int argc, char **argv)
 
   /* POSIX says -c, -l and -q are mutually exclusive.  In this
      implementation, -q overrides -l and -L, which in turn override -c.  */
-  if (exit_on_match)
+  if (exit_on_match | dev_null_output)
     list_files = LISTFILES_NONE;
-  if (exit_on_match || list_files != LISTFILES_NONE)
+  if ((exit_on_match | dev_null_output) || list_files != LISTFILES_NONE)
     {
       count_matches = false;
       done_on_match = true;
