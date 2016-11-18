@@ -502,7 +502,7 @@ char eolbyte;
 static char const *matcher;
 
 /* For error messages. */
-/* The input file name, or (if standard input) "-" or a --label argument.  */
+/* The input file name, or (if standard input) null or a --label argument.  */
 static char const *filename;
 /* Omit leading "./" from file names in diagnostics.  */
 static bool omit_dot_slash;
@@ -590,12 +590,20 @@ typedef size_t (*execute_fp_t) (char *, size_t, size_t *, char const *);
 static compile_fp_t compile;
 static execute_fp_t execute;
 
-/* Like error, but suppress the diagnostic if requested.  */
+static char const *
+input_filename (void)
+{
+  if (!filename)
+    filename = _("(standard input)");
+  return filename;
+}
+
+/* Unless requested, diagnose an error about the input file.  */
 static void
-suppressible_error (char const *mesg, int errnum)
+suppressible_error (int errnum)
 {
   if (! suppress_errors)
-    error (0, errnum, "%s", mesg);
+    error (0, errnum, "%s", input_filename ());
   errseen = true;
 }
 
@@ -739,7 +747,7 @@ file_must_have_nulls (size_t size, int fd, struct stat const *st)
       if (0 <= hole_start)
         {
           if (lseek (fd, cur, SEEK_SET) < 0)
-            suppressible_error (filename, errno);
+            suppressible_error (errno);
           if (hole_start < st->st_size)
             return true;
         }
@@ -859,7 +867,7 @@ reset (int fd, struct stat const *st)
     {
       if (errno != ESPIPE)
         {
-          suppressible_error (filename, errno);
+          suppressible_error (errno);
           return false;
         }
       bufoffset = 0;
@@ -1056,7 +1064,7 @@ static void
 print_filename (void)
 {
   pr_sgr_start_if (filename_color);
-  fputs_errno (filename);
+  fputs_errno (input_filename ());
   pr_sgr_end_if (filename_color);
 }
 
@@ -1514,7 +1522,7 @@ grep (int fd, struct stat const *st, bool *ineof)
 
   if (! fillbuf (save, st))
     {
-      suppressible_error (filename, errno);
+      suppressible_error (errno);
       return 0;
     }
 
@@ -1598,7 +1606,7 @@ grep (int fd, struct stat const *st, bool *ineof)
         nlscan (beg);
       if (! fillbuf (save, st))
         {
-          suppressible_error (filename, errno);
+          suppressible_error (errno);
           goto finish_grep;
         }
     }
@@ -1617,7 +1625,7 @@ grep (int fd, struct stat const *st, bool *ineof)
   if (!out_quiet && (encoding_error_output
                      || (0 <= nlines_first_null && nlines_first_null < nlines)))
     {
-      printf_errno (_("Binary file %s matches\n"), filename);
+      printf_errno (_("Binary file %s matches\n"), input_filename ());
       if (line_buffered)
         fflush_errno ();
     }
@@ -1672,7 +1680,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
     case FTS_DNR:
     case FTS_ERR:
     case FTS_NS:
-      suppressible_error (filename, ent->fts_errno);
+      suppressible_error (ent->fts_errno);
       return true;
 
     case FTS_DEFAULT:
@@ -1689,7 +1697,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
               int flag = follow ? 0 : AT_SYMLINK_NOFOLLOW;
               if (fstatat (fts->fts_cwd_fd, ent->fts_accpath, &st1, flag) != 0)
                 {
-                  suppressible_error (filename, errno);
+                  suppressible_error (errno);
                   return true;
                 }
               st = &st1;
@@ -1738,7 +1746,7 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
   if (desc < 0)
     {
       if (follow || ! open_symlink_nofollow_error (errno))
-        suppressible_error (filename, errno);
+        suppressible_error (errno);
       return true;
     }
   return grepdesc (desc, command_line);
@@ -1797,7 +1805,7 @@ finalize_input (int fd, struct stat const *st, bool ineof)
         return;
     }
 
-  suppressible_error (filename, errno);
+  suppressible_error (errno);
 }
 
 static bool
@@ -1816,7 +1824,7 @@ grepdesc (int desc, bool command_line)
      directory for a non-directory while 'grep' is running.  */
   if (fstat (desc, &st) != 0)
     {
-      suppressible_error (filename, errno);
+      suppressible_error (errno);
       goto closeout;
     }
 
@@ -1843,7 +1851,7 @@ grepdesc (int desc, bool command_line)
       /* Close DESC now, to conserve file descriptors if the race
          condition occurs many times in a deep recursion.  */
       if (close (desc) != 0)
-        suppressible_error (filename, errno);
+        suppressible_error (errno);
 
       fts_arg[0] = (char *) filename;
       fts_arg[1] = NULL;
@@ -1854,9 +1862,9 @@ grepdesc (int desc, bool command_line)
       while ((ent = fts_read (fts)))
         status &= grepdirent (fts, ent, command_line);
       if (errno)
-        suppressible_error (filename, errno);
+        suppressible_error (errno);
       if (fts_close (fts) != 0)
-        suppressible_error (filename, errno);
+        suppressible_error (errno);
       return status;
     }
   if (desc != STDIN_FILENO
@@ -1888,7 +1896,8 @@ grepdesc (int desc, bool command_line)
       && S_ISREG (st.st_mode) && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
-        error (0, 0, _("input file %s is also the output"), quote (filename));
+        error (0, 0, _("input file %s is also the output"),
+               quote (input_filename ()));
       errseen = true;
       goto closeout;
     }
@@ -1928,7 +1937,7 @@ grepdesc (int desc, bool command_line)
 
  closeout:
   if (desc != STDIN_FILENO && close (desc) != 0)
-    suppressible_error (filename, errno);
+    suppressible_error (errno);
   return status;
 }
 
@@ -1937,7 +1946,7 @@ grep_command_line_arg (char const *arg)
 {
   if (STREQ (arg, "-"))
     {
-      filename = label ? label : _("(standard input)");
+      filename = label;
       return grepdesc (STDIN_FILENO, true);
     }
   else
