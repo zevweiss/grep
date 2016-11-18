@@ -2761,54 +2761,6 @@ main (int argc, char **argv)
   if (show_help)
     usage (EXIT_SUCCESS);
 
-  bool possibly_tty = false;
-  struct stat tmp_stat;
-  if (! exit_on_match && fstat (STDOUT_FILENO, &tmp_stat) == 0)
-    {
-      if (S_ISREG (tmp_stat.st_mode))
-        out_stat = tmp_stat;
-      else if (S_ISCHR (tmp_stat.st_mode))
-        {
-          struct stat null_stat;
-          if (stat ("/dev/null", &null_stat) == 0
-              && SAME_INODE (tmp_stat, null_stat))
-            dev_null_output = true;
-          else
-            possibly_tty = true;
-        }
-    }
-
-  if (color_option == 2)
-    color_option = possibly_tty && should_colorize () && isatty (STDOUT_FILENO);
-  init_colorize ();
-
-  if (color_option)
-    {
-      /* Legacy.  */
-      char *userval = getenv ("GREP_COLOR");
-      if (userval != NULL && *userval != '\0')
-        selected_match_color = context_match_color = userval;
-
-      /* New GREP_COLORS has priority.  */
-      parse_grep_colors ();
-    }
-
-  /* POSIX says -c, -l and -q are mutually exclusive.  In this
-     implementation, -q overrides -l and -L, which in turn override -c.  */
-  if (exit_on_match | dev_null_output)
-    list_files = LISTFILES_NONE;
-  if ((exit_on_match | dev_null_output) || list_files != LISTFILES_NONE)
-    {
-      count_matches = false;
-      done_on_match = true;
-    }
-  out_quiet = count_matches | done_on_match;
-
-  if (out_after < 0)
-    out_after = default_context;
-  if (out_before < 0)
-    out_before = default_context;
-
   if (keys)
     {
       if (keycc == 0)
@@ -2830,6 +2782,60 @@ main (int argc, char **argv)
     }
   else
     usage (EXIT_TROUBLE);
+
+  bool possibly_tty = false;
+  struct stat tmp_stat;
+  if (! exit_on_match && fstat (STDOUT_FILENO, &tmp_stat) == 0)
+    {
+      if (S_ISREG (tmp_stat.st_mode))
+        out_stat = tmp_stat;
+      else if (S_ISCHR (tmp_stat.st_mode))
+        {
+          struct stat null_stat;
+          if (stat ("/dev/null", &null_stat) == 0
+              && SAME_INODE (tmp_stat, null_stat))
+            dev_null_output = true;
+          else
+            possibly_tty = true;
+        }
+    }
+
+  /* POSIX says -c, -l and -q are mutually exclusive.  In this
+     implementation, -q overrides -l and -L, which in turn override -c.  */
+  if (exit_on_match | dev_null_output)
+    list_files = LISTFILES_NONE;
+  if ((exit_on_match | dev_null_output) || list_files != LISTFILES_NONE)
+    {
+      count_matches = false;
+      done_on_match = true;
+    }
+  out_quiet = count_matches | done_on_match;
+
+  if (out_after < 0)
+    out_after = default_context;
+  if (out_before < 0)
+    out_before = default_context;
+
+  /* If it is easy to see that matching cannot succeed (e.g., 'grep -f
+     /dev/null'), fail without reading the input.  */
+  if (max_count == 0
+      || (keycc == 0 && out_invert && !match_lines && !match_words))
+    return EXIT_FAILURE;
+
+  if (color_option == 2)
+    color_option = possibly_tty && should_colorize () && isatty (STDOUT_FILENO);
+  init_colorize ();
+
+  if (color_option)
+    {
+      /* Legacy.  */
+      char *userval = getenv ("GREP_COLOR");
+      if (userval != NULL && *userval != '\0')
+        selected_match_color = context_match_color = userval;
+
+      /* New GREP_COLORS has priority.  */
+      parse_grep_colors ();
+    }
 
   initialize_unibyte_mask ();
 
@@ -2865,12 +2871,6 @@ main (int argc, char **argv)
      NL to CR-LF pairs, especially when grepping binary files.  */
   if (O_BINARY && !isatty (STDOUT_FILENO))
     set_binary_mode (STDOUT_FILENO, O_BINARY);
-
-  /* If it is easy to see that matching cannot succeed (e.g., 'grep -f
-     /dev/null'), fail without reading the input.  */
-  if (max_count == 0
-      || (keycc == 0 && out_invert && !match_lines && !match_words))
-    return EXIT_FAILURE;
 
   /* Prefer sysconf for page size, as getpagesize typically returns int.  */
 #ifdef _SC_PAGESIZE
