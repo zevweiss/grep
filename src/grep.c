@@ -2413,9 +2413,9 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
 int
 main (int argc, char **argv)
 {
-  char *keys;
-  size_t keycc, oldcc, keyalloc;
-  bool with_filenames;
+  char *keys = NULL;
+  size_t keycc = 0, oldcc, keyalloc = 0;
+  bool with_filenames = false;
   size_t cc;
   int opt, prepended;
   int prev_optind, last_recursive;
@@ -2425,9 +2425,6 @@ main (int argc, char **argv)
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
 
-  keys = NULL;
-  keycc = 0;
-  with_filenames = false;
   eolbyte = '\n';
   filename_mask = ~0;
 
@@ -2556,8 +2553,12 @@ main (int argc, char **argv)
 
       case 'e':
         cc = strlen (optarg);
-        keys = xrealloc (keys, keycc + cc + 1);
-        strcpy (&keys[keycc], optarg);
+        if (keyalloc < keycc + cc + 1)
+          {
+            keyalloc = keycc + cc + 1;
+            keys = x2realloc (keys, &keyalloc);
+          }
+        memcpy (&keys[keycc], optarg, cc);
         keycc += cc;
         keys[keycc++] = '\n';
         fl_add (keys, keycc - cc - 1, keycc, "");
@@ -2567,15 +2568,14 @@ main (int argc, char **argv)
         fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
         if (!fp)
           die (EXIT_TROUBLE, errno, "%s", optarg);
-        for (keyalloc = 1; keyalloc <= keycc + 1; keyalloc *= 2)
-          ;
-        keys = xrealloc (keys, keyalloc);
         oldcc = keycc;
-        while ((cc = fread (keys + keycc, 1, keyalloc - 1 - keycc, fp)) != 0)
+        for (;; keycc += cc)
           {
-            keycc += cc;
-            if (keycc == keyalloc - 1)
-              keys = x2nrealloc (keys, &keyalloc, sizeof *keys);
+            if (keyalloc <= keycc + 1)
+              keys = x2realloc (keys, &keyalloc);
+            cc = fread (keys + keycc, 1, keyalloc - (keycc + 1), fp);
+            if (cc == 0)
+              break;
           }
         fread_errno = errno;
         if (ferror (fp))
@@ -2823,7 +2823,7 @@ main (int argc, char **argv)
     }
   else if (optind < argc)
     {
-      /* A copy must be made in case of an xrealloc() or free() later.  */
+      /* Make a copy so that it can be reallocated or freed later.  */
       keycc = strlen (argv[optind]);
       keys = xmemdup (argv[optind++], keycc + 1);
       fl_add (keys, 0, keycc, "");
