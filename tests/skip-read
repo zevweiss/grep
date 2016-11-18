@@ -1,0 +1,15 @@
+#!/bin/sh
+# Check that grep skips reading in some cases.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+fail=0
+
+for opts in '-m0 y' '-f /dev/null' '-v ""'; do
+  for matcher in '' -E -F; do
+    eval returns_ 1 grep $opts $matcher no-such-file > out || fail=1
+    compare /dev/null out || fail=1
+  done
+done
+
+Exit $fail

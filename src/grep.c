@@ -2866,7 +2866,10 @@ main (int argc, char **argv)
   if (O_BINARY && !isatty (STDOUT_FILENO))
     set_binary_mode (STDOUT_FILENO, O_BINARY);
 
-  if (max_count == 0)
+  /* If it is easy to see that matching cannot succeed (e.g., 'grep -f
+     /dev/null'), fail without reading the input.  */
+  if (max_count == 0
+      || (keycc == 0 && out_invert && !match_lines && !match_words))
     return EXIT_FAILURE;
 
   /* Prefer sysconf for page size, as getpagesize typically returns int.  */

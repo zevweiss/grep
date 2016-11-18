@@ -143,6 +143,7 @@ TESTS =						\
   reversed-range-endpoints			\
   sjis-mb					\
   skip-device					\
+  skip-read					\
   spencer1					\
   spencer1-locale				\
   status					\

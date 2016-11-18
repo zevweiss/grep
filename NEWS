@@ -16,6 +16,11 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep's use of getprogname no longer causes a build failure on HP-UX.
 
+** Improvements
+
+  grep no longer reads the input in a few more cases when it is easy
+  to see that matching cannot succeed, e.g., 'grep -f /dev/null'.
+
 
 * Noteworthy changes in release 2.26 (2016-10-02) [stable]
 
