@@ -6,7 +6,6 @@
 require_timeout_
 
 ${AWK-awk} 'BEGIN {while (1) print "x"}' </dev/null |
-  timeout 1 grep x >/dev/null
-test $? -eq 124 || fail=1
+  returns_ 124 timeout 1 grep x >/dev/null || fail=1
 
 Exit $fail
