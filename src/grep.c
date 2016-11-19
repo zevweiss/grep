@@ -1834,12 +1834,10 @@ grepdesc (int desc, bool command_line)
       goto closeout;
     }
 
-#if defined SET_BINARY
   /* Set input to binary mode.  Pipes are simulated with files
      on DOS, so this includes the case of "foo | grep bar".  */
-  if (!isatty (desc))
-    SET_BINARY (desc);
-#endif
+  if (O_BINARY && !isatty (desc))
+    set_binary_mode (desc, O_BINARY);
 
   count = grep (desc, &st);
   if (count_matches)
@@ -2801,12 +2799,10 @@ main (int argc, char **argv)
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-#ifdef SET_BINARY
   /* Output is set to binary mode because we shouldn't convert
      NL to CR-LF pairs, especially when grepping binary files.  */
-  if (!isatty (STDOUT_FILENO))
-    SET_BINARY (STDOUT_FILENO);
-#endif
+  if (O_BINARY && !isatty (STDOUT_FILENO))
+    set_binary_mode (STDOUT_FILENO, O_BINARY);
 
   if (max_count == 0)
     return EXIT_FAILURE;
