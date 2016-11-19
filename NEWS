@@ -16,6 +16,10 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep -m0 -L PAT FILE now outputs "FILE".  [bug introduced in grep-2.5]
 
+  To output ':' and tab-align the following character C, grep -T no
+  longer outputs tab-backspace-':'-C, an approach that has problems if
+  run inside an Emacs shell window.  [bug introduced in grep-2.5.2]
+
   grep's use of getprogname no longer causes a build failure on HP-UX.
 
 ** Improvements

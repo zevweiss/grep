@@ -108,6 +108,7 @@ TESTS =						\
   in-eq-out-infloop				\
   include-exclude				\
   inconsistent-range				\
+  initial-tab					\
   invalid-multibyte-infloop			\
   khadafy					\
   kwset-abuse					\
