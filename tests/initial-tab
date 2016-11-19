@@ -29,4 +29,9 @@ printf 'in:\tx\nin:\n' > exp || framework_failure_
 grep -T '^' in /dev/null > out || fail=1
 compare exp out || fail=1
 
+printf '%s\n' a b c d e f g h i j > in1 || framework_failure_
+printf 'in1: 1:\ta\n' > exp1 || framework_failure_
+grep -Tn 'a' in1 /dev/null > out1 || fail=1
+compare exp1 out1 || fail=1
+
 Exit $fail

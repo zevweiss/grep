@@ -463,10 +463,8 @@ Make sure that the first character of actual line content lies on a tab stop,
 so that the alignment of tabs looks normal.
 This is useful with options that prefix their output to the actual content:
 @option{-H}, @option{-n}, and @option{-b}.
-In order to improve the probability that lines
-from a single file will all start at the same column,
-this also causes the line number and byte offset (if present)
-to be printed in a minimum-size field width.
+This may also prepend spaces to output line numbers and byte offsets
+so that lines from a single file all start at the same column.
 
 @item -u
 @itemx --unix-byte-offsets

@@ -20,6 +20,10 @@ GNU grep NEWS                                    -*- outline -*-
   longer outputs tab-backspace-':'-C, an approach that has problems if
   run inside an Emacs shell window.  [bug introduced in grep-2.5.2]
 
+  grep -T now uses worst-case widths of line numbers and byte offsets
+  instead of guessing widths that might not work with larger files.
+  [bug introduced in grep-2.5.2]
+
   grep's use of getprogname no longer causes a build failure on HP-UX.
 
 ** Improvements

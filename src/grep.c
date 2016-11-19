@@ -81,6 +81,9 @@ static bool only_matching;
 /* If nonzero, make sure first content char in a line is on a tab stop. */
 static bool align_tabs;
 
+/* Print width of line numbers and byte offsets.  Nonzero if ALIGN_TABS.  */
+static int offset_width;
+
 /* See below */
 struct FL_pair
   {
@@ -1079,12 +1082,13 @@ print_sep (char sep)
 
 /* Print a line number or a byte offset.  */
 static void
-print_offset (uintmax_t pos, int min_width, const char *color)
+print_offset (uintmax_t pos, const char *color)
 {
 #if !HAVE_PRINTF_C99_SIZES
   /* Do not rely on printf to print pos, since uintmax_t may be longer
      than long, and long long is not portable.  */
 
+  int min_width = offset_width;
   char buf[sizeof pos * CHAR_BIT];
   char *p = buf + sizeof buf;
 
@@ -1096,14 +1100,13 @@ print_offset (uintmax_t pos, int min_width, const char *color)
   while ((pos /= 10) != 0);
 
   /* Do this to maximize the probability of alignment across lines.  */
-  if (align_tabs)
-    while (--min_width >= 0)
-      *--p = ' ';
+  while (--min_width >= 0)
+    *--p = ' ';
 #endif /* !HAVE_PRINTF_C99_SIZES */
 
   pr_sgr_start_if (color);
 #if HAVE_PRINTF_C99_SIZES
-  printf_errno ("%*ju", align_tabs ? min_width : 0, pos);
+  printf_errno ("%*ju", offset_width, pos);
 #else
   fwrite_errno (p, 1, buf + sizeof buf - p);
 #endif
@@ -1151,7 +1154,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
           totalnl = add_count (totalnl, 1);
           lastnl = lim;
         }
-      print_offset (totalnl, 4, line_num_color);
+      print_offset (totalnl, line_num_color);
       print_sep (sep);
     }
 
@@ -1159,7 +1162,7 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
       pos = dossified_pos (pos);
-      print_offset (pos, 6, byte_num_color);
+      print_offset (pos, byte_num_color);
       print_sep (sep);
     }
 
@@ -1509,6 +1512,17 @@ grep (int fd, struct stat const *st, bool *ineof)
     {
       suppressible_error (errno);
       return 0;
+    }
+
+  offset_width = 0;
+  if (align_tabs)
+    {
+      /* Width is log of maximum number.  Line numbers are origin-1.  */
+      uintmax_t num = usable_st_size (st) ? st->st_size : UINTMAX_MAX;
+      num += out_line && num < UINTMAX_MAX;
+      do
+        offset_width++;
+      while ((num /= 10) != 0);
     }
 
   for (bool firsttime = true; ; firsttime = false)
