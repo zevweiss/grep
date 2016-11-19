@@ -206,12 +206,6 @@ fi
 
 gl_FUNC_PCRE
 
-gl_PRINTF_SIZES_C99
-if test "$gl_cv_func_printf_sizes_c99" = yes; then
-  AC_DEFINE([HAVE_PRINTF_C99_SIZES], [1],
-    [Define to 1 if printf formats %j, %z, %t and %L work.])
-fi
-
 case $host_os in
   mingw*) suffix=w32 ;;
   *) suffix=posix ;;

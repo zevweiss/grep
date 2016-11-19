@@ -1084,32 +1084,8 @@ print_sep (char sep)
 static void
 print_offset (uintmax_t pos, const char *color)
 {
-#if !HAVE_PRINTF_C99_SIZES
-  /* Do not rely on printf to print pos, since uintmax_t may be longer
-     than long, and long long is not portable.  */
-
-  int min_width = offset_width;
-  char buf[sizeof pos * CHAR_BIT];
-  char *p = buf + sizeof buf;
-
-  do
-    {
-      *--p = '0' + pos % 10;
-      --min_width;
-    }
-  while ((pos /= 10) != 0);
-
-  /* Do this to maximize the probability of alignment across lines.  */
-  while (--min_width >= 0)
-    *--p = ' ';
-#endif /* !HAVE_PRINTF_C99_SIZES */
-
   pr_sgr_start_if (color);
-#if HAVE_PRINTF_C99_SIZES
-  printf_errno ("%*ju", offset_width, pos);
-#else
-  fwrite_errno (p, 1, buf + sizeof buf - p);
-#endif
+  printf_errno ("%*"PRIuMAX, offset_width, pos);
   pr_sgr_end_if (color);
 }
 
