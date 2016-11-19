@@ -355,6 +355,9 @@ When the @option{-v} or @option{--invert-match} option is also used,
 @cindex only matching
 Print only the matched (non-empty) parts of matching lines,
 with each such part on a separate output line.
+Output lines use the same delimiters as input, and delimiters are null
+bytes if @option{-z} (@option{--null-data}) is also used (@pxref{Other
+Options}).
 
 @item -q
 @itemx --quiet
@@ -1768,7 +1771,7 @@ Therefore, merely using the @code{[:space:]} character class does not
 match newlines in the way you might expect.
 
 With the GNU @command{grep} option @option{-z} (@option{--null-data}), each
-input ``line'' is terminated by a null byte; @pxref{Other Options}.  Thus,
+input and output ``line'' is null-terminated; @pxref{Other Options}.  Thus,
 you can match newlines in the input, but typically if there is a match
 the entire input is output, so this usage is often combined with
 output-suppressing options like @option{-q}, e.g.:
