@@ -32,6 +32,9 @@ enum { NSUB = 300 };
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;
 
+/* PCRE options used to compile the pattern.  */
+static int reflags;
+
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
@@ -85,8 +88,6 @@ jit_exec (char const *subject, int search_bytes, int search_offset,
 /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
    string matches when that flag is used.  */
 static int empty_match[2];
-
-static bool multibyte_locale;
 #endif
 
 void
@@ -112,18 +113,19 @@ Pcompile (char const *pattern, size_t size)
   char *n = re;
   char const *p;
   char const *pnul;
+  bool multibyte_locale = 1 < MB_CUR_MAX;
 
-  if (1 < MB_CUR_MAX)
+  if (multibyte_locale)
     {
       if (! localeinfo.using_utf8)
         die (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
-      multibyte_locale = true;
       flags |= PCRE_UTF8;
     }
 
-  /* FIXME: Remove these restrictions.  */
+  /* FIXME: Remove this restriction.  */
   if (memchr (pattern, '\n', size))
     die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
+
   if (! eolbyte)
     {
       bool escaped = false;
@@ -133,9 +135,12 @@ Pcompile (char const *pattern, size_t size)
           escaped = after_unescaped_left_bracket = false;
         else
           {
-            if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket))
-              die (EXIT_TROUBLE, 0,
-                   _("unescaped ^ or $ not supported with -Pz"));
+            if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket)
+                || (*p == '(' && (p[1] == '?' || p[1] == '*')))
+              {
+                flags = (flags & ~ PCRE_MULTILINE) | PCRE_DOLLAR_ENDONLY;
+                break;
+              }
             escaped = *p == '\\';
             after_unescaped_left_bracket = *p == '[';
           }
@@ -217,12 +222,15 @@ Pexecute (char *buf, size_t size, size_t *match_size,
      error.  */
   char const *subject = buf;
 
-  /* If the input is unibyte or is free of encoding errors a multiline search is
+  /* If the pattern has no problematic operators and the input is
+     unibyte or is free of encoding errors, a multiline search is
      typically more efficient.  Otherwise, a single-line search is
-     typically faster, so that pcre_exec doesn't waste time validating
-     the entire input buffer.  */
-  bool multiline = true;
-  if (multibyte_locale)
+     either less confusing because the problematic operators are
+     interpreted more naturally, or it is typically faster because
+     pcre_exec doesn't waste time validating the entire input
+     buffer.  */
+  bool multiline = (reflags & PCRE_MULTILINE) != 0;
+  if (multiline && (reflags & PCRE_UTF8) != 0)
     {
       multiline = ! buf_has_encoding_errors (buf, size - 1);
       buf[size - 1] = eolbyte;

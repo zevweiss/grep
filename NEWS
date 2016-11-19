@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -Pz no longer rejects patterns containing ^ and $, and is
+  more cautious about special patterns like (?-m) and (*FAIL).
+  [bug introduced in grep-2.23]
+
   grep's use of getprogname no longer causes a build failure on HP-UX.
 
 
