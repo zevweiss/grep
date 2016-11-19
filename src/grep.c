@@ -2818,8 +2818,9 @@ main (int argc, char **argv)
 
   /* If it is easy to see that matching cannot succeed (e.g., 'grep -f
      /dev/null'), fail without reading the input.  */
-  if (max_count == 0
-      || (keycc == 0 && out_invert && !match_lines && !match_words))
+  if ((max_count == 0
+       || (keycc == 0 && out_invert && !match_lines && !match_words))
+      && list_files != LISTFILES_NONMATCHING)
     return EXIT_FAILURE;
 
   if (color_option == 2)

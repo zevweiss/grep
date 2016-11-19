@@ -14,6 +14,8 @@ GNU grep NEWS                                    -*- outline -*-
   more cautious about special patterns like (?-m) and (*FAIL).
   [bug introduced in grep-2.23]
 
+  grep -m0 -L PAT FILE now outputs "FILE".  [bug introduced in grep-2.5]
+
   grep's use of getprogname no longer causes a build failure on HP-UX.
 
 ** Improvements
