@@ -176,6 +176,7 @@ Pcompile (char const *pattern, size_t size)
   if (match_lines)
     strcpy (n, xsuffix);
 
+  reflags = flags;
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
     die (EXIT_TROUBLE, 0, "%s", ep);
