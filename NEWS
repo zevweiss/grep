@@ -10,9 +10,9 @@ GNU grep NEWS                                    -*- outline -*-
   >/dev/null" where PROGRAM dies when writing into a broken pipe.
   [bug introduced in grep-2.26]
 
-  grep -Pz no longer rejects patterns containing ^ and $, and is
-  more cautious about special patterns like (?-m) and (*FAIL).
-  [bug introduced in grep-2.23]
+  grep -Pz no longer rejects patterns containing ^ and $, is more
+  cautious about special patterns like (?-m) and (*FAIL), and works
+  when combined with -x.  [bug introduced in grep-2.23]
 
   grep -m0 -L PAT FILE now outputs "FILE".  [bug introduced in grep-2.5]
 

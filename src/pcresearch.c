@@ -128,22 +128,28 @@ Pcompile (char const *pattern, size_t size)
 
   if (! eolbyte)
     {
-      bool escaped = false;
-      bool after_unescaped_left_bracket = false;
-      for (p = pattern; *p; p++)
-        if (escaped)
-          escaped = after_unescaped_left_bracket = false;
-        else
-          {
-            if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket)
-                || (*p == '(' && (p[1] == '?' || p[1] == '*')))
+      bool line_at_a_time = match_lines;
+      if (! line_at_a_time)
+        {
+          bool escaped = false;
+          bool after_unescaped_left_bracket = false;
+          for (p = pattern; *p; p++)
+            if (escaped)
+              escaped = after_unescaped_left_bracket = false;
+            else
               {
-                flags = (flags & ~ PCRE_MULTILINE) | PCRE_DOLLAR_ENDONLY;
-                break;
+                if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket)
+                    || (*p == '(' && (p[1] == '?' || p[1] == '*')))
+                  {
+                    line_at_a_time = true;
+                    break;
+                  }
+                escaped = *p == '\\';
+                after_unescaped_left_bracket = *p == '[';
               }
-            escaped = *p == '\\';
-            after_unescaped_left_bracket = *p == '[';
-          }
+        }
+      if (line_at_a_time)
+        flags = (flags & ~ PCRE_MULTILINE) | PCRE_DOLLAR_ENDONLY;
     }
 
   *n = '\0';
