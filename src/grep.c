@@ -861,7 +861,7 @@ reset (int fd, struct stat const *st)
           bufoffset = lseek (fd, 0, SEEK_CUR);
           if (bufoffset < 0)
             {
-              suppressible_error (_("lseek failed"), errno);
+              suppressible_error (filename, errno);
               return false;
             }
         }
