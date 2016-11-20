@@ -54,15 +54,15 @@ extern wint_t mb_next_wc (char const *, char const *);
 /* dfasearch.c */
 extern struct localeinfo localeinfo;
 extern void GEAcompile (char const *, size_t, reg_syntax_t);
-extern size_t EGexecute (char *, size_t, size_t *, char const *);
+extern size_t EGexecute (char const *, size_t, size_t *, char const *);
 
 /* kwsearch.c */
 extern void Fcompile (char const *, size_t);
-extern size_t Fexecute (char *, size_t, size_t *, char const *);
+extern size_t Fexecute (char const *, size_t, size_t *, char const *);
 
 /* pcresearch.c */
 extern void Pcompile (char const *, size_t);
-extern size_t Pexecute (char *, size_t, size_t *, char const *);
+extern size_t Pexecute (char const *, size_t, size_t *, char const *);
 
 /* Return the number of bytes in the character at the start of S, which
    is of size N.  N must be positive.  MBS is the conversion state.

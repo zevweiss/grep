@@ -32,9 +32,6 @@ enum { NSUB = 300 };
 /* Compiled internal form of a Perl regular expression.  */
 static pcre *cre;
 
-/* PCRE options used to compile the pattern.  */
-static int reflags;
-
 /* Additional information about the pattern.  */
 static pcre_extra *extra;
 
@@ -107,15 +104,13 @@ Pcompile (char const *pattern, size_t size)
   int fix_len_max = MAX (sizeof wprefix - 1 + sizeof wsuffix - 1,
                          sizeof xprefix - 1 + sizeof xsuffix - 1);
   char *re = xnmalloc (4, size + (fix_len_max + 4 - 1) / 4);
-  int flags = (PCRE_MULTILINE
-               | (match_icase ? PCRE_CASELESS : 0));
+  int flags = PCRE_DOLLAR_ENDONLY | (match_icase ? PCRE_CASELESS : 0);
   char const *patlim = pattern + size;
   char *n = re;
   char const *p;
   char const *pnul;
-  bool multibyte_locale = 1 < MB_CUR_MAX;
 
-  if (multibyte_locale)
+  if (1 < MB_CUR_MAX)
     {
       if (! localeinfo.using_utf8)
         die (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
@@ -125,32 +120,6 @@ Pcompile (char const *pattern, size_t size)
   /* FIXME: Remove this restriction.  */
   if (memchr (pattern, '\n', size))
     die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
-
-  if (! eolbyte)
-    {
-      bool line_at_a_time = match_lines;
-      if (! line_at_a_time)
-        {
-          bool escaped = false;
-          bool after_unescaped_left_bracket = false;
-          for (p = pattern; *p; p++)
-            if (escaped)
-              escaped = after_unescaped_left_bracket = false;
-            else
-              {
-                if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket)
-                    || (*p == '(' && (p[1] == '?' || p[1] == '*')))
-                  {
-                    line_at_a_time = true;
-                    break;
-                  }
-                escaped = *p == '\\';
-                after_unescaped_left_bracket = *p == '[';
-              }
-        }
-      if (line_at_a_time)
-        flags = (flags & ~ PCRE_MULTILINE) | PCRE_DOLLAR_ENDONLY;
-    }
 
   *n = '\0';
   if (match_words)
@@ -182,7 +151,6 @@ Pcompile (char const *pattern, size_t size)
   if (match_lines)
     strcpy (n, xsuffix);
 
-  reflags = flags;
   cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
   if (!cre)
     die (EXIT_TROUBLE, 0, "%s", ep);
@@ -210,7 +178,7 @@ Pcompile (char const *pattern, size_t size)
 }
 
 size_t
-Pexecute (char *buf, size_t size, size_t *match_size,
+Pexecute (char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
@@ -229,38 +197,14 @@ Pexecute (char *buf, size_t size, size_t *match_size,
      error.  */
   char const *subject = buf;
 
-  /* If the pattern has no problematic operators and the input is
-     unibyte or is free of encoding errors, a multiline search is
-     typically more efficient.  Otherwise, a single-line search is
-     either less confusing because the problematic operators are
-     interpreted more naturally, or it is typically faster because
-     pcre_exec doesn't waste time validating the entire input
-     buffer.  */
-  bool multiline = (reflags & PCRE_MULTILINE) != 0;
-  if (multiline && (reflags & PCRE_UTF8) != 0)
-    {
-      multiline = ! buf_has_encoding_errors (buf, size - 1);
-      buf[size - 1] = eolbyte;
-    }
-
   for (; p < buf + size; p = line_start = line_end + 1)
     {
-      bool too_big;
-
-      if (multiline)
-        {
-          size_t pcre_size_max = MIN (INT_MAX, SIZE_MAX - 1);
-          size_t scan_size = MIN (pcre_size_max + 1, buf + size - p);
-          line_end = memrchr (p, eolbyte, scan_size);
-          too_big = ! line_end;
-        }
-      else
-        {
-          line_end = memchr (p, eolbyte, buf + size - p);
-          too_big = INT_MAX < line_end - p;
-        }
-
-      if (too_big)
+      /* Use a single_line search.  Although this code formerly used
+         PCRE_MULTILINE for performance, the performance wasn't always
+         better and the correctness issues were too puzzling.  See
+         Bug#22655.  */
+      line_end = memchr (p, eolbyte, buf + size - p);
+      if (INT_MAX < line_end - p)
         die (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
       for (;;)
@@ -289,27 +233,11 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           int options = 0;
           if (!bol)
             options |= PCRE_NOTBOL;
-          if (multiline)
-            options |= PCRE_NO_UTF8_CHECK;
 
           e = jit_exec (subject, line_end - subject, search_offset,
                         options, sub);
           if (e != PCRE_ERROR_BADUTF8)
-            {
-              if (0 < e && multiline && sub[1] - sub[0] != 0)
-                {
-                  char const *nl = memchr (subject + sub[0], eolbyte,
-                                           sub[1] - sub[0]);
-                  if (nl)
-                    {
-                      /* This match crosses a line boundary; reject it.  */
-                      p = subject + sub[0];
-                      line_end = nl;
-                      continue;
-                    }
-                }
-              break;
-            }
+            break;
           int valid_bytes = sub[0];
 
           if (search_offset <= valid_bytes)
@@ -381,15 +309,6 @@ Pexecute (char *buf, size_t size, size_t *match_size,
         {
           beg = matchbeg;
           end = matchend;
-        }
-      else if (multiline)
-        {
-          char const *prev_nl = memrchr (line_start - 1, eolbyte,
-                                         matchbeg - (line_start - 1));
-          char const *next_nl = memchr (matchend, eolbyte,
-                                        line_end + 1 - matchend);
-          beg = prev_nl + 1;
-          end = next_nl + 1;
         }
       else
         {

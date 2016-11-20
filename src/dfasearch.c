@@ -216,7 +216,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 }
 
 size_t
-EGexecute (char *buf, size_t size, size_t *match_size,
+EGexecute (char const *buf, size_t size, size_t *match_size,
            char const *start_ptr)
 {
   char const *buflim, *beg, *end, *ptr, *match, *best_match, *mb_start;

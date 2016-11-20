@@ -29,7 +29,6 @@ extern bool match_words;	/* -w */
 extern bool match_lines;	/* -x */
 extern char eolbyte;		/* -z */
 
-extern bool buf_has_encoding_errors (char *, size_t);
 extern char const *pattern_file_name (size_t, size_t *);
 
 #endif

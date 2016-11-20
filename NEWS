@@ -10,9 +10,11 @@ GNU grep NEWS                                    -*- outline -*-
   >/dev/null" where PROGRAM dies when writing into a broken pipe.
   [bug introduced in grep-2.26]
 
-  grep -Pz no longer rejects patterns containing ^ and $, is more
-  cautious about special patterns like (?-m) and (*FAIL), and works
-  when combined with -x.  [bug introduced in grep-2.23]
+  grep -P no longer attempts multiline matches.  This works more
+  intuitively with unusual patterns, and means that grep -Pz no longer
+  rejects patterns containing ^ and $ and works when combined with -x.
+  [bugs introduced in grep-2.23] A downside is that grep -P is now
+  significantly slower, albeit typically still faster than pcregrep.
 
   grep -m0 -L PAT FILE now outputs "FILE".  [bug introduced in grep-2.5]
 
