@@ -194,12 +194,12 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
 
   /* The search address to pass to pcre_exec.  This is the start of
      the buffer, or just past the most-recently discovered encoding
-     error.  */
+     error or line end.  */
   char const *subject = buf;
 
-  for (; p < buf + size; p = line_start = line_end + 1)
+  do
     {
-      /* Use a single_line search.  Although this code formerly used
+      /* Search line by line.  Although this code formerly used
          PCRE_MULTILINE for performance, the performance wasn't always
          better and the correctness issues were too puzzling.  See
          Bug#22655.  */
@@ -269,7 +269,9 @@ Pexecute (char const *buf, size_t size, size_t *match_size,
       if (e != PCRE_ERROR_NOMATCH)
         break;
       bol = true;
+      p = subject = line_start = line_end + 1;
     }
+  while (p < buf + size);
 
   if (e <= 0)
     {
