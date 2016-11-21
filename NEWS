@@ -10,6 +10,9 @@ GNU grep NEWS                                    -*- outline -*-
   >/dev/null" where PROGRAM dies when writing into a broken pipe.
   [bug introduced in grep-2.26]
 
+  grep no longer mishandles ranges in nontrivial unibyte locales.
+  [bug introduced in grep-2.26]
+
   grep -P no longer attempts multiline matches.  This works more
   intuitively with unusual patterns, and means that grep -Pz no longer
   rejects patterns containing ^ and $ and works when combined with -x.
