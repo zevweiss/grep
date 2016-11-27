@@ -94,6 +94,7 @@ TESTS =						\
   equiv-classes					\
   ere						\
   euc-mb					\
+  false-match-mb-non-utf8			\
   fedora					\
   fgrep-infloop					\
   file						\
