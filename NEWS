@@ -7,8 +7,7 @@ GNU grep NEWS                                    -*- outline -*-
   grep no longer reports a false match in a multibyte, non-UTF8 locale
   like zh_CN.gb18030, with a regular expression like ".*7" that just
   happens to match the 4-byte representation of gb18030's \uC9, the
-  final byte of which is the digit "7".  This "fix" is to make grep
-  always use the slower regex matcher in such locales.
+  final byte of which is the digit "7".
   [bug introduced in grep-2.19]
 
   grep by default now reads all of standard input if it is a pipe,
