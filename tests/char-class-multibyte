@@ -24,7 +24,7 @@ done
 
 for LOC in en_US.UTF-8 $LOCALE_FR_UTF8; do
   out=out3-$LOC
-  printf '\303\n' | LC_ALL=$LOC returns_ 1 grep '[é]' > $out || fail=1
+  printf '\303\n' | returns_ 1 env LC_ALL=$LOC grep '[é]' > $out || fail=1
 done
 
 Exit $fail

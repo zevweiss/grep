@@ -42,6 +42,6 @@ make_input BABABA |returns_ 1 euc_grep AB || fail=1
 make_input BABABA |returns_ 1 euc_grep '^x\|AB' || fail=1
 
 # -P supports only unibyte and UTF-8 locales.
-LC_ALL=$locale returns_ 2 grep -P x /dev/null || fail=1
+returns_ 2 env LC_ALL=$locale grep -P x /dev/null || fail=1
 
 Exit $fail

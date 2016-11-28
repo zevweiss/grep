@@ -18,7 +18,7 @@ returns_ 1 grep '[[:space:]]' x 2> err || fail=1
 test -s err && fail=1
 
 # disabled by POSIXLY_CORRECT
-POSIXLY_CORRECT=yes returns_ 1 grep '[:space:]' x 2> err || fail=1
+returns_ 1 env POSIXLY_CORRECT=yes grep '[:space:]' x 2> err || fail=1
 test -s err && fail=1
 
 # patterns that are considered valid
