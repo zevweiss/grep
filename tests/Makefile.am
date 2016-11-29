@@ -85,6 +85,7 @@ TESTS =						\
   count-newline					\
   dfa-coverage					\
   dfa-heap-overrun				\
+  dfa-infloop					\
   dfaexec-multibyte				\
   empty						\
   empty-line					\
