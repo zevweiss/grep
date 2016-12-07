@@ -1758,29 +1758,14 @@ drain_input (int fd, struct stat const *st)
 static void
 finalize_input (int fd, struct stat const *st, bool ineof)
 {
-  if (fd != STDIN_FILENO)
-    return;
-
-  if (outleft)
-    {
-      if (ineof)
-        return;
-      if (seek_failed)
-        {
-          if (drain_input (fd, st))
-            return;
-        }
-      else if (0 <= lseek (fd, 0, SEEK_END))
-        return;
-    }
-  else
-    {
-      if (seek_failed || bufoffset == after_last_match
-          || 0 <= lseek (fd, after_last_match, SEEK_SET))
-        return;
-    }
-
-  suppressible_error (errno);
+  if (fd == STDIN_FILENO
+      && (outleft
+          ? (!ineof && (seek_failed
+                        ? ! drain_input (fd, st)
+                        : lseek (fd, 0, SEEK_END) < 0))
+          : (bufoffset != after_last_match && !seek_failed
+             && lseek (fd, after_last_match, SEEK_SET) < 0)))
+    suppressible_error (errno);
 }
 
 static bool
