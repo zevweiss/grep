@@ -13,7 +13,8 @@ GNU grep NEWS                                    -*- outline -*-
   final byte of which is the digit "7".
   [bug introduced in grep-2.19]
 
-  grep by default now reads all of standard input if it is a pipe,
+  Unless an early-exit option like -q, -l, -L, -m, or -f /dev/null is
+  specified, grep now reads all of a non-seekable standard input,
   even if this cannot affect grep's output or exit status.  This works
   better with nonportable scripts that run "PROGRAM | grep PATTERN
   >/dev/null" where PROGRAM dies when writing into a broken pipe.
