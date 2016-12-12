@@ -1760,9 +1760,12 @@ finalize_input (int fd, struct stat const *st, bool ineof)
 {
   if (fd == STDIN_FILENO
       && (outleft
-          ? (!ineof && (seek_failed
-                        ? ! drain_input (fd, st)
-                        : lseek (fd, 0, SEEK_END) < 0))
+          ? (!ineof
+             && (seek_failed
+                 || (lseek (fd, 0, SEEK_END) < 0
+                     /* Linux proc file system has EINVAL (Bug#25180).  */
+                     && errno != EINVAL))
+             && ! drain_input (fd, st))
           : (bufoffset != after_last_match && !seek_failed
              && lseek (fd, after_last_match, SEEK_SET) < 0)))
     suppressible_error (errno);

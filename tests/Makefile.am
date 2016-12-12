@@ -141,6 +141,7 @@ TESTS =						\
   pcre-z					\
   posix-bracket					\
   prefix-of-multibyte				\
+  proc						\
   r-dot						\
   repetition-overflow				\
   reversed-range-endpoints			\
