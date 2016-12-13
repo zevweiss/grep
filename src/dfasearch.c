@@ -121,8 +121,7 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   if (match_icase)
     syntax_bits |= RE_ICASE;
   re_set_syntax (syntax_bits);
-  int dfaopts = ((match_icase ? DFA_CASE_FOLD : 0)
-                 | (eolbyte ? 0 : DFA_EOL_NUL));
+  int dfaopts = eolbyte ? 0 : DFA_EOL_NUL;
   dfasyntax (dfa, &localeinfo, syntax_bits, dfaopts);
 
   /* For GNU regex, pass the patterns separately to detect errors like
