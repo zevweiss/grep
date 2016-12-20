@@ -104,46 +104,35 @@ static size_t n_fl_pair_slots;
    and any command-line argument that serves as a regular expression.  */
 static size_t n_pattern_files;
 
-/* Given the concatenation of all patterns, one per line, be they
-   specified via -e, a lone command-line argument or -f, this is the
-   number of the first line of each entity, in that concatenation.
+/* The number of patterns seen so far.
    It is advanced by fl_add and, when needed, used in pattern_file_name
    to derive a file-relative line number.  */
-static uintmax_t patfile_lineno = 1;
+static size_t n_patterns;
 
-/* Return the number of newline bytes in BUF starting at offset BEG
-   and up to and not including offset END.  */
+/* Return the number of newline bytes in BUF with size SIZE.  */
 static size_t _GL_ATTRIBUTE_PURE
-count_nl_bytes (char const *buf, size_t beg, size_t end)
+count_nl_bytes (char const *buf, size_t size)
 {
-  char const *p = buf + beg;
-  char const *end_p = buf + end;
-  uintmax_t n = 0;
-  while (true)
-    {
-      p = memchr (p, '\n', end_p - p);
-      if (!p)
-        break;
-      p++;
-      n++;
-    }
+  char const *p = buf;
+  char const *end_p = buf + size;
+  size_t n = 0;
+  while ((p = memchr (p, '\n', end_p - p)))
+    p++, n++;
   return n;
 }
 
-/* Append a FILENAME,line-number pair to FL_PAIR.  The line number we save
-   with FILENAME is the initial value of the global PATFILE_LINENO.
-   PATFILE_LINENO is then incremented by the number of newlines in BUF
-   from offset BEG up to but not including offset END.  */
+/* Append a FILENAME,line-number pair to FL_PAIR, and update
+   pattern-related counts from the contents of BUF with SIZE bytes.  */
 static void
-fl_add (char const *buf, size_t beg, size_t end, char const *filename)
+fl_add (char const *buf, size_t size, char const *filename)
 {
   if (n_fl_pair_slots <= n_pattern_files)
     fl_pair = x2nrealloc (fl_pair, &n_fl_pair_slots, sizeof *fl_pair);
 
-  fl_pair[n_pattern_files].lineno = patfile_lineno;
+  fl_pair[n_pattern_files].lineno = n_patterns + 1;
   fl_pair[n_pattern_files].filename = filename;
   n_pattern_files++;
-  patfile_lineno += count_nl_bytes (buf, beg, end);
+  n_patterns += count_nl_bytes (buf, size);
 }
 
 /* Map the line number, LINENO, of one of the input patterns to the
@@ -2521,10 +2510,11 @@ main (int argc, char **argv)
             keyalloc = keycc + cc + 1;
             keys = x2realloc (keys, &keyalloc);
           }
-        memcpy (&keys[keycc], optarg, cc);
+        oldcc = keycc;
+        memcpy (keys + oldcc, optarg, cc);
         keycc += cc;
         keys[keycc++] = '\n';
-        fl_add (keys, keycc - cc - 1, keycc, "");
+        fl_add (keys + oldcc, cc + 1, "");
         break;
 
       case 'f':
@@ -2548,7 +2538,7 @@ main (int argc, char **argv)
         /* Append final newline if file ended in non-newline. */
         if (oldcc != keycc && keys[keycc - 1] != '\n')
           keys[keycc++] = '\n';
-        fl_add (keys, oldcc, keycc, xstrdup (optarg));
+        fl_add (keys + oldcc, keycc - oldcc, optarg);
         break;
 
       case 'h':
@@ -2741,7 +2731,8 @@ main (int argc, char **argv)
       /* Make a copy so that it can be reallocated or freed later.  */
       keycc = strlen (argv[optind]);
       keys = xmemdup (argv[optind++], keycc + 1);
-      fl_add (keys, 0, keycc, "");
+      fl_add (keys, keycc, "");
+      n_patterns++;
     }
   else
     usage (EXIT_TROUBLE);
