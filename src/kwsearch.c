@@ -34,7 +34,7 @@ wordchar (wint_t wc)
 static kwset_t kwset;
 
 void
-Fcompile (char const *pattern, size_t size)
+Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
   size_t total = size;
 

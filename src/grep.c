@@ -491,8 +491,6 @@ bool match_words;
 bool match_lines;
 char eolbyte;
 
-static char const *matcher;
-
 /* For error messages. */
 /* The input file name, or (if standard input) null or a --label argument.  */
 static char const *filename;
@@ -577,9 +575,8 @@ static bool seek_failed;
 static bool seek_data_failed;
 
 /* Functions we'll use to search. */
-typedef void (*compile_fp_t) (char const *, size_t);
+typedef void (*compile_fp_t) (char const *, size_t, reg_syntax_t);
 typedef size_t (*execute_fp_t) (char const *, size_t, size_t *, char const *);
-static compile_fp_t compile;
 static execute_fp_t execute;
 
 static char const *
@@ -2019,70 +2016,36 @@ if any error occurs and -q is not given, the exit status is 2.\n"));
 
 /* Pattern compilers and matchers.  */
 
-static void
-Gcompile (char const *pattern, size_t size)
+static struct
 {
-  GEAcompile (pattern, size, RE_SYNTAX_GREP);
-}
-
-static void
-Ecompile (char const *pattern, size_t size)
-{
-  GEAcompile (pattern, size, RE_SYNTAX_EGREP);
-}
-
-static void
-Acompile (char const *pattern, size_t size)
-{
-  GEAcompile (pattern, size, RE_SYNTAX_AWK);
-}
-
-static void
-GAcompile (char const *pattern, size_t size)
-{
-  GEAcompile (pattern, size, RE_SYNTAX_GNU_AWK);
-}
-
-static void
-PAcompile (char const *pattern, size_t size)
-{
-  GEAcompile (pattern, size, RE_SYNTAX_POSIX_AWK);
-}
-
-struct matcher
-{
-  char const name[16];
+  char const name[12];
+  int syntax; /* used if compile == GEAcompile */
   compile_fp_t compile;
   execute_fp_t execute;
+} const matchers[] = {
+  { "grep", RE_SYNTAX_GREP, GEAcompile, EGexecute },
+  { "egrep", RE_SYNTAX_EGREP, GEAcompile, EGexecute },
+  { "fgrep", 0, Fcompile, Fexecute, },
+  { "awk", RE_SYNTAX_AWK, GEAcompile, EGexecute },
+  { "gawk", RE_SYNTAX_GNU_AWK, GEAcompile, EGexecute },
+  { "posixawk", RE_SYNTAX_POSIX_AWK, GEAcompile, EGexecute },
+  { "perl", 0, Pcompile, Pexecute, },
 };
-static struct matcher const matchers[] = {
-  { "grep",      Gcompile, EGexecute },
-  { "egrep",     Ecompile, EGexecute },
-  { "fgrep",     Fcompile,  Fexecute },
-  { "awk",       Acompile, EGexecute },
-  { "gawk",     GAcompile, EGexecute },
-  { "posixawk", PAcompile, EGexecute },
-  { "perl",      Pcompile,  Pexecute },
-  { "", NULL, NULL },
-};
+/* Keep these in sync with the 'matchers' table.  */
+enum { F_MATCHER_INDEX = 2, G_MATCHER_INDEX = 0 };
 
-/* Set the matcher to M if available.  Exit in case of conflicts or if
-   M is not available.  */
-static void
-setmatcher (char const *m)
+/* Return the index of the matcher corresponding to M if available.
+   MATCHER is the index of the previous matcher, or -1 if none.
+   Exit in case of conflicts or if M is not available.  */
+static int
+setmatcher (char const *m, int matcher)
 {
-  struct matcher const *p;
-
-  if (matcher && !STREQ (matcher, m))
-    die (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
-
-  for (p = matchers; p->compile; p++)
-    if (STREQ (m, p->name))
+  for (int i = 0; i < sizeof matchers / sizeof *matchers; i++)
+    if (STREQ (m, matchers[i].name))
       {
-        matcher = p->name;
-        compile = p->compile;
-        execute = p->execute;
-        return;
+        if (0 <= matcher && matcher != i)
+          die (EXIT_TROUBLE, 0, _("conflicting matchers specified"));
+        return i;
       }
 
   die (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
@@ -2367,6 +2330,7 @@ main (int argc, char **argv)
 {
   char *keys = NULL;
   size_t keycc = 0, oldcc, keyalloc = 0;
+  int matcher = -1;
   bool with_filenames = false;
   size_t cc;
   int opt, prepended;
@@ -2409,9 +2373,6 @@ main (int argc, char **argv)
     error (0, 0, _("warning: GREP_OPTIONS is deprecated;"
                    " please use an alias or script"));
 
-  compile = matchers[0].compile;
-  execute = matchers[0].execute;
-
   while (prev_optind = optind,
          (opt = get_nondigit_option (argc, argv, &default_context)) != -1)
     switch (opt)
@@ -2440,23 +2401,23 @@ main (int argc, char **argv)
         break;
 
       case 'E':
-        setmatcher ("egrep");
+        matcher = setmatcher ("egrep", matcher);
         break;
 
       case 'F':
-        setmatcher ("fgrep");
+        matcher = setmatcher ("fgrep", matcher);
         break;
 
       case 'P':
-        setmatcher ("perl");
+        matcher = setmatcher ("perl", matcher);
         break;
 
       case 'G':
-        setmatcher ("grep");
+        matcher = setmatcher ("grep", matcher);
         break;
 
       case 'X': /* undocumented on purpose */
-        setmatcher (optarg);
+        matcher = setmatcher (optarg, matcher);
         break;
 
       case 'H':
@@ -2794,24 +2755,26 @@ main (int argc, char **argv)
 
   initialize_unibyte_mask ();
 
+  if (matcher < 0)
+    matcher = G_MATCHER_INDEX;
+
   /* In a unibyte locale, switch from fgrep to grep if
      the pattern matches words (where grep is typically faster).
      In a multibyte locale, switch from fgrep to grep if either
      (1) the pattern has an encoding error (where fgrep might not work), or
      (2) case is ignored and a fast fgrep ignore-case is not available.  */
-  if (compile == Fcompile
+  if (matcher == F_MATCHER_INDEX
       && (MB_CUR_MAX <= 1
           ? match_words
           : (contains_encoding_error (keys, keycc)
              || (match_icase && !fgrep_icase_available (keys, keycc)))))
     {
       fgrep_to_grep_pattern (&keys, &keycc);
-      matcher = "grep";
-      compile = Gcompile;
-      execute = EGexecute;
+      matcher = G_MATCHER_INDEX;
     }
 
-  compile (keys, keycc);
+  execute = matchers[matcher].execute;
+  matchers[matcher].compile (keys, keycc, matchers[matcher].syntax);
   free (keys);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };

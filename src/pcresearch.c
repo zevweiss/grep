@@ -88,7 +88,7 @@ static int empty_match[2];
 #endif
 
 void
-Pcompile (char const *pattern, size_t size)
+Pcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
 #if !HAVE_LIBPCRE
   die (EXIT_TROUBLE, 0,
