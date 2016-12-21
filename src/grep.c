@@ -2032,7 +2032,7 @@ static struct
   { "perl", 0, Pcompile, Pexecute, },
 };
 /* Keep these in sync with the 'matchers' table.  */
-enum { F_MATCHER_INDEX = 2, G_MATCHER_INDEX = 0 };
+enum { E_MATCHER_INDEX = 1, F_MATCHER_INDEX = 2, G_MATCHER_INDEX = 0 };
 
 /* Return the index of the matcher corresponding to M if available.
    MATCHER is the index of the previous matcher, or -1 if none.
@@ -2245,23 +2245,12 @@ contains_encoding_error (char const *pat, size_t patlen)
   return false;
 }
 
-/* Return true if the fgrep pattern PAT, of size PATLEN, matches only
-   single-byte characters including case folding, and so is suitable
-   to be converted to a grep pattern.  */
+/* Return true if the set of single-byte characters USED contains only
+   characters whose case counterparts are also single-byte.  */
 
 static bool
-fgrep_icase_available (char const *pat, size_t patlen)
+all_single_byte_after_folding (bool used[UCHAR_MAX + 1])
 {
-  bool used[UCHAR_MAX + 1] = { 0, };
-
-  for (size_t i = 0; i < patlen; i++)
-    {
-      unsigned char c = pat[i];
-      if (localeinfo.sbctowc[c] == WEOF)
-        return false;
-      used[c] = true;
-    }
-
   for (int c = 0; c <= UCHAR_MAX; c++)
     if (used[c])
       {
@@ -2279,6 +2268,26 @@ fgrep_icase_available (char const *pat, size_t patlen)
       }
 
   return true;
+}
+
+/* Return true if the -F patterns PAT, of size PATLEN, match only
+   single-byte characters including case folding, and so can be
+   processed by the -F matcher even if -i is given.  */
+
+static bool
+fgrep_icase_available (char const *pat, size_t patlen)
+{
+  bool used[UCHAR_MAX + 1] = { 0, };
+
+  for (size_t i = 0; i < patlen; i++)
+    {
+      unsigned char c = pat[i];
+      if (localeinfo.sbctowc[c] == WEOF)
+        return false;
+      used[c] = true;
+    }
+
+  return all_single_byte_after_folding (used);
 }
 
 /* Change the pattern *KEYS_P, of size *LEN_P, from fgrep to grep style.  */
@@ -2323,6 +2332,84 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
   free (*keys_p);
   *keys_p = new_keys;
   *len_p = p - new_keys;
+}
+
+/* If it is easy, convert the MATCHER-style patterns KEYS (of size
+   *LEN_P) to -F style, update *LEN_P to a possibly-smaller value, and
+   return F_MATCHER_INDEX.  If not, leave KEYS and *LEN_P alone and
+   return MATCHER.  This function is conservative and sometimes misses
+   conversions, e.g., it does not convert the -E pattern "(a|a|[aa])"
+   to the -F pattern "a".  */
+
+static int
+try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
+{
+  int result = matcher;
+  size_t len = *len_p;
+  char *new_keys = xmalloc (len + 1);
+  char *p = new_keys;
+  mbstate_t mb_state = { 0 };
+  size_t mblen_lim = match_icase ? 1 : -3;
+  bool used[UCHAR_MAX + 1] = { 0, };
+
+  while (len != 0)
+    {
+      switch (*keys)
+        {
+        case '$': case '*': case '.': case '[': case '^':
+          goto fail;
+
+        case '(': case '+': case '?': case '{': case '|':
+          if (matcher != G_MATCHER_INDEX)
+            goto fail;
+          break;
+
+        case '\\':
+          if (1 < len)
+            switch (keys[1])
+              {
+              case '\n':
+              case 'B': case 'S': case 'W': case'\'': case '<':
+              case 'b': case 's': case 'w': case '`': case '>':
+              case '1': case '2': case '3': case '4':
+              case '5': case '6': case '7': case '8': case '9':
+                goto fail;
+
+              case '(': case '+': case '?': case '{': case '|':
+                if (matcher == G_MATCHER_INDEX)
+                  goto fail;
+                /* Fall through.  */
+              default:
+                keys++, len--;
+                break;
+              }
+          break;
+        }
+
+      {
+        size_t n = mb_clen (keys, len, &mb_state);
+        if (mblen_lim < n)
+          goto fail;
+        used[to_uchar (keys[0])] = true;
+        p = mempcpy (p, keys, n);
+        keys += n;
+        len -= n;
+      }
+    }
+
+  if (mblen_lim == 1 && !all_single_byte_after_folding (used))
+    goto fail;
+
+  if (*len_p != p - new_keys)
+    {
+      *len_p = p - new_keys;
+      memcpy (keys, new_keys, p - new_keys);
+    }
+  result = F_MATCHER_INDEX;
+
+ fail:
+  free (new_keys);
+  return result;
 }
 
 int
@@ -2758,11 +2845,11 @@ main (int argc, char **argv)
   if (matcher < 0)
     matcher = G_MATCHER_INDEX;
 
-  /* In a unibyte locale, switch from fgrep to grep if
-     the pattern matches words (where grep is typically faster).
-     In a multibyte locale, switch from fgrep to grep if either
-     (1) the pattern has an encoding error (where fgrep might not work), or
-     (2) case is ignored and a fast fgrep ignore-case is not available.  */
+  /* In a single-byte locale, switch from -F to -G if it is a single
+     pattern that matches words, where -G is typically faster.  In a
+     multi-byte locale, switch if the patterns have an encoding error
+     (where -F does not work) or if -i and the patterns will not work
+     for -iF.  */
   if (matcher == F_MATCHER_INDEX
       && (MB_CUR_MAX <= 1
           ? match_words
@@ -2772,6 +2859,11 @@ main (int argc, char **argv)
       fgrep_to_grep_pattern (&keys, &keycc);
       matcher = G_MATCHER_INDEX;
     }
+  /* With two or more patterns, if -F works then switch from either -E
+     or -G, as -F is probably faster then.  */
+  else if ((matcher == G_MATCHER_INDEX || matcher == E_MATCHER_INDEX)
+           && 1 < n_patterns)
+    matcher = try_fgrep_pattern (matcher, keys, &keycc);
 
   execute = matchers[matcher].execute;
   matchers[matcher].compile (keys, keycc, matchers[matcher].syntax);
