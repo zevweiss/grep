@@ -22,8 +22,6 @@
 #define SYSTEM_INLINE _GL_EXTERN_INLINE
 #include "search.h"
 
-#define NCHAR (UCHAR_MAX + 1)
-
 kwset_t
 kwsinit (bool mb_trans)
 {

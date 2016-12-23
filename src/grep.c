@@ -50,9 +50,9 @@
 #include "xalloc.h"
 #include "xstrtol.h"
 
-#define SEP_CHAR_SELECTED ':'
-#define SEP_CHAR_REJECTED '-'
-#define SEP_STR_GROUP    "--"
+enum { SEP_CHAR_SELECTED = ':' };
+enum { SEP_CHAR_REJECTED = '-' };
+char const SEP_STR_GROUP[] = "--";
 
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
@@ -797,7 +797,7 @@ skipped_file (char const *name, bool command_line, bool is_dir)
 
 static char *buffer;		/* Base of buffer. */
 static size_t bufalloc;		/* Allocated buffer size, counting slop. */
-#define INITIAL_BUFSIZE 32768	/* Initial buffer size, not counting slop. */
+enum { INITIAL_BUFSIZE = 32768 }; /* Initial buffer size, not counting slop. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */

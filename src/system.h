@@ -37,6 +37,7 @@
 #include <ctype.h>
 
 enum { EXIT_TROUBLE = 2 };
+enum { NCHAR = UCHAR_MAX + 1 };
 
 #include <gettext.h>
 #define N_(String) gettext_noop(String)

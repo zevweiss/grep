@@ -42,19 +42,14 @@
 #include "obstack.h"
 #include "xalloc.h"
 
-#define link kwset_link
-
-#ifdef GREP
-# include "xalloc.h"
-# undef malloc
-# define malloc xmalloc
-#endif
-
-#define NCHAR (UCHAR_MAX + 1)
-#define obstack_chunk_alloc malloc
+#define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-#define U(c) to_uchar (c)
+static unsigned char
+U (char ch)
+{
+  return to_uchar (ch);
+}
 
 /* Balanced tree of edges and labels leaving a given trie node. */
 struct tree
@@ -159,7 +154,7 @@ kwsalloc (char const *trans, bool reverse)
 
 /* This upper bound is valid for CHAR_BIT >= 4 and
    exact for CHAR_BIT in { 4..11, 13, 15, 17, 19 }. */
-#define DEPTH_SIZE (CHAR_BIT + CHAR_BIT/2)
+enum { DEPTH_SIZE = CHAR_BIT + CHAR_BIT / 2 };
 
 /* Add the given string to the contents of the keyword set.  */
 void
@@ -181,46 +176,46 @@ kwsincr (kwset_t kwset, char const *text, size_t len)
       /* Descend the tree of outgoing links for this trie node,
          looking for the current character and keeping track
          of the path followed. */
-      struct tree *link = trie->links;
+      struct tree *cur = trie->links;
       struct tree *links[DEPTH_SIZE];
       enum { L, R } dirs[DEPTH_SIZE];
       links[0] = (struct tree *) &trie->links;
       dirs[0] = L;
       int depth = 1;
 
-      while (link && label != link->label)
+      while (cur && label != cur->label)
         {
-          links[depth] = link;
-          if (label < link->label)
-            dirs[depth++] = L, link = link->llink;
+          links[depth] = cur;
+          if (label < cur->label)
+            dirs[depth++] = L, cur = cur->llink;
           else
-            dirs[depth++] = R, link = link->rlink;
+            dirs[depth++] = R, cur = cur->rlink;
         }
 
       /* The current character doesn't have an outgoing link at
          this trie node, so build a new trie node and install
          a link in the current trie node's tree. */
-      if (!link)
+      if (!cur)
         {
-          link = obstack_alloc (&kwset->obstack, sizeof *link);
-          link->llink = NULL;
-          link->rlink = NULL;
-          link->trie = obstack_alloc (&kwset->obstack, sizeof *link->trie);
-          link->trie->accepting = 0;
-          link->trie->links = NULL;
-          link->trie->parent = trie;
-          link->trie->next = NULL;
-          link->trie->fail = NULL;
-          link->trie->depth = trie->depth + 1;
-          link->trie->shift = 0;
-          link->label = label;
-          link->balance = 0;
+          cur = obstack_alloc (&kwset->obstack, sizeof *cur);
+          cur->llink = NULL;
+          cur->rlink = NULL;
+          cur->trie = obstack_alloc (&kwset->obstack, sizeof *cur->trie);
+          cur->trie->accepting = 0;
+          cur->trie->links = NULL;
+          cur->trie->parent = trie;
+          cur->trie->next = NULL;
+          cur->trie->fail = NULL;
+          cur->trie->depth = trie->depth + 1;
+          cur->trie->shift = 0;
+          cur->label = label;
+          cur->balance = 0;
 
           /* Install the new tree node in its parent. */
           if (dirs[--depth] == L)
-            links[depth]->llink = link;
+            links[depth]->llink = cur;
           else
-            links[depth]->rlink = link;
+            links[depth]->rlink = cur;
 
           /* Back up the tree fixing the balance flags. */
           while (depth && !links[depth]->balance)
@@ -291,7 +286,7 @@ kwsincr (kwset_t kwset, char const *text, size_t len)
             }
         }
 
-      trie = link->trie;
+      trie = cur->trie;
     }
 
   /* Mark the node we finally reached as accepting, encoding the
@@ -326,7 +321,7 @@ static void
 treefails (struct tree const *tree, struct trie const *fail,
            struct trie *recourse, bool reverse)
 {
-  struct tree *link;
+  struct tree *cur;
 
   if (!tree)
     return;
@@ -338,16 +333,16 @@ treefails (struct tree const *tree, struct trie const *fail,
      node that has a descendant on the current label. */
   while (fail)
     {
-      link = fail->links;
-      while (link && tree->label != link->label)
-        if (tree->label < link->label)
-          link = link->llink;
+      cur = fail->links;
+      while (cur && tree->label != cur->label)
+        if (tree->label < cur->label)
+          cur = cur->llink;
         else
-          link = link->rlink;
-      if (link)
+          cur = cur->rlink;
+      if (cur)
         {
-          tree->trie->fail = link->trie;
-          if (!reverse && link->trie->accepting && !tree->trie->accepting)
+          tree->trie->fail = cur->trie;
+          if (!reverse && cur->trie->accepting && !tree->trie->accepting)
             tree->trie->accepting = SIZE_MAX;
           return;
         }
@@ -641,18 +636,18 @@ static size_t
 memoff2_kwset (char const *s, size_t n, kwset_t kwset,
                struct kwsmatch *kwsmatch)
 {
-  struct tree const *link = kwset->trie->links;
-  struct tree const *clink = link->llink ? link->llink : link->rlink;
+  struct tree const *cur = kwset->trie->links;
+  struct tree const *clink = cur->llink ? cur->llink : cur->rlink;
   char const *mch = (clink
-                     ? memchr2 (s, link->label, clink->label, n)
-                     : memchr (s, link->label, n));
+                     ? memchr2 (s, cur->label, clink->label, n)
+                     : memchr (s, cur->label, n));
   if (! mch)
     return SIZE_MAX;
   else
     {
       size_t off = mch - s;
-      if (*mch == link->label)
-        kwsmatch->index = link->trie->accepting / 2;
+      if (*mch == cur->label)
+        kwsmatch->index = cur->trie->accepting / 2;
       else
         kwsmatch->index = clink->trie->accepting / 2;
       kwsmatch->offset[0] = off;
