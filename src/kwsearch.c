@@ -103,7 +103,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
                                buf + size - beg + match_lines, &kwsmatch,
                                longest);
       if (offset == (size_t) -1)
-        goto failure;
+        break;
       len = kwsmatch.size[0] - 2 * match_lines;
       if (mb_check && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
@@ -157,7 +157,6 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
         goto success;
     } /* for (beg in buf) */
 
- failure:
   return -1;
 
  success:
