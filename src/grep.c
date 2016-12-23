@@ -2852,7 +2852,7 @@ main (int argc, char **argv)
      (where -F does not work) or if -i and the patterns will not work
      for -iF.  */
   if (matcher == F_MATCHER_INDEX
-      && (MB_CUR_MAX <= 1
+      && (! localeinfo.multibyte
           ? match_words
           : (contains_encoding_error (keys, keycc)
              || (match_icase && !fgrep_icase_available (keys, keycc)))))

@@ -110,7 +110,7 @@ Pcompile (char const *pattern, size_t size, reg_syntax_t ignored)
   char const *p;
   char const *pnul;
 
-  if (1 < MB_CUR_MAX)
+  if (localeinfo.multibyte)
     {
       if (! localeinfo.using_utf8)
         die (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));

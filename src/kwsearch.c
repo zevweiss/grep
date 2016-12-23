@@ -86,7 +86,7 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
     mb_check = longest = false;
   else
     {
-      mb_check = MB_CUR_MAX > 1 && !localeinfo.using_utf8;
+      mb_check = localeinfo.multibyte & !localeinfo.using_utf8;
       longest = mb_check | !!start_ptr | match_words;
     }
 
