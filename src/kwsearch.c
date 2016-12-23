@@ -81,7 +81,7 @@ size_t
 Fexecute (char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
-  char const *beg, *try, *end, *mb_start;
+  char const *beg, *end, *mb_start;
   size_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
@@ -131,30 +131,32 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
           len += start_ptr == NULL;
           goto success_in_beg_and_len;
         }
-      if (match_words)
-        for (try = beg; ; )
-          {
-            char const *bol = memrchr (buf, eol, beg - buf);
-            bol = bol ? bol + 1 : buf;
-            if (wordchar (mb_prev_wc (bol, try, buf + size)))
-              break;
-            if (wordchar (mb_next_wc (try + len, buf + size)))
-              {
-                if (!len)
-                  break;
-                offset = kwsexec (kwset, beg, --len, &kwsmatch, true);
-                if (offset == (size_t) -1)
-                  break;
-                try = beg + offset;
-                len = kwsmatch.size[0];
-              }
-            else if (!start_ptr)
-              goto success;
-            else
-              goto success_in_beg_and_len;
-          } /* for (try) */
-      else
+      if (! match_words)
         goto success;
+
+      /* Succeed if the preceding and following characters are word
+         constituents.  If the following character is not a word
+         constituent, keep trying with shorter matches.  */
+      char const *bol = memrchr (mb_start, eol, beg - mb_start);
+      if (bol)
+        mb_start = bol + 1;
+      if (! wordchar (mb_prev_wc (mb_start, beg, buf + size)))
+        for (;;)
+          {
+            if (! wordchar (mb_next_wc (beg + len, buf + size)))
+              {
+                if (start_ptr)
+                  goto success_in_beg_and_len;
+                else
+                  goto success;
+              }
+            if (!len)
+              break;
+            offset = kwsexec (kwset, beg, --len, &kwsmatch, true);
+            if (offset != 0)
+              break;
+            len = kwsmatch.size[0];
+          }
     } /* for (beg in buf) */
 
   return -1;
