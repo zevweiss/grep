@@ -48,6 +48,7 @@ typedef signed char mb_len_map_t;
 /* searchutils.c */
 extern void wordinit (void);
 extern kwset_t kwsinit (bool);
+extern size_t wordchars_size (char const *, char const *);
 extern size_t wordchar_next (char const *, char const *);
 extern bool wordchar_prev (char const *, char const *, char const *);
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);

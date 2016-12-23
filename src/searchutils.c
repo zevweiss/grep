@@ -146,6 +146,15 @@ wordchars_count (char const *buf, char const *end, bool countall)
   return n;
 }
 
+/* Examine the start of BUF for the longest prefix containing just
+   word constituents.  Return the total number of bytes in the prefix.
+   The buffer ends at END.  */
+size_t
+wordchars_size (char const *buf, char const *end)
+{
+  return wordchars_count (buf, end, true);
+}
+
 /* If BUF starts with a word constituent, return the number of bytes
    used to represent it; otherwise, return zero.  The buffer ends at END.  */
 size_t

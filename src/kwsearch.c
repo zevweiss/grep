@@ -150,6 +150,12 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
               break;
             len = kwsmatch.size[0];
           }
+
+      /* No word match was found at BEG.  Skip past word constituents,
+         since they cannot precede the next match and not skipping
+         them could make things much slower.  */
+      beg += wordchars_size (beg, buf + size);
+      mb_start = beg;
     } /* for (beg in buf) */
 
   return -1;
