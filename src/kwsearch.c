@@ -21,13 +21,6 @@
 #include <config.h>
 #include "search.h"
 
-/* Whether -w considers WC to be a word constituent.  */
-static bool
-wordchar (wint_t wc)
-{
-  return wc == L'_' || iswalnum (wc);
-}
-
 /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
    a list of strings, at least one of which is known to occur in
    any string matching the regexp. */
@@ -140,10 +133,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size,
       char const *bol = memrchr (mb_start, eol, beg - mb_start);
       if (bol)
         mb_start = bol + 1;
-      if (! wordchar (mb_prev_wc (mb_start, beg, buf + size)))
+      if (! wordchar_prev (mb_start, beg, buf + size))
         for (;;)
           {
-            if (! wordchar (mb_next_wc (beg + len, buf + size)))
+            if (! wordchar_next (beg + len, buf + size))
               {
                 if (start_ptr)
                   goto success_in_beg_and_len;

@@ -2651,6 +2651,7 @@ main (int argc, char **argv)
         break;
 
       case 'w':
+        wordinit ();
         match_words = true;
         break;
 

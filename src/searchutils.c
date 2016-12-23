@@ -22,6 +22,30 @@
 #define SYSTEM_INLINE _GL_EXTERN_INLINE
 #include "search.h"
 
+#include <verify.h>
+
+/* For each byte B, word_start[B] is 1 if B is a single-byte character
+   that is a word constituent, 0 if B cannot start a word constituent,
+   and -1 if B might be or might not be the start of a word
+   constituent.  */
+static wint_t word_start[NCHAR];
+verify (WEOF != 0 && WEOF != 1);
+
+/* Whether -w considers WC to be a word constituent.  */
+static bool
+wordchar (wint_t wc)
+{
+  return wc == L'_' || iswalnum (wc);
+}
+
+void
+wordinit (void)
+{
+  for (int i = 0; i < NCHAR; i++)
+    word_start[i] = (localeinfo.sbclen[i] == -2 ? WEOF
+                     : wordchar (localeinfo.sbctowc[i]));
+}
+
 kwset_t
 kwsinit (bool mb_trans)
 {
@@ -93,27 +117,56 @@ mb_goback (char const **mb_start, char const *cur, char const *end)
   return p == cur ? 0 : cur - p0;
 }
 
-/* In the buffer BUF, return the wide character that is encoded just
-   before CUR.  The buffer ends at END.  Return WEOF if there is no
-   wide character just before CUR.  */
-wint_t
-mb_prev_wc (char const *buf, char const *cur, char const *end)
+/* Examine the start of BUF (of size SIZE) for word constituents.
+   If COUNTALL, examine as many as possible; otherwise, examine at most one.
+   Return the total number of bytes in the examined characters.  */
+static size_t
+wordchars_count (char const *buf, char const *end, bool countall)
 {
-  if (cur == buf)
-    return WEOF;
-  char const *p = buf;
-  cur--;
-  cur -= mb_goback (&p, cur, end);
-  return mb_next_wc (cur, end);
+  size_t n = 0;
+  mbstate_t mbs = { 0 };
+  while (n < end - buf)
+    {
+      wint_t ws = word_start[to_uchar (buf[n])];
+      if (ws == 0)
+        break;
+      else if (ws == 1)
+        n++;
+      else
+        {
+          wchar_t wc = 0;
+          size_t wcbytes = mbrtowc (&wc, buf + n, end - buf - n, &mbs);
+          if (!wordchar (wc))
+            break;
+          n += wcbytes + !wcbytes;
+        }
+      if (!countall)
+        break;
+    }
+  return n;
 }
 
-/* Return the wide character that is encoded at CUR.  The buffer ends
-   at END.  Return WEOF if there is no wide character encoded at CUR.  */
-wint_t
-mb_next_wc (char const *cur, char const *end)
+/* If BUF starts with a word constituent, return the number of bytes
+   used to represent it; otherwise, return zero.  The buffer ends at END.  */
+size_t
+wordchar_next (char const *buf, char const *end)
 {
-  wchar_t wc;
-  mbstate_t mbs = { 0 };
-  return (end - cur != 0 && mbrtowc (&wc, cur, end - cur, &mbs) < (size_t) -2
-          ? wc : WEOF);
+  return wordchars_count (buf, end, false);
+}
+
+/* In the buffer BUF, return true if the character whose encoding
+   contains the byte before CUR is a word constituent.  The buffer
+   ends at END.  */
+bool
+wordchar_prev (char const *buf, char const *cur, char const *end)
+{
+  if (buf == cur)
+    return false;
+  cur--;
+  wint_t ws = word_start[to_uchar (*cur)];
+  if (! localeinfo.multibyte)
+    return ws == 1;
+  char const *p = buf;
+  cur -= mb_goback (&p, cur, end);
+  return wordchar_next (cur, end) != 0;
 }

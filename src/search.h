@@ -46,10 +46,11 @@ _GL_INLINE_HEADER_BEGIN
 typedef signed char mb_len_map_t;
 
 /* searchutils.c */
+extern void wordinit (void);
 extern kwset_t kwsinit (bool);
+extern size_t wordchar_next (char const *, char const *);
+extern bool wordchar_prev (char const *, char const *, char const *);
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);
-extern wint_t mb_prev_wc (char const *, char const *, char const *);
-extern wint_t mb_next_wc (char const *, char const *);
 
 /* dfasearch.c */
 extern struct localeinfo localeinfo;

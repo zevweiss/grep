@@ -26,13 +26,6 @@
 
 struct localeinfo localeinfo;
 
-/* Whether -w considers WC to be a word constituent.  */
-static bool
-wordchar (wint_t wc)
-{
-  return wc == L'_' || iswalnum (wc);
-}
-
 /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
    a list of strings, at least one of which is known to occur in
    any string matching the regexp. */
@@ -394,8 +387,8 @@ EGexecute (char const *buf, size_t size, size_t *match_size,
                 while (match <= best_match)
                   {
                     regoff_t shorter_len = 0;
-                    if (!wordchar (mb_prev_wc (beg, match, end - 1))
-                        && !wordchar (mb_next_wc (match + len, end - 1)))
+                    if (! wordchar_next (match + len, end - 1)
+                        && ! wordchar_prev (beg, match, end - 1))
                       goto assess_pattern_match;
                     if (len > 0)
                       {
