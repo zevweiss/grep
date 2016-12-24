@@ -22,14 +22,9 @@
 #define SYSTEM_INLINE _GL_EXTERN_INLINE
 #include "search.h"
 
-#include <verify.h>
-
-/* For each byte B, word_start[B] is 1 if B is a single-byte character
-   that is a word constituent, 0 if B cannot start a word constituent,
-   and -1 if B might be or might not be the start of a word
-   constituent.  */
-static wint_t word_start[NCHAR];
-verify (WEOF != 0 && WEOF != 1);
+/* For each byte B, sbwordchar[B] is true if B is a single-byte
+   character that is a word constituent, and is false otherwise.  */
+static bool sbwordchar[NCHAR];
 
 /* Whether -w considers WC to be a word constituent.  */
 static bool
@@ -42,8 +37,7 @@ void
 wordinit (void)
 {
   for (int i = 0; i < NCHAR; i++)
-    word_start[i] = (localeinfo.sbclen[i] == -2 ? WEOF
-                     : wordchar (localeinfo.sbctowc[i]));
+    sbwordchar[i] = wordchar (localeinfo.sbctowc[i]);
 }
 
 kwset_t
@@ -94,23 +88,46 @@ mb_goback (char const **mb_start, char const *cur, char const *end)
 {
   const char *p = *mb_start;
   const char *p0 = p;
-  mbstate_t cur_state;
 
-  memset (&cur_state, 0, sizeof cur_state);
+  if (cur <= p)
+    return cur - p;
 
-  while (p < cur)
+  if (localeinfo.using_utf8)
     {
-      size_t clen = mb_clen (p, end - p, &cur_state);
+      p = cur;
 
-      if ((size_t) -2 <= clen)
+      if (cur < end && (*cur & 0xc0) == 0x80)
+        for (int i = 1; i <= 3; i++)
+          if ((cur[-i] & 0xc0) != 0x80)
+            {
+              mbstate_t mbs = { 0 };
+              size_t clen = mb_clen (cur - i, end - (cur - i), &mbs);
+              if (i < clen && clen < (size_t) -2)
+                {
+                  p0 = cur - i;
+                  p = p0 + clen;
+                }
+              break;
+            }
+    }
+  else
+    {
+      mbstate_t mbs = { 0 };
+      do
         {
-          /* An invalid sequence, or a truncated multibyte character.
-             Treat it as a single byte character.  */
-          clen = 1;
-          memset (&cur_state, 0, sizeof cur_state);
+          size_t clen = mb_clen (p, end - p, &mbs);
+
+          if ((size_t) -2 <= clen)
+            {
+              /* An invalid sequence, or a truncated multibyte character.
+                 Treat it as a single byte character.  */
+              clen = 1;
+              memset (&mbs, 0, sizeof mbs);
+            }
+          p0 = p;
+          p += clen;
         }
-      p0 = p;
-      p += clen;
+      while (p < cur);
     }
 
   *mb_start = p;
@@ -127,11 +144,11 @@ wordchars_count (char const *buf, char const *end, bool countall)
   mbstate_t mbs = { 0 };
   while (n < end - buf)
     {
-      wint_t ws = word_start[to_uchar (buf[n])];
-      if (ws == 0)
-        break;
-      else if (ws == 1)
+      unsigned char b = buf[n];
+      if (sbwordchar[b])
         n++;
+      else if (localeinfo.sbclen[b] != -2)
+        break;
       else
         {
           wchar_t wc = 0;
@@ -163,19 +180,19 @@ wordchar_next (char const *buf, char const *end)
   return wordchars_count (buf, end, false);
 }
 
-/* In the buffer BUF, return true if the character whose encoding
+/* In the buffer BUF, return nonzero if the character whose encoding
    contains the byte before CUR is a word constituent.  The buffer
    ends at END.  */
-bool
+size_t
 wordchar_prev (char const *buf, char const *cur, char const *end)
 {
   if (buf == cur)
-    return false;
-  cur--;
-  wint_t ws = word_start[to_uchar (*cur)];
-  if (! localeinfo.multibyte)
-    return ws == 1;
+    return 0;
+  unsigned char b = *--cur;
+  if (! localeinfo.multibyte
+      || (localeinfo.using_utf8 && localeinfo.sbclen[b] != -2))
+    return sbwordchar[b];
   char const *p = buf;
   cur -= mb_goback (&p, cur, end);
-  return wordchar_next (cur, end) != 0;
+  return wordchar_next (cur, end);
 }
