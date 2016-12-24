@@ -77,7 +77,7 @@ kwsinit (bool mb_trans)
    start of a multibyte character or is an error-encoding byte.  The
    buffer ends at END (i.e., one past the address of the buffer's last
    byte).  If CUR is already at a boundary, return 0.  If *MB_START is
-   greater than or equal to CUR, return the negative value CUR - *MB_START.
+   greater than CUR, return the negative value CUR - *MB_START.
 
    When returning zero, set *MB_START to CUR.  When returning a
    positive value, set *MB_START to the next boundary after CUR, or to
