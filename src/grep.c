@@ -52,7 +52,7 @@
 
 enum { SEP_CHAR_SELECTED = ':' };
 enum { SEP_CHAR_REJECTED = '-' };
-char const SEP_STR_GROUP[] = "--";
+static char const SEP_STR_GROUP[] = "--";
 
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
