@@ -26,7 +26,7 @@
    any string matching the regexp. */
 static kwset_t kwset;
 
-void
+void *
 Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
   size_t total = size;
@@ -68,10 +68,12 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
   while (p);
 
   kwsprep (kwset);
+
+  return NULL;
 }
 
 size_t
-Fexecute (char const *buf, size_t size, size_t *match_size,
+Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
   char const *beg, *end, *mb_start;

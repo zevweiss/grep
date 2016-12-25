@@ -104,7 +104,7 @@ kwsmusts (void)
   dfamustfree (dm);
 }
 
-void
+void *
 GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   char *motif;
@@ -205,10 +205,12 @@ GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
   kwsmusts ();
 
   free (motif);
+
+  return NULL;
 }
 
 size_t
-EGexecute (char const *buf, size_t size, size_t *match_size,
+EGexecute (void *vdc, char const *buf, size_t size, size_t *match_size,
            char const *start_ptr)
 {
   char const *buflim, *beg, *end, *ptr, *match, *best_match, *mb_start;
