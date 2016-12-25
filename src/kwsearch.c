@@ -21,14 +21,10 @@
 #include <config.h>
 #include "search.h"
 
-/* KWset compiled pattern.  For Ecompile and Gcompile, we compile
-   a list of strings, at least one of which is known to occur in
-   any string matching the regexp. */
-static kwset_t kwset;
-
 void *
 Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
+  kwset_t kwset;
   size_t total = size;
 
   kwset = kwsinit (true);
@@ -69,7 +65,7 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 
   kwsprep (kwset);
 
-  return NULL;
+  return kwset;
 }
 
 size_t
@@ -83,6 +79,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   size_t ret_val;
   bool mb_check;
   bool longest;
+  kwset_t kwset = vcp;
 
   if (match_lines)
     mb_check = longest = false;
