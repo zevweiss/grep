@@ -625,6 +625,8 @@ clean_up_stdout (void)
 /* An unsigned type suitable for fast matching.  */
 typedef uintmax_t uword;
 
+struct localeinfo localeinfo;
+
 /* A mask to test for unibyte characters, with the pattern repeated to
    fill a uword.  For a multibyte character encoding where
    all bytes are unibyte characters, this is 0.  For UTF-8, this is

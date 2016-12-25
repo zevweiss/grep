@@ -24,8 +24,6 @@
 #include "die.h"
 #include <error.h>
 
-struct localeinfo localeinfo;
-
 struct dfa_comp
 {
   /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
