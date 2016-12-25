@@ -43,11 +43,11 @@ wordinit (void)
 kwset_t
 kwsinit (bool mb_trans)
 {
-  static char trans[NCHAR];
-  char *transptr = NULL;
+  char *trans = NULL;
 
   if (match_icase && (MB_CUR_MAX == 1 || mb_trans))
     {
+      trans = xmalloc (NCHAR);
       if (MB_CUR_MAX == 1)
         for (int i = 0; i < NCHAR; i++)
           trans[i] = toupper (i);
@@ -66,10 +66,9 @@ kwsinit (bool mb_trans)
             else
               trans[i] = i;
           }
-      transptr = trans;
     }
 
-  return kwsalloc (transptr, false);
+  return kwsalloc (trans, false);
 }
 
 /* In the buffer *MB_START, return the number of bytes needed to go
