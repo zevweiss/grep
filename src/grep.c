@@ -1728,11 +1728,15 @@ drain_input (int fd, struct stat const *st)
     {
 #ifdef SPLICE_F_MOVE
       /* Should be faster, since it need not copy data to user space.  */
-      while ((nbytes = splice (fd, NULL, STDOUT_FILENO, NULL,
-                               INITIAL_BUFSIZE, SPLICE_F_MOVE)))
-        if (nbytes < 0)
-          return false;
-      return true;
+      nbytes = splice (fd, NULL, STDOUT_FILENO, NULL,
+                       INITIAL_BUFSIZE, SPLICE_F_MOVE);
+      if (0 <= nbytes || errno != EINVAL)
+        {
+          while (0 < nbytes)
+            nbytes = splice (fd, NULL, STDOUT_FILENO, NULL,
+                             INITIAL_BUFSIZE, SPLICE_F_MOVE);
+          return nbytes == 0;
+        }
 #endif
     }
   while ((nbytes = safe_read (fd, buffer, bufalloc)))
