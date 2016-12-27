@@ -6,7 +6,7 @@ GNU grep NEWS                                    -*- outline -*-
 
   When standard output is /dev/null, grep no longer fails when
   standard input is a file in the Linux /proc file system, or when
-  standard input is a pipe and standard output is in append mdoe.
+  standard input is a pipe and standard output is in append mode.
   [bugs introduced in grep-2.27]
 
 ** Bug fixes
