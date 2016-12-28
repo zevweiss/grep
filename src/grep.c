@@ -2862,7 +2862,7 @@ main (int argc, char **argv)
      for -iF.  */
   if (matcher == F_MATCHER_INDEX
       && (! localeinfo.multibyte
-          ? match_words
+          ? n_patterns == 1 && match_words
           : (contains_encoding_error (keys, keycc)
              || (match_icase && !fgrep_icase_available (keys, keycc)))))
     {
