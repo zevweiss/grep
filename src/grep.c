@@ -1921,19 +1921,19 @@ usage (int status)
   if (status != 0)
     {
       fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
-               getprogname());
+               getprogname ());
       fprintf (stderr, _("Try '%s --help' for more information.\n"),
-               getprogname());
+               getprogname ());
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname());
+      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname ());
       printf (_("Search for PATTERN in each FILE or standard input.\n"));
       printf (_("PATTERN is, by default, a basic regular expression (BRE).\n"));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n"), getprogname());
+Regexp selection and interpretation:\n"), getprogname ());
       printf (_("\
   -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
@@ -2764,7 +2764,7 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      version_etc (stdout, getprogname(), PACKAGE_NAME, VERSION, AUTHORS,
+      version_etc (stdout, getprogname (), PACKAGE_NAME, VERSION, AUTHORS,
                    (char *) NULL);
       return EXIT_SUCCESS;
     }
@@ -2931,6 +2931,6 @@ main (int argc, char **argv)
     status &= grep_command_line_arg (*files++);
   while (*files != NULL);
 
-  /* We register via atexit() to test stdout.  */
+  /* We register via atexit to test stdout.  */
   return errseen ? EXIT_TROUBLE : status;
 }

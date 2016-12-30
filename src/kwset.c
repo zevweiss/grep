@@ -310,8 +310,8 @@ enqueue (struct tree *tree, struct trie **last)
 {
   if (!tree)
     return;
-  enqueue(tree->llink, last);
-  enqueue(tree->rlink, last);
+  enqueue (tree->llink, last);
+  enqueue (tree->rlink, last);
   (*last) = (*last)->next = tree->trie;
 }
 
@@ -327,8 +327,8 @@ treefails (struct tree const *tree, struct trie const *fail,
   if (!tree)
     return;
 
-  treefails(tree->llink, fail, recourse, reverse);
-  treefails(tree->rlink, fail, recourse, reverse);
+  treefails (tree->llink, fail, recourse, reverse);
+  treefails (tree->rlink, fail, recourse, reverse);
 
   /* Find, in the chain of fails going back to the root, the first
      node that has a descendant on the current label. */
@@ -360,8 +360,8 @@ treedelta (struct tree const *tree, ptrdiff_t depth, unsigned char delta[])
 {
   if (!tree)
     return;
-  treedelta(tree->llink, depth, delta);
-  treedelta(tree->rlink, depth, delta);
+  treedelta (tree->llink, depth, delta);
+  treedelta (tree->rlink, depth, delta);
   if (depth < delta[tree->label])
     delta[tree->label] = depth;
 }
@@ -372,9 +372,9 @@ hasevery (struct tree const *a, struct tree const *b)
 {
   if (!b)
     return true;
-  if (!hasevery(a, b->llink))
+  if (!hasevery (a, b->llink))
     return false;
-  if (!hasevery(a, b->rlink))
+  if (!hasevery (a, b->rlink))
     return false;
   while (a && b->label != a->label)
     if (b->label < a->label)
@@ -391,8 +391,8 @@ treenext (struct tree const *tree, struct trie *next[])
 {
   if (!tree)
     return;
-  treenext(tree->llink, next);
-  treenext(tree->rlink, next);
+  treenext (tree->llink, next);
+  treenext (tree->rlink, next);
   next[tree->label] = tree->trie;
 }
 

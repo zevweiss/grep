@@ -113,7 +113,7 @@ undossify_input (char *buf, size_t buflen)
 
   /* Guess if this file is binary, unless we already know that.  */
   if (dos_file_type == UNKNOWN)
-    dos_file_type = guess_type(buf, buflen);
+    dos_file_type = guess_type (buf, buflen);
 
   /* If this file is to be treated as DOS Text, strip the CR characters
      and maybe build the table for character position mapping on output.  */
@@ -143,9 +143,9 @@ undossify_input (char *buf, size_t buflen)
                   if (inp_map_idx >= dos_pos_map_size - 1)
                     {
                       dos_pos_map_size = inp_map_idx ? inp_map_idx * 2 : 1000;
-                      dos_pos_map = xrealloc(dos_pos_map,
-                                             dos_pos_map_size *
-                                             sizeof(struct dos_map));
+                      dos_pos_map = xrealloc (dos_pos_map,
+                                              (dos_pos_map_size
+                                               * sizeof (struct dos_map)));
                     }
 
                   if (!inp_map_idx)
