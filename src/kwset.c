@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include "system.h"
+#include "intprops.h"
 #include "memchr2.h"
 #include "obstack.h"
 #include "xalloc.h"
@@ -69,9 +70,9 @@ struct trie
   struct trie *parent;		/* Parent of this node. */
   struct trie *next;		/* List of all trie nodes in level order. */
   struct trie *fail;		/* Aho-Corasick failure function. */
-  int depth;			/* Depth of this node from the root. */
-  int shift;			/* Shift function for search failures. */
-  int maxshift;			/* Max shift of self and descendants. */
+  ptrdiff_t depth;		/* Depth of this node from the root. */
+  ptrdiff_t shift;		/* Shift function for search failures. */
+  ptrdiff_t maxshift;		/* Max shift of self and descendants. */
 };
 
 /* Structure returned opaquely to the caller, containing everything. */
@@ -80,12 +81,12 @@ struct kwset
   struct obstack obstack;	/* Obstack for node allocation. */
   ptrdiff_t words;		/* Number of words in the trie. */
   struct trie *trie;		/* The trie itself. */
-  int mind;			/* Minimum depth of an accepting node. */
-  int maxd;			/* Maximum depth of any node. */
+  ptrdiff_t mind;		/* Minimum depth of an accepting node. */
+  ptrdiff_t maxd;		/* Maximum depth of any node. */
   unsigned char delta[NCHAR];	/* Delta table for rapid search. */
   struct trie *next[NCHAR];	/* Table of children of the root. */
   char *target;			/* Target string if there's only one. */
-  int *shift;			/* Used in Boyer-Moore search for one string. */
+  ptrdiff_t *shift;		/* Used in Boyer-Moore search for one string. */
   char const *trans;		/* Character translation table. */
 
   /* If there's only one string, this is the string's last byte,
@@ -142,7 +143,7 @@ kwsalloc (char const *trans, bool reverse)
   kwset->trie->fail = NULL;
   kwset->trie->depth = 0;
   kwset->trie->shift = 0;
-  kwset->mind = INT_MAX;
+  kwset->mind = PTRDIFF_MAX;
   kwset->maxd = -1;
   kwset->target = NULL;
   kwset->trans = trans;
@@ -181,7 +182,7 @@ kwsincr (kwset_t kwset, char const *text, size_t len)
       enum { L, R } dirs[DEPTH_SIZE];
       links[0] = (struct tree *) &trie->links;
       dirs[0] = L;
-      int depth = 1;
+      ptrdiff_t depth = 1;
 
       while (cur && label != cur->label)
         {
@@ -355,9 +356,7 @@ treefails (struct tree const *tree, struct trie const *fail,
 /* Set delta entries for the links of the given tree such that
    the preexisting delta value is larger than the current depth. */
 static void
-treedelta (struct tree const *tree,
-           unsigned int depth,
-           unsigned char delta[])
+treedelta (struct tree const *tree, ptrdiff_t depth, unsigned char delta[])
 {
   if (!tree)
     return;
@@ -368,15 +367,15 @@ treedelta (struct tree const *tree,
 }
 
 /* Return true if A has every label in B. */
-static int _GL_ATTRIBUTE_PURE
+static bool _GL_ATTRIBUTE_PURE
 hasevery (struct tree const *a, struct tree const *b)
 {
   if (!b)
-    return 1;
+    return true;
   if (!hasevery(a, b->llink))
-    return 0;
+    return false;
   if (!hasevery(a, b->rlink))
-    return 0;
+    return false;
   while (a && b->label != a->label)
     if (b->label < a->label)
       a = a->llink;
@@ -403,7 +402,7 @@ void
 kwsprep (kwset_t kwset)
 {
   char const *trans = kwset->trans;
-  int i;
+  ptrdiff_t i;
   unsigned char deltabuf[NCHAR];
   unsigned char *delta = trans ? deltabuf : kwset->delta;
   struct trie *curr, *last;
@@ -565,16 +564,17 @@ kwsprep (kwset_t kwset)
    efficiency.  If D1 is nonnull, it is a delta1 table for shifting *TP
    when failing.  KWSET->shift says how much to shift.  */
 static inline bool
-bm_delta2_search (char const **tpp, char const *ep, char const *sp, int len,
+bm_delta2_search (char const **tpp, char const *ep, char const *sp,
+                  ptrdiff_t len,
                   char const *trans, char gc1, char gc2,
                   unsigned char const *d1, kwset_t kwset)
 {
   char const *tp = *tpp;
-  int d = len, skip = 0;
+  ptrdiff_t d = len, skip = 0;
 
   while (true)
     {
-      int i = 2;
+      ptrdiff_t i = 2;
       if (tr (trans, tp[-2]) == gc2)
         {
           while (++i <= d)
@@ -663,7 +663,7 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
   unsigned char const *d1;
   char const *ep, *sp, *tp;
   int d;
-  int len = kwset->mind;
+  ptrdiff_t len = kwset->mind;
   char const *trans = kwset->trans;
 
   if (len == 0)
@@ -683,7 +683,8 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
   char gc2 = kwset->gc2;
 
   /* Significance of 12: 1 (initial offset) + 10 (skip loop) + 1 (md2). */
-  if (size > 12 * len)
+  ptrdiff_t len12;
+  if (!INT_MULTIPLY_WRAPV (len, 12, &len12) && len12 < size)
     /* 11 is not a bug, the initial offset happens only once. */
     for (ep = text + size - 11 * len; tp <= ep; )
       {
@@ -772,7 +773,7 @@ cwexec (kwset_t kwset, char const *text, size_t len,
   char const *beg, *lim, *mch, *lmch;
   unsigned char c;
   unsigned char const *delta;
-  int d;
+  ptrdiff_t d;
   char const *end, *qlim;
   struct tree const *tree;
   char const *trans;
