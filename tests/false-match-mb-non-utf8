@@ -1,7 +1,7 @@
 #! /bin/sh
 # Test for false matches in grep 2.19..2.26 in multibyte, non-UTF8 locales
 #
-# Copyright (C) 2016 Free Software Foundation, Inc.
+# Copyright (C) 2016-2017 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
