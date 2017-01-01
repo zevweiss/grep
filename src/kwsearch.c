@@ -26,6 +26,8 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
   kwset_t kwset;
   size_t total = size;
+  char *buf = NULL;
+  size_t bufalloc = 0;
 
   kwset = kwsinit (true);
 
@@ -46,23 +48,32 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
           total = 0;
         }
 
-      char *buf = NULL;
       if (match_lines)
         {
-          buf = xmalloc (len + 2);
-          buf[0] = eolbyte;
-          memcpy (buf + 1, p, len);
-          buf[len + 1] = eolbyte;
-          p = buf;
+          if (eolbyte == '\n' && pattern < p && sep)
+            p--;
+          else
+            {
+              if (bufalloc < len + 2)
+                {
+                  free (buf);
+                  bufalloc = len + 2;
+                  buf = x2realloc (NULL, &bufalloc);
+                  buf[0] = eolbyte;
+                }
+              memcpy (buf + 1, p, len);
+              buf[len + 1] = eolbyte;
+              p = buf;
+            }
           len += 2;
         }
       kwsincr (kwset, p, len);
-      free (buf);
 
       p = sep;
     }
   while (p);
 
+  free (buf);
   kwsprep (kwset);
 
   return kwset;
