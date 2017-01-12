@@ -17,18 +17,16 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-/* Written August 1989 by Mike Haertel.
-   The author may be reached (Email) at the address mike@ai.mit.edu,
-   or (US mail) as Mike Haertel c/o Free Software Foundation. */
+/* Written August 1989 by Mike Haertel.  */
 
 #include <stddef.h>
 #include <stdbool.h>
 
 struct kwsmatch
 {
-  size_t index;			/* Index number of matching keyword. */
-  size_t offset[1];		/* Offset of each submatch. */
-  size_t size[1];		/* Length of each submatch. */
+  size_t index;			/* Index number of matching keyword.  */
+  size_t offset[1];		/* Offset of match.  */
+  size_t size[1];		/* Length of match.  */
 };
 
 #include "arg-nonnull.h"
@@ -36,26 +34,9 @@ struct kwsmatch
 struct kwset;
 typedef struct kwset *kwset_t;
 
-/* Return an opaque pointer to a newly allocated keyword set.  A nonnull arg
-   specifies a table of character translations to be applied to all
-   pattern and search text.  */
 extern kwset_t kwsalloc (char const *, bool);
-
-/* Incrementally extend the keyword set to include the given string.
-   Remember an index number for each keyword included in the set.  */
 extern void kwsincr (kwset_t, char const *, size_t);
-
-/* When the keyword set has been completely built, prepare it for use.  */
 extern void kwsprep (kwset_t);
-
-/* Search through the given buffer for a member of the keyword set.
-   Return a pointer to the leftmost longest match found, or NULL if
-   no match is found.  If foundlen is non-NULL, store the length of
-   the matching substring in the integer it points to.  Similarly,
-   if foundindex is non-NULL, store the index of the particular
-   keyword found therein. */
 extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *, bool)
   _GL_ARG_NONNULL ((4));
-
-/* Deallocate the given keyword set and all its associated storage. */
 extern void kwsfree (kwset_t);

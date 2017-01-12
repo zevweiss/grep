@@ -133,7 +133,7 @@ mb_goback (char const **mb_start, char const *cur, char const *end)
   return p == cur ? 0 : cur - p0;
 }
 
-/* Examine the start of BUF (of size SIZE) for word constituents.
+/* Examine the start of BUF (which goes to END) for word constituents.
    If COUNTALL, examine as many as possible; otherwise, examine at most one.
    Return the total number of bytes in the examined characters.  */
 static size_t
