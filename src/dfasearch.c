@@ -104,7 +104,7 @@ kwsmusts (struct dfa_comp *dc)
 }
 
 void *
-GEAcompile (char const *pattern, size_t size, reg_syntax_t syntax_bits)
+GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
 {
   char *motif;
   struct dfa_comp *dc = xcalloc (1, sizeof (*dc));

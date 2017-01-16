@@ -91,7 +91,7 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
 #endif
 
 void *
-Pcompile (char const *pattern, size_t size, reg_syntax_t ignored)
+Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
 {
 #if !HAVE_LIBPCRE
   die (EXIT_TROUBLE, 0,

@@ -55,19 +55,20 @@ extern size_t wordchar_prev (char const *, char const *, char const *)
 extern ptrdiff_t mb_goback (char const **, char const *, char const *);
 
 /* dfasearch.c */
-extern void *GEAcompile (char const *, size_t, reg_syntax_t);
+extern void *GEAcompile (char *, size_t, reg_syntax_t);
 extern size_t EGexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* kwsearch.c */
-extern void *Fcompile (char const *, size_t, reg_syntax_t);
+extern void *Fcompile (char *, size_t, reg_syntax_t);
 extern size_t Fexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* pcresearch.c */
-extern void *Pcompile (char const *, size_t, reg_syntax_t);
+extern void *Pcompile (char *, size_t, reg_syntax_t);
 extern size_t Pexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* grep.c */
 extern struct localeinfo localeinfo;
+extern void fgrep_to_grep_pattern (char **, size_t *);
 
 /* Return the number of bytes in the character at the start of S, which
    is of size N.  N must be positive.  MBS is the conversion state.

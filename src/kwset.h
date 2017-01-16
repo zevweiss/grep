@@ -36,6 +36,7 @@ typedef struct kwset *kwset_t;
 
 extern kwset_t kwsalloc (char const *, bool);
 extern void kwsincr (kwset_t, char const *, ptrdiff_t);
+extern ptrdiff_t kwswords (kwset_t) _GL_ATTRIBUTE_PURE;
 extern void kwsprep (kwset_t);
 extern ptrdiff_t kwsexec (kwset_t, char const *, ptrdiff_t,
                           struct kwsmatch *, bool)

@@ -21,8 +21,33 @@
 #include <config.h>
 #include "search.h"
 
+/* A compiled -F pattern list.  */
+
+struct kwsearch
+{
+  /* The kwset for this pattern list.  */
+  kwset_t kwset;
+
+  /* The number of user-specified patterns.  This is less than
+     'kwswords (kwset)' when some extra one-character words have been
+     appended, one for each troublesome character that will require a
+     DFA search.  */
+  ptrdiff_t words;
+
+  /* The user's pattern and its size in bytes.  */
+  char *pattern;
+  size_t size;
+
+  /* The user's pattern compiled as a regular expression,
+     or null if it has not been compiled.  */
+  void *re;
+};
+
+/* Compile the -F style PATTERN, containing SIZE bytes.  Return a
+   description of the compiled pattern.  */
+
 void *
-Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
+Fcompile (char *pattern, size_t size, reg_syntax_t ignored)
 {
   kwset_t kwset;
   ptrdiff_t total = size;
@@ -74,11 +99,55 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
   while (p);
 
   free (buf);
+  ptrdiff_t words = kwswords (kwset);
+
+  if (match_icase)
+    {
+      /* For each pattern character C that has a case folded
+         counterpart F that is multibyte and so cannot easily be
+         implemented via translating a single byte, append a pattern
+         containing just F.  That way, if the data contains F, the
+         matcher can fall back on DFA.  For example, if C is 'i' and
+         the locale is en_US.utf8, append a pattern containing just
+         the character U+0131 (LATIN SMALL LETTER DOTLESS I), so that
+         Fexecute will use a DFA if the data contain U+0131.  */
+      mbstate_t mbs = { 0 };
+      char checked[NCHAR] = {0,};
+      for (p = pattern; p < pattern + size; p++)
+        {
+          unsigned char c = *p;
+          if (checked[c])
+            continue;
+          checked[c] = true;
+
+          wint_t wc = localeinfo.sbctowc[c];
+          wchar_t folded[CASE_FOLDED_BUFSIZE];
+
+          for (int i = case_folded_counterparts (wc, folded); 0 <= --i; )
+            {
+              char s[MB_LEN_MAX];
+              int nbytes = wcrtomb (s, folded[i], &mbs);
+              if (1 < nbytes)
+                kwsincr (kwset, s, nbytes);
+            }
+        }
+    }
+
   kwsprep (kwset);
 
-  return kwset;
+  struct kwsearch *kwsearch = xmalloc (sizeof *kwsearch);
+  kwsearch->kwset = kwset;
+  kwsearch->words = words;
+  kwsearch->pattern = pattern;
+  kwsearch->size = size;
+  kwsearch->re = NULL;
+  return kwsearch;
 }
 
+/* Use the compiled pattern VCP to search the buffer BUF of size SIZE.
+   If found, return the offset of the first match and store its
+   size into *MATCH_SIZE.  If not found, return SIZE_MAX.
+   If START_PTR is nonnull, start searching there.  */
 size_t
 Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
@@ -90,7 +159,8 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   size_t ret_val;
   bool mb_check;
   bool longest;
-  kwset_t kwset = vcp;
+  struct kwsearch *kwsearch = vcp;
+  kwset_t kwset = kwsearch->kwset;
 
   if (match_lines)
     mb_check = longest = false;
@@ -108,6 +178,22 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
       if (offset < 0)
         break;
       len = kwsmatch.size[0] - 2 * match_lines;
+
+      if (kwsearch->words <= kwsmatch.index)
+        {
+          /* The data contain a multibyte character that matches
+             some pattern character that is a case folded counterpart.
+             Since the kwset code cannot handle this case, fall back
+             on the DFA code, which can.  */
+          if (! kwsearch->re)
+            {
+              fgrep_to_grep_pattern (&kwsearch->pattern, &kwsearch->size);
+              kwsearch->re = GEAcompile (kwsearch->pattern, kwsearch->size,
+                                         RE_SYNTAX_GREP);
+            }
+          return EGexecute (kwsearch->re, buf, size, match_size, start_ptr);
+        }
+
       if (mb_check && mb_goback (&mb_start, beg + offset, buf + size) != 0)
         {
           /* We have matched a single byte that is not at the beginning of a

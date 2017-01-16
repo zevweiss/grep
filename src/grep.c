@@ -575,7 +575,7 @@ static bool seek_failed;
 static bool seek_data_failed;
 
 /* Functions we'll use to search. */
-typedef void *(*compile_fp_t) (char const *, size_t, reg_syntax_t);
+typedef void *(*compile_fp_t) (char *, size_t, reg_syntax_t);
 typedef size_t (*execute_fp_t) (void *, char const *, size_t, size_t *,
                                 char const *);
 static execute_fp_t execute;
@@ -2254,54 +2254,58 @@ contains_encoding_error (char const *pat, size_t patlen)
   return false;
 }
 
-/* Return true if the set of single-byte characters USED contains only
-   characters whose case counterparts are also single-byte.  */
+/* Return the number of bytes in the initial character of PAT, of size
+   PATLEN, if Fcompile can handle that character.  Return -1 if
+   Fcompile cannot handle it.  MBS is the multibyte conversion state.
 
-static bool
-all_single_byte_after_folding (bool used[UCHAR_MAX + 1])
+   Fcompile can handle a character C if C is single-byte, or if C has no
+   case folded counterparts and toupper translates none of its bytes.  */
+
+static int
+fgrep_icase_charlen (char const *pat, size_t patlen, mbstate_t *mbs)
 {
-  for (int c = 0; c <= UCHAR_MAX; c++)
-    if (used[c])
-      {
-        wint_t wc = localeinfo.sbctowc[c];
-        wchar_t folded[CASE_FOLDED_BUFSIZE];
-        size_t nfolded = case_folded_counterparts (wc, folded);
-
-        for (size_t i = 0; i < nfolded; i++)
-          {
-            char s[MB_LEN_MAX];
-            mbstate_t mb_state = { 0 };
-            if (1 < wcrtomb (s, folded[i], &mb_state))
-              return false;
-          }
-      }
-
-  return true;
+  int n = localeinfo.sbclen[to_uchar (*pat)];
+  if (n < 0)
+    {
+      wchar_t wc;
+      wchar_t folded[CASE_FOLDED_BUFSIZE];
+      size_t wn = mbrtowc (&wc, pat, patlen, mbs);
+      if (MB_LEN_MAX < wn || case_folded_counterparts (wc, folded))
+        return -1;
+      for (int i = wn; 0 < --i; )
+        {
+          unsigned char c = pat[i];
+          if (toupper (c) != c)
+            return -1;
+        }
+      n = wn;
+    }
+  return n;
 }
 
-/* Return true if the -F patterns PAT, of size PATLEN, match only
-   single-byte characters including case folding, and so can be
-   processed by the -F matcher even if -i is given.  */
+/* Return true if the -F patterns PAT, of size PATLEN, contain only
+   single-byte characters or characters not subject to case folding,
+   and so can be processed by Fcompile.  */
 
 static bool
 fgrep_icase_available (char const *pat, size_t patlen)
 {
-  bool used[UCHAR_MAX + 1] = { 0, };
+  mbstate_t mbs = {0,};
 
-  for (size_t i = 0; i < patlen; i++)
+  for (size_t i = 0; i < patlen; )
     {
-      unsigned char c = pat[i];
-      if (localeinfo.sbctowc[c] == WEOF)
+      int n = fgrep_icase_charlen (pat + i, patlen - i, &mbs);
+      if (n < 0)
         return false;
-      used[c] = true;
+      i += n;
     }
 
-  return all_single_byte_after_folding (used);
+  return true;
 }
 
 /* Change the pattern *KEYS_P, of size *LEN_P, from fgrep to grep style.  */
 
-static void
+void
 fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
 {
   size_t len = *len_p;
@@ -2358,8 +2362,6 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
   char *new_keys = xmalloc (len + 1);
   char *p = new_keys;
   mbstate_t mb_state = { 0 };
-  size_t mblen_lim = match_icase ? 1 : -3;
-  bool used[UCHAR_MAX + 1] = { 0, };
 
   while (len != 0)
     {
@@ -2396,18 +2398,26 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
         }
 
       {
-        size_t n = mb_clen (keys, len, &mb_state);
-        if (mblen_lim < n)
-          goto fail;
-        used[to_uchar (keys[0])] = true;
+        size_t n;
+        if (match_icase)
+          {
+            int ni = fgrep_icase_charlen (keys, len, &mb_state);
+            if (ni < 0)
+              goto fail;
+            n = ni;
+          }
+        else
+          {
+            n = mb_clen (keys, len, &mb_state);
+            if (MB_LEN_MAX < n)
+              goto fail;
+          }
+
         p = mempcpy (p, keys, n);
         keys += n;
         len -= n;
       }
     }
-
-  if (mblen_lim == 1 && !all_single_byte_after_folding (used))
-    goto fail;
 
   if (*len_p != p - new_keys)
     {
@@ -2878,7 +2888,6 @@ main (int argc, char **argv)
   execute = matchers[matcher].execute;
   compiled_pattern = matchers[matcher].compile (keys, keycc,
                                                 matchers[matcher].syntax);
-  free (keys);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;

@@ -328,6 +328,12 @@ kwsincr (kwset_t kwset, char const *text, ptrdiff_t len)
     kwset->maxd = trie->depth;
 }
 
+ptrdiff_t
+kwswords (kwset_t kwset)
+{
+  return kwset->words;
+}
+
 /* Enqueue the trie nodes referenced from the given tree in the
    given queue.  */
 static void
