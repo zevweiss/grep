@@ -127,7 +127,8 @@ struct kwset
   bool reverse;
 
   /* kwsexec implementation.  */
-  size_t (*kwsexec) (kwset_t, char const *, size_t, struct kwsmatch *, bool);
+  ptrdiff_t (*kwsexec) (kwset_t, char const *, ptrdiff_t,
+                        struct kwsmatch *, bool);
 };
 
 /* Use TRANS to transliterate C.  A null TRANS does no transliteration.  */
@@ -137,9 +138,12 @@ tr (char const *trans, char c)
   return trans ? trans[U(c)] : c;
 }
 
-static size_t acexec (kwset_t, char const *, size_t, struct kwsmatch *, bool);
-static size_t cwexec (kwset_t, char const *, size_t, struct kwsmatch *, bool);
-static size_t bmexec (kwset_t, char const *, size_t, struct kwsmatch *, bool);
+static ptrdiff_t acexec (kwset_t, char const *, ptrdiff_t,
+                         struct kwsmatch *, bool);
+static ptrdiff_t cwexec (kwset_t, char const *, ptrdiff_t,
+                         struct kwsmatch *, bool);
+static ptrdiff_t bmexec (kwset_t, char const *, ptrdiff_t,
+                         struct kwsmatch *, bool);
 
 /* Return a newly allocated keyword set.  A nonnull TRANS specifies a
    table of character translations to be applied to all pattern and
@@ -176,8 +180,9 @@ enum { DEPTH_SIZE = CHAR_BIT + CHAR_BIT / 2 };
 
 /* Add the given string to the contents of the keyword set.  */
 void
-kwsincr (kwset_t kwset, char const *text, size_t len)
+kwsincr (kwset_t kwset, char const *text, ptrdiff_t len)
 {
+  assume (0 <= len);
   struct trie *trie = kwset->trie;
   char const *trans = kwset->trans;
 
@@ -310,7 +315,10 @@ kwsincr (kwset_t kwset, char const *text, size_t len)
   /* Mark the node finally reached as accepting, encoding the
      index number of this word in the keyword set so far.  */
   if (!trie->accepting)
-    trie->accepting = 1 + 2 * kwset->words;
+    {
+      size_t words = kwset->words;
+      trie->accepting = 2 * words + 1;
+    }
   ++kwset->words;
 
   /* Keep track of the longest and shortest string of the keyword set.  */
@@ -629,14 +637,14 @@ bm_delta2_search (char const **tpp, char const *ep, char const *sp,
    that matches the last byte specified by KWSET, a singleton.
    Return NULL if there is no match.  */
 static char const *
-memchr_kwset (char const *s, size_t n, kwset_t kwset)
+memchr_kwset (char const *s, ptrdiff_t n, kwset_t kwset)
 {
   if (kwset->gc1help < 0)
     return memchr (s, kwset->gc1, n);
   int small_heuristic = 2;
   int small = (- (uintptr_t) s % sizeof (long)
                + small_heuristic * sizeof (long));
-  size_t ntrans = kwset->gc1help < NCHAR && small < n ? small : n;
+  ptrdiff_t ntrans = kwset->gc1help < NCHAR && small < n ? small : n;
   char const *slim = s + ntrans;
   for (; s < slim; s++)
     if (kwset->trans[U(*s)] == kwset->gc1)
@@ -647,9 +655,9 @@ memchr_kwset (char const *s, size_t n, kwset_t kwset)
 
 /* Return the offset of the first byte in the buffer S (of size N)
    that matches the last byte specified by KWSET, a pair.
-   Return SIZE_MAX if there is no match.  */
-static size_t
-memoff2_kwset (char const *s, size_t n, kwset_t kwset,
+   Return -1 if there is no match.  */
+static ptrdiff_t
+memoff2_kwset (char const *s, ptrdiff_t n, kwset_t kwset,
                struct kwsmatch *kwsmatch)
 {
   struct tree const *cur = kwset->trie->links;
@@ -658,10 +666,10 @@ memoff2_kwset (char const *s, size_t n, kwset_t kwset,
                      ? memchr2 (s, cur->label, clink->label, n)
                      : memchr (s, cur->label, n));
   if (! mch)
-    return SIZE_MAX;
+    return -1;
   else
     {
-      size_t off = mch - s;
+      ptrdiff_t off = mch - s;
       if (*mch == cur->label)
         kwsmatch->index = cur->trie->accepting / 2;
       else
@@ -673,9 +681,10 @@ memoff2_kwset (char const *s, size_t n, kwset_t kwset,
 }
 
 /* Fast Boyer-Moore search (inlinable version).  */
-static inline size_t
-bmexec_trans (kwset_t kwset, char const *text, size_t size)
+static inline ptrdiff_t
+bmexec_trans (kwset_t kwset, char const *text, ptrdiff_t size)
 {
+  assume (0 <= size);
   unsigned char const *d1;
   char const *ep, *sp, *tp;
   int d;
@@ -685,11 +694,11 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
   if (len == 0)
     return 0;
   if (len > size)
-    return SIZE_MAX;
+    return -1;
   if (len == 1)
     {
       tp = memchr_kwset (text, size, kwset);
-      return tp ? tp - text : SIZE_MAX;
+      return tp ? tp - text : -1;
     }
 
   d1 = kwset->delta;
@@ -730,7 +739,7 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
                     tp--;
                     tp = memchr_kwset (tp, text + size - tp, kwset);
                     if (! tp)
-                      return SIZE_MAX;
+                      return -1;
                     tp++;
                     if (ep <= tp)
                       break;
@@ -754,21 +763,21 @@ bmexec_trans (kwset_t kwset, char const *text, size_t size)
         return tp - text;
     }
 
-  return SIZE_MAX;
+  return -1;
 }
 
 /* Fast Boyer-Moore search.  */
-static size_t
-bmexec (kwset_t kwset, char const *text, size_t size,
+static ptrdiff_t
+bmexec (kwset_t kwset, char const *text, ptrdiff_t size,
         struct kwsmatch *kwsmatch, bool longest)
 {
   /* Help the compiler inline in two ways, depending on whether
      kwset->trans is null.  */
-  size_t ret = (kwset->trans
-                ? bmexec_trans (kwset, text, size)
-                : bmexec_trans (kwset, text, size));
+  ptrdiff_t ret = (kwset->trans
+                   ? bmexec_trans (kwset, text, size)
+                   : bmexec_trans (kwset, text, size));
 
-  if (ret != SIZE_MAX)
+  if (0 <= ret)
     {
        kwsmatch->index = 0;
        kwsmatch->offset[0] = ret;
@@ -779,10 +788,11 @@ bmexec (kwset_t kwset, char const *text, size_t size,
 }
 
 /* Hairy multiple string search with the Commentz-Walter algorithm.  */
-static size_t
-cwexec (kwset_t kwset, char const *text, size_t len,
+static ptrdiff_t
+cwexec (kwset_t kwset, char const *text, ptrdiff_t len,
         struct kwsmatch *kwsmatch, bool longest)
 {
+  assume (0 <= len);
   struct trie * const *next;
   struct trie const *trie;
   struct trie const *accept;
@@ -796,7 +806,7 @@ cwexec (kwset_t kwset, char const *text, size_t len,
 
   /* Initialize register copies and look for easy ways out.  */
   if (len < kwset->mind)
-    return SIZE_MAX;
+    return -1;
   if (!kwset->trans && kwset->maxd == 1 && kwset->words == 2)
     return memoff2_kwset (text, len, kwset, kwsmatch);
   next = kwset->next;
@@ -868,7 +878,7 @@ cwexec (kwset_t kwset, char const *text, size_t len,
       if (mch)
         goto match;
     }
-  return SIZE_MAX;
+  return -1;
 
  match:
   /* Given a known match, find the longest possible match anchored
@@ -938,8 +948,8 @@ cwexec (kwset_t kwset, char const *text, size_t len,
 
 /* Hairy multiple string search with the Aho-Corasick algorithm.
    (inlinable version)  */
-static inline size_t
-acexec_trans (kwset_t kwset, char const *text, size_t len,
+static inline ptrdiff_t
+acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
               struct kwsmatch *kwsmatch, bool longest)
 {
   struct trie * const *next;
@@ -950,7 +960,7 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
 
   /* Initialize register copies and look for easy ways out.  */
   if (len < kwset->mind)
-    return SIZE_MAX;
+    return -1;
   trans = kwset->trans;
   if (!trans && kwset->maxd == 1 && kwset->words == 2)
     return memoff2_kwset (text, len, kwset, kwsmatch);
@@ -969,7 +979,7 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
           while (! (trie = next[c]))
             {
               if (tp >= lim)
-                return SIZE_MAX;
+                return -1;
               c = tr (trans, *tp++);
             }
 
@@ -978,7 +988,7 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
               if (trie->accepting)
                 goto match;
               if (tp >= lim)
-                return SIZE_MAX;
+                return -1;
               c = tr (trans, *tp++);
 
               for (tree = trie->links; c != tree->label; )
@@ -1046,10 +1056,11 @@ acexec_trans (kwset_t kwset, char const *text, size_t len,
 }
 
 /* Hairy multiple string search with Aho-Corasick algorithm.  */
-static size_t
-acexec (kwset_t kwset, char const *text, size_t size,
+static ptrdiff_t
+acexec (kwset_t kwset, char const *text, ptrdiff_t size,
         struct kwsmatch *kwsmatch, bool longest)
 {
+  assume (0 <= size);
   /* Help the compiler inline in two ways, depending on whether
      kwset->trans is null.  */
   return (kwset->trans
@@ -1059,12 +1070,12 @@ acexec (kwset_t kwset, char const *text, size_t size,
 
 /* Find the first instance of a KWSET member in TEXT, which has SIZE bytes.
    Return the offset (into TEXT) of the first byte of the matching substring,
-   or SIZE_MAX if no match is found.  Upon a match, store details in
+   or -1 if no match is found.  Upon a match, store details in
    *KWSMATCH: index of matched keyword, start offset (same as the return
    value), and length.  If LONGEST, find the longest match; otherwise
    any match will do.  */
-size_t
-kwsexec (kwset_t kwset, char const *text, size_t size,
+ptrdiff_t
+kwsexec (kwset_t kwset, char const *text, ptrdiff_t size,
          struct kwsmatch *kwsmatch, bool longest)
 {
   return kwset->kwsexec (kwset, text, size, kwsmatch, longest);

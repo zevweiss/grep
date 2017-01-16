@@ -25,7 +25,7 @@ void *
 Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
 {
   kwset_t kwset;
-  size_t total = size;
+  ptrdiff_t total = size;
   char *buf = NULL;
   size_t bufalloc = 0;
 
@@ -34,7 +34,7 @@ Fcompile (char const *pattern, size_t size, reg_syntax_t ignored)
   char const *p = pattern;
   do
     {
-      size_t len;
+      ptrdiff_t len;
       char const *sep = memchr (p, '\n', total);
       if (sep)
         {
@@ -84,7 +84,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
   char const *beg, *end, *mb_start;
-  size_t len;
+  ptrdiff_t len;
   char eol = eolbyte;
   struct kwsmatch kwsmatch;
   size_t ret_val;
@@ -102,10 +102,10 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
-      size_t offset = kwsexec (kwset, beg - match_lines,
-                               buf + size - beg + match_lines, &kwsmatch,
-                               longest);
-      if (offset == (size_t) -1)
+      ptrdiff_t offset = kwsexec (kwset, beg - match_lines,
+                                  buf + size - beg + match_lines, &kwsmatch,
+                                  longest);
+      if (offset < 0)
         break;
       len = kwsmatch.size[0] - 2 * match_lines;
       if (mb_check && mb_goback (&mb_start, beg + offset, buf + size) != 0)

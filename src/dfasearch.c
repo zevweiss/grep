@@ -42,7 +42,7 @@ struct dfa_comp
   /* Number of compiled fixed strings known to exactly match the regexp.
      If kwsexec returns < kwset_exact_matches, then we don't need to
      call the regexp matcher at all. */
-  size_t kwset_exact_matches;
+  ptrdiff_t kwset_exact_matches;
 
   bool begline;
 };
@@ -80,8 +80,8 @@ kwsmusts (struct dfa_comp *dc)
          The kwset matcher will return the index of the matching
          string that it chooses. */
       ++dc->kwset_exact_matches;
-      size_t old_len = strlen (dm->must);
-      size_t new_len = old_len + dm->begline + dm->endline;
+      ptrdiff_t old_len = strlen (dm->must);
+      ptrdiff_t new_len = old_len + dm->begline + dm->endline;
       char *must = xmalloc (new_len);
       char *mp = must;
       *mp = eolbyte;
@@ -244,9 +244,10 @@ EGexecute (void *vdc, char const *buf, size_t size, size_t *match_size,
               char const *prev_beg;
 
               /* Find a possible match using the KWset matcher.  */
-              size_t offset = kwsexec (dc->kwset, beg - dc->begline,
-                                       buflim - beg + dc->begline, &kwsm, true);
-              if (offset == (size_t) -1)
+              ptrdiff_t offset = kwsexec (dc->kwset, beg - dc->begline,
+                                          buflim - beg + dc->begline,
+                                          &kwsm, true);
+              if (offset < 0)
                 goto failure;
               match = beg + offset;
               prev_beg = beg;

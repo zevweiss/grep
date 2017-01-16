@@ -24,9 +24,9 @@
 
 struct kwsmatch
 {
-  size_t index;			/* Index number of matching keyword.  */
-  size_t offset[1];		/* Offset of match.  */
-  size_t size[1];		/* Length of match.  */
+  ptrdiff_t index;			/* Index number of matching keyword.  */
+  ptrdiff_t offset[1];		/* Offset of match.  */
+  ptrdiff_t size[1];		/* Length of match.  */
 };
 
 #include "arg-nonnull.h"
@@ -35,8 +35,9 @@ struct kwset;
 typedef struct kwset *kwset_t;
 
 extern kwset_t kwsalloc (char const *, bool);
-extern void kwsincr (kwset_t, char const *, size_t);
+extern void kwsincr (kwset_t, char const *, ptrdiff_t);
 extern void kwsprep (kwset_t);
-extern size_t kwsexec (kwset_t, char const *, size_t, struct kwsmatch *, bool)
+extern ptrdiff_t kwsexec (kwset_t, char const *, ptrdiff_t,
+                          struct kwsmatch *, bool)
   _GL_ARG_NONNULL ((4));
 extern void kwsfree (kwset_t);
