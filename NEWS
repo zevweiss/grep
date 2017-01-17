@@ -9,8 +9,6 @@ GNU grep NEWS                                    -*- outline -*-
   standard input is a pipe and standard output is in append mode.
   [bugs introduced in grep-2.27]
 
-** Bug fixes
-
   Fix performance regression with multiple patterns, e.g., for -Fi in
   a multi-byte locale, or for -Fw in a single-byte locale.
   [bugs introduced in grep-2.19, grep-2.22 and grep-2.26]
