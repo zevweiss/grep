@@ -101,7 +101,8 @@ struct kwset
   unsigned char delta[NCHAR];	/* Delta table for rapid search.  */
   struct trie *next[NCHAR];	/* Table of children of the root.  */
   char *target;			/* Target string if there's only one.  */
-  ptrdiff_t *shift;		/* Used in Boyer-Moore search for one string.  */
+  ptrdiff_t *shift;		/* Used in Boyer-Moore search for one
+                                   string.  */
   char const *trans;		/* Character translation table.  */
 
   /* If there's only one string, this is the string's last byte,
