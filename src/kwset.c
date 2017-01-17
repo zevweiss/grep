@@ -19,7 +19,7 @@
 
 /* Written August 1989 by Mike Haertel.  */
 
-/* The algorithm called "Commentz_Walter" below bears a startling resemblance
+/* The algorithm called "Commentz-Walter" below bears a startling resemblance
    to that of Beate Commentz-Walter, although it is not identical.
    See: Commentz-Walter B. A string matching algorithm fast on the average.
    Lecture Notes in Computer Science 71 (1979), 118-32
