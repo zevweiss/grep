@@ -99,23 +99,25 @@ struct kwset
                                    string.  */
   char const *trans;		/* Character translation table.  */
 
-  /* If there's only one string, this is the string's last byte,
-     translated via TRANS if TRANS is nonnull.  */
-  char gc1;
+  /* This helps to match a terminal byte, which is the first byte
+     for Aho-Corasick, and the last byte for Boyer-More.  If all the
+     patterns have the same terminal byte (after translation via TRANS
+     if TRANS is nonnull), then this is that byte as an unsigned char.
+     Otherwise this is -1 if there is disagreement among the strings
+     about terminal bytes, and -2 if there are no terminal bytes and
+     no disagreement because all the patterns are empty.  */
+  int gc1;
 
-  /* Likewise for the string's penultimate byte, if it has two or more
-     bytes.  */
-  char gc2;
-
-  /* If there's only one string, this helps to match the string's last byte.
-     If GC1HELP is negative, only GC1 matches the string's last byte;
-     otherwise at least two bytes match, and B matches if TRANS[B] == GC1.
-     If GC1HELP is in the range 0..(NCHAR - 1), there are exactly two
-     such matches, and GC1HELP is the other match after conversion to
-     unsigned char.  If GC1HELP is at least NCHAR, there are three or
-     more such matches; e.g., Greek has three sigma characters that
-     all match when case-folding.  */
+  /* This helps to match a terminal byte.  If 0 <= GC1HELP, B is
+     terminal when B == GC1 || B == GC1HELP (note that GC1 == GCHELP
+     is common here).  This is typically faster than evaluating
+     to_uchar (TRANS[B]) == GC1.  */
   int gc1help;
+
+  /* If the string has two or more bytes, this is the penultimate byte,
+     after translation via TRANS if TRANS is nonnull.  This variable
+     is used only by Boyer-Moore.  */
+  char gc2;
 
   /* kwsexec implementation.  */
   ptrdiff_t (*kwsexec) (kwset_t, char const *, ptrdiff_t,
@@ -510,14 +512,38 @@ kwsprep (kwset_t kwset)
     }
 
   /* Create a vector, indexed by character code, of the outgoing links
-     from the root node.  */
+     from the root node.  Accumulate GC1 and GC1HELP.  */
   struct trie *nextbuf[NCHAR];
   struct trie **next = trans ? nextbuf : kwset->next;
   memset (next, 0, sizeof nextbuf);
   treenext (kwset->trie->links, next);
-  if (trans)
-    for (i = 0; i < NCHAR; ++i)
-      kwset->next[i] = next[U(trans[i])];
+  int gc1 = -2;
+  int gc1help = -1;
+  for (i = 0; i < NCHAR; i++)
+    {
+      int ti = i;
+      if (trans)
+        {
+          ti = U(trans[i]);
+          kwset->next[i] = next[ti];
+        }
+      if (kwset->next[i])
+        {
+          if (gc1 < -1)
+            {
+              gc1 = ti;
+              gc1help = i;
+            }
+          else if (gc1 == ti)
+            gc1help = gc1help == ti ? i : -1;
+          else if (i == ti && gc1 == gc1help)
+            gc1help = i;
+          else
+            gc1 = -1;
+        }
+    }
+  kwset->gc1 = gc1;
+  kwset->gc1help = gc1help;
 
   if (reverse)
     {
@@ -529,10 +555,10 @@ kwsprep (kwset_t kwset)
           curr = curr->next;
         }
 
-      /* Looking for the delta2 shift that might be made after a
-         backwards match has failed.  Extract it from the trie.  */
       if (kwset->mind > 1)
         {
+          /* Looking for the delta2 shift that might be made after a
+             backwards match has failed.  Extract it from the trie.  */
           kwset->shift
             = obstack_alloc (&kwset->obstack,
                              sizeof *kwset->shift * (kwset->mind - 1));
@@ -541,28 +567,10 @@ kwsprep (kwset_t kwset)
               kwset->shift[i] = curr->shift;
               curr = curr->next;
             }
+
+          /* The penultimate byte.  */
+          kwset->gc2 = tr (trans, kwset->target[kwset->mind - 2]);
         }
-
-      char gc1 = tr (trans, kwset->target[kwset->mind - 1]);
-
-      /* Set GC1HELP according to whether exactly one, exactly two, or
-         three-or-more characters match GC1.  */
-      int gc1help = -1;
-      if (trans)
-        {
-          char const *equiv1 = memchr (trans, gc1, NCHAR);
-          char const *equiv2 = memchr (equiv1 + 1, gc1,
-                                       trans + NCHAR - (equiv1 + 1));
-          if (equiv2)
-            gc1help = (memchr (equiv2 + 1, gc1, trans + NCHAR - (equiv2 + 1))
-                       ? NCHAR
-                       : U(gc1) ^ (equiv1 - trans) ^ (equiv2 - trans));
-        }
-
-      kwset->gc1 = gc1;
-      kwset->gc1help = gc1help;
-      if (kwset->mind > 1)
-        kwset->gc2 = tr (trans, kwset->target[kwset->mind - 2]);
     }
 
   /* Fix things up for any translation table.  */
@@ -626,50 +634,18 @@ bm_delta2_search (char const **tpp, char const *ep, char const *sp,
 }
 
 /* Return the address of the first byte in the buffer S (of size N)
-   that matches the last byte specified by KWSET, a singleton.
-   Return NULL if there is no match.  */
+   that matches the terminal byte specified by KWSET, or NULL if there
+   is no match.  KWSET->gc1 should be nonnegative.  */
 static char const *
 memchr_kwset (char const *s, ptrdiff_t n, kwset_t kwset)
 {
-  if (kwset->gc1help < 0)
-    return memchr (s, kwset->gc1, n);
-  int small_heuristic = 2;
-  int small = (- (uintptr_t) s % sizeof (long)
-               + small_heuristic * sizeof (long));
-  ptrdiff_t ntrans = kwset->gc1help < NCHAR && small < n ? small : n;
-  char const *slim = s + ntrans;
+  if (0 <= kwset->gc1help)
+    return memchr2 (s, kwset->gc1, kwset->gc1help, n);
+  char const *slim = s + n;
   for (; s < slim; s++)
-    if (kwset->trans[U(*s)] == kwset->gc1)
+    if (U(kwset->trans[U(*s)]) == kwset->gc1)
       return s;
-  n -= ntrans;
-  return n == 0 ? NULL : memchr2 (s, kwset->gc1, kwset->gc1help, n);
-}
-
-/* Return the offset of the first byte in the buffer S (of size N)
-   that matches the last byte specified by KWSET, a pair.
-   Return -1 if there is no match.  */
-static ptrdiff_t
-memoff2_kwset (char const *s, ptrdiff_t n, kwset_t kwset,
-               struct kwsmatch *kwsmatch)
-{
-  struct tree const *cur = kwset->trie->links;
-  struct tree const *clink = cur->llink ? cur->llink : cur->rlink;
-  char const *mch = (clink
-                     ? memchr2 (s, cur->label, clink->label, n)
-                     : memchr (s, cur->label, n));
-  if (! mch)
-    return -1;
-  else
-    {
-      ptrdiff_t off = mch - s;
-      if (*mch == cur->label)
-        kwsmatch->index = cur->trie->accepting / 2;
-      else
-        kwsmatch->index = clink->trie->accepting / 2;
-      kwsmatch->offset[0] = off;
-      kwsmatch->size[0] = 1;
-      return off;
-    }
+  return NULL;
 }
 
 /* Fast Boyer-Moore search (inlinable version).  */
@@ -785,7 +761,6 @@ static inline ptrdiff_t
 acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
               struct kwsmatch *kwsmatch, bool longest)
 {
-  struct trie * const *next;
   struct trie const *trie, *accept;
   char const *tp, *left, *lim;
   struct tree const *tree;
@@ -795,25 +770,30 @@ acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
   if (len < kwset->mind)
     return -1;
   trans = kwset->trans;
-  if (!trans && kwset->maxd == 1 && kwset->words == 2)
-    return memoff2_kwset (text, len, kwset, kwsmatch);
-
-  next = kwset->next;
   trie = kwset->trie;
   lim = text + len;
   tp = text;
 
   if (!trie->accepting)
     {
-      unsigned char c = tr (trans, *tp++);
+      unsigned char c;
+      int gc1 = kwset->gc1;
 
       while (true)
         {
-          while (! (trie = next[c]))
+          if (gc1 < 0)
             {
-              if (tp >= lim)
+              while (! (trie = kwset->next[c = tr (trans, *tp++)]))
+                if (tp >= lim)
+                  return -1;
+            }
+          else
+            {
+              tp = memchr_kwset (tp, lim - tp, kwset);
+              if (!tp)
                 return -1;
               c = tr (trans, *tp++);
+              trie = kwset->next[c];
             }
 
           while (true)
@@ -831,7 +811,14 @@ acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
                     {
                       trie = trie->fail;
                       if (!trie)
-                        goto next_trie;
+                        {
+                          trie = kwset->next[c];
+                          if (trie)
+                            goto have_trie;
+                          if (tp >= lim)
+                            return -1;
+                          goto next_c;
+                        }
                       if (trie->accepting)
                         {
                           --tp;
@@ -841,8 +828,9 @@ acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
                     }
                 }
               trie = tree->trie;
+            have_trie:;
             }
-        next_trie:;
+        next_c:;
         }
     }
 
