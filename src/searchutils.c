@@ -68,7 +68,7 @@ kwsinit (bool mb_trans)
           }
     }
 
-  return kwsalloc (trans, false);
+  return kwsalloc (trans);
 }
 
 /* In the buffer *MB_START, return the number of bytes needed to go

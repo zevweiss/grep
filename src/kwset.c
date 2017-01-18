@@ -19,13 +19,7 @@
 
 /* Written August 1989 by Mike Haertel.  */
 
-/* The algorithm called "Commentz-Walter" below bears a startling resemblance
-   to that of Beate Commentz-Walter, although it is not identical.
-   See: Commentz-Walter B. A string matching algorithm fast on the average.
-   Lecture Notes in Computer Science 71 (1979), 118-32
-   <http://dx.doi.org/10.1007/3-540-09510-1_10>.
-
-   For the Aho-Corasick algorithm, see:
+/* For the Aho-Corasick algorithm, see:
    Aho AV, Corasick MJ. Efficient string matching: an aid to
    bibliographic search. CACM 18, 6 (1975), 333-40
    <http://dx.doi.org/10.1145/360825.360855>, which describes the
@@ -76,7 +70,7 @@ struct tree
 struct trie
 {
   /* If an accepting node, this is either 2*W + 1 where W is the word
-     index, or is SIZE_MAX if Commentz-Walter is in use and FAIL
+     index, or is SIZE_MAX if Aho-Corasick is in use and FAIL
      specifies where to look for more info.  If not an accepting node,
      this is zero.  */
   size_t accepting;
@@ -123,10 +117,6 @@ struct kwset
      all match when case-folding.  */
   int gc1help;
 
-  /* If true, prefer Aho-Corasick to Commentz-Walter when searching
-     for multiple words.  */
-  bool reverse;
-
   /* kwsexec implementation.  */
   ptrdiff_t (*kwsexec) (kwset_t, char const *, ptrdiff_t,
                         struct kwsmatch *, bool);
@@ -141,17 +131,14 @@ tr (char const *trans, char c)
 
 static ptrdiff_t acexec (kwset_t, char const *, ptrdiff_t,
                          struct kwsmatch *, bool);
-static ptrdiff_t cwexec (kwset_t, char const *, ptrdiff_t,
-                         struct kwsmatch *, bool);
 static ptrdiff_t bmexec (kwset_t, char const *, ptrdiff_t,
                          struct kwsmatch *, bool);
 
 /* Return a newly allocated keyword set.  A nonnull TRANS specifies a
    table of character translations to be applied to all pattern and
-   search text.  If REVERSE, prefer the Aho-Corasick algorithm to the
-   Commentz-Walter algorithm.  */
+   search text.  */
 kwset_t
-kwsalloc (char const *trans, bool reverse)
+kwsalloc (char const *trans)
 {
   struct kwset *kwset = xmalloc (sizeof *kwset);
 
@@ -169,8 +156,7 @@ kwsalloc (char const *trans, bool reverse)
   kwset->maxd = -1;
   kwset->target = NULL;
   kwset->trans = trans;
-  kwset->reverse = reverse;
-  kwset->kwsexec = reverse ? cwexec : acexec;
+  kwset->kwsexec = acexec;
 
   return kwset;
 }
@@ -186,15 +172,16 @@ kwsincr (kwset_t kwset, char const *text, ptrdiff_t len)
   assume (0 <= len);
   struct trie *trie = kwset->trie;
   char const *trans = kwset->trans;
+  bool reverse = kwset->kwsexec == bmexec;
 
-  if (kwset->reverse)
+  if (reverse)
     text += len;
 
   /* Descend the trie (built of keywords) character-by-character,
      installing new nodes when necessary.  */
   while (len--)
     {
-      unsigned char uc = kwset->reverse ? *--text : *text++;
+      unsigned char uc = reverse ? *--text : *text++;
       unsigned char label = trans ? trans[uc] : uc;
 
       /* Descend the tree of outgoing links for this trie node,
@@ -438,31 +425,31 @@ kwsprep (kwset_t kwset)
   unsigned char *delta = trans ? deltabuf : kwset->delta;
   struct trie *curr, *last;
 
-  if (kwset->words == 1)
+  /* Use Boyer-Moore if just one pattern, Aho-Corasick otherwise.  */
+  bool reverse = kwset->words == 1;
+
+  if (reverse)
     {
-      if (!kwset->reverse)
+      kwset_t new_kwset;
+
+      /* Enqueue the immediate descendants in the level order queue.  */
+      for (curr = last = kwset->trie; curr; curr = curr->next)
+        enqueue (curr->links, &last);
+
+      /* Looking for just one string.  Extract it from the trie.  */
+      kwset->target = obstack_alloc (&kwset->obstack, kwset->mind);
+      for (i = 0, curr = kwset->trie; i < kwset->mind; ++i)
         {
-          kwset_t new_kwset;
-
-          /* Enqueue the immediate descendants in the level order queue.  */
-          for (curr = last = kwset->trie; curr; curr = curr->next)
-             enqueue (curr->links, &last);
-
-          /* Looking for just one string.  Extract it from the trie.  */
-          kwset->target = obstack_alloc (&kwset->obstack, kwset->mind);
-          for (i = 0, curr = kwset->trie; i < kwset->mind; ++i)
-            {
-              kwset->target[i] = curr->links->label;
-              curr = curr->next;
-            }
-
-          new_kwset = kwsalloc (kwset->trans, true);
-          kwsincr (new_kwset, kwset->target, kwset->mind);
-          obstack_free (&kwset->obstack, NULL);
-          *kwset = *new_kwset;
-          free (new_kwset);
+          kwset->target[i] = curr->links->label;
+          curr = curr->next;
         }
-      kwset->kwsexec = bmexec;
+
+      new_kwset = kwsalloc (kwset->trans);
+      new_kwset->kwsexec = bmexec;
+      kwsincr (new_kwset, kwset->target, kwset->mind);
+      obstack_free (&kwset->obstack, NULL);
+      *kwset = *new_kwset;
+      free (new_kwset);
     }
 
   /* Initial values for the delta table; will be changed later.  The
@@ -481,9 +468,9 @@ kwsprep (kwset_t kwset)
       treedelta (curr->links, curr->depth, delta);
 
       /* Compute the failure function for the descendants of this node.  */
-      treefails (curr->links, curr->fail, kwset->trie, kwset->reverse);
+      treefails (curr->links, curr->fail, kwset->trie, reverse);
 
-      if (kwset->reverse)
+      if (reverse)
         {
           curr->shift = kwset->mind;
           curr->maxshift = kwset->mind;
@@ -509,7 +496,7 @@ kwsprep (kwset_t kwset)
         }
     }
 
-  if (kwset->reverse)
+  if (reverse)
     {
       /* Traverse the trie in level order again, fixing up all nodes whose
          shift exceeds their inherited maxshift.  */
@@ -532,9 +519,7 @@ kwsprep (kwset_t kwset)
     for (i = 0; i < NCHAR; ++i)
       kwset->next[i] = next[U(trans[i])];
 
-  /* Decide whether to use the simple Boyer-Moore algorithm, instead
-     of the hairy Commentz-Walter algorithm.  */
-  if (kwset->words == 1)
+  if (reverse)
     {
       /* Looking for just one string.  Extract it from the trie.  */
       kwset->target = obstack_alloc (&kwset->obstack, kwset->mind);
@@ -792,165 +777,6 @@ bmexec (kwset_t kwset, char const *text, ptrdiff_t size,
     }
 
   return ret;
-}
-
-/* Hairy multiple string search with the Commentz-Walter algorithm.  */
-static ptrdiff_t
-cwexec (kwset_t kwset, char const *text, ptrdiff_t len,
-        struct kwsmatch *kwsmatch, bool longest)
-{
-  assume (0 <= len);
-  struct trie * const *next;
-  struct trie const *trie;
-  struct trie const *accept;
-  char const *beg, *lim, *mch, *lmch;
-  unsigned char c;
-  unsigned char const *delta;
-  ptrdiff_t d;
-  char const *end, *qlim;
-  struct tree const *tree;
-  char const *trans;
-
-  /* Initialize register copies and look for easy ways out.  */
-  if (len < kwset->mind)
-    return -1;
-  if (!kwset->trans && kwset->maxd == 1 && kwset->words == 2)
-    return memoff2_kwset (text, len, kwset, kwsmatch);
-  next = kwset->next;
-  delta = kwset->delta;
-  trans = kwset->trans;
-  lim = text + len;
-  end = text;
-  if ((d = kwset->mind) != 0)
-    mch = NULL;
-  else
-    {
-      mch = text, accept = kwset->trie;
-      goto match;
-    }
-
-  if (len >= 4 * kwset->mind)
-    qlim = lim - 4 * kwset->mind;
-  else
-    qlim = NULL;
-
-  while (lim - end >= d)
-    {
-      if (qlim && end <= qlim)
-        {
-          end += d - 1;
-          while ((d = delta[c = *end]) && end < qlim)
-            {
-              end += d;
-              end += delta[U(*end)];
-              end += delta[U(*end)];
-            }
-          ++end;
-        }
-      else
-        d = delta[c = (end += d)[-1]];
-      if (d)
-        continue;
-      beg = end - 1;
-      trie = next[c];
-      if (trie->accepting)
-        {
-          mch = beg;
-          accept = trie;
-        }
-      d = trie->shift;
-      while (beg > text)
-        {
-          unsigned char uc = *--beg;
-          c = trans ? trans[uc] : uc;
-          tree = trie->links;
-          while (tree && c != tree->label)
-            if (c < tree->label)
-              tree = tree->llink;
-            else
-              tree = tree->rlink;
-          if (tree)
-            {
-              trie = tree->trie;
-              if (trie->accepting)
-                {
-                  mch = beg;
-                  accept = trie;
-                }
-            }
-          else
-            break;
-          d = trie->shift;
-        }
-      if (mch)
-        goto match;
-    }
-  return -1;
-
- match:
-  /* Given a known match, find the longest possible match anchored
-     at or before its starting point.  This is nearly a verbatim
-     copy of the preceding main search loops.  */
-  if (longest)
-    {
-      if (lim - mch > kwset->maxd)
-        lim = mch + kwset->maxd;
-      lmch = 0;
-      d = 1;
-      while (lim - end >= d)
-        {
-          if ((d = delta[c = (end += d)[-1]]) != 0)
-            continue;
-          beg = end - 1;
-          if (!(trie = next[c]))
-            {
-              d = 1;
-              continue;
-            }
-          if (trie->accepting && beg <= mch)
-            {
-              lmch = beg;
-              accept = trie;
-            }
-          d = trie->shift;
-          while (beg > text)
-            {
-              unsigned char uc = *--beg;
-              c = trans ? trans[uc] : uc;
-              tree = trie->links;
-              while (tree && c != tree->label)
-                if (c < tree->label)
-                  tree = tree->llink;
-                else
-                  tree = tree->rlink;
-              if (tree)
-                {
-                  trie = tree->trie;
-                  if (trie->accepting && beg <= mch)
-                    {
-                      lmch = beg;
-                      accept = trie;
-                    }
-                }
-              else
-                break;
-              d = trie->shift;
-            }
-          if (lmch)
-            {
-              mch = lmch;
-              goto match;
-            }
-          if (!d)
-            d = 1;
-        }
-    }
-
-  kwsmatch->index = accept->accepting / 2;
-  kwsmatch->offset[0] = mch - text;
-  kwsmatch->size[0] = accept->depth;
-
-  return mch - text;
 }
 
 /* Hairy multiple string search with the Aho-Corasick algorithm.
