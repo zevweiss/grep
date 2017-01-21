@@ -4,6 +4,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  When grep -Fo finds matches of differing length, it could
+  mistakenly print a shorter one.  Now it prints a longest one.
+  [bug introduced in grep-2.26]
+
   When standard output is /dev/null, grep no longer fails when
   standard input is a file in the Linux /proc file system, or when
   standard input is a pipe and standard output is in append mode.

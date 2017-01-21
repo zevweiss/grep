@@ -848,9 +848,20 @@ acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
           struct trie const *accept1;
           char const *left1;
           unsigned char c = tr (trans, *tp++);
-          tree = trie->links;
-          while (tree && c != tree->label)
-            tree = c < tree->label ? tree->llink : tree->rlink;
+          while (true)
+            {
+              tree = trie->links;
+              while (tree && c != tree->label)
+                tree = c < tree->label ? tree->llink : tree->rlink;
+              if (tree)
+                break;
+              trie = trie->fail;
+              if (!trie)
+                break;
+              left1 = tp - trie->depth;
+              if (left1 > left)
+                break;
+            }
           if (!tree)
             break;
           trie = tree->trie;
