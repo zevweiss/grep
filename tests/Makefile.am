@@ -98,6 +98,7 @@ TESTS =						\
   false-match-mb-non-utf8			\
   fedora					\
   fgrep-infloop					\
+  fgrep-longest					\
   file						\
   filename-lineno.pl				\
   fmbtest					\
