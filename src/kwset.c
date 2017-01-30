@@ -639,12 +639,26 @@ bm_delta2_search (char const **tpp, char const *ep, char const *sp,
 static char const *
 memchr_kwset (char const *s, ptrdiff_t n, kwset_t kwset)
 {
-  if (0 <= kwset->gc1help)
-    return memchr2 (s, kwset->gc1, kwset->gc1help, n);
   char const *slim = s + n;
-  for (; s < slim; s++)
-    if (U(kwset->trans[U(*s)]) == kwset->gc1)
-      return s;
+  if (kwset->gc1help < 0)
+    {
+      for (; s < slim; s++)
+        if (kwset->next[U(*s)])
+          return s;
+    }
+  else
+    {
+      int small_heuristic = 2;
+      size_t small_bytes = small_heuristic * sizeof (unsigned long int);
+      while (s < slim)
+        {
+          if (kwset->next[U(*s)])
+            return s;
+          s++;
+          if ((uintptr_t) s % small_bytes == 0)
+            return memchr2 (s, kwset->gc1, kwset->gc1help, slim - s);
+        }
+    }
   return NULL;
 }
 
