@@ -42,15 +42,14 @@ struct pcre_comp
   pcre_extra *extra;
 
 # if PCRE_STUDY_JIT_COMPILE
-  /* Maximum size of the JIT stack.  */
+  /* The JIT stack and its maximum size.  */
+  pcre_jit_stack *jit_stack;
   int jit_stack_size;
 # endif
 
   /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
      string matches when that flag is used.  */
   int empty_match[2];
-
-  pcre_jit_stack *jit_stack;
 };
 
 
