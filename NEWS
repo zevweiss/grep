@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep without -F no longer goes awry when given two or more patterns
+  that contain no special characters other than '\' and also contain a
+  subpattern like '\.' that escapes a character to make it ordinary.
+  [bug introduced in grep 2.28]
+
   grep no longer fails to build on PCRE versions before 8.20.
   [bug introduced in grep 2.28]
 

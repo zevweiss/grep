@@ -2361,11 +2361,12 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
   size_t len = *len_p;
   char *new_keys = xmalloc (len + 1);
   char *p = new_keys;
+  char const *q = keys;
   mbstate_t mb_state = { 0 };
 
   while (len != 0)
     {
-      switch (*keys)
+      switch (*q)
         {
         case '$': case '*': case '.': case '[': case '^':
           goto fail;
@@ -2377,7 +2378,7 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
 
         case '\\':
           if (1 < len)
-            switch (keys[1])
+            switch (q[1])
               {
               case '\n':
               case 'B': case 'S': case 'W': case'\'': case '<':
@@ -2391,7 +2392,7 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
                   goto fail;
                 /* Fall through.  */
               default:
-                keys++, len--;
+                q++, len--;
                 break;
               }
           break;
@@ -2401,20 +2402,20 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
         size_t n;
         if (match_icase)
           {
-            int ni = fgrep_icase_charlen (keys, len, &mb_state);
+            int ni = fgrep_icase_charlen (q, len, &mb_state);
             if (ni < 0)
               goto fail;
             n = ni;
           }
         else
           {
-            n = mb_clen (keys, len, &mb_state);
+            n = mb_clen (q, len, &mb_state);
             if (MB_LEN_MAX < n)
               goto fail;
           }
 
-        p = mempcpy (p, keys, n);
-        keys += n;
+        p = mempcpy (p, q, n);
+        q += n;
         len -= n;
       }
     }

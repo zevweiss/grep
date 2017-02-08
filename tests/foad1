@@ -137,6 +137,13 @@ grep_test "$x2" "$y2" -F -w --color=always bc
 grep_test "$x3" "$y3" -E -w --color=always bc
 grep_test "$x3" "$y3" -F -w --color=always bc
 
+# Bug#25655
+grep_test .tar/ .tar/ -e '\.tar' -e '\.tbz'
+grep_test .tar/ .tar/ -o -e '\.tar' -e 'tar'
+grep_test '$*.[^\/' '$*.[^\/' -o -e '\$\*\.\[\^\\' -e abc
+grep_test '$*.[^\/(+?{|/' '$*.[^\/(+?{|/' -o -E \
+          -e '\$\*\.\[\^\\' -e '\(\+\?\{\|'
+
 # Skip the rest of the tests - known to fail. TAA.
 Exit $failures
 
