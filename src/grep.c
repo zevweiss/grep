@@ -1928,16 +1928,15 @@ usage (int status)
   else
     {
       printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname ());
-      printf (_("Search for PATTERN in each FILE or standard input.\n"));
-      printf (_("PATTERN is, by default, a basic regular expression (BRE).\n"));
+      printf (_("Search for PATTERN in each FILE.\n"));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
 \n\
-Regexp selection and interpretation:\n"), getprogname ());
+Pattern selection and interpretation:\n"), getprogname ());
       printf (_("\
-  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
+  -E, --extended-regexp     PATTERN is an extended regular expression\n\
   -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n\
+  -G, --basic-regexp        PATTERN is a basic regular expression (default)\n\
   -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
   /* -X is deliberately undocumented.  */
       printf (_("\
@@ -2011,11 +2010,8 @@ Context control:\n\
                             (MSDOS/Windows)\n\
 \n"));
       printf (_("\
-'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n\
-Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"));
-      printf (_("\
-When FILE is -, read standard input.  With no FILE, read . if a command-line\n\
--r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n\
+When FILE is '-', read standard input.  With no FILE, read '.' if\n\
+recursive, '-' otherwise.  With fewer than two FILEs, assume -h.\n\
 Exit status is 0 if any line is selected, 1 otherwise;\n\
 if any error occurs and -q is not given, the exit status is 2.\n"));
       emit_bug_reporting_address ();

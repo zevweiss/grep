@@ -43,15 +43,19 @@ grep, egrep, fgrep \- print lines matching a pattern
 .
 .SH DESCRIPTION
 .B grep
-searches the named input
-.IR FILE s
-for lines containing a match to the given
-.IR PATTERN .
-If no files are specified, or if the file
+searches for
+.I PATTERN
+in each
+.IR FILE .
+A
+.I FILE
+of
 .RB "\*(lq" \- "\*(rq"
-is given,
-.B grep
-searches standard input.
+stands for standard input.
+If no
+.I FILE
+is given, recursive searches examine the working directory,
+and nonrecursive searches read standard input.
 By default,
 .B grep
 prints the matching lines.
