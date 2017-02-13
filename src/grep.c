@@ -2582,7 +2582,7 @@ main (int argc, char **argv)
         break;
 
       case 'f':
-        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
+        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
         if (!fp)
           die (EXIT_TROUBLE, errno, "%s", optarg);
         oldcc = keycc;
