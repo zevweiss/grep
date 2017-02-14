@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Changes in behavior
+
+  The following changes affect only MS-Windows platforms.  First, the
+  --binary (-U) option now governs whether binary I/O is used, instead
+  of a heuristic that was sometimes incorrect.  Second, the
+  --unix-byte-offsets (-u) option now has no effect on MS-Windows too.
+
 
 * Noteworthy changes in release 3.0 (2017-02-09) [stable]
 

@@ -412,10 +412,6 @@ Print the 0-based byte offset within the input file
 before each line of output.
 If @option{-o} (@option{--only-matching}) is specified,
 print the offset of the matching part itself.
-When @command{grep} runs on MS-DOS or MS-Windows,
-the printed byte offsets depend on whether
-the @option{-u} (@option{--unix-byte-offsets}) option is used;
-see below.
 
 @item -H
 @itemx --with-filename
@@ -465,21 +461,6 @@ This is useful with options that prefix their output to the actual content:
 @option{-H}, @option{-n}, and @option{-b}.
 This may also prepend spaces to output line numbers and byte offsets
 so that lines from a single file all start at the same column.
-
-@item -u
-@itemx --unix-byte-offsets
-@opindex -u
-@opindex --unix-byte-offsets
-@cindex MS-DOS/MS-Windows byte offsets
-@cindex byte offsets, on MS-DOS/MS-Windows
-Report Unix-style byte offsets.
-This option causes @command{grep} to report byte offsets
-as if the file were a Unix-style text file,
-i.e., the byte offsets ignore carriage returns that were stripped.
-This will produce results identical
-to running @command{grep} on a Unix machine.
-This option has no effect unless the @option{-b} option is also used;
-it has no effect on platforms other than MS-DOS and MS-Windows.
 
 @item -Z
 @itemx --null
@@ -759,21 +740,26 @@ This can cause a performance penalty.
 @itemx --binary
 @opindex -U
 @opindex --binary
-@cindex MS-DOS/MS-Windows binary files
-@cindex binary files, MS-DOS/MS-Windows
-Treat the file(s) as binary.
-By default, under MS-DOS and MS-Windows,
-@command{grep} guesses whether a file is text or binary
-as described for the @option{--binary-files} option.
-If @command{grep} decides the file is a text file,
-it strips carriage returns from the original file contents
-(to make regular expressions with @code{^} and @code{$} work correctly).
-Specifying @option{-U} overrules this guesswork,
-causing all files to be read and passed to the matching mechanism verbatim;
-if the file is a text file with @code{CR/LF} pairs at the end of each line,
-this will cause some regular expressions to fail.
-This option has no effect
-on platforms other than MS-DOS and MS-Windows.
+@cindex MS-Windows binary I/O
+@cindex binary I/O, /MS-Windows
+Under MS-Windows, use binary I/O when reading and writing files other
+than the user's terminal, so that all input bytes are read and written
+as-is.  This overrides the default behavior where @command{grep}
+follows the operating system's advice whether to use binary or text
+I/O.  When @command{grep} uses text I/O it reads a carriage
+return--newline pair as a newline and a Control-Z as end-of-file, and
+it writes a newline as a carriage return--newline pair.  When this
+option is combined with @option{--byte-offset} (@option{-b}), byte
+counts treat each text I/O carriage return--newline as a single byte.
+
+When using text I/O, @option{--binary-files} heuristics are applied to
+input data after text-I/O processing.  These heuristics need not agree
+with the @option{--binary} option; that is, they may treat the data as
+text even if @option{--binary} is given, or vice versa.
+@xref{File and Directory Selection}.
+
+This option has no effect on platforms other than MS-Windows.
+
 
 @item -z
 @itemx --null-data

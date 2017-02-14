@@ -48,6 +48,7 @@
 #include "search.h"
 #include "version-etc.h"
 #include "xalloc.h"
+#include "xfreopen.h"
 #include "xstrtol.h"
 
 enum { SEP_CHAR_SELECTED = ':' };
@@ -536,10 +537,6 @@ static enum
 static bool grepfile (int, char const *, bool, bool);
 static bool grepdesc (int, bool);
 
-static void dos_binary (void);
-static void dos_unix_byte_offsets (void);
-static size_t undossify_input (char *, size_t);
-
 static bool
 is_device_mode (mode_t m)
 {
@@ -973,7 +970,6 @@ fillbuf (size_t save, struct stat const *st)
         }
     }
 
-  fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
 
   /* Initialize the following word, because skip_easy_bytes and some
@@ -1033,8 +1029,7 @@ static intmax_t pending;	/* Pending lines of output.
 static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
 static bool dev_null_output;	/* Stdout is known to be /dev/null.  */
-
-#include "dosbuf.c"
+static bool binary;		/* Use binary rather than text I/O.  */
 
 static void
 nlscan (char const *lim)
@@ -1127,7 +1122,6 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
-      pos = dossified_pos (pos);
       print_offset (pos, byte_num_color);
       print_sep (sep);
     }
@@ -1862,7 +1856,7 @@ grepdesc (int desc, bool command_line)
 
   /* Set input to binary mode.  Pipes are simulated with files
      on DOS, so this includes the case of "foo | grep bar".  */
-  if (O_BINARY && !isatty (desc))
+  if (binary && !isatty (desc))
     set_binary_mode (desc, O_BINARY);
 
   count = grep (desc, &st, &ineof);
@@ -2006,8 +2000,6 @@ Context control:\n\
       --colour[=WHEN]       use markers to highlight the matching strings;\n\
                             WHEN is 'always', 'never', or 'auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)\n\
-  -u, --unix-byte-offsets   report offsets as if CRs were not there\n\
-                            (MSDOS/Windows)\n\
 \n"));
       printf (_("\
 When FILE is '-', read standard input.  With no FILE, read '.' if\n\
@@ -2537,11 +2529,13 @@ main (int argc, char **argv)
         break;
 
       case 'U':
-        dos_binary ();
+        if (O_BINARY)
+          binary = true;
         break;
 
       case 'u':
-        dos_unix_byte_offsets ();
+        /* Obsolete option; it has no effect.  FIXME: Diagnose use of
+           this option starting in (say) the year 2020.  */
         break;
 
       case 'V':
@@ -2582,7 +2576,15 @@ main (int argc, char **argv)
         break;
 
       case 'f':
-        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, "r");
+        if (STREQ (optarg, "-"))
+          {
+            if (binary)
+              xfreopen (NULL, "rb", stdin);
+            fp = stdin;
+          }
+        else
+          fp = fopen (optarg, binary ? "rb" : "r");
+
         if (!fp)
           die (EXIT_TROUBLE, errno, "%s", optarg);
         oldcc = keycc;
@@ -2897,8 +2899,8 @@ main (int argc, char **argv)
 
   /* Output is set to binary mode because we shouldn't convert
      NL to CR-LF pairs, especially when grepping binary files.  */
-  if (O_BINARY && !isatty (STDOUT_FILENO))
-    set_binary_mode (STDOUT_FILENO, O_BINARY);
+  if (binary && !isatty (STDOUT_FILENO))
+    xfreopen (NULL, "wb", stdout);
 
   /* Prefer sysconf for page size, as getpagesize typically returns int.  */
 #ifdef _SC_PAGESIZE
