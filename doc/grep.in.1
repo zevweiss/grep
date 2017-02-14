@@ -34,11 +34,16 @@ grep, egrep, fgrep \- print lines matching a pattern
 .br
 .B grep
 .RI [ OPTIONS ]
-.RB [ \-e
+.B \-e
 .I PATTERN
-|
+\&.\|.\|.\&
+.RI [ FILE .\|.\|.]
+.br
+.B grep
+.RI [ OPTIONS ]
 .B \-f
-.IR FILE ]
+.I FILE
+\&.\|.\|.\&
 .RI [ FILE .\|.\|.]
 .
 .SH DESCRIPTION
@@ -129,9 +134,8 @@ option, search for all patterns given.
 The empty file contains zero patterns, and therefore matches nothing.
 .TP
 .BR \-i ", " \-\^\-ignore\-case
-Ignore case distinctions in both the
-.I PATTERN
-and the input files.
+Ignore case distinctions, so that characters that differ only in case
+match each other.
 .TP
 .BR \-v ", " \-\^\-invert\-match
 Invert the sense of matching, to select non-matching lines.
@@ -305,10 +309,10 @@ on a Unix machine.
 This option has no effect unless
 .B \-b
 option is also used;
-it has no effect on platforms other than \s-1MS-DOS\s0 and \s-1MS\s0-Windows.
+it has no effect on platforms other than MS-DOS and MS-Windows.
 .TP
 .BR \-Z ", " \-\^\-null
-Output a zero byte (the \s-1ASCII\s0
+Output a zero byte (the ASCII
 .B NUL
 character) instead of the character that normally follows a file name.
 For example,
@@ -565,7 +569,7 @@ This can cause a performance penalty.
 .TP
 .BR \-U ", " \-\^\-binary
 Treat the file(s) as binary.
-By default, under \s-1MS-DOS\s0 and \s-1MS\s0-Windows,
+By default, under MS-DOS and MS-Windows,
 .BR grep
 guesses whether a file is text or binary as described for the
 .B \-\^\-binary\-files
@@ -585,7 +589,7 @@ matching mechanism verbatim; if the file is a text file with CR/LF
 pairs at the end of each line, this will cause some regular
 expressions to fail.
 This option has no effect on platforms
-other than \s-1MS-DOS\s0 and \s-1MS\s0-Windows.
+other than MS-DOS and MS-Windows.
 .TP
 .BR \-z ", " \-\^\-null\-data
 Treat input and output data as sequences of lines, each terminated by
@@ -606,8 +610,8 @@ expressions, by using various operators to combine smaller expressions.
 .B grep
 understands three different versions of regular expression syntax:
 \*(lqbasic\*(rq (BRE), \*(lqextended\*(rq (ERE) and \*(lqperl\*(rq (PCRE).
-In
-.RB "\s-1GNU\s0\ " grep ,
+In GNU
+.B grep
 there is no difference in available functionality between basic and
 extended syntaxes.
 In other implementations, basic regular expressions are less powerful.
@@ -685,7 +689,8 @@ and
 For example,
 .B [[:alnum:]]
 means the character class of numbers and
-letters in the current locale. In the C locale and \s-1ASCII\s0
+letters in the current locale.
+In the C locale and ASCII
 character set encoding, this is the same as
 .BR [0\-9A\-Za\-z] .
 (Note that the brackets in these class names are part of the symbolic
@@ -757,7 +762,7 @@ or more times.
 The preceding item is matched at most
 .I m
 times.
-This is a \s-1GNU\s0 extension.
+This is a GNU extension.
 .TP
 .BI { n , m }
 The preceding item is matched at least
@@ -834,7 +839,7 @@ category.
 The C locale is used if none of these environment variables are set,
 if the locale catalog is not installed, or if
 .B grep
-was not compiled with national language support (\s-1NLS\s0).
+was not compiled with national language support (NLS).
 The shell command
 .B "locale \-a"
 lists locales that are currently available.
@@ -1102,13 +1107,13 @@ The default C locale uses American English messages.
 .B POSIXLY_CORRECT
 If set,
 .B grep
-behaves as \s-1POSIX\s0 requires; otherwise,
+behaves as POSIX requires; otherwise,
 .B grep
-behaves more like other \s-1GNU\s0 programs.
-\s-1POSIX\s0 requires that options that follow file names must be
+behaves more like other GNU programs.
+POSIX requires that options that follow file names must be
 treated as file names; by default, such options are permuted to the
 front of the operand list and are treated as options.
-Also, \s-1POSIX\s0 requires that unrecognized options be diagnosed as
+Also, POSIX requires that unrecognized options be diagnosed as
 \*(lqillegal\*(rq, but since they are not really against the law the default
 is to diagnose them as \*(lqinvalid\*(rq.
 .B POSIXLY_CORRECT
@@ -1132,7 +1137,7 @@ to be an option, even if it appears to be one.
 A shell can put this variable in the environment for each command it runs,
 specifying which operands are the results of file name wildcard
 expansion and therefore should not be treated as options.
-This behavior is available only with the \s-1GNU\s0 C library, and only
+This behavior is available only with the GNU C library, and only
 when
 .B POSIXLY_CORRECT
 is not set.
@@ -1149,7 +1154,7 @@ is used and a line is selected, the exit status is 0 even if an error
 occurred.
 .
 .SH COPYRIGHT
-Copyright 1998-2000, 2002, 2005-2017 Free Software Foundation, Inc.
+Copyright 1998\(en2000, 2002, 2005\(en2017 Free Software Foundation, Inc.
 .PP
 This is free software;
 see the source for copying conditions.
@@ -1187,7 +1192,7 @@ read(2),
 pcre(3), pcresyntax(3), pcrepattern(3),
 terminfo(5),
 glob(7), regex(7).
-.SS "\s-1POSIX\s0 Programmer's Manual Page"
+.SS "POSIX Programmer's Manual Page"
 grep(1p).
 .SS "Full Documentation"
 A

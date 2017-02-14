@@ -1152,7 +1152,7 @@ Regular expressions are constructed analogously to arithmetic expressions,
 by using various operators to combine smaller expressions.
 @command{grep} understands
 three different versions of regular expression syntax:
-``basic'' (BRE), ``extended'' (ERE) and ``perl'' (PCRE).
+basic (BRE), extended (ERE), and Perl-compatible (PCRE).
 In GNU @command{grep},
 there is no difference in available functionality between the basic and
 extended syntaxes.
@@ -1831,7 +1831,7 @@ Back-references are very slow, and may require exponential time.
 GNU @command{grep} is licensed under the GNU GPL, which makes it @dfn{free
 software}.
 
-The ``free'' in ``free software'' refers to liberty, not price. As
+The ``free'' in ``free software'' refers to liberty, not price.  As
 some GNU project advocates like to point out, think of ``free speech''
 rather than ``free beer''.  In short, you have the right (freedom) to
 run and change @command{grep} and distribute it to other people, and---if you
