@@ -48,7 +48,7 @@
 #include "search.h"
 #include "version-etc.h"
 #include "xalloc.h"
-#include "xfreopen.h"
+#include "xbinary-io.h"
 #include "xstrtol.h"
 
 enum { SEP_CHAR_SELECTED = ':' };
@@ -1700,6 +1700,7 @@ static bool
 grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
   int oflag = (O_RDONLY | O_NOCTTY
+               | (binary ? O_BINARY : 0)
                | (follow ? 0 : O_NOFOLLOW)
                | (skip_devices (command_line) ? O_NONBLOCK : 0));
   int desc = openat_safer (dirdesc, name, oflag);
@@ -1854,11 +1855,6 @@ grepdesc (int desc, bool command_line)
       goto closeout;
     }
 
-  /* Set input to binary mode.  Pipes are simulated with files
-     on DOS, so this includes the case of "foo | grep bar".  */
-  if (binary && !isatty (desc))
-    set_binary_mode (desc, O_BINARY);
-
   count = grep (desc, &st, &ineof);
   if (count_matches)
     {
@@ -1899,6 +1895,8 @@ grep_command_line_arg (char const *arg)
   if (STREQ (arg, "-"))
     {
       filename = label;
+      if (binary)
+        xset_binary_mode (STDIN_FILENO, O_BINARY);
       return grepdesc (STDIN_FILENO, true);
     }
   else
@@ -2579,14 +2577,15 @@ main (int argc, char **argv)
         if (STREQ (optarg, "-"))
           {
             if (binary)
-              xfreopen (NULL, "rb", stdin);
+              xset_binary_mode (STDIN_FILENO, O_BINARY);
             fp = stdin;
           }
         else
-          fp = fopen (optarg, binary ? "rb" : "r");
-
-        if (!fp)
-          die (EXIT_TROUBLE, errno, "%s", optarg);
+          {
+            fp = fopen (optarg, binary ? "rb" : "r");
+            if (!fp)
+              die (EXIT_TROUBLE, errno, "%s", optarg);
+          }
         oldcc = keycc;
         for (;; keycc += cc)
           {
@@ -2897,10 +2896,8 @@ main (int argc, char **argv)
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-  /* Output is set to binary mode because we shouldn't convert
-     NL to CR-LF pairs, especially when grepping binary files.  */
-  if (binary && !isatty (STDOUT_FILENO))
-    xfreopen (NULL, "wb", stdout);
+  if (binary)
+    xset_binary_mode (STDOUT_FILENO, O_BINARY);
 
   /* Prefer sysconf for page size, as getpagesize typically returns int.  */
 #ifdef _SC_PAGESIZE

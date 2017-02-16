@@ -741,25 +741,26 @@ This can cause a performance penalty.
 @opindex -U
 @opindex --binary
 @cindex MS-Windows binary I/O
-@cindex binary I/O, /MS-Windows
-Under MS-Windows, use binary I/O when reading and writing files other
+@cindex binary I/O
+On platforms that distinguish between text and binary I/O,
+use the latter when reading and writing files other
 than the user's terminal, so that all input bytes are read and written
 as-is.  This overrides the default behavior where @command{grep}
-follows the operating system's advice whether to use binary or text
-I/O.  When @command{grep} uses text I/O it reads a carriage
-return--newline pair as a newline and a Control-Z as end-of-file, and
-it writes a newline as a carriage return--newline pair.  When this
-option is combined with @option{--byte-offset} (@option{-b}), byte
-counts treat each text I/O carriage return--newline as a single byte.
+follows the operating system's advice whether to use text or binary
+I/O@.  On MS-Windows when @command{grep} uses text I/O it reads a
+carriage return--newline pair as a newline and a Control-Z as
+end-of-file, and it writes a newline as a carriage return--newline
+pair.
 
-When using text I/O, @option{--binary-files} heuristics are applied to
-input data after text-I/O processing.  These heuristics need not agree
+When using text I/O @option{--byte-offset} (@option{-b}) counts and
+@option{--binary-files} heuristics apply to input data after text-I/O
+processing.  Also, the @option{--binary-files} heuristics need not agree
 with the @option{--binary} option; that is, they may treat the data as
 text even if @option{--binary} is given, or vice versa.
 @xref{File and Directory Selection}.
 
-This option has no effect on platforms other than MS-Windows.
-
+This option has no effect on GNU and other POSIX-compatible platforms,
+which do not distinguish text from binary I/O.
 
 @item -z
 @itemx --null-data

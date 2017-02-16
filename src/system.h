@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "binary-io.h"
 #include "configmake.h"
 #include "dirname.h"
 #include "ignore-value.h"
