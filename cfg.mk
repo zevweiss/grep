@@ -81,10 +81,11 @@ sc_prohibit_echo_minus_en:
 # - tests involving long checksum lines, and
 # - the 'pr' test cases.
 LINE_LEN_MAX = 80
-FILTER_LONG_LINES =						\
-  /^[^:]*\.diff:[^:]*:@@ / d;					\
-  \|^[^:]*man/help2man:| d;			\
-  \|^[^:]*tests/misc/sha[0-9]*sum.*\.pl[-:]| d;			\
+FILTER_LONG_LINES =							\
+  /^[^:]*\.diff:[^:]*:@@ / d;						\
+  \|^[^:]*TODO:| d;							\
+  \|^[^:]*man/help2man:| d;						\
+  \|^[^:]*tests/misc/sha[0-9]*sum.*\.pl[-:]| d;				\
   \|^[^:]*tests/pr/|{ \|^[^:]*tests/pr/pr-tests:| !d; };
 sc_long_lines:
 	@files=$$($(VC_LIST_EXCEPT))					\
