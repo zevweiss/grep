@@ -47,7 +47,7 @@ grep_LDADD = $(LDADD) $(PCRE_LIBS)
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 
-EXTRA_DIST = dosbuf.c egrep.sh
+EXTRA_DIST = egrep.sh
 
 egrep fgrep: egrep.sh Makefile
 	$(AM_V_GEN)grep=`echo grep | sed -e '$(transform)'` &&		\
