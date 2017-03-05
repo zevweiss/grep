@@ -17,7 +17,7 @@
 # Cause the tool(s) built by this package to be used also when running
 # commands via e.g., "make syntax-check".  Doing this a little sooner
 # would have avoided a grep infloop bug.
-export PATH := $(srcdir)/src:${PATH}
+export PATH := $(srcdir)/src$(PATH_SEPARATOR)${PATH}
 
 # Used in maint.mk's web-manual rule
 manual_title = GNU Grep: Print lines matching a pattern
