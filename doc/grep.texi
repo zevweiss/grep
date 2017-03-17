@@ -737,6 +737,14 @@ directory, recursively, following all symbolic links.
 
 @table @option
 
+@item --
+@opindex --
+@cindex option delimiter
+Delimit the option list.  Later arguments, if any, are treated as
+operands even if they begin with @samp{-}.  For example, @samp{grep PAT --
+-file1 file2} searches for the pattern PAT in the files named @file{-file1}
+and @file{file2}.
+
 @item --line-buffered
 @opindex --line-buffered
 @cindex line buffering
