@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Improvements
+
+  grep '[0-9]' is now just as fast as grep '[[:digit:]]' when run
+  in a multi-byte locale.  Before, it was several times slower.
+
 ** Changes in behavior
 
   The following changes affect only MS-Windows platforms.  First, the
