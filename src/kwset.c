@@ -46,6 +46,7 @@
 #include "memchr2.h"
 #include "obstack.h"
 #include "xalloc.h"
+#include "verify.h"
 
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
