@@ -33,6 +33,9 @@ local-checks-to-skip =			\
 # Tools used to bootstrap this package, used for "announcement".
 bootstrap-tools = autoconf,automake,gnulib
 
+# Override the default Cc: used in generating an announcement.
+announcement_Cc_ = $(translation_project_), $(PACKAGE)-devel@gnu.org
+
 # The tight_scope test gets confused about inline functions.
 # like 'to_uchar'.
 _gl_TS_unmarked_extern_functions = main usage mb_clen to_uchar dfaerror dfawarn
