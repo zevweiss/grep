@@ -115,4 +115,18 @@ __asan_unpoison_memory_region (void const volatile *addr, size_t size) { }
 # endif
 #endif
 
+/* When we deliberately use duplicate branches, use this macro to
+   disable gcc's -Wduplicated-branches in the containing expression.  */
+#if 7 <= __GNUC__
+# define IGNORE_DUPLICATE_BRANCH_WARNING(exp)				\
+  ({									\
+    _Pragma ("GCC diagnostic push")					\
+    _Pragma ("GCC diagnostic ignored \"-Wduplicated-branches\"")	\
+    exp;								\
+    _Pragma ("GCC diagnostic pop")					\
+  })
+#else
+# define IGNORE_DUPLICATE_BRANCH_WARNING(exp) exp
+#endif
+
 #endif

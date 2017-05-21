@@ -1700,7 +1700,8 @@ static bool
 grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
   int oflag = (O_RDONLY | O_NOCTTY
-               | (binary ? O_BINARY : 0)
+               | (IGNORE_DUPLICATE_BRANCH_WARNING
+                  (binary ? O_BINARY : 0))
                | (follow ? 0 : O_NOFOLLOW)
                | (skip_devices (command_line) ? O_NONBLOCK : 0));
   int desc = openat_safer (dirdesc, name, oflag);
