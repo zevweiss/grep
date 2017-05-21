@@ -107,4 +107,12 @@ static _GL_UNUSED void
 __asan_unpoison_memory_region (void const volatile *addr, size_t size) { }
 #endif
 
+#ifndef FALLTHROUGH
+# if __GNUC__ < 7
+#  define FALLTHROUGH ((void) 0)
+# else
+#  define FALLTHROUGH __attribute__ ((__fallthrough__))
+# endif
+#endif
+
 #endif

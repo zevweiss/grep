@@ -759,7 +759,7 @@ context_length_arg (char const *str, intmax_t *out)
     case LONGINT_OVERFLOW:
       if (0 <= *out)
         break;
-      /* Fall through.  */
+      FALLTHROUGH;
     default:
       die (EXIT_TROUBLE, 0, "%s: %s", str,
            _("invalid context length argument"));
@@ -2308,7 +2308,7 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
         {
         case (size_t) -2:
           n = len;
-          /* Fall through.  */
+          FALLTHROUGH;
         default:
           p = mempcpy (p, keys, n);
           break;
@@ -2316,7 +2316,7 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
         case (size_t) -1:
           memset (&mb_state, 0, sizeof mb_state);
           n = 1;
-          /* Fall through.  */
+          FALLTHROUGH;
         case 1:
           switch (*keys)
             {
@@ -2376,7 +2376,7 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
               case '(': case '+': case '?': case '{': case '|':
                 if (matcher == G_MATCHER_INDEX)
                   goto fail;
-                /* Fall through.  */
+                FALLTHROUGH;
               default:
                 q++, len--;
                 break;
@@ -2653,7 +2653,7 @@ main (int argc, char **argv)
 
       case 'R':
         fts_options = basic_fts_options | FTS_LOGICAL;
-        /* Fall through.  */
+        FALLTHROUGH;
       case 'r':
         directories = RECURSE_DIRECTORIES;
         last_recursive = prev_optind;
