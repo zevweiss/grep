@@ -64,6 +64,7 @@ This manual is for version @value{VERSION} of GNU Grep.
 * Invoking::                    Command-line options, environment, exit status.
 * Regular Expressions::         Regular Expressions.
 * Usage::                       Examples.
+* Performance::                 Performance tuning.
 * Reporting Bugs::              Reporting Bugs.
 * Copying::                     License terms for this manual.
 * Index::                       Combined index.
@@ -1788,6 +1789,93 @@ g/re/p
 
 @end enumerate
 
+
+@node Performance
+@chapter Performance
+
+@cindex performance
+Typically @command{grep} is an efficient way to search text.  However,
+it can be quite slow in some cases, and it can search large files
+where even minor performance tweaking can help significantly.
+Although the algorithm used by @command{grep} is an implementation
+detail that can change from release to release, understanding its
+basic strengths and weaknesses can help you improve its performance.
+
+The @command{grep} command operates partly via a set of automata that
+are designed for efficiency, and partly via a slower matcher that
+takes over when the fast matchers run into unusual features like
+back-references.  When feasible, the Boyer--Moore fast string
+searching algorithm is used to match a single fixed pattern, and the
+Aho--Corasick algorithm is used to match multiple fixed patterns.
+
+@cindex locales
+Generally speaking @command{grep} operates more efficiently in
+single-byte locales, since it can avoid the special processing needed
+for multi-byte characters.  If your pattern will work just as well
+that way, setting @env{LC_ALL} to a single-byte locale can help
+performance considerably.  Setting @samp{LC_ALL='C'} can be
+particularly efficient, as @command{grep} is tuned for that locale.
+
+@cindex case insensitive search
+Outside the @samp{C} locale, case-insensitive search, and search for
+bracket expressions like @samp{[a-z]} and @samp{[[=a=]b]}, can be
+suprisingly inefficient due to difficulties in fast portable access to
+concepts like multi-character collating elements.
+
+@cindex back-references
+A back-reference such as @samp{\1} can hurt performance significantly
+in some cases, since back-references cannot in general be implemented
+via a finite state automaton, and instead trigger a backtracking
+algorithm that can be quite inefficient.  For example, although the
+pattern @samp{^(.*)\1@{14@}(.*)\2@{13@}$} matches only lines whose
+lengths can be written as a sum @math{15x + 14y} for nonnegative
+integers @math{x} and @math{y}, the pattern matcher does not perform
+linear Diophantine analysis and instead backtracks through all
+possible matching strings, using an algorithm that is exponential in
+the worst case.
+
+@cindex holes in files
+On some operating systems that support files with holes---large
+regions of zeros that are not physically present on secondary
+storage---@command{grep} can skip over the holes efficiently without
+needing to read the zeros.  This optimization is not available if the
+@option{-a} (@option{--text}) option is used (@pxref{File and
+Directory Selection}), unless the @option{-z} (@option{--null-data})
+option is also used (@pxref{Other Options}).
+
+For more about the algorithms used by @command{grep} and about
+related string matching algorithms, see:
+
+@frenchspacing on
+@itemize @bullet
+@item
+Aho AV. Algorithms for finding patterns in strings.
+In: van Leeuwen J. @emph{Handbook of Theoretical Computer Science}, vol. A.
+New York: Elsevier; 1990. p. 255--300.
+This surveys classic string matching algorithms, some of which are
+used by @command{grep}.
+
+@item
+Aho AV, Corasick MJ. Efficient string matching: an aid to bibliographic search.
+@emph{CACM}. 1975;18(6):333--40.
+@url{http://dx.doi.org/10.1145/360825.360855}.
+This introduces the Aho--Corasick algorithm.
+
+@item
+Boyer RS, Moore JS. A fast string searching algorithm.
+@emph{CACM}. 1977;20(10):762--72.
+@url{http://dx.doi.org/10.1145/359842.359859}.
+This introduces the Boyer--Moore algorithm.
+
+@item
+Faro S, Lecroq T. The exact online string matching problem: a review
+of the most recent results.
+@emph{ACM Comput Surv}. 2013;45(2):13.
+@url{http://dx.doi.org/10.1145/2431211.2431212}.
+This surveys string matching algorithms that might help improve the
+performance of @command{grep} in the future.
+@end itemize
+@frenchspacing off
 
 @node Reporting Bugs
 @chapter Reporting bugs
