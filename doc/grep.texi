@@ -1817,7 +1817,7 @@ particularly efficient, as @command{grep} is tuned for that locale.
 @cindex case insensitive search
 Outside the @samp{C} locale, case-insensitive search, and search for
 bracket expressions like @samp{[a-z]} and @samp{[[=a=]b]}, can be
-suprisingly inefficient due to difficulties in fast portable access to
+surprisingly inefficient due to difficulties in fast portable access to
 concepts like multi-character collating elements.
 
 @cindex back-references
