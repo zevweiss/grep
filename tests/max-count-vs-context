@@ -12,7 +12,7 @@ another needle
 6th line...
 EOF
 
-sed 4q in > exp || framework_failure_
+sed 6q in > exp || framework_failure_
 
 fail=0
 grep -m1 -A5 needle in > out 2>err || fail=1

@@ -9,6 +9,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Changes in behavior
 
+  Context no longer excludes selected lines omitted because of -m.
+  For example, 'grep "^" -m1 -A1' now outputs the first two input
+  lines, not just the first line.  This fixes a glitch that has been
+  present since -m was added in grep 2.5.
+
   The following changes affect only MS-Windows platforms.  First, the
   --binary (-U) option now governs whether binary I/O is used, instead
   of a heuristic that was sometimes incorrect.  Second, the

@@ -311,11 +311,11 @@ The scanning of each file stops on the first match.
 @opindex -m
 @opindex --max-count
 @cindex max-count
-Stop reading a file after @var{num} matching lines.
+Stop after the first @var{num} selected lines.
 If the input is standard input from a regular file,
-and @var{num} matching lines are output,
+and @var{num} selected lines are output,
 @command{grep} ensures that the standard input is positioned
-just after the last matching line before exiting,
+just after the last selected line before exiting,
 regardless of the presence of trailing context lines.
 This enables a calling process to resume a search.
 For example, the following shell script makes use of it:
@@ -340,10 +340,8 @@ done
 @end example
 
 @cindex context lines
-When @command{grep} stops after @var{num} matching lines,
+When @command{grep} stops after @var{num} selected lines,
 it outputs any trailing context lines.
-Since context does not include matching lines,
-@command{grep} will stop when it encounters another matching line.
 When the @option{-c} or @option{--count} option is also used,
 @command{grep} does not output a count greater than @var{num}.
 When the @option{-v} or @option{--invert-match} option is also used,

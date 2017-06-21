@@ -1011,7 +1011,7 @@ static intmax_t out_before;	/* Lines of leading context. */
 static intmax_t out_after;	/* Lines of trailing context. */
 static bool count_matches;	/* Count matching lines.  */
 static bool no_filenames;	/* Suppress file names.  */
-static intmax_t max_count;	/* Stop after outputting this many
+static intmax_t max_count;	/* Max number of selected
                                    lines from an input file.  */
 static bool line_buffered;	/* Use line buffering.  */
 static char *label = NULL;      /* Fake filename for stdin */
@@ -1023,7 +1023,7 @@ static char const *lastnl;	/* Pointer after last newline counted. */
 static char *lastout;		/* Pointer after last character output;
                                    NULL if no character has been output
                                    or if it's conceptually before bufbeg. */
-static intmax_t outleft;	/* Maximum number of lines to be output.  */
+static intmax_t outleft;	/* Maximum number of selected lines.  */
 static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
 static bool done_on_match;	/* Stop scanning file on first match.  */
@@ -1276,25 +1276,16 @@ prline (char *beg, char *lim, char sep)
   lastout = lim;
 }
 
-/* Print pending lines of trailing context prior to LIM. Trailing context ends
-   at the next matching line when OUTLEFT is 0.  */
+/* Print pending lines of trailing context prior to LIM.  */
 static void
 prpending (char const *lim)
 {
   if (!lastout)
     lastout = bufbeg;
-  while (pending > 0 && lastout < lim)
+  for (; 0 < pending && lastout < lim; pending--)
     {
       char *nl = memchr (lastout, eolbyte, lim - lastout);
-      size_t match_size;
-      --pending;
-      if (outleft
-          || ((execute (compiled_pattern, lastout, nl + 1 - lastout,
-                        &match_size, NULL) == (size_t) -1)
-              == !out_invert))
-        prline (lastout, nl + 1, SEP_CHAR_REJECTED);
-      else
-        pending = 0;
+      prline (lastout, nl + 1, SEP_CHAR_REJECTED);
     }
 }
 
@@ -1949,11 +1940,11 @@ Miscellaneous:\n\
       printf (_("\
 \n\
 Output control:\n\
-  -m, --max-count=NUM       stop after NUM matches\n\
+  -m, --max-count=NUM       stop after NUM selected lines\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
       --line-buffered       flush output on every line\n\
-  -H, --with-filename       print the file name for each match\n\
+  -H, --with-filename       print file name with output lines\n\
   -h, --no-filename         suppress the file name prefix on output\n\
       --label=LABEL         use LABEL as the standard input file name prefix\n\
 "));
@@ -1981,9 +1972,9 @@ Output control:\n\
       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
 "));
       printf (_("\
-  -L, --files-without-match  print only names of FILEs containing no match\n\
-  -l, --files-with-matches  print only names of FILEs containing matches\n\
-  -c, --count               print only a count of matching lines per FILE\n\
+  -L, --files-without-match  print only names of FILEs with no selected lines\n\
+  -l, --files-with-matches  print only names of FILEs with selected lines\n\
+  -c, --count               print only a count of selected lines per FILE\n\
   -T, --initial-tab         make tabs line up (if needed)\n\
   -Z, --null                print 0 byte after FILE name\n"));
       printf (_("\

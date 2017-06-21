@@ -73,14 +73,14 @@ set x \
   '-C,1,--no-gr'    "$rB$C$D$E$rF$rG$H$I$rJ$rL$M$N$z0" \
   '-m,4'            "$C$D$E$H$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-o'         "$c$d$e$h$z0$XI$XJ$XK$XL$XM$XN" \
-  '-m,4,-C,1'       "$rB$C$D$E$rF$rG$H$z0$XI$XJ$XK$XL$XM$XN" \
+  '-m,4,-C,1'       "$rB$C$D$E$rF$rG$H$rI$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,4,-C,1,-o'    "$c$d$e$h$z0$XI$XJ$XK$XL$XM$XN" \
   '-m,5'            "$C$D$E$H$I$z0$XJ$XK$XL$XM$XN" \
   '-m,5,-o'         "$c$d$e$h$i$z0$XJ$XK$XL$XM$XN" \
   '-m,5,-C,1,-o'    "$c$d$e$h$i$z0$XJ$XK$XL$XM$XN" \
   '-m,6'            "$C$D$E$H$I$M$z0$XN" \
   '-m,6,-o'         "$c$d$e$h$i$m$z0$XN" \
-  '-m,6,-C,1'       "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$z0$XN" \
+  '-m,6,-C,1'       "$rB$C$D$E$rF$rG$H$I$rJ$s$rL$M$rN$z0$XN" \
   '-m,6,-C,1,-o'    "$c$d$e$h$i$s$m$z0$XN" \
   '-v'              "$A$B$F$G$J$K$L$z0" \
   '-v,-o'           "$z0" \
@@ -92,13 +92,13 @@ set x \
   '-4,-v,-1'        "$A$B$rC$s$rE$F$G$rH$rI$J$K$L$rM$z0" \
   '-m,1,-v'         "$A$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,1,-v,-o'      "$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
-  '-m,1,-v,-C,1'    "$A$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
+  '-m,1,-v,-C,1'    "$A$rB$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,1,-v,-C,1,-o' "$z0$XB$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,2,-v'         "$A$B$z0$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,2,-v,-o'      "$z0$XC$XD$XE$XF$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,3,-v'         "$A$B$F$z0$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,3,-v,-o'      "$z0$XG$XH$XI$XJ$XK$XL$XM$XN" \
-  '-m,3,-v,-C,1'    "$A$B$rC$s$rE$F$z0$XG$XH$XI$XJ$XK$XL$XM$XN" \
+  '-m,3,-v,-C,1'    "$A$B$rC$s$rE$F$rG$z0$XG$XH$XI$XJ$XK$XL$XM$XN" \
   '-m,3,-v,-C,1,-o' "$rc$s$re$z0$XG$XH$XI$XJ$XK$XL$XM$XN" \
   x
 shift
