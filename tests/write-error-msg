@@ -40,7 +40,7 @@ returns_ 2 grep -v '^$' <in >/dev/full 2>err2 \
 # ensure each error message file contains a 'write error' with additional text
 for f in err1 err2 ;
 do
-    grep -Eiq '^grep: write error: [a-z]+' $f \
+    grep -Eiq '^[^:]*: write error: [a-z]+' $f \
         || {
              warn_ "incorrect/missing error message in file $f"
              compare /dev/null $f   # print the content in the logs

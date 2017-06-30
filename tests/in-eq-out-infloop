@@ -24,6 +24,8 @@ for arg in out - ''; do
   # grep-2.10 and earlier would infloop with $arg = - or $arg = ''.
   timeout 10 grep 0 $arg < out >> out 2> err; st=$?; test $st = 2 || fail=1
   sed 's/file .* is/file ... is/' err > k && mv k err
+  # Normalize the diagnostic prefix from e.g., "/mnt/dir/grep: " to "grep: "
+  sed 's/^[^:]*: /grep: /' err > k && mv k err
   compare err.exp err || fail=1
 
   # But with each of the following options it must not exit-2.

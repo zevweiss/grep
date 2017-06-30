@@ -24,6 +24,9 @@ use strict;
 (my $program_name = $0) =~ s|.*/||;
 
 my $prog = 'grep';
+my $full_prog_name = `$prog --no-such-option 2>&1`;
+$full_prog_name =~ s/:.*//s;
+$prog = $full_prog_name if $full_prog_name;
 
 # Turn off localization of executable's output.
 @ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
