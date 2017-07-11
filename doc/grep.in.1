@@ -1,4 +1,14 @@
 .\" GNU grep man page
+.de dT
+.ds Dt \\$2
+..
+.dT Time-stamp: "2017-06-21"
+.\" Update the above date whenever a change to either this file or
+.\" grep.c's 'usage' function results in a nontrivial change to the man page.
+.\" In Emacs, you can update the date by running 'M-x time-stamp'
+.\" after you make a change that you decide is nontrivial.
+.\" It is no big deal to forget to update the date.
+.
 .if !\n(.g \{\
 .	if !\w|\*(lq| \{\
 .		ds lq ``
@@ -1213,3 +1223,8 @@ This man page is maintained only fitfully;
 the full documentation is often more up-to-date.
 .\" Work around problems with some troff -man implementations.
 .br
+.
+.\" Format for Emacs-maintained Dt string defined at this file's start.
+.\" Local variables:
+.\" time-stamp-format: "%:y-%02m-%02d"
+.\" End:
