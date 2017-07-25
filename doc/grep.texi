@@ -235,8 +235,16 @@ or preceded by a non-word constituent character.
 Similarly,
 it must be either at the end of the line
 or followed by a non-word constituent character.
-Word-constituent characters are letters, digits, and the underscore.
+Word constituent characters are letters, digits, and the underscore.
 This option has no effect if @option{-x} is also specified.
+
+Because the @option{-w} option can match a substring that does not
+begin and end with word constituents, it differs from surrounding a
+pattern with @samp{\<} and @samp{\>}.  For example, although
+@samp{grep -w @@} matches a line containing only @samp{@@}, @samp{grep
+'\<@@\>'} cannot match any line because @samp{@@} is not a
+word constituent.  @xref{The Backslash Character and Special
+Expressions}.
 
 @item -x
 @itemx --line-regexp
