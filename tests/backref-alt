@@ -24,4 +24,10 @@ grep -E '0|()0|\1|0' in >out
 status=$?
 test $status -eq 2 || test $status -eq 1 || fail=1
 
+# This fuzz test comes from Bug#27838.
+printf '\1772{\177)\216\216\n\216\216\t\0372{\177)(\037W3|\244\\\220)\0373|d{\244k\220)\0373|(|2{\177)(\037W3|\244\\\220)\0373|d{\244k\220)\0373|d{\220)(\013\0373|2{\177)\216\255\t\216\216\t\0373|$\\2\n' >pat
+LC_ALL=C grep -E -f pat in >out
+status=$?
+test $status -eq 2 || test $status -eq 1 || fail=1
+
 Exit $fail
