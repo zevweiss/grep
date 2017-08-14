@@ -1949,7 +1949,7 @@ Output control:\n\
       --label=LABEL         use LABEL as the standard input file name prefix\n\
 "));
       printf (_("\
-  -o, --only-matching       show only nonempty parts of lines matching PATTERN\n\
+  -o, --only-matching      show only nonempty parts of lines matching PATTERN\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE;\n\
                             TYPE is 'binary', 'text', or 'without-match'\n\
