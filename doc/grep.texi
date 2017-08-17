@@ -1067,6 +1067,9 @@ and only when @env{POSIXLY_CORRECT} is not set.
 
 Normally the exit status is 0 if a line is selected, 1 if no lines
 were selected, and 2 if an error occurred.  However, if the
+@option{-L} or @option{--files-without-match} is used, the exit status
+is 0 if a file is listed, 1 if no files were listed, and 2 if an error
+occurred.  Also, if the
 @option{-q} or @option{--quiet} or @option{--silent} option is used
 and a line is selected, the exit status is 0 even if an error
 occurred.  Other @command{grep} implementations may exit with status

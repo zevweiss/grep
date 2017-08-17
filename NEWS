@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Changes in behavior
+
+  The --files-without-match (-L) option now causes grep to succeed
+  when a file is listed, instead of when a line is selected.  This
+  resembles what git-grep does.
 
 * Noteworthy changes in release 3.1 (2017-07-02) [stable]
 

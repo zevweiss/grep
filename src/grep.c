@@ -1863,11 +1863,11 @@ grepdesc (int desc, bool command_line)
         fflush_errno ();
     }
 
-  status = !count;
+  status = !count != (list_files == LISTFILES_NONMATCHING);
 
   if (list_files == LISTFILES_NONE)
     finalize_input (desc, &st, ineof);
-  else if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
+  else if (status == 0)
     {
       print_filename ();
       putchar_errno ('\n' & filename_mask);
@@ -1994,7 +1994,7 @@ Context control:\n\
       printf (_("\
 When FILE is '-', read standard input.  With no FILE, read '.' if\n\
 recursive, '-' otherwise.  With fewer than two FILEs, assume -h.\n\
-Exit status is 0 if any line is selected, 1 otherwise;\n\
+Exit status is 0 if any line (or file if -L) is selected, 1 otherwise;\n\
 if any error occurs and -q is not given, the exit status is 2.\n"));
       emit_bug_reporting_address ();
     }
