@@ -1863,7 +1863,7 @@ grepdesc (int desc, bool command_line)
         fflush_errno ();
     }
 
-  status = !count != (list_files == LISTFILES_NONMATCHING);
+  status = !count == !(list_files == LISTFILES_NONMATCHING);
 
   if (list_files == LISTFILES_NONE)
     finalize_input (desc, &st, ineof);
