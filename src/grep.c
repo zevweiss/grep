@@ -2005,7 +2005,7 @@ if any error occurs and -q is not given, the exit status is 2.\n"));
 
 static struct
 {
-  char const name[12];
+  char name[12];
   int syntax; /* used if compile == GEAcompile */
   compile_fp_t compile;
   execute_fp_t execute;
