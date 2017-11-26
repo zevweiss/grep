@@ -29,8 +29,14 @@
    in pcre_exec.  */
 enum { NSUB = 300 };
 
+# ifndef PCRE_EXTRA_MATCH_LIMIT_RECURSION
+#  define PCRE_EXTRA_MATCH_LIMIT_RECURSION 0
+# endif
 # ifndef PCRE_STUDY_JIT_COMPILE
 #  define PCRE_STUDY_JIT_COMPILE 0
+# endif
+# ifndef PCRE_STUDY_EXTRA_NEEDED
+#  define PCRE_STUDY_EXTRA_NEEDED 0
 # endif
 
 struct pcre_comp
@@ -79,6 +85,21 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
             die (EXIT_TROUBLE, 0,
                  _("failed to allocate memory for the PCRE JIT stack"));
           pcre_assign_jit_stack (pc->extra, NULL, pc->jit_stack);
+          continue;
+        }
+# endif
+
+# if PCRE_EXTRA_MATCH_LIMIT_RECURSION
+      if (e == PCRE_ERROR_RECURSIONLIMIT
+          && (PCRE_STUDY_EXTRA_NEEDED || pc->extra)
+          && pc->extra->match_limit_recursion <= ULONG_MAX / 2)
+        {
+          pc->extra->match_limit_recursion *= 2;
+          if (pc->extra->match_limit_recursion == 0)
+            {
+              pc->extra->match_limit_recursion = (1 << 24) - 1;
+              pc->extra->flags |= PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+            }
           continue;
         }
 # endif
@@ -158,7 +179,8 @@ Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
   if (!pc->cre)
     die (EXIT_TROUBLE, 0, "%s", ep);
 
-  pc->extra = pcre_study (pc->cre, PCRE_STUDY_JIT_COMPILE, &ep);
+  int pcre_study_flags = PCRE_STUDY_EXTRA_NEEDED | PCRE_STUDY_JIT_COMPILE;
+  pc->extra = pcre_study (pc->cre, pcre_study_flags, &ep);
   if (ep)
     die (EXIT_TROUBLE, 0, "%s", ep);
 
