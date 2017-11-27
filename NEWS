@@ -8,6 +8,12 @@ GNU grep NEWS                                    -*- outline -*-
   when a file is listed, instead of when a line is selected.  This
   resembles what git-grep does.
 
+** Bug fixes
+
+  The --recursive (-r) option no longer fails on MS-Windows.
+  [bug introduced in grep 2.11]
+
+
 * Noteworthy changes in release 3.1 (2017-07-02) [stable]
 
 ** Improvements
