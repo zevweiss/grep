@@ -30,6 +30,7 @@
 
 #include "argmatch.h"
 #include "c-ctype.h"
+#include "c-stack.h"
 #include "closeout.h"
 #include "colorize.h"
 #include "die.h"
@@ -2450,6 +2451,7 @@ main (int argc, char **argv)
   init_localeinfo (&localeinfo);
 
   atexit (clean_up_stdout);
+  c_stack_action (NULL);
 
   last_recursive = 0;
 

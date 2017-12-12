@@ -1,0 +1,16 @@
+#!/bin/sh
+# Ensure a stack overflow no longer segfaults
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+# Too many open parentheses.
+printf %080000d 0|tr 0 '(' > in || framework_failure_
+echo grep: stack overflow > exp || framework_failure_
+
+fail=0
+returns_ 2 grep -E -f in >out 2>err || fail=1
+
+compare /dev/null out || fail=1
+compare exp err || fail=1
+
+Exit $fail

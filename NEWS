@@ -13,6 +13,12 @@ GNU grep NEWS                                    -*- outline -*-
   The --recursive (-r) option no longer fails on MS-Windows.
   [bug introduced in grep 2.11]
 
+** Improvements
+
+  grep now diagnoses stack overflow.  Before grep-2.6, the included
+  regexp code would detect it.  Since 2.6, grep defaulted to using
+  glibc's regexp, which lost that capability.
+
 
 * Noteworthy changes in release 3.1 (2017-07-02) [stable]
 

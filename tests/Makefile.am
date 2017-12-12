@@ -151,6 +151,7 @@ TESTS =						\
   skip-read					\
   spencer1					\
   spencer1-locale				\
+  stack-overflow				\
   status					\
   surrogate-pair				\
   symlink					\
