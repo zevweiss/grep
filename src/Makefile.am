@@ -43,7 +43,7 @@ LDADD = \
   ../lib/libgreputils.a $(LIBINTL) ../lib/libgreputils.a $(LIBICONV) \
   $(LIBTHREAD)
 
-grep_LDADD = $(LDADD) $(PCRE_LIBS)
+grep_LDADD = $(LDADD) $(PCRE_LIBS) $(LIBCSTACK)
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib
 
