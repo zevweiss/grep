@@ -1,7 +1,7 @@
 #! /bin/sh
 # Regression test for GNU grep.
 #
-# Copyright 2016-2017 Free Software Foundation, Inc.
+# Copyright 2016-2018 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
