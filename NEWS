@@ -983,7 +983,7 @@ Version 2.4:
 
   - The --revert-match option has been renamed to --invert-match.
 
-  - The --fixed-regexp option has been renamed to --fixed-string.
+  - The --fixed-regexp option has been renamed to --fixed-strings.
 
   - New option -H or --with-filename.
 
