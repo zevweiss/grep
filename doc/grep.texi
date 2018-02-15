@@ -1131,8 +1131,8 @@ expressions), separated by newlines, any of which is to be matched.
 @opindex --perl-regexp
 @cindex matching Perl-compatible regular expressions
 Interpret the pattern as a Perl-compatible regular expression (PCRE).
-This is experimental, particularly when combined with
-the @option{-z} (@option{--null-data}) option, and
+PCRE support is here to stay, but consider this option experimental when
+combined with the @option{-z} (@option{--null-data}) option, and note that
 @samp{grep@ -P} may warn of unimplemented features.
 @xref{Other Options}.
 
