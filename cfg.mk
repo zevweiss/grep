@@ -63,7 +63,7 @@ export VERBOSE = yes
 # 1127556 9e
 export XZ_OPT = -6e
 
-old_NEWS_hash = 51c3b77c72f53965e784cb4a8074842c
+old_NEWS_hash = 45dd6d1e422e22cd3d94c87dd5747534
 
 # Many m4 macros names once began with 'jm_'.
 # Make sure that none are inadvertently reintroduced.
