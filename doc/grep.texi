@@ -1016,6 +1016,8 @@ interpreted.
 @vindex LC_ALL @r{environment variable}
 @vindex LC_CTYPE @r{environment variable}
 @vindex LANG @r{environment variable}
+@cindex encoding error
+@cindex null character
 These variables specify the locale for the @env{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
@@ -1023,6 +1025,18 @@ This category also determines the character encoding, that is, whether
 text is encoded in UTF-8, ASCII, or some other encoding.  In the
 @samp{C} or @samp{POSIX} locale, all characters are encoded as a
 single byte and every byte is a valid character.
+In more-complex encodings such as UTF-8, a sequence of multiple bytes
+may be needed to represent a character, and some bytes may be encoding
+errors that do not contribute to the representation of any character.
+POSIX does not specify the behavior of @command{grep} when patterns or
+input data contain encoding errors or null characters, so portable
+scripts should avoid such usage.  As an extension to POSIX, GNU
+@command{grep} treats null characters like any other character.
+However, unless the @option{-a} (@option{--binary-files=text}) option
+is used, the presence of null characters in input or of encoding
+errors in output causes GNU @command{grep} to treat the file as binary
+and suppress details about matches.  @xref{File and Directory
+Selection}.
 
 @item LANGUAGE
 @itemx LC_ALL
@@ -1187,16 +1201,16 @@ are regular expressions that match themselves.
 Any meta-character
 with special meaning may be quoted by preceding it with a backslash.
 
-A regular expression may be followed by one of several
-repetition operators:
-
-@table @samp
-
-@item .
 @opindex .
 @cindex dot
 @cindex period
 The period @samp{.} matches any single character.
+It is unspecified whether @samp{.} matches an encoding error.
+
+A regular expression may be followed by one of several
+repetition operators:
+
+@table @samp
 
 @item ?
 @opindex ?
@@ -1267,11 +1281,15 @@ An unmatched @samp{)} matches just itself.
 @cindex character class
 A @dfn{bracket expression} is a list of characters enclosed by @samp{[} and
 @samp{]}.
-It matches any single character in that list;
-if the first character of the list is the caret @samp{^},
-then it matches any character @strong{not} in the list.
+It matches any single character in that list.
+If the first character of the list is the caret @samp{^},
+then it matches any character @strong{not} in the list,
+and it is unspecified whether it matches an encoding error.
 For example, the regular expression
-@samp{[0123456789]} matches any single digit.
+@samp{[0123456789]} matches any single digit,
+whereas @samp{[^()]} matches any single character that is not
+an opening or closing parenthesis, and might or might not match an
+encoding error.
 
 @cindex range expression
 Within a bracket expression, a @dfn{range expression} consists of two
@@ -1856,7 +1874,7 @@ On some operating systems that support files with holes---large
 regions of zeros that are not physically present on secondary
 storage---@command{grep} can skip over the holes efficiently without
 needing to read the zeros.  This optimization is not available if the
-@option{-a} (@option{--text}) option is used (@pxref{File and
+@option{-a} (@option{--binary-files=text}) option is used (@pxref{File and
 Directory Selection}), unless the @option{-z} (@option{--null-data})
 option is also used (@pxref{Other Options}).
 

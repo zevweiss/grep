@@ -744,6 +744,7 @@ may be quoted by preceding it with a backslash.
 The period
 .B .\&
 matches any single character.
+It is unspecified whether it matches an encoding error.
 .SS "Character Classes and Bracket Expressions"
 A
 .I "bracket expression"
@@ -752,12 +753,13 @@ is a list of characters enclosed by
 and
 .BR ] .
 It matches any single
-character in that list; if the first character of the list
+character in that list.
+If the first character of the list
 is the caret
 .B ^
 then it matches any character
 .I not
-in the list.
+in the list; it is unspecified whether it matches an encoding error.
 For example, the regular expression
 .B [0123456789]
 matches any single digit.
