@@ -9,28 +9,131 @@
 .\" after you make a change that you decide is nontrivial.
 .\" It is no big deal to forget to update the date.
 .
-.if !\n(.g \{\
-.	if !\w|\*(lq| \{\
-.		ds lq ``
-.		if \w'\(lq' .ds lq "\(lq
-.	\}
-.	if !\w|\*(rq| \{\
-.		ds rq ''
-.		if \w'\(rq' .ds rq "\(rq
-.	\}
-.\}
-.
-.ie \n[.g] .mso www.tmac
-.el \{\
-. de MTO
-\\$2 \(laemail: \\$1 \(ra\\$3
-..
-. de URL
-\\$2 \(laURL: \\$1 \(ra\\$3
-..
-.\}
-.
 .TH GREP 1 \*(Dt "GNU grep @VERSION@" "User Commands"
+.
+.if !\w|\*(lq| \{\
+.\" groff an-old.tmac does not seem to be in use, so define lq and rq.
+.	ie \n(.g \{\
+.		ds lq \(lq\"
+.		ds rq \(rq\"
+.	\}
+.	el \{\
+.		ds lq ``
+.		ds rq ''
+.	\}
+.\}
+.
+.if !\w|\*(la| \{\
+.\" groff an-ext.tmac does not seem to be in use, so define the parts of
+.\" it that are used below.  For a copy of groff an-ext.tmac, please see:
+.\" https://git.savannah.gnu.org/cgit/groff.git/plain/tmac/an-ext.tmac
+.\" --- Start of lines taken from groff an-ext.tmac
+.
+.\" Check whether we are using grohtml.
+.nr mH 0
+.if \n(.g \
+.  if '\*(.T'html' \
+.    nr mH 1
+.
+.
+.\" Map mono-width fonts to standard fonts for groff's TTY device.
+.if n \{\
+.  do ftr CR R
+.  do ftr CI I
+.  do ftr CB B
+.\}
+.
+.\" groff has glyph entities for angle brackets.
+.ie \n(.g \{\
+.  ds la \(la\"
+.  ds ra \(ra\"
+.\}
+.el \{\
+.  ds la <\"
+.  ds ra >\"
+.  \" groff's man macros control hyphenation with this register.
+.  nr HY 1
+.\}
+.
+.\" Start URL.
+.de UR
+.  ds m1 \\$1\"
+.  nh
+.  if \\n(mH \{\
+.    \" Start diversion in a new environment.
+.    do ev URL-div
+.    do di URL-div
+.  \}
+..
+.
+.
+.\" End URL.
+.de UE
+.  ie \\n(mH \{\
+.    br
+.    di
+.    ev
+.
+.    \" Has there been one or more input lines for the link text?
+.    ie \\n(dn \{\
+.      do HTML-NS "<a href=""\\*(m1"">"
+.      \" Yes, strip off final newline of diversion and emit it.
+.      do chop URL-div
+.      do URL-div
+\c
+.      do HTML-NS </a>
+.    \}
+.    el \
+.      do HTML-NS "<a href=""\\*(m1"">\\*(m1</a>"
+\&\\$*\"
+.  \}
+.  el \
+\\*(la\\*(m1\\*(ra\\$*\"
+.
+.  hy \\n(HY
+..
+.
+.
+.\" Start email address.
+.de MT
+.  ds m1 \\$1\"
+.  nh
+.  if \\n(mH \{\
+.    \" Start diversion in a new environment.
+.    do ev URL-div
+.    do di URL-div
+.  \}
+..
+.
+.
+.\" End email address.
+.de ME
+.  ie \\n(mH \{\
+.    br
+.    di
+.    ev
+.
+.    \" Has there been one or more input lines for the link text?
+.    ie \\n(dn \{\
+.      do HTML-NS "<a href=""mailto:\\*(m1"">"
+.      \" Yes, strip off final newline of diversion and emit it.
+.      do chop URL-div
+.      do URL-div
+\c
+.      do HTML-NS </a>
+.    \}
+.    el \
+.      do HTML-NS "<a href=""mailto:\\*(m1"">\\*(m1</a>"
+\&\\$*\"
+.  \}
+.  el \
+\\*(la\\*(m1\\*(ra\\$*\"
+.
+.  hy \\n(HY
+..
+.\" --- End of lines taken from groff an-ext.tmac
+.\}
+.
 .hy 0
 .
 .SH NAME
@@ -1174,11 +1277,17 @@ not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH BUGS
 .SS "Reporting Bugs"
 Email bug reports to
-.MTO bug-grep@gnu.org "the bug-reporting address" .
+.MT bug-grep@gnu.org
+the bug-reporting address
+.ME .
 An
-.URL http://lists.gnu.org/mailman/listinfo/bug-grep "email archive"
+.UR http://lists.gnu.org/mailman/listinfo/bug-grep
+email archive
+.UE
 and a
-.URL http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep "bug tracker"
+.UR http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep
+bug tracker
+.UE
 are available.
 .SS "Known Bugs"
 Large repetition counts in the
@@ -1206,7 +1315,9 @@ glob(7), regex(7).
 grep(1p).
 .SS "Full Documentation"
 A
-.URL http://www.gnu.org/software/grep/manual/ "complete manual"
+.UR http://www.gnu.org/software/grep/manual/
+complete manual
+.UE
 is available.
 If the
 .B info
