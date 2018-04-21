@@ -377,7 +377,7 @@ Send patches to the address listed in --help output
 Please follow the guidelines in the "Sending your patches." section of
 git's own SubmittingPatches:
 
-  https://git.kernel.org/pub/scm/git/git.git/tree/Documentation/SubmittingPatches
+ https://git.kernel.org/pub/scm/git/git.git/tree/Documentation/SubmittingPatches
 
 
 Add documentation
