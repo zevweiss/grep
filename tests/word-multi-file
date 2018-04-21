@@ -1,6 +1,6 @@
 #!/bin/sh
 # exercise the -w option on multiple files
-# Derived from http://bugzilla.redhat.com/570500
+# Derived from https://bugzilla.redhat.com/570500
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 mkdir a || framework_failure_

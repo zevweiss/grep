@@ -347,7 +347,7 @@
           (GNU Free Documentation License): @include fdl.texi instead.
           (@copying): update to v1.3 or later.
         * doc/fdl.texi: new file, copied from
-          http://www.gnu.org/licenses/fdl.texi.
+          https://www.gnu.org/licenses/fdl.texi.
         * doc/Makefile.am (grep_TEXINFOS): new variable to get fdl.texi.
           Also add usual GPL license statement.
 
@@ -561,9 +561,9 @@
         of execute() were not up to it.  This set of changes aims to
         rectify that situation.  Previously failing tests relative to
         left anchors (^ and \<) and -w should now pass.  This fixes
-        <http://savannah.gnu.org/bugs/?func=detailitem&item_id=11579>,
-        <http://savannah.gnu.org/patch/?func=detailitem&item_id=1834>,
-        <http://savannah.gnu.org/bugs/?func=detailitem&item_id=8243>,
+        <https://savannah.gnu.org/bugs/?func=detailitem&item_id=11579>,
+        <https://savannah.gnu.org/patch/?func=detailitem&item_id=1834>,
+        <https://savannah.gnu.org/bugs/?func=detailitem&item_id=8243>,
         and possibly part of other, bigger, pending patches.  The problem
         was also compounded by the POSIX requirement to support a pattern
         list instead of just an individual pattern (for -G and -E as well).
@@ -661,7 +661,7 @@
           src/grep.h, po/da.po, po/nb.po, po/no.po, po/sv.po:
           Replace all capitalized "Grep" by a lowercase "grep", except
           in citations.  Reported by Benno Schulenberg <benno@nietvergeten.nl>
-          from the <http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=190551>
+          from the <https://bugs.debian.org/190551>
           entry in the Debian bug tracker.
         * doc/grep.1, doc/grep.texi: Explain that the "egrep" and "fgrep"
           commands are deprecated and provided for historical applications.

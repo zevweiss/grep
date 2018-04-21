@@ -49,11 +49,11 @@ necessarily of the same byte length.
 
 A list of outstanding and resolved bugs can be found at:
 
-        http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep
+        https://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep
 
 You can also browse the bug-grep mailing list archive at:
 
-        http://lists.gnu.org/archive/html/bug-grep/
+        https://lists.gnu.org/r/bug-grep/
 
 For any copyright year range specified as YYYY-ZZZZ in this package
 note that the range specifies every single year in that closed interval.

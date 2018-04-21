@@ -39,7 +39,7 @@ if test $? -ne 1 ; then
 fi
 
 # checking for multiple -e options; see:
-# http://bugs.gnu.org/21670
+# https://bugs.gnu.org/21670
 echo abchelloabc | grep -e '^hello' -e 'hello$' > /dev/null 2>&1
 if test $? -ne 1 ; then
         echo "Options: Wrong status code, test #4 failed"

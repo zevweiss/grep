@@ -58,7 +58,7 @@ static char const SEP_STR_GROUP[] = "--";
 
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
-  _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
+  _("others, see <https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
 
 /* When stdout is connected to a regular file, save its stat
    information here, so that we can automatically skip it, thus

@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 TEST_EXTENSIONS = .sh .pl
 
@@ -193,7 +193,7 @@ EXTRA_DIST =					\
   spencer1-locale.awk
 
 # Default to a nonzero value.  Environment overrides.
-# http://udrepper.livejournal.com/11429.html
+# https://udrepper.livejournal.com/11429.html
 MALLOC_PERTURB_ = 1
 
 TESTS_ENVIRONMENT =				\

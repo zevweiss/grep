@@ -1,6 +1,6 @@
 #!/bin/sh
 # exercise \< and \> with multibyte data.
-# Derived from http://savannah.gnu.org/bugs/?29537
+# Derived from https://savannah.gnu.org/bugs/?29537
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
 require_en_utf8_locale_

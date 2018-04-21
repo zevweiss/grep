@@ -1893,20 +1893,20 @@ used by @command{grep}.
 @item
 Aho AV, Corasick MJ. Efficient string matching: an aid to bibliographic search.
 @emph{CACM}. 1975;18(6):333--40.
-@url{http://dx.doi.org/10.1145/360825.360855}.
+@url{https://dx.doi.org/10.1145/360825.360855}.
 This introduces the Aho--Corasick algorithm.
 
 @item
 Boyer RS, Moore JS. A fast string searching algorithm.
 @emph{CACM}. 1977;20(10):762--72.
-@url{http://dx.doi.org/10.1145/359842.359859}.
+@url{https://dx.doi.org/10.1145/359842.359859}.
 This introduces the Boyer--Moore algorithm.
 
 @item
 Faro S, Lecroq T. The exact online string matching problem: a review
 of the most recent results.
 @emph{ACM Comput Surv}. 2013;45(2):13.
-@url{http://dx.doi.org/10.1145/2431211.2431212}.
+@url{https://dx.doi.org/10.1145/2431211.2431212}.
 This surveys string matching algorithms that might help improve the
 performance of @command{grep} in the future.
 @end itemize
@@ -1917,7 +1917,7 @@ performance of @command{grep} in the future.
 
 @cindex bugs, reporting
 Bug reports can be found at the
-@url{http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep,
+@url{https://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep,
 GNU bug report logs for @command{grep}}.
 If you find a bug not listed there, please email it to
 @email{bug-grep@@gnu.org} to create a new bug report.
@@ -1952,12 +1952,12 @@ same restrictions.
 This general method of licensing software is sometimes called
 @dfn{open source}.  The GNU project prefers the term ``free software''
 for reasons outlined at
-@url{http://www.gnu.org/philosophy/open-source-misses-the-point.html}.
+@url{https://www.gnu.org/philosophy/open-source-misses-the-point.html}.
 
 This manual is free documentation in the same sense.  The
 documentation license is included below.  The license for the program
 is available with the source code, or at
-@url{http://www.gnu.org/licenses/gpl.html}.
+@url{https://www.gnu.org/licenses/gpl.html}.
 
 @menu
 * GNU Free Documentation License::

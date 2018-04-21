@@ -83,10 +83,10 @@ included version of the regex code to defer to the native version when
 handling [= =] and [. .].
 
 For Unicode, interesting things to check include the Unicode Standard
-<http://www.unicode.org/standard/standard.html> and the Unicode Technical
-Standard #18 (<http://www.unicode.org/reports/tr18/> “Unicode Regular
+<https://www.unicode.org/standard/standard.html> and the Unicode Technical
+Standard #18 (<https://www.unicode.org/reports/tr18/> “Unicode Regular
 Expressions”).  Talk to Bruno Haible who’s maintaining GNU libunistring.
-See also Unicode Standard Annex #15 (<http://www.unicode.org/reports/tr15/>
+See also Unicode Standard Annex #15 (<https://www.unicode.org/reports/tr15/>
 “Unicode Normalization Forms”), already implemented by GNU libunistring.
 
 In particular, --ignore-case needs to be evaluated against the standards.
@@ -232,24 +232,24 @@ Unicode and --ignore-case
 For this issue, interesting things to check in Unicode include:
 
   - The Unicode Standard, Chapter 3
-    (<http://www.unicode.org/versions/Unicode9.0.0/ch03.pdf>
+    (<https://www.unicode.org/versions/Unicode9.0.0/ch03.pdf>
     “Conformance”), Section 3.13 (“Default Case Algorithms”) and the
     toCasefold() case conversion operation.
 
   - The Unicode Standard, Chapter 4
-    (<http://www.unicode.org/versions/Unicode9.0.0/ch04.pdf>
+    (<https://www.unicode.org/versions/Unicode9.0.0/ch04.pdf>
     “Character Properties”), Section 4.2 (“Case”) and
-    the <http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt>
+    the <https://www.unicode.org/Public/UNIDATA/SpecialCasing.txt>
     SpecialCasing.txt and
-    <http://www.unicode.org/Public/UNIDATA/CaseFolding.txt>
+    <https://www.unicode.org/Public/UNIDATA/CaseFolding.txt>
     CaseFolding.txt files.
 
   - The Unicode Standard, Chapter 5
-    (<http://www.unicode.org/versions/Unicode9.0.0/ch05.pdf>
+    (<https://www.unicode.org/versions/Unicode9.0.0/ch05.pdf>
     “Implementation Guidelines”), Section 5.18 (“Case Mappings”),
     Subsection “Caseless Matching”.
 
-  - The Unicode case charts <http://www.unicode.org/charts/case/>.
+  - The Unicode case charts <https://www.unicode.org/charts/case/>.
 
 Unicode uses the
 

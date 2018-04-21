@@ -22,18 +22,18 @@
 /* For the Aho-Corasick algorithm, see:
    Aho AV, Corasick MJ. Efficient string matching: an aid to
    bibliographic search. CACM 18, 6 (1975), 333-40
-   <http://dx.doi.org/10.1145/360825.360855>, which describes the
+   <https://dx.doi.org/10.1145/360825.360855>, which describes the
    failure function used below.
 
    For the Boyer-Moore algorithm, see: Boyer RS, Moore JS.
    A fast string searching algorithm. CACM 20, 10 (1977), 762-72
-   <http://dx.doi.org/10.1145/359842.359859>.
+   <https://dx.doi.org/10.1145/359842.359859>.
 
    For a survey of more-recent string matching algorithms that might
    help improve performance, see: Faro S, Lecroq T. The exact online
    string matching problem: a review of the most recent results.
    ACM Computing Surveys 45, 2 (2013), 13
-   <http://dx.doi.org/10.1145/2431211.2431212>.  */
+   <https://dx.doi.org/10.1145/2431211.2431212>.  */
 
 #include <config.h>
 
