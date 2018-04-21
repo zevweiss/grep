@@ -2,7 +2,7 @@
 .de dT
 .ds Dt \\$2
 ..
-.dT Time-stamp: "2017-06-21"
+.dT Time-stamp: "2018-04-21"
 .\" Update the above date whenever a change to either this file or
 .\" grep.c's 'usage' function results in a nontrivial change to the man page.
 .\" In Emacs, you can update the date by running 'M-x time-stamp'
@@ -620,7 +620,8 @@ Skip any command-line file with a name suffix that matches the pattern
 using wildcard matching; a name suffix is either the whole
 name, or any suffix starting after a
 .B /
-and before a +non-\fB/\fP.
+and before a
+.RI non- / .
 When searching recursively, skip any subfile whose base name matches
 .IR GLOB ;
 the base name is the part after the last
@@ -629,7 +630,7 @@ A pattern can use
 .BR * ,
 .BR ? ,
 and
-.BR [ ... ]
+.BR [ .\|.\|. ]\&
 as wildcards, and
 .B \e
 to quote a wildcard or backslash character literally.
@@ -800,7 +801,7 @@ Their names are self explanatory, and they are
 .BR [:space:] ,
 .BR [:upper:] ,
 and
-.BR [:xdigit:].
+.BR [:xdigit:] .
 For example,
 .B [[:alnum:]]
 means the character class of numbers and
@@ -1126,7 +1127,7 @@ The default is a cyan text foreground over the terminal's default background.
 .B ne
 Boolean value that prevents clearing to the end of line
 using Erase in Line (EL) to Right
-.RB ( \\\\\\33[K )
+.RB ( \e33[K )
 each time a colorized item ends.
 This is needed on terminals on which EL is not supported.
 It is otherwise useful on terminals
@@ -1139,7 +1140,7 @@ or when EL is too slow or causes too much flicker.
 The default is false (i.e., the capability is omitted).
 .PP
 Note that boolean capabilities have no
-.BR = ...
+.BR = .\|.\|.\&
 part.
 They are omitted (i.e., false) by default and become true when specified.
 .PP
@@ -1151,7 +1152,7 @@ and can be concatenated with semicolons.
 .B grep
 takes care of assembling the result
 into a complete SGR sequence
-.RB ( \\\\\\33[ ... m ).
+.RB ( \e33[ .\|.\|. m ).
 Common values to concatenate include
 .B 1
 for bold,
@@ -1269,7 +1270,7 @@ is used and a line is selected, the exit status is 0 even if an error
 occurred.
 .
 .SH COPYRIGHT
-Copyright 1998\(en2000, 2002, 2005\(en2017 Free Software Foundation, Inc.
+Copyright 1998\(en2000, 2002, 2005\(en2018 Free Software Foundation, Inc.
 .PP
 This is free software;
 see the source for copying conditions.
