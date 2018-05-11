@@ -2,7 +2,7 @@
 .de dT
 .ds Dt \\$2
 ..
-.dT Time-stamp: "2018-04-21"
+.dT Time-stamp: "2018-05-11"
 .\" Update the above date whenever a change to either this file or
 .\" grep.c's 'usage' function results in a nontrivial change to the man page.
 .\" In Emacs, you can update the date by running 'M-x time-stamp'
@@ -137,34 +137,39 @@
 .hy 0
 .
 .SH NAME
-grep, egrep, fgrep \- print lines matching a pattern
+grep, egrep, fgrep \- print lines that match patterns
 .
 .SH SYNOPSIS
 .B grep
-.RI [ OPTIONS ]
-.I PATTERN
+.RI [ OPTION .\|.\|.]\&
+.I PATTERNS
 .RI [ FILE .\|.\|.]
 .br
 .B grep
-.RI [ OPTIONS ]
+.RI [ OPTION .\|.\|.]\&
 .B \-e
-.I PATTERN
+.I PATTERNS
 \&.\|.\|.\&
 .RI [ FILE .\|.\|.]
 .br
 .B grep
-.RI [ OPTIONS ]
+.RI [ OPTION .\|.\|.]\&
 .B \-f
-.I FILE
+.I PATTERN_FILE
 \&.\|.\|.\&
 .RI [ FILE .\|.\|.]
 .
 .SH DESCRIPTION
 .B grep
 searches for
-.I PATTERN
+.I PATTERNS
 in each
 .IR FILE .
+.I PATTERNS
+is one or patterns separated by newline characters, and
+.B grep
+prints each line that matches a pattern.
+.PP
 A
 .I FILE
 of
@@ -174,9 +179,6 @@ If no
 .I FILE
 is given, recursive searches examine the working directory,
 and nonrecursive searches read standard input.
-By default,
-.B grep
-prints the matching lines.
 .PP
 In addition, the variant programs
 .B egrep
@@ -203,36 +205,37 @@ and exit.
 .TP
 .BR \-E ", " \-\^\-extended\-regexp
 Interpret
-.I PATTERN
-as an extended regular expression (ERE, see below).
+.I PATTERNS
+as extended regular expressions (EREs, see below).
 .TP
 .BR \-F ", " \-\^\-fixed\-strings
 Interpret
-.I PATTERN
-as a list of fixed strings (instead of regular expressions),
-separated by newlines,
-any of which is to be matched.
+.I PATTERNS
+as fixed strings, not regular expressions.
 .TP
 .BR \-G ", " \-\^\-basic\-regexp
 Interpret
-.I PATTERN
-as a basic regular expression (BRE, see below).
+.I PATTERNS
+as basic regular expressions (BREs, see below).
 This is the default.
 .TP
 .BR \-P ", " \-\^\-perl\-regexp
-Interpret the pattern as a Perl-compatible regular expression (PCRE).
-This is experimental and
+Interpret PATTERNS as Perl-compatible regular expressions (PCREs).
+This option is experimental when combined with the
+.B \-z
+.RB ( \-\^\-null\-data )
+option, and
 .B "grep \-P"
 may warn of unimplemented features.
 .SS "Matching Control"
 .TP
-.BI \-e " PATTERN" "\fR,\fP \-\^\-regexp=" PATTERN
+.BI \-e " PATTERNS" "\fR,\fP \-\^\-regexp=" PATTERNS
 Use
-.I PATTERN
-as the pattern.
+.I PATTERNS
+as the patterns.
 If this option is used multiple times or is combined with the
 .B \-f
-.RB ( \-\-file )
+.RB ( \-\^\-file )
 option, search for all patterns given.
 This option can be used to protect a pattern beginning with \*(lq\-\*(rq.
 .TP
@@ -242,7 +245,7 @@ Obtain patterns from
 one per line.
 If this option is used multiple times or is combined with the
 .B \-e
-.RB ( \-\-regexp )
+.RB ( \-\^\-regexp )
 option, search for all patterns given.
 The empty file contains zero patterns, and therefore matches nothing.
 .TP
@@ -389,7 +392,7 @@ Display input actually coming from standard input as input coming from file
 This is especially useful when implementing tools like
 .BR zgrep ,
 e.g.,
-.BR "gzip -cd foo.gz | grep --label=foo -H something" .
+.BR "gzip \-cd foo.gz | grep \-\^\-label=foo \-H something" .
 See also the
 .B \-H
 option.
@@ -511,7 +514,7 @@ matches, or no message if there is no match.
 If
 .I TYPE
 is
-.BR without-match ,
+.BR without\-match ,
 when
 .B grep
 discovers that a file is binary it assumes that the rest of the file
@@ -635,13 +638,13 @@ as wildcards, and
 .B \e
 to quote a wildcard or backslash character literally.
 .TP
-.BI \-\^\-exclude-from= FILE
+.BI \-\^\-exclude\-from= FILE
 Skip files whose base name matches any of the file-name globs read from
 .I FILE
 (using wildcard matching as described under
 .BR \-\^\-exclude ).
 .TP
-.BI \-\^\-exclude-dir= GLOB
+.BI \-\^\-exclude\-dir= GLOB
 Skip any command-line directory with a name suffix that matches the
 pattern
 .IR GLOB .
@@ -654,7 +657,7 @@ Ignore any redundant trailing slashes in
 .BR \-I
 Process a binary file as if it did not contain matching data; this is
 equivalent to the
-.B \-\^\-binary\-files=without-match
+.B \-\^\-binary\-files=without\-match
 option.
 .TP
 .BI \-\^\-include= GLOB
@@ -987,10 +990,10 @@ have priority over it.
 It can only specify the color used to highlight
 the matching non-empty text in any matching line
 (a selected line when the
-.B -v
+.B \-v
 command-line option is omitted,
 or a context line when
-.B -v
+.B \-v
 is specified).
 The default is
 .BR 01;31 ,

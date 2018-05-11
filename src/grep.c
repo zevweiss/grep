@@ -1905,31 +1905,32 @@ usage (int status)
 {
   if (status != 0)
     {
-      fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
+      fprintf (stderr, _("Usage: %s [OPTION]... PATTERNS [FILE]...\n"),
                getprogname ());
       fprintf (stderr, _("Try '%s --help' for more information.\n"),
                getprogname ());
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname ());
-      printf (_("Search for PATTERN in each FILE.\n"));
+      printf (_("Usage: %s [OPTION]... PATTERNS [FILE]...\n"), getprogname ());
+      printf (_("Search for PATTERNS in each FILE.\n"));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
+PATTERNS can contain multiple patterns separated by newlines.\n\
 \n\
 Pattern selection and interpretation:\n"), getprogname ());
       printf (_("\
-  -E, --extended-regexp     PATTERN is an extended regular expression\n\
-  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression (default)\n\
-  -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
+  -E, --extended-regexp     PATTERNS are extended regular expressions\n\
+  -F, --fixed-strings       PATTERNS are strings\n\
+  -G, --basic-regexp        PATTERNS are basic regular expressions\n\
+  -P, --perl-regexp         PATTERNS are Perl regular expressions\n"));
   /* -X is deliberately undocumented.  */
       printf (_("\
-  -e, --regexp=PATTERN      use PATTERN for matching\n\
-  -f, --file=FILE           obtain PATTERN from FILE\n\
+  -e, --regexp=PATTERNS     use PATTERNS for matching\n\
+  -f, --file=FILE           take PATTERNS from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
-  -w, --word-regexp         force PATTERN to match only whole words\n\
-  -x, --line-regexp         force PATTERN to match only whole lines\n\
+  -w, --word-regexp         match only whole words\n\
+  -x, --line-regexp         match only whole lines\n\
   -z, --null-data           a data line ends in 0 byte, not newline\n"));
       printf (_("\
 \n\
@@ -1950,7 +1951,7 @@ Output control:\n\
       --label=LABEL         use LABEL as the standard input file name prefix\n\
 "));
       printf (_("\
-  -o, --only-matching      show only nonempty parts of lines matching PATTERN\n\
+  -o, --only-matching       show only nonempty parts of lines that match\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE;\n\
                             TYPE is 'binary', 'text', or 'without-match'\n\
@@ -1966,11 +1967,10 @@ Output control:\n\
   -R, --dereference-recursive  likewise, but follow all symlinks\n\
 "));
       printf (_("\
-      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
-      --exclude=FILE_PATTERN  skip files and directories matching\
- FILE_PATTERN\n\
+      --include=GLOB        search only files that match GLOB (a file pattern)\n\
+      --exclude=GLOB        skip files and directories matching GLOB\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
-      --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
+      --exclude-dir=GLOB    skip directories that match GLOB\n\
 "));
       printf (_("\
   -L, --files-without-match  print only names of FILEs with no selected lines\n\

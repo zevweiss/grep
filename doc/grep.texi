@@ -33,11 +33,11 @@ Texts.  A copy of the license is included in the section entitled
 
 @dircategory Text creation and manipulation
 @direntry
-* grep: (grep).                 Print lines matching a pattern.
+* grep: (grep).                 Print lines that match patterns.
 @end direntry
 
 @titlepage
-@title GNU Grep: Print lines matching a pattern
+@title GNU Grep: Print lines that match patterns
 @subtitle version @value{VERSION}, @value{UPDATED}
 @author Alain Magloire et al.
 @page
@@ -52,7 +52,7 @@ Texts.  A copy of the license is included in the section entitled
 @node Top
 @top grep
 
-@command{grep} prints lines that contain a match for a pattern.
+@command{grep} prints lines that contain a match for one or more patterns.
 
 This manual is for version @value{VERSION} of GNU Grep.
 
@@ -74,10 +74,10 @@ This manual is for version @value{VERSION} of GNU Grep.
 @node Introduction
 @chapter Introduction
 
-@cindex searching for a pattern
+@cindex searching for patterns
 
-@command{grep} searches input files
-for lines containing a match to a given pattern list.
+Given one or more patterns, @command{grep} searches input files
+for matches to the patterns.
 When it finds a match in a line,
 it copies the line to standard output (by default),
 or produces whatever other sort of output you have requested with options.
@@ -97,17 +97,16 @@ there is no way to match newline characters in a text.
 The general synopsis of the @command{grep} command line is
 
 @example
-grep @var{options} @var{pattern} @var{input_file_names}
+grep [@var{option}...] [@var{patterns}] [@var{file}...]
 @end example
 
 @noindent
-There can be zero or more @var{options}.
-@var{pattern} will only be seen as such
-(and not as an @var{input_file_name})
-if it wasn't already specified within @var{options}
-(by using the @samp{-e@ @var{pattern}}
-or @samp{-f@ @var{file}} options).
-There can be zero or more @var{input_file_names}.
+
+There can be zero or more @var{option} arguments, and zero or more
+@var{file} arguments.  The @var{patterns} argument contains one or
+more patterns separated by newlines, and is omitted when patterns are
+given via the @samp{-e@ @var{patterns}} or @samp{-f@ @var{file}}
+options.
 
 @menu
 * Command-line Options::        Short and long names, grouped by category.
@@ -170,12 +169,13 @@ This version number should be included in all bug reports.
 
 @table @option
 
-@item -e @var{pattern}
-@itemx --regexp=@var{pattern}
+@item -e @var{patterns}
+@itemx --regexp=@var{patterns}
 @opindex -e
-@opindex --regexp=@var{pattern}
-@cindex pattern list
-Use @var{pattern} as the pattern.
+@opindex --regexp=@var{patterns}
+@cindex patterns option
+Use @var{patterns} as one or more patterns; newlines within
+@var{patterns} separate each pattern from the next.
 If this option is used multiple times or is combined with the
 @option{-f} (@option{--file}) option, search for all patterns given.
 (@option{-e} is specified by POSIX.)
@@ -184,7 +184,7 @@ If this option is used multiple times or is combined with the
 @itemx --file=@var{file}
 @opindex -f
 @opindex --file
-@cindex pattern from file
+@cindex patterns from file
 Obtain patterns from @var{file}, one per line.
 If this option is used multiple times or is combined with the
 @option{-e} (@option{--regexp}) option, search for all patterns given.
@@ -240,7 +240,7 @@ This option has no effect if @option{-x} is also specified.
 
 Because the @option{-w} option can match a substring that does not
 begin and end with word constituents, it differs from surrounding a
-pattern with @samp{\<} and @samp{\>}.  For example, although
+regular expression with @samp{\<} and @samp{\>}.  For example, although
 @samp{grep -w @@} matches a line containing only @samp{@@}, @samp{grep
 '\<@@\>'} cannot match any line because @samp{@@} is not a
 word constituent.  @xref{The Backslash Character and Special
@@ -252,7 +252,7 @@ Expressions}.
 @opindex --line-regexp
 @cindex match the whole line
 Select only those matches that exactly match the whole line.
-For a regular expression pattern, this is like parenthesizing the
+For regular expression patterns, this is like parenthesizing each
 pattern and then surrounding it with @samp{^} and @samp{$}.
 (@option{-x} is specified by POSIX.)
 
@@ -1103,7 +1103,7 @@ greater than 2 on error.
 @cindex variants of @command{grep}
 
 @command{grep} searches the named input files
-for lines containing a match to the given pattern.
+for lines containing a match to the given patterns.
 By default, @command{grep} prints the matching lines.
 A file named @file{-} stands for standard input.
 If no input is specified, @command{grep} searches the working
@@ -1119,7 +1119,7 @@ controlled by the following options.
 @opindex -G
 @opindex --basic-regexp
 @cindex matching basic regular expressions
-Interpret the pattern as a basic regular expression (BRE).
+Interpret patterns as basic regular expressions (BREs).
 This is the default.
 
 @item -E
@@ -1127,7 +1127,7 @@ This is the default.
 @opindex -E
 @opindex --extended-regexp
 @cindex matching extended regular expressions
-Interpret the pattern as an extended regular expression (ERE).
+Interpret patterns as extended regular expressions (EREs).
 (@option{-E} is specified by POSIX.)
 
 @item -F
@@ -1135,8 +1135,7 @@ Interpret the pattern as an extended regular expression (ERE).
 @opindex -F
 @opindex --fixed-strings
 @cindex matching fixed strings
-Interpret the pattern as a list of fixed strings (instead of regular
-expressions), separated by newlines, any of which is to be matched.
+Interpret patterns as fixed strings, not regular expressions.
 (@option{-F} is specified by POSIX.)
 
 @item -P
@@ -1144,7 +1143,7 @@ expressions), separated by newlines, any of which is to be matched.
 @opindex -P
 @opindex --perl-regexp
 @cindex matching Perl-compatible regular expressions
-Interpret the pattern as a Perl-compatible regular expression (PCRE).
+Interpret patterns as Perl-compatible regular expressions (PCREs).
 PCRE support is here to stay, but consider this option experimental when
 combined with the @option{-z} (@option{--null-data}) option, and note that
 @samp{grep@ -P} may warn of unimplemented features.
@@ -1846,7 +1845,7 @@ Aho--Corasick algorithm is used to match multiple fixed patterns.
 @cindex locales
 Generally speaking @command{grep} operates more efficiently in
 single-byte locales, since it can avoid the special processing needed
-for multi-byte characters.  If your pattern will work just as well
+for multi-byte characters.  If your patterns will work just as well
 that way, setting @env{LC_ALL} to a single-byte locale can help
 performance considerably.  Setting @samp{LC_ALL='C'} can be
 particularly efficient, as @command{grep} is tuned for that locale.
