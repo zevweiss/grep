@@ -56,7 +56,7 @@ XFAIL_TESTS = triple-backref
 if USE_INCLUDED_REGEX
 XFAIL_TESTS += equiv-classes
 else
-# The backslash-alt test fails for glibc 2.27 and earlier.
+# The backref-alt test fails for glibc 2.27 and earlier.
 # If you're using older glibc you can upgrade to glibc 2.28 or later,
 # configure --with-included-regex, or ignore the test failure.
 endif
