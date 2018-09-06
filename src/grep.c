@@ -799,7 +799,6 @@ skipped_file (char const *name, bool command_line, bool is_dir)
 
 static char *buffer;		/* Base of buffer. */
 static size_t bufalloc;		/* Allocated buffer size, counting slop. */
-enum { INITIAL_BUFSIZE = 32768 }; /* Initial buffer size, not counting slop. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
@@ -811,6 +810,9 @@ static off_t after_last_match;	/* Pointer after last matching line that
 static bool skip_nuls;		/* Skip '\0' in data.  */
 static bool skip_empty_lines;	/* Skip empty lines in data.  */
 static uintmax_t totalnl;	/* Total newline count before lastnl. */
+
+/* Initial buffer size, not counting slop. */
+enum { INITIAL_BUFSIZE = 96 * 1024 };
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
