@@ -1967,7 +1967,8 @@ Output control:\n\
   -R, --dereference-recursive  likewise, but follow all symlinks\n\
 "));
       printf (_("\
-      --include=GLOB        search only files that match GLOB (a file pattern)\n\
+      --include=GLOB        search only files that match GLOB (a file pattern)"
+                "\n\
       --exclude=GLOB        skip files and directories matching GLOB\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
       --exclude-dir=GLOB    skip directories that match GLOB\n\
