@@ -17,7 +17,9 @@
 # Cause the tool(s) built by this package to be used also when running
 # commands via e.g., "make syntax-check".  Doing this a little sooner
 # would have avoided a grep infloop bug.
+ifeq ($(build_triplet), $(host_triplet))
 export PATH := $(builddir)/src$(PATH_SEPARATOR)$(PATH)
+endif
 
 # Used in maint.mk's web-manual rule
 manual_title = GNU Grep: Print lines matching a pattern
