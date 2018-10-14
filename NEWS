@@ -15,6 +15,14 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Improvements
 
+  An over-30x performance improvement when many 'or'd expressions
+  share a common prefix, thanks to improvements in gnulib's dfa.c,
+  by Norihiro Tanaka.  See gnulib commits v0.1-2110-ge648401be,
+  v0.1-2111-g4299106ce, v0.1-2117-g617a60974
+
+  An additional 3-23% speed-up when searching large files, via
+  increased initial buffer size.
+
   grep now diagnoses stack overflow.  Before grep-2.6, the included
   regexp code would detect it.  Since 2.6, grep defaulted to using
   glibc's regexp, which lost that capability.
