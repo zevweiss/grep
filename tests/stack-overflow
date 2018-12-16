@@ -22,4 +22,13 @@ for i in 1 3 5 10 20 30 40 50 100 200; do
   fi
 done
 
+# If there was no stack overflow message and the final run exited with
+# status 1 and both stdout and stderr were empty, then assume it's a working
+# regex that avoids the internal stack overflow problem like glibc's regexp
+# used to.
+test $st = 1 \
+  && ! test -s out \
+  && ! test -s err \
+  && Exit 0
+
 fail_ 'grep never printed "stack overflow"'
