@@ -153,7 +153,6 @@ TESTS =						\
   spencer1-locale				\
   stack-overflow				\
   status					\
-  surrogate-pair				\
   symlink					\
   triple-backref				\
   turkish-I					\
