@@ -5,6 +5,11 @@
 
 echo grep: stack overflow > exp || framework_failure_
 
+# Limit stack size.  Otherwise, it appears to be too hard to overflow the
+# stack on some systems like gcc113, aarch64/linux-3.13.0 with 32GB of RAM
+# and 20GB of swap.
+ulimit -s 8192 2>/dev/null
+
 # grep attempts to detect overflow via gnulib's c-stack module.
 # Trigger that with an input regex composed solely of open parentheses,
 # increasing the size of that input until grep emits the expected diagnostic.
