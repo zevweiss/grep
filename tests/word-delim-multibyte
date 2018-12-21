@@ -24,4 +24,14 @@ grep -w "$e_acute" in > out 2>err || fail=1
 compare out in || fail=1
 compare /dev/null err || fail=1
 
+# Also ensure that this works in both the C locale and that multibyte one.
+# In the C locale, it failed due to a dfa.c regression in grep-3.2.
+echo 123-x > in || framework_failure_
+
+for locale in C en_US.UTF-8; do
+  LC_ALL=$locale grep '.\bx' in > out 2>err || fail=1
+  compare out in || fail=1
+  compare /dev/null err || fail=1
+done
+
 Exit $fail
