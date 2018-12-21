@@ -56,10 +56,6 @@ enum { SEP_CHAR_SELECTED = ':' };
 enum { SEP_CHAR_REJECTED = '-' };
 static char const SEP_STR_GROUP[] = "--";
 
-#define AUTHORS \
-  proper_name ("Mike Haertel"), \
-  _("others, see <https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
-
 /* When stdout is connected to a regular file, save its stat
    information here, so that we can automatically skip it, thus
    avoiding a potential (racy) infinite loop.  */
@@ -2769,8 +2765,10 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      version_etc (stdout, getprogname (), PACKAGE_NAME, VERSION, AUTHORS,
+      version_etc (stdout, getprogname (), PACKAGE_NAME, VERSION,
                    (char *) NULL);
+      puts (_("Written by Mike Haertel and others; see\n"
+              "<https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>."));
       return EXIT_SUCCESS;
     }
 
