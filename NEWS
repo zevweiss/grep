@@ -13,7 +13,7 @@ GNU grep NEWS                                    -*- outline -*-
   Using a multibyte locale, using certain regexp constructs (some ranges,
   backreferences), or forcing use of the PCRE matcher via --perl-regexp (-P)
   would avoid the bug.
-  [bug introduced in grep 2.3]
+  [bug introduced in grep 3.2]
 
 
 * Noteworthy changes in release 3.2 (2018-12-20) [stable]
