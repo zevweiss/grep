@@ -2,7 +2,7 @@
 # With multiple matches, grep -Fo could print a shorter one.
 # This bug affected grep versions 2.26 through 2.27.
 #
-# Copyright (C) 2017-2018 Free Software Foundation, Inc.
+# Copyright (C) 2017-2019 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
