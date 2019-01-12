@@ -250,6 +250,23 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
                 else
                   goto success;
               }
+            if (!start_ptr && !localeinfo.multibyte)
+              {
+                if (! kwsearch->re)
+                  {
+                    fgrep_to_grep_pattern (&kwsearch->pattern, &kwsearch->size);
+                    kwsearch->re = GEAcompile (kwsearch->pattern,
+                                               kwsearch->size,
+                                               RE_SYNTAX_GREP);
+                  }
+                end = memchr (beg + len, eol, (buf + size) - (beg + len));
+                end = end ? end + 1 : buf + size;
+                if (EGexecute (kwsearch->re, beg, end - beg, match_size, NULL)
+                    != (size_t) -1)
+                  goto success_match_words;
+                beg = end - 1;
+                break;
+              }
             if (!len)
               break;
             offset = kwsexec (kwset, beg, --len, &kwsmatch, true);
@@ -270,6 +287,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
  success:
   end = memchr (beg + len, eol, (buf + size) - (beg + len));
   end = end ? end + 1 : buf + size;
+ success_match_words:
   beg = memrchr (buf, eol, beg - buf);
   beg = beg ? beg + 1 : buf;
   len = end - beg;
