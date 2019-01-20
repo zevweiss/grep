@@ -22,22 +22,21 @@
 #include "search.h"
 #include "die.h"
 
-#if HAVE_LIBPCRE
-# include <pcre.h>
+#include <pcre.h>
 
 /* This must be at least 2; everything after that is for performance
    in pcre_exec.  */
 enum { NSUB = 300 };
 
-# ifndef PCRE_EXTRA_MATCH_LIMIT_RECURSION
-#  define PCRE_EXTRA_MATCH_LIMIT_RECURSION 0
-# endif
-# ifndef PCRE_STUDY_JIT_COMPILE
-#  define PCRE_STUDY_JIT_COMPILE 0
-# endif
-# ifndef PCRE_STUDY_EXTRA_NEEDED
-#  define PCRE_STUDY_EXTRA_NEEDED 0
-# endif
+#ifndef PCRE_EXTRA_MATCH_LIMIT_RECURSION
+# define PCRE_EXTRA_MATCH_LIMIT_RECURSION 0
+#endif
+#ifndef PCRE_STUDY_JIT_COMPILE
+# define PCRE_STUDY_JIT_COMPILE 0
+#endif
+#ifndef PCRE_STUDY_EXTRA_NEEDED
+# define PCRE_STUDY_EXTRA_NEEDED 0
+#endif
 
 struct pcre_comp
 {
@@ -47,11 +46,11 @@ struct pcre_comp
   /* Additional information about the pattern.  */
   pcre_extra *extra;
 
-# if PCRE_STUDY_JIT_COMPILE
+#if PCRE_STUDY_JIT_COMPILE
   /* The JIT stack and its maximum size.  */
   pcre_jit_stack *jit_stack;
   int jit_stack_size;
-# endif
+#endif
 
   /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
      string matches when that flag is used.  */
@@ -72,7 +71,7 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
       int e = pcre_exec (pc->cre, pc->extra, subject, search_bytes,
                          search_offset, options, sub, NSUB);
 
-# if PCRE_STUDY_JIT_COMPILE
+#if PCRE_STUDY_JIT_COMPILE
       if (e == PCRE_ERROR_JIT_STACKLIMIT
           && 0 < pc->jit_stack_size && pc->jit_stack_size <= INT_MAX / 2)
         {
@@ -87,9 +86,9 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
           pcre_assign_jit_stack (pc->extra, NULL, pc->jit_stack);
           continue;
         }
-# endif
+#endif
 
-# if PCRE_EXTRA_MATCH_LIMIT_RECURSION
+#if PCRE_EXTRA_MATCH_LIMIT_RECURSION
       if (e == PCRE_ERROR_RECURSIONLIMIT
           && (PCRE_STUDY_EXTRA_NEEDED || pc->extra)
           && pc->extra->match_limit_recursion <= ULONG_MAX / 2)
@@ -102,22 +101,15 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
             }
           continue;
         }
-# endif
+#endif
 
       return e;
     }
 }
 
-#endif
-
 void *
 Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
 {
-#if !HAVE_LIBPCRE
-  die (EXIT_TROUBLE, 0,
-       _("support for the -P option is not compiled into "
-         "this --disable-perl-regexp binary"));
-#else
   int e;
   char const *ep;
   static char const wprefix[] = "(?<!\\w)(?:";
@@ -184,14 +176,14 @@ Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
   if (ep)
     die (EXIT_TROUBLE, 0, "%s", ep);
 
-# if PCRE_STUDY_JIT_COMPILE
+#if PCRE_STUDY_JIT_COMPILE
   if (pcre_fullinfo (pc->cre, pc->extra, PCRE_INFO_JIT, &e))
     die (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
   /* The PCRE documentation says that a 32 KiB stack is the default.  */
   if (e)
     pc->jit_stack_size = 32 << 10;
-# endif
+#endif
 
   free (re);
 
@@ -202,17 +194,12 @@ Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
                                      NSUB);
 
   return pc;
-#endif /* HAVE_LIBPCRE */
 }
 
 size_t
 Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
-#if !HAVE_LIBPCRE
-  /* We can't get here, because Pcompile would have been called earlier.  */
-  die (EXIT_TROUBLE, 0, _("internal error"));
-#else
   int sub[NSUB];
   char const *p = start_ptr ? start_ptr : buf;
   bool bol = p[-1] == eolbyte;
@@ -312,10 +299,10 @@ Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
         case PCRE_ERROR_NOMEMORY:
           die (EXIT_TROUBLE, 0, _("memory exhausted"));
 
-# if PCRE_STUDY_JIT_COMPILE
+#if PCRE_STUDY_JIT_COMPILE
         case PCRE_ERROR_JIT_STACKLIMIT:
           die (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
-# endif
+#endif
 
         case PCRE_ERROR_MATCHLIMIT:
           die (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
@@ -349,5 +336,4 @@ Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
       *match_size = end - beg;
       return beg - buf;
     }
-#endif
 }

@@ -29,8 +29,10 @@ grep_SOURCES =					\
   grep.c					\
   kwsearch.c					\
   kwset.c					\
-  pcresearch.c					\
   searchutils.c
+if USE_PCRE
+grep_SOURCES += pcresearch.c
+endif
 
 noinst_HEADERS = grep.h kwset.h search.h system.h
 

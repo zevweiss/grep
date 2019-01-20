@@ -2016,7 +2016,9 @@ static struct
   { "awk", RE_SYNTAX_AWK, GEAcompile, EGexecute },
   { "gawk", RE_SYNTAX_GNU_AWK, GEAcompile, EGexecute },
   { "posixawk", RE_SYNTAX_POSIX_AWK, GEAcompile, EGexecute },
+#if HAVE_LIBPCRE
   { "perl", 0, Pcompile, Pexecute, },
+#endif
 };
 /* Keep these in sync with the 'matchers' table.  */
 enum { E_MATCHER_INDEX = 1, F_MATCHER_INDEX = 2, G_MATCHER_INDEX = 0 };
@@ -2035,6 +2037,11 @@ setmatcher (char const *m, int matcher)
         return i;
       }
 
+#if !HAVE_LIBPCRE
+  if (STREQ (m, "perl"))
+    die (EXIT_TROUBLE, 0,
+         _("Perl matching not supported in a --disable-perl-regexp build"));
+#endif
   die (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
 }
 

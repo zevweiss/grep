@@ -206,6 +206,7 @@ if test "$ac_use_included_regex" = no; then
 fi
 
 gl_FUNC_PCRE
+AM_CONDITIONAL([USE_PCRE], [test $use_pcre = yes])
 
 case $host_os in
   mingw*) suffix=w32 ;;
