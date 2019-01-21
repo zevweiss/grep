@@ -94,6 +94,10 @@ AC_TYPE_SIZE_T
 AC_C_CONST
 gl_INIT
 
+# Ensure VLAs are not used.
+# Note -Wvla is implicitly added by gl_MANYWARN_ALL_GCC
+AC_DEFINE([GNULIB_NO_VLA], [1], [Define to 1 to disable use of VLAs])
+
 # The test suite needs to know if we have a working perl.
 # FIXME: this is suboptimal.  Ideally, we would be able to call gl_PERL
 # with an ACTION-IF-NOT-FOUND argument ...
@@ -134,7 +138,6 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wundef"                  # Warns on '#if GNULIB_FOO' etc in gnulib
   nw="$nw -Wsystem-headers"         # Don't let system headers trigger warnings
   nw="$nw -Wpadded"                 # Our structs are not padded
-  nw="$nw -Wvla"                    # warnings in gettext.h
   nw="$nw -Wstack-protector"        # generates false alarms for useful code
   nw="$nw -Wswitch-default"         # Too many warnings for now
   nw="$nw -Wunsafe-loop-optimizations" # OK to suppress unsafe optimizations
