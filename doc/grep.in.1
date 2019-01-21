@@ -505,11 +505,14 @@ By default,
 .I TYPE
 is
 .BR binary ,
-and when
+and
 .B grep
-discovers that a file is binary it suppresses any further output, and
-instead outputs either a one-line message saying that a binary file
-matches, or no message if there is no match.
+suppresses output after null input binary data is discovered,
+and suppresses output lines that contain improperly encoded data.
+When some output is suppressed,
+.B grep
+follows any output
+with a one-line message saying that a binary file matches.
 .IP
 If
 .I TYPE
@@ -517,7 +520,7 @@ is
 .BR without\-match ,
 when
 .B grep
-discovers that a file is binary it assumes that the rest of the file
+discovers null input binary data it assumes that the rest of the file
 does not match; this is equivalent to the
 .B \-I
 option.
