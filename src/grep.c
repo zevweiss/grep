@@ -22,10 +22,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <wchar.h>
-#include <fcntl.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <strings.h>
 #include "system.h"
 
 #include "argmatch.h"
