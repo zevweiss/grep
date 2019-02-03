@@ -25,7 +25,6 @@
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <strings.h>
 #include "system.h"
 
 #include "argmatch.h"
@@ -47,6 +46,7 @@
 #include "quote.h"
 #include "safe-read.h"
 #include "search.h"
+#include "c-strcase.h"
 #include "version-etc.h"
 #include "xalloc.h"
 #include "xbinary-io.h"
@@ -2698,14 +2698,17 @@ main (int argc, char **argv)
       case COLOR_OPTION:
         if (optarg)
           {
-            if (!strcasecmp (optarg, "always") || !strcasecmp (optarg, "yes")
-                || !strcasecmp (optarg, "force"))
+            if (!c_strcasecmp (optarg, "always")
+                || !c_strcasecmp (optarg, "yes")
+                || !c_strcasecmp (optarg, "force"))
               color_option = 1;
-            else if (!strcasecmp (optarg, "never") || !strcasecmp (optarg, "no")
-                     || !strcasecmp (optarg, "none"))
+            else if (!c_strcasecmp (optarg, "never")
+                     || !c_strcasecmp (optarg, "no")
+                     || !c_strcasecmp (optarg, "none"))
               color_option = 0;
-            else if (!strcasecmp (optarg, "auto") || !strcasecmp (optarg, "tty")
-                     || !strcasecmp (optarg, "if-tty"))
+            else if (!c_strcasecmp (optarg, "auto")
+                     || !c_strcasecmp (optarg, "tty")
+                     || !c_strcasecmp (optarg, "if-tty"))
               color_option = 2;
             else
               show_help = 1;
