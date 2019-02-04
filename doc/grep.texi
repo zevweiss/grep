@@ -672,10 +672,11 @@ this is equivalent to the @option{-r} option.
 @cindex searching directory trees
 Skip any command-line file with a name suffix that matches the pattern
 @var{glob}, using wildcard matching; a name suffix is either the whole
-name, or any suffix starting after a @samp{/} and before a
-non-@samp{/}.  When searching recursively, skip any subfile whose base
+name, or a trailing part that starts with a non-slash character
+immediately after a slash (@samp{/}) in the name.
+When searching recursively, skip any subfile whose base
 name matches @var{glob}; the base name is the part after the last
-@samp{/}.  A pattern can use
+slash.  A pattern can use
 @samp{*}, @samp{?}, and @samp{[}...@samp{]} as wildcards,
 and @code{\} to quote a wildcard or backslash character literally.
 
