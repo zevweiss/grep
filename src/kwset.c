@@ -664,7 +664,7 @@ memchr_kwset (char const *s, ptrdiff_t n, kwset_t kwset)
 }
 
 /* Fast Boyer-Moore search (inlinable version).  */
-static inline ptrdiff_t
+static inline ptrdiff_t _GL_ATTRIBUTE_PURE
 bmexec_trans (kwset_t kwset, char const *text, ptrdiff_t size)
 {
   assume (0 <= size);
