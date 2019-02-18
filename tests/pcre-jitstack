@@ -52,8 +52,11 @@ if test $? != 1; then
 
     # Rerun that same test, but now with no limit on stack size:
     (ulimit -s unlimited;
-     returns_ 1 env LC_ALL=C grep -P -n '^([/](?!/)|[^/])*~/.*' pcrejit.txt) \
+     returns_ 1 env LC_ALL=C grep -P -n '^([/](?!/)|[^/])*~/.*' pcrejit.txt 2> err) \
        || fail=1
+
+    # If that failed due to stack overflow, don't cry foul.
+    test $fail = 1 && { grep -q 'stack overflow' err && fail=0 || cat err; }
 fi
 
 Exit $fail
