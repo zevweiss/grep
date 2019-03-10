@@ -2,6 +2,15 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Build-related
+
+  The build procedure no longer relies on any already-built src/grep
+  that might be absent or broken.  Instead, it uses the system 'grep'
+  to bootstrap, and uses src/grep only to test the build.  On Solaris
+  /usr/bin/grep is broken, but you can install GNU or XPG4 'grep' from
+  the standard Solaris distribution before building GNU Grep yourself.
+  [bug introduced in grep 2.8]
+
 
 * Noteworthy changes in release 3.3 (2018-12-20) [stable]
 

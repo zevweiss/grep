@@ -22,45 +22,14 @@ AC_INIT([GNU grep],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [bug-grep@gnu.org])
 
-# Set the GREP and EGREP variables to a dummy replacement for the 'grep'
-# command, so that AC_PROG_GREP and AC_PROG_EGREP don't fail when no good
-# 'grep' program is found. This makes it possible to build GNU grep on a
-# Solaris machine that has only /usr/bin/grep and no /usr/xpg4/bin/grep.
-# This function supports only restricted arguments:
-#   - No file names as arguments, process only standard input.
-#   - Only literal strings without backslashes, no regular expressions.
-#   - The only options are -e and -E (and -Ee).
-# This function also does not support long lines beyond what the shell
-# supports), and backslash-processes the input.
-fn_grep () {
-  test "$1" = -E && shift
-  case $@%:@:$1 in
-    0:*) AC_MSG_ERROR([fn_grep: expected pattern]) ;;
-    1:-*) AC_MSG_ERROR([fn_grep: invalid command line]) ;;
-    1:*) pattern=$1 ;;
-    2:--|2:-e|2:-Ee) pattern=$2 ;;
-    *) AC_MSG_ERROR([fn_grep: invalid command line]) ;;
-  esac
-
-  case $pattern in
-    [*['].^$\*[']*]) dnl The outer brackets are for M4.
-      AC_MSG_ERROR([fn_grep: regular expressions not supported])  ;;
-  esac
-
-  rc=1
-  while read line; do
-    case $line in
-      *$pattern*)
-        rc=0
-        AS_ECHO([$line]) ;;
-    esac
-  done
-  return $rc
-}
-
-test -n "$GREP" || GREP=fn_grep
-test -n "$EGREP" || EGREP=fn_grep
-ac_cv_path_EGREP=$EGREP
+if test -n "$GREP" || test -n "$EGREP"; then
+  AC_MSG_ERROR(
+    [no working 'grep' found
+  A working 'grep' command is needed to build GNU Grep.
+  This 'grep' should support -e and long lines.
+  On Solaris 10, install the package SUNWggrp or SUNWxcu4.
+  On Solaris 11, install the package text/gnu-grep or system/xopen/xcu4.])
+fi
 
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
@@ -227,6 +196,4 @@ AC_CONFIG_FILES([
   doc/Makefile
   gnulib-tests/Makefile
 ])
-GREP="$ac_abs_top_builddir/src/grep"
-EGREP="$ac_abs_top_builddir/src/grep -E"
 AC_OUTPUT
