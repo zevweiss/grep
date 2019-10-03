@@ -1926,7 +1926,7 @@ Pattern selection and interpretation:\n"), getprogname ());
       printf (_("\
   -e, --regexp=PATTERNS     use PATTERNS for matching\n\
   -f, --file=FILE           take PATTERNS from FILE\n\
-  -i, --ignore-case         ignore case distinctions\n\
+  -i, --ignore-case         ignore case distinctions in patterns and data\n\
   -w, --word-regexp         match only whole words\n\
   -x, --line-regexp         match only whole lines\n\
   -z, --null-data           a data line ends in 0 byte, not newline\n"));

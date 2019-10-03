@@ -198,7 +198,8 @@ The empty file contains zero patterns, and therefore matches nothing.
 @opindex -y
 @opindex --ignore-case
 @cindex case insensitive search
-Ignore case distinctions, so that characters that differ only in case
+Ignore case distinctions in patterns and input data,
+so that characters that differ only in case
 match each other.  Although this is straightforward when letters
 differ in case only via lowercase-uppercase pairs, the behavior is
 unspecified in other situations.  For example, uppercase ``S'' has an
