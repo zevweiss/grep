@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  The exit status of 'grep -L' is no longer incorrect when standard
+  output is /dev/null.
+  [Bug#37716 introduced in grep 3.2]
+
 ** Build-related
 
   The build procedure no longer relies on any already-built src/grep

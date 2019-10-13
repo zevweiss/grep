@@ -1864,7 +1864,7 @@ grepdesc (int desc, bool command_line)
 
   status = !count == !(list_files == LISTFILES_NONMATCHING);
 
-  if (list_files == LISTFILES_NONE)
+  if (list_files == LISTFILES_NONE || dev_null_output)
     finalize_input (desc, &st, ineof);
   else if (status == 0)
     {
@@ -2827,7 +2827,7 @@ main (int argc, char **argv)
 
   /* POSIX says -c, -l and -q are mutually exclusive.  In this
      implementation, -q overrides -l and -L, which in turn override -c.  */
-  if (exit_on_match | dev_null_output)
+  if (exit_on_match)
     list_files = LISTFILES_NONE;
   if ((exit_on_match | dev_null_output) || list_files != LISTFILES_NONE)
     {
