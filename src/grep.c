@@ -2432,13 +2432,9 @@ main (int argc, char **argv)
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
 
-  /* Command-line options for filename output.  */
-  enum
-  {
-   NO_FILENAME = -1,	/* --no-filename (-h) */
-   FILENAME_DEFAULT,	/* Neither option is specified.  */
-   WITH_FILENAME,	/* --with-filename (-H) */
-  } filename_option = FILENAME_DEFAULT;
+  /* Which command-line options have been specified for filename output.
+     -1 for -h, 1 for -H, 0 for neither.  */
+  int filename_option = 0;
 
   eolbyte = '\n';
   filename_mask = ~0;
@@ -2521,7 +2517,7 @@ main (int argc, char **argv)
         break;
 
       case 'H':
-        filename_option = WITH_FILENAME;
+        filename_option = 1;
         break;
 
       case 'I':
@@ -2613,7 +2609,7 @@ main (int argc, char **argv)
         break;
 
       case 'h':
-        filename_option = NO_FILENAME;
+        filename_option = -1;
         break;
 
       case 'i':
@@ -2904,11 +2900,9 @@ main (int argc, char **argv)
                       == out_invert);
 
   int num_operands = argc - optind;
-  out_file = (filename_option < FILENAME_DEFAULT
-              ? 0
-              : filename_option == FILENAME_DEFAULT && num_operands <= 1
+  out_file = (filename_option == 0 && num_operands <= 1
               ? - (directories == RECURSE_DIRECTORIES)
-              : 1);
+              : 0 <= filename_option);
 
   if (binary)
     xset_binary_mode (STDOUT_FILENO, O_BINARY);
