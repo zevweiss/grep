@@ -1000,20 +1000,14 @@ static enum
   LISTFILES_NONMATCHING,
 } list_files;
 
-/* What was requested on the command-line w.r.t. printing filenames. */
-static enum
-{
-  PRINTFILENAMES_DEFAULT, /* neither -h nor -H */
-  PRINTFILENAMES_ON,      /* -H */
-  PRINTFILENAMES_OFF,     /* -h */
-} print_filenames;
+/* Whether to output filenames.  1 means yes, 0 means no, and -1 means
+   'grep -r PATTERN FILE' was used and it is not known yet whether
+   FILE is a directory (which means yes) or not (which means no).  */
+static int out_file;
 
 static int filename_mask;	/* If zero, output nulls after filenames.  */
 static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
-static int out_file;		/* Print filenames. */
-static bool single_command_line_arg; /* True if we received exactly one
-                                        command-line argument */
 static bool out_line;		/* Print line numbers. */
 static bool out_byte;		/* Print byte offsets. */
 static intmax_t out_before;	/* Lines of leading context. */
@@ -1782,11 +1776,9 @@ grepdesc (int desc, bool command_line)
       && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))
     goto closeout;
 
-  /* Don't print file names if invoked as 'grep -r foo <non-directory>'. */
-  if (command_line && single_command_line_arg
-      && print_filenames == PRINTFILENAMES_DEFAULT
-      && directories == RECURSE_DIRECTORIES && !S_ISDIR (st.st_mode))
-    out_file = 0;
+  /* Don't output file names if invoked as 'grep -r PATTERN NONDIRECTORY'.  */
+  if (out_file < 0)
+    out_file = !!S_ISDIR (st.st_mode);
 
   if (desc != STDIN_FILENO
       && directories == RECURSE_DIRECTORIES && S_ISDIR (st.st_mode))
@@ -2440,6 +2432,14 @@ main (int argc, char **argv)
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
 
+  /* Command-line options for filename output.  */
+  enum
+  {
+   NO_FILENAME = -1,	/* --no-filename (-h) */
+   FILENAME_DEFAULT,	/* Neither option is specified.  */
+   WITH_FILENAME,	/* --with-filename (-H) */
+  } filename_option = FILENAME_DEFAULT;
+
   eolbyte = '\n';
   filename_mask = ~0;
 
@@ -2521,7 +2521,7 @@ main (int argc, char **argv)
         break;
 
       case 'H':
-        print_filenames = PRINTFILENAMES_ON;
+        filename_option = WITH_FILENAME;
         break;
 
       case 'I':
@@ -2613,7 +2613,7 @@ main (int argc, char **argv)
         break;
 
       case 'h':
-        print_filenames = PRINTFILENAMES_OFF;
+        filename_option = NO_FILENAME;
         break;
 
       case 'i':
@@ -2903,11 +2903,12 @@ main (int argc, char **argv)
                                 &match_size, NULL) == 0)
                       == out_invert);
 
-  single_command_line_arg = argc - optind == 1;
-  if (print_filenames == PRINTFILENAMES_ON
-      || (print_filenames == PRINTFILENAMES_DEFAULT
-          && (argc - optind > 1 || directories == RECURSE_DIRECTORIES)))
-    out_file = 1;
+  int num_operands = argc - optind;
+  out_file = (filename_option < FILENAME_DEFAULT
+              ? 0
+              : filename_option == FILENAME_DEFAULT && num_operands <= 1
+              ? - (directories == RECURSE_DIRECTORIES)
+              : 1);
 
   if (binary)
     xset_binary_mode (STDOUT_FILENO, O_BINARY);
@@ -2928,7 +2929,7 @@ main (int argc, char **argv)
     devices = READ_DEVICES;
 
   char *const *files;
-  if (optind < argc)
+  if (0 < num_operands)
     {
       files = argv + optind;
     }
