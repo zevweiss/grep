@@ -1000,16 +1000,25 @@ static enum
   LISTFILES_NONMATCHING,
 } list_files;
 
+/* What was requested on the command-line w.r.t. printing filenames. */
+static enum
+{
+  PRINTFILENAMES_DEFAULT, /* neither -h nor -H */
+  PRINTFILENAMES_ON,      /* -H */
+  PRINTFILENAMES_OFF,     /* -h */
+} print_filenames;
+
 static int filename_mask;	/* If zero, output nulls after filenames.  */
 static bool out_quiet;		/* Suppress all normal output. */
 static bool out_invert;		/* Print nonmatching stuff. */
 static int out_file;		/* Print filenames. */
+static bool single_command_line_arg; /* True if we received exactly one
+                                        command-line argument */
 static bool out_line;		/* Print line numbers. */
 static bool out_byte;		/* Print byte offsets. */
 static intmax_t out_before;	/* Lines of leading context. */
 static intmax_t out_after;	/* Lines of trailing context. */
 static bool count_matches;	/* Count matching lines.  */
-static bool no_filenames;	/* Suppress file names.  */
 static intmax_t max_count;	/* Max number of selected
                                    lines from an input file.  */
 static bool line_buffered;	/* Use line buffering.  */
@@ -1589,11 +1598,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
   command_line &= ent->fts_level == FTS_ROOTLEVEL;
 
   if (ent->fts_info == FTS_DP)
-    {
-      if (directories == RECURSE_DIRECTORIES && command_line)
-        out_file &= ~ (2 * !no_filenames);
-      return true;
-    }
+    return true;
 
   if (!command_line
       && skipped_file (ent->fts_name, false,
@@ -1614,10 +1619,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
     {
     case FTS_D:
       if (directories == RECURSE_DIRECTORIES)
-        {
-          out_file |= 2 * !no_filenames;
-          return true;
-        }
+        return true;
       fts_set (fts, ent, FTS_SKIP);
       break;
 
@@ -1779,6 +1781,12 @@ grepdesc (int desc, bool command_line)
   if (desc != STDIN_FILENO && command_line
       && skipped_file (filename, true, S_ISDIR (st.st_mode) != 0))
     goto closeout;
+
+  /* Don't print file names if invoked as 'grep -r foo <non-directory>'. */
+  if (command_line && single_command_line_arg
+      && print_filenames == PRINTFILENAMES_DEFAULT
+      && directories == RECURSE_DIRECTORIES && !S_ISDIR (st.st_mode))
+    out_file = 0;
 
   if (desc != STDIN_FILENO
       && directories == RECURSE_DIRECTORIES && S_ISDIR (st.st_mode))
@@ -2423,7 +2431,6 @@ main (int argc, char **argv)
   char *keys = NULL;
   size_t keycc = 0, oldcc, keyalloc = 0;
   int matcher = -1;
-  bool with_filenames = false;
   size_t cc;
   int opt, prepended;
   int prev_optind, last_recursive;
@@ -2514,8 +2521,7 @@ main (int argc, char **argv)
         break;
 
       case 'H':
-        with_filenames = true;
-        no_filenames = false;
+        print_filenames = PRINTFILENAMES_ON;
         break;
 
       case 'I':
@@ -2607,8 +2613,7 @@ main (int argc, char **argv)
         break;
 
       case 'h':
-        with_filenames = false;
-        no_filenames = true;
+        print_filenames = PRINTFILENAMES_OFF;
         break;
 
       case 'i':
@@ -2898,7 +2903,10 @@ main (int argc, char **argv)
                                 &match_size, NULL) == 0)
                       == out_invert);
 
-  if ((argc - optind > 1 && !no_filenames) || with_filenames)
+  single_command_line_arg = argc - optind == 1;
+  if (print_filenames == PRINTFILENAMES_ON
+      || (print_filenames == PRINTFILENAMES_DEFAULT
+          && (argc - optind > 1 || directories == RECURSE_DIRECTORIES)))
     out_file = 1;
 
   if (binary)
