@@ -424,7 +424,8 @@ enum
   GROUP_SEPARATOR_OPTION,
   INCLUDE_OPTION,
   LINE_BUFFERED_OPTION,
-  LABEL_OPTION
+  LABEL_OPTION,
+  NO_IGNORE_CASE_OPTION
 };
 
 /* Long options equivalences. */
@@ -455,6 +456,7 @@ static struct option const long_options[] =
   {"help", no_argument, &show_help, 1},
   {"include", required_argument, NULL, INCLUDE_OPTION},
   {"ignore-case", no_argument, NULL, 'i'},
+  {"no-ignore-case", no_argument, NULL, NO_IGNORE_CASE_OPTION},
   {"initial-tab", no_argument, NULL, 'T'},
   {"label", required_argument, NULL, LABEL_OPTION},
   {"line-buffered", no_argument, NULL, LINE_BUFFERED_OPTION},
@@ -1927,6 +1929,7 @@ Pattern selection and interpretation:\n"), getprogname ());
   -e, --regexp=PATTERNS     use PATTERNS for matching\n\
   -f, --file=FILE           take PATTERNS from FILE\n\
   -i, --ignore-case         ignore case distinctions in patterns and data\n\
+      --no-ignore-case      do not ignore case distinctions (default)\n\
   -w, --word-regexp         match only whole words\n\
   -x, --line-regexp         match only whole lines\n\
   -z, --null-data           a data line ends in 0 byte, not newline\n"));
@@ -2615,6 +2618,10 @@ main (int argc, char **argv)
       case 'i':
       case 'y':			/* For old-timers . . . */
         match_icase = true;
+        break;
+
+      case NO_IGNORE_CASE_OPTION:
+        match_icase = false;
         break;
 
       case 'L':

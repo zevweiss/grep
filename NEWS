@@ -2,6 +2,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** New features
+
+  The new --no-ignore-case option causes grep to observe case
+  distinctions, overriding any previous -i (--ignore-case) option.
+
 ** Bug fixes
 
   The exit status of 'grep -L' is no longer incorrect when standard

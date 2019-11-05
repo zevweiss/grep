@@ -215,6 +215,13 @@ SHARP S) even though lowercasing the latter yields the former.
 @option{-y} is an obsolete synonym that is provided for compatibility.
 (@option{-i} is specified by POSIX.)
 
+@item --no-ignore-case
+@opindex --no-ignore-case
+Do not ignore case distinctions in patterns and input data.  This is
+the default.  This option is useful for passing to shell scripts that
+already use @option{-i}, in order to cancel its effects because the
+two options override each other.
+
 @item -v
 @itemx --invert-match
 @opindex -v

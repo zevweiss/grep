@@ -254,6 +254,13 @@ Ignore case distinctions in patterns and input data,
 so that characters that differ only in case
 match each other.
 .TP
+.B \-\^\-no\-ignore\-case
+Do not ignore case distinctions in patterns and input data.
+This is the default.
+This option is useful for passing to shell scripts that already use
+.BR \-i ,
+to cancel its effects because the two options override each other.
+.TP
 .BR \-v ", " \-\^\-invert\-match
 Invert the sense of matching, to select non-matching lines.
 .TP
@@ -683,7 +690,7 @@ Follow all symbolic links, unlike
 .BR \-r .
 .SS "Other Options"
 .TP
-.BR \-\^\-line\-buffered
+.B \-\^\-line\-buffered
 Use line buffering on output.
 This can cause a performance penalty.
 .TP
