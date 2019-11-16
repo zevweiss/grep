@@ -228,9 +228,9 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
       char const *bol = memrchr (mb_start, eol, beg - mb_start);
       mb_start = bol ? bol + 1 : buf;
 
-      /* Succeed if the preceding and following characters are word
-         constituents.  If the following character is not a word
-         constituent, keep trying with shorter matches.  */
+      /* Succeed if neither the preceding nor the following character is a
+         word constituent.  If the preceding is not, yet the following
+         character IS a word constituent, keep trying with shorter matches.  */
       if (! wordchar_prev (mb_start, beg, buf + size))
         for (;;)
           {
