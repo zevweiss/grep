@@ -224,9 +224,18 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
         goto success;
 
       /* We need a preceding mb_start pointer.  Use the beginning of line
-         if there is a preceding newline, else BUF.  */
-      char const *nl = memrchr (mb_start, eol, beg - mb_start);
-      mb_start = nl ? nl + 1 : buf;
+         if there is a preceding newline.  */
+      if (mb_check)
+        {
+           char const *nl = memrchr (buf, eol, beg - buf);
+           mb_start = nl ? nl + 1 : buf;
+        }
+      else
+        {
+           char const *nl = memrchr (mb_start, eol, beg - mb_start);
+           if (nl)
+             mb_start = nl + 1;
+        }
 
       /* Succeed if neither the preceding nor the following character is a
          word constituent.  If the preceding is not, yet the following
