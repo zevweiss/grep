@@ -223,12 +223,14 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
       if (! match_words)
         goto success;
 
+      /* We need a preceding mb_start pointer.  Use the beginning of line
+         if there is a preceding newline, else BUF.  */
+      char const *bol = memrchr (mb_start, eol, beg - mb_start);
+      mb_start = bol ? bol + 1 : buf;
+
       /* Succeed if the preceding and following characters are word
          constituents.  If the following character is not a word
          constituent, keep trying with shorter matches.  */
-      char const *bol = memrchr (mb_start, eol, beg - mb_start);
-      if (bol)
-        mb_start = bol + 1;
       if (! wordchar_prev (mb_start, beg, buf + size))
         for (;;)
           {
