@@ -279,7 +279,7 @@ EGexecute (void *vdc, char const *buf, size_t size, size_t *match_size,
                     goto success;
                   if (mb_start < beg)
                     mb_start = beg;
-                  if (mb_goback (&mb_start, match, buflim) == 0)
+                  if (mb_goback (&mb_start, NULL, match, buflim) == 0)
                     goto success;
                   /* The matched line starts in the middle of a multibyte
                      character.  Perform the DFA search starting from the

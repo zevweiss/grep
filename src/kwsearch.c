@@ -161,6 +161,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   bool longest;
   struct kwsearch *kwsearch = vcp;
   kwset_t kwset = kwsearch->kwset;
+  size_t mbclen;
 
   if (match_lines)
     mb_check = longest = false;
@@ -194,7 +195,9 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           return EGexecute (kwsearch->re, buf, size, match_size, start_ptr);
         }
 
-      if (mb_check && mb_goback (&mb_start, beg + offset, buf + size) != 0)
+      mbclen = 0;
+      if (mb_check
+          && mb_goback (&mb_start, &mbclen, beg + offset, buf + size) != 0)
         {
           /* We have matched a single byte that is not at the beginning of a
              multibyte character.  mb_goback has advanced MB_START past that
@@ -225,22 +228,19 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
 
       /* We need a preceding mb_start pointer.  Use the beginning of line
          if there is a preceding newline.  */
-      if (mb_check)
+      if (mbclen == 0)
         {
-           char const *nl = memrchr (buf, eol, beg - buf);
-           mb_start = nl ? nl + 1 : buf;
-        }
-      else
-        {
-           char const *nl = memrchr (mb_start, eol, beg - mb_start);
-           if (nl)
-             mb_start = nl + 1;
+          char const *nl = memrchr (mb_start, eol, beg - mb_start);
+          if (nl)
+            mb_start = nl + 1;
         }
 
       /* Succeed if neither the preceding nor the following character is a
          word constituent.  If the preceding is not, yet the following
          character IS a word constituent, keep trying with shorter matches.  */
-      if (! wordchar_prev (mb_start, beg, buf + size))
+      if (mbclen > 0
+          ? ! wordchar_next (beg - mbclen, buf + size)
+          : ! wordchar_prev (mb_start, beg, buf + size))
         for (;;)
           {
             if (! wordchar_next (beg + len, buf + size))
