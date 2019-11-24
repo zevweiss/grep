@@ -12,7 +12,7 @@ GNU grep NEWS                                    -*- outline -*-
   grep -Fw can no longer false match in non-UTF8 multibyte locales
   For example, this command would erroneously print its input line:
     echo ab | LC_CTYPE=ja_JP.eucjp grep -Fw b
-  [Bug#38223 introduced in grep 3.0]
+  [Bug#38223 introduced in grep 2.28]
 
   The exit status of 'grep -L' is no longer incorrect when standard
   output is /dev/null.
