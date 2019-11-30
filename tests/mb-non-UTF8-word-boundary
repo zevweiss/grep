@@ -23,7 +23,7 @@ fail=0
 
 echo ab > in || framework_failure_
 
-# This would mistakenly print its input line from grep-3.0..3.3
+# This would mistakenly print its input line from grep-2.28..3.3
 returns_ 1 grep -Fw b in || fail=1
 
 Exit $fail
