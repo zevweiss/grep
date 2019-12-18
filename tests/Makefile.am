@@ -86,6 +86,7 @@ TESTS =						\
   dfa-coverage					\
   dfa-heap-overrun				\
   dfa-infloop					\
+  dfa-invalid-utf8				\
   dfaexec-multibyte				\
   empty						\
   empty-line					\

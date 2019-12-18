@@ -234,7 +234,7 @@ EGexecute (void *vdc, char const *buf, size_t size, size_t *match_size,
       if (!start_ptr)
         {
           char const *next_beg, *dfa_beg = beg;
-          size_t count = 0;
+          ptrdiff_t count = 0;
           bool exact_kwset_match = false;
           bool backref = false;
 
