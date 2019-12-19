@@ -123,8 +123,8 @@ TESTS =						\
   max-count-vs-context				\
   mb-dot-newline				\
   mb-non-UTF8-overrun				\
-  mb-non-UTF8-performance			\
   mb-non-UTF8-perf-Fw				\
+  mb-non-UTF8-performance			\
   mb-non-UTF8-word-boundary			\
   multibyte-white-space				\
   multiple-begin-or-end-line			\
