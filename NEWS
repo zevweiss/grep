@@ -21,6 +21,10 @@ GNU grep NEWS                                    -*- outline -*-
   output is /dev/null.
   [Bug#37716 introduced in grep 3.2]
 
+  A performance bug has been fixed for patterns like '01.2' that
+  cause grep to reorder tokens internally.
+  [Bug#34951 introduced in grep 3.2]
+
 ** Build-related
 
   The build procedure no longer relies on any already-built src/grep
