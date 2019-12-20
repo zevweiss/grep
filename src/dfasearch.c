@@ -202,8 +202,9 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
   else
     motif = NULL;
 
-  dfacomp (pattern, size, dc->dfa, 1);
+  dfaparse (pattern, size, dc->dfa);
   kwsmusts (dc);
+  dfacomp (NULL, 0, dc->dfa, 1);
 
   free (motif);
 
