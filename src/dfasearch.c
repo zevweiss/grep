@@ -103,6 +103,59 @@ kwsmusts (struct dfa_comp *dc)
   dfamustfree (dm);
 }
 
+static bool
+find_backref_in_pattern (const char *keys, size_t len)
+{
+  for (; len; keys++, len--)
+    if (keys[0] == '\\')
+      {
+        if (1 <= keys[1] && keys[1] <= '9')
+          return true;
+
+        if (keys[1] == '\\')
+          keys++;
+      }
+
+  return false;
+}
+
+static bool
+regex_compile (struct dfa_comp *dc, const char *p, size_t len, size_t pcount,
+               size_t lineno, bool syntax_only)
+{
+  struct re_pattern_buffer pat0;
+  struct re_pattern_buffer *pat = syntax_only ? &pat0 : &dc->patterns[pcount];
+  pat->buffer = NULL;
+  pat->allocated = 0;
+
+  /* Do not use a fastmap with -i, to work around glibc Bug#20381.  */
+  pat->fastmap = (syntax_only || match_icase) ? NULL : xmalloc (UCHAR_MAX + 1);
+
+  pat->translate = NULL;
+
+  char const *err = re_compile_pattern (p, len, pat);
+
+  if (!err)
+    return true;
+
+  /* With patterns specified only on the command line, emit the bare
+     diagnostic.  Otherwise, include a filename:lineno: prefix.  */
+  size_t new_lineno;
+  const char *pat_filename;
+
+  if (lineno != (size_t) -1)
+    pat_filename = pattern_file_name (lineno + 1, &new_lineno);
+  else
+    pat_filename = "\0";
+
+  if (*pat_filename == '\0')
+    error (0, 0, "%s", err);
+  else
+    error (0, 0, "%s:%zu: %s", pat_filename, new_lineno, err);
+
+  return false;
+}
+
 void *
 GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
 {
@@ -126,6 +179,11 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
   bool compilation_failed = false;
   size_t palloc = 0;
 
+  char const *prev = pattern;
+  char *buf = NULL;
+  size_t buflen = 0;
+  size_t lineno = 0;
+
   do
     {
       size_t len;
@@ -138,38 +196,67 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
       else
         len = patlim - p;
 
+      bool backref = find_backref_in_pattern (p, len);
+
+      if (backref && prev < p)
+        {
+          len = p - prev;
+          buf = xrealloc (buf, (buflen + len) * sizeof *buf);
+          memcpy (buf + buflen, p, len);
+          buflen += len;
+        }
+
       if (palloc <= dc->pcount)
         dc->patterns = x2nrealloc (dc->patterns, &palloc, sizeof *dc->patterns);
-      struct re_pattern_buffer *pat = &dc->patterns[dc->pcount];
-      pat->buffer = NULL;
-      pat->allocated = 0;
 
-      /* Do not use a fastmap with -i, to work around glibc Bug#20381.  */
-      pat->fastmap = match_icase ? NULL : xmalloc (UCHAR_MAX + 1);
+      if (!regex_compile (dc, p, len, dc->pcount, lineno, !backref))
+        compilation_failed = true;
 
-      pat->translate = NULL;
-
-      char const *err = re_compile_pattern (p, len, pat);
-      if (err)
-        {
-          /* With patterns specified only on the command line, emit the bare
-             diagnostic.  Otherwise, include a filename:lineno: prefix.  */
-          size_t lineno;
-          char const *pat_filename = pattern_file_name (dc->pcount + 1,
-                                                        &lineno);
-          if (*pat_filename == '\0')
-            error (0, 0, "%s", err);
-          else
-            error (0, 0, "%s:%zu: %s", pat_filename, lineno, err);
-          compilation_failed = true;
-        }
-      dc->pcount++;
       p = sep;
+      lineno++;
+
+      if (backref)
+        {
+          dc->pcount++;
+          prev = p;
+        }
     }
   while (p);
 
   if (compilation_failed)
     exit (EXIT_TROUBLE);
+
+  if (prev != NULL)
+    {
+      if (pattern < prev)
+        {
+          size_t len = patlim - prev;
+          buf = xrealloc (buf, (buflen + len) * sizeof *buf);
+          memcpy (buf + buflen, prev, len);
+          buflen += len;
+        }
+      else
+        {
+          buf = pattern;
+          buflen = size;
+        }
+    }
+
+  if (buf != NULL)
+    {
+      dc->patterns = x2nrealloc (dc->patterns, &palloc, sizeof *dc->patterns);
+
+      for (size_t i = 0; i < dc->pcount; i++)
+        dc->patterns[i + 1] = dc->patterns[i];
+
+      if (!regex_compile (dc, buf, buflen, 0, -1, false))
+        abort ();
+
+      dc->pcount++;
+
+      if (buf != pattern)
+        free (buf);
+    }
 
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.
