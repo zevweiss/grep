@@ -110,16 +110,16 @@ kwsmusts (struct dfa_comp *dc)
 static bool _GL_ATTRIBUTE_PURE
 possible_backrefs_in_pattern (char const *keys, ptrdiff_t len, bool bs_safe)
 {
-  /* Normally a backslash, but in an unsafe encoding this is a a
-     non-char value so that the comparison below always fails, because
-     if there are two adjacent '\' bytes the first might the last byte
-     of a multibyte character.  */
+  /* Normally a backslash, but in an unsafe encoding this is a non-char
+     value so that the comparison below always fails, because if there
+     are two adjacent '\' bytes, the first might be the last byte of a
+     multibyte character.  */
   int second_backslash = bs_safe ? '\\' : CHAR_MAX + 1;
 
   /* This code can return true even if KEYS lacks a backreference, for
-     patterns like [\2], or for encodings where '\' appears as
-     the last byte of a multibyte character.  However, false alarms
-     should be rare and do not affect correctness.  */
+     patterns like [\2], or for encodings where '\' appears as the last
+     byte of a multibyte character.  However, false alarms should be
+     rare and do not affect correctness.  */
 
   /* Do not look for a backslash in the pattern's last byte, since it
      can't be part of a backreference and this streamlines the code.  */
