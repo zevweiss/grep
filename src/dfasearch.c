@@ -35,7 +35,7 @@ struct dfa_comp
   struct dfa *dfa;
 
   /* Regex compiled regexps. */
-  struct re_pattern_buffer* patterns;
+  struct re_pattern_buffer *patterns;
   size_t pcount;
   struct re_registers regs;
 
@@ -103,25 +103,49 @@ kwsmusts (struct dfa_comp *dc)
   dfamustfree (dm);
 }
 
-static bool
-find_backref_in_pattern (const char *keys, size_t len)
+/* Return true if KEYS, of length LEN, might contain a backreference.
+   Return false if KEYS cannot contain a backreference.
+   BS_SAFE is true of encodings where a backslash cannot appear as the
+   last byte of a multibyte character.  */
+static bool _GL_ATTRIBUTE_PURE
+possible_backrefs_in_pattern (char const *keys, ptrdiff_t len, bool bs_safe)
 {
-  for (; len; keys++, len--)
-    if (keys[0] == '\\')
-      {
-        if (1 <= keys[1] && keys[1] <= '9')
-          return true;
+  /* Normally a backslash, but in an unsafe encoding this is a a
+     non-char value so that the comparison below always fails, because
+     if there are two adjacent '\' bytes the first might the last byte
+     of a multibyte character.  */
+  int second_backslash = bs_safe ? '\\' : CHAR_MAX + 1;
 
-        if (keys[1] == '\\')
-          keys++;
-      }
+  /* This code can return true even if KEYS lacks a backreference, for
+     patterns like [\2], or for encodings where '\' appears as
+     the last byte of a multibyte character.  However, false alarms
+     should be rare and do not affect correctness.  */
 
+  /* Do not look for a backslash in the pattern's last byte, since it
+     can't be part of a backreference and this streamlines the code.  */
+  len--;
+
+  if (0 <= len)
+    {
+      char const *lim = keys + len;
+      for (char const *p = keys; (p = memchr (p, '\\', lim - p)); p++)
+        {
+          if ('1' <= p[1] && p[1] <= '9')
+            return true;
+          if (p[1] == second_backslash)
+            {
+              p++;
+              if (p == lim)
+                break;
+            }
+        }
+    }
   return false;
 }
 
 static bool
-regex_compile (struct dfa_comp *dc, const char *p, size_t len, size_t pcount,
-               size_t lineno, bool syntax_only)
+regex_compile (struct dfa_comp *dc, char const *p, ptrdiff_t len,
+               ptrdiff_t pcount, ptrdiff_t lineno, bool syntax_only)
 {
   struct re_pattern_buffer pat0;
   struct re_pattern_buffer *pat = syntax_only ? &pat0 : &dc->patterns[pcount];
@@ -129,29 +153,23 @@ regex_compile (struct dfa_comp *dc, const char *p, size_t len, size_t pcount,
   pat->allocated = 0;
 
   /* Do not use a fastmap with -i, to work around glibc Bug#20381.  */
-  pat->fastmap = (syntax_only || match_icase) ? NULL : xmalloc (UCHAR_MAX + 1);
+  pat->fastmap = syntax_only | match_icase ? NULL : xmalloc (UCHAR_MAX + 1);
 
   pat->translate = NULL;
 
   char const *err = re_compile_pattern (p, len, pat);
-
   if (!err)
     return true;
 
-  /* With patterns specified only on the command line, emit the bare
-     diagnostic.  Otherwise, include a filename:lineno: prefix.  */
-  size_t new_lineno;
-  const char *pat_filename;
-
-  if (lineno != (size_t) -1)
-    pat_filename = pattern_file_name (lineno + 1, &new_lineno);
-  else
-    pat_filename = "\0";
+  /* Emit a filename:lineno: prefix for patterns taken from files.  */
+  size_t pat_lineno = lineno;
+  char const *pat_filename
+    = lineno < 0 ? "\0" : pattern_file_name (lineno + 1, &pat_lineno);
 
   if (*pat_filename == '\0')
     error (0, 0, "%s", err);
   else
-    error (0, 0, "%s:%zu: %s", pat_filename, new_lineno, err);
+    error (0, 0, "%s:%zu: %s", pat_filename, pat_lineno, err);
 
   return false;
 }
@@ -169,6 +187,7 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
   re_set_syntax (syntax_bits);
   int dfaopts = eolbyte ? 0 : DFA_EOL_NUL;
   dfasyntax (dc->dfa, &localeinfo, syntax_bits, dfaopts);
+  bool bs_safe = !localeinfo.multibyte | localeinfo.using_utf8;
 
   /* For GNU regex, pass the patterns separately to detect errors like
      "[\nallo\n]\n", where the patterns are "[", "allo" and "]", and
@@ -177,12 +196,20 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
   char const *p = pattern;
   char const *patlim = pattern + size;
   bool compilation_failed = false;
-  size_t palloc = 0;
+
+  dc->patterns = xmalloc (sizeof *dc->patterns);
+  dc->patterns++;
+  dc->pcount = 0;
+  size_t palloc = 1;
 
   char const *prev = pattern;
+
+  /* Buffer containing backreference-free patterns.  */
   char *buf = NULL;
-  size_t buflen = 0;
-  size_t lineno = 0;
+  ptrdiff_t buflen = 0;
+  size_t bufalloc = 0;
+
+  ptrdiff_t lineno = 0;
 
   do
     {
@@ -196,18 +223,26 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
       else
         len = patlim - p;
 
-      bool backref = find_backref_in_pattern (p, len);
+      bool backref = possible_backrefs_in_pattern (p, len, bs_safe);
 
       if (backref && prev < p)
         {
-          len = p - prev;
-          buf = xrealloc (buf, (buflen + len) * sizeof *buf);
-          memcpy (buf + buflen, p, len);
-          buflen += len;
+          ptrdiff_t prevlen = p - prev;
+          while (bufalloc < buflen + prevlen)
+            buf = x2realloc (buf, &bufalloc);
+          memcpy (buf + buflen, prev, prevlen);
+          buflen += prevlen;
         }
 
-      if (palloc <= dc->pcount)
-        dc->patterns = x2nrealloc (dc->patterns, &palloc, sizeof *dc->patterns);
+      /* Ensure room for at least two more patterns.  The extra one is
+         for the regex_compile that may be executed after this loop
+         exits, and its (unused) slot is patterns[-1] until then.  */
+      while (palloc <= dc->pcount + 1)
+        {
+          dc->patterns = x2nrealloc (dc->patterns - 1, &palloc,
+                                     sizeof *dc->patterns);
+          dc->patterns++;
+        }
 
       if (!regex_compile (dc, p, len, dc->pcount, lineno, !backref))
         compilation_failed = true;
@@ -230,10 +265,10 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
     {
       if (pattern < prev)
         {
-          size_t len = patlim - prev;
-          buf = xrealloc (buf, (buflen + len) * sizeof *buf);
-          memcpy (buf + buflen, prev, len);
-          buflen += len;
+          ptrdiff_t prevlen = patlim - prev;
+          buf = xrealloc (buf, buflen + prevlen);
+          memcpy (buf + buflen, prev, prevlen);
+          buflen += prevlen;
         }
       else
         {
@@ -244,15 +279,11 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
 
   if (buf != NULL)
     {
-      dc->patterns = x2nrealloc (dc->patterns, &palloc, sizeof *dc->patterns);
-
-      for (size_t i = 0; i < dc->pcount; i++)
-        dc->patterns[i + 1] = dc->patterns[i];
+      dc->patterns--;
+      dc->pcount++;
 
       if (!regex_compile (dc, buf, buflen, 0, -1, false))
         abort ();
-
-      dc->pcount++;
 
       if (buf != pattern)
         free (buf);
