@@ -67,7 +67,7 @@ TESTS =						\
   backref-multibyte-slow			\
   backref-word					\
   backslash-s-and-repetition-operators		\
-  backslash-s-vs-invalid-multitype		\
+  backslash-s-vs-invalid-multibyte		\
   big-hole					\
   big-match					\
   bogus-wctob					\
