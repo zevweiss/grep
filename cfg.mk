@@ -159,3 +159,16 @@ exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
 exclude_file_name_regexp--sc_prohibit_doubled_word = ^tests/count-newline$$
 
 exclude_file_name_regexp--sc_long_lines = ^tests/.*$$
+
+# If a test uses timeout, it must also use require_timeout_.
+# Grandfather-exempt the fedora test, since it ensures timeout works
+# as expected before using it.
+sc_timeout_prereq:
+	@$(VC_LIST_EXCEPT)						\
+	  | grep '^tests/'						\
+	  | grep -v '^tests/fedora$$'					\
+	  | xargs grep -lw timeout					\
+	  | xargs grep -FLw require_timeout_				\
+	  | $(GREP) .							\
+	  && { echo '$(ME): timeout withtout use of require_timeout_'	\
+	    1>&2; exit 1; } || :
