@@ -20,6 +20,7 @@
 
 fail=0
 
+require_timeout_
 require_JP_EUC_locale_
 
 yes 00 | head -10000000 > in || framework_failure_
