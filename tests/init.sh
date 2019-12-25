@@ -378,6 +378,8 @@ testdir_prefix_ () { printf gt; }
 # Set up the environment for the test to run in.
 setup_ ()
 {
+  export LC_ALL=C
+
   if test "$VERBOSE" = yes; then
     # Test whether set -x may cause the selected shell to corrupt an
     # application's stderr.  Many do, including zsh-4.3.10 and the /bin/sh
