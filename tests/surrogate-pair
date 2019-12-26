@@ -1,6 +1,5 @@
 #!/bin/sh
 # Check the handling of characters outside the Unicode BMP.
-# Known failures: This test currently fails on Cygwin and AIX.
 
 # Copyright (C) 2013-2019 Free Software Foundation, Inc.
 
@@ -26,6 +25,10 @@ fail=0
 
 printf '\360\220\220\205\n' > in || framework_failure_
 
+# On platforms where wchar_t is only 16 bits, wchar_t cannot represent
+# the character encoded in 'in', so accept that behavior too.
+printf 'Binary file in matches\n' > out16 || framework_failure_
+
 LC_ALL=en_US.UTF-8
 export LC_ALL
 
@@ -38,7 +41,7 @@ compare /dev/null out || fail=1
 # Also test whether a surrogate-pair in the search string works.
 for opt in '' -i -E -F -iE -iF; do
   grep --file=in $opt in > out 2>&1 || fail=1
-  compare out in || fail=1
+  compare out in || compare out out16 || fail=1
 done
 
 Exit $fail
