@@ -21,8 +21,8 @@ GNU grep NEWS                                    -*- outline -*-
   output is /dev/null.
   [Bug#37716 introduced in grep 3.2]
 
-  A performance bug has been fixed when grep is given many patterns
-  each of which lack backreferences.
+  A performance bug has been fixed when grep is given many patterns,
+  each with no backreference.
   [Bug#33249 introduced in grep 2.5]
 
   A performance bug has been fixed for patterns like '01.2' that
