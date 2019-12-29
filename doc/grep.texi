@@ -14,6 +14,18 @@
 @c %**end of header
 
 @documentencoding UTF-8
+@c These two require Texinfo 5.0 or later, so use the older
+@c equivalent @set variables supported in 4.11 and later.
+@ignore
+@codequotebacktick on
+@codequoteundirected on
+@end ignore
+@set txicodequoteundirected
+@set txicodequotebacktick
+@iftex
+@c TeX sometimes fails to hyphenate, so help it here.
+@hyphenation{spec-i-fied}
+@end iftex
 
 @copying
 This manual is for @command{grep}, a pattern matching engine.
@@ -101,12 +113,12 @@ grep [@var{option}...] [@var{patterns}] [@var{file}...]
 @end example
 
 @noindent
-
 There can be zero or more @var{option} arguments, and zero or more
 @var{file} arguments.  The @var{patterns} argument contains one or
 more patterns separated by newlines, and is omitted when patterns are
 given via the @samp{-e@ @var{patterns}} or @samp{-f@ @var{file}}
-options.
+options.  Typically @var{patterns} should be quoted when
+@command{grep} is used in a shell command.
 
 @menu
 * Command-line Options::        Short and long names, grouped by category.
@@ -178,6 +190,8 @@ Use @var{patterns} as one or more patterns; newlines within
 @var{patterns} separate each pattern from the next.
 If this option is used multiple times or is combined with the
 @option{-f} (@option{--file}) option, search for all patterns given.
+Typically @var{patterns} should be quoted when @command{grep} is used
+in a shell command.
 (@option{-e} is specified by POSIX.)
 
 @item -f @var{file}
@@ -337,7 +351,7 @@ This enables a calling process to resume a search.
 For example, the following shell script makes use of it:
 
 @example
-while grep -m 1 PATTERN
+while grep -m 1 'PATTERN'
 do
   echo xxxx
 done < FILE
@@ -349,7 +363,7 @@ file:
 @example
 # This probably will not work.
 cat FILE |
-while grep -m 1 PATTERN
+while grep -m 1 'PATTERN'
 do
   echo xxxx
 done
@@ -449,12 +463,12 @@ This is the default when there is only one file
 @opindex --label
 @cindex changing name of standard input
 Display input actually coming from standard input
-as input coming from file @var{LABEL}.  This is
-especially useful when implementing tools like
-@command{zgrep}; e.g.:
+as input coming from file @var{LABEL}.
+This can be useful for commands that transform a file's contents
+before searching; e.g.:
 
 @example
-gzip -cd foo.gz | grep --label=foo -H something
+gzip -cd foo.gz | grep --label=foo -H 'some pattern'
 @end example
 
 @item -n
@@ -1565,6 +1579,26 @@ this is because @samp{.*} matches zero or more characters within a line.
 The @option{-i} option causes @command{grep}
 to ignore case, causing it to match the line @samp{Hello, world!}, which
 it would not otherwise match.
+
+Here is a more complex example session,
+showing the location and contents of any line
+containing @samp{f} and ending in @samp{.c},
+within all files in the current directory whose names
+contain @samp{g} and end in @samp{.h}.
+The command also searches the empty file @file{/dev/null},
+so that file names are displayed
+even if only one file name happens to be of the form @samp{*g*.h}.
+
+@example
+$ @kbd{grep -n 'f.*\.c$' *g*.h /dev/null}
+argmatch.h:1:/* definitions and prototypes for argmatch.c
+@end example
+
+@noindent
+The only line that contains a match is line 1 of @file{argmatch.h}.
+Note that the regular expression syntax used in the pattern differs
+from the globbing syntax that the shell uses to match file names.
+
 @xref{Invoking}, for more details about
 how to invoke @command{grep}.
 

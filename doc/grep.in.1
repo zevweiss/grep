@@ -2,7 +2,7 @@
 .de dT
 .ds Dt \\$2
 ..
-.dT Time-stamp: "2018-05-11"
+.dT Time-stamp: "2019-12-29"
 .\" Update the above date whenever a change to either this file or
 .\" grep.c's 'usage' function results in a nontrivial change to the man page.
 .\" In Emacs, you can update the date by running 'M-x time-stamp'
@@ -169,6 +169,11 @@ in each
 is one or patterns separated by newline characters, and
 .B grep
 prints each line that matches a pattern.
+Typically
+.I PATTERNS
+should be quoted when
+.B grep
+is used in a shell command.
 .PP
 A
 .I FILE
@@ -397,10 +402,10 @@ This is the default when there is only one file
 .BI \-\^\-label= LABEL
 Display input actually coming from standard input as input coming from file
 .IR LABEL .
-This is especially useful when implementing tools like
-.BR zgrep ,
+This can be useful for commands that transform a file's contents
+before searching,
 e.g.,
-.BR "gzip \-cd foo.gz | grep \-\^\-label=foo \-H something" .
+.BR "gzip \-cd foo.gz | grep \-\^\-label=foo \-H 'some pattern'" .
 See also the
 .B \-H
 option.
@@ -943,7 +948,18 @@ versions
 and
 .BR \e) .
 .
-.SH "ENVIRONMENT VARIABLES"
+.SH "EXIT STATUS"
+Normally the exit status is 0 if a line is selected, 1 if no lines
+were selected, and 2 if an error occurred.  However, if the
+.B \-q
+or
+.B \-\^\-quiet
+or
+.B \-\^\-silent
+is used and a line is selected, the exit status is 0 even if an error
+occurred.
+.
+.SH ENVIRONMENT
 The behavior of
 .B grep
 is affected by the following environment variables.
@@ -1271,16 +1287,9 @@ when
 .B POSIXLY_CORRECT
 is not set.
 .
-.SH "EXIT STATUS"
-Normally the exit status is 0 if a line is selected, 1 if no lines
-were selected, and 2 if an error occurred.  However, if the
-.B \-q
-or
-.B \-\^\-quiet
-or
-.B \-\^\-silent
-is used and a line is selected, the exit status is 0 even if an error
-occurred.
+.SH NOTES
+This man page is maintained only fitfully;
+the full documentation is often more up-to-date.
 .
 .SH COPYRIGHT
 Copyright 1998\(en2000, 2002, 2005\(en2018 Free Software Foundation, Inc.
@@ -1319,16 +1328,43 @@ to run out of memory.
 .PP
 Back-references are very slow, and may require exponential time.
 .
+.SH EXAMPLE
+The following example outputs the location and contents of any line
+containing \*(lqf\*(rq and ending in \*(lq.c\*(rq,
+within all files in the current directory whose names
+contain \*(lqg\*(rq and end in \*(lq.h\*(rq.
+The command also searches the empty file /dev/null,
+so that file names are displayed
+even if only one file name happens to be of the form \*(lq*g*.h\*(rq.
+.PP
+.in +2n
+.EX
+$ \fBgrep\fP \-n 'f.*\e.c$' *g*.h /dev/null
+argmatch.h:1:/* definitions and prototypes for argmatch.c
+.EE
+.in
+.PP
+The only line that matches is line 1 of argmatch.h.
+Note that the regular expression syntax used in the pattern differs
+from the globbing syntax that the shell uses to match file names.
+.
 .SH "SEE ALSO"
 .SS "Regular Manual Pages"
-awk(1), cmp(1), diff(1), find(1), gzip(1),
-perl(1), sed(1), sort(1), xargs(1), zgrep(1),
-read(2),
-pcre(3), pcresyntax(3), pcrepattern(3),
-terminfo(5),
-glob(7), regex(7).
-.SS "POSIX Programmer's Manual Page"
-grep(1p).
+.BR awk (1),
+.BR cmp (1),
+.BR diff (1),
+.BR find (1),
+.BR perl (1),
+.BR sed (1),
+.BR sort (1),
+.BR xargs (1),
+.BR read (2),
+.BR pcre (3),
+.BR pcresyntax (3),
+.BR pcrepattern (3),
+.BR terminfo (5),
+.BR glob (7),
+.BR regex(7).
 .SS "Full Documentation"
 A
 .UR https://www.gnu.org/software/grep/manual/
@@ -1345,9 +1381,6 @@ programs are properly installed at your site, the command
 .PP
 should give you access to the complete manual.
 .
-.SH NOTES
-This man page is maintained only fitfully;
-the full documentation is often more up-to-date.
 .\" Work around problems with some troff -man implementations.
 .br
 .
