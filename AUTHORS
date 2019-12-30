@@ -6,16 +6,20 @@
 
 Mike Haertel wrote the main program and the dfa and kwset matchers.
 
+Isamu Hasegawa wrote the POSIX regular expression matcher, which is
+part of the GNU C Library and is distributed as part of GNU grep for
+use on non-GNU systems.  Ulrich Drepper, Paul Eggert, Paolo Bonzini,
+Stanislav Brabec, Assaf Gordon, Jakub Jelinek, Jim Meyering, Arnold
+Robbins, Andreas Schwab and Florian Weimer also contributed to this
+matcher.
+
 Arthur David Olson contributed the heuristics for finding fixed substrings
 at the end of dfa.c.
 
-Richard Stallman and Karl Berry wrote the regex backtracking matcher.
-
 Henry Spencer wrote the original test suite from which grep's was derived.
-
 Scott Anderson invented the Khadafy test.
 
-David MacKenzie wrote the automatic configuration software use to
+David MacKenzie wrote the automatic configuration software used to
 produce the configure script.
 
 Authors of the replacements for standard library routines are identified
@@ -26,17 +30,16 @@ non-matching text before calling the regexp matcher was originally due
 to James Woods.  He also contributed some code to early versions of
 GNU grep.
 
-Mike Haertel would like to thank Andrew Hume for many fascinating discussions
-of string searching issues over the years.  Hume & Sunday's excellent
-paper on fast string searching (AT&T Bell Laboratories CSTR #156)
-describes some of the history of the subject, as well as providing
-exhaustive performance analysis of various implementation alternatives.
+Mike Haertel would like to thank Andrew Hume for many fascinating
+discussions of string searching issues over the years.  Hume and
+Sunday's excellent paper on fast string searching describes some of
+the history of the subject, as well as providing exhaustive
+performance analysis of various implementation alternatives.
 The inner loop of GNU grep is similar to Hume & Sunday's recommended
-"Tuned Boyer Moore" inner loop.
-
-More work was done on regex.[ch] by Ulrich Drepper and Arnold
-Robbins. Regex is now part of GNU C library, see this package
-for complete details and credits.
+"Tuned Boyer Moore" inner loop.  See: Hume A, Sunday D.
+Fast string searching. Software Pract Exper. 1991;21(11):1221-48.
+https://doi.org/10.1002/spe.4380211105
+https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.13.9460&rep=rep1&type=pdf
 
 Arnold Robbins contributed to improve dfa.[ch]. In fact
 it came straight from gawk-3.0.3 with small editing and fixes.
