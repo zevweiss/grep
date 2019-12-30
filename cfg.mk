@@ -67,6 +67,12 @@ export XZ_OPT = -6e
 
 old_NEWS_hash = 1cecbfe717381ff5abaf2f871b74b8db
 
+# We prefer to spell it back-reference, as POSIX does.
+sc_prohibit_backref:
+	@prohibit=back''reference					\
+	halt='spell it "back-reference"'				\
+	  $(_sc_search_regexp)
+
 # Many m4 macros names once began with 'jm_'.
 # Make sure that none are inadvertently reintroduced.
 sc_prohibit_jm_in_m4:
