@@ -1333,13 +1333,18 @@ The following example outputs the location and contents of any line
 containing \*(lqf\*(rq and ending in \*(lq.c\*(rq,
 within all files in the current directory whose names
 contain \*(lqg\*(rq and end in \*(lq.h\*(rq.
-The command also searches the empty file /dev/null,
-so that file names are displayed
+The
+.B \-n
+option outputs line numbers, the
+.B \-\-
+argument treats expansions of \*(lq*g*.h\*(rq starting with \*(lq\-\*(rq
+as file names not options,
+and the empty file /dev/null causes file names to be output
 even if only one file name happens to be of the form \*(lq*g*.h\*(rq.
 .PP
 .in +2n
 .EX
-$ \fBgrep\fP \-n 'f.*\e.c$' *g*.h /dev/null
+$ \fBgrep\fP \-n \-\- 'f.*\e.c$' *g*.h /dev/null
 argmatch.h:1:/* definitions and prototypes for argmatch.c
 .EE
 .in
