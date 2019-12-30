@@ -1536,6 +1536,8 @@ When multiple regular expressions are given with
 @option{-e} or from a file (@samp{-f @var{file}}),
 back-references are local to each expression.
 
+@xref{Known Bugs}, for some known problems with back-references.
+
 @node Basic vs Extended
 @section Basic vs Extended Regular Expressions
 @cindex basic regular expressions
@@ -1965,6 +1967,11 @@ GNU bug report logs for @command{grep}}.
 If you find a bug not listed there, please email it to
 @email{bug-grep@@gnu.org} to create a new bug report.
 
+@menu
+* Known Bugs::
+@end menu
+
+@node Known Bugs
 @section Known Bugs
 @cindex Bugs, known
 
@@ -1974,7 +1981,17 @@ In addition, certain other
 obscure regular expressions require exponential time and
 space, and may cause @command{grep} to run out of memory.
 
-Back-references are very slow, and may require exponential time.
+Back-references can greatly slow down matching, as they can generate
+exponentially many matching possibilities that can consume both time
+and memory to explore.  Also, the POSIX specification for
+back-references is at times unclear.  Furthermore, many regular
+expression implementations have back-reference bugs that can cause
+programs to return incorrect answers or even crash, and fixing these
+bugs has often been low-priority---for example, as of 2019 the GNU C
+library bug database contained back-reference bugs 52, 10844, 11053,
+and 23522, with little sign of forthcoming fixes.  Luckily,
+back-references are rarely useful and it should be little trouble to
+avoid them in practical applications.
 
 
 @node Copying
