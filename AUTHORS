@@ -39,7 +39,6 @@ The inner loop of GNU grep is similar to Hume & Sunday's recommended
 "Tuned Boyer Moore" inner loop.  See: Hume A, Sunday D.
 Fast string searching. Software Pract Exper. 1991;21(11):1221-48.
 https://doi.org/10.1002/spe.4380211105
-https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.13.9460&rep=rep1&type=pdf
 
 Arnold Robbins contributed to improve dfa.[ch]. In fact
 it came straight from gawk-3.0.3 with small editing and fixes.
