@@ -1,5 +1,5 @@
 #! /bin/sh
-# Before grep-2.19, grep -P and -w/-x would not with a backreference.
+# Before grep-2.19, grep -P and -w/-x would not work with a back-reference.
 #
 # Copyright (C) 2014-2019 Free Software Foundation, Inc.
 #

@@ -22,7 +22,7 @@ GNU grep NEWS                                    -*- outline -*-
   [Bug#37716 introduced in grep 3.2]
 
   A performance bug has been fixed when grep is given many patterns,
-  each with no backreference.
+  each with no back-reference.
   [Bug#33249 introduced in grep 2.5]
 
   A performance bug has been fixed for patterns like '01.2' that
@@ -47,7 +47,7 @@ GNU grep NEWS                                    -*- outline -*-
   the following would print nothing (it should print the input line):
     echo 123-x|LC_ALL=C grep '.\bx'
   Using a multibyte locale, using certain regexp constructs (some ranges,
-  backreferences), or forcing use of the PCRE matcher via --perl-regexp (-P)
+  back-references), or forcing use of the PCRE matcher via --perl-regexp (-P)
   would avoid the bug.
   [bug introduced in grep 3.2]
 
@@ -240,7 +240,7 @@ GNU grep NEWS                                    -*- outline -*-
 
   grep -z would match strings it should not.  To trigger the bug, you'd
   have to use a regular expression including an anchor (^ or $) and a
-  feature like a range or a backreference, causing grep to forego its DFA
+  feature like a range or a back-reference, causing grep to forego its DFA
   matcher and resort to using re_search.  With a multibyte locale, that
   matcher could mistakenly match a string containing a newline.
   For example, this command:
@@ -473,7 +473,7 @@ GNU grep NEWS                                    -*- outline -*-
   Previously it was unreliable, and sometimes crashed or looped.
   [bug introduced in grep-2.16]
 
-  grep -P now works with -w and -x and backreferences. Before,
+  grep -P now works with -w and -x and back-references. Before,
   echo aa|grep -Pw '(.)\1' would fail to match, yet
   echo aa|grep -Pw '(.)\2' would match.
 
@@ -809,7 +809,7 @@ GNU grep NEWS                                    -*- outline -*-
   X{0,0} is implemented correctly.  It used to be a synonym of X{0,1}.
   [bug present since "the beginning"]
 
-  In multibyte locales, regular expressions including backreferences
+  In multibyte locales, regular expressions including back-references
   no longer exhibit quadratic complexity (i.e., they are orders
   of magnitude faster). [bug present since multi-byte character set
   support was introduced in 2.5.2]
@@ -967,7 +967,7 @@ Version 2.5
   - The new option --line-buffered fflush on everyline.  There is a noticeable
     slow down when forcing line buffering.
 
-  - Back references  are now local to the regex.
+  - Back-references are now local to the regex.
     grep -e '\(a\)\1' -e '\(b\)\1'
     The last backref \1 in the second expression refer to \(b\)
 

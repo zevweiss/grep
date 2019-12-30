@@ -103,8 +103,8 @@ kwsmusts (struct dfa_comp *dc)
   dfamustfree (dm);
 }
 
-/* Return true if KEYS, of length LEN, might contain a backreference.
-   Return false if KEYS cannot contain a backreference.
+/* Return true if KEYS, of length LEN, might contain a back-reference.
+   Return false if KEYS cannot contain a back-reference.
    BS_SAFE is true of encodings where a backslash cannot appear as the
    last byte of a multibyte character.  */
 static bool _GL_ATTRIBUTE_PURE
@@ -116,13 +116,13 @@ possible_backrefs_in_pattern (char const *keys, ptrdiff_t len, bool bs_safe)
      multibyte character.  */
   int second_backslash = bs_safe ? '\\' : CHAR_MAX + 1;
 
-  /* This code can return true even if KEYS lacks a backreference, for
+  /* This code can return true even if KEYS lacks a back-reference, for
      patterns like [\2], or for encodings where '\' appears as the last
      byte of a multibyte character.  However, false alarms should be
      rare and do not affect correctness.  */
 
   /* Do not look for a backslash in the pattern's last byte, since it
-     can't be part of a backreference and this streamlines the code.  */
+     can't be part of a back-reference and this streamlines the code.  */
   len--;
 
   if (0 <= len)
@@ -204,7 +204,7 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
 
   char const *prev = pattern;
 
-  /* Buffer containing backreference-free patterns.  */
+  /* Buffer containing back-reference-free patterns.  */
   char *buf = NULL;
   ptrdiff_t buflen = 0;
   size_t bufalloc = 0;
@@ -449,7 +449,7 @@ EGexecute (void *vdc, char const *buf, size_t size, size_t *match_size,
           end = memchr (next_beg, eol, buflim - next_beg);
           end = end ? end + 1 : buflim;
 
-          /* Successful, no backreferences encountered! */
+          /* Successful, no back-references encountered! */
           if (!backref)
             goto success;
           ptr = beg;

@@ -152,7 +152,7 @@ a\\$		&	a$
 a\\$		&	a\$
 a\\$		&	a\	a\
 
-# back references, ugh
+# back-references, ugh
 ##a\(b\)\2c	bC	ESUBREG
 ##a\(b\1\)c	bC	ESUBREG
 a\(b*\)c\1d	b	abbcbbd	abbcbbd	bb
@@ -166,7 +166,7 @@ a\(\([bc]\)\2\)*d	b	abbcbd
 a\(\(b\)*\2\)*d		b	abbbd	abbbd
 # here is a case that no NFA implementation does right
 \(ab*\)[ab]*\1	b	ababaaa	ababaaa	a
-# check out normal matching in the presence of back refs
+# check out normal matching in the presence of back-references
 \(a\)\1bcd	b	aabcd	aabcd
 \(a\)\1bc*d	b	aabcd	aabcd
 \(a\)\1bc*d	b	aabd	aabd
