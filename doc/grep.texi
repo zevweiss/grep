@@ -1615,11 +1615,11 @@ Here are some common questions and answers about @command{grep} usage.
 How can I list just the names of matching files?
 
 @example
-grep -l 'main' *.c
+grep -l 'main' test-*.c
 @end example
 
 @noindent
-lists the names of all C files in the current directory whose contents
+lists names of @samp{test-*.c} files in the current directory whose contents
 mention @samp{main}.
 
 @item
@@ -1633,45 +1633,54 @@ grep -r 'hello' /home/gigi
 searches for @samp{hello} in all files
 under the @file{/home/gigi} directory.
 For more control over which files are searched,
-use @command{find}, @command{grep}, and @command{xargs}.
+use @command{find} and @command{grep}.
 For example, the following command searches only C files:
 
 @example
-find /home/gigi -name '*.c' -print0 | xargs -0r grep -H 'hello'
+find /home/gigi -name '*.c' ! -type d \
+  -exec grep -H 'hello' '@{@}' +
 @end example
 
 This differs from the command:
 
 @example
-grep -H 'hello' *.c
+grep -H 'hello' /home/gigi/*.c
 @end example
 
-which merely looks for @samp{hello} in all files in the current
-directory whose names end in @samp{.c}.
-The @samp{find ...} command line above is more similar to the command:
+which merely looks for @samp{hello} in non-hidden C files in
+@file{/home/gigi} whose names end in @samp{.c}.
+The @command{find} command line above is more similar to the command:
 
 @example
-grep -rH --include='*.c' 'hello' /home/gigi
+grep -r --include='*.c' 'hello' /home/gigi
 @end example
 
 @item
-What if a pattern has a leading @samp{-}?
+What if a pattern or file has a leading @samp{-}?
 
 @example
-grep -e '--cut here--' *
+grep -- '--cut here--' *
 @end example
 
 @noindent
 searches for all lines matching @samp{--cut here--}.
-Without @option{-e},
+Without @option{--},
 @command{grep} would attempt to parse @samp{--cut here--} as a list of
-options.
+options, and there would be similar problems with any file names
+beginning with @samp{-}.
+
+Alternatively, you can prevent misinterpretation of leading @samp{-}
+by using @option{-e} for patterns and leading @samp{./} for files:
+
+@example
+grep -e '--cut here--' ./*
+@end example
 
 @item
 Suppose I want to search for a whole word, not a part of a word?
 
 @example
-grep -w 'hello' *
+grep -w 'hello' test*.log
 @end example
 
 @noindent
@@ -1682,7 +1691,7 @@ For more control, use @samp{\<} and
 For example:
 
 @example
-grep 'hello\>' *
+grep 'hello\>' test*.log
 @end example
 
 @noindent
@@ -1693,7 +1702,7 @@ searches only for words ending in @samp{hello}, so it matches the word
 How do I output context around the matching lines?
 
 @example
-grep -C 2 'hello' *
+grep -C 2 'hello' test*.log
 @end example
 
 @noindent
@@ -1775,7 +1784,7 @@ Why does the empty pattern match every input line?
 The @command{grep} command searches for lines that contain strings
 that match a pattern.  Every line contains the empty string, so an
 empty pattern causes @command{grep} to find a match on each line.  It
-is not the only such pattern: @samp{^}, @samp{$}, @samp{.*}, and many
+is not the only such pattern: @samp{^}, @samp{$}, and many
 other patterns cause @command{grep} to match every line.
 
 To match empty lines, use the pattern @samp{^$}.  To match blank
