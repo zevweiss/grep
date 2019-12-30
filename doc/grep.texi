@@ -1801,31 +1801,6 @@ cat /etc/passwd | grep 'alain' - /etc/motd
 @end example
 
 @item
-@cindex palindromes
-How to express palindromes in a regular expression?
-
-It can be done by using back-references;
-for example,
-a palindrome of 4 characters can be written with a BRE:
-
-@example
-grep -w -e '\(.\)\(.\).\2\1' file
-@end example
-
-It matches the word ``radar'' or ``civic.''
-
-Guglielmo Bondioni proposed a single RE
-that finds all palindromes up to 19 characters long
-using @w{9 subexpressions} and @w{9 back-references}:
-
-@smallexample
-grep -E -e '^(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?).?\9\8\7\6\5\4\3\2\1$' file
-@end smallexample
-
-Note this is done by using GNU ERE extensions;
-it might not be portable to other implementations of @command{grep}.
-
-@item
 Why is this back-reference failing?
 
 @example
