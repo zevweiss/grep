@@ -30,7 +30,7 @@
 @copying
 This manual is for @command{grep}, a pattern matching engine.
 
-Copyright @copyright{} 1999-2002, 2005, 2008-2019 Free Software Foundation,
+Copyright @copyright{} 1999--2002, 2005, 2008--2020 Free Software Foundation,
 Inc.
 
 @quotation
