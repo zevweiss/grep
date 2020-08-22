@@ -15,9 +15,9 @@ for opts in '-m0 y' '-f /dev/null' '-v ""'; do
       eval returns_ 1 grep -l $opts $matcher /dev/null > out || fail=1
       compare /dev/null out || fail=1
     done
-    eval grep -L $opts $matcher /dev/null > out || fail=1
+    eval returns_ 1 grep -L $opts $matcher /dev/null > out || fail=1
     compare exp out || fail=1
-    eval grep -L $opts $matcher /dev/null > /dev/null || fail=1
+    eval returns_ 1 grep -L $opts $matcher /dev/null > /dev/null || fail=1
   done
 done
 

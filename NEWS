@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Changes in behavior
+
+  The --files-without-match (-L) option has reverted to its behavior
+  in grep 3.1 and earlier.  That is, grep -L again succeeds when a
+  line is selected, not when a file is listed.  The behavior in grep
+  3.2 through 3.4 was causing compatibility problems.
+
 
 * Noteworthy changes in release 3.4 (2020-01-02) [stable]
 
