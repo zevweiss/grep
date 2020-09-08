@@ -199,7 +199,7 @@ update_patterns (char *keys, ptrdiff_t dupfree_size, ptrdiff_t size,
   return dst - keys;
 }
 
-/* Map LINENO, the origin-1 line number of one of the input patterns,
+/* Map LINENO, the origin-0 line number of one of the input patterns,
    to the name of the file from which it came.  Return "-" if it was
    read from stdin, "" if it was specified on the command line.
    Set *NEW_LINENO to the origin-1 line number of PATTERN in the file,
@@ -207,7 +207,6 @@ update_patterns (char *keys, ptrdiff_t dupfree_size, ptrdiff_t size,
 char const * _GL_ATTRIBUTE_PURE
 pattern_file_name (size_t lineno, size_t *new_lineno)
 {
-  lineno--;
   ptrdiff_t i;
   for (i = 1; i < patlocs_used; i++)
     if (lineno < patloc[i].lineno)
