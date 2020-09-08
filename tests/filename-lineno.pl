@@ -48,7 +48,7 @@ my @Tests =
    # Show that with two or more errors, grep now prints all diagnostics:
    ['invalid-re-2-files', '-f g -f h', {EXIT=>2},
     {AUX=>{g=>"1\n2[[\n3\n4[[\n"}},
-    {AUX=>{h=>"\n\n[[\n"}},
+    {AUX=>{h=>"5\n6\n7[[\n"}},
     $err_subst,
     {ERR => "$prog: g:2: Unmatched [...\n"
          . "$prog: g:4: Unmatched [...\n"
@@ -59,7 +59,7 @@ my @Tests =
    # Like the above, but on the other lines.
    ['invalid-re-2-files2', '-f g -f h', {EXIT=>2},
     {AUX=>{g=>"1[[\n2\n3[[\n4\n"}},
-    {AUX=>{h=>"[[\n[[\n\n"}},
+    {AUX=>{h=>"5[[\n6[[\n7\n"}},
     $err_subst,
     {ERR => "$prog: g:1: Unmatched [...\n"
          . "$prog: g:3: Unmatched [...\n"
@@ -68,9 +68,22 @@ my @Tests =
     },
    ],
 
+   # Make sure the line numbers are right when some regexps are duplicates.
+   ['invalid-re-line-numbers', '-f g -f h', {EXIT=>2},
+    {AUX=>{g=>"1[[\n\n3[[\n\n5[[\n"}},
+    {AUX=>{h=>"1[[\n\n\n4[[\n\n6[[\n"}},
+    $err_subst,
+    {ERR => "$prog: g:1: Unmatched [...\n"
+         . "$prog: g:3: Unmatched [...\n"
+         . "$prog: g:5: Unmatched [...\n"
+         . "$prog: h:4: Unmatched [...\n"
+         . "$prog: h:6: Unmatched [...\n"
+    },
+   ],
+
    # Show that with two '-e'-specified erroneous regexps,
    # there is no file name or line number.
-   ['invalid-re-2e', '-e "[[" -e "[["', {EXIT=>2},
+   ['invalid-re-2e', '-e "1[[" -e "2[["', {EXIT=>2},
     $err_subst,
     {ERR => "$prog: Unmatched [...\n" x 2},
    ],

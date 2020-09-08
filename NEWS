@@ -9,6 +9,10 @@ GNU grep NEWS                                    -*- outline -*-
   line is selected, not when a file is listed.  The behavior in grep
   3.2 through 3.4 was causing compatibility problems.
 
+** Bug fixes
+
+  A performance regression with many duplicate patterns has been fixed.
+  [Bug#43040 introduced in grep 3.4]
 
 * Noteworthy changes in release 3.4 (2020-01-02) [stable]
 

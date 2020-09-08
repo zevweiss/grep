@@ -24,6 +24,7 @@
 #include <wchar.h>
 #include <inttypes.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include "system.h"
 
@@ -41,6 +42,7 @@
 #include "getopt.h"
 #include "getprogname.h"
 #include "grep.h"
+#include "hash.h"
 #include "intprops.h"
 #include "propername.h"
 #include "quote.h"
@@ -82,72 +84,136 @@ static bool align_tabs;
 /* Print width of line numbers and byte offsets.  Nonzero if ALIGN_TABS.  */
 static int offset_width;
 
-/* See below */
-struct FL_pair
+/* An entry in the PATLOC array saying where patterns came from.  */
+struct patloc
   {
+    /* Line number of the pattern in PATTERN_ARRAY.  Line numbers
+       start at 0, and each pattern is terminated by '\n'.  */
+    ptrdiff_t lineno;
+
+    /* Input location of the pattern.  The FILENAME "-" represents
+       standard input, and "" represents the command line.  FILELINE is
+       origin-1 for files and is irrelevant for the command line.  */
     char const *filename;
-    size_t lineno;
+    ptrdiff_t fileline;
   };
 
-/* A list of lineno,filename pairs corresponding to -f FILENAME
-   arguments. Since we store the concatenation of all patterns in
-   a single array, KEYS, be they from the command line via "-e PAT"
-   or read from one or more -f-specified FILENAMES.  Given this
-   invocation, grep -f <(seq 5) -f <(seq 2) -f <(seq 3) FILE, there
-   will be three entries in LF_PAIR: {1, x} {6, y} {8, z}, where
-   x, y and z are just place-holders for shell-generated names.  */
-static struct FL_pair *fl_pair;
-static size_t n_fl_pair_slots;
-/* Count not only -f-specified files, but also individual -e operands
-   and any command-line argument that serves as a regular expression.  */
-static size_t n_pattern_files;
+/* The array of pattern locations.  The concatenation of all patterns
+   is stored in a single array, KEYS.  Given the invocation
+   'grep -f <(seq 5) -f <(seq 6) -f <(seq 3)', there will initially be
+   28 bytes in KEYS.  After duplicate patterns are removed, KEYS
+   will have 12 bytes and PATLOC will be {0,x,1}, {10,y,1}
+   where x, y and z are just place-holders for shell-generated names
+   since and z is omitted as it contains only duplicates.  Sometimes
+   removing duplicates will grow PATLOC, since each run of
+   removed patterns not at a file start or end requires another
+   PATLOC entry for the first non-removed pattern.  */
+static struct patloc *patloc;
+static size_t patlocs_allocated, patlocs_used;
 
-/* The number of patterns seen so far.
-   It is advanced by fl_add and, when needed, used in pattern_file_name
-   to derive a file-relative line number.  */
+/* Pointer to the array of patterns, each terminated by newline.  */
+static char *pattern_array;
+
+/* The number of unique patterns seen so far.  */
 static size_t n_patterns;
 
-/* Return the number of newline bytes in BUF with size SIZE.  */
+/* Hash table of patterns seen so far.  */
+static Hash_table *pattern_table;
+
+/* Hash and compare newline-terminated patterns for textual equality.
+   Patterns are represented by origin-1 offsets into PATTERN_ARRAY,
+   cast to void *.  The origin-1 is so that the first pattern offset
+   does not appear to be a null pointer when cast to void *.  */
 static size_t _GL_ATTRIBUTE_PURE
-count_nl_bytes (char const *buf, size_t size)
+hash_pattern (void const *pat, size_t n_buckets)
 {
-  char const *p = buf;
-  char const *end_p = buf + size;
-  size_t n = 0;
-  while ((p = memchr (p, '\n', end_p - p)))
-    p++, n++;
-  return n;
+  size_t h = 0;
+  intptr_t pat_offset = (intptr_t) pat - 1;
+  for (char const *s = pattern_array + pat_offset; *s != '\n'; s++)
+    h = *s + ((h << 9) | (h >> (SIZE_WIDTH - 9)));
+  return h % n_buckets;
+}
+static bool _GL_ATTRIBUTE_PURE
+compare_patterns (void const *a, void const *b)
+{
+  intptr_t a_offset = (intptr_t) a - 1;
+  intptr_t b_offset = (intptr_t) b - 1;
+  char const *p = pattern_array + a_offset;
+  char const *q = pattern_array + b_offset;
+  for (; *p == *q; p++, q++)
+    if (*p == '\n')
+      return true;
+  return false;
 }
 
-/* Append a FILENAME,line-number pair to FL_PAIR, and update
-   pattern-related counts from the contents of BUF with SIZE bytes.  */
-static void
-fl_add (char const *buf, size_t size, char const *filename)
+/* Update KEYS to remove duplicate patterns, and return the number of
+   bytes in the resulting KEYS.  KEYS contains a sequence of patterns
+   each terminated by '\n'.  The first DUPFREE_SIZE bytes are a
+   sequence of patterns with no duplicates; SIZE is the total number
+   of bytes in KEYS.  If some patterns past the first DUPFREE_SIZE
+   bytes are not duplicates, update PATLOCS accordingly.  */
+static ptrdiff_t
+update_patterns (char *keys, ptrdiff_t dupfree_size, ptrdiff_t size,
+                 char const *filename)
 {
-  if (n_fl_pair_slots <= n_pattern_files)
-    fl_pair = x2nrealloc (fl_pair, &n_fl_pair_slots, sizeof *fl_pair);
+  char *dst = keys + dupfree_size;
+  ptrdiff_t fileline = 1;
+  int prev_inserted = 0;
 
-  fl_pair[n_pattern_files].lineno = n_patterns + 1;
-  fl_pair[n_pattern_files].filename = filename;
-  n_pattern_files++;
-  n_patterns += count_nl_bytes (buf, size);
+  char const *srclim = keys + size;
+  ptrdiff_t patsize;
+  for (char const *src = keys + dupfree_size; src < srclim; src += patsize)
+    {
+      char const *patend = memchr (src, '\n', srclim - src);
+      patsize = patend + 1 - src;
+      memmove (dst, src, patsize);
+
+      intptr_t dst_offset_1 = dst - keys + 1;
+      int inserted = hash_insert_if_absent (pattern_table,
+                                            (void *) dst_offset_1, NULL);
+      if (inserted)
+        {
+          if (inserted < 0)
+            xalloc_die ();
+          dst += patsize;
+
+          /* Add a PATLOCS entry unless this input line is simply the
+             next one in the same file.  */
+          if (!prev_inserted)
+            {
+              if (patlocs_used == patlocs_allocated)
+                patloc = x2nrealloc (patloc, &patlocs_allocated,
+                                     sizeof *patloc);
+              patloc[patlocs_used++]
+                = (struct patloc) { .lineno = n_patterns,
+                                    .filename = filename,
+                                    .fileline = fileline };
+            }
+          n_patterns++;
+        }
+
+      prev_inserted = inserted;
+      fileline++;
+    }
+
+  return dst - keys;
 }
 
-/* Map the line number, LINENO, of one of the input patterns to the
-   name of the file from which it came.  If it was read from stdin
-   or if it was specified on the command line, return "-".  */
+/* Map LINENO, the origin-1 line number of one of the input patterns,
+   to the name of the file from which it came.  Return "-" if it was
+   read from stdin, "" if it was specified on the command line.
+   Set *NEW_LINENO to the origin-1 line number of PATTERN in the file,
+   or to an unspecified value if PATTERN came from the command line.  */
 char const * _GL_ATTRIBUTE_PURE
 pattern_file_name (size_t lineno, size_t *new_lineno)
 {
-  size_t i;
-  for (i = 1; i < n_pattern_files; i++)
-    {
-      if (lineno < fl_pair[i].lineno)
-        break;
-    }
-
-  *new_lineno = lineno - fl_pair[i - 1].lineno + 1;
-  return fl_pair[i - 1].filename;
+  lineno--;
+  ptrdiff_t i;
+  for (i = 1; i < patlocs_used; i++)
+    if (lineno < patloc[i].lineno)
+      break;
+  *new_lineno = lineno - patloc[i - 1].lineno + patloc[i - 1].fileline;
+  return patloc[i - 1].filename;
 }
 
 #if HAVE_ASAN
@@ -2330,6 +2396,7 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
         }
     }
 
+  *p = '\n';
   free (*keys_p);
   *keys_p = new_keys;
   *len_p = p - new_keys;
@@ -2424,9 +2491,8 @@ int
 main (int argc, char **argv)
 {
   char *keys = NULL;
-  size_t keycc = 0, oldcc, keyalloc = 0;
+  size_t keycc = 0, keyalloc = 0;
   int matcher = -1;
-  size_t cc;
   int opt, prepended;
   int prev_optind, last_recursive;
   int fread_errno;
@@ -2466,6 +2532,10 @@ main (int argc, char **argv)
   c_stack_action (NULL);
 
   last_recursive = 0;
+
+  pattern_table = hash_initialize (0, 0, hash_pattern, compare_patterns, 0);
+  if (!pattern_table)
+    xalloc_die ();
 
   prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
   if (prepended)
@@ -2565,50 +2635,52 @@ main (int argc, char **argv)
         break;
 
       case 'e':
-        cc = strlen (optarg);
-        if (keyalloc < keycc + cc + 1)
-          {
-            keyalloc = keycc + cc + 1;
-            keys = x2realloc (keys, &keyalloc);
-          }
-        oldcc = keycc;
-        memcpy (keys + oldcc, optarg, cc);
-        keycc += cc;
-        keys[keycc++] = '\n';
-        fl_add (keys + oldcc, cc + 1, "");
+        {
+          ptrdiff_t cc = strlen (optarg);
+          if (keyalloc < keycc + cc + 1)
+            {
+              keyalloc = keycc + cc + 1;
+              pattern_array = keys = x2realloc (keys, &keyalloc);
+            }
+          char *keyend = mempcpy (keys + keycc, optarg, cc);
+          *keyend = '\n';
+          keycc = update_patterns (keys, keycc, keycc + cc + 1, "");
+        }
         break;
 
       case 'f':
-        if (STREQ (optarg, "-"))
-          {
-            if (binary)
-              xset_binary_mode (STDIN_FILENO, O_BINARY);
-            fp = stdin;
-          }
-        else
-          {
-            fp = fopen (optarg, binary ? "rb" : "r");
-            if (!fp)
-              die (EXIT_TROUBLE, errno, "%s", optarg);
-          }
-        oldcc = keycc;
-        for (;; keycc += cc)
-          {
-            if (keyalloc <= keycc + 1)
-              keys = x2realloc (keys, &keyalloc);
-            cc = fread (keys + keycc, 1, keyalloc - (keycc + 1), fp);
-            if (cc == 0)
-              break;
-          }
-        fread_errno = errno;
-        if (ferror (fp))
-          die (EXIT_TROUBLE, fread_errno, "%s", optarg);
-        if (fp != stdin)
-          fclose (fp);
-        /* Append final newline if file ended in non-newline. */
-        if (oldcc != keycc && keys[keycc - 1] != '\n')
-          keys[keycc++] = '\n';
-        fl_add (keys + oldcc, keycc - oldcc, optarg);
+        {
+          if (STREQ (optarg, "-"))
+            {
+              if (binary)
+                xset_binary_mode (STDIN_FILENO, O_BINARY);
+              fp = stdin;
+            }
+          else
+            {
+              fp = fopen (optarg, binary ? "rb" : "r");
+              if (!fp)
+                die (EXIT_TROUBLE, errno, "%s", optarg);
+            }
+          ptrdiff_t newkeycc = keycc, cc;
+          for (;; newkeycc += cc)
+            {
+              if (keyalloc <= newkeycc + 1)
+                pattern_array = keys = x2realloc (keys, &keyalloc);
+              cc = fread (keys + newkeycc, 1, keyalloc - (newkeycc + 1), fp);
+              if (cc == 0)
+                break;
+            }
+          fread_errno = errno;
+          if (ferror (fp))
+            die (EXIT_TROUBLE, fread_errno, "%s", optarg);
+          if (fp != stdin)
+            fclose (fp);
+          /* Append final newline if file ended in non-newline. */
+          if (newkeycc != keycc && keys[newkeycc - 1] != '\n')
+            keys[newkeycc++] = '\n';
+          keycc = update_patterns (keys, keycc, newkeycc, optarg);
+        }
         break;
 
       case 'h':
@@ -2800,21 +2872,25 @@ main (int argc, char **argv)
           /* No keys were specified (e.g. -f /dev/null).  Match nothing.  */
           out_invert ^= true;
           match_lines = match_words = false;
+          keys[keycc++] = '\n';
         }
-      else
-        /* Strip trailing newline. */
-        --keycc;
     }
   else if (optind < argc)
     {
       /* Make a copy so that it can be reallocated or freed later.  */
-      keycc = strlen (argv[optind]);
-      keys = xmemdup (argv[optind++], keycc + 1);
-      fl_add (keys, keycc, "");
+      pattern_array = keys = xstrdup (argv[optind++]);
+      ptrdiff_t patlen = strlen (keys);
+      keys[patlen] = '\n';
+      keycc = update_patterns (keys, 0, patlen + 1, "");
       n_patterns++;
     }
   else
     usage (EXIT_TROUBLE);
+
+  /* Strip trailing newline from keys.  */
+  keycc--;
+
+  hash_free (pattern_table);
 
   bool possibly_tty = false;
   struct stat tmp_stat;
@@ -2887,7 +2963,8 @@ main (int argc, char **argv)
           : (contains_encoding_error (keys, keycc)
              || (match_icase && !fgrep_icase_available (keys, keycc)))))
     {
-      fgrep_to_grep_pattern (&keys, &keycc);
+      fgrep_to_grep_pattern (&pattern_array, &keycc);
+      keys = pattern_array;
       matcher = G_MATCHER_INDEX;
     }
   /* With two or more patterns, if -F works then switch from either -E
