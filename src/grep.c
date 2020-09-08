@@ -164,7 +164,7 @@ update_patterns (char *keys, ptrdiff_t dupfree_size, ptrdiff_t size,
   ptrdiff_t patsize;
   for (char const *src = keys + dupfree_size; src < srclim; src += patsize)
     {
-      char const *patend = memchr (src, '\n', srclim - src);
+      char const *patend = rawmemchr (src, '\n');
       patsize = patend + 1 - src;
       memmove (dst, src, patsize);
 
@@ -1104,8 +1104,7 @@ static void
 nlscan (char const *lim)
 {
   size_t newlines = 0;
-  char const *beg;
-  for (beg = lastnl; beg < lim; beg++)
+  for (char const *beg = lastnl; beg < lim; beg++)
     {
       beg = memchr (beg, eolbyte, lim - beg);
       if (!beg)
@@ -1353,7 +1352,7 @@ prpending (char const *lim)
     lastout = bufbeg;
   for (; 0 < pending && lastout < lim; pending--)
     {
-      char *nl = memchr (lastout, eolbyte, lim - lastout);
+      char *nl = rawmemchr (lastout, eolbyte);
       prline (lastout, nl + 1, SEP_CHAR_REJECTED);
     }
 }
@@ -1394,7 +1393,7 @@ prtext (char *beg, char *lim)
 
       while (p < beg)
         {
-          char *nl = memchr (p, eol, beg - p);
+          char *nl = rawmemchr (p, eol);
           nl++;
           prline (p, nl, SEP_CHAR_REJECTED);
           p = nl;
@@ -1407,7 +1406,7 @@ prtext (char *beg, char *lim)
       /* One or more lines are output.  */
       for (n = 0; p < lim && n < outleft; n++)
         {
-          char *nl = memchr (p, eol, lim - p);
+          char *nl = rawmemchr (p, eol);
           nl++;
           if (!out_quiet)
             prline (p, nl, SEP_CHAR_SELECTED);

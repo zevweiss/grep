@@ -43,14 +43,13 @@ struct kwsearch
   void *re;
 };
 
-/* Compile the -F style PATTERN, containing SIZE bytes.  Return a
-   description of the compiled pattern.  */
+/* Compile the -F style PATTERN, containing SIZE bytes that are
+   followed by '\n'.  Return a description of the compiled pattern.  */
 
 void *
 Fcompile (char *pattern, size_t size, reg_syntax_t ignored)
 {
   kwset_t kwset;
-  ptrdiff_t total = size;
   char *buf = NULL;
   size_t bufalloc = 0;
 
@@ -59,23 +58,12 @@ Fcompile (char *pattern, size_t size, reg_syntax_t ignored)
   char const *p = pattern;
   do
     {
-      ptrdiff_t len;
-      char const *sep = memchr (p, '\n', total);
-      if (sep)
-        {
-          len = sep - p;
-          sep++;
-          total -= (len + 1);
-        }
-      else
-        {
-          len = total;
-          total = 0;
-        }
+      char const *sep = rawmemchr (p, '\n');
+      ptrdiff_t len = sep - p;
 
       if (match_lines)
         {
-          if (eolbyte == '\n' && pattern < p && sep)
+          if (eolbyte == '\n' && pattern < p)
             p--;
           else
             {
@@ -94,9 +82,9 @@ Fcompile (char *pattern, size_t size, reg_syntax_t ignored)
         }
       kwsincr (kwset, p, len);
 
-      p = sep;
+      p = sep + 1;
     }
-  while (p);
+  while (p <= pattern + size);
 
   free (buf);
   ptrdiff_t words = kwswords (kwset);
@@ -259,8 +247,14 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
                                                kwsearch->size,
                                                RE_SYNTAX_GREP);
                   }
-                end = memchr (beg + len, eol, (buf + size) - (beg + len));
-                end = end ? end + 1 : buf + size;
+                if (beg + len < buf + size)
+                  {
+                    end = rawmemchr (beg + len, eol);
+                    end++;
+                  }
+                else
+                  end = buf + size;
+
                 if (EGexecute (kwsearch->re, beg, end - beg, match_size, NULL)
                     != (size_t) -1)
                   goto success_match_words;
@@ -285,8 +279,13 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   return -1;
 
  success:
-  end = memchr (beg + len, eol, (buf + size) - (beg + len));
-  end = end ? end + 1 : buf + size;
+  if (beg + len < buf + size)
+    {
+      end = rawmemchr (beg + len, eol);
+      end++;
+    }
+  else
+    end = buf + size;
  success_match_words:
   beg = memrchr (buf, eol, beg - buf);
   beg = beg ? beg + 1 : buf;
