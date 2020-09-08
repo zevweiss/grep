@@ -162,9 +162,9 @@ regex_compile (struct dfa_comp *dc, char const *p, ptrdiff_t len,
     return true;
 
   /* Emit a filename:lineno: prefix for patterns taken from files.  */
-  size_t pat_lineno = lineno;
+  size_t pat_lineno;
   char const *pat_filename
-    = lineno < 0 ? "\0" : pattern_file_name (lineno + 1, &pat_lineno);
+    = lineno < 0 ? "" : pattern_file_name (lineno + 1, &pat_lineno);
 
   if (*pat_filename == '\0')
     error (0, 0, "%s", err);
