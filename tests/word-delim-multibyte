@@ -34,4 +34,12 @@ for locale in C en_US.UTF-8; do
   compare /dev/null err || fail=1
 done
 
+# Bug#43255
+printf 'a \303\255cone b\n' >in
+for flag in '' -i; do
+  returns_ 1 env LC_ALL=en_US.UTF-8 grep -w $flag cone in >out 2>err || fail=1
+  compare /dev/null out || fail=1
+  compare /dev/null err || fail=1
+done
+
 Exit $fail

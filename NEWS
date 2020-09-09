@@ -11,6 +11,10 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  In UTF-8 locales, grep -w no longer ignores a multibyte word
+  constituent just before what would otherwise be a word match.
+  [Bug#43225 introduced in grep 2.28]
+
   A performance regression with many duplicate patterns has been fixed.
   [Bug#43040 introduced in grep 3.4]
 

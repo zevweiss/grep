@@ -195,7 +195,7 @@ wordchar_prev (char const *buf, char const *cur, char const *end)
     return 0;
   unsigned char b = *--cur;
   if (! localeinfo.multibyte
-      || (localeinfo.using_utf8 && localeinfo.sbclen[b] != -2))
+      || (localeinfo.using_utf8 && localeinfo.sbclen[b] == 1))
     return sbwordchar[b];
   char const *p = buf;
   cur -= mb_goback (&p, NULL, cur, end);
