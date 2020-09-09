@@ -38,7 +38,7 @@ AC_PREREQ([2.64])
 AC_CONFIG_MACRO_DIRS([m4])
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz color-tests parallel-tests
+AM_INIT_AUTOMAKE([1.11 dist-xz color-tests parallel-tests
                   subdir-objects])
 AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 

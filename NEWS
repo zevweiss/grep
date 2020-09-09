@@ -14,6 +14,11 @@ GNU grep NEWS                                    -*- outline -*-
   A performance regression with many duplicate patterns has been fixed.
   [Bug#43040 introduced in grep 3.4]
 
+** Build-related
+
+  "make dist" builds .tar.gz files again, as they are still used in
+  some barebones builds.
+
 * Noteworthy changes in release 3.4 (2020-01-02) [stable]
 
 ** New features
