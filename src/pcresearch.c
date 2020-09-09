@@ -311,6 +311,9 @@ Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
         case PCRE_ERROR_MATCHLIMIT:
           die (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
 
+        case PCRE_ERROR_RECURSIONLIMIT:
+          die (EXIT_TROUBLE, 0, _("exceeded PCRE's recursion limit"));
+
         default:
           /* For now, we lump all remaining PCRE failures into this basket.
              If anyone cares to provide sample grep usage that can trigger

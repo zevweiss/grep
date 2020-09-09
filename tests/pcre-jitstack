@@ -56,7 +56,8 @@ if test $? != 1; then
        || fail=1
 
     # If that failed due to stack overflow, don't cry foul.
-    test $fail = 1 && { grep -q 'stack overflow' err && fail=0 || cat err; }
+    overflow_pat="stack overflow|exceeded PCRE's recursion limit"
+    test $fail = 1 && { grep -Eq "$overflow_pat" err && fail=0 || cat err; }
 fi
 
 Exit $fail
