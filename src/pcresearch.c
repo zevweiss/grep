@@ -90,16 +90,18 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
 
 #if PCRE_EXTRA_MATCH_LIMIT_RECURSION
       if (e == PCRE_ERROR_RECURSIONLIMIT
-          && (PCRE_STUDY_EXTRA_NEEDED || pc->extra)
-          && pc->extra->match_limit_recursion <= ULONG_MAX / 2)
+          && (PCRE_STUDY_EXTRA_NEEDED || pc->extra))
         {
-          pc->extra->match_limit_recursion *= 2;
-          if (pc->extra->match_limit_recursion == 0)
+          unsigned long lim
+            = (pc->extra->flags & PCRE_EXTRA_MATCH_LIMIT_RECURSION
+               ? pc->extra->match_limit_recursion
+               : 0);
+          if (lim <= ULONG_MAX / 2)
             {
-              pc->extra->match_limit_recursion = (1 << 24) - 1;
+              pc->extra->match_limit_recursion = lim ? 2 * lim : (1 << 24) - 1;
               pc->extra->flags |= PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+              continue;
             }
-          continue;
         }
 #endif
 
