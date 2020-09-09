@@ -13,6 +13,7 @@ I.E. the tools checked for by the bootstrap script and include:
 - Rsync      <https://rsync.samba.org/>
 - Tar        <https://www.gnu.org/software/tar/>
 - Texinfo    <https://www.gnu.org/software/texinfo/>
+- XZ Utils   <https://tukaani.org/xz/>
 
 Note please try to install/build official packages for your system.
 If these programs are not available use the following instructions
