@@ -27,6 +27,7 @@ GNU grep NEWS                                    -*- outline -*-
   "make dist" builds .tar.gz files again, as they are still used in
   some barebones builds.
 
+
 * Noteworthy changes in release 3.4 (2020-01-02) [stable]
 
 ** New features
