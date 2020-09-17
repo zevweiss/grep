@@ -70,6 +70,7 @@ TESTS =						\
   backslash-s-vs-invalid-multibyte		\
   big-hole					\
   big-match					\
+  binary-file-matches				\
   bogus-wctob					\
   bre						\
   c-locale					\
