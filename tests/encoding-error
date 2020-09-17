@@ -25,8 +25,7 @@ grep '^A' in >out || fail=1
 compare a out || fail=1
 
 grep '^P' in >out || fail=1
-printf 'Binary file in matches\n' >exp || framework_failure_
-compare exp out || fail=1
+compare /dev/null out || fail=1
 
 grep -I '^P' in >out 2>err || fail=1
 compare /dev/null out || fail=1
@@ -39,7 +38,7 @@ returns_ 1 grep '^X' in >out || fail=1
 compare /dev/null out || fail=1
 
 grep . in >out || fail=1
-(cat a j && printf 'Binary file in matches\n') >exp || framework_failure_
+cat a j >exp || framework_failure_
 compare exp out || fail=1
 
 grep -I . in >out 2>err || fail=1

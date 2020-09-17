@@ -1754,7 +1754,8 @@ to output lines even from files that appear to be binary, use the
 @option{-a} or @samp{--binary-files=text} option.
 To eliminate the
 ``Binary file matches'' messages, use the @option{-I} or
-@samp{--binary-files=without-match} option.
+@samp{--binary-files=without-match} option,
+or the @option{-s} or @option{--no-messages} option.
 
 @item
 Why doesn't @samp{grep -lv} print non-matching file names?

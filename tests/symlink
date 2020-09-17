@@ -58,11 +58,7 @@ do
 
     printf "$exp" >exp || framework_failure_
 
-    LC_ALL=C sort grepout >out-t || fail=1
-
-    # Ignore "Binary file d matches" on systems for which
-    # reading from a directory actually succeeds.
-    grep -v Binary out-t > out; case $? in 0|1) ;; *) fail=1;; esac
+    LC_ALL=C sort grepout >out || fail=1
 
     compare exp out || fail=1
   done

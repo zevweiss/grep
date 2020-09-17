@@ -1641,14 +1641,10 @@ grep (int fd, struct stat const *st, bool *ineof)
  finish_grep:
   done_on_match = done_on_match_0;
   out_quiet = out_quiet_0;
-  if (binary_files == BINARY_BINARY_FILES && !out_quiet
+  if (binary_files == BINARY_BINARY_FILES && ! (out_quiet | suppress_errors)
       && (encoding_error_output
           || (0 <= nlines_first_null && nlines_first_null < nlines)))
-    {
-      printf_errno (_("Binary file %s matches\n"), input_filename ());
-      if (line_buffered)
-        fflush_errno ();
-    }
+    error (0, 0, _("Binary file %s matches"), quote (input_filename ()));
   return nlines;
 }
 

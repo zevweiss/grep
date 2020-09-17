@@ -56,7 +56,7 @@ echo xxx >exp || framework_failure_
 grep xxx in >out || fail=1
 compare exp out || fail=1
 
-printf '%s\n' xxx 'Binary file in matches' > exp || framework_failure_
+printf 'xxx\n' > exp || framework_failure_
 grep -E 'xxx|z' in >out || fail=1
 compare exp out || fail=1
 

@@ -22,7 +22,7 @@ require_unibyte_locale
 fail=0
 
 printf 'a\n\200\nb\n' >in || framework_failure_
-printf 'a\nBinary file in matches\n' >exp || framework_failure_
+printf 'a\n' >exp || framework_failure_
 grep . in >out || fail=1
 
 # In some unibyte locales, \200 is an encoding error;

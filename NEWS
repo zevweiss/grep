@@ -4,6 +4,14 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Changes in behavior
 
+  The "Binary file FOO matches" message is now sent to standard error
+  and FOO is now quoted, to avoid confusion with ordinary output and
+  when file names contain spaces and the like.  For example, commands
+  like 'grep PATTERN FILE | wc' no longer add 1 to the count of
+  matching text lines due to the presence of the message.  Like other
+  stderr messages, the message is now omitted if the --no-messages
+  (-s) option is given.
+
   The --files-without-match (-L) option has reverted to its behavior
   in grep 3.1 and earlier.  That is, grep -L again succeeds when a
   line is selected, not when a file is listed.  The behavior in grep

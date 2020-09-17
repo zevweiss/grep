@@ -24,12 +24,10 @@ else
   test $status -eq 2
 fi || fail=1
 
-echo 'Binary file input matches' >binary-file-matches
-
 LC_ALL=en_US.UTF-8 timeout 10 grep -F $(encode A) input > out
 status=$?
 if test $status -eq 0; then
-  compare binary-file-matches out
+  compare /dev/null out
 elif test $status -eq 1; then
   compare_dev_null_ /dev/null out
 else
