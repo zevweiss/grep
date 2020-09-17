@@ -11,6 +11,9 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep -I no longer issues a spurious "Binary file FOO matches" line.
+  [Bug#33552 introduced in grep 2.23]
+
   In UTF-8 locales, grep -w no longer ignores a multibyte word
   constituent just before what would otherwise be a word match.
   [Bug#43225 introduced in grep 2.28]
