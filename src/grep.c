@@ -45,7 +45,6 @@
 #include "hash.h"
 #include "intprops.h"
 #include "propername.h"
-#include "quote.h"
 #include "safe-read.h"
 #include "search.h"
 #include "c-strcase.h"
@@ -1644,7 +1643,7 @@ grep (int fd, struct stat const *st, bool *ineof)
   if (binary_files == BINARY_BINARY_FILES && ! (out_quiet | suppress_errors)
       && (encoding_error_output
           || (0 <= nlines_first_null && nlines_first_null < nlines)))
-    error (0, 0, _("binary file %s matches"), quote (input_filename ()));
+    error (0, 0, _("%s: binary file matches"), input_filename ());
   return nlines;
 }
 
@@ -1682,8 +1681,7 @@ grepdirent (FTS *fts, FTSENT *ent, bool command_line)
 
     case FTS_DC:
       if (!suppress_errors)
-        error (0, 0, _("warning: %s: %s"), filename,
-               _("recursive directory loop"));
+        error (0, 0, _("%s: warning: recursive directory loop"), filename);
       return true;
 
     case FTS_DNR:
@@ -1903,8 +1901,7 @@ grepdesc (int desc, bool command_line)
       && S_ISREG (st.st_mode) && SAME_INODE (st, out_stat))
     {
       if (! suppress_errors)
-        error (0, 0, _("input file %s is also the output"),
-               quote (input_filename ()));
+        error (0, 0, _("%s: input file is also the output"), input_filename ());
       errseen = true;
       goto closeout;
     }

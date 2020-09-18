@@ -4,13 +4,19 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Changes in behavior
 
-  The "Binary file FOO matches" message is now sent to standard error
-  and FOO is now quoted, to avoid confusion with ordinary output and
-  when file names contain spaces and the like.  For example, commands
+  The message that a binary file matches is now sent to standard error
+  and the message has been reworded from "Binary file FOO matches" to
+  "grep: FOO: binary file matches", to avoid confusion with ordinary
+  output or when file names contain spaces and the like, and to be
+  more consistent with other diagnostics.  For example, commands
   like 'grep PATTERN FILE | wc' no longer add 1 to the count of
   matching text lines due to the presence of the message.  Like other
   stderr messages, the message is now omitted if the --no-messages
   (-s) option is given.
+
+  Two other stderr messages now use the typical form too.  They are
+  now "grep: FOO: warning: recursive directory loop" and "grep: FOO:
+  input file is also the output".
 
   The --files-without-match (-L) option has reverted to its behavior
   in grep 3.1 and earlier.  That is, grep -L again succeeds when a

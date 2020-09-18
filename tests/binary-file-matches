@@ -11,7 +11,7 @@
 
 fail=0
 
-echo "grep: binary file '(standard input)' matches" > exp \
+echo "grep: (standard input): binary file matches" > exp \
   || framework_failure_
 
 printf 'a\0' | grep a > out 2> err || fail=1

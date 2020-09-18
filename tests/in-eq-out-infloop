@@ -17,13 +17,13 @@ echo "$v" > out || framework_failure_
 for arg in out - ''; do
   # Accommodate both 'out' and '(standard input)', as well as
   # the multi-byte quoting we see on OS/X-based systems.
-  echo grep: input file ... is also the output > err.exp || framework_failure_
+  echo grep: ...: input file is also the output > err.exp || framework_failure_
 
   # Require an exit status of 2.
   # grep-2.8 and earlier would infloop with $arg = out.
   # grep-2.10 and earlier would infloop with $arg = - or $arg = ''.
   timeout 10 grep 0 $arg < out >> out 2> err; st=$?; test $st = 2 || fail=1
-  sed 's/file .* is/file ... is/' err > k && mv k err
+  sed 's/grep: .*: /grep: ...: /' err > k && mv k err
   # Normalize the diagnostic prefix from e.g., "/mnt/dir/grep: " to "grep: "
   sed 's/^[^:]*: /grep: /' err > k && mv k err
   compare err.exp err || fail=1
