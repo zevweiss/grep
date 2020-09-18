@@ -26,7 +26,7 @@
 
 struct dfa_comp
 {
-  /* KWset compiled pattern.  For Ecompile and Gcompile, we compile
+  /* KWset compiled pattern.  For GEAcompile, we compile
      a list of strings, at least one of which is known to occur in
      any string matching the regexp. */
   kwset_t kwset;
