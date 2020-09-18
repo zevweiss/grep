@@ -2471,6 +2471,9 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
     {
       *len_p = p - new_keys;
       memcpy (keys, new_keys, p - new_keys);
+      /* We have just shortened this pattern.
+         Preserve the invariant that it is newline-terminated.  */
+      keys[*len_p] = '\n';
     }
   result = F_MATCHER_INDEX;
 

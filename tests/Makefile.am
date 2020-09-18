@@ -66,6 +66,7 @@ TESTS =						\
   backref-alt					\
   backref-multibyte-slow			\
   backref-word					\
+  backslash-dot					\
   backslash-s-and-repetition-operators		\
   backslash-s-vs-invalid-multibyte		\
   big-hole					\
