@@ -2419,6 +2419,8 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
           goto fail;
 
         case '(': case '+': case '?': case '{': case '|':
+          /* There is no "case ')'" here, as "grep -E ')'" acts like
+             "grep -E '\)'".  */
           if (matcher != G_MATCHER_INDEX)
             goto fail;
           break;
@@ -2435,6 +2437,10 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
                 goto fail;
 
               case '(': case '+': case '?': case '{': case '|':
+                /* Pass '\)' to GEAcompile so it can complain.  Otherwise,
+                   "grep '\)'" would act like "grep ')'" while "grep '.*\)'
+                   would be an error.  */
+              case ')':
                 if (matcher == G_MATCHER_INDEX)
                   goto fail;
                 FALLTHROUGH;

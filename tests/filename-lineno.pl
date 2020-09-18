@@ -87,6 +87,22 @@ my @Tests =
     $err_subst,
     {ERR => "$prog: Unmatched [...\n" x 2},
    ],
+
+   # Test unmatched ) as well.  It is OK with -E and an error with -G and -P.
+   ['invalid-re-E-paren', '-E ")"', {IN=>''}, {EXIT=>1}],
+   ['invalid-re-E-star-paren', '-E ".*)"', {IN=>''}, {EXIT=>1}],
+   ['invalid-re-G-paren', '-G "\\)"', {EXIT=>2},
+    {ERR => "$prog: Unmatched ) or \\)\n"},
+   ],
+   ['invalid-re-G-star-paren', '-G "a.*\\)"', {EXIT=>2},
+    {ERR => "$prog: Unmatched ) or \\)\n"},
+   ],
+   ['invalid-re-P-paren', '-P ")"', {EXIT=>2},
+    {ERR => "$prog: unmatched parentheses\n"},
+   ],
+   ['invalid-re-P-star-paren', '-P "a.*)"', {EXIT=>2},
+    {ERR => "$prog: unmatched parentheses\n"},
+   ],
   );
 
 my $save_temps = $ENV{DEBUG};
