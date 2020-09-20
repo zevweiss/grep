@@ -3,6 +3,11 @@
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 
+case $host_triplet in
+  *-midnightbsd*)
+    skip_ 'our stack-overflow detection does not work on this system';;
+esac
+
 echo grep: stack overflow > exp || framework_failure_
 
 # Limit stack size.  Otherwise, it appears to be too hard to overflow the

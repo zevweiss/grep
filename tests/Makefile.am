@@ -242,6 +242,7 @@ TESTS_ENVIRONMENT =				\
   abs_top_srcdir='$(abs_top_srcdir)'		\
   abs_srcdir='$(abs_srcdir)'			\
   built_programs="$$built_programs"		\
+  host_triplet='$(host_triplet)'		\
   srcdir='$(srcdir)'				\
   top_srcdir='$(top_srcdir)'			\
   CC='$(CC)'					\
