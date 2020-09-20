@@ -56,15 +56,15 @@ extern ptrdiff_t mb_goback (char const **, size_t *, char const *,
                             char const *);
 
 /* dfasearch.c */
-extern void *GEAcompile (char *, size_t, reg_syntax_t);
+extern void *GEAcompile (char *, size_t, reg_syntax_t, bool);
 extern size_t EGexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* kwsearch.c */
-extern void *Fcompile (char *, size_t, reg_syntax_t);
+extern void *Fcompile (char *, size_t, reg_syntax_t, bool);
 extern size_t Fexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* pcresearch.c */
-extern void *Pcompile (char *, size_t, reg_syntax_t);
+extern void *Pcompile (char *, size_t, reg_syntax_t, bool);
 extern size_t Pexecute (void *, char const *, size_t, size_t *, char const *);
 
 /* grep.c */

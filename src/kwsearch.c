@@ -47,7 +47,7 @@ struct kwsearch
    followed by '\n'.  Return a description of the compiled pattern.  */
 
 void *
-Fcompile (char *pattern, size_t size, reg_syntax_t ignored)
+Fcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
 {
   kwset_t kwset;
   char *buf = NULL;
@@ -178,7 +178,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
             {
               fgrep_to_grep_pattern (&kwsearch->pattern, &kwsearch->size);
               kwsearch->re = GEAcompile (kwsearch->pattern, kwsearch->size,
-                                         RE_SYNTAX_GREP);
+                                         RE_SYNTAX_GREP, !!start_ptr);
             }
           return EGexecute (kwsearch->re, buf, size, match_size, start_ptr);
         }
@@ -245,7 +245,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
                     fgrep_to_grep_pattern (&kwsearch->pattern, &kwsearch->size);
                     kwsearch->re = GEAcompile (kwsearch->pattern,
                                                kwsearch->size,
-                                               RE_SYNTAX_GREP);
+                                               RE_SYNTAX_GREP, !!start_ptr);
                   }
                 if (beg + len < buf + size)
                   {

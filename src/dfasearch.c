@@ -179,7 +179,8 @@ regex_compile (struct dfa_comp *dc, char const *p, ptrdiff_t len,
    Return a description of the compiled pattern.  */
 
 void *
-GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
+GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
+            bool exact)
 {
   char *motif;
   struct dfa_comp *dc = xcalloc (1, sizeof (*dc));
@@ -274,18 +275,6 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
         }
     }
 
-  if (buf != NULL)
-    {
-      dc->patterns--;
-      dc->pcount++;
-
-      if (!regex_compile (dc, buf, buflen, 0, -1, false))
-        abort ();
-
-      if (buf != pattern)
-        free (buf);
-    }
-
   /* In the match_words and match_lines cases, we use a different pattern
      for the DFA matcher that will quickly throw out cases that won't work.
      Then if DFA succeeds we do some hairy stuff using the regex matcher
@@ -320,6 +309,21 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits)
   dfaparse (pattern, size, dc->dfa);
   kwsmusts (dc);
   dfacomp (NULL, 0, dc->dfa, 1);
+
+  if (buf != NULL)
+    {
+      if (exact || !dfasupported (dc->dfa))
+        {
+          dc->patterns--;
+          dc->pcount++;
+
+          if (!regex_compile (dc, buf, buflen, 0, -1, false))
+            abort ();
+        }
+
+      if (buf != pattern)
+        free (buf);
+    }
 
   free (motif);
 

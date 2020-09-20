@@ -113,7 +113,7 @@ jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
    followed by '\n'.  Return a description of the compiled pattern.  */
 
 void *
-Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
+Pcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
 {
   int e;
   char const *ep;

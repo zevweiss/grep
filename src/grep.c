@@ -635,7 +635,7 @@ static bool seek_failed;
 static bool seek_data_failed;
 
 /* Functions we'll use to search. */
-typedef void *(*compile_fp_t) (char *, size_t, reg_syntax_t);
+typedef void *(*compile_fp_t) (char *, size_t, reg_syntax_t, bool);
 typedef size_t (*execute_fp_t) (void *, char const *, size_t, size_t *,
                                 char const *);
 static execute_fp_t execute;
@@ -2973,8 +2973,9 @@ main (int argc, char **argv)
     matcher = try_fgrep_pattern (matcher, keys, &keycc);
 
   execute = matchers[matcher].execute;
-  compiled_pattern = matchers[matcher].compile (keys, keycc,
-                                                matchers[matcher].syntax);
+  compiled_pattern =
+    matchers[matcher].compile (keys, keycc, matchers[matcher].syntax,
+                               only_matching | color_option);
   /* We need one byte prior and one after.  */
   char eolbytes[3] = { 0, eolbyte, 0 };
   size_t match_size;
