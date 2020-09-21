@@ -120,6 +120,7 @@ TESTS =						\
   kwset-abuse					\
   long-line-vs-2GiB-read			\
   long-pattern-perf				\
+  many-regex-performance			\
   match-lines					\
   max-count-overread				\
   max-count-vs-context				\

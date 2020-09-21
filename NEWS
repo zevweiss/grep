@@ -39,6 +39,14 @@ GNU grep NEWS                                    -*- outline -*-
   A performance regression with many duplicate patterns has been fixed.
   [Bug#43040 introduced in grep 3.4]
 
+  An N^2 RSS performance regression with many patterns has been fixed
+  in common cases (no backref, and no use of -o or --color).
+  With only 80,000 lines of /usr/share/dict/linux.words, the following
+  would use 100GB of RSS and take 3 minutes. With the fix, it used less
+  than 400MB and took less than one second:
+    head -80000 /usr/share/dict/linux.words > w; grep -vf w w
+  [Bug#43527 introduced in grep 3.4]
+
 ** Build-related
 
   "make dist" builds .tar.gz files again, as they are still used in
