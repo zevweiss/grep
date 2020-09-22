@@ -771,8 +771,11 @@ and @file{file2}.
 @item --line-buffered
 @opindex --line-buffered
 @cindex line buffering
-Use line buffering on output.
-This can cause a performance penalty.
+Use line buffering for standard output, regardless of output device.
+By default, standard output is line buffered for interactive devices,
+and is fully buffered otherwise.  With full buffering, the output
+buffer is flushed when full; with line buffering, the buffer is also
+flushed after every output line.  The buffer size is system dependent.
 
 @item -U
 @itemx --binary
