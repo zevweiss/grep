@@ -1044,22 +1044,8 @@ interpreted.
 These variables specify the locale for the @env{LC_CTYPE} category,
 which determines the type of characters,
 e.g., which characters are whitespace.
-This category also determines the character encoding, that is, whether
-text is encoded in UTF-8, ASCII, or some other encoding.  In the
-@samp{C} or @samp{POSIX} locale, all characters are encoded as a
-single byte and every byte is a valid character.
-In more-complex encodings such as UTF-8, a sequence of multiple bytes
-may be needed to represent a character, and some bytes may be encoding
-errors that do not contribute to the representation of any character.
-POSIX does not specify the behavior of @command{grep} when patterns or
-input data contain encoding errors or null characters, so portable
-scripts should avoid such usage.  As an extension to POSIX, GNU
-@command{grep} treats null characters like any other character.
-However, unless the @option{-a} (@option{--binary-files=text}) option
-is used, the presence of null characters in input or of encoding
-errors in output causes GNU @command{grep} to treat the file as binary
-and suppress details about matches.  @xref{File and Directory
-Selection}.
+This category also determines the character encoding.
+@xref{Character Encoding}.
 
 @item LANGUAGE
 @itemx LC_ALL
@@ -1208,6 +1194,8 @@ pages, but work only if PCRE is available in the system.
 * Anchoring::
 * Back-references and Subexpressions::
 * Basic vs Extended::
+* Character Encoding::
+* Matching Non-ASCII::
 @end menu
 
 @node Fundamental Structure
@@ -1559,6 +1547,70 @@ instead of reporting a syntax error in the regular expression.
 POSIX allows this behavior as an extension, but portable scripts
 should avoid it.
 
+@node Character Encoding
+@section Character Encoding
+@cindex character encoding
+
+The @env{LC_CTYPE} locale specifies the encoding of characters in
+patterns and data, that is, whether text is encoded in UTF-8, ASCII,
+or some other encoding.  @xref{Environment Variables}.
+
+In the @samp{C} or @samp{POSIX} locale, every character is encoded as
+a single byte and every byte is a valid character.  In more-complex
+encodings such as UTF-8, a sequence of multiple bytes may be needed to
+represent a character, and some bytes may be encoding errors that do
+not contribute to the representation of any character.  POSIX does not
+specify the behavior of @command{grep} when patterns or input data
+contain encoding errors or null characters, so portable scripts should
+avoid such usage.  As an extension to POSIX, GNU @command{grep} treats
+null characters like any other character.  However, unless the
+@option{-a} (@option{--binary-files=text}) option is used, the
+presence of null characters in input or of encoding errors in output
+causes GNU @command{grep} to treat the file as binary and suppress
+details about matches.  @xref{File and Directory Selection}.
+
+Regardless of locale, the 103 characters in the POSIX Portable
+Character Set (a subset of ASCII) are always encoded as a single byte,
+and the 128 ASCII characters have their usual single-byte encodings on
+all but oddball platforms.
+
+@node Matching Non-ASCII
+@section Matching Non-ASCII and Non-printable Characters
+@cindex non-ASCII matching
+@cindex non-printable matching
+
+In a regular expression, non-ASCII and non-printable characters other
+than newline are not special, and represent themselves.  For example,
+in a locale using UTF-8 the command @samp{grep 'Λ@tie{}ω'} (where the
+white space between @samp{Λ} and the @samp{ω} is a tab character)
+searches for @samp{Λ} (Unicode character U+039B GREEK CAPITAL LETTER
+LAMBDA), followed by a tab (U+0009 TAB), followed by @samp{ω} (U+03C9
+GREEK SMALL LETTER OMEGA).
+
+Suppose you want to limit your pattern to only printable characters
+(or even only printable ASCII characters) to keep your script readable
+or portable, but you also want to match specific non-ASCII or non-null
+non-printable characters.  If you are using the @option{-P}
+(@option{--perl-regexp}) option, PCREs give you several ways to do
+this.  Otherwise, if you are using Bash, the GNU project's shell, you
+can represent these characters via ANSI-C quoting.  For example, the
+Bash commands @samp{grep $'Λ\tω'} and @samp{grep $'\u039B\t\u03C9'}
+both search for the same three-character string @samp{Λ@tie{}ω}
+mentioned earlier.  However, because Bash translates ANSI-C quoting
+before @command{grep} sees the pattern, this technique should not be
+used to match printable ASCII characters; for example, @samp{grep
+$'\u005E'} is equivalent to @samp{grep '^'} and matches any line, not
+just lines containing the character @samp{^} (U+005E CIRCUMFLEX
+ACCENT).
+
+Since PCREs and ANSI-C quoting are GNU extensions to POSIX, portable
+shell scripts written in ASCII should use other methods to match
+specific non-ASCII characters.  For example, in a UTF-8 locale the
+command @samp{grep "$(printf '\316\233\t\317\211\n')"} is a portable
+albeit hard-to-read alternative to Bash's @samp{grep $'Λ\tω'}.
+However, none of these techniques will let you put a null character
+directly into a command-line pattern; null characters can appear only
+in a pattern specified via the @option{-f} (@option{--file}) option.
 
 @node Usage
 @chapter Usage
