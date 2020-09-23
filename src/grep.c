@@ -2881,7 +2881,6 @@ main (int argc, char **argv)
       ptrdiff_t patlen = strlen (keys);
       keys[patlen] = '\n';
       keycc = update_patterns (keys, 0, patlen + 1, "");
-      n_patterns++;
     }
   else
     usage (EXIT_TROUBLE);
