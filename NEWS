@@ -32,6 +32,12 @@ GNU grep NEWS                                    -*- outline -*-
   constituent just before what would otherwise be a word match.
   [Bug#43225 introduced in grep 2.28]
 
+  grep -i no longer mishandles ASCII characters that match multibyte
+  characters.  For example, 'LC_ALL=tr_TR.utf8 grep -i i' no longer
+  dumps core merely because 'i' matches 'İ' (U+0130 LATIN CAPITAL
+  LETTER I WITH DOT ABOVE) in Turkish when ignoring case.
+  [Bug#43577 introduced in grep 3.4]
+
   A performance regression with -E and many patterns has been mostly fixed.
   "Mostly" as there is a performance tradeoff between Bug#22357 and Bug#40634.
   [Bug#40634 introduced in grep 2.28]
