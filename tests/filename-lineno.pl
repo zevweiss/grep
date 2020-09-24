@@ -97,12 +97,6 @@ my @Tests =
    ['invalid-re-G-star-paren', '-G "a.*\\)"', {EXIT=>2},
     {ERR => "$prog: Unmatched ) or \\)\n"},
    ],
-   ['invalid-re-P-paren', '-P ")"', {EXIT=>2},
-    {ERR => "$prog: unmatched parentheses\n"},
-   ],
-   ['invalid-re-P-star-paren', '-P "a.*)"', {EXIT=>2},
-    {ERR => "$prog: unmatched parentheses\n"},
-   ],
   );
 
 my $save_temps = $ENV{DEBUG};
