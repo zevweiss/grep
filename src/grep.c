@@ -684,6 +684,7 @@ clean_up_stdout (void)
 
 /* An unsigned type suitable for fast matching.  */
 typedef uintmax_t uword;
+static uword const uword_max = UINTMAX_MAX;
 
 struct localeinfo localeinfo;
 
@@ -717,7 +718,6 @@ initialize_unibyte_mask (void)
   /* Now MASK will detect any encoding-error byte, although it may
      cry wolf and it may not be optimal.  Build a uword-length mask by
      repeating MASK.  */
-  uword uword_max = -1;
   unibyte_mask = uword_max / UCHAR_MAX * mask;
 }
 
