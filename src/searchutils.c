@@ -48,24 +48,11 @@ kwsinit (bool mb_trans)
   if (match_icase && (MB_CUR_MAX == 1 || mb_trans))
     {
       trans = xmalloc (NCHAR);
-      if (MB_CUR_MAX == 1)
-        for (int i = 0; i < NCHAR; i++)
-          trans[i] = toupper (i);
-      else
-        for (int i = 0; i < NCHAR; i++)
-          {
-            wint_t wc = localeinfo.sbctowc[i];
-            wint_t uwc = towupper (wc);
-            if (uwc != wc)
-              {
-                mbstate_t mbs = { 0 };
-                size_t len = wcrtomb (&trans[i], uwc, &mbs);
-                if (len != 1)
-                  abort ();
-              }
-            else
-              trans[i] = i;
-          }
+      /* If I is a single-byte character that becomes a different
+         single-byte character when uppercased, set trans[I]
+         to that character.  Otherwise, set trans[I] to I.  */
+      for (int i = 0; i < NCHAR; i++)
+        trans[i] = toupper (i);
     }
 
   return kwsalloc (trans);

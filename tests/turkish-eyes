@@ -36,11 +36,23 @@ i=$(printf '\304\261') # lowercase dotless i
 
       data="I:$I $i:i"
 search_str="$i:i I:$I"
-printf "$data\n" > in || framework_failure_
+printf "$data\\n" > in || framework_failure_
 
 for opt in -E -F -G; do
-  LC_ALL=$L grep $opt -i "$search_str" in > out || fail=1
-  compare out in || fail=1
+  for pat in i I "$i" "$I" " " : "$search_str"; do
+    LC_ALL=$L grep $opt -i "$pat" in > out || fail=1
+    compare in out || fail=1
+
+    case $pat in
+      i|"$I") printf "$I\\ni\\n";;
+      I|"$i") printf "I\\n$i\\n";;
+      :) printf ":\\n:\\n";;
+      ' ') printf " \\n";;
+      *) cat in;;
+    esac >exp || framework_failure_
+    LC_ALL=$L grep -o $opt -i "$pat" in > out || fail=1
+    compare exp out || fail=1
+  done
 done
 
 Exit $fail

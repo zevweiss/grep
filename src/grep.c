@@ -2300,37 +2300,75 @@ contains_encoding_error (char const *pat, size_t patlen)
   return false;
 }
 
+/* When ignoring case and (-E or -F or -G), then for each single-byte
+   character I, ok_fold[I] is 1 if every case folded counterpart of I
+   is also single-byte, and is -1 otherwise.  */
+static signed char ok_fold[NCHAR];
+static void
+setup_ok_fold (void)
+{
+  for (int i = 0; i < NCHAR; i++)
+    {
+      wint_t wi = localeinfo.sbctowc[i];
+      if (wi == WEOF)
+        continue;
+
+      int ok = 1;
+      wchar_t folded[CASE_FOLDED_BUFSIZE];
+      for (int n = case_folded_counterparts (wi, folded); 0 <= --n; )
+        {
+          char buf[MB_LEN_MAX];
+          mbstate_t s = { 0 };
+          if (wcrtomb (buf, folded[n], &s) != 1)
+            {
+              ok = -1;
+              break;
+            }
+        }
+      ok_fold[i] = ok;
+    }
+}
+
 /* Return the number of bytes in the initial character of PAT, of size
    PATLEN, if Fcompile can handle that character.  Return -1 if
    Fcompile cannot handle it.  MBS is the multibyte conversion state.
-
-   Fcompile can handle a character C if C is single-byte, or if C has no
-   case folded counterparts and toupper translates none of its bytes.  */
+   PATLEN must be nonzero.  */
 
 static int
 fgrep_icase_charlen (char const *pat, size_t patlen, mbstate_t *mbs)
 {
-  int n = localeinfo.sbclen[to_uchar (*pat)];
-  if (n < 0)
+  unsigned char pat0 = pat[0];
+
+  /* If PAT starts with a single-byte character, Fcompile works if
+     every case folded counterpart is also single-byte.  */
+  if (localeinfo.sbctowc[pat0] != WEOF)
+    return ok_fold[pat0];
+
+  wchar_t wc;
+  size_t wn = mbrtowc (&wc, pat, patlen, mbs);
+
+  /* If PAT starts with an encoding error, Fcompile does not work.  */
+  if (MB_LEN_MAX < wn)
+    return -1;
+
+  /* PAT starts with a multibyte character.  Fcompile works if the
+     character has no case folded counterparts and toupper translates
+     none of its encoding's bytes.  */
+  wchar_t folded[CASE_FOLDED_BUFSIZE];
+  if (case_folded_counterparts (wc, folded))
+    return -1;
+  for (int i = wn; 0 < --i; )
     {
-      wchar_t wc;
-      wchar_t folded[CASE_FOLDED_BUFSIZE];
-      size_t wn = mbrtowc (&wc, pat, patlen, mbs);
-      if (MB_LEN_MAX < wn || case_folded_counterparts (wc, folded))
+      unsigned char c = pat[i];
+      if (toupper (c) != c)
         return -1;
-      for (int i = wn; 0 < --i; )
-        {
-          unsigned char c = pat[i];
-          if (toupper (c) != c)
-            return -1;
-        }
-      n = wn;
     }
-  return n;
+  return wn;
 }
 
 /* Return true if the -F patterns PAT, of size PATLEN, contain only
-   single-byte characters or characters not subject to case folding,
+   single-byte characters that case-fold only to single-byte
+   characters, or multibyte characters not subject to case folding,
    and so can be processed by Fcompile.  */
 
 static bool
@@ -2950,26 +2988,34 @@ main (int argc, char **argv)
   if (matcher < 0)
     matcher = G_MATCHER_INDEX;
 
-  /* In a single-byte locale, switch from -F to -G if it is a single
-     pattern that matches words, where -G is typically faster.  In a
-     multi-byte locale, switch if the patterns have an encoding error
-     (where -F does not work) or if -i and the patterns will not work
-     for -iF.  */
   if (matcher == F_MATCHER_INDEX
-      && (! localeinfo.multibyte
-          ? n_patterns == 1 && match_words
-          : (contains_encoding_error (keys, keycc)
-             || (match_icase && !fgrep_icase_available (keys, keycc)))))
+      || matcher == E_MATCHER_INDEX || matcher == G_MATCHER_INDEX)
     {
-      fgrep_to_grep_pattern (&pattern_array, &keycc);
-      keys = pattern_array;
-      matcher = G_MATCHER_INDEX;
+      if (match_icase)
+        setup_ok_fold ();
+
+      /* In a single-byte locale, switch from -F to -G if it is a single
+         pattern that matches words, where -G is typically faster.  In a
+         multibyte locale, switch if the patterns have an encoding error
+         (where -F does not work) or if -i and the patterns will not work
+         for -iF.  */
+      if (matcher == F_MATCHER_INDEX)
+        {
+          if (! localeinfo.multibyte
+              ? n_patterns == 1 && match_words
+              : (contains_encoding_error (keys, keycc)
+                 || (match_icase && !fgrep_icase_available (keys, keycc))))
+            {
+              fgrep_to_grep_pattern (&pattern_array, &keycc);
+              keys = pattern_array;
+              matcher = G_MATCHER_INDEX;
+            }
+        }
+      /* With two or more patterns, if -F works then switch from either -E
+         or -G, as -F is probably faster then.  */
+      else if (1 < n_patterns)
+        matcher = try_fgrep_pattern (matcher, keys, &keycc);
     }
-  /* With two or more patterns, if -F works then switch from either -E
-     or -G, as -F is probably faster then.  */
-  else if ((matcher == G_MATCHER_INDEX || matcher == E_MATCHER_INDEX)
-           && 1 < n_patterns)
-    matcher = try_fgrep_pattern (matcher, keys, &keycc);
 
   execute = matchers[matcher].execute;
   compiled_pattern =
