@@ -8,6 +8,15 @@ case $host_triplet in
     skip_ 'our stack-overflow detection does not work on this system';;
 esac
 
+# When compiled with ASAN, skip this test, because (on Fedora 32) it
+# would fail due to output like this on stderr:
+# +==2176827==WARNING: ASan is ignoring requested __asan_handle_no_return:
+#   stack top: 0x7ffc48f20000; bottom 0x000000e25000; size: 0x7ffc480fb000 (140721517473792)
+# +False positive error reports may follow
+# +For details see https://github.com/google/sanitizers/issues/189
+ASAN_OPTIONS=help=true grep --version 2>&1 | grep -q AddressSanitizer \
+  && skip_ 'avoid false failure when built with ASAN'
+
 echo grep: stack overflow > exp || framework_failure_
 
 # Limit stack size.  Otherwise, it appears to be too hard to overflow the
