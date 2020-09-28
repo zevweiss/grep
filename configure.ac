@@ -31,8 +31,8 @@ if test -n "$GREP" || test -n "$EGREP"; then
   On Solaris 11, install the package text/gnu-grep or system/xopen/xcu4.])
 fi
 
-AC_CONFIG_AUX_DIR(build-aux)
-AC_CONFIG_SRCDIR(src/grep.c)
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_SRCDIR([src/grep.c])
 AC_DEFINE([GREP], 1, [We are building grep])
 AC_PREREQ([2.64])
 AC_CONFIG_MACRO_DIRS([m4])
@@ -161,7 +161,7 @@ AC_HEADER_DIRENT
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 
-AC_CHECK_FUNCS_ONCE(isascii setlocale)
+AC_CHECK_FUNCS_ONCE([isascii setlocale])
 
 dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.18.2])
