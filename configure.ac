@@ -156,7 +156,6 @@ AC_DEFINE([ARGMATCH_DIE_DECL], [void usage (int _e)],
           [Define to the declaration of the xargmatch failure function.])
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 
 dnl Checks for functions.

@@ -8,7 +8,7 @@
 AC_DEFUN([gl_FUNC_PCRE],
 [
   AC_ARG_ENABLE([perl-regexp],
-    AC_HELP_STRING([--disable-perl-regexp],
+    AS_HELP_STRING([--disable-perl-regexp],
                    [disable perl-regexp (pcre) support]),
     [case $enableval in
        yes|no) test_pcre=$enableval;;
