@@ -97,6 +97,19 @@ my @Tests =
    ['invalid-re-G-star-paren', '-G "a.*\\)"', {EXIT=>2},
     {ERR => "$prog: Unmatched ) or \\)\n"},
    ],
+   ['invalid-re-P-paren', '-P ")"', {EXIT=>2},
+    {ERR => $ENV{PCRE_WORKS} == 1
+       ? "$prog: unmatched parentheses\n"
+       : "Perl matching not supported in a --disable-perl-regexp build\n"
+    },
+   ],
+   ['invalid-re-P-star-paren', '-P "a.*)"', {EXIT=>2},
+    {ERR => $ENV{PCRE_WORKS} == 1
+       ? "$prog: unmatched parentheses\n"
+       : "Perl matching not supported in a --disable-perl-regexp build\n"
+    },
+   ],
+
   );
 
 my $save_temps = $ENV{DEBUG};
