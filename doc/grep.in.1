@@ -680,6 +680,17 @@ Search only files whose base name matches
 .I GLOB
 (using wildcard matching as described under
 .BR \-\^\-exclude ).
+If contradictory
+.B \-\^\-include
+and
+.B \-\^\-exclude
+options are given, the last matching one wins.
+If no
+.B \-\^\-include
+or
+.B \-\^\-exclude
+options match, a file is included unless the first such option is
+.BR \-\^\-include .
 .TP
 .BR \-r ", " \-\^\-recursive
 Read all files under each directory, recursively,

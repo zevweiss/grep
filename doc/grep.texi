@@ -728,6 +728,10 @@ this is equivalent to the @samp{--binary-files=without-match} option.
 @cindex searching directory trees
 Search only files whose name matches @var{glob},
 using wildcard matching as described under @option{--exclude}.
+If contradictory @option{--include} and @option{--exclude} options are
+given, the last matching one wins.  If no @option{--include} or
+@option{--exclude} options match, a file is included unless the first
+such option is @option{--include}.
 
 @item -r
 @itemx --recursive
