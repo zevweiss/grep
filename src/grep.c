@@ -641,7 +641,7 @@ typedef size_t (*execute_fp_t) (void *, char const *, size_t, size_t *,
 static execute_fp_t execute;
 static void *compiled_pattern;
 
-static char const *
+char const *
 input_filename (void)
 {
   if (!filename)

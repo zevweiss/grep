@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  grep -P now reports the troublesome input filename upon PCRE execution
+  failure.  Before, searching many files for something rare might fail with
+  just "exceeded PCRE's backtracking limit".  Now, it also reports which file
+  triggered the failure.
+
 
 * Noteworthy changes in release 3.5 (2020-09-27) [stable]
 

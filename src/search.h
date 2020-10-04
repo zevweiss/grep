@@ -82,6 +82,8 @@ mb_clen (char const *s, size_t n, mbstate_t *mbs)
   return len == (size_t) -2 ? mbrlen (s, n, mbs) : len;
 }
 
+extern char const *input_filename (void);
+
 _GL_INLINE_HEADER_END
 
 #endif /* GREP_SEARCH_H */
