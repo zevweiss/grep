@@ -100,13 +100,13 @@ my @Tests =
    ['invalid-re-P-paren', '-P ")"', {EXIT=>2},
     {ERR => $ENV{PCRE_WORKS} == 1
        ? "$prog: unmatched parentheses\n"
-       : "Perl matching not supported in a --disable-perl-regexp build\n"
+       : "$prog: Perl matching not supported in a --disable-perl-regexp build\n"
     },
    ],
    ['invalid-re-P-star-paren', '-P "a.*)"', {EXIT=>2},
     {ERR => $ENV{PCRE_WORKS} == 1
-       ? "$prog: unmatched parentheses\n"
-       : "Perl matching not supported in a --disable-perl-regexp build\n"
+       ? "$prog: unmatched parentheses $ENV{PCRE_WORKS}\n"
+       : "$prog: Perl matching not supported in a --disable-perl-regexp build\n"
     },
    ],
 
