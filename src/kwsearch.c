@@ -89,38 +89,6 @@ Fcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
   free (buf);
   ptrdiff_t words = kwswords (kwset);
 
-  if (match_icase)
-    {
-      /* For each pattern character C that has a case folded
-         counterpart F that is multibyte and so cannot easily be
-         implemented via translating a single byte, append a pattern
-         containing just F.  That way, if the data contains F, the
-         matcher can fall back on DFA.  For example, if C is 'i' and
-         the locale is en_US.utf8, append a pattern containing just
-         the character U+0131 (LATIN SMALL LETTER DOTLESS I), so that
-         Fexecute will use a DFA if the data contain U+0131.  */
-      mbstate_t mbs = { 0 };
-      char checked[NCHAR] = {0,};
-      for (p = pattern; p < pattern + size; p++)
-        {
-          unsigned char c = *p;
-          if (checked[c])
-            continue;
-          checked[c] = true;
-
-          wint_t wc = localeinfo.sbctowc[c];
-          wchar_t folded[CASE_FOLDED_BUFSIZE];
-
-          for (int i = case_folded_counterparts (wc, folded); 0 <= --i; )
-            {
-              char s[MB_LEN_MAX];
-              int nbytes = wcrtomb (s, folded[i], &mbs);
-              if (1 < nbytes)
-                kwsincr (kwset, s, nbytes);
-            }
-        }
-    }
-
   kwsprep (kwset);
 
   struct kwsearch *kwsearch = xmalloc (sizeof *kwsearch);
@@ -167,21 +135,6 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
       if (offset < 0)
         break;
       len = kwsmatch.size[0] - 2 * match_lines;
-
-      if (kwsearch->words <= kwsmatch.index)
-        {
-          /* The data contain a multibyte character that matches
-             some pattern character that is a case folded counterpart.
-             Since the kwset code cannot handle this case, fall back
-             on the DFA code, which can.  */
-          if (! kwsearch->re)
-            {
-              fgrep_to_grep_pattern (&kwsearch->pattern, &kwsearch->size);
-              kwsearch->re = GEAcompile (kwsearch->pattern, kwsearch->size,
-                                         RE_SYNTAX_GREP, !!start_ptr);
-            }
-          return EGexecute (kwsearch->re, buf, size, match_size, start_ptr);
-        }
 
       mbclen = 0;
       if (mb_check
