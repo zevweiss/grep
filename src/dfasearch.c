@@ -145,7 +145,8 @@ possible_backrefs_in_pattern (char const *keys, ptrdiff_t len, bool bs_safe)
 
 static bool
 regex_compile (struct dfa_comp *dc, char const *p, ptrdiff_t len,
-               ptrdiff_t pcount, ptrdiff_t lineno, bool syntax_only)
+               ptrdiff_t pcount, ptrdiff_t lineno, reg_syntax_t syntax_bits,
+               bool syntax_only)
 {
   struct re_pattern_buffer pat0;
   struct re_pattern_buffer *pat = syntax_only ? &pat0 : &dc->patterns[pcount];
@@ -156,6 +157,11 @@ regex_compile (struct dfa_comp *dc, char const *p, ptrdiff_t len,
   pat->fastmap = syntax_only | match_icase ? NULL : xmalloc (UCHAR_MAX + 1);
 
   pat->translate = NULL;
+
+  if (syntax_only)
+    re_set_syntax (syntax_bits | RE_NO_SUB);
+  else
+    re_set_syntax (syntax_bits);
 
   char const *err = re_compile_pattern (p, len, pat);
   if (!err)
@@ -189,7 +195,6 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
 
   if (match_icase)
     syntax_bits |= RE_ICASE;
-  re_set_syntax (syntax_bits);
   int dfaopts = eolbyte ? 0 : DFA_EOL_NUL;
   dfasyntax (dc->dfa, &localeinfo, syntax_bits, dfaopts);
   bool bs_safe = !localeinfo.multibyte | localeinfo.using_utf8;
@@ -242,7 +247,10 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
           dc->patterns++;
         }
 
-      if (!regex_compile (dc, p, len, dc->pcount, lineno, !backref))
+      re_set_syntax (syntax_bits);
+
+      if (!regex_compile (dc, p, len, dc->pcount, lineno, syntax_bits,
+                          !backref))
         compilation_failed = true;
 
       p = sep + 1;
@@ -317,7 +325,7 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
           dc->patterns--;
           dc->pcount++;
 
-          if (!regex_compile (dc, buf, buflen, 0, -1, false))
+          if (!regex_compile (dc, buf, buflen, 0, -1, syntax_bits, false))
             abort ();
         }
 
