@@ -760,13 +760,9 @@ bmexec (kwset_t kwset, char const *text, ptrdiff_t size,
                    (kwset->trans
                     ? bmexec_trans (kwset, text, size)
                     : bmexec_trans (kwset, text, size)));
-  if (0 <= ret)
-    {
-       kwsmatch->index = 0;
-       kwsmatch->offset[0] = ret;
-       kwsmatch->size[0] = kwset->mind;
-    }
-
+  kwsmatch->index = 0;
+  kwsmatch->offset = ret;
+  kwsmatch->size = kwset->mind;
   return ret;
 }
 
@@ -891,8 +887,8 @@ acexec_trans (kwset_t kwset, char const *text, ptrdiff_t len,
     }
 
   kwsmatch->index = accept->accepting / 2;
-  kwsmatch->offset[0] = left - text;
-  kwsmatch->size[0] = accept->depth;
+  kwsmatch->offset = left - text;
+  kwsmatch->size = accept->depth;
 
   return left - text;
 }

@@ -24,9 +24,9 @@
 
 struct kwsmatch
 {
-  ptrdiff_t index;			/* Index number of matching keyword.  */
-  ptrdiff_t offset[1];		/* Offset of match.  */
-  ptrdiff_t size[1];		/* Length of match.  */
+  ptrdiff_t index;	/* Index number of matching keyword.  */
+  ptrdiff_t offset;	/* Offset of match.  */
+  ptrdiff_t size;	/* Length of match.  */
 };
 
 #include "arg-nonnull.h"

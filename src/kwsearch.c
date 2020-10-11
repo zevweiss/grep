@@ -87,8 +87,8 @@ Fcompile (char *pattern, size_t size, reg_syntax_t ignored, bool exact)
   while (p <= pattern + size);
 
   free (buf);
-  ptrdiff_t words = kwswords (kwset);
 
+  ptrdiff_t words = kwswords (kwset);
   kwsprep (kwset);
 
   struct kwsearch *kwsearch = xmalloc (sizeof *kwsearch);
@@ -111,32 +111,22 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   char const *beg, *end, *mb_start;
   ptrdiff_t len;
   char eol = eolbyte;
-  struct kwsmatch kwsmatch;
-  size_t ret_val;
-  bool mb_check;
-  bool longest;
   struct kwsearch *kwsearch = vcp;
   kwset_t kwset = kwsearch->kwset;
-  size_t mbclen;
-
-  if (match_lines)
-    mb_check = longest = false;
-  else
-    {
-      mb_check = localeinfo.multibyte & !localeinfo.using_utf8;
-      longest = mb_check | !!start_ptr | match_words;
-    }
+  bool mb_check = localeinfo.multibyte & !localeinfo.using_utf8 & !match_lines;
+  bool longest = (mb_check | !!start_ptr | match_words) & !match_lines;
 
   for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
     {
+      struct kwsmatch kwsmatch;
       ptrdiff_t offset = kwsexec (kwset, beg - match_lines,
                                   buf + size - beg + match_lines, &kwsmatch,
                                   longest);
       if (offset < 0)
         break;
-      len = kwsmatch.size[0] - 2 * match_lines;
+      len = kwsmatch.size - 2 * match_lines;
 
-      mbclen = 0;
+      size_t mbclen = 0;
       if (mb_check
           && mb_goback (&mb_start, &mbclen, beg + offset, buf + size) != 0)
         {
@@ -216,10 +206,11 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
               }
             if (!len)
               break;
-            offset = kwsexec (kwset, beg, --len, &kwsmatch, true);
-            if (offset != 0)
+
+            struct kwsmatch shorter_match;
+            if (kwsexec (kwset, beg, --len, &shorter_match, true) != 0)
               break;
-            len = kwsmatch.size[0];
+            len = shorter_match.size;
           }
 
       /* No word match was found at BEG.  Skip past word constituents,
@@ -227,7 +218,7 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
          them could make things much slower.  */
       beg += wordchars_size (beg, buf + size);
       mb_start = beg;
-    } /* for (beg in buf) */
+    }
 
   return -1;
 
@@ -244,9 +235,6 @@ Fexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
   beg = beg ? beg + 1 : buf;
   len = end - beg;
  success_in_beg_and_len:;
-  size_t off = beg - buf;
-
   *match_size = len;
-  ret_val = off;
-  return ret_val;
+  return beg - buf;
 }
