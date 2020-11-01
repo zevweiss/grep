@@ -4,6 +4,11 @@ GNU grep NEWS                                    -*- outline -*-
 
 ** Bug fixes
 
+  grep's DFA matcher performed an invalid regex transformation
+  that would convert an ERE like a+a+a+ to a+a+, which would make
+  grep a+a+a+ mistakenly match "aa".
+  [Bug#44351 introduced in grep 3.2]
+
   grep -P now reports the troublesome input filename upon PCRE execution
   failure.  Before, searching many files for something rare might fail with
   just "exceeded PCRE's backtracking limit".  Now, it also reports which file
