@@ -218,3 +218,5 @@
 0@)@)
 1@)@x
 0@\()\((a\())(b))@()(a()b)
+# This would erroneously match from grep-3.2 to grep-3.5
+1@a+a+a@aa
