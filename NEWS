@@ -2,6 +2,12 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Changes in behavior
+
+  The GREP_OPTIONS environment variable no longer affects grep's behavior.
+  The variable was declared obsolescent in grep 2.21 (2014), and since
+  then any use had caused grep to issue a diagnostic.
+
 ** Bug fixes
 
   grep's DFA matcher performed an invalid regex transformation

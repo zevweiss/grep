@@ -2106,66 +2106,6 @@ setmatcher (char const *m, int matcher)
   die (EXIT_TROUBLE, 0, _("invalid matcher %s"), m);
 }
 
-/* Find the white-space-separated options specified by OPTIONS, and
-   using BUF to store copies of these options, set ARGV[0], ARGV[1],
-   etc. to the option copies.  Return the number N of options found.
-   Do not set ARGV[N] to NULL.  If ARGV is NULL, do not store ARGV[0]
-   etc.  Backslash can be used to escape whitespace (and backslashes).  */
-static size_t
-prepend_args (char const *options, char *buf, char **argv)
-{
-  char const *o = options;
-  char *b = buf;
-  size_t n = 0;
-
-  for (;;)
-    {
-      while (c_isspace (to_uchar (*o)))
-        o++;
-      if (!*o)
-        return n;
-      if (argv)
-        argv[n] = b;
-      n++;
-
-      do
-        if ((*b++ = *o++) == '\\' && *o)
-          b[-1] = *o++;
-      while (*o && ! c_isspace (to_uchar (*o)));
-
-      *b++ = '\0';
-    }
-}
-
-/* Prepend the whitespace-separated options in OPTIONS to the argument
-   vector of a main program with argument count *PARGC and argument
-   vector *PARGV.  Return the number of options prepended.  */
-static int
-prepend_default_options (char const *options, int *pargc, char ***pargv)
-{
-  if (options && *options)
-    {
-      char *buf = xmalloc (strlen (options) + 1);
-      size_t prepended = prepend_args (options, buf, NULL);
-      int argc = *pargc;
-      char *const *argv = *pargv;
-      char **pp;
-      enum { MAX_ARGS = MIN (INT_MAX, SIZE_MAX / sizeof *pp - 1) };
-      if (MAX_ARGS - argc < prepended)
-        xalloc_die ();
-      pp = xmalloc ((prepended + argc + 1) * sizeof *pp);
-      *pargc = prepended + argc;
-      *pargv = pp;
-      *pp++ = *argv++;
-      pp += prepend_args (options, buf, pp);
-      while ((*pp++ = *argv++))
-        continue;
-      return prepended;
-    }
-
-  return 0;
-}
-
 /* Get the next non-digit option from ARGC and ARGV.
    Return -1 if there are no more options.
    Process any digit options that were encountered on the way,
@@ -2530,7 +2470,7 @@ main (int argc, char **argv)
   char *keys = NULL;
   size_t keycc = 0, keyalloc = 0;
   int matcher = -1;
-  int opt, prepended;
+  int opt;
   int prev_optind, last_recursive;
   int fread_errno;
   intmax_t default_context;
@@ -2573,11 +2513,6 @@ main (int argc, char **argv)
   pattern_table = hash_initialize (0, 0, hash_pattern, compare_patterns, 0);
   if (!pattern_table)
     xalloc_die ();
-
-  prepended = prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
-  if (prepended)
-    error (0, 0, _("warning: GREP_OPTIONS is deprecated;"
-                   " please use an alias or script"));
 
   while (prev_optind = optind,
          (opt = get_nondigit_option (argc, argv, &default_context)) != -1)
@@ -3056,7 +2991,7 @@ main (int argc, char **argv)
     {
       files = argv + optind;
     }
-  else if (directories == RECURSE_DIRECTORIES && prepended < last_recursive)
+  else if (directories == RECURSE_DIRECTORIES && 0 < last_recursive)
     {
       static char *const cwd_only[] = { (char *) ".", NULL };
       files = cwd_only;

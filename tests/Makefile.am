@@ -237,7 +237,6 @@ TESTS_ENVIRONMENT =				\
   LOCALE_FR='$(LOCALE_FR)'			\
   LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'		\
   AWK=$(AWK)					\
-  GREP_OPTIONS=''				\
   LC_ALL=C					\
   abs_top_builddir='$(abs_top_builddir)'	\
   abs_top_srcdir='$(abs_top_srcdir)'		\
