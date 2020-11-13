@@ -147,6 +147,20 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-Wno-format-nonliteral])
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
+
+  # For gnulib-tests, the set is slightly smaller still.
+  nw=
+  nw="$nw -Wstrict-prototypes"
+  # It's not worth being this picky about test programs.
+  nw="$nw -Wsuggest-attribute=const"
+  nw="$nw -Wsuggest-attribute=pure"
+  nw="$nw -Wsuggest-attribute=format"
+  nw="$nw -Wformat-truncation=2"    # False alarm in strerror_r.c
+  nw="$nw -Wold-style-definition"
+  gl_MANYWARN_COMPLEMENT([GNULIB_TEST_WARN_CFLAGS],
+                         [$GNULIB_WARN_CFLAGS], [$nw])
+  gl_WARN_ADD([-Wno-return-type], [GNULIB_TEST_WARN_CFLAGS])
+  AC_SUBST([GNULIB_TEST_WARN_CFLAGS])
 fi
 
 # By default, argmatch should fail calling usage (EXIT_FAILURE).
