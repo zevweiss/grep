@@ -447,7 +447,7 @@ fputs_errno (char const *s)
     stdout_errno = errno;
 }
 
-static void _GL_ATTRIBUTE_FORMAT_PRINTF (1, 2)
+static void _GL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (1, 2)
 printf_errno (char const *format, ...)
 {
   va_list ap;
