@@ -128,8 +128,9 @@ hash_pattern (void const *pat, size_t n_buckets)
 {
   size_t h = 0;
   intptr_t pat_offset = (intptr_t) pat - 1;
-  for (char const *s = pattern_array + pat_offset; *s != '\n'; s++)
-    h = *s + ((h << 9) | (h >> (SIZE_WIDTH - 9)));
+  unsigned char const *s = (unsigned char const *) pattern_array + pat_offset;
+  for ( ; *s != '\n'; s++)
+    h = h * 33 ^ *s;
   return h % n_buckets;
 }
 static bool _GL_ATTRIBUTE_PURE

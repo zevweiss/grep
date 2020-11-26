@@ -109,6 +109,7 @@ TESTS =						\
   grep-dev-null					\
   grep-dev-null-out				\
   grep-dir					\
+  hash-collision-perf				\
   help-version					\
   high-bit-range				\
   in-eq-out-infloop				\

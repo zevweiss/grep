@@ -2,6 +2,13 @@ GNU grep NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Preprocessing N patterns would take at least O(N^2) time when too many
+  patterns hashed to too few buckets. This now takes seconds, not days:
+  : | grep -Ff <(seq 6400000 | tr 0-9 A-J)
+  [Bug#44754 introduced in grep 3.5]
+
 
 * Noteworthy changes in release 3.6 (2020-11-08) [stable]
 
