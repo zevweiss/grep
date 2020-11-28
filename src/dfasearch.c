@@ -189,6 +189,7 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
             bool exact)
 {
   char *motif;
+  char *orig_pattern = pattern;
   struct dfa_comp *dc = xcalloc (1, sizeof (*dc));
 
   dc->dfa = dfaalloc ();
@@ -329,7 +330,7 @@ GEAcompile (char *pattern, size_t size, reg_syntax_t syntax_bits,
             abort ();
         }
 
-      if (buf != pattern)
+      if (buf != orig_pattern)
         free (buf);
     }
 
